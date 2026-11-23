@@ -2,7 +2,7 @@
 
 An **offline-first, multi-platform Flutter Garment & Production Management System**. Built with **Android as the primary target** and full cross-platform support for iOS, Web, Windows, macOS, and Linux from a single Flutter codebase.
 
-> **Project Phase:** Milestone 4 (StitchFlow Business Foundation — Modules A–F) Complete — Ready for Milestone 5 Review.
+> **Project Phase:** Milestone 5 (StitchFlow Processes, Workers, Assignments & Historical Rates) Complete — Ready for Review.
 
 ---
 
@@ -69,6 +69,7 @@ An **offline-first, multi-platform Flutter Garment & Production Management Syste
 | 30 | [docs/30_MILESTONE_4_IMPLEMENTATION_REPORT.md](docs/30_MILESTONE_4_IMPLEMENTATION_REPORT.md) | Milestone 4 business foundation (Modules A–F) report |
 | 31 | [docs/31_STITCHFLOW_BUILD_AUTOMATION.md](docs/31_STITCHFLOW_BUILD_AUTOMATION.md) | One-command Windows APK build automation guide |
 | 32 | [docs/32_MILESTONE_3_6_IMPLEMENTATION_REPORT.md](docs/32_MILESTONE_3_6_IMPLEMENTATION_REPORT.md) | Milestone 3.6 APK build automation report |
+| 33 | [docs/33_MILESTONE_5_IMPLEMENTATION_REPORT.md](docs/33_MILESTONE_5_IMPLEMENTATION_REPORT.md) | Milestone 5 processes, workers & historical rates report |
 
 ### Governance Files
 - [CHANGELOG.md](CHANGELOG.md) — Version history and milestone tracking

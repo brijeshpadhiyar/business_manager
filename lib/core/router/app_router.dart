@@ -8,6 +8,15 @@ import 'package:business_manager/features/dashboard/presentation/pages/dashboard
 import 'package:business_manager/features/inventory/presentation/pages/inventory_overview_page.dart';
 import 'package:business_manager/features/lots/presentation/pages/lot_detail_page.dart';
 import 'package:business_manager/features/lots/presentation/pages/lot_list_page.dart';
+import 'package:business_manager/features/processes/presentation/pages/process_detail_page.dart';
+import 'package:business_manager/features/processes/presentation/pages/process_form_page.dart';
+import 'package:business_manager/features/processes/presentation/pages/process_list_page.dart';
+import 'package:business_manager/features/rates/presentation/pages/rate_form_page.dart';
+import 'package:business_manager/features/rates/presentation/pages/rate_history_page.dart';
+import 'package:business_manager/features/workers/presentation/pages/worker_assignments_page.dart';
+import 'package:business_manager/features/workers/presentation/pages/worker_detail_page.dart';
+import 'package:business_manager/features/workers/presentation/pages/worker_form_page.dart';
+import 'package:business_manager/features/workers/presentation/pages/worker_list_page.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -23,6 +32,62 @@ GoRouter createAppRouter(AppConfig config) {
         path: RoutePaths.lotDetailPattern,
         builder: (context, state) =>
             LotDetailPage(lotId: state.pathParameters['id']!),
+      ),
+      // Processes
+      GoRoute(
+        path: RoutePaths.processCreate,
+        builder: (context, state) => const ProcessFormPage(),
+      ),
+      GoRoute(
+        path: RoutePaths.processDetailPattern,
+        builder: (context, state) =>
+            ProcessDetailPage(processId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: RoutePaths.processEditPattern,
+        builder: (context, state) =>
+            ProcessFormPage(processId: state.pathParameters['id']!),
+      ),
+      // Workers, Assignments & Historical Rates
+      GoRoute(
+        path: RoutePaths.workerCreate,
+        builder: (context, state) => const WorkerFormPage(),
+      ),
+      GoRoute(
+        path: RoutePaths.workerDetailPattern,
+        builder: (context, state) =>
+            WorkerDetailPage(workerId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: RoutePaths.workerEditPattern,
+        builder: (context, state) =>
+            WorkerFormPage(workerId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: RoutePaths.workerAssignmentsPattern,
+        builder: (context, state) =>
+            WorkerAssignmentsPage(workerId: state.pathParameters['id']!),
+      ),
+      GoRoute(
+        path: RoutePaths.workerRatesPattern,
+        builder: (context, state) => RateHistoryPage(
+          workerId: state.pathParameters['id']!,
+          processId: state.uri.queryParameters['processId'],
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.workerRateCreatePattern,
+        builder: (context, state) => RateFormPage(
+          workerId: state.pathParameters['id']!,
+          initialProcessId: state.uri.queryParameters['processId'],
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.workerRateEditPattern,
+        builder: (context, state) => RateFormPage(
+          workerId: state.pathParameters['id']!,
+          rateId: state.pathParameters['rateId']!,
+        ),
       ),
       GoRoute(
         path: RoutePaths.showcase,
@@ -65,6 +130,16 @@ final class _StitchFlowShellPageState extends State<StitchFlowShellPage> {
           selectedIcon: Icons.inventory_2,
         ),
         ResponsiveNavDestination(
+          label: l10n.navProcesses,
+          icon: Icons.precision_manufacturing_outlined,
+          selectedIcon: Icons.precision_manufacturing,
+        ),
+        ResponsiveNavDestination(
+          label: l10n.navWorkers,
+          icon: Icons.people_outline,
+          selectedIcon: Icons.people,
+        ),
+        ResponsiveNavDestination(
           label: l10n.navInventory,
           icon: Icons.bar_chart_outlined,
           selectedIcon: Icons.bar_chart,
@@ -81,7 +156,9 @@ final class _StitchFlowShellPageState extends State<StitchFlowShellPage> {
           onNavigateTab: (idx) => setState(() => _selectedIndex = idx),
         ),
         1 => const LotListPage(),
-        2 => const InventoryOverviewPage(),
+        2 => const ProcessListPage(),
+        3 => const WorkerListPage(),
+        4 => const InventoryOverviewPage(),
         _ => const BusinessProfilePage(),
       },
     );

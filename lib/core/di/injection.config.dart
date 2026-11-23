@@ -39,6 +39,30 @@ import 'package:business_manager/features/lots/presentation/bloc/lot_detail_cubi
     as _i309;
 import 'package:business_manager/features/lots/presentation/bloc/lot_list_cubit.dart'
     as _i548;
+import 'package:business_manager/features/processes/data/repositories/process_repository_impl.dart'
+    as _i658;
+import 'package:business_manager/features/processes/domain/repositories/process_repository.dart'
+    as _i926;
+import 'package:business_manager/features/processes/presentation/bloc/process_detail_cubit.dart'
+    as _i515;
+import 'package:business_manager/features/processes/presentation/bloc/process_list_cubit.dart'
+    as _i531;
+import 'package:business_manager/features/rates/data/repositories/rate_repository_impl.dart'
+    as _i610;
+import 'package:business_manager/features/rates/domain/repositories/rate_repository.dart'
+    as _i307;
+import 'package:business_manager/features/rates/presentation/bloc/rate_history_cubit.dart'
+    as _i576;
+import 'package:business_manager/features/workers/data/repositories/worker_repository_impl.dart'
+    as _i966;
+import 'package:business_manager/features/workers/domain/repositories/worker_repository.dart'
+    as _i291;
+import 'package:business_manager/features/workers/presentation/bloc/worker_assignments_cubit.dart'
+    as _i560;
+import 'package:business_manager/features/workers/presentation/bloc/worker_detail_cubit.dart'
+    as _i506;
+import 'package:business_manager/features/workers/presentation/bloc/worker_list_cubit.dart'
+    as _i249;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
@@ -98,6 +122,27 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i548.LotListCubit>(
       () => _i548.LotListCubit(gh<_i932.LotRepository>()),
     );
+    gh.lazySingleton<_i291.WorkerRepository>(
+      () => _i966.WorkerRepositoryImpl(
+        gh<_i177.AppDatabase>(),
+        gh<_i665.DatabaseTransactionRunner>(),
+        gh<_i656.IdGenerator>(),
+      ),
+    );
+    gh.lazySingleton<_i307.RateRepository>(
+      () => _i610.RateRepositoryImpl(
+        gh<_i177.AppDatabase>(),
+        gh<_i665.DatabaseTransactionRunner>(),
+        gh<_i656.IdGenerator>(),
+      ),
+    );
+    gh.lazySingleton<_i926.ProcessRepository>(
+      () => _i658.ProcessRepositoryImpl(
+        gh<_i177.AppDatabase>(),
+        gh<_i665.DatabaseTransactionRunner>(),
+        gh<_i656.IdGenerator>(),
+      ),
+    );
     gh.lazySingleton<_i521.BusinessProfileRepository>(
       () => _i930.BusinessProfileRepositoryImpl(
         gh<_i177.AppDatabase>(),
@@ -107,6 +152,31 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i931.InventoryOverviewCubit>(
       () => _i931.InventoryOverviewCubit(gh<_i932.LotRepository>()),
+    );
+    gh.factory<_i576.RateHistoryCubit>(
+      () => _i576.RateHistoryCubit(
+        gh<_i291.WorkerRepository>(),
+        gh<_i926.ProcessRepository>(),
+        gh<_i307.RateRepository>(),
+      ),
+    );
+    gh.factory<_i506.WorkerDetailCubit>(
+      () => _i506.WorkerDetailCubit(gh<_i291.WorkerRepository>()),
+    );
+    gh.factory<_i249.WorkerListCubit>(
+      () => _i249.WorkerListCubit(gh<_i291.WorkerRepository>()),
+    );
+    gh.factory<_i515.ProcessDetailCubit>(
+      () => _i515.ProcessDetailCubit(gh<_i926.ProcessRepository>()),
+    );
+    gh.factory<_i531.ProcessListCubit>(
+      () => _i531.ProcessListCubit(gh<_i926.ProcessRepository>()),
+    );
+    gh.factory<_i560.WorkerAssignmentsCubit>(
+      () => _i560.WorkerAssignmentsCubit(
+        gh<_i291.WorkerRepository>(),
+        gh<_i926.ProcessRepository>(),
+      ),
     );
     gh.factory<_i1018.BusinessProfileCubit>(
       () => _i1018.BusinessProfileCubit(gh<_i521.BusinessProfileRepository>()),

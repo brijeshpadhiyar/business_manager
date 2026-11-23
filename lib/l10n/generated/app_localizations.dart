@@ -967,6 +967,534 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'pcs'**
   String get piecesUnit;
+
+  /// No description provided for @navProcesses.
+  ///
+  /// In en, this message translates to:
+  /// **'Processes'**
+  String get navProcesses;
+
+  /// No description provided for @navWorkers.
+  ///
+  /// In en, this message translates to:
+  /// **'Workers'**
+  String get navWorkers;
+
+  /// No description provided for @statusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get statusActive;
+
+  /// No description provided for @statusInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get statusInactive;
+
+  /// No description provided for @filterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get filterAll;
+
+  /// No description provided for @filterActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get filterActive;
+
+  /// No description provided for @filterInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get filterInactive;
+
+  /// No description provided for @processesHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Production Processes'**
+  String get processesHeading;
+
+  /// No description provided for @processesSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search processes by name or description'**
+  String get processesSearchHint;
+
+  /// No description provided for @processesEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Processes Yet'**
+  String get processesEmptyTitle;
+
+  /// No description provided for @processesEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your own production processes in any order your workshop uses.'**
+  String get processesEmptySubtitle;
+
+  /// No description provided for @processCreateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'New Process'**
+  String get processCreateAction;
+
+  /// No description provided for @processEditAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Process'**
+  String get processEditAction;
+
+  /// No description provided for @processDetailsHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Process Details'**
+  String get processDetailsHeading;
+
+  /// No description provided for @processNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Process Name'**
+  String get processNameLabel;
+
+  /// No description provided for @processDescriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description (Optional)'**
+  String get processDescriptionLabel;
+
+  /// No description provided for @processBillingOverrideLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Labour Billing Mode'**
+  String get processBillingOverrideLabel;
+
+  /// No description provided for @processBillingInheritGlobal.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Business Default'**
+  String get processBillingInheritGlobal;
+
+  /// No description provided for @processIncludeDamagedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Include damaged pieces in labour'**
+  String get processIncludeDamagedLabel;
+
+  /// No description provided for @processActivateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate Process'**
+  String get processActivateAction;
+
+  /// No description provided for @processDeactivateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate Process'**
+  String get processDeactivateAction;
+
+  /// No description provided for @processDeactivateConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate Process?'**
+  String get processDeactivateConfirmTitle;
+
+  /// No description provided for @processDeactivateConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Historical records remain intact, but new assignments and issues will be blocked while inactive.'**
+  String get processDeactivateConfirmMessage;
+
+  /// No description provided for @processDuplicateNameError.
+  ///
+  /// In en, this message translates to:
+  /// **'A process with this name already exists.'**
+  String get processDuplicateNameError;
+
+  /// No description provided for @processAssignedWorkersHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned Workers'**
+  String get processAssignedWorkersHeading;
+
+  /// No description provided for @processNoAssignedWorkers.
+  ///
+  /// In en, this message translates to:
+  /// **'No workers are currently assigned to this process.'**
+  String get processNoAssignedWorkers;
+
+  /// No description provided for @processAuditHistoryHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Audit History'**
+  String get processAuditHistoryHeading;
+
+  /// No description provided for @processNoAuditHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'No audit entries recorded yet.'**
+  String get processNoAuditHistory;
+
+  /// No description provided for @createdAtLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Created'**
+  String get createdAtLabel;
+
+  /// No description provided for @updatedAtLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Updated'**
+  String get updatedAtLabel;
+
+  /// No description provided for @workersHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Workers'**
+  String get workersHeading;
+
+  /// No description provided for @workersSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search workers by name, phone, or address'**
+  String get workersSearchHint;
+
+  /// No description provided for @workersEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Workers Yet'**
+  String get workersEmptyTitle;
+
+  /// No description provided for @workersEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add your workshop workers to assign processes and configure per-piece rates.'**
+  String get workersEmptySubtitle;
+
+  /// No description provided for @workerCreateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'New Worker'**
+  String get workerCreateAction;
+
+  /// No description provided for @workerEditAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Worker'**
+  String get workerEditAction;
+
+  /// No description provided for @workerDetailsHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker Profile'**
+  String get workerDetailsHeading;
+
+  /// No description provided for @workerNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker Name'**
+  String get workerNameLabel;
+
+  /// No description provided for @workerPhoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number (Optional)'**
+  String get workerPhoneLabel;
+
+  /// No description provided for @workerAddressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Address (Optional)'**
+  String get workerAddressLabel;
+
+  /// No description provided for @workerNotesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (Optional)'**
+  String get workerNotesLabel;
+
+  /// No description provided for @workerActivateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate Worker'**
+  String get workerActivateAction;
+
+  /// No description provided for @workerDeactivateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate Worker'**
+  String get workerDeactivateAction;
+
+  /// No description provided for @workerDeactivateConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate Worker?'**
+  String get workerDeactivateConfirmTitle;
+
+  /// No description provided for @workerDeactivateConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Historical records and rates are preserved. Inactive workers cannot receive new assignments.'**
+  String get workerDeactivateConfirmMessage;
+
+  /// No description provided for @workerContactHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Details'**
+  String get workerContactHeading;
+
+  /// No description provided for @workerNoContactInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'No phone or address recorded.'**
+  String get workerNoContactInfo;
+
+  /// No description provided for @workerAssignedProcessesHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned Processes & Current Rates'**
+  String get workerAssignedProcessesHeading;
+
+  /// No description provided for @workerNoAssignedProcesses.
+  ///
+  /// In en, this message translates to:
+  /// **'No processes assigned yet.'**
+  String get workerNoAssignedProcesses;
+
+  /// No description provided for @workerManageAssignmentsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Assignments'**
+  String get workerManageAssignmentsAction;
+
+  /// No description provided for @workerViewRateHistoryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate History'**
+  String get workerViewRateHistoryAction;
+
+  /// No description provided for @workerAddRateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Rate'**
+  String get workerAddRateAction;
+
+  /// No description provided for @assignmentsHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker Process Assignments'**
+  String get assignmentsHeading;
+
+  /// No description provided for @assignmentsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'A worker can be assigned to multiple processes with no fixed sequence.'**
+  String get assignmentsSubtitle;
+
+  /// No description provided for @assignmentsAddLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Active Process'**
+  String get assignmentsAddLabel;
+
+  /// No description provided for @assignmentsAddAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign Process'**
+  String get assignmentsAddAction;
+
+  /// No description provided for @assignmentsRemoveAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get assignmentsRemoveAction;
+
+  /// No description provided for @assignmentsRemoveConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Assignment?'**
+  String get assignmentsRemoveConfirmTitle;
+
+  /// No description provided for @assignmentsRemoveConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This deactivates the assignment while preserving historical rate and work records.'**
+  String get assignmentsRemoveConfirmMessage;
+
+  /// No description provided for @assignmentsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Active Assignments'**
+  String get assignmentsEmptyTitle;
+
+  /// No description provided for @assignmentsEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign one or more active processes to this worker.'**
+  String get assignmentsEmptySubtitle;
+
+  /// No description provided for @assignmentsNoAvailableProcesses.
+  ///
+  /// In en, this message translates to:
+  /// **'All active processes are already assigned or no active processes exist.'**
+  String get assignmentsNoAvailableProcesses;
+
+  /// No description provided for @assignmentsDuplicateError.
+  ///
+  /// In en, this message translates to:
+  /// **'This process is already assigned to the worker.'**
+  String get assignmentsDuplicateError;
+
+  /// No description provided for @assignmentsInactiveWorkerError.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate this worker before adding process assignments.'**
+  String get assignmentsInactiveWorkerError;
+
+  /// No description provided for @assignmentsInactiveProcessError.
+  ///
+  /// In en, this message translates to:
+  /// **'Only active processes can be assigned.'**
+  String get assignmentsInactiveProcessError;
+
+  /// No description provided for @ratesHistoryHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Per-Piece Rate History'**
+  String get ratesHistoryHeading;
+
+  /// No description provided for @ratesFilterProcessLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Process'**
+  String get ratesFilterProcessLabel;
+
+  /// No description provided for @ratesCurrentRateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Rate'**
+  String get ratesCurrentRateLabel;
+
+  /// No description provided for @ratesNoCurrentRate.
+  ///
+  /// In en, this message translates to:
+  /// **'No current rate'**
+  String get ratesNoCurrentRate;
+
+  /// No description provided for @ratesPerPieceSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **'/ pc'**
+  String get ratesPerPieceSuffix;
+
+  /// No description provided for @ratesOngoingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ongoing'**
+  String get ratesOngoingLabel;
+
+  /// No description provided for @ratesEffectiveFromLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Effective From (IST)'**
+  String get ratesEffectiveFromLabel;
+
+  /// No description provided for @ratesEffectiveToLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Effective To (IST, Optional)'**
+  String get ratesEffectiveToLabel;
+
+  /// No description provided for @ratesClearEffectiveTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear End Date (Ongoing)'**
+  String get ratesClearEffectiveTo;
+
+  /// No description provided for @ratesAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate per Piece (₹)'**
+  String get ratesAmountLabel;
+
+  /// No description provided for @ratesNotesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason / Notes (Optional)'**
+  String get ratesNotesLabel;
+
+  /// No description provided for @ratesAddHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Historical Rate'**
+  String get ratesAddHeading;
+
+  /// No description provided for @ratesEditHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Rate'**
+  String get ratesEditHeading;
+
+  /// No description provided for @ratesEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Rates Configured'**
+  String get ratesEmptyTitle;
+
+  /// No description provided for @ratesEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add an effective-dated per-piece rate for this worker and process.'**
+  String get ratesEmptySubtitle;
+
+  /// No description provided for @ratesSelectProcessHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Process'**
+  String get ratesSelectProcessHint;
+
+  /// No description provided for @ratesAutoCloseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Close Previous Ongoing Rate?'**
+  String get ratesAutoCloseTitle;
+
+  /// No description provided for @ratesAutoCloseMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'An ongoing rate exists for this process. Saving will close it on the previous day and start the new rate from your chosen date.'**
+  String get ratesAutoCloseMessage;
+
+  /// No description provided for @ratesOverlapError.
+  ///
+  /// In en, this message translates to:
+  /// **'This date range overlaps with an existing rate.'**
+  String get ratesOverlapError;
+
+  /// No description provided for @ratesMultipleOpenEndedError.
+  ///
+  /// In en, this message translates to:
+  /// **'Another ongoing rate already exists for this worker and process.'**
+  String get ratesMultipleOpenEndedError;
+
+  /// No description provided for @ratesToBeforeFromError.
+  ///
+  /// In en, this message translates to:
+  /// **'Effective To date cannot be earlier than Effective From date.'**
+  String get ratesToBeforeFromError;
+
+  /// No description provided for @ratesLockedByHistoryError.
+  ///
+  /// In en, this message translates to:
+  /// **'This rate is already used in historical transactions and cannot be edited.'**
+  String get ratesLockedByHistoryError;
+
+  /// No description provided for @ratesHistoricalNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Historical rates are preserved. To change a rate, add a new effective-dated entry.'**
+  String get ratesHistoricalNotice;
 }
 
 class _AppLocalizationsDelegate

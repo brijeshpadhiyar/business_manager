@@ -1,6 +1,6 @@
 # 11 — Member Pricing Rules
 
-Historical pricing logic lives in a pure Dart domain service (`RateResolver`). Rates are never hardcoded and historical transactions are never retroactively recalculated.
+Historical pricing logic lives in a pure Dart domain service (`MemberProcessRateResolver` in `lib/features/rates/domain/services/member_process_rate_resolver.dart`). Rates are never hardcoded and historical transactions are never retroactively recalculated.
 
 ---
 

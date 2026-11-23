@@ -74,16 +74,28 @@ final class DashboardPage extends StatelessWidget {
                   onPressed: () => onNavigateTab(1),
                 ),
                 AppButton(
-                  label: l10n.navInventory,
-                  icon: Icons.bar_chart_outlined,
+                  label: l10n.navProcesses,
+                  icon: Icons.precision_manufacturing_outlined,
                   variant: AppButtonVariant.secondary,
                   onPressed: () => onNavigateTab(2),
+                ),
+                AppButton(
+                  label: l10n.navWorkers,
+                  icon: Icons.people_outline,
+                  variant: AppButtonVariant.secondary,
+                  onPressed: () => onNavigateTab(3),
+                ),
+                AppButton(
+                  label: l10n.navInventory,
+                  icon: Icons.bar_chart_outlined,
+                  variant: AppButtonVariant.outlined,
+                  onPressed: () => onNavigateTab(4),
                 ),
                 AppButton(
                   label: l10n.navBusinessProfile,
                   icon: Icons.storefront_outlined,
                   variant: AppButtonVariant.outlined,
-                  onPressed: () => onNavigateTab(3),
+                  onPressed: () => onNavigateTab(5),
                 ),
                 if (config.isDev)
                   AppButton(

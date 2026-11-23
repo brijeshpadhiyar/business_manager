@@ -460,4 +460,289 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get piecesUnit => 'pcs';
+
+  @override
+  String get navProcesses => 'Processes';
+
+  @override
+  String get navWorkers => 'Workers';
+
+  @override
+  String get statusActive => 'Active';
+
+  @override
+  String get statusInactive => 'Inactive';
+
+  @override
+  String get filterAll => 'All';
+
+  @override
+  String get filterActive => 'Active';
+
+  @override
+  String get filterInactive => 'Inactive';
+
+  @override
+  String get processesHeading => 'Production Processes';
+
+  @override
+  String get processesSearchHint => 'Search processes by name or description';
+
+  @override
+  String get processesEmptyTitle => 'No Processes Yet';
+
+  @override
+  String get processesEmptySubtitle =>
+      'Create your own production processes in any order your workshop uses.';
+
+  @override
+  String get processCreateAction => 'New Process';
+
+  @override
+  String get processEditAction => 'Edit Process';
+
+  @override
+  String get processDetailsHeading => 'Process Details';
+
+  @override
+  String get processNameLabel => 'Process Name';
+
+  @override
+  String get processDescriptionLabel => 'Description (Optional)';
+
+  @override
+  String get processBillingOverrideLabel => 'Labour Billing Mode';
+
+  @override
+  String get processBillingInheritGlobal => 'Use Business Default';
+
+  @override
+  String get processIncludeDamagedLabel => 'Include damaged pieces in labour';
+
+  @override
+  String get processActivateAction => 'Activate Process';
+
+  @override
+  String get processDeactivateAction => 'Deactivate Process';
+
+  @override
+  String get processDeactivateConfirmTitle => 'Deactivate Process?';
+
+  @override
+  String get processDeactivateConfirmMessage =>
+      'Historical records remain intact, but new assignments and issues will be blocked while inactive.';
+
+  @override
+  String get processDuplicateNameError =>
+      'A process with this name already exists.';
+
+  @override
+  String get processAssignedWorkersHeading => 'Assigned Workers';
+
+  @override
+  String get processNoAssignedWorkers =>
+      'No workers are currently assigned to this process.';
+
+  @override
+  String get processAuditHistoryHeading => 'Audit History';
+
+  @override
+  String get processNoAuditHistory => 'No audit entries recorded yet.';
+
+  @override
+  String get createdAtLabel => 'Created';
+
+  @override
+  String get updatedAtLabel => 'Last Updated';
+
+  @override
+  String get workersHeading => 'Workers';
+
+  @override
+  String get workersSearchHint => 'Search workers by name, phone, or address';
+
+  @override
+  String get workersEmptyTitle => 'No Workers Yet';
+
+  @override
+  String get workersEmptySubtitle =>
+      'Add your workshop workers to assign processes and configure per-piece rates.';
+
+  @override
+  String get workerCreateAction => 'New Worker';
+
+  @override
+  String get workerEditAction => 'Edit Worker';
+
+  @override
+  String get workerDetailsHeading => 'Worker Profile';
+
+  @override
+  String get workerNameLabel => 'Worker Name';
+
+  @override
+  String get workerPhoneLabel => 'Phone Number (Optional)';
+
+  @override
+  String get workerAddressLabel => 'Address (Optional)';
+
+  @override
+  String get workerNotesLabel => 'Notes (Optional)';
+
+  @override
+  String get workerActivateAction => 'Activate Worker';
+
+  @override
+  String get workerDeactivateAction => 'Deactivate Worker';
+
+  @override
+  String get workerDeactivateConfirmTitle => 'Deactivate Worker?';
+
+  @override
+  String get workerDeactivateConfirmMessage =>
+      'Historical records and rates are preserved. Inactive workers cannot receive new assignments.';
+
+  @override
+  String get workerContactHeading => 'Contact Details';
+
+  @override
+  String get workerNoContactInfo => 'No phone or address recorded.';
+
+  @override
+  String get workerAssignedProcessesHeading =>
+      'Assigned Processes & Current Rates';
+
+  @override
+  String get workerNoAssignedProcesses => 'No processes assigned yet.';
+
+  @override
+  String get workerManageAssignmentsAction => 'Manage Assignments';
+
+  @override
+  String get workerViewRateHistoryAction => 'Rate History';
+
+  @override
+  String get workerAddRateAction => 'Add Rate';
+
+  @override
+  String get assignmentsHeading => 'Worker Process Assignments';
+
+  @override
+  String get assignmentsSubtitle =>
+      'A worker can be assigned to multiple processes with no fixed sequence.';
+
+  @override
+  String get assignmentsAddLabel => 'Select Active Process';
+
+  @override
+  String get assignmentsAddAction => 'Assign Process';
+
+  @override
+  String get assignmentsRemoveAction => 'Remove';
+
+  @override
+  String get assignmentsRemoveConfirmTitle => 'Remove Assignment?';
+
+  @override
+  String get assignmentsRemoveConfirmMessage =>
+      'This deactivates the assignment while preserving historical rate and work records.';
+
+  @override
+  String get assignmentsEmptyTitle => 'No Active Assignments';
+
+  @override
+  String get assignmentsEmptySubtitle =>
+      'Assign one or more active processes to this worker.';
+
+  @override
+  String get assignmentsNoAvailableProcesses =>
+      'All active processes are already assigned or no active processes exist.';
+
+  @override
+  String get assignmentsDuplicateError =>
+      'This process is already assigned to the worker.';
+
+  @override
+  String get assignmentsInactiveWorkerError =>
+      'Activate this worker before adding process assignments.';
+
+  @override
+  String get assignmentsInactiveProcessError =>
+      'Only active processes can be assigned.';
+
+  @override
+  String get ratesHistoryHeading => 'Per-Piece Rate History';
+
+  @override
+  String get ratesFilterProcessLabel => 'Process';
+
+  @override
+  String get ratesCurrentRateLabel => 'Current Rate';
+
+  @override
+  String get ratesNoCurrentRate => 'No current rate';
+
+  @override
+  String get ratesPerPieceSuffix => '/ pc';
+
+  @override
+  String get ratesOngoingLabel => 'Ongoing';
+
+  @override
+  String get ratesEffectiveFromLabel => 'Effective From (IST)';
+
+  @override
+  String get ratesEffectiveToLabel => 'Effective To (IST, Optional)';
+
+  @override
+  String get ratesClearEffectiveTo => 'Clear End Date (Ongoing)';
+
+  @override
+  String get ratesAmountLabel => 'Rate per Piece (₹)';
+
+  @override
+  String get ratesNotesLabel => 'Reason / Notes (Optional)';
+
+  @override
+  String get ratesAddHeading => 'Add Historical Rate';
+
+  @override
+  String get ratesEditHeading => 'Edit Rate';
+
+  @override
+  String get ratesEmptyTitle => 'No Rates Configured';
+
+  @override
+  String get ratesEmptySubtitle =>
+      'Add an effective-dated per-piece rate for this worker and process.';
+
+  @override
+  String get ratesSelectProcessHint => 'Select Process';
+
+  @override
+  String get ratesAutoCloseTitle => 'Close Previous Ongoing Rate?';
+
+  @override
+  String get ratesAutoCloseMessage =>
+      'An ongoing rate exists for this process. Saving will close it on the previous day and start the new rate from your chosen date.';
+
+  @override
+  String get ratesOverlapError =>
+      'This date range overlaps with an existing rate.';
+
+  @override
+  String get ratesMultipleOpenEndedError =>
+      'Another ongoing rate already exists for this worker and process.';
+
+  @override
+  String get ratesToBeforeFromError =>
+      'Effective To date cannot be earlier than Effective From date.';
+
+  @override
+  String get ratesLockedByHistoryError =>
+      'This rate is already used in historical transactions and cannot be edited.';
+
+  @override
+  String get ratesHistoricalNotice =>
+      'Historical rates are preserved. To change a rate, add a new effective-dated entry.';
 }

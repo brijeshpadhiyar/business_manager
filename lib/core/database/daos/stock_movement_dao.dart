@@ -34,4 +34,13 @@ class StockMovementDao extends DatabaseAccessor<AppDatabase>
           ]))
         .get();
   }
+
+  Future<bool> hasMovementsUsingRate(String rateId) async {
+    final row =
+        await (select(stockMovements)
+              ..where((t) => t.sourceRateId.equals(rateId))
+              ..limit(1))
+            .getSingleOrNull();
+    return row != null;
+  }
 }

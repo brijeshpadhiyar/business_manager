@@ -8,3 +8,15 @@ final class LocalStorageException implements Exception {
   @override
   String toString() => 'LocalStorageException: $message';
 }
+
+/// Typed domain validation error carrying a machine-readable [code] so
+/// presentation layers can map errors to localized user-facing messages.
+final class DomainValidationException implements Exception {
+  const DomainValidationException(this.code, this.message);
+
+  final String code;
+  final String message;
+
+  @override
+  String toString() => 'DomainValidationException($code): $message';
+}

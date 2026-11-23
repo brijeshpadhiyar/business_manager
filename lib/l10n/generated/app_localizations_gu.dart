@@ -459,4 +459,290 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get piecesUnit => 'પીસ';
+
+  @override
+  String get navProcesses => 'પ્રક્રિયાઓ';
+
+  @override
+  String get navWorkers => 'કારીગરો';
+
+  @override
+  String get statusActive => 'સક્રિય';
+
+  @override
+  String get statusInactive => 'નિષ્ક્રિય';
+
+  @override
+  String get filterAll => 'બધા';
+
+  @override
+  String get filterActive => 'સક્રિય';
+
+  @override
+  String get filterInactive => 'નિષ્ક્રિય';
+
+  @override
+  String get processesHeading => 'પ્રોડક્શન પ્રક્રિયાઓ';
+
+  @override
+  String get processesSearchHint => 'નામ અથવા વિગત દ્વારા પ્રક્રિયા શોધો';
+
+  @override
+  String get processesEmptyTitle => 'હજુ કોઈ પ્રક્રિયા નથી';
+
+  @override
+  String get processesEmptySubtitle =>
+      'તમારા કારખાના મુજબ કોઈપણ ક્રમમાં તમારી પોતાની પ્રોડક્શન પ્રક્રિયાઓ બનાવો.';
+
+  @override
+  String get processCreateAction => 'નવી પ્રક્રિયા';
+
+  @override
+  String get processEditAction => 'પ્રક્રિયા સુધારો';
+
+  @override
+  String get processDetailsHeading => 'પ્રક્રિયાની વિગતો';
+
+  @override
+  String get processNameLabel => 'પ્રક્રિયાનું નામ';
+
+  @override
+  String get processDescriptionLabel => 'વિગત (વૈકલ્પિક)';
+
+  @override
+  String get processBillingOverrideLabel => 'મજૂરી ગણતરી પદ્ધતિ';
+
+  @override
+  String get processBillingInheritGlobal => 'બિઝનેસ ડિફોલ્ટ મુજબ';
+
+  @override
+  String get processIncludeDamagedLabel =>
+      'નુકસાનગ્રસ્ત પીસને મજૂરીમાં સામેલ કરો';
+
+  @override
+  String get processActivateAction => 'પ્રક્રિયા સક્રિય કરો';
+
+  @override
+  String get processDeactivateAction => 'પ્રક્રિયા નિષ્ક્રિય કરો';
+
+  @override
+  String get processDeactivateConfirmTitle => 'પ્રક્રિયા નિષ્ક્રિય કરવી છે?';
+
+  @override
+  String get processDeactivateConfirmMessage =>
+      'ઐતિહાસિક નોંધ સુરક્ષિત રહેશે, પરંતુ નિષ્ક્રિય હોય ત્યારે નવી સોંપણી કે ઇશ્યૂ થઈ શકશે નહીં.';
+
+  @override
+  String get processDuplicateNameError =>
+      'આ નામની પ્રક્રિયા પહેલેથી અસ્તિત્વમાં છે.';
+
+  @override
+  String get processAssignedWorkersHeading => 'સોંપેલા કારીગરો';
+
+  @override
+  String get processNoAssignedWorkers =>
+      'આ પ્રક્રિયામાં હાલમાં કોઈ કારીગર સોંપેલ નથી.';
+
+  @override
+  String get processAuditHistoryHeading => 'ઓડિટ ઇતિહાસ';
+
+  @override
+  String get processNoAuditHistory => 'હજુ કોઈ ઓડિટ નોંધ નથી.';
+
+  @override
+  String get createdAtLabel => 'બનાવેલ તારીખ';
+
+  @override
+  String get updatedAtLabel => 'છેલ્લો સુધારો';
+
+  @override
+  String get workersHeading => 'કારીગરો';
+
+  @override
+  String get workersSearchHint => 'નામ, ફોન અથવા સરનામા દ્વારા કારીગર શોધો';
+
+  @override
+  String get workersEmptyTitle => 'હજુ કોઈ કારીગર નથી';
+
+  @override
+  String get workersEmptySubtitle =>
+      'પ્રક્રિયાઓ સોંપવા અને પીસ દીઠ ભાવ સેટ કરવા માટે તમારા કારીગરો ઉમેરો.';
+
+  @override
+  String get workerCreateAction => 'નવો કારીગર';
+
+  @override
+  String get workerEditAction => 'કારીગર સુધારો';
+
+  @override
+  String get workerDetailsHeading => 'કારીગર પ્રોફાઇલ';
+
+  @override
+  String get workerNameLabel => 'કારીગરનું નામ';
+
+  @override
+  String get workerPhoneLabel => 'ફોન નંબર (વૈકલ્પિક)';
+
+  @override
+  String get workerAddressLabel => 'સરનામું (વૈકલ્પિક)';
+
+  @override
+  String get workerNotesLabel => 'નોંધ (વૈકલ્પિક)';
+
+  @override
+  String get workerActivateAction => 'કારીગર સક્રિય કરો';
+
+  @override
+  String get workerDeactivateAction => 'કારીગર નિષ્ક્રિય કરો';
+
+  @override
+  String get workerDeactivateConfirmTitle => 'કારીગર નિષ્ક્રિય કરવો છે?';
+
+  @override
+  String get workerDeactivateConfirmMessage =>
+      'ઐતિહાસિક નોંધ અને ભાવ સુરક્ષિત રહેશે. નિષ્ક્રિય કારીગરને નવી પ્રક્રિયા સોંપી શકાશે નહીં.';
+
+  @override
+  String get workerContactHeading => 'સંપર્ક વિગતો';
+
+  @override
+  String get workerNoContactInfo => 'ફોન અથવા સરનામું નોંધેલ નથી.';
+
+  @override
+  String get workerAssignedProcessesHeading =>
+      'સોંપેલી પ્રક્રિયાઓ અને વર્તમાન ભાવ';
+
+  @override
+  String get workerNoAssignedProcesses => 'હજુ કોઈ પ્રક્રિયા સોંપેલ નથી.';
+
+  @override
+  String get workerManageAssignmentsAction => 'પ્રક્રિયા સોંપણી';
+
+  @override
+  String get workerViewRateHistoryAction => 'ભાવ ઇતિહાસ';
+
+  @override
+  String get workerAddRateAction => 'ભાવ ઉમેરો';
+
+  @override
+  String get assignmentsHeading => 'કારીગર પ્રક્રિયા સોંપણી';
+
+  @override
+  String get assignmentsSubtitle =>
+      'એક કારીગરને કોઈપણ ક્રમ વગર એકથી વધુ પ્રક્રિયાઓ સોંપી શકાય છે.';
+
+  @override
+  String get assignmentsAddLabel => 'સક્રિય પ્રક્રિયા પસંદ કરો';
+
+  @override
+  String get assignmentsAddAction => 'પ્રક્રિયા સોંપો';
+
+  @override
+  String get assignmentsRemoveAction => 'દૂર કરો';
+
+  @override
+  String get assignmentsRemoveConfirmTitle => 'સોંપણી દૂર કરવી છે?';
+
+  @override
+  String get assignmentsRemoveConfirmMessage =>
+      'ઐતિહાસિક ભાવ અને કામની નોંધ સુરક્ષિત રાખીને આ સોંપણી નિષ્ક્રિય થશે.';
+
+  @override
+  String get assignmentsEmptyTitle => 'કોઈ સક્રિય સોંપણી નથી';
+
+  @override
+  String get assignmentsEmptySubtitle =>
+      'આ કારીગરને એક અથવા વધુ સક્રિય પ્રક્રિયાઓ સોંપો.';
+
+  @override
+  String get assignmentsNoAvailableProcesses =>
+      'બધી સક્રિય પ્રક્રિયાઓ પહેલેથી સોંપેલી છે અથવા કોઈ સક્રિય પ્રક્રિયા ઉપલબ્ધ નથી.';
+
+  @override
+  String get assignmentsDuplicateError =>
+      'આ પ્રક્રિયા આ કારીગરને પહેલેથી સોંપેલી છે.';
+
+  @override
+  String get assignmentsInactiveWorkerError =>
+      'પ્રક્રિયા સોંપતા પહેલા આ કારીગરને સક્રિય કરો.';
+
+  @override
+  String get assignmentsInactiveProcessError =>
+      'માત્ર સક્રિય પ્રક્રિયાઓ જ સોંપી શકાય છે.';
+
+  @override
+  String get ratesHistoryHeading => 'પીસ દીઠ ભાવ ઇતિહાસ';
+
+  @override
+  String get ratesFilterProcessLabel => 'પ્રક્રિયા';
+
+  @override
+  String get ratesCurrentRateLabel => 'વર્તમાન ભાવ';
+
+  @override
+  String get ratesNoCurrentRate => 'કોઈ વર્તમાન ભાવ નથી';
+
+  @override
+  String get ratesPerPieceSuffix => '/ પીસ';
+
+  @override
+  String get ratesOngoingLabel => 'ચાલુ';
+
+  @override
+  String get ratesEffectiveFromLabel => 'અમલી તારીખ થી (IST)';
+
+  @override
+  String get ratesEffectiveToLabel => 'અમલી તારીખ સુધી (IST, વૈકલ્પિક)';
+
+  @override
+  String get ratesClearEffectiveTo => 'અંતિમ તારીખ દૂર કરો (ચાલુ)';
+
+  @override
+  String get ratesAmountLabel => 'પીસ દીઠ ભાવ (₹)';
+
+  @override
+  String get ratesNotesLabel => 'કારણ / નોંધ (વૈકલ્પિક)';
+
+  @override
+  String get ratesAddHeading => 'ઐતિહાસિક ભાવ ઉમેરો';
+
+  @override
+  String get ratesEditHeading => 'ભાવ સુધારો';
+
+  @override
+  String get ratesEmptyTitle => 'કોઈ ભાવ સેટ નથી';
+
+  @override
+  String get ratesEmptySubtitle =>
+      'આ કારીગર અને પ્રક્રિયા માટે અમલી તારીખ સાથેનો પીસ દીઠ ભાવ ઉમેરો.';
+
+  @override
+  String get ratesSelectProcessHint => 'પ્રક્રિયા પસંદ કરો';
+
+  @override
+  String get ratesAutoCloseTitle => 'અગાઉનો ચાલુ ભાવ બંધ કરવો છે?';
+
+  @override
+  String get ratesAutoCloseMessage =>
+      'આ પ્રક્રિયા માટે અગાઉથી એક ચાલુ ભાવ છે. સાચવવાથી તે અગાઉના દિવસે બંધ થશે અને નવો ભાવ તમારી પસંદ કરેલી તારીખથી શરૂ થશે.';
+
+  @override
+  String get ratesOverlapError =>
+      'આ તારીખનો સમયગાળો હાલના ભાવ સાથે ઓવરલેપ થાય છે.';
+
+  @override
+  String get ratesMultipleOpenEndedError =>
+      'આ કારીગર અને પ્રક્રિયા માટે અગાઉથી બીજો ચાલુ ભાવ અસ્તિત્વમાં છે.';
+
+  @override
+  String get ratesToBeforeFromError =>
+      'અંતિમ તારીખ શરૂઆતની તારીખથી પહેલાની હોઈ શકે નહીં.';
+
+  @override
+  String get ratesLockedByHistoryError =>
+      'આ ભાવ ઐતિહાસિક વ્યવહારોમાં વપરાયેલ હોવાથી સુધારી શકાતો નથી.';
+
+  @override
+  String get ratesHistoricalNotice =>
+      'ઐતિહાસિક ભાવ સુરક્ષિત રહે છે. ભાવ બદલવા માટે નવી અમલી તારીખ સાથે નવી નોંધ ઉમેરો.';
 }

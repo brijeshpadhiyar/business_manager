@@ -83,22 +83,33 @@ final class ResponsiveNavigation extends StatelessWidget {
         body: SafeArea(
           child: Row(
             children: [
-              NavigationRail(
-                selectedIndex: selectedIndex,
-                onDestinationSelected: onDestinationSelected,
-                labelType: NavigationRailLabelType.all,
-                destinations: destinations
-                    .map(
-                      (d) => NavigationRailDestination(
-                        icon: Icon(d.icon, size: AppSizing.iconMd),
-                        selectedIcon: Icon(
-                          d.selectedIcon ?? d.icon,
-                          size: AppSizing.iconMd,
-                        ),
-                        label: Text(d.label),
+              LayoutBuilder(
+                builder: (context, constraints) => SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
+                    child: IntrinsicHeight(
+                      child: NavigationRail(
+                        selectedIndex: selectedIndex,
+                        onDestinationSelected: onDestinationSelected,
+                        labelType: NavigationRailLabelType.all,
+                        destinations: destinations
+                            .map(
+                              (d) => NavigationRailDestination(
+                                icon: Icon(d.icon, size: AppSizing.iconMd),
+                                selectedIcon: Icon(
+                                  d.selectedIcon ?? d.icon,
+                                  size: AppSizing.iconMd,
+                                ),
+                                label: Text(d.label),
+                              ),
+                            )
+                            .toList(),
                       ),
-                    )
-                    .toList(),
+                    ),
+                  ),
+                ),
               ),
               const VerticalDivider(width: 1),
               Expanded(child: body),
@@ -141,7 +152,13 @@ final class ResponsiveNavigation extends StatelessWidget {
                         d.selectedIcon ?? d.icon,
                         size: AppSizing.iconMd,
                       ),
-                      label: Text(d.label),
+                      label: Flexible(
+                        child: Text(
+                          d.label,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
+                      ),
                     ),
                   ),
                 ],
