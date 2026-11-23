@@ -75,8 +75,25 @@ abstract final class SchemaIndexes {
         'WHERE client_request_id IS NOT NULL;',
   ];
 
+  /// Additive read-performance indexes introduced in schema v3 (V1.2).
+  /// Zero tables or columns altered; speeds up date-range reports, insights,
+  /// daily workshop summaries, and backup-age notification checks.
+  static const List<String> v3IndexStatements = [
+    'CREATE INDEX IF NOT EXISTS idx_sm_tx_type '
+        'ON stock_movements(transaction_at DESC, movement_type);',
+    'CREATE INDEX IF NOT EXISTS idx_labour_tx_payable '
+        'ON labour_entries(transaction_at DESC, is_payable);',
+    'CREATE INDEX IF NOT EXISTS idx_payments_tx '
+        'ON payments(transaction_at DESC, payment_type);',
+    'CREATE INDEX IF NOT EXISTS idx_wla_tx '
+        'ON worker_ledger_adjustments(transaction_at DESC);',
+    'CREATE INDEX IF NOT EXISTS idx_audit_action_rec '
+        'ON audit_logs(action_type, recorded_at DESC);',
+  ];
+
   static const List<String> allIndexStatements = [
     ...v1IndexStatements,
     ...v2IndexStatements,
+    ...v3IndexStatements,
   ];
 }

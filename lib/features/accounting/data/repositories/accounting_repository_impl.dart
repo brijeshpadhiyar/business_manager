@@ -5,10 +5,12 @@ import 'package:business_manager/core/database/database_transaction_runner.dart'
 import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/features/accounting/domain/calculators/ledger_calculator.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:business_manager/features/accounting/domain/repositories/accounting_repository.dart';
 import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
+import 'package:business_manager/features/notifications/data/services/notification_refresh_coordinator.dart';
 import 'package:business_manager/features/stock_movements/domain/calculators/stock_calculator.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 import 'package:drift/drift.dart';
@@ -359,76 +361,105 @@ final class AccountingRepositoryImpl implements AccountingRepository {
         'Payment amount must be greater than zero.',
       );
     }
+    if (amountPaise > ValidationLimits.maxAmountPaise) {
+      throw const DomainValidationException(
+        'amount_too_large',
+        'Payment amount exceeds maximum allowed limit.',
+      );
+    }
+    if (!AppValidators.dateValidator(transactionAtUtcMillis).isValid) {
+      throw const DomainValidationException(
+        'invalid_date',
+        'Transaction date is invalid.',
+      );
+    }
+    if ((referenceNo?.trim().length ?? 0) >
+            ValidationLimits.maxShortNameLength ||
+        (notes?.trim().length ?? 0) > ValidationLimits.maxNotesLength) {
+      throw const DomainValidationException(
+        'text_too_long',
+        'Reference number or notes exceed maximum allowed length.',
+      );
+    }
 
     final reqId = clientRequestId?.trim().isEmpty ?? true
         ? _idGenerator.nextRequestId()
         : clientRequestId!.trim();
 
-    return _txRunner.runInTransaction(() async {
-      final existingByReq = await _db.paymentDao.findByClientRequestId(reqId);
-      if (existingByReq != null) {
-        return _mapPayment(existingByReq);
-      }
+    return _txRunner
+        .runInTransaction(() async {
+          final existingByReq = await _db.paymentDao.findByClientRequestId(
+            reqId,
+          );
+          if (existingByReq != null) {
+            return _mapPayment(existingByReq);
+          }
 
-      final worker = await _db.processMemberDao.findMemberById(workerId);
-      if (worker == null || worker.deletedAt != null) {
-        throw const DomainValidationException(
-          'worker_not_found',
-          'Worker was not found.',
-        );
-      }
+          final worker = await _db.processMemberDao.findMemberById(workerId);
+          if (worker == null || worker.deletedAt != null) {
+            throw const DomainValidationException(
+              'worker_not_found',
+              'Worker was not found.',
+            );
+          }
 
-      final now = IstDateTimeHelper.nowUtcMillis();
-      final actor = await _resolveActor();
-      final paymentId = _idGenerator.nextEntityId();
-      final cleanedRef = referenceNo?.trim().isEmpty ?? true
-          ? null
-          : referenceNo!.trim();
-      final cleanedNotes = notes?.trim().isEmpty ?? true ? null : notes!.trim();
+          final now = IstDateTimeHelper.nowUtcMillis();
+          final actor = await _resolveActor();
+          final paymentId = _idGenerator.nextEntityId();
+          final cleanedRef = referenceNo?.trim().isEmpty ?? true
+              ? null
+              : referenceNo!.trim();
+          final cleanedNotes = notes?.trim().isEmpty ?? true
+              ? null
+              : notes!.trim();
 
-      await _db.paymentDao.insertPayment(
-        PaymentsCompanion(
-          id: Value(paymentId),
-          memberId: Value(worker.id),
-          paymentType: Value(paymentType.dbValue),
-          clientRequestId: Value(reqId),
-          amountPaise: Value(amountPaise),
-          paymentMode: Value(paymentMode.dbValue),
-          referenceNo: Value(cleanedRef),
-          notes: Value(cleanedNotes),
-          transactionAt: Value(transactionAtUtcMillis),
-          recordedAt: Value(now),
-          createdBy: Value(actor),
-          updatedBy: Value(actor),
-          createdAt: Value(now),
-          updatedAt: Value(now),
-        ),
-      );
+          await _db.paymentDao.insertPayment(
+            PaymentsCompanion(
+              id: Value(paymentId),
+              memberId: Value(worker.id),
+              paymentType: Value(paymentType.dbValue),
+              clientRequestId: Value(reqId),
+              amountPaise: Value(amountPaise),
+              paymentMode: Value(paymentMode.dbValue),
+              referenceNo: Value(cleanedRef),
+              notes: Value(cleanedNotes),
+              transactionAt: Value(transactionAtUtcMillis),
+              recordedAt: Value(now),
+              createdBy: Value(actor),
+              updatedBy: Value(actor),
+              createdAt: Value(now),
+              updatedAt: Value(now),
+            ),
+          );
 
-      await _db.attachmentAuditDao.insertAuditLog(
-        AuditLogsCompanion(
-          id: Value(_idGenerator.nextEntityId()),
-          entityType: const Value('payments'),
-          entityId: Value(paymentId),
-          actionType: const Value('CREATE'),
-          actor: Value(actor),
-          newValueJson: Value(
-            jsonEncode({
-              'worker': worker.name,
-              'payment_type': paymentType.dbValue,
-              'amount_paise': amountPaise,
-              'payment_mode': paymentMode.dbValue,
-              'reference_no': cleanedRef,
-            }),
-          ),
-          transactionAt: Value(transactionAtUtcMillis),
-          recordedAt: Value(now),
-        ),
-      );
+          await _db.attachmentAuditDao.insertAuditLog(
+            AuditLogsCompanion(
+              id: Value(_idGenerator.nextEntityId()),
+              entityType: const Value('payments'),
+              entityId: Value(paymentId),
+              actionType: const Value('CREATE'),
+              actor: Value(actor),
+              newValueJson: Value(
+                jsonEncode({
+                  'worker': worker.name,
+                  'payment_type': paymentType.dbValue,
+                  'amount_paise': amountPaise,
+                  'payment_mode': paymentMode.dbValue,
+                  'reference_no': cleanedRef,
+                }),
+              ),
+              transactionAt: Value(transactionAtUtcMillis),
+              recordedAt: Value(now),
+            ),
+          );
 
-      final inserted = await _db.paymentDao.findById(paymentId);
-      return _mapPayment(inserted!);
-    });
+          final inserted = await _db.paymentDao.findById(paymentId);
+          return _mapPayment(inserted!);
+        })
+        .then((result) {
+          NotificationRefreshCoordinator.requestBackgroundRefreshIfRegistered();
+          return result;
+        });
   }
 
   @override
@@ -545,10 +576,29 @@ final class AccountingRepositoryImpl implements AccountingRepository {
         'Adjustment amount must be greater than zero.',
       );
     }
+    if (amountPaise > ValidationLimits.maxAmountPaise) {
+      throw const DomainValidationException(
+        'amount_too_large',
+        'Adjustment amount exceeds maximum allowed limit.',
+      );
+    }
+    if (!AppValidators.dateValidator(transactionAtUtcMillis).isValid) {
+      throw const DomainValidationException(
+        'invalid_date',
+        'Transaction date is invalid.',
+      );
+    }
     if (reason.trim().isEmpty) {
       throw const DomainValidationException(
         'reason_required',
         'A reason is required for a worker ledger adjustment.',
+      );
+    }
+    if (reason.trim().length > ValidationLimits.maxNotesLength ||
+        (notes?.trim().length ?? 0) > ValidationLimits.maxNotesLength) {
+      throw const DomainValidationException(
+        'text_too_long',
+        'Reason or notes exceed maximum allowed length.',
       );
     }
 
@@ -556,70 +606,76 @@ final class AccountingRepositoryImpl implements AccountingRepository {
         ? _idGenerator.nextRequestId()
         : clientRequestId!.trim();
 
-    return _txRunner.runInTransaction(() async {
-      final existingByReq = await _db.workerAdjustmentDao.findByClientRequestId(
-        reqId,
-      );
-      if (existingByReq != null) {
-        return _mapAdjustment(existingByReq);
-      }
+    return _txRunner
+        .runInTransaction(() async {
+          final existingByReq = await _db.workerAdjustmentDao
+              .findByClientRequestId(reqId);
+          if (existingByReq != null) {
+            return _mapAdjustment(existingByReq);
+          }
 
-      final worker = await _db.processMemberDao.findMemberById(workerId);
-      if (worker == null || worker.deletedAt != null) {
-        throw const DomainValidationException(
-          'worker_not_found',
-          'Worker was not found.',
-        );
-      }
+          final worker = await _db.processMemberDao.findMemberById(workerId);
+          if (worker == null || worker.deletedAt != null) {
+            throw const DomainValidationException(
+              'worker_not_found',
+              'Worker was not found.',
+            );
+          }
 
-      final now = IstDateTimeHelper.nowUtcMillis();
-      final actor = await _resolveActor();
-      final adjId = _idGenerator.nextEntityId();
-      final cleanedReason = reason.trim();
-      final cleanedNotes = notes?.trim().isEmpty ?? true ? null : notes!.trim();
+          final now = IstDateTimeHelper.nowUtcMillis();
+          final actor = await _resolveActor();
+          final adjId = _idGenerator.nextEntityId();
+          final cleanedReason = reason.trim();
+          final cleanedNotes = notes?.trim().isEmpty ?? true
+              ? null
+              : notes!.trim();
 
-      await _db.workerAdjustmentDao.insertAdjustment(
-        WorkerLedgerAdjustmentsCompanion(
-          id: Value(adjId),
-          memberId: Value(worker.id),
-          adjustmentType: Value(adjustmentType.dbValue),
-          clientRequestId: Value(reqId),
-          amountPaise: Value(amountPaise),
-          reason: Value(cleanedReason),
-          notes: Value(cleanedNotes),
-          transactionAt: Value(transactionAtUtcMillis),
-          recordedAt: Value(now),
-          createdBy: Value(actor),
-          updatedBy: Value(actor),
-          createdAt: Value(now),
-          updatedAt: Value(now),
-        ),
-      );
+          await _db.workerAdjustmentDao.insertAdjustment(
+            WorkerLedgerAdjustmentsCompanion(
+              id: Value(adjId),
+              memberId: Value(worker.id),
+              adjustmentType: Value(adjustmentType.dbValue),
+              clientRequestId: Value(reqId),
+              amountPaise: Value(amountPaise),
+              reason: Value(cleanedReason),
+              notes: Value(cleanedNotes),
+              transactionAt: Value(transactionAtUtcMillis),
+              recordedAt: Value(now),
+              createdBy: Value(actor),
+              updatedBy: Value(actor),
+              createdAt: Value(now),
+              updatedAt: Value(now),
+            ),
+          );
 
-      await _db.attachmentAuditDao.insertAuditLog(
-        AuditLogsCompanion(
-          id: Value(_idGenerator.nextEntityId()),
-          entityType: const Value('worker_ledger_adjustments'),
-          entityId: Value(adjId),
-          actionType: const Value('CREATE'),
-          actor: Value(actor),
-          newValueJson: Value(
-            jsonEncode({
-              'worker': worker.name,
-              'adjustment_type': adjustmentType.dbValue,
-              'amount_paise': amountPaise,
-              'reason': cleanedReason,
-            }),
-          ),
-          reason: Value(cleanedReason),
-          transactionAt: Value(transactionAtUtcMillis),
-          recordedAt: Value(now),
-        ),
-      );
+          await _db.attachmentAuditDao.insertAuditLog(
+            AuditLogsCompanion(
+              id: Value(_idGenerator.nextEntityId()),
+              entityType: const Value('worker_ledger_adjustments'),
+              entityId: Value(adjId),
+              actionType: const Value('CREATE'),
+              actor: Value(actor),
+              newValueJson: Value(
+                jsonEncode({
+                  'worker': worker.name,
+                  'adjustment_type': adjustmentType.dbValue,
+                  'amount_paise': amountPaise,
+                  'reason': cleanedReason,
+                }),
+              ),
+              reason: Value(cleanedReason),
+              transactionAt: Value(transactionAtUtcMillis),
+              recordedAt: Value(now),
+            ),
+          );
 
-      final inserted = await _db.workerAdjustmentDao.findById(adjId);
-      return _mapAdjustment(inserted!);
-    });
+          final inserted = await _db.workerAdjustmentDao.findById(adjId);
+          return _mapAdjustment(inserted!);
+        })
+        .then((result) {
+          NotificationRefreshCoordinator.requestBackgroundRefreshIfRegistered();
+          return result;
+        });
   }
 
   @override

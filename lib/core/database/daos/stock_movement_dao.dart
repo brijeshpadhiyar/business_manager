@@ -101,4 +101,29 @@ class StockMovementDao extends DatabaseAccessor<AppDatabase>
             .getSingleOrNull();
     return row != null;
   }
+
+  /// Bounded read-only date-range query accelerated by `idx_sm_tx_type`.
+  Future<List<StockMovementRow>> getMovementsInRange({
+    int? fromUtcMillis,
+    int? toUtcMillis,
+  }) {
+    final query = select(stockMovements);
+    if (fromUtcMillis != null && toUtcMillis != null) {
+      query.where(
+        (t) =>
+            t.transactionAt.isBiggerOrEqualValue(fromUtcMillis) &
+            t.transactionAt.isSmallerOrEqualValue(toUtcMillis),
+      );
+    } else if (fromUtcMillis != null) {
+      query.where((t) => t.transactionAt.isBiggerOrEqualValue(fromUtcMillis));
+    } else if (toUtcMillis != null) {
+      query.where((t) => t.transactionAt.isSmallerOrEqualValue(toUtcMillis));
+    }
+    query.orderBy([
+      (t) => OrderingTerm.asc(t.transactionAt),
+      (t) => OrderingTerm.asc(t.recordedAt),
+      (t) => OrderingTerm.asc(t.id),
+    ]);
+    return query.get();
+  }
 }

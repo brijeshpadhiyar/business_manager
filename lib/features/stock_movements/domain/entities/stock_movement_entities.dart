@@ -297,3 +297,29 @@ final class SettlementBatchResult {
   final int remainingPending;
   final bool wasIdempotentReplay;
 }
+
+/// Recent active `(process, worker)` suggestion derived from real `ISSUE` history.
+final class RecentWorkPairSuggestion {
+  const RecentWorkPairSuggestion({
+    required this.processId,
+    required this.processName,
+    required this.workerId,
+    required this.workerName,
+  });
+
+  final String processId;
+  final String processName;
+  final String workerId;
+  final String workerName;
+}
+
+/// Safe quick-pick suggestions for `StockIssuePage`.
+final class RecentIssueSuggestions {
+  const RecentIssueSuggestions({
+    this.workPairs = const [],
+    this.inStockDesignColourIds = const [],
+  });
+
+  final List<RecentWorkPairSuggestion> workPairs;
+  final List<String> inStockDesignColourIds;
+}

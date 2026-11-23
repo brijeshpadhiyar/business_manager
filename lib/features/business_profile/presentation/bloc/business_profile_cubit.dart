@@ -1,3 +1,4 @@
+import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
 import 'package:business_manager/features/business_profile/domain/repositories/business_profile_repository.dart';
 import 'package:business_manager/features/business_profile/presentation/bloc/business_profile_state.dart';
@@ -52,6 +53,13 @@ final class BusinessProfileCubit extends Cubit<BusinessProfileState> {
       );
       emit(
         state.copyWith(status: BusinessProfileStatus.saved, profile: updated),
+      );
+    } on DomainValidationException catch (e) {
+      emit(
+        state.copyWith(
+          status: BusinessProfileStatus.error,
+          errorMessage: e.code,
+        ),
       );
     } catch (e) {
       emit(

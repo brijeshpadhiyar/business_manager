@@ -1,4 +1,5 @@
 import 'package:business_manager/core/localization/locale_state.dart';
+import 'package:business_manager/features/notifications/data/services/notification_refresh_coordinator.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,5 +24,8 @@ final class LocaleCubit extends Cubit<LocaleState> {
   Future<void> setPreference(AppLocalePreference preference) async {
     await _prefs.setString(_localePreferenceKey, preference.storageKey);
     emit(state.copyWith(preference: preference));
+    NotificationRefreshCoordinator.requestBackgroundRefreshIfRegistered(
+      forceReschedule: true,
+    );
   }
 }

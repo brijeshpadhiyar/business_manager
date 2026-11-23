@@ -5,6 +5,7 @@ import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:business_manager/features/accounting/domain/repositories/accounting_repository.dart';
@@ -23,9 +24,18 @@ final class PaymentFormPage extends StatefulWidget {
 
 final class _PaymentFormPageState extends State<PaymentFormPage> {
   final _formKey = GlobalKey<FormState>();
+  final _workerFieldKey = GlobalKey<FormFieldState<String>>();
+  final _amountFieldKey = GlobalKey<FormFieldState<String>>();
+  final _refFieldKey = GlobalKey<FormFieldState<String>>();
+  final _notesFieldKey = GlobalKey<FormFieldState<String>>();
+
   final _amountCtrl = TextEditingController();
   final _refCtrl = TextEditingController();
   final _notesCtrl = TextEditingController();
+
+  final _amountFocus = FocusNode();
+  final _refFocus = FocusNode();
+  final _notesFocus = FocusNode();
 
   final _repo = getIt<AccountingRepository>();
   final _clientRequestId = getIt<IdGenerator>().nextRequestId();
@@ -37,6 +47,7 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
   int _transactionAtUtc = IstDateTimeHelper.nowUtcMillis();
   bool _loading = true;
   bool _saving = false;
+  bool _submittedOnce = false;
   String? _submitError;
 
   @override
@@ -50,6 +61,9 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
     _amountCtrl.dispose();
     _refCtrl.dispose();
     _notesCtrl.dispose();
+    _amountFocus.dispose();
+    _refFocus.dispose();
+    _notesFocus.dispose();
     super.dispose();
   }
 
@@ -66,14 +80,24 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
   }
 
   int? _parsePaise(String text) {
-    final parsed = double.tryParse(text.trim());
-    if (parsed == null || parsed <= 0) return null;
-    return (parsed * 100).round();
+    return AppValidators.parseRupeesToPaiseExact(text, allowZero: false).paise;
   }
 
   Future<void> _submit() async {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
-    if (_saving || _selectedWorkerId == null) return;
+    if (_saving) return;
+    if (!_submittedOnce) {
+      setState(() => _submittedOnce = true);
+    }
+    final valid = FormValidationHelper.validateAndFocusFirstInvalid(
+      formKey: _formKey,
+      orderedAnchors: [
+        ValidatedFieldAnchor(fieldKey: _workerFieldKey),
+        ValidatedFieldAnchor(fieldKey: _amountFieldKey, focusNode: _amountFocus),
+        ValidatedFieldAnchor(fieldKey: _refFieldKey, focusNode: _refFocus),
+        ValidatedFieldAnchor(fieldKey: _notesFieldKey, focusNode: _notesFocus),
+      ],
+    );
+    if (!valid || _selectedWorkerId == null) return;
     final l10n = context.l10n;
     final paise = _parsePaise(_amountCtrl.text);
     if (paise == null) return;
@@ -102,7 +126,7 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
       if (!mounted) return;
       setState(() {
         _saving = false;
-        _submitError = e.message;
+        _submitError = ValidationLocalizer.localizeDomainException(l10n, e);
       });
     } catch (e) {
       if (!mounted) return;
@@ -141,18 +165,25 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
       title: l10n.accountingRecordPaymentAction,
       body: Form(
         key: _formKey,
+        autovalidateMode: _submittedOnce
+            ? AutovalidateMode.onUserInteraction
+            : AutovalidateMode.disabled,
         child: ListView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           children: [
             AppCard(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   AppDropdown<String>(
+                    fieldKey: _workerFieldKey,
                     label: l10n.workerNameLabel,
                     value: _selectedWorkerId,
                     items: _workers.map((w) => w.workerId).toList(),
                     itemLabelBuilder: (id) =>
                         _workers.firstWhere((w) => w.workerId == id).workerName,
+                    validator: (v) =>
+                        v == null ? l10n.validationRequired : null,
                     onChanged: (v) => setState(() => _selectedWorkerId = v),
                   ),
                   const SizedBox(height: AppSpacing.sm),
@@ -197,15 +228,24 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
                   ),
                   const SizedBox(height: AppSpacing.md),
                   AppTextField(
+                    fieldKey: _amountFieldKey,
                     controller: _amountCtrl,
+                    focusNode: _amountFocus,
                     label: l10n.accountingAmountLabel,
                     prefixIcon: Icons.currency_rupee,
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
-                    validator: (v) => _parsePaise(v ?? '') == null
-                        ? l10n.validationRequired
-                        : null,
+                    textInputAction: TextInputAction.next,
+                    onChanged: (_) {
+                      if (_submitError != null) {
+                        setState(() => _submitError = null);
+                      }
+                    },
+                    validator: ValidationLocalizer.wrap(
+                      l10n,
+                      (v) => AppValidators.amountValidator(v),
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   AppDropdown<PaymentMode>(
@@ -233,15 +273,36 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
                   ),
                   const SizedBox(height: AppSpacing.md),
                   AppTextField(
+                    fieldKey: _refFieldKey,
                     controller: _refCtrl,
+                    focusNode: _refFocus,
                     label: l10n.accountingReferenceLabel,
                     prefixIcon: Icons.receipt_outlined,
+                    textInputAction: TextInputAction.next,
+                    maxLength: ValidationLimits.maxShortNameLength,
+                    validator: ValidationLocalizer.wrap(
+                      l10n,
+                      (v) => AppValidators.maxLengthValidator(
+                        v,
+                        maxLength: ValidationLimits.maxShortNameLength,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   AppTextField(
+                    fieldKey: _notesFieldKey,
                     controller: _notesCtrl,
+                    focusNode: _notesFocus,
                     label: l10n.stockNotesLabel,
                     maxLines: 2,
+                    maxLength: ValidationLimits.maxNotesLength,
+                    validator: ValidationLocalizer.wrap(
+                      l10n,
+                      (v) => AppValidators.maxLengthValidator(
+                        v,
+                        maxLength: ValidationLimits.maxNotesLength,
+                      ),
+                    ),
                   ),
                   if (_submitError != null) ...[
                     const SizedBox(height: AppSpacing.sm),

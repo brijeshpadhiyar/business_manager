@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:archive/archive_io.dart';
 import 'package:business_manager/core/config/app_config.dart';
+import 'package:business_manager/core/config/app_identity.dart';
 import 'package:business_manager/core/database/app_database.dart';
 import 'package:business_manager/core/database/connection/database_connection_native.dart';
 import 'package:business_manager/core/database/migrations/database_migration_manager.dart';
@@ -11,6 +12,7 @@ import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/features/backup/domain/entities/backup_entities.dart';
 import 'package:business_manager/features/backup/domain/services/backup_restore_service.dart';
+import 'package:business_manager/features/notifications/data/services/notification_refresh_coordinator.dart';
 import 'package:crypto/crypto.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
@@ -31,7 +33,8 @@ final class NativeBackupRestoreService implements BackupRestoreService {
     @ignoreParam this.tempDirectoryOverride,
   });
 
-  static const String appVersionString = '1.0.0+1';
+  static String get appVersionString =>
+      '${AppIdentity.appVersion}+${AppIdentity.appBuildNumber}';
 
   final AppDatabase _db;
   final AppConfig _config;
@@ -339,6 +342,9 @@ final class NativeBackupRestoreService implements BackupRestoreService {
 
       onProgress?.call(
         const BackupProgress(stageCode: 'completed', fraction: 1.0),
+      );
+      NotificationRefreshCoordinator.requestBackgroundRefreshIfRegistered(
+        forceReschedule: true,
       );
       return BackupExportResult(
         filePath: zipOutPath,

@@ -3139,6 +3139,1458 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Worker & Process'**
   String get stockTabSummary;
+
+  /// No description provided for @auditActionDeactivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivated'**
+  String get auditActionDeactivate;
+
+  /// No description provided for @auditActionReactivate.
+  ///
+  /// In en, this message translates to:
+  /// **'Reactivated'**
+  String get auditActionReactivate;
+
+  /// No description provided for @auditActionBackupExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup Created'**
+  String get auditActionBackupExport;
+
+  /// No description provided for @auditActionBackupRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup Restored'**
+  String get auditActionBackupRestore;
+
+  /// No description provided for @auditEntityBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup & Restore'**
+  String get auditEntityBackup;
+
+  /// No description provided for @auditEntityAppSecurity.
+  ///
+  /// In en, this message translates to:
+  /// **'App Security'**
+  String get auditEntityAppSecurity;
+
+  /// No description provided for @settingsSecurityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'App Lock & Security'**
+  String get settingsSecurityTitle;
+
+  /// No description provided for @settingsSecuritySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Local PIN, optional fingerprint unlock, auto-lock timeout, and recovery key.'**
+  String get settingsSecuritySubtitle;
+
+  /// No description provided for @securityBadgeEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN Protected'**
+  String get securityBadgeEnabled;
+
+  /// No description provided for @securityBadgeOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get securityBadgeOff;
+
+  /// No description provided for @securityStatusProtected.
+  ///
+  /// In en, this message translates to:
+  /// **'StitchFlow Is PIN Protected'**
+  String get securityStatusProtected;
+
+  /// No description provided for @securityStatusProtectedDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'{pinLength}-digit PIN • Auto-lock: {timeout}'**
+  String securityStatusProtectedDesc(int pinLength, String timeout);
+
+  /// No description provided for @securityStatusOff.
+  ///
+  /// In en, this message translates to:
+  /// **'App Lock Is Off'**
+  String get securityStatusOff;
+
+  /// No description provided for @securityStatusOffDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a local PIN to prevent casual unauthorized access on your phone.'**
+  String get securityStatusOffDesc;
+
+  /// No description provided for @securitySetupPinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set Up App PIN'**
+  String get securitySetupPinTitle;
+
+  /// No description provided for @securitySetupBenefitsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep workshop stock, rates, and karigar accounts private with a 4- or 6-digit offline PIN and optional fingerprint unlock.'**
+  String get securitySetupBenefitsBody;
+
+  /// No description provided for @securityEnablePinAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable App PIN'**
+  String get securityEnablePinAction;
+
+  /// No description provided for @securityLockNowAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock Now'**
+  String get securityLockNowAction;
+
+  /// No description provided for @securityChangePinAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Change PIN'**
+  String get securityChangePinAction;
+
+  /// No description provided for @securityDisablePinAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable App PIN'**
+  String get securityDisablePinAction;
+
+  /// No description provided for @securityDisablePinDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove the local PIN and open StitchFlow without unlocking.'**
+  String get securityDisablePinDesc;
+
+  /// No description provided for @securityDisablePinConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable App PIN?'**
+  String get securityDisablePinConfirmTitle;
+
+  /// No description provided for @securityDisablePinConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Anyone using this phone will be able to open StitchFlow without entering a PIN.'**
+  String get securityDisablePinConfirmMessage;
+
+  /// No description provided for @securityRegenerateRecoveryKeyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'New Recovery Key'**
+  String get securityRegenerateRecoveryKeyAction;
+
+  /// No description provided for @securityPinLength4Label.
+  ///
+  /// In en, this message translates to:
+  /// **'4-Digit PIN (Fast)'**
+  String get securityPinLength4Label;
+
+  /// No description provided for @securityPinLength6Label.
+  ///
+  /// In en, this message translates to:
+  /// **'6-Digit PIN'**
+  String get securityPinLength6Label;
+
+  /// No description provided for @securityCreatePinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Your PIN'**
+  String get securityCreatePinTitle;
+
+  /// No description provided for @securityEnterNewPinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter New PIN'**
+  String get securityEnterNewPinTitle;
+
+  /// No description provided for @securityCreatePinSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a {pinLength}-digit numeric PIN.'**
+  String securityCreatePinSubtitle(int pinLength);
+
+  /// No description provided for @securityConfirmPinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Your PIN'**
+  String get securityConfirmPinTitle;
+
+  /// No description provided for @securityConfirmPinSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-enter the same PIN to confirm.'**
+  String get securityConfirmPinSubtitle;
+
+  /// No description provided for @securityPinMismatchError.
+  ///
+  /// In en, this message translates to:
+  /// **'PINs do not match. Please try again.'**
+  String get securityPinMismatchError;
+
+  /// No description provided for @securityStartOverAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Over'**
+  String get securityStartOverAction;
+
+  /// No description provided for @securityRecoveryKeyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Your Offline Recovery Key'**
+  String get securityRecoveryKeyTitle;
+
+  /// No description provided for @securityNewRecoveryKeyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your New Recovery Key'**
+  String get securityNewRecoveryKeyTitle;
+
+  /// No description provided for @securityRecoveryKeyWriteDownBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Write this 8-character code on paper and keep it safely in your workshop diary. It is shown only once and is the only way to reset a forgotten PIN without losing data.'**
+  String get securityRecoveryKeyWriteDownBody;
+
+  /// No description provided for @securityRecoveryKeyConfirmedCheckbox.
+  ///
+  /// In en, this message translates to:
+  /// **'I have written down this Recovery Key in a safe place.'**
+  String get securityRecoveryKeyConfirmedCheckbox;
+
+  /// No description provided for @securityActivateAppLockAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Activate App Lock'**
+  String get securityActivateAppLockAction;
+
+  /// No description provided for @securityPinEnabledSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'App PIN enabled successfully.'**
+  String get securityPinEnabledSuccess;
+
+  /// No description provided for @securityPinChangedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'App PIN updated successfully.'**
+  String get securityPinChangedSuccess;
+
+  /// No description provided for @securityPinDisabledSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'App PIN disabled.'**
+  String get securityPinDisabledSuccess;
+
+  /// No description provided for @securityUnlockOptionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock & Privacy Options'**
+  String get securityUnlockOptionsTitle;
+
+  /// No description provided for @securityEnableBiometricLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Fingerprint / Biometric Unlock'**
+  String get securityEnableBiometricLabel;
+
+  /// No description provided for @securityEnableBiometricSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock StitchFlow quickly with your phone\'s fingerprint or biometric sensor. PIN always remains available.'**
+  String get securityEnableBiometricSubtitle;
+
+  /// No description provided for @securityBiometricNotEnrolledHint.
+  ///
+  /// In en, this message translates to:
+  /// **'No fingerprint or biometric is set up in Android Settings yet.'**
+  String get securityBiometricNotEnrolledHint;
+
+  /// No description provided for @securityBiometricNoHardwareHint.
+  ///
+  /// In en, this message translates to:
+  /// **'This device does not support biometric hardware.'**
+  String get securityBiometricNoHardwareHint;
+
+  /// No description provided for @securityBiometricUnavailableHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication is currently unavailable on this device.'**
+  String get securityBiometricUnavailableHint;
+
+  /// No description provided for @securityScreenshotProtectionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Block Screenshots & App Preview'**
+  String get securityScreenshotProtectionLabel;
+
+  /// No description provided for @securityScreenshotProtectionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hides workshop data in Android Recent Apps and blocks screenshots while enabled.'**
+  String get securityScreenshotProtectionSubtitle;
+
+  /// No description provided for @securityAutoLockTimeoutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-Lock Timeout'**
+  String get securityAutoLockTimeoutTitle;
+
+  /// No description provided for @securityAutoLockTimeoutSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically lock StitchFlow after switching apps or staying idle.'**
+  String get securityAutoLockTimeoutSubtitle;
+
+  /// No description provided for @securityTimeoutImmediate.
+  ///
+  /// In en, this message translates to:
+  /// **'Immediate'**
+  String get securityTimeoutImmediate;
+
+  /// No description provided for @securityTimeout30s.
+  ///
+  /// In en, this message translates to:
+  /// **'30 sec'**
+  String get securityTimeout30s;
+
+  /// No description provided for @securityTimeout1m.
+  ///
+  /// In en, this message translates to:
+  /// **'1 min'**
+  String get securityTimeout1m;
+
+  /// No description provided for @securityTimeout5m.
+  ///
+  /// In en, this message translates to:
+  /// **'5 min'**
+  String get securityTimeout5m;
+
+  /// No description provided for @securityTimeout15m.
+  ///
+  /// In en, this message translates to:
+  /// **'15 min'**
+  String get securityTimeout15m;
+
+  /// No description provided for @securityLockScreenTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'StitchFlow Locked'**
+  String get securityLockScreenTitle;
+
+  /// No description provided for @securityLockScreenSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your PIN to access workshop records.'**
+  String get securityLockScreenSubtitle;
+
+  /// No description provided for @securityWrongPinError.
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect PIN. Please try again.'**
+  String get securityWrongPinError;
+
+  /// No description provided for @securityLockoutCountdown.
+  ///
+  /// In en, this message translates to:
+  /// **'Too many attempts. Try again in {remaining}.'**
+  String securityLockoutCountdown(String remaining);
+
+  /// No description provided for @securityUseBiometricAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock with Biometrics'**
+  String get securityUseBiometricAction;
+
+  /// No description provided for @securityBiometricPromptReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock StitchFlow workshop records'**
+  String get securityBiometricPromptReason;
+
+  /// No description provided for @securityBiometricLockoutFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometrics temporarily locked by device. Enter your PIN instead.'**
+  String get securityBiometricLockoutFallback;
+
+  /// No description provided for @securityBiometricUnavailableFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric unlock unavailable. Enter your PIN.'**
+  String get securityBiometricUnavailableFallback;
+
+  /// No description provided for @securityBiometricFailedFallback.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric check did not match. Enter your PIN.'**
+  String get securityBiometricFailedFallback;
+
+  /// No description provided for @securityForgotPinAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot PIN?'**
+  String get securityForgotPinAction;
+
+  /// No description provided for @securityRecoveryHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'PIN Recovery'**
+  String get securityRecoveryHeading;
+
+  /// No description provided for @securityRecoveryEnterKeyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Offline Recovery Key'**
+  String get securityRecoveryEnterKeyTitle;
+
+  /// No description provided for @securityRecoveryEnterKeySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the 8-character Recovery Key you wrote down when setting up your PIN.'**
+  String get securityRecoveryEnterKeySubtitle;
+
+  /// No description provided for @securityRecoveryKeyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovery Key'**
+  String get securityRecoveryKeyLabel;
+
+  /// No description provided for @securityVerifyRecoveryKeyAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify Recovery Key'**
+  String get securityVerifyRecoveryKeyAction;
+
+  /// No description provided for @securityRecoveryKeyInvalidError.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid Recovery Key. Check your code and try again.'**
+  String get securityRecoveryKeyInvalidError;
+
+  /// No description provided for @securityCompleteRecoveryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Save New PIN & Unlock'**
+  String get securityCompleteRecoveryAction;
+
+  /// No description provided for @securityLostBothTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lost Both PIN and Recovery Key?'**
+  String get securityLostBothTitle;
+
+  /// No description provided for @securityLostBothBody.
+  ///
+  /// In en, this message translates to:
+  /// **'For your privacy, StitchFlow never silently bypasses App Lock. If you have a saved StitchFlow .zip backup, you can clear app data or reinstall and restore your backup.'**
+  String get securityLostBothBody;
+
+  /// No description provided for @securityVerifyCurrentPinTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Current PIN'**
+  String get securityVerifyCurrentPinTitle;
+
+  /// No description provided for @securityVerifyChangePinSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your current PIN before choosing a new PIN.'**
+  String get securityVerifyChangePinSubtitle;
+
+  /// No description provided for @securityVerifyDisablePinSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your current PIN before disabling App Lock.'**
+  String get securityVerifyDisablePinSubtitle;
+
+  /// No description provided for @securityVerifyRecoveryRegenSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your current PIN to generate a new Recovery Key.'**
+  String get securityVerifyRecoveryRegenSubtitle;
+
+  /// No description provided for @securityReauthRequiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication Required'**
+  String get securityReauthRequiredTitle;
+
+  /// No description provided for @securityReauthRestoreSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your PIN or fingerprint before restoring a backup.'**
+  String get securityReauthRestoreSubtitle;
+
+  /// No description provided for @securityReauthRawSqliteSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify your PIN or fingerprint before exporting the raw SQLite database.'**
+  String get securityReauthRawSqliteSubtitle;
+
+  /// No description provided for @securityPrivacyNoteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'How Local App Lock Works'**
+  String get securityPrivacyNoteTitle;
+
+  /// No description provided for @securityPrivacyNoteBody.
+  ///
+  /// In en, this message translates to:
+  /// **'• Your PIN is stored only as a salted PBKDF2-HMAC-SHA256 hash inside Android Keystore secure storage — never in plain text, logs, SQLite, or backup ZIPs.\n• App Lock prevents casual unauthorized access on your phone; it does not encrypt the local SQLite database file on disk. Keep Android screen lock enabled and store exported backups safely.'**
+  String get securityPrivacyNoteBody;
+
+  /// No description provided for @dashboardTodayHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Workshop'**
+  String get dashboardTodayHeading;
+
+  /// No description provided for @dashboardDailySummaryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Summary'**
+  String get dashboardDailySummaryAction;
+
+  /// No description provided for @dashboardTodayIssuedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Issued Today'**
+  String get dashboardTodayIssuedLabel;
+
+  /// No description provided for @dashboardTodayReturnedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Returned Good Today'**
+  String get dashboardTodayReturnedLabel;
+
+  /// No description provided for @dashboardTodayLabourLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Labour Earned Today'**
+  String get dashboardTodayLabourLabel;
+
+  /// No description provided for @dashboardTodayPaymentsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Payments Today'**
+  String get dashboardTodayPaymentsLabel;
+
+  /// No description provided for @dashboardTodayDamagedLostAlert.
+  ///
+  /// In en, this message translates to:
+  /// **'Damaged / Lost Today'**
+  String get dashboardTodayDamagedLostAlert;
+
+  /// No description provided for @dashboardImportantPendingHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Important Pending Work'**
+  String get dashboardImportantPendingHeading;
+
+  /// No description provided for @dashboardViewAllPendingAction.
+  ///
+  /// In en, this message translates to:
+  /// **'View All'**
+  String get dashboardViewAllPendingAction;
+
+  /// No description provided for @dailySummaryHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Production Summary'**
+  String get dailySummaryHeading;
+
+  /// No description provided for @dailySummaryPickDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Business Date (IST)'**
+  String get dailySummaryPickDateLabel;
+
+  /// No description provided for @dailySummaryDamagedLostLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Damaged / Lost'**
+  String get dailySummaryDamagedLostLabel;
+
+  /// No description provided for @dailySummaryNoActivityTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Workshop Activity Recorded'**
+  String get dailySummaryNoActivityTitle;
+
+  /// No description provided for @dailySummaryNoActivitySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No stock issues, returns, or payments were recorded for this IST date.'**
+  String get dailySummaryNoActivitySubtitle;
+
+  /// No description provided for @dailySummaryProcessActivityHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Process-Wise Activity'**
+  String get dailySummaryProcessActivityHeading;
+
+  /// No description provided for @dailySummaryWorkerActivityHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker-Wise Activity'**
+  String get dailySummaryWorkerActivityHeading;
+
+  /// No description provided for @dailySummaryLivePendingNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Live Workshop Balances'**
+  String get dailySummaryLivePendingNote;
+
+  /// No description provided for @reportPresetToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get reportPresetToday;
+
+  /// No description provided for @reportPresetYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get reportPresetYesterday;
+
+  /// No description provided for @pendingAgeDaysBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'{days}d pending'**
+  String pendingAgeDaysBadge(int days);
+
+  /// No description provided for @stockRecentStockSuggestionsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Recently Used In-Stock Colours'**
+  String get stockRecentStockSuggestionsLabel;
+
+  /// No description provided for @stockRecentWorkPairsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Process & Worker'**
+  String get stockRecentWorkPairsLabel;
+
+  /// No description provided for @stockUnusualConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Please Confirm Unusual Issue'**
+  String get stockUnusualConfirmTitle;
+
+  /// No description provided for @stockUnusualFullStockWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'You are issuing all {qty} available pieces (100% of remaining stock).'**
+  String stockUnusualFullStockWarning(int qty);
+
+  /// No description provided for @stockUnusualRateOverrideWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual rate override is enabled for this issue.'**
+  String get stockUnusualRateOverrideWarning;
+
+  /// No description provided for @stockUnusualBackdatedWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction date is backdated by {days} days.'**
+  String stockUnusualBackdatedWarning(int days);
+
+  /// No description provided for @stockSortOldestFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Oldest First'**
+  String get stockSortOldestFirst;
+
+  /// No description provided for @stockSortHighestPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Highest Pending'**
+  String get stockSortHighestPending;
+
+  /// No description provided for @stockSortNewestFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Newest First'**
+  String get stockSortNewestFirst;
+
+  /// No description provided for @stockShortcutHalf.
+  ///
+  /// In en, this message translates to:
+  /// **'Half'**
+  String get stockShortcutHalf;
+
+  /// No description provided for @stockFillRemainingGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill Remaining Good'**
+  String get stockFillRemainingGood;
+
+  /// No description provided for @workerWorkOverviewHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Work & Balance Overview'**
+  String get workerWorkOverviewHeading;
+
+  /// No description provided for @workerOpenIssuesCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'open issues'**
+  String get workerOpenIssuesCountLabel;
+
+  /// No description provided for @workerOpenIssuesHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Pending Work'**
+  String get workerOpenIssuesHeading;
+
+  /// No description provided for @workerRecentPaymentsHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Payments'**
+  String get workerRecentPaymentsHeading;
+
+  /// No description provided for @reportPresetThisWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'This Week'**
+  String get reportPresetThisWeek;
+
+  /// No description provided for @reportPresetThisMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This Month'**
+  String get reportPresetThisMonth;
+
+  /// No description provided for @reportPresetPreviousMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Prev. Month'**
+  String get reportPresetPreviousMonth;
+
+  /// No description provided for @reportPresetAllTime.
+  ///
+  /// In en, this message translates to:
+  /// **'All Time'**
+  String get reportPresetAllTime;
+
+  /// No description provided for @reportPresetCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get reportPresetCustom;
+
+  /// No description provided for @reportCategoryDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Workshop'**
+  String get reportCategoryDaily;
+
+  /// No description provided for @reportCategoryWorkers.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker Performance'**
+  String get reportCategoryWorkers;
+
+  /// No description provided for @reportCategoryProcesses.
+  ///
+  /// In en, this message translates to:
+  /// **'Process Performance'**
+  String get reportCategoryProcesses;
+
+  /// No description provided for @reportCategoryInventory.
+  ///
+  /// In en, this message translates to:
+  /// **'Inventory'**
+  String get reportCategoryInventory;
+
+  /// No description provided for @reportCategoryFinancial.
+  ///
+  /// In en, this message translates to:
+  /// **'Labour & Financial'**
+  String get reportCategoryFinancial;
+
+  /// No description provided for @reportCategoryInsights.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Insights'**
+  String get reportCategoryInsights;
+
+  /// No description provided for @reportFiltersButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get reportFiltersButton;
+
+  /// No description provided for @reportAllOption.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get reportAllOption;
+
+  /// No description provided for @reportIncludeReversedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Include Reversed Movements'**
+  String get reportIncludeReversedLabel;
+
+  /// No description provided for @reportInvSubSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock Summary'**
+  String get reportInvSubSummary;
+
+  /// No description provided for @reportInvSubLots.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot-Wise'**
+  String get reportInvSubLots;
+
+  /// No description provided for @reportInvSubColours.
+  ///
+  /// In en, this message translates to:
+  /// **'Design & Colour'**
+  String get reportInvSubColours;
+
+  /// No description provided for @reportInvSubHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Movement History'**
+  String get reportInvSubHistory;
+
+  /// No description provided for @reportFinSubLabour.
+  ///
+  /// In en, this message translates to:
+  /// **'Labour Earned'**
+  String get reportFinSubLabour;
+
+  /// No description provided for @reportFinSubSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker Summary'**
+  String get reportFinSubSummary;
+
+  /// No description provided for @reportFinSubPayments.
+  ///
+  /// In en, this message translates to:
+  /// **'Payments'**
+  String get reportFinSubPayments;
+
+  /// No description provided for @reportRefStockValueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference Stock Value'**
+  String get reportRefStockValueLabel;
+
+  /// No description provided for @reportRefStockValueNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference value from good stock × unit cost (not sales or profit).'**
+  String get reportRefStockValueNote;
+
+  /// No description provided for @reportLabourCostLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Labour Cost'**
+  String get reportLabourCostLabel;
+
+  /// No description provided for @reportCurrentStandingBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Balance'**
+  String get reportCurrentStandingBadge;
+
+  /// No description provided for @reportPeriodFlowBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected Period'**
+  String get reportPeriodFlowBadge;
+
+  /// No description provided for @reportAvgTurnaroundLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg. Completion Time'**
+  String get reportAvgTurnaroundLabel;
+
+  /// No description provided for @reportTurnaroundSampleCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} settled issues'**
+  String reportTurnaroundSampleCount(int count);
+
+  /// No description provided for @reportDefectRateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Defect / Loss Rate'**
+  String get reportDefectRateLabel;
+
+  /// No description provided for @reportWorkerProcessBreakdown.
+  ///
+  /// In en, this message translates to:
+  /// **'Process-Wise Productivity'**
+  String get reportWorkerProcessBreakdown;
+
+  /// No description provided for @reportProcessWorkerContribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker Contributions'**
+  String get reportProcessWorkerContribution;
+
+  /// No description provided for @reportNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'N/A'**
+  String get reportNotAvailable;
+
+  /// No description provided for @reportInsightsTrendsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Production Trends'**
+  String get reportInsightsTrendsTitle;
+
+  /// No description provided for @reportInsightsWeeklyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Grouped by IST week'**
+  String get reportInsightsWeeklyNote;
+
+  /// No description provided for @reportInsightsDailyNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Grouped by IST day'**
+  String get reportInsightsDailyNote;
+
+  /// No description provided for @reportInsightsComparisonTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Period-over-Period Comparison'**
+  String get reportInsightsComparisonTitle;
+
+  /// No description provided for @reportInsightsNoPriorData.
+  ///
+  /// In en, this message translates to:
+  /// **'No prior data'**
+  String get reportInsightsNoPriorData;
+
+  /// No description provided for @reportInsightsBottlenecksTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Process Bottlenecks'**
+  String get reportInsightsBottlenecksTitle;
+
+  /// No description provided for @reportInsightsNoBottlenecks.
+  ///
+  /// In en, this message translates to:
+  /// **'All processes are clear — no pending bottlenecks.'**
+  String get reportInsightsNoBottlenecks;
+
+  /// No description provided for @reportInsightsWorkerTrendsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Worker Productivity'**
+  String get reportInsightsWorkerTrendsTitle;
+
+  /// No description provided for @reportInsightsDefectReasonsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Damaged / Lost Reasons'**
+  String get reportInsightsDefectReasonsTitle;
+
+  /// No description provided for @reportInsightsLabourShareTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Labour Cost by Process'**
+  String get reportInsightsLabourShareTitle;
+
+  /// No description provided for @reportExportAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Export / Print'**
+  String get reportExportAction;
+
+  /// No description provided for @reportExportSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export & Print Report'**
+  String get reportExportSheetTitle;
+
+  /// No description provided for @reportExportPrintPdfTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Print / Save as PDF'**
+  String get reportExportPrintPdfTitle;
+
+  /// No description provided for @reportExportPrintPdfSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Gujarati-accurate A4 layout via Android Print dialog.'**
+  String get reportExportPrintPdfSubtitle;
+
+  /// No description provided for @reportExportExcelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Excel (.xlsx)'**
+  String get reportExportExcelTitle;
+
+  /// No description provided for @reportExportExcelSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share current report sheet to WhatsApp, Drive, or Files.'**
+  String get reportExportExcelSubtitle;
+
+  /// No description provided for @reportExportFullWorkbookTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Excel Workbook (.xlsx)'**
+  String get reportExportFullWorkbookTitle;
+
+  /// No description provided for @reportExportFullWorkbookSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'All sheets: Daily, Workers, Processes, Inventory, Labour & Payments.'**
+  String get reportExportFullWorkbookSubtitle;
+
+  /// No description provided for @reportExportCsvTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Export CSV (UTF-8)'**
+  String get reportExportCsvTitle;
+
+  /// No description provided for @reportExportCsvSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Fast Gujarati-compatible CSV for Excel & large datasets.'**
+  String get reportExportCsvSubtitle;
+
+  /// No description provided for @reportExportLargeNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'This view has {rows} rows. Excel or CSV export is recommended over multi-page PDF printing.'**
+  String reportExportLargeNotice(int rows);
+
+  /// No description provided for @reportExportSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Report exported: {name}'**
+  String reportExportSuccess(String name);
+
+  /// No description provided for @reportExportPrintOpened.
+  ///
+  /// In en, this message translates to:
+  /// **'Android Print / PDF dialog opened.'**
+  String get reportExportPrintOpened;
+
+  /// No description provided for @settingsNotificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications & Reminders'**
+  String get settingsNotificationsTitle;
+
+  /// No description provided for @settingsNotificationsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline reminders for pending work, karigar settlements, daily recap, and backups.'**
+  String get settingsNotificationsSubtitle;
+
+  /// No description provided for @notificationsHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications & Reminders'**
+  String get notificationsHeading;
+
+  /// No description provided for @notificationsStatusTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Permission'**
+  String get notificationsStatusTitle;
+
+  /// No description provided for @notificationsPermGranted.
+  ///
+  /// In en, this message translates to:
+  /// **'Allowed'**
+  String get notificationsPermGranted;
+
+  /// No description provided for @notificationsPermNeeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Permission Needed'**
+  String get notificationsPermNeeded;
+
+  /// No description provided for @notificationsPermBlocked.
+  ///
+  /// In en, this message translates to:
+  /// **'Blocked in Settings'**
+  String get notificationsPermBlocked;
+
+  /// No description provided for @notificationsPermUnsupported.
+  ///
+  /// In en, this message translates to:
+  /// **'Android Only'**
+  String get notificationsPermUnsupported;
+
+  /// No description provided for @notificationsStatusGrantedDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Local offline reminders are active on this device. No internet or cloud push is used.'**
+  String get notificationsStatusGrantedDesc;
+
+  /// No description provided for @notificationsStatusNeededDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow notifications so StitchFlow can remind you locally about pending returns, settlements, and backups.'**
+  String get notificationsStatusNeededDesc;
+
+  /// No description provided for @notificationsStatusBlockedDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications are turned off in Android Settings. Open Phone Settings -> Apps -> StitchFlow -> Notifications to re-enable.'**
+  String get notificationsStatusBlockedDesc;
+
+  /// No description provided for @notificationsAllowAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow Notifications'**
+  String get notificationsAllowAction;
+
+  /// No description provided for @notificationsSendTestAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Test Notification'**
+  String get notificationsSendTestAction;
+
+  /// No description provided for @notificationsTestTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'StitchFlow Reminder Check'**
+  String get notificationsTestTitle;
+
+  /// No description provided for @notificationsTestBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Local workshop notifications are working properly.'**
+  String get notificationsTestBody;
+
+  /// No description provided for @notificationsTestSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Test notification sent.'**
+  String get notificationsTestSent;
+
+  /// No description provided for @notificationsMasterToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Local Reminders'**
+  String get notificationsMasterToggle;
+
+  /// No description provided for @notificationsMasterSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Master switch for all scheduled offline reminders.'**
+  String get notificationsMasterSubtitle;
+
+  /// No description provided for @notificationsPendingWorkTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Work Reminder'**
+  String get notificationsPendingWorkTitle;
+
+  /// No description provided for @notificationsPendingWorkDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminds you daily if open karigar issues stay pending beyond your chosen age.'**
+  String get notificationsPendingWorkDesc;
+
+  /// No description provided for @notificationsPendingDaysLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Alert when pending at least'**
+  String get notificationsPendingDaysLabel;
+
+  /// No description provided for @notificationsSettlementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker Settlement Reminder'**
+  String get notificationsSettlementTitle;
+
+  /// No description provided for @notificationsSettlementDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Saturday reminder when karigars have outstanding payable balances.'**
+  String get notificationsSettlementDesc;
+
+  /// No description provided for @notificationsMinAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum payable balance'**
+  String get notificationsMinAmountLabel;
+
+  /// No description provided for @notificationsDailySummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Workshop Summary'**
+  String get notificationsDailySummaryTitle;
+
+  /// No description provided for @notificationsDailySummaryDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening reminder to review today\'s issued, returned, and labour recap.'**
+  String get notificationsDailySummaryDesc;
+
+  /// No description provided for @notificationsSkipQuietDaysLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip if no activity today'**
+  String get notificationsSkipQuietDaysLabel;
+
+  /// No description provided for @notificationsBackupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline Backup Reminder'**
+  String get notificationsBackupTitle;
+
+  /// No description provided for @notificationsBackupDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminds you periodically to save a fresh StitchFlow .zip backup.'**
+  String get notificationsBackupDesc;
+
+  /// No description provided for @notificationsBackupIntervalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind every'**
+  String get notificationsBackupIntervalLabel;
+
+  /// No description provided for @notificationsAlertsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Important Local Business Alerts'**
+  String get notificationsAlertsTitle;
+
+  /// No description provided for @notificationsAlertsDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Local alerts when damaged stock crosses 20 pcs or an issue is 14+ days overdue (max 1 per 24h).'**
+  String get notificationsAlertsDesc;
+
+  /// No description provided for @notificationsTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder time'**
+  String get notificationsTimeLabel;
+
+  /// No description provided for @notificationsPrivacyOemTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline Privacy & Battery Note'**
+  String get notificationsPrivacyOemTitle;
+
+  /// No description provided for @notificationsPrivacyOemBody.
+  ///
+  /// In en, this message translates to:
+  /// **'• 100% offline: reminders run locally on your Android phone without Firebase or internet.\n• Lock-screen privacy: when App PIN is enabled, notifications hide exact Rupee amounts and worker names.\n• Android battery note: on OPPO (ColorOS), Xiaomi, Vivo, or Samsung phones, allow StitchFlow background notifications in Phone Settings if reminders arrive late after a reboot.'**
+  String get notificationsPrivacyOemBody;
+
+  /// No description provided for @validationWhitespaceOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'This field cannot contain only spaces.'**
+  String get validationWhitespaceOnly;
+
+  /// No description provided for @validationMaxLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum {max} characters allowed.'**
+  String validationMaxLength(int max);
+
+  /// No description provided for @validationTextTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Entered text exceeds the allowed length.'**
+  String get validationTextTooLong;
+
+  /// No description provided for @validationMobileRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter mobile number.'**
+  String get validationMobileRequired;
+
+  /// No description provided for @validationMobileInvalidIndian.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid 10-digit mobile number.'**
+  String get validationMobileInvalidIndian;
+
+  /// No description provided for @validationMobileInvalidChars.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile number contains invalid characters.'**
+  String get validationMobileInvalidChars;
+
+  /// No description provided for @validationMobileInvalidInternational.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid international mobile number with country code.'**
+  String get validationMobileInvalidInternational;
+
+  /// No description provided for @validationEmailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address.'**
+  String get validationEmailInvalid;
+
+  /// No description provided for @validationInvalidNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid number.'**
+  String get validationInvalidNumber;
+
+  /// No description provided for @validationInvalidInteger.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid whole number.'**
+  String get validationInvalidInteger;
+
+  /// No description provided for @validationInvalidDecimal.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid decimal number.'**
+  String get validationInvalidDecimal;
+
+  /// No description provided for @validationTooManyDecimals.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter up to {maxDecimals} decimal places.'**
+  String validationTooManyDecimals(int maxDecimals);
+
+  /// No description provided for @validationNegativeNotAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Value cannot be negative.'**
+  String get validationNegativeNotAllowed;
+
+  /// No description provided for @validationPositiveNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a number greater than 0.'**
+  String get validationPositiveNumber;
+
+  /// No description provided for @validationValueTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Entered value exceeds the maximum allowed limit.'**
+  String get validationValueTooLarge;
+
+  /// No description provided for @validationNonNegativeInt.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a whole number 0 or greater.'**
+  String get validationNonNegativeInt;
+
+  /// No description provided for @validationQuantityExceedsMax.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity cannot exceed {max}.'**
+  String validationQuantityExceedsMax(int max);
+
+  /// No description provided for @validationPositiveAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid amount greater than 0.'**
+  String get validationPositiveAmount;
+
+  /// No description provided for @validationInvalidPercentage.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a percentage between 0 and 100.'**
+  String get validationInvalidPercentage;
+
+  /// No description provided for @validationInvalidDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a valid date.'**
+  String get validationInvalidDate;
+
+  /// No description provided for @validationDateRangeOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'End date cannot be earlier than start date.'**
+  String get validationDateRangeOrder;
+
+  /// No description provided for @validationDuplicateValue.
+  ///
+  /// In en, this message translates to:
+  /// **'This value already exists.'**
+  String get validationDuplicateValue;
+
+  /// No description provided for @validationInvalidHexColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid hex colour code (e.g. #172B4D).'**
+  String get validationInvalidHexColor;
+
+  /// No description provided for @validationInvalidPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid 4- or 6-digit numeric PIN.'**
+  String get validationInvalidPin;
+
+  /// No description provided for @validationRecoveryKeyRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your 8-character Recovery Key.'**
+  String get validationRecoveryKeyRequired;
+
+  /// No description provided for @validationQuantityBelowCommittedStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Initial quantity cannot be less than stock already issued, damaged, or settled.'**
+  String get validationQuantityBelowCommittedStock;
+
+  /// No description provided for @validationWorkerNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected worker was not found.'**
+  String get validationWorkerNotFound;
+
+  /// No description provided for @validationWorkerNotAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected worker is not actively assigned to this process.'**
+  String get validationWorkerNotAssigned;
+
+  /// No description provided for @validationRecordNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Referenced record was not found or is no longer active.'**
+  String get validationRecordNotFound;
+
+  /// No description provided for @validationOverrideReasonRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason is required when overriding the rate.'**
+  String get validationOverrideReasonRequired;
+
+  /// No description provided for @validationParentIssueInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Original stock issue is no longer active.'**
+  String get validationParentIssueInactive;
+
+  /// No description provided for @validationAlreadyReversed.
+  ///
+  /// In en, this message translates to:
+  /// **'This entry has already been reversed.'**
+  String get validationAlreadyReversed;
+
+  /// No description provided for @validationCannotReverseReversal.
+  ///
+  /// In en, this message translates to:
+  /// **'A reversal entry cannot itself be reversed.'**
+  String get validationCannotReverseReversal;
 }
 
 class _AppLocalizationsDelegate

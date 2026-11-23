@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
 import 'package:business_manager/features/lots/domain/repositories/lot_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -73,6 +74,8 @@ final class LotDetailCubit extends Cubit<LotDetailState> {
       );
       await loadLot(lotId);
       return null;
+    } on DomainValidationException catch (e) {
+      return e.code;
     } catch (e) {
       return e.toString();
     }
@@ -95,6 +98,8 @@ final class LotDetailCubit extends Cubit<LotDetailState> {
       );
       await loadLot(lotId);
       return null;
+    } on DomainValidationException catch (e) {
+      return e.code;
     } catch (e) {
       return e.toString();
     }
@@ -114,6 +119,8 @@ final class LotDetailCubit extends Cubit<LotDetailState> {
       );
       await loadLot(lotId);
       return null;
+    } on DomainValidationException catch (e) {
+      return e.code;
     } catch (e) {
       return e.toString();
     }
@@ -144,6 +151,8 @@ final class LotDetailCubit extends Cubit<LotDetailState> {
       );
       await loadLot(lotId);
       return null;
+    } on DomainValidationException catch (e) {
+      return e.code;
     } catch (e) {
       return e.toString();
     }
@@ -169,6 +178,8 @@ final class LotDetailCubit extends Cubit<LotDetailState> {
       );
       await loadLot(lotId);
       return null;
+    } on DomainValidationException catch (e) {
+      return e.code;
     } catch (e) {
       return e.toString();
     }
@@ -196,6 +207,8 @@ final class LotDetailCubit extends Cubit<LotDetailState> {
       );
       await loadLot(lotId);
       return null;
+    } on DomainValidationException catch (e) {
+      return e.code;
     } catch (e) {
       return e.toString();
     }

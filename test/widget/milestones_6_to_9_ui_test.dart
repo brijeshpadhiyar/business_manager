@@ -61,6 +61,11 @@ void main() {
       await tester.pumpAndSettle();
 
       // Live Dashboard renders real KPIs
+      await tester.scrollUntilVisible(
+        find.text('Inventory & Production Health'),
+        200,
+        scrollable: find.byType(Scrollable).last,
+      );
       expect(find.text('Inventory & Production Health'), findsOneWidget);
       await tester.scrollUntilVisible(
         find.text('Worker Accounting Summary'),
@@ -68,7 +73,7 @@ void main() {
         scrollable: find.byType(Scrollable).last,
       );
       expect(find.text('Worker Accounting Summary'), findsOneWidget);
-      await tester.drag(find.byType(ListView).first, const Offset(0, 600));
+      await tester.drag(find.byType(ListView).first, const Offset(0, 900));
       await tester.pumpAndSettle();
 
       // Open Stock Movements screen
@@ -85,16 +90,23 @@ void main() {
       await tester.pageBack();
       await tester.pumpAndSettle();
 
-      // Open Business Reports screen & verify report tabs
+      // Open Business Reports screen & verify V1.2 report categories
       await tester.tap(find.text('Reports').first);
       await tester.pumpAndSettle();
       expect(find.text('Business Reports'), findsOneWidget);
-      expect(find.text('Stock Summary'), findsOneWidget);
+      expect(find.text('Daily Workshop'), findsWidgets);
       await tester.pageBack();
       await tester.pumpAndSettle();
 
       // Open Settings -> Backup & Data Safety screen
       await tester.tap(find.text('Settings').last);
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(
+        find.text('Backup & Data Safety').first,
+        200,
+        scrollable: find.byType(Scrollable).last,
+      );
+      await tester.ensureVisible(find.text('Backup & Data Safety').first);
       await tester.pumpAndSettle();
       await tester.tap(find.text('Backup & Data Safety').first);
       await tester.pumpAndSettle();

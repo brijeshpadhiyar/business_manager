@@ -5,11 +5,14 @@ import 'package:business_manager/core/database/database_transaction_runner.dart'
 import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/features/accounting/domain/calculators/labour_calculator.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
+import 'package:business_manager/features/notifications/data/services/notification_refresh_coordinator.dart';
 import 'package:business_manager/features/rates/domain/entities/rate_entities.dart';
 import 'package:business_manager/features/rates/domain/services/member_process_rate_resolver.dart';
+import 'package:business_manager/features/reports/domain/calculators/workshop_daily_calculator.dart';
 import 'package:business_manager/features/stock_movements/domain/calculators/stock_calculator.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 import 'package:business_manager/features/stock_movements/domain/repositories/stock_movement_repository.dart';
@@ -533,6 +536,46 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
   }
 
   @override
+  Future<RecentIssueSuggestions> getRecentIssueSuggestions() async {
+    final allMovements = (await _db.stockMovementDao.getAllMovements())
+        .map(_mapRow)
+        .toList();
+    final procs = await _db.processMemberDao.getNonDeletedProcesses();
+    final workers = await _db.processMemberDao.getNonDeletedMembers();
+    final links = await _db.select(_db.memberProcesses).get();
+    final balances = await getAllDesignColourBalances();
+
+    final activeProcessIds = {
+      for (final p in procs)
+        if (p.isActive == 1) p.id,
+    };
+    final activeWorkerIds = {
+      for (final w in workers)
+        if (w.isActive == 1) w.id,
+    };
+    final activeLinks = {
+      for (final l in links)
+        if (l.isActive == 1) '${l.memberId}::${l.processId}',
+    };
+    final procNames = {for (final p in procs) p.id: p.name};
+    final workerNames = {for (final w in workers) w.id: w.name};
+    final inStockIds = {
+      for (final b in balances)
+        if (b.physicalAvailableInHouse > 0) b.designColourId,
+    };
+
+    return const WorkshopDailyCalculator().deriveRecentIssueSuggestions(
+      allMovements: allMovements,
+      activeProcessIds: activeProcessIds,
+      activeWorkerIds: activeWorkerIds,
+      activeAssignmentKeys: activeLinks,
+      processNamesById: procNames,
+      workerNamesById: workerNames,
+      inStockColourIds: inStockIds,
+    );
+  }
+
+  @override
   Future<StockMovementEntity> issueStock({
     required String designColourId,
     required String processId,
@@ -549,252 +592,286 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
         ? _idGenerator.nextRequestId()
         : clientRequestId!.trim();
 
-    return _txRunner.runInTransaction(() async {
-      // Idempotency guard: return already committed issue on duplicate tap/retry
-      final existingByReq = await _db.stockMovementDao.findByClientRequestId(
-        reqId,
-      );
-      if (existingByReq != null) {
-        return _mapRow(existingByReq);
-      }
+    return _txRunner
+        .runInTransaction(() async {
+          // Idempotency guard: return already committed issue on duplicate tap/retry
+          final existingByReq = await _db.stockMovementDao
+              .findByClientRequestId(reqId);
+          if (existingByReq != null) {
+            return _mapRow(existingByReq);
+          }
 
-      if (quantity <= 0) {
-        throw const DomainValidationException(
-          'invalid_quantity',
-          'Issue quantity must be greater than zero.',
-        );
-      }
-
-      // Verify design colour -> design -> lot hierarchy
-      final colour = await _db.lotDao.findDesignColourById(designColourId);
-      if (colour == null || colour.deletedAt != null) {
-        throw const DomainValidationException(
-          'colour_not_found',
-          'Selected colour was not found.',
-        );
-      }
-      final design = await _db.lotDao.findDesignById(colour.lotDesignId);
-      if (design == null || design.deletedAt != null) {
-        throw const DomainValidationException(
-          'design_not_found',
-          'Selected design was not found.',
-        );
-      }
-      final lot = await _db.lotDao.findLotById(design.lotId);
-      if (lot == null || lot.deletedAt != null) {
-        throw const DomainValidationException(
-          'lot_not_found',
-          'Selected lot was not found.',
-        );
-      }
-
-      // Atomic 5-point worker-process pre-issue validation
-      // 1. Worker exists, non-deleted, active
-      final worker = await _db.processMemberDao.findMemberById(workerId);
-      if (worker == null || worker.deletedAt != null || worker.isActive != 1) {
-        throw const DomainValidationException(
-          'worker_inactive',
-          'Selected worker is inactive or unavailable.',
-        );
-      }
-
-      // 2. Process exists, non-deleted, active
-      final process = await _db.processMemberDao.findProcessById(processId);
-      if (process == null ||
-          process.deletedAt != null ||
-          process.isActive != 1) {
-        throw const DomainValidationException(
-          'process_inactive',
-          'Selected process is inactive or unavailable.',
-        );
-      }
-
-      // 3. Active worker-process assignment link exists
-      final link = await _db.processMemberDao.findMemberProcessLink(
-        workerId,
-        processId,
-      );
-      if (link == null || link.isActive != 1) {
-        throw const DomainValidationException(
-          'worker_not_assigned',
-          'Selected worker is not actively assigned to this process.',
-        );
-      }
-
-      // 4. Resolve historical rate by transactionAt (IST date) or validate override
-      final rateRows = await _db.processMemberDao.getActiveRates(
-        workerId,
-        processId,
-      );
-      final resolution = _rateResolver.resolve(
-        workerId: workerId,
-        processId: processId,
-        transactionAtUtcMillis: transactionAtUtcMillis,
-        rates: rateRows.map(_mapRateRow).toList(),
-      );
-
-      String? sourceRateId;
-      int appliedRatePaise;
-      bool isOverridden = false;
-      String? cleanedOverrideReason;
-
-      if (allowRateOverride && overrideRatePaise != null) {
-        if (overrideRatePaise < 0) {
-          throw const DomainValidationException(
-            'invalid_rate',
-            'Rate cannot be negative.',
-          );
-        }
-        if (overrideReason == null || overrideReason.trim().isEmpty) {
-          throw const DomainValidationException(
-            'override_reason_required',
-            'A reason is required for manual rate override.',
-          );
-        }
-        isOverridden = true;
-        appliedRatePaise = overrideRatePaise;
-        cleanedOverrideReason = overrideReason.trim();
-        if (resolution is RateResolutionFound) {
-          sourceRateId = resolution.rate.id;
-        }
-      } else {
-        switch (resolution) {
-          case RateResolutionFound(:final rate):
-            sourceRateId = rate.id;
-            appliedRatePaise = rate.ratePaise;
-          case RateResolutionMissing():
+          if (quantity <= 0) {
             throw const DomainValidationException(
-              'rate_missing',
-              'No effective historical rate configured for this worker and process on the transaction date.',
+              'invalid_quantity',
+              'Issue quantity must be greater than zero.',
             );
-          case RateResolutionConflict():
+          }
+          if (quantity > ValidationLimits.maxQuantity) {
             throw const DomainValidationException(
-              'rate_conflict',
-              'Conflicting overlapping rates exist for this worker and process on the transaction date.',
+              'quantity_too_large',
+              'Issue quantity exceeds maximum allowed limit.',
             );
-        }
-      }
+          }
+          if (!AppValidators.dateValidator(transactionAtUtcMillis).isValid) {
+            throw const DomainValidationException(
+              'invalid_date',
+              'Transaction date is invalid.',
+            );
+          }
+          if ((notes?.trim().length ?? 0) > ValidationLimits.maxNotesLength ||
+              (overrideReason?.trim().length ?? 0) >
+                  ValidationLimits.maxNotesLength) {
+            throw const DomainValidationException(
+              'text_too_long',
+              'Notes or override reason exceeds maximum allowed length.',
+            );
+          }
 
-      // 5. Physical available in-house good stock validation
-      final existingMovements =
-          (await _db.stockMovementDao.getMovementsForDesignColour(
-            designColourId,
-          )).map(_mapRow).toList();
-      final qtyError = _stockCalc.validateIssueQuantity(
-        initialQuantity: colour.initialQuantity,
-        existingMovementsForColour: existingMovements,
-        issueQuantity: quantity,
-      );
-      if (qtyError != null) {
-        throw DomainValidationException(
-          qtyError,
-          'Cannot issue $quantity pieces: exceeds available in-house good stock.',
-        );
-      }
+          // Verify design colour -> design -> lot hierarchy
+          final colour = await _db.lotDao.findDesignColourById(designColourId);
+          if (colour == null || colour.deletedAt != null) {
+            throw const DomainValidationException(
+              'colour_not_found',
+              'Selected colour was not found.',
+            );
+          }
+          final design = await _db.lotDao.findDesignById(colour.lotDesignId);
+          if (design == null || design.deletedAt != null) {
+            throw const DomainValidationException(
+              'design_not_found',
+              'Selected design was not found.',
+            );
+          }
+          final lot = await _db.lotDao.findLotById(design.lotId);
+          if (lot == null || lot.deletedAt != null) {
+            throw const DomainValidationException(
+              'lot_not_found',
+              'Selected lot was not found.',
+            );
+          }
 
-      // Lock effective billing configuration onto ISSUE row (anti-double-counting)
-      final profile = await _db.businessProfileDao.getProfile();
-      final globalMode = profile != null
-          ? BillingMode.fromDbValue(profile.defaultBillingMode)
-          : BillingMode.receivedQty;
-      final processOverride = process.billingModeOverride != null
-          ? BillingMode.fromDbValue(process.billingModeOverride!)
-          : null;
-      final lockedBillingMode = _labourCalc.resolveEffectiveBillingMode(
-        globalDefault: globalMode,
-        processOverride: processOverride,
-      );
-      final lockedIncludeDamaged = process.includeDamagedInLabour == 1;
+          // Atomic 5-point worker-process pre-issue validation
+          // 1. Worker exists, non-deleted, active
+          final worker = await _db.processMemberDao.findMemberById(workerId);
+          if (worker == null ||
+              worker.deletedAt != null ||
+              worker.isActive != 1) {
+            throw const DomainValidationException(
+              'worker_inactive',
+              'Selected worker is inactive or unavailable.',
+            );
+          }
 
-      final now = IstDateTimeHelper.nowUtcMillis();
-      final actor = await _resolveActor();
-      final movementId = _idGenerator.nextEntityId();
-      final cleanedNotes = notes?.trim().isEmpty ?? true ? null : notes!.trim();
+          // 2. Process exists, non-deleted, active
+          final process = await _db.processMemberDao.findProcessById(processId);
+          if (process == null ||
+              process.deletedAt != null ||
+              process.isActive != 1) {
+            throw const DomainValidationException(
+              'process_inactive',
+              'Selected process is inactive or unavailable.',
+            );
+          }
 
-      await _db.stockMovementDao.insertMovement(
-        StockMovementsCompanion(
-          id: Value(movementId),
-          lotId: Value(lot.id),
-          lotDesignId: Value(design.id),
-          designColourId: Value(colour.id),
-          processId: Value(process.id),
-          memberId: Value(worker.id),
-          clientRequestId: Value(reqId),
-          movementType: Value(StockMovementType.issue.dbValue),
-          quantity: Value(quantity),
-          sourceRateId: Value(sourceRateId),
-          appliedRatePaise: Value(appliedRatePaise),
-          isRateOverridden: Value(isOverridden ? 1 : 0),
-          overrideReason: Value(cleanedOverrideReason),
-          lockedBillingMode: Value(lockedBillingMode.dbValue),
-          lockedIncludeDamaged: Value(lockedIncludeDamaged ? 1 : 0),
-          notes: Value(cleanedNotes),
-          transactionAt: Value(transactionAtUtcMillis),
-          recordedAt: Value(now),
-          createdBy: Value(actor),
-          updatedBy: Value(actor),
-          createdAt: Value(now),
-          updatedAt: Value(now),
-        ),
-      );
+          // 3. Active worker-process assignment link exists
+          final link = await _db.processMemberDao.findMemberProcessLink(
+            workerId,
+            processId,
+          );
+          if (link == null || link.isActive != 1) {
+            throw const DomainValidationException(
+              'worker_not_assigned',
+              'Selected worker is not actively assigned to this process.',
+            );
+          }
 
-      // Plan & insert labour entry atomically
-      final plannedLabour = _labourCalc.planForIssue(
-        quantity: quantity,
-        appliedRatePaise: appliedRatePaise,
-        lockedBillingMode: lockedBillingMode,
-      );
-      await _db.labourEntryDao.insertEntry(
-        LabourEntriesCompanion(
-          id: Value(_idGenerator.nextEntityId()),
-          stockMovementId: Value(movementId),
-          memberId: Value(worker.id),
-          processId: Value(process.id),
-          lotId: Value(lot.id),
-          basisType: Value(plannedLabour.basisType.dbValue),
-          quantity: Value(plannedLabour.quantity),
-          ratePaise: Value(plannedLabour.ratePaise),
-          amountPaise: Value(plannedLabour.amountPaise),
-          isPayable: Value(plannedLabour.isPayable ? 1 : 0),
-          transactionAt: Value(transactionAtUtcMillis),
-          recordedAt: Value(now),
-          createdAt: Value(now),
-          updatedAt: Value(now),
-        ),
-      );
+          // 4. Resolve historical rate by transactionAt (IST date) or validate override
+          final rateRows = await _db.processMemberDao.getActiveRates(
+            workerId,
+            processId,
+          );
+          final resolution = _rateResolver.resolve(
+            workerId: workerId,
+            processId: processId,
+            transactionAtUtcMillis: transactionAtUtcMillis,
+            rates: rateRows.map(_mapRateRow).toList(),
+          );
 
-      // Write audit log
-      await _db.attachmentAuditDao.insertAuditLog(
-        AuditLogsCompanion(
-          id: Value(_idGenerator.nextEntityId()),
-          entityType: const Value('stock_movements'),
-          entityId: Value(movementId),
-          actionType: Value(isOverridden ? 'RATE_OVERRIDE' : 'CREATE'),
-          actor: Value(actor),
-          newValueJson: Value(
-            jsonEncode({
-              'movement_type': StockMovementType.issue.dbValue,
-              'lot_number': lot.lotNumber,
-              'design': design.designName,
-              'colour': colour.colourName,
-              'process': process.name,
-              'worker': worker.name,
-              'quantity': quantity,
-              'applied_rate_paise': appliedRatePaise,
-              'source_rate_id': sourceRateId,
-              'locked_billing_mode': lockedBillingMode.dbValue,
-              'locked_include_damaged': lockedIncludeDamaged,
-            }),
-          ),
-          reason: Value(cleanedOverrideReason),
-          transactionAt: Value(transactionAtUtcMillis),
-          recordedAt: Value(now),
-        ),
-      );
+          String? sourceRateId;
+          int appliedRatePaise;
+          bool isOverridden = false;
+          String? cleanedOverrideReason;
 
-      final inserted = await _db.stockMovementDao.findById(movementId);
-      return _mapRow(inserted!);
-    });
+          if (allowRateOverride) {
+            if (overrideRatePaise == null || overrideRatePaise < 0) {
+              throw const DomainValidationException(
+                'invalid_rate',
+                'Rate cannot be negative.',
+              );
+            }
+            if (overrideRatePaise > ValidationLimits.maxAmountPaise) {
+              throw const DomainValidationException(
+                'rate_too_large',
+                'Override rate exceeds maximum allowed limit.',
+              );
+            }
+            if (overrideReason == null || overrideReason.trim().isEmpty) {
+              throw const DomainValidationException(
+                'override_reason_required',
+                'A reason is required for manual rate override.',
+              );
+            }
+            isOverridden = true;
+            appliedRatePaise = overrideRatePaise;
+            cleanedOverrideReason = overrideReason.trim();
+            if (resolution is RateResolutionFound) {
+              sourceRateId = resolution.rate.id;
+            }
+          } else {
+            switch (resolution) {
+              case RateResolutionFound(:final rate):
+                sourceRateId = rate.id;
+                appliedRatePaise = rate.ratePaise;
+              case RateResolutionMissing():
+                throw const DomainValidationException(
+                  'rate_missing',
+                  'No effective historical rate configured for this worker and process on the transaction date.',
+                );
+              case RateResolutionConflict():
+                throw const DomainValidationException(
+                  'rate_conflict',
+                  'Conflicting overlapping rates exist for this worker and process on the transaction date.',
+                );
+            }
+          }
+
+          // 5. Physical available in-house good stock validation
+          final existingMovements =
+              (await _db.stockMovementDao.getMovementsForDesignColour(
+                designColourId,
+              )).map(_mapRow).toList();
+          final qtyError = _stockCalc.validateIssueQuantity(
+            initialQuantity: colour.initialQuantity,
+            existingMovementsForColour: existingMovements,
+            issueQuantity: quantity,
+          );
+          if (qtyError != null) {
+            throw DomainValidationException(
+              qtyError,
+              'Cannot issue $quantity pieces: exceeds available in-house good stock.',
+            );
+          }
+
+          // Lock effective billing configuration onto ISSUE row (anti-double-counting)
+          final profile = await _db.businessProfileDao.getProfile();
+          final globalMode = profile != null
+              ? BillingMode.fromDbValue(profile.defaultBillingMode)
+              : BillingMode.receivedQty;
+          final processOverride = process.billingModeOverride != null
+              ? BillingMode.fromDbValue(process.billingModeOverride!)
+              : null;
+          final lockedBillingMode = _labourCalc.resolveEffectiveBillingMode(
+            globalDefault: globalMode,
+            processOverride: processOverride,
+          );
+          final lockedIncludeDamaged = process.includeDamagedInLabour == 1;
+
+          final now = IstDateTimeHelper.nowUtcMillis();
+          final actor = await _resolveActor();
+          final movementId = _idGenerator.nextEntityId();
+          final cleanedNotes = notes?.trim().isEmpty ?? true
+              ? null
+              : notes!.trim();
+
+          await _db.stockMovementDao.insertMovement(
+            StockMovementsCompanion(
+              id: Value(movementId),
+              lotId: Value(lot.id),
+              lotDesignId: Value(design.id),
+              designColourId: Value(colour.id),
+              processId: Value(process.id),
+              memberId: Value(worker.id),
+              clientRequestId: Value(reqId),
+              movementType: Value(StockMovementType.issue.dbValue),
+              quantity: Value(quantity),
+              sourceRateId: Value(sourceRateId),
+              appliedRatePaise: Value(appliedRatePaise),
+              isRateOverridden: Value(isOverridden ? 1 : 0),
+              overrideReason: Value(cleanedOverrideReason),
+              lockedBillingMode: Value(lockedBillingMode.dbValue),
+              lockedIncludeDamaged: Value(lockedIncludeDamaged ? 1 : 0),
+              notes: Value(cleanedNotes),
+              transactionAt: Value(transactionAtUtcMillis),
+              recordedAt: Value(now),
+              createdBy: Value(actor),
+              updatedBy: Value(actor),
+              createdAt: Value(now),
+              updatedAt: Value(now),
+            ),
+          );
+
+          // Plan & insert labour entry atomically
+          final plannedLabour = _labourCalc.planForIssue(
+            quantity: quantity,
+            appliedRatePaise: appliedRatePaise,
+            lockedBillingMode: lockedBillingMode,
+          );
+          await _db.labourEntryDao.insertEntry(
+            LabourEntriesCompanion(
+              id: Value(_idGenerator.nextEntityId()),
+              stockMovementId: Value(movementId),
+              memberId: Value(worker.id),
+              processId: Value(process.id),
+              lotId: Value(lot.id),
+              basisType: Value(plannedLabour.basisType.dbValue),
+              quantity: Value(plannedLabour.quantity),
+              ratePaise: Value(plannedLabour.ratePaise),
+              amountPaise: Value(plannedLabour.amountPaise),
+              isPayable: Value(plannedLabour.isPayable ? 1 : 0),
+              transactionAt: Value(transactionAtUtcMillis),
+              recordedAt: Value(now),
+              createdAt: Value(now),
+              updatedAt: Value(now),
+            ),
+          );
+
+          // Write audit log
+          await _db.attachmentAuditDao.insertAuditLog(
+            AuditLogsCompanion(
+              id: Value(_idGenerator.nextEntityId()),
+              entityType: const Value('stock_movements'),
+              entityId: Value(movementId),
+              actionType: Value(isOverridden ? 'RATE_OVERRIDE' : 'CREATE'),
+              actor: Value(actor),
+              newValueJson: Value(
+                jsonEncode({
+                  'movement_type': StockMovementType.issue.dbValue,
+                  'lot_number': lot.lotNumber,
+                  'design': design.designName,
+                  'colour': colour.colourName,
+                  'process': process.name,
+                  'worker': worker.name,
+                  'quantity': quantity,
+                  'applied_rate_paise': appliedRatePaise,
+                  'source_rate_id': sourceRateId,
+                  'locked_billing_mode': lockedBillingMode.dbValue,
+                  'locked_include_damaged': lockedIncludeDamaged,
+                }),
+              ),
+              reason: Value(cleanedOverrideReason),
+              transactionAt: Value(transactionAtUtcMillis),
+              recordedAt: Value(now),
+            ),
+          );
+
+          final inserted = await _db.stockMovementDao.findById(movementId);
+          return _mapRow(inserted!);
+        })
+        .then((result) {
+          NotificationRefreshCoordinator.requestBackgroundRefreshIfRegistered();
+          return result;
+        });
   }
 
   @override
@@ -813,194 +890,230 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
         ? _idGenerator.nextRequestId()
         : clientRequestId!.trim();
 
-    return _txRunner.runInTransaction(() async {
-      final parentRow = await _db.stockMovementDao.findById(parentIssueId);
-      if (parentRow == null) {
-        throw const DomainValidationException(
-          'parent_issue_inactive',
-          'Original stock issue was not found.',
-        );
-      }
-      final parentIssue = _mapRow(parentRow);
-      final existingMovements =
-          (await _db.stockMovementDao.getMovementsForDesignColour(
-            parentIssue.designColourId,
-          )).map(_mapRow).toList();
-
-      // Check idempotency across deterministic child request IDs
-      final componentSpecs = <(StockMovementType, int, String)>[
-        if (goodQuantity > 0)
-          (StockMovementType.returnGood, goodQuantity, '$baseReqId:GOOD'),
-        if (damagedQuantity > 0)
-          (
-            StockMovementType.returnDamaged,
-            damagedQuantity,
-            '$baseReqId:DAMAGED',
-          ),
-        if (lostQuantity > 0)
-          (StockMovementType.settlementLost, lostQuantity, '$baseReqId:LOST'),
-        if (shortageQuantity > 0)
-          (
-            StockMovementType.settlementShortage,
-            shortageQuantity,
-            '$baseReqId:SHORTAGE',
-          ),
-      ];
-
-      if (componentSpecs.isNotEmpty) {
-        final alreadyCommitted = <StockMovementEntity>[];
-        for (final spec in componentSpecs) {
-          final existing = await _db.stockMovementDao.findByClientRequestId(
-            spec.$3,
-          );
-          if (existing != null) {
-            alreadyCommitted.add(_mapRow(existing));
+    return _txRunner
+        .runInTransaction(() async {
+          final parentRow = await _db.stockMovementDao.findById(parentIssueId);
+          if (parentRow == null) {
+            throw const DomainValidationException(
+              'parent_issue_inactive',
+              'Original stock issue was not found.',
+            );
           }
-        }
-        if (alreadyCommitted.isNotEmpty) {
+          final parentIssue = _mapRow(parentRow);
+          final existingMovements =
+              (await _db.stockMovementDao.getMovementsForDesignColour(
+                parentIssue.designColourId,
+              )).map(_mapRow).toList();
+
+          // Check idempotency across deterministic child request IDs
+          final componentSpecs = <(StockMovementType, int, String)>[
+            if (goodQuantity > 0)
+              (StockMovementType.returnGood, goodQuantity, '$baseReqId:GOOD'),
+            if (damagedQuantity > 0)
+              (
+                StockMovementType.returnDamaged,
+                damagedQuantity,
+                '$baseReqId:DAMAGED',
+              ),
+            if (lostQuantity > 0)
+              (
+                StockMovementType.settlementLost,
+                lostQuantity,
+                '$baseReqId:LOST',
+              ),
+            if (shortageQuantity > 0)
+              (
+                StockMovementType.settlementShortage,
+                shortageQuantity,
+                '$baseReqId:SHORTAGE',
+              ),
+          ];
+
+          if (componentSpecs.isNotEmpty) {
+            final alreadyCommitted = <StockMovementEntity>[];
+            for (final spec in componentSpecs) {
+              final existing = await _db.stockMovementDao.findByClientRequestId(
+                spec.$3,
+              );
+              if (existing != null) {
+                alreadyCommitted.add(_mapRow(existing));
+              }
+            }
+            if (alreadyCommitted.isNotEmpty) {
+              final remaining = _stockCalc.calculateIssueRemainingPending(
+                issue: parentIssue,
+                allMovementsForColour: existingMovements,
+              );
+              return SettlementBatchResult(
+                createdMovements: alreadyCommitted,
+                remainingPending: remaining,
+                wasIdempotentReplay: true,
+              );
+            }
+          }
+
+          if (!AppValidators.dateValidator(transactionAtUtcMillis).isValid) {
+            throw const DomainValidationException(
+              'invalid_date',
+              'Transaction date is invalid.',
+            );
+          }
+          if (goodQuantity > ValidationLimits.maxQuantity ||
+              damagedQuantity > ValidationLimits.maxQuantity ||
+              lostQuantity > ValidationLimits.maxQuantity ||
+              shortageQuantity > ValidationLimits.maxQuantity) {
+            throw const DomainValidationException(
+              'quantity_too_large',
+              'Settlement quantity exceeds maximum allowed limit.',
+            );
+          }
+          if ((reason?.trim().length ?? 0) > ValidationLimits.maxNotesLength ||
+              (notes?.trim().length ?? 0) > ValidationLimits.maxNotesLength) {
+            throw const DomainValidationException(
+              'text_too_long',
+              'Reason or notes exceed maximum allowed length.',
+            );
+          }
+
+          // Validate batch against remaining pending & reason requirement
+          final validationErr = _stockCalc.validateSettlementBatch(
+            parentIssue: parentIssue,
+            existingMovementsForColour: existingMovements,
+            goodQty: goodQuantity,
+            damagedQty: damagedQuantity,
+            lostQty: lostQuantity,
+            shortageQty: shortageQuantity,
+            reason: reason,
+          );
+          if (validationErr != null) {
+            throw DomainValidationException(
+              validationErr,
+              'Invalid settlement submission ($validationErr).',
+            );
+          }
+
+          final now = IstDateTimeHelper.nowUtcMillis();
+          final actor = await _resolveActor();
+          final cleanedReason = reason?.trim().isEmpty ?? true
+              ? null
+              : reason!.trim();
+          final cleanedNotes = notes?.trim().isEmpty ?? true
+              ? null
+              : notes!.trim();
+          final lockedMode =
+              parentIssue.lockedBillingMode ?? BillingMode.receivedQty;
+          final lockedIncludeDamaged = parentIssue.lockedIncludeDamaged;
+
+          final created = <StockMovementEntity>[];
+          for (final (type, qty, reqId) in componentSpecs) {
+            final movId = _idGenerator.nextEntityId();
+            await _db.stockMovementDao.insertMovement(
+              StockMovementsCompanion(
+                id: Value(movId),
+                lotId: Value(parentIssue.lotId),
+                lotDesignId: Value(parentIssue.lotDesignId),
+                designColourId: Value(parentIssue.designColourId),
+                processId: Value(parentIssue.processId),
+                memberId: Value(parentIssue.memberId),
+                parentIssueId: Value(parentIssue.id),
+                clientRequestId: Value(reqId),
+                movementType: Value(type.dbValue),
+                quantity: Value(qty),
+                sourceRateId: Value(parentIssue.sourceRateId),
+                appliedRatePaise: Value(parentIssue.appliedRatePaise),
+                isRateOverridden: Value(parentIssue.isRateOverridden ? 1 : 0),
+                overrideReason: Value(parentIssue.overrideReason),
+                lockedBillingMode: Value(lockedMode.dbValue),
+                lockedIncludeDamaged: Value(lockedIncludeDamaged ? 1 : 0),
+                reason: Value(
+                  type.requiresReason ? cleanedReason : cleanedReason,
+                ),
+                notes: Value(cleanedNotes),
+                transactionAt: Value(transactionAtUtcMillis),
+                recordedAt: Value(now),
+                createdBy: Value(actor),
+                updatedBy: Value(actor),
+                createdAt: Value(now),
+                updatedAt: Value(now),
+              ),
+            );
+
+            // Plan & insert labour entry inheriting parent locked rate & billing config
+            final plannedLabour = _labourCalc.planForSettlement(
+              movementType: type,
+              quantity: qty,
+              lockedRatePaise: parentIssue.appliedRatePaise,
+              lockedBillingMode: lockedMode,
+              lockedIncludeDamaged: lockedIncludeDamaged,
+            );
+            if (plannedLabour != null &&
+                parentIssue.memberId != null &&
+                parentIssue.processId != null) {
+              await _db.labourEntryDao.insertEntry(
+                LabourEntriesCompanion(
+                  id: Value(_idGenerator.nextEntityId()),
+                  stockMovementId: Value(movId),
+                  memberId: Value(parentIssue.memberId!),
+                  processId: Value(parentIssue.processId!),
+                  lotId: Value(parentIssue.lotId),
+                  basisType: Value(plannedLabour.basisType.dbValue),
+                  quantity: Value(plannedLabour.quantity),
+                  ratePaise: Value(plannedLabour.ratePaise),
+                  amountPaise: Value(plannedLabour.amountPaise),
+                  isPayable: Value(plannedLabour.isPayable ? 1 : 0),
+                  transactionAt: Value(transactionAtUtcMillis),
+                  recordedAt: Value(now),
+                  createdAt: Value(now),
+                  updatedAt: Value(now),
+                ),
+              );
+            }
+
+            await _db.attachmentAuditDao.insertAuditLog(
+              AuditLogsCompanion(
+                id: Value(_idGenerator.nextEntityId()),
+                entityType: const Value('stock_movements'),
+                entityId: Value(movId),
+                actionType: const Value('CREATE'),
+                actor: Value(actor),
+                newValueJson: Value(
+                  jsonEncode({
+                    'movement_type': type.dbValue,
+                    'parent_issue_id': parentIssue.id,
+                    'quantity': qty,
+                    'inherited_rate_paise': parentIssue.appliedRatePaise,
+                    'locked_billing_mode': lockedMode.dbValue,
+                  }),
+                ),
+                reason: Value(cleanedReason),
+                transactionAt: Value(transactionAtUtcMillis),
+                recordedAt: Value(now),
+              ),
+            );
+
+            final insertedRow = await _db.stockMovementDao.findById(movId);
+            created.add(_mapRow(insertedRow!));
+          }
+
+          final updatedMovements =
+              (await _db.stockMovementDao.getMovementsForDesignColour(
+                parentIssue.designColourId,
+              )).map(_mapRow).toList();
           final remaining = _stockCalc.calculateIssueRemainingPending(
             issue: parentIssue,
-            allMovementsForColour: existingMovements,
+            allMovementsForColour: updatedMovements,
           );
+
           return SettlementBatchResult(
-            createdMovements: alreadyCommitted,
+            createdMovements: created,
             remainingPending: remaining,
-            wasIdempotentReplay: true,
+            wasIdempotentReplay: false,
           );
-        }
-      }
-
-      // Validate batch against remaining pending & reason requirement
-      final validationErr = _stockCalc.validateSettlementBatch(
-        parentIssue: parentIssue,
-        existingMovementsForColour: existingMovements,
-        goodQty: goodQuantity,
-        damagedQty: damagedQuantity,
-        lostQty: lostQuantity,
-        shortageQty: shortageQuantity,
-        reason: reason,
-      );
-      if (validationErr != null) {
-        throw DomainValidationException(
-          validationErr,
-          'Invalid settlement submission ($validationErr).',
-        );
-      }
-
-      final now = IstDateTimeHelper.nowUtcMillis();
-      final actor = await _resolveActor();
-      final cleanedReason = reason?.trim().isEmpty ?? true
-          ? null
-          : reason!.trim();
-      final cleanedNotes = notes?.trim().isEmpty ?? true ? null : notes!.trim();
-      final lockedMode =
-          parentIssue.lockedBillingMode ?? BillingMode.receivedQty;
-      final lockedIncludeDamaged = parentIssue.lockedIncludeDamaged;
-
-      final created = <StockMovementEntity>[];
-      for (final (type, qty, reqId) in componentSpecs) {
-        final movId = _idGenerator.nextEntityId();
-        await _db.stockMovementDao.insertMovement(
-          StockMovementsCompanion(
-            id: Value(movId),
-            lotId: Value(parentIssue.lotId),
-            lotDesignId: Value(parentIssue.lotDesignId),
-            designColourId: Value(parentIssue.designColourId),
-            processId: Value(parentIssue.processId),
-            memberId: Value(parentIssue.memberId),
-            parentIssueId: Value(parentIssue.id),
-            clientRequestId: Value(reqId),
-            movementType: Value(type.dbValue),
-            quantity: Value(qty),
-            sourceRateId: Value(parentIssue.sourceRateId),
-            appliedRatePaise: Value(parentIssue.appliedRatePaise),
-            isRateOverridden: Value(parentIssue.isRateOverridden ? 1 : 0),
-            overrideReason: Value(parentIssue.overrideReason),
-            lockedBillingMode: Value(lockedMode.dbValue),
-            lockedIncludeDamaged: Value(lockedIncludeDamaged ? 1 : 0),
-            reason: Value(type.requiresReason ? cleanedReason : cleanedReason),
-            notes: Value(cleanedNotes),
-            transactionAt: Value(transactionAtUtcMillis),
-            recordedAt: Value(now),
-            createdBy: Value(actor),
-            updatedBy: Value(actor),
-            createdAt: Value(now),
-            updatedAt: Value(now),
-          ),
-        );
-
-        // Plan & insert labour entry inheriting parent locked rate & billing config
-        final plannedLabour = _labourCalc.planForSettlement(
-          movementType: type,
-          quantity: qty,
-          lockedRatePaise: parentIssue.appliedRatePaise,
-          lockedBillingMode: lockedMode,
-          lockedIncludeDamaged: lockedIncludeDamaged,
-        );
-        if (plannedLabour != null &&
-            parentIssue.memberId != null &&
-            parentIssue.processId != null) {
-          await _db.labourEntryDao.insertEntry(
-            LabourEntriesCompanion(
-              id: Value(_idGenerator.nextEntityId()),
-              stockMovementId: Value(movId),
-              memberId: Value(parentIssue.memberId!),
-              processId: Value(parentIssue.processId!),
-              lotId: Value(parentIssue.lotId),
-              basisType: Value(plannedLabour.basisType.dbValue),
-              quantity: Value(plannedLabour.quantity),
-              ratePaise: Value(plannedLabour.ratePaise),
-              amountPaise: Value(plannedLabour.amountPaise),
-              isPayable: Value(plannedLabour.isPayable ? 1 : 0),
-              transactionAt: Value(transactionAtUtcMillis),
-              recordedAt: Value(now),
-              createdAt: Value(now),
-              updatedAt: Value(now),
-            ),
-          );
-        }
-
-        await _db.attachmentAuditDao.insertAuditLog(
-          AuditLogsCompanion(
-            id: Value(_idGenerator.nextEntityId()),
-            entityType: const Value('stock_movements'),
-            entityId: Value(movId),
-            actionType: const Value('CREATE'),
-            actor: Value(actor),
-            newValueJson: Value(
-              jsonEncode({
-                'movement_type': type.dbValue,
-                'parent_issue_id': parentIssue.id,
-                'quantity': qty,
-                'inherited_rate_paise': parentIssue.appliedRatePaise,
-                'locked_billing_mode': lockedMode.dbValue,
-              }),
-            ),
-            reason: Value(cleanedReason),
-            transactionAt: Value(transactionAtUtcMillis),
-            recordedAt: Value(now),
-          ),
-        );
-
-        final insertedRow = await _db.stockMovementDao.findById(movId);
-        created.add(_mapRow(insertedRow!));
-      }
-
-      final updatedMovements =
-          (await _db.stockMovementDao.getMovementsForDesignColour(
-            parentIssue.designColourId,
-          )).map(_mapRow).toList();
-      final remaining = _stockCalc.calculateIssueRemainingPending(
-        issue: parentIssue,
-        allMovementsForColour: updatedMovements,
-      );
-
-      return SettlementBatchResult(
-        createdMovements: created,
-        remainingPending: remaining,
-        wasIdempotentReplay: false,
-      );
-    });
+        })
+        .then((result) {
+          NotificationRefreshCoordinator.requestBackgroundRefreshIfRegistered();
+          return result;
+        });
   }
 
   @override
@@ -1016,98 +1129,124 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
         ? _idGenerator.nextRequestId()
         : clientRequestId!.trim();
 
-    return _txRunner.runInTransaction(() async {
-      final existingByReq = await _db.stockMovementDao.findByClientRequestId(
-        reqId,
-      );
-      if (existingByReq != null) {
-        return _mapRow(existingByReq);
-      }
+    return _txRunner
+        .runInTransaction(() async {
+          final existingByReq = await _db.stockMovementDao
+              .findByClientRequestId(reqId);
+          if (existingByReq != null) {
+            return _mapRow(existingByReq);
+          }
 
-      final colour = await _db.lotDao.findDesignColourById(designColourId);
-      if (colour == null || colour.deletedAt != null) {
-        throw const DomainValidationException(
-          'colour_not_found',
-          'Selected colour was not found.',
-        );
-      }
-      final design = await _db.lotDao.findDesignById(colour.lotDesignId);
-      if (design == null || design.deletedAt != null) {
-        throw const DomainValidationException(
-          'design_not_found',
-          'Selected design was not found.',
-        );
-      }
+          if (!AppValidators.dateValidator(transactionAtUtcMillis).isValid) {
+            throw const DomainValidationException(
+              'invalid_date',
+              'Transaction date is invalid.',
+            );
+          }
+          if (quantity > ValidationLimits.maxQuantity) {
+            throw const DomainValidationException(
+              'quantity_too_large',
+              'Repair quantity exceeds maximum allowed limit.',
+            );
+          }
+          if (reason.trim().length > ValidationLimits.maxNotesLength ||
+              (notes?.trim().length ?? 0) > ValidationLimits.maxNotesLength) {
+            throw const DomainValidationException(
+              'text_too_long',
+              'Reason or notes exceed maximum allowed length.',
+            );
+          }
 
-      final existingMovements =
-          (await _db.stockMovementDao.getMovementsForDesignColour(
-            designColourId,
-          )).map(_mapRow).toList();
-      final validationErr = _stockCalc.validateDamagedToGoodAdjustment(
-        initialQuantity: colour.initialQuantity,
-        existingMovementsForColour: existingMovements,
-        quantity: quantity,
-        reason: reason,
-      );
-      if (validationErr != null) {
-        throw DomainValidationException(
-          validationErr,
-          'Invalid damaged-to-good repair adjustment ($validationErr).',
-        );
-      }
+          final colour = await _db.lotDao.findDesignColourById(designColourId);
+          if (colour == null || colour.deletedAt != null) {
+            throw const DomainValidationException(
+              'colour_not_found',
+              'Selected colour was not found.',
+            );
+          }
+          final design = await _db.lotDao.findDesignById(colour.lotDesignId);
+          if (design == null || design.deletedAt != null) {
+            throw const DomainValidationException(
+              'design_not_found',
+              'Selected design was not found.',
+            );
+          }
 
-      final now = IstDateTimeHelper.nowUtcMillis();
-      final actor = await _resolveActor();
-      final movId = _idGenerator.nextEntityId();
-      final cleanedReason = reason.trim();
-      final cleanedNotes = notes?.trim().isEmpty ?? true ? null : notes!.trim();
+          final existingMovements =
+              (await _db.stockMovementDao.getMovementsForDesignColour(
+                designColourId,
+              )).map(_mapRow).toList();
+          final validationErr = _stockCalc.validateDamagedToGoodAdjustment(
+            initialQuantity: colour.initialQuantity,
+            existingMovementsForColour: existingMovements,
+            quantity: quantity,
+            reason: reason,
+          );
+          if (validationErr != null) {
+            throw DomainValidationException(
+              validationErr,
+              'Invalid damaged-to-good repair adjustment ($validationErr).',
+            );
+          }
 
-      await _db.stockMovementDao.insertMovement(
-        StockMovementsCompanion(
-          id: Value(movId),
-          lotId: Value(design.lotId),
-          lotDesignId: Value(design.id),
-          designColourId: Value(colour.id),
-          clientRequestId: Value(reqId),
-          movementType: Value(
-            StockMovementType.adjustmentDamagedToGood.dbValue,
-          ),
-          quantity: Value(quantity),
-          appliedRatePaise: const Value(0),
-          reason: Value(cleanedReason),
-          notes: Value(cleanedNotes),
-          transactionAt: Value(transactionAtUtcMillis),
-          recordedAt: Value(now),
-          createdBy: Value(actor),
-          updatedBy: Value(actor),
-          createdAt: Value(now),
-          updatedAt: Value(now),
-        ),
-      );
+          final now = IstDateTimeHelper.nowUtcMillis();
+          final actor = await _resolveActor();
+          final movId = _idGenerator.nextEntityId();
+          final cleanedReason = reason.trim();
+          final cleanedNotes = notes?.trim().isEmpty ?? true
+              ? null
+              : notes!.trim();
 
-      await _db.attachmentAuditDao.insertAuditLog(
-        AuditLogsCompanion(
-          id: Value(_idGenerator.nextEntityId()),
-          entityType: const Value('stock_movements'),
-          entityId: Value(movId),
-          actionType: const Value('DAMAGED_TO_GOOD_ADJUSTMENT'),
-          actor: Value(actor),
-          newValueJson: Value(
-            jsonEncode({
-              'design_colour_id': colour.id,
-              'quantity': quantity,
-              'reason': cleanedReason,
-            }),
-          ),
-          reason: Value(cleanedReason),
-          transactionAt: Value(transactionAtUtcMillis),
-          recordedAt: Value(now),
-        ),
-      );
+          await _db.stockMovementDao.insertMovement(
+            StockMovementsCompanion(
+              id: Value(movId),
+              lotId: Value(design.lotId),
+              lotDesignId: Value(design.id),
+              designColourId: Value(colour.id),
+              clientRequestId: Value(reqId),
+              movementType: Value(
+                StockMovementType.adjustmentDamagedToGood.dbValue,
+              ),
+              quantity: Value(quantity),
+              appliedRatePaise: const Value(0),
+              reason: Value(cleanedReason),
+              notes: Value(cleanedNotes),
+              transactionAt: Value(transactionAtUtcMillis),
+              recordedAt: Value(now),
+              createdBy: Value(actor),
+              updatedBy: Value(actor),
+              createdAt: Value(now),
+              updatedAt: Value(now),
+            ),
+          );
 
-      final inserted = await _db.stockMovementDao.findById(movId);
-      return _mapRow(inserted!);
-    });
+          await _db.attachmentAuditDao.insertAuditLog(
+            AuditLogsCompanion(
+              id: Value(_idGenerator.nextEntityId()),
+              entityType: const Value('stock_movements'),
+              entityId: Value(movId),
+              actionType: const Value('DAMAGED_TO_GOOD_ADJUSTMENT'),
+              actor: Value(actor),
+              newValueJson: Value(
+                jsonEncode({
+                  'design_colour_id': colour.id,
+                  'quantity': quantity,
+                  'reason': cleanedReason,
+                }),
+              ),
+              reason: Value(cleanedReason),
+              transactionAt: Value(transactionAtUtcMillis),
+              recordedAt: Value(now),
+            ),
+          );
+
+          final inserted = await _db.stockMovementDao.findById(movId);
+          return _mapRow(inserted!);
+        })
+        .then((result) {
+          NotificationRefreshCoordinator.requestBackgroundRefreshIfRegistered();
+          return result;
+        });
   }
 
   @override

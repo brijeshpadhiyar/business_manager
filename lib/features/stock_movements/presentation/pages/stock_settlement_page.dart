@@ -10,9 +10,12 @@ import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/accounting/domain/calculators/labour_calculator.dart';
 import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
+import 'package:business_manager/features/processes/domain/entities/process_entities.dart';
+import 'package:business_manager/features/processes/domain/repositories/process_repository.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 import 'package:business_manager/features/stock_movements/domain/repositories/stock_movement_repository.dart';
 import 'package:flutter/services.dart';
@@ -32,6 +35,13 @@ final class StockSettlementPage extends StatefulWidget {
 
 final class _StockSettlementPageState extends State<StockSettlementPage> {
   final _formKey = GlobalKey<FormState>();
+  final _goodFieldKey = GlobalKey<FormFieldState<String>>();
+  final _damagedFieldKey = GlobalKey<FormFieldState<String>>();
+  final _lostFieldKey = GlobalKey<FormFieldState<String>>();
+  final _shortageFieldKey = GlobalKey<FormFieldState<String>>();
+  final _reasonFieldKey = GlobalKey<FormFieldState<String>>();
+  final _notesFieldKey = GlobalKey<FormFieldState<String>>();
+
   final _goodCtrl = TextEditingController();
   final _damagedCtrl = TextEditingController();
   final _lostCtrl = TextEditingController();
@@ -39,15 +49,20 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
   final _reasonCtrl = TextEditingController();
   final _notesCtrl = TextEditingController();
 
+  final _reasonFocus = FocusNode();
+
   final _repo = getIt<StockMovementRepository>();
+  final _processRepo = getIt<ProcessRepository>();
   final _idGen = getIt<IdGenerator>();
   static const LabourCalculator _labourCalc = LabourCalculator();
 
   late String _clientRequestId;
 
   OpenIssueSummary? _detail;
+  List<ProcessEntity> _otherActiveProcesses = const [];
   bool _loading = true;
   bool _saving = false;
+  bool _submittedOnce = false;
   bool _showAdvanced = false;
   String? _loadError;
   String? _submitError;
@@ -71,6 +86,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
     _shortageCtrl.dispose();
     _reasonCtrl.dispose();
     _notesCtrl.dispose();
+    _reasonFocus.dispose();
     super.dispose();
   }
 
@@ -80,7 +96,12 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
       _loadError = null;
     });
     try {
-      final detail = await _repo.getIssueDetail(widget.issueId);
+      final results = await Future.wait([
+        _repo.getIssueDetail(widget.issueId),
+        _processRepo.getProcesses(isActiveFilter: true),
+      ]);
+      final detail = results[0] as OpenIssueSummary?;
+      final activeProcs = results[1] as List<ProcessEntity>;
       if (!mounted) return;
       if (detail == null) {
         setState(() {
@@ -89,8 +110,12 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
         });
         return;
       }
+      final currentProcId = detail.issueView.movement.processId;
       setState(() {
         _detail = detail;
+        _otherActiveProcesses = activeProcs
+            .where((p) => p.id != currentProcId)
+            .toList();
         _goodCtrl.text = detail.remainingPending > 0
             ? '${detail.remainingPending}'
             : '';
@@ -119,6 +144,14 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
       _damagedCtrl.text = '0';
       _lostCtrl.text = '0';
       _shortageCtrl.text = '0';
+      _submitError = null;
+    });
+  }
+
+  void _setGoodQtyClamped(int target, int maxGood) {
+    final clamped = target.clamp(0, maxGood);
+    setState(() {
+      _goodCtrl.text = '$clamped';
       _submitError = null;
     });
   }
@@ -158,8 +191,25 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
   }
 
   Future<void> _submit() async {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
     if (_saving || _detail == null) return;
+    if (!_submittedOnce) {
+      setState(() => _submittedOnce = true);
+    }
+    final valid = FormValidationHelper.validateAndFocusFirstInvalid(
+      formKey: _formKey,
+      orderedAnchors: [
+        ValidatedFieldAnchor(fieldKey: _goodFieldKey),
+        ValidatedFieldAnchor(fieldKey: _damagedFieldKey),
+        ValidatedFieldAnchor(fieldKey: _lostFieldKey),
+        ValidatedFieldAnchor(fieldKey: _shortageFieldKey),
+        ValidatedFieldAnchor(
+          fieldKey: _reasonFieldKey,
+          focusNode: _reasonFocus,
+        ),
+        ValidatedFieldAnchor(fieldKey: _notesFieldKey),
+      ],
+    );
+    if (!valid) return;
     final l10n = context.l10n;
 
     final good = _qtyOf(_goodCtrl);
@@ -231,12 +281,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
       if (!mounted) return;
       setState(() {
         _saving = false;
-        _submitError = switch (e.code) {
-          'exceeds_pending_quantity' => l10n.stockSettlementTotalExceedsError,
-          'settlement_empty' => l10n.stockSettlementEmptyError,
-          'reason_required' => l10n.stockSettlementReasonRequiredError,
-          _ => e.message,
-        };
+        _submitError = ValidationLocalizer.localizeDomainException(l10n, e);
       });
     } catch (e) {
       if (!mounted) return;
@@ -319,6 +364,9 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
       title: l10n.stockSettlementHeading,
       body: Form(
         key: _formKey,
+        autovalidateMode: _submittedOnce
+            ? AutovalidateMode.onUserInteraction
+            : AutovalidateMode.disabled,
         child: ListView(
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           children: [
@@ -447,23 +495,74 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.md),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: ActionChip(
-                        avatar: Icon(
-                          Icons.done_all_rounded,
-                          size: 16,
-                          color: semantic.goodStock,
+                    Wrap(
+                      spacing: AppSpacing.xs,
+                      runSpacing: AppSpacing.xs,
+                      children: [
+                        ActionChip(
+                          avatar: Icon(
+                            Icons.done_all_rounded,
+                            size: 16,
+                            color: semantic.goodStock,
+                          ),
+                          label: Text(
+                            '${l10n.stockFillAllRemaining} (${detail.remainingPending})',
+                          ),
+                          onPressed: () =>
+                              _fillAllGood(detail.remainingPending),
                         ),
-                        label: Text(
-                          '${l10n.stockFillAllRemaining} (${detail.remainingPending})',
-                        ),
-                        onPressed: () => _fillAllGood(detail.remainingPending),
-                      ),
+                        if (detail.remainingPending >= 4)
+                          ActionChip(
+                            label: Text(
+                              '${l10n.stockShortcutHalf} (${detail.remainingPending ~/ 2})',
+                            ),
+                            onPressed: () => _setGoodQtyClamped(
+                              detail.remainingPending ~/ 2,
+                              detail.remainingPending -
+                                  (damaged + lost + shortage),
+                            ),
+                          ),
+                        if (detail.remainingPending >= 10)
+                          ActionChip(
+                            label: const Text('+10'),
+                            onPressed: () => _setGoodQtyClamped(
+                              good + 10,
+                              detail.remainingPending -
+                                  (damaged + lost + shortage),
+                            ),
+                          ),
+                        if (detail.remainingPending >= 25)
+                          ActionChip(
+                            label: const Text('+25'),
+                            onPressed: () => _setGoodQtyClamped(
+                              good + 25,
+                              detail.remainingPending -
+                                  (damaged + lost + shortage),
+                            ),
+                          ),
+                        if ((damaged + lost + shortage) > 0 &&
+                            remainingAfter > 0)
+                          ActionChip(
+                            avatar: Icon(
+                              Icons.auto_fix_high_rounded,
+                              size: 16,
+                              color: semantic.goodStock,
+                            ),
+                            label: Text(
+                              '${l10n.stockFillRemainingGood} (${detail.remainingPending - (damaged + lost + shortage)})',
+                            ),
+                            onPressed: () => _setGoodQtyClamped(
+                              detail.remainingPending -
+                                  (damaged + lost + shortage),
+                              detail.remainingPending,
+                            ),
+                          ),
+                      ],
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     // Good Returned (Primary Green)
                     AppTextField(
+                      fieldKey: _goodFieldKey,
                       controller: _goodCtrl,
                       label: l10n.stockGoodReturnQtyLabel,
                       prefixIcon: Icons.check_circle_outline_rounded,
@@ -476,11 +575,16 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                           fontWeight: FontWeight.w700,
                         ),
                       ),
+                      validator: ValidationLocalizer.wrap(
+                        l10n,
+                        (v) => AppValidators.nonNegativeQuantityValidator(v),
+                      ),
                       onChanged: (_) => setState(() => _submitError = null),
                     ),
                     const SizedBox(height: AppSpacing.md),
                     // Damaged Returned (Red)
                     AppTextField(
+                      fieldKey: _damagedFieldKey,
                       controller: _damagedCtrl,
                       label: l10n.stockDamagedReturnQtyLabel,
                       prefixIcon: Icons.report_problem_outlined,
@@ -493,11 +597,16 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
+                      validator: ValidationLocalizer.wrap(
+                        l10n,
+                        (v) => AppValidators.nonNegativeQuantityValidator(v),
+                      ),
                       onChanged: (_) => setState(() => _submitError = null),
                     ),
                     const SizedBox(height: AppSpacing.md),
                     // Lost vs Shortage clearly separated with helper text
                     AppTextField(
+                      fieldKey: _lostFieldKey,
                       controller: _lostCtrl,
                       label: l10n.stockLostQtyLabel,
                       helperText: l10n.stockLostHelper,
@@ -508,10 +617,15 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                       style: AppTypography.tabular(
                         Theme.of(context).textTheme.titleMedium!,
                       ),
+                      validator: ValidationLocalizer.wrap(
+                        l10n,
+                        (v) => AppValidators.nonNegativeQuantityValidator(v),
+                      ),
                       onChanged: (_) => setState(() => _submitError = null),
                     ),
                     const SizedBox(height: AppSpacing.md),
                     AppTextField(
+                      fieldKey: _shortageFieldKey,
                       controller: _shortageCtrl,
                       label: l10n.stockShortageQtyLabel,
                       helperText: l10n.stockShortageHelper,
@@ -522,18 +636,31 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                       style: AppTypography.tabular(
                         Theme.of(context).textTheme.titleMedium!,
                       ),
+                      validator: ValidationLocalizer.wrap(
+                        l10n,
+                        (v) => AppValidators.nonNegativeQuantityValidator(v),
+                      ),
                       onChanged: (_) => setState(() => _submitError = null),
                     ),
                     const SizedBox(height: AppSpacing.md),
                     AppTextField(
+                      fieldKey: _reasonFieldKey,
                       controller: _reasonCtrl,
+                      focusNode: _reasonFocus,
                       label: l10n.stockSettlementReasonLabel,
                       maxLines: 2,
+                      maxLength: ValidationLimits.maxNotesLength,
                       validator: (v) {
                         if (needsReason && (v == null || v.trim().isEmpty)) {
                           return l10n.stockSettlementReasonRequiredError;
                         }
-                        return null;
+                        return ValidationLocalizer.localize(
+                          l10n,
+                          AppValidators.maxLengthValidator(
+                            v,
+                            maxLength: ValidationLimits.maxNotesLength,
+                          ),
+                        );
                       },
                       onChanged: (_) => setState(() => _submitError = null),
                     ),
@@ -561,9 +688,18 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                           ),
                           const SizedBox(height: AppSpacing.sm),
                           AppTextField(
+                            fieldKey: _notesFieldKey,
                             controller: _notesCtrl,
                             label: l10n.stockNotesLabel,
                             maxLines: 2,
+                            maxLength: ValidationLimits.maxNotesLength,
+                            validator: ValidationLocalizer.wrap(
+                              l10n,
+                              (v) => AppValidators.maxLengthValidator(
+                                v,
+                                maxLength: ValidationLimits.maxNotesLength,
+                              ),
+                            ),
                           ),
                           const SizedBox(height: AppSpacing.sm),
                         ],
@@ -856,6 +992,27 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                       ),
                     ),
                   ),
+                  if (_otherActiveProcesses.isNotEmpty) ...[
+                    const SizedBox(height: AppSpacing.sm),
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: AppSpacing.xs,
+                      runSpacing: AppSpacing.xs,
+                      children: [
+                        for (final proc in _otherActiveProcesses.take(4))
+                          ActionChip(
+                            avatar: const Icon(Icons.outbox_rounded, size: 16),
+                            label: Text(proc.name),
+                            onPressed: () => context.pushReplacement(
+                              RoutePaths.stockIssue(
+                                designColourId: info.designColourId,
+                                processId: proc.id,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
                   const SizedBox(height: AppSpacing.sm),
                 ],
                 AppButton(

@@ -41,4 +41,28 @@ class PaymentDao extends DatabaseAccessor<AppDatabase> with _$PaymentDaoMixin {
           ]))
         .get();
   }
+
+  /// Bounded read-only date-range query accelerated by `idx_payments_tx`.
+  Future<List<PaymentRow>> getPaymentsInRange({
+    int? fromUtcMillis,
+    int? toUtcMillis,
+  }) {
+    final query = select(payments);
+    if (fromUtcMillis != null && toUtcMillis != null) {
+      query.where(
+        (t) =>
+            t.transactionAt.isBiggerOrEqualValue(fromUtcMillis) &
+            t.transactionAt.isSmallerOrEqualValue(toUtcMillis),
+      );
+    } else if (fromUtcMillis != null) {
+      query.where((t) => t.transactionAt.isBiggerOrEqualValue(fromUtcMillis));
+    } else if (toUtcMillis != null) {
+      query.where((t) => t.transactionAt.isSmallerOrEqualValue(toUtcMillis));
+    }
+    query.orderBy([
+      (t) => OrderingTerm.desc(t.transactionAt),
+      (t) => OrderingTerm.desc(t.recordedAt),
+    ]);
+    return query.get();
+  }
 }

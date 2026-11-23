@@ -5,6 +5,7 @@ import 'package:business_manager/core/database/database_transaction_runner.dart'
 import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/features/rates/domain/entities/rate_entities.dart';
 import 'package:business_manager/features/rates/domain/repositories/rate_repository.dart';
 import 'package:business_manager/features/rates/domain/services/member_process_rate_resolver.dart';
@@ -89,6 +90,18 @@ final class RateRepositoryImpl implements RateRepository {
     final cleanFrom = effectiveFrom.trim();
     final cleanTo = _nullIfBlank(effectiveTo);
     final cleanNotes = _nullIfBlank(notes);
+    if (ratePaise > ValidationLimits.maxAmountPaise) {
+      throw const DomainValidationException(
+        'rate_too_large',
+        'Rate exceeds maximum allowed limit.',
+      );
+    }
+    if ((cleanNotes?.length ?? 0) > ValidationLimits.maxNotesLength) {
+      throw const DomainValidationException(
+        'text_too_long',
+        'Notes exceed maximum allowed length.',
+      );
+    }
 
     return _txRunner.runInTransaction(() async {
       final worker = await _db.processMemberDao.findMemberById(workerId);
@@ -222,6 +235,18 @@ final class RateRepositoryImpl implements RateRepository {
     final cleanFrom = effectiveFrom.trim();
     final cleanTo = _nullIfBlank(effectiveTo);
     final cleanNotes = _nullIfBlank(notes);
+    if (ratePaise > ValidationLimits.maxAmountPaise) {
+      throw const DomainValidationException(
+        'rate_too_large',
+        'Rate exceeds maximum allowed limit.',
+      );
+    }
+    if ((cleanNotes?.length ?? 0) > ValidationLimits.maxNotesLength) {
+      throw const DomainValidationException(
+        'text_too_long',
+        'Notes exceed maximum allowed length.',
+      );
+    }
 
     return _txRunner.runInTransaction(() async {
       final existingRow = await _db.processMemberDao.findRateById(rateId);

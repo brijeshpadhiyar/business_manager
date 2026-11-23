@@ -1,0 +1,625 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:isolate';
+
+import 'package:business_manager/core/utils/ist_datetime_helper.dart';
+import 'package:business_manager/core/utils/money_formatter.dart';
+import 'package:business_manager/features/reports/data/services/android_report_print_channel.dart';
+import 'package:business_manager/features/reports/data/services/report_html_builder.dart';
+import 'package:business_manager/features/reports/domain/entities/advanced_report_entities.dart';
+import 'package:business_manager/features/reports/domain/entities/report_filter.dart';
+import 'package:business_manager/features/reports/domain/services/report_export_service.dart';
+import 'package:business_manager/features/security/presentation/bloc/app_lock_cubit.dart';
+import 'package:excel_plus/excel_plus.dart';
+import 'package:injectable/injectable.dart';
+import 'package:path/path.dart' as p;
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
+
+/// Sendable sheet payload for background Isolate `.xlsx` / `.csv` generation.
+final class ExportSheetData {
+  const ExportSheetData({
+    required this.name,
+    required this.headers,
+    required this.rows,
+  });
+
+  final String name;
+  final List<String> headers;
+  final List<List<Object?>> rows;
+}
+
+/// Offline Gujarati-safe report exporter supporting:
+/// - Native Android WebView + PrintManager ("Save as PDF" & print)
+/// - MIT-licensed `excel_plus` `.xlsx` multi-sheet workbooks (in Isolate)
+/// - Pure-Dart UTF-8 with BOM (`\uFEFF`) `.csv` export (in Isolate)
+@LazySingleton(as: ReportExportService)
+final class ExcelCsvExportService implements ReportExportService {
+  ExcelCsvExportService(this._printChannel, this._appLockCubit);
+
+  final AndroidReportPrintChannel _printChannel;
+  final AppLockCubit _appLockCubit;
+
+  static const ReportHtmlBuilder _htmlBuilder = ReportHtmlBuilder();
+
+  static bool get _isFlutterTest =>
+      Platform.environment.containsKey('FLUTTER_TEST');
+
+  @override
+  Future<ReportExportResult> printOrSavePdf({
+    required AdvancedReportsBundle bundle,
+    required ReportCategory category,
+    required String localeCode,
+    int? subTabIndex,
+  }) async {
+    final html = _htmlBuilder.buildHtml(
+      bundle: bundle,
+      category: category,
+      localeCode: localeCode,
+      subTabIndex: subTabIndex,
+    );
+    final stamp = IstDateTimeHelper.formatIstFileTimestamp(
+      bundle.generatedAtUtcMillis,
+    );
+    final jobName = 'StitchFlow_${category.name}_$stamp';
+
+    final ok = await _appLockCubit.runWithSystemPicker(
+      () => _printChannel.printHtml(jobName: jobName, html: html),
+    );
+    return ReportExportResult(
+      success: ok,
+      message: ok
+          ? jobName
+          : 'Print dialog is only available on Android devices.',
+    );
+  }
+
+  @override
+  Future<ReportExportResult> exportExcel({
+    required AdvancedReportsBundle bundle,
+    required ReportCategory category,
+    required String localeCode,
+    bool fullWorkbook = false,
+  }) async {
+    final sheets = buildSheets(
+      bundle: bundle,
+      category: category,
+      localeCode: localeCode,
+      fullWorkbook: fullWorkbook,
+    );
+    final totalRows = sheets.fold<int>(0, (s, sh) => s + sh.rows.length);
+    final bytes = await Isolate.run(() => buildXlsxBytes(sheets));
+
+    final stamp = IstDateTimeHelper.formatIstFileTimestamp(
+      bundle.generatedAtUtcMillis,
+    );
+    final slug = fullWorkbook ? 'full_workbook' : category.name;
+    final fileName = 'stitchflow_report_${slug}_$stamp.xlsx';
+    final filePath = await _writeTempExportFile(fileName, bytes);
+
+    if (!_isFlutterTest) {
+      await _appLockCubit.runWithSystemPicker(
+        () => SharePlus.instance.share(
+          ShareParams(files: [XFile(filePath)], text: fileName),
+        ),
+      );
+    }
+
+    return ReportExportResult(
+      success: true,
+      filePath: filePath,
+      message: fileName,
+      rowCount: totalRows,
+    );
+  }
+
+  @override
+  Future<ReportExportResult> exportCsv({
+    required AdvancedReportsBundle bundle,
+    required ReportCategory category,
+    required String localeCode,
+  }) async {
+    final sheets = buildSheets(
+      bundle: bundle,
+      category: category,
+      localeCode: localeCode,
+      fullWorkbook: false,
+    );
+    final primarySheet = sheets.first;
+    final bytes = await Isolate.run(() => buildCsvBytesWithBom(primarySheet));
+
+    final stamp = IstDateTimeHelper.formatIstFileTimestamp(
+      bundle.generatedAtUtcMillis,
+    );
+    final fileName = 'stitchflow_report_${category.name}_$stamp.csv';
+    final filePath = await _writeTempExportFile(fileName, bytes);
+
+    if (!_isFlutterTest) {
+      await _appLockCubit.runWithSystemPicker(
+        () => SharePlus.instance.share(
+          ShareParams(files: [XFile(filePath)], text: fileName),
+        ),
+      );
+    }
+
+    return ReportExportResult(
+      success: true,
+      filePath: filePath,
+      message: fileName,
+      rowCount: primarySheet.rows.length,
+    );
+  }
+
+  Future<String> _writeTempExportFile(String fileName, List<int> bytes) async {
+    final baseDir = _isFlutterTest
+        ? Directory.systemTemp
+        : await getTemporaryDirectory();
+    final exportDir = Directory(p.join(baseDir.path, 'stitchflow_exports'));
+    if (!exportDir.existsSync()) {
+      await exportDir.create(recursive: true);
+    }
+    final outFile = File(p.join(exportDir.path, fileName));
+    await outFile.writeAsBytes(bytes, flush: true);
+    return outFile.path;
+  }
+
+  /// Pure-Dart Excel `.xlsx` encoder (safe for `Isolate.run` and unit tests).
+  static List<int> buildXlsxBytes(List<ExportSheetData> sheets) {
+    final excel = Excel.createExcel();
+    final defaultSheet = excel.getDefaultSheet() ?? 'Sheet1';
+
+    for (var i = 0; i < sheets.length; i++) {
+      final data = sheets[i];
+      final safeName = _sanitizeSheetName(data.name);
+      if (i == 0 && excel.tables.containsKey(defaultSheet)) {
+        if (defaultSheet != safeName) {
+          excel.rename(defaultSheet, safeName);
+        }
+      }
+      final sheet = excel[safeName];
+
+      for (var c = 0; c < data.headers.length; c++) {
+        sheet.updateCell(
+          CellIndex.indexByColumnRow(columnIndex: c, rowIndex: 0),
+          TextCellValue(data.headers[c]),
+        );
+      }
+
+      for (var r = 0; r < data.rows.length; r++) {
+        final row = data.rows[r];
+        for (var c = 0; c < row.length; c++) {
+          final val = row[c];
+          final CellValue cellVal;
+          if (val is int) {
+            cellVal = IntCellValue(val);
+          } else if (val is double) {
+            cellVal = DoubleCellValue(val);
+          } else {
+            cellVal = TextCellValue(val?.toString() ?? '');
+          }
+          sheet.updateCell(
+            CellIndex.indexByColumnRow(columnIndex: c, rowIndex: r + 1),
+            cellVal,
+          );
+        }
+      }
+    }
+
+    final encoded = excel.save();
+    return encoded ?? const <int>[];
+  }
+
+  /// Pure-Dart UTF-8 with BOM (`\uFEFF`) CSV encoder so Microsoft Excel opens
+  /// Gujarati Unicode cleanly without garbled Latin-1 decoding.
+  static List<int> buildCsvBytesWithBom(ExportSheetData sheet) {
+    final buf = StringBuffer('\uFEFF');
+    buf.writeln(sheet.headers.map(_csvEscape).join(','));
+    for (final row in sheet.rows) {
+      buf.writeln(row.map((v) => _csvEscape(v?.toString() ?? '')).join(','));
+    }
+    return utf8.encode(buf.toString());
+  }
+
+  static String _csvEscape(String value) {
+    final needsQuotes =
+        value.contains(',') ||
+        value.contains('"') ||
+        value.contains('\n') ||
+        value.contains('\r');
+    if (!needsQuotes) return value;
+    return '"${value.replaceAll('"', '""')}"';
+  }
+
+  static String _sanitizeSheetName(String raw) {
+    final cleaned = raw.replaceAll(RegExp(r'[\[\]:*?/\\]'), '_').trim();
+    if (cleaned.isEmpty) return 'Report';
+    return cleaned.length > 31 ? cleaned.substring(0, 31) : cleaned;
+  }
+
+  /// Converts an [AdvancedReportsBundle] into sendable tabular sheets.
+  static List<ExportSheetData> buildSheets({
+    required AdvancedReportsBundle bundle,
+    required ReportCategory category,
+    required String localeCode,
+    required bool fullWorkbook,
+  }) {
+    final isGu = localeCode == 'gu';
+    if (fullWorkbook) {
+      return [
+        _dailySheet(bundle, isGu: isGu),
+        _workersSheet(bundle, isGu: isGu),
+        _processesSheet(bundle, isGu: isGu),
+        _inventoryLotsSheet(bundle, isGu: isGu),
+        _inventoryColoursSheet(bundle, isGu: isGu),
+        _labourSheet(bundle, isGu: isGu),
+        _paymentsSheet(bundle, isGu: isGu),
+      ];
+    }
+
+    return switch (category) {
+      ReportCategory.dailyWorkshop => [_dailySheet(bundle, isGu: isGu)],
+      ReportCategory.workerPerformance => [_workersSheet(bundle, isGu: isGu)],
+      ReportCategory.processPerformance => [
+        _processesSheet(bundle, isGu: isGu),
+      ],
+      ReportCategory.inventory => [
+        _inventoryLotsSheet(bundle, isGu: isGu),
+        _inventoryColoursSheet(bundle, isGu: isGu),
+      ],
+      ReportCategory.labourFinancial => [
+        _labourSheet(bundle, isGu: isGu),
+        _paymentsSheet(bundle, isGu: isGu),
+      ],
+      ReportCategory.businessInsights => [_insightsSheet(bundle, isGu: isGu)],
+    };
+  }
+
+  static ExportSheetData _dailySheet(
+    AdvancedReportsBundle b, {
+    required bool isGu,
+  }) {
+    return ExportSheetData(
+      name: isGu ? 'દૈનિક_રિપોર્ટ' : 'Daily',
+      headers: isGu
+          ? const [
+              'તારીખ (IST)',
+              'ઇશ્યુ',
+              'સારા પરત',
+              'નુકસાન',
+              'ગુમ/ઘટ',
+              'મજૂરી ખર્ચ (₹)',
+              'નેટ ચુકવણી (₹)',
+            ]
+          : const [
+              'Date (IST)',
+              'Issued',
+              'Good Returned',
+              'Damaged',
+              'Lost & Shortage',
+              'Labour Cost (INR)',
+              'Net Payments (INR)',
+            ],
+      rows: [
+        for (final r in b.dailyRows)
+          [
+            r.istDateIso,
+            r.issuedQty,
+            r.goodReturnedQty,
+            r.damagedQty,
+            r.lostAndShortageQty,
+            r.labourEarnedPaise / 100.0,
+            r.netPaymentsPaise / 100.0,
+          ],
+      ],
+    );
+  }
+
+  static ExportSheetData _workersSheet(
+    AdvancedReportsBundle b, {
+    required bool isGu,
+  }) {
+    return ExportSheetData(
+      name: isGu ? 'કારીગર_કામગીરી' : 'Workers',
+      headers: isGu
+          ? const [
+              'કારીગર',
+              'ઇશ્યુ',
+              'સારા પરત',
+              'નુકસાન',
+              'ગુમ/ઘટ',
+              'હાલનું બાકી',
+              'સમય મજૂરી (₹)',
+              'ચુકવણી (₹)',
+              'હાલનું બાકી લેણું (₹)',
+              'એડવાન્સ જમા (₹)',
+            ]
+          : const [
+              'Worker',
+              'Period Issued',
+              'Period Good Returned',
+              'Period Damaged',
+              'Period Lost & Shortage',
+              'Current Pending Qty',
+              'Period Labour Cost (INR)',
+              'Period Net Payments (INR)',
+              'Current Outstanding Payable (INR)',
+              'Current Advance Credit (INR)',
+            ],
+      rows: [
+        for (final w in b.workerPerformance)
+          [
+            w.workerName,
+            w.periodIssuedQty,
+            w.periodGoodReturnedQty,
+            w.periodDamagedQty,
+            w.periodLostShortageQty,
+            w.currentPendingQty,
+            w.periodLabourEarnedPaise / 100.0,
+            w.periodNetPaymentsPaise / 100.0,
+            w.currentOutstandingPayablePaise / 100.0,
+            w.currentAdvanceCreditPaise / 100.0,
+          ],
+      ],
+    );
+  }
+
+  static ExportSheetData _processesSheet(
+    AdvancedReportsBundle b, {
+    required bool isGu,
+  }) {
+    return ExportSheetData(
+      name: isGu ? 'પ્રક્રિયા_કામગીરી' : 'Processes',
+      headers: isGu
+          ? const [
+              'પ્રક્રિયા',
+              'ઇશ્યુ',
+              'પૂર્ણ (સારા)',
+              'નુકસાન',
+              'ગુમ/ઘટ',
+              'હાલનું બાકી',
+              'સરેરાશ સમય (કલાક)',
+              'પૂર્ણ ઇશ્યુ સંખ્યા',
+              'મજૂરી ખર્ચ (₹)',
+            ]
+          : const [
+              'Process',
+              'Period Issued',
+              'Period Completed (Good)',
+              'Period Damaged',
+              'Period Lost & Shortage',
+              'Current Pending Qty',
+              'Avg Completion Hours',
+              'Settled Issues Count',
+              'Period Labour Cost (INR)',
+            ],
+      rows: [
+        for (final p in b.processPerformance)
+          [
+            p.processName,
+            p.periodIssuedQty,
+            p.periodGoodReturnedQty,
+            p.periodDamagedQty,
+            p.periodLostShortageQty,
+            p.currentPendingQty,
+            p.averageTurnaroundHours != null
+                ? double.parse(p.averageTurnaroundHours!.toStringAsFixed(2))
+                : 'N/A',
+            p.settledIssuesCount,
+            p.periodLabourCostPaise / 100.0,
+          ],
+      ],
+    );
+  }
+
+  static ExportSheetData _inventoryLotsSheet(
+    AdvancedReportsBundle b, {
+    required bool isGu,
+  }) {
+    return ExportSheetData(
+      name: isGu ? 'લોટ_સ્ટોક' : 'Inventory_Lots',
+      headers: isGu
+          ? const [
+              'લોટ નંબર',
+              'શીર્ષક',
+              'શરૂઆત સ્ટોક',
+              'ઉપલબ્ધ સારો સ્ટોક',
+              'કારીગર પાસે બાકી',
+              'નુકસાન',
+              'ગુમ',
+              'ઘટ',
+              'અંદાજિત સ્ટોક કિંમત (₹)',
+            ]
+          : const [
+              'Lot Number',
+              'Title',
+              'Initial Stock',
+              'Available Good Stock',
+              'Pending With Workers',
+              'Damaged Bucket',
+              'Lost',
+              'Shortage',
+              'Reference Stock Value (INR)',
+            ],
+      rows: [
+        for (final r in b.inventory.lotRows)
+          [
+            r.lotNumber,
+            r.title ?? '',
+            r.initialQuantity,
+            r.availableGoodStock,
+            r.pendingWithWorkers,
+            r.damagedBucket,
+            r.lostQuantity,
+            r.shortageQuantity,
+            r.goodStockValuePaise / 100.0,
+          ],
+      ],
+    );
+  }
+
+  static ExportSheetData _inventoryColoursSheet(
+    AdvancedReportsBundle b, {
+    required bool isGu,
+  }) {
+    return ExportSheetData(
+      name: isGu ? 'રંગ_સ્ટોક' : 'Inventory_Colours',
+      headers: isGu
+          ? const [
+              'લોટ',
+              'ડિઝાઇન',
+              'રંગ',
+              'શરૂઆત',
+              'ઉપલબ્ધ સારો',
+              'બાકી',
+              'નુકસાન',
+              'ગુમ',
+              'ઘટ',
+            ]
+          : const [
+              'Lot',
+              'Design',
+              'Colour',
+              'Initial',
+              'Available Good',
+              'Pending',
+              'Damaged',
+              'Lost',
+              'Shortage',
+            ],
+      rows: [
+        for (final c in b.inventory.colourBalances)
+          [
+            c.lotNumber,
+            c.designName,
+            c.colourName,
+            c.initialQuantity,
+            c.physicalAvailableInHouse,
+            c.totalPendingWithWorkers,
+            c.damagedBucket,
+            c.totalLost,
+            c.totalShortage,
+          ],
+      ],
+    );
+  }
+
+  static ExportSheetData _labourSheet(
+    AdvancedReportsBundle b, {
+    required bool isGu,
+  }) {
+    return ExportSheetData(
+      name: isGu ? 'મજૂરી_નોંધ' : 'Labour',
+      headers: isGu
+          ? const [
+              'તારીખ (IST)',
+              'કારીગર',
+              'પ્રક્રિયા',
+              'લોટ',
+              'નંગ',
+              'દર (₹)',
+              'રકમ (₹)',
+            ]
+          : const [
+              'Date (IST)',
+              'Worker',
+              'Process',
+              'Lot',
+              'Quantity',
+              'Locked Rate (INR)',
+              'Labour Amount (INR)',
+            ],
+      rows: [
+        for (final l in b.financial.labourEntries)
+          [
+            IstDateTimeHelper.toIstBusinessDate(l.entry.transactionAt),
+            l.workerName,
+            l.processName,
+            l.lotNumber,
+            l.entry.quantity,
+            l.entry.ratePaise / 100.0,
+            l.entry.amountPaise / 100.0,
+          ],
+      ],
+    );
+  }
+
+  static ExportSheetData _paymentsSheet(
+    AdvancedReportsBundle b, {
+    required bool isGu,
+  }) {
+    return ExportSheetData(
+      name: isGu ? 'ચુકવણી_ઇતિહાસ' : 'Payments',
+      headers: isGu
+          ? const [
+              'તારીખ (IST)',
+              'કારીગર',
+              'પ્રકાર',
+              'માધ્યમ',
+              'રકમ (₹)',
+              'સંદર્ભ / નોંધ',
+            ]
+          : const [
+              'Date (IST)',
+              'Worker',
+              'Payment Type',
+              'Mode',
+              'Amount (INR)',
+              'Reference / Notes',
+            ],
+      rows: [
+        for (final p in b.financial.payments)
+          [
+            IstDateTimeHelper.toIstBusinessDate(p.payment.transactionAt),
+            p.workerName,
+            p.payment.paymentType.dbValue,
+            p.payment.paymentMode.dbValue,
+            p.payment.amountPaise / 100.0,
+            p.payment.referenceNo ?? p.payment.notes ?? '',
+          ],
+      ],
+    );
+  }
+
+  static ExportSheetData _insightsSheet(
+    AdvancedReportsBundle b, {
+    required bool isGu,
+  }) {
+    return ExportSheetData(
+      name: isGu ? 'વિશ્લેષણ_અવરોધ' : 'Insights',
+      headers: isGu
+          ? const [
+              'પ્રક્રિયા',
+              'બાકી નંગ',
+              'ખુલ્લા ઇશ્યુ',
+              'સૌથી જૂનું (દિવસ)',
+              'સમયમાં પૂર્ણ',
+              'મજૂરી ખર્ચ',
+            ]
+          : const [
+              'Process',
+              'Current Pending Qty',
+              'Open Issues',
+              'Oldest Pending (Days)',
+              'Period Completed Qty',
+              'Period Labour Cost',
+            ],
+      rows: [
+        for (final bn in b.insights.bottlenecks)
+          [
+            bn.processName,
+            bn.currentPendingQty,
+            bn.openIssuesCount,
+            bn.oldestOpenIssueAgeDays,
+            bn.periodCompletedQty,
+            MoneyFormatter.formatPaise(
+              b.processPerformance
+                      .where((p) => p.processId == bn.processId)
+                      .firstOrNull
+                      ?.periodLabourCostPaise ??
+                  0,
+            ),
+          ],
+      ],
+    );
+  }
+}

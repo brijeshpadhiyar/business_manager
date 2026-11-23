@@ -50,4 +50,23 @@ class WorkerAdjustmentDao extends DatabaseAccessor<AppDatabase>
         ]))
         .get();
   }
+
+  /// Bounded read-only range query using `idx_wla_tx` (Schema v3).
+  Future<List<WorkerLedgerAdjustmentRow>> getAdjustmentsInRange({
+    int? fromUtcMillis,
+    int? toUtcMillis,
+  }) {
+    final query = select(workerLedgerAdjustments);
+    if (fromUtcMillis != null) {
+      query.where((t) => t.transactionAt.isBiggerOrEqualValue(fromUtcMillis));
+    }
+    if (toUtcMillis != null) {
+      query.where((t) => t.transactionAt.isSmallerOrEqualValue(toUtcMillis));
+    }
+    query.orderBy([
+      (t) => OrderingTerm.desc(t.transactionAt),
+      (t) => OrderingTerm.desc(t.recordedAt),
+    ]);
+    return query.get();
+  }
 }

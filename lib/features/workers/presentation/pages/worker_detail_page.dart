@@ -5,6 +5,8 @@ import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
+import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
+import 'package:business_manager/features/reports/domain/calculators/workshop_daily_calculator.dart';
 import 'package:business_manager/features/workers/domain/entities/worker_entities.dart';
 import 'package:business_manager/features/workers/presentation/bloc/worker_detail_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -236,6 +238,260 @@ final class _WorkerDetailView extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
+
+              // V1.2 Live Worker Work & Financial Overview (reconciled with LedgerCalculator)
+              if (state.ledgerDetail != null) ...[
+                Builder(
+                  builder: (context) {
+                    final ledger = state.ledgerDetail!;
+                    final fin = ledger.summary;
+                    final stock = ledger.stockSummary;
+                    final openIssues = state.openIssues;
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        AppHeading(
+                          l10n.workerWorkOverviewHeading,
+                          level: AppHeadingLevel.h3,
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            final isWide = constraints.maxWidth >= 680;
+                            final tileW = isWide
+                                ? (constraints.maxWidth - AppSpacing.sm * 3) / 4
+                                : (constraints.maxWidth - AppSpacing.sm) / 2;
+                            return Wrap(
+                              spacing: AppSpacing.sm,
+                              runSpacing: AppSpacing.sm,
+                              children: [
+                                SizedBox(
+                                  width: tileW,
+                                  child: AppMetricTile(
+                                    label: l10n.stockPendingWorkerLabel,
+                                    value: stock.pending,
+                                    suffix: l10n.piecesUnit,
+                                    subtitle:
+                                        '${openIssues.length} ${l10n.workerOpenIssuesCountLabel}',
+                                    icon: Icons.pending_actions_rounded,
+                                    tone: stock.pending > 0
+                                        ? AppStatusTone.pending
+                                        : AppStatusTone.good,
+                                    onTap: () => context.push(
+                                      RoutePaths.stockReturnPickerFiltered(
+                                        workerId: worker.id,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: tileW,
+                                  child: AppMetricTile(
+                                    label: l10n.accountingEarnedLabourLabel,
+                                    value: fin.earnedLabourPaise,
+                                    isCurrencyPaise: true,
+                                    icon: Icons.work_outline_rounded,
+                                    tone: AppStatusTone.good,
+                                    onTap: () => context.push(
+                                      RoutePaths.workerLedger(worker.id),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: tileW,
+                                  child: AppMetricTile(
+                                    label: fin.advanceCreditBalancePaise > 0
+                                        ? l10n.accountingAdvanceCreditLabel
+                                        : l10n.accountingOutstandingPayableLabel,
+                                    value: fin.advanceCreditBalancePaise > 0
+                                        ? fin.advanceCreditBalancePaise
+                                        : fin.outstandingPayablePaise,
+                                    isCurrencyPaise: true,
+                                    icon: Icons.account_balance_wallet_outlined,
+                                    tone: fin.advanceCreditBalancePaise > 0
+                                        ? AppStatusTone.info
+                                        : (fin.outstandingPayablePaise > 0
+                                              ? AppStatusTone.pending
+                                              : AppStatusTone.good),
+                                    onTap: () => context.push(
+                                      RoutePaths.workerLedger(worker.id),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: tileW,
+                                  child: AppMetricTile(
+                                    label: l10n.stockGoodReturnedLabel,
+                                    value: stock.goodReturned,
+                                    suffix: l10n.piecesUnit,
+                                    icon: Icons.check_circle_outline_rounded,
+                                    tone: AppStatusTone.neutral,
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                        if (openIssues.isNotEmpty) ...[
+                          const SizedBox(height: AppSpacing.md),
+                          AppCard(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: AppText(
+                                        l10n.workerOpenIssuesHeading,
+                                        variant: AppTextVariant.label,
+                                      ),
+                                    ),
+                                    AppButton(
+                                      label: l10n.dashboardViewAllPendingAction,
+                                      variant: AppButtonVariant.text,
+                                      onPressed: () async {
+                                        await context.push(
+                                          RoutePaths.stockReturnPickerFiltered(
+                                            workerId: worker.id,
+                                          ),
+                                        );
+                                        if (context.mounted) {
+                                          await context
+                                              .read<WorkerDetailCubit>()
+                                              .loadWorker(worker.id);
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                for (
+                                  var i = 0;
+                                  i < openIssues.take(3).length;
+                                  i++
+                                ) ...[
+                                  Builder(
+                                    builder: (context) {
+                                      final issue = openIssues[i];
+                                      final v = issue.issueView;
+                                      final ageDays =
+                                          WorkshopDailyCalculator.pendingAgeDays(
+                                            v.movement.transactionAt,
+                                            IstDateTimeHelper.nowUtcMillis(),
+                                          );
+                                      return Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: AppSpacing.xs,
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  AppText(
+                                                    '${v.processName ?? '-'} • ${v.lotNumber} • ${v.colourName}',
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                  AppText(
+                                                    '${issue.remainingPending} ${l10n.piecesUnit} • ${ageDays == 0 ? l10n.reportPresetToday : l10n.pendingAgeDaysBadge(ageDays)}',
+                                                    variant: AppTextVariant
+                                                        .bodySmall,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            AppButton(
+                                              label: l10n.stockReturnAction,
+                                              variant:
+                                                  AppButtonVariant.secondary,
+                                              onPressed: () async {
+                                                await context.push(
+                                                  RoutePaths.stockReturn(
+                                                    v.movement.id,
+                                                  ),
+                                                );
+                                                if (context.mounted) {
+                                                  await context
+                                                      .read<WorkerDetailCubit>()
+                                                      .loadWorker(worker.id);
+                                                }
+                                              },
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                  if (i < openIssues.take(3).length - 1)
+                                    const Divider(),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ],
+                        if (ledger.payments
+                            .where(
+                              (p) =>
+                                  !p.isReversed &&
+                                  p.payment.paymentType != PaymentType.reversal,
+                            )
+                            .isNotEmpty) ...[
+                          const SizedBox(height: AppSpacing.md),
+                          AppCard(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                AppText(
+                                  l10n.workerRecentPaymentsHeading,
+                                  variant: AppTextVariant.label,
+                                ),
+                                const SizedBox(height: AppSpacing.xs),
+                                for (final p
+                                    in ledger.payments
+                                        .where(
+                                          (p) =>
+                                              !p.isReversed &&
+                                              p.payment.paymentType !=
+                                                  PaymentType.reversal,
+                                        )
+                                        .take(3))
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 4,
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          child: AppText(
+                                            IstDateTimeHelper.formatIstDate(
+                                              p.payment.transactionAt,
+                                              locale: localeCode,
+                                            ),
+                                            variant: AppTextVariant.bodySmall,
+                                          ),
+                                        ),
+                                        AppText(
+                                          MoneyFormatter.formatPaise(
+                                            p.payment.amountPaise,
+                                          ),
+                                          variant: AppTextVariant.numeric,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ],
+                    );
+                  },
+                ),
+                const SizedBox(height: AppSpacing.lg),
+              ],
+
               AppHeading(
                 l10n.workerAssignedProcessesHeading,
                 level: AppHeadingLevel.h3,

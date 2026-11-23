@@ -5,6 +5,7 @@ import 'package:business_manager/core/database/database_transaction_runner.dart'
 import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/features/processes/domain/entities/process_entities.dart';
 import 'package:business_manager/features/processes/domain/repositories/process_repository.dart';
 import 'package:drift/drift.dart';
@@ -104,6 +105,13 @@ final class ProcessRepositoryImpl implements ProcessRepository {
         'Process name cannot be empty.',
       );
     }
+    if (cleanName.length > ValidationLimits.maxShortNameLength ||
+        (description?.trim().length ?? 0) > ValidationLimits.maxNotesLength) {
+      throw const DomainValidationException(
+        'text_too_long',
+        'Process name or description exceeds allowed length.',
+      );
+    }
 
     return _txRunner.runInTransaction(() async {
       final duplicate = await _db.processMemberDao
@@ -174,6 +182,13 @@ final class ProcessRepositoryImpl implements ProcessRepository {
       throw const DomainValidationException(
         'process_name_required',
         'Process name cannot be empty.',
+      );
+    }
+    if (cleanName.length > ValidationLimits.maxShortNameLength ||
+        (description?.trim().length ?? 0) > ValidationLimits.maxNotesLength) {
+      throw const DomainValidationException(
+        'text_too_long',
+        'Process name or description exceeds allowed length.',
       );
     }
 

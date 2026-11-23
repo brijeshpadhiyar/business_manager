@@ -11,6 +11,7 @@ import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/theme/theme_cubit.dart';
 import 'package:business_manager/core/theme/theme_state.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
+import 'package:business_manager/features/security/presentation/bloc/app_lock_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -108,9 +109,38 @@ final class SettingsHomePage extends StatelessWidget {
             ),
             const SizedBox(height: AppSpacing.md),
 
-            // Section 2: Data Safety & Guidance
+            // Section 2: Security, Data Safety & Guidance
             _SettingsSectionCard(
               children: [
+                BlocBuilder<AppLockCubit, AppLockState>(
+                  builder: (context, lockState) => _SettingsTile(
+                    icon: lockState.isPinEnabled
+                        ? Icons.verified_user_outlined
+                        : Icons.lock_outline_rounded,
+                    iconBg: lockState.isPinEnabled
+                        ? context.semanticColors.goodStockContainer
+                        : colorScheme.surfaceContainerHighest,
+                    iconColor: lockState.isPinEnabled
+                        ? context.semanticColors.goodStock
+                        : colorScheme.onSurfaceVariant,
+                    title: l10n.settingsSecurityTitle,
+                    subtitle: l10n.settingsSecuritySubtitle,
+                    badgeText: lockState.isPinEnabled
+                        ? l10n.securityBadgeEnabled
+                        : l10n.securityBadgeOff,
+                    onTap: () => context.push(RoutePaths.settingsSecurity),
+                  ),
+                ),
+                const Divider(indent: 64),
+                _SettingsTile(
+                  icon: Icons.notifications_outlined,
+                  iconBg: context.semanticColors.pendingContainer,
+                  iconColor: context.semanticColors.pending,
+                  title: l10n.settingsNotificationsTitle,
+                  subtitle: l10n.settingsNotificationsSubtitle,
+                  onTap: () => context.push(RoutePaths.settingsNotifications),
+                ),
+                const Divider(indent: 64),
                 _SettingsTile(
                   icon: Icons.backup_outlined,
                   iconBg: context.semanticColors.goodStockContainer,

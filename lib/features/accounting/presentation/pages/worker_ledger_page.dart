@@ -1,9 +1,11 @@
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
+import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:business_manager/features/accounting/domain/repositories/accounting_repository.dart';
@@ -57,13 +59,19 @@ final class _WorkerLedgerView extends StatelessWidget {
         ),
         content: Form(
           key: formKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: AppTextField(
             controller: reasonCtrl,
             label: l10n.stockReverseReasonLabel,
             maxLines: 2,
-            validator: (v) => (v == null || v.trim().isEmpty)
-                ? l10n.validationRequired
-                : null,
+            maxLength: ValidationLimits.maxNotesLength,
+            validator: ValidationLocalizer.wrap(
+              l10n,
+              (v) => AppValidators.nameValidator(
+                v,
+                maxLength: ValidationLimits.maxNotesLength,
+              ),
+            ),
           ),
         ),
         actions: [
@@ -119,6 +127,13 @@ final class _WorkerLedgerView extends StatelessWidget {
       }
       if (context.mounted) {
         await context.read<WorkerLedgerCubit>().reload();
+      }
+    } on DomainValidationException catch (e) {
+      if (context.mounted) {
+        AppFeedback.showError(
+          context,
+          ValidationLocalizer.localizeDomainException(l10n, e),
+        );
       }
     } catch (e) {
       if (context.mounted) AppFeedback.showError(context, e.toString());
@@ -331,6 +346,12 @@ final class _WorkerLedgerView extends StatelessWidget {
                           child: AppDatePicker(
                             label: l10n.accountingToDateLabel,
                             selectedUtcMillis: state.toUtcMillis,
+                            errorText: state.dateRangeErrorCode != null
+                                ? ValidationLocalizer.localizeDomainCode(
+                                    l10n,
+                                    state.dateRangeErrorCode!,
+                                  )
+                                : null,
                             onDateSelectedUtcMillis: (utc) {
                               final ist = IstDateTimeHelper.fromUtcMillisToIst(
                                 utc,

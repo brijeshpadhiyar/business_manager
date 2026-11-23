@@ -196,7 +196,11 @@ final class BackupRestoreCubit extends Cubit<BackupRestoreState> {
         },
       );
       // Reload entire DI graph cleanly against the restored SQLite database
-      await AppSessionController.instance.reloadSession(_config);
+      // while preserving the active unlocked security session.
+      await AppSessionController.instance.reloadSession(
+        _config,
+        preserveUnlockedSecuritySession: true,
+      );
       if (!isClosed) {
         emit(
           state.copyWith(

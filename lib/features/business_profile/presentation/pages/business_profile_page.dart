@@ -2,6 +2,7 @@ import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
 import 'package:business_manager/features/business_profile/presentation/bloc/business_profile_cubit.dart';
@@ -34,13 +35,27 @@ final class _BusinessProfileView extends StatefulWidget {
 
 final class _BusinessProfileViewState extends State<_BusinessProfileView> {
   final _formKey = GlobalKey<FormState>();
+  final _nameEnKey = GlobalKey<FormFieldState<String>>();
+  final _nameGuKey = GlobalKey<FormFieldState<String>>();
+  final _ownerKey = GlobalKey<FormFieldState<String>>();
+  final _phoneKey = GlobalKey<FormFieldState<String>>();
+  final _addressKey = GlobalKey<FormFieldState<String>>();
+
   final _nameEnController = TextEditingController();
   final _nameGuController = TextEditingController();
   final _ownerController = TextEditingController();
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
+
+  final _nameEnFocus = FocusNode();
+  final _nameGuFocus = FocusNode();
+  final _ownerFocus = FocusNode();
+  final _phoneFocus = FocusNode();
+  final _addressFocus = FocusNode();
+
   BillingMode _billingMode = BillingMode.receivedQty;
   bool _hydrated = false;
+  bool _submittedOnce = false;
 
   @override
   void dispose() {
@@ -49,6 +64,11 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
     _ownerController.dispose();
     _phoneController.dispose();
     _addressController.dispose();
+    _nameEnFocus.dispose();
+    _nameGuFocus.dispose();
+    _ownerFocus.dispose();
+    _phoneFocus.dispose();
+    _addressFocus.dispose();
     super.dispose();
   }
 
@@ -64,7 +84,20 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
   }
 
   Future<void> _submit() async {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
+    if (!_submittedOnce) {
+      setState(() => _submittedOnce = true);
+    }
+    final valid = FormValidationHelper.validateAndFocusFirstInvalid(
+      formKey: _formKey,
+      orderedAnchors: [
+        ValidatedFieldAnchor(fieldKey: _nameEnKey, focusNode: _nameEnFocus),
+        ValidatedFieldAnchor(fieldKey: _nameGuKey, focusNode: _nameGuFocus),
+        ValidatedFieldAnchor(fieldKey: _ownerKey, focusNode: _ownerFocus),
+        ValidatedFieldAnchor(fieldKey: _phoneKey, focusNode: _phoneFocus),
+        ValidatedFieldAnchor(fieldKey: _addressKey, focusNode: _addressFocus),
+      ],
+    );
+    if (!valid) return;
     await context.read<BusinessProfileCubit>().saveProfile(
       nameEn: _nameEnController.text,
       nameGu: _nameGuController.text,
@@ -115,6 +148,9 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
             ),
             child: Form(
               key: _formKey,
+              autovalidateMode: _submittedOnce
+                  ? AutovalidateMode.onUserInteraction
+                  : AutovalidateMode.disabled,
               child: ListView(
                 keyboardDismissBehavior:
                     ScrollViewKeyboardDismissBehavior.onDrag,
@@ -140,45 +176,85 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         AppTextField(
+                          fieldKey: _nameEnKey,
                           controller: _nameEnController,
+                          focusNode: _nameEnFocus,
                           label: l10n.businessNameEnLabel,
                           prefixIcon: Icons.storefront_outlined,
                           textInputAction: TextInputAction.next,
-                          validator: (v) => (v == null || v.trim().isEmpty)
-                              ? l10n.validationRequired
-                              : null,
+                          maxLength: ValidationLimits.maxPersonNameLength,
+                          validator: ValidationLocalizer.wrap(
+                            l10n,
+                            (v) => AppValidators.nameValidator(
+                              v,
+                              maxLength: ValidationLimits.maxPersonNameLength,
+                            ),
+                          ),
                         ),
                         const SizedBox(height: AppSpacing.md),
                         AppTextField(
+                          fieldKey: _nameGuKey,
                           controller: _nameGuController,
+                          focusNode: _nameGuFocus,
                           label: l10n.businessNameGuLabel,
                           prefixIcon: Icons.translate,
                           textInputAction: TextInputAction.next,
-                          validator: (v) => (v == null || v.trim().isEmpty)
-                              ? l10n.validationRequired
-                              : null,
+                          maxLength: ValidationLimits.maxPersonNameLength,
+                          validator: ValidationLocalizer.wrap(
+                            l10n,
+                            (v) => AppValidators.nameValidator(
+                              v,
+                              maxLength: ValidationLimits.maxPersonNameLength,
+                            ),
+                          ),
                         ),
                         const SizedBox(height: AppSpacing.md),
                         AppTextField(
+                          fieldKey: _ownerKey,
                           controller: _ownerController,
+                          focusNode: _ownerFocus,
                           label: l10n.businessOwnerLabel,
                           prefixIcon: Icons.person_outline,
                           textInputAction: TextInputAction.next,
+                          maxLength: ValidationLimits.maxPersonNameLength,
+                          validator: ValidationLocalizer.wrap(
+                            l10n,
+                            (v) => AppValidators.maxLengthValidator(
+                              v,
+                              maxLength: ValidationLimits.maxPersonNameLength,
+                            ),
+                          ),
                         ),
                         const SizedBox(height: AppSpacing.md),
                         AppTextField(
+                          fieldKey: _phoneKey,
                           controller: _phoneController,
+                          focusNode: _phoneFocus,
                           label: l10n.businessPhoneLabel,
                           prefixIcon: Icons.phone_outlined,
                           keyboardType: TextInputType.phone,
                           textInputAction: TextInputAction.next,
+                          validator: ValidationLocalizer.wrap(
+                            l10n,
+                            (v) => AppValidators.mobileNumberValidator(v),
+                          ),
                         ),
                         const SizedBox(height: AppSpacing.md),
                         AppTextField(
+                          fieldKey: _addressKey,
                           controller: _addressController,
+                          focusNode: _addressFocus,
                           label: l10n.businessAddressLabel,
                           prefixIcon: Icons.location_on_outlined,
                           maxLines: 3,
+                          maxLength: ValidationLimits.maxAddressLength,
+                          validator: ValidationLocalizer.wrap(
+                            l10n,
+                            (v) => AppValidators.maxLengthValidator(
+                              v,
+                              maxLength: ValidationLimits.maxAddressLength,
+                            ),
+                          ),
                         ),
                         const SizedBox(height: AppSpacing.md),
                         AppText(
@@ -212,7 +288,11 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
                             state.errorMessage != null) ...[
                           const SizedBox(height: AppSpacing.sm),
                           AppText(
-                            state.errorMessage!,
+                            ValidationLocalizer.localizeDomainCode(
+                              l10n,
+                              state.errorMessage!,
+                              fallback: state.errorMessage,
+                            ),
                             color: Theme.of(context).colorScheme.error,
                           ),
                         ],

@@ -1,0 +1,203 @@
+import 'package:business_manager/core/design_system/app_radius.dart';
+import 'package:business_manager/core/design_system/app_spacing.dart';
+import 'package:business_manager/core/design_system/app_typography.dart';
+import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart';
+
+/// Accessible, 360dp-safe numeric PIN keypad with masked indicator dots and
+/// optional bottom-left biometric trigger button.
+final class PinKeypad extends StatelessWidget {
+  const PinKeypad({
+    super.key,
+    required this.pinLength,
+    required this.enteredLength,
+    required this.onDigitPressed,
+    required this.onBackspacePressed,
+    this.enabled = true,
+    this.showBiometricButton = false,
+    this.onBiometricPressed,
+    this.biometricTooltip,
+    this.onDarkBackground = false,
+  });
+
+  final int pinLength;
+  final int enteredLength;
+  final ValueChanged<String> onDigitPressed;
+  final VoidCallback onBackspacePressed;
+  final bool enabled;
+  final bool showBiometricButton;
+  final VoidCallback? onBiometricPressed;
+  final String? biometricTooltip;
+  final bool onDarkBackground;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final dotFill = onDarkBackground ? Colors.white : colorScheme.primary;
+    final dotBorder = onDarkBackground
+        ? Colors.white.withValues(alpha: 0.45)
+        : colorScheme.outline;
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Masked PIN Dots
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(pinLength, (index) {
+            final filled = index < enteredLength;
+            return AnimatedContainer(
+              duration: const Duration(milliseconds: 140),
+              margin: const EdgeInsets.symmetric(horizontal: 8),
+              width: 16,
+              height: 16,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: filled ? dotFill : Colors.transparent,
+                border: Border.all(
+                  color: filled ? dotFill : dotBorder,
+                  width: 2,
+                ),
+              ),
+            );
+          }),
+        ),
+        const SizedBox(height: AppSpacing.lg),
+
+        // 3x4 Keypad Grid (large >= 56dp accessible touch targets)
+        ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 288),
+          child: Column(
+            children: [
+              _buildRow(context, const ['1', '2', '3']),
+              const SizedBox(height: AppSpacing.sm),
+              _buildRow(context, const ['4', '5', '6']),
+              const SizedBox(height: AppSpacing.sm),
+              _buildRow(context, const ['7', '8', '9']),
+              const SizedBox(height: AppSpacing.sm),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  SizedBox(
+                    width: 68,
+                    height: 58,
+                    child: showBiometricButton && onBiometricPressed != null
+                        ? Tooltip(
+                            message: biometricTooltip ?? '',
+                            child: _KeyButton(
+                              onDarkBackground: onDarkBackground,
+                              enabled: enabled,
+                              onTap: onBiometricPressed!,
+                              child: Icon(
+                                Icons.fingerprint_rounded,
+                                size: 30,
+                                color: onDarkBackground
+                                    ? Colors.white
+                                    : colorScheme.secondary,
+                              ),
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                  _digitKey(context, '0'),
+                  SizedBox(
+                    width: 68,
+                    height: 58,
+                    child: _KeyButton(
+                      onDarkBackground: onDarkBackground,
+                      enabled: enabled && enteredLength > 0,
+                      onTap: onBackspacePressed,
+                      child: Icon(
+                        Icons.backspace_outlined,
+                        size: 24,
+                        color: onDarkBackground
+                            ? Colors.white.withValues(
+                                alpha: enteredLength > 0 ? 1 : 0.4,
+                              )
+                            : colorScheme.onSurface.withValues(
+                                alpha: enteredLength > 0 ? 1 : 0.38,
+                              ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRow(BuildContext context, List<String> digits) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [for (final d in digits) _digitKey(context, d)],
+    );
+  }
+
+  Widget _digitKey(BuildContext context, String digit) {
+    final textColor = onDarkBackground
+        ? Colors.white
+        : Theme.of(context).colorScheme.onSurface;
+    return SizedBox(
+      width: 68,
+      height: 58,
+      child: _KeyButton(
+        onDarkBackground: onDarkBackground,
+        enabled: enabled,
+        onTap: () {
+          HapticFeedback.selectionClick();
+          onDigitPressed(digit);
+        },
+        child: Text(
+          digit,
+          style: AppTypography.tabular(
+            Theme.of(context).textTheme.headlineSmall!
+                .copyWith(color: textColor, fontWeight: FontWeight.w600),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+final class _KeyButton extends StatelessWidget {
+  const _KeyButton({
+    required this.onDarkBackground,
+    required this.enabled,
+    required this.onTap,
+    required this.child,
+  });
+
+  final bool onDarkBackground;
+  final bool enabled;
+  final VoidCallback onTap;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final bg = onDarkBackground
+        ? Colors.white.withValues(alpha: enabled ? 0.12 : 0.05)
+        : colorScheme.surfaceContainerHighest.withValues(
+            alpha: enabled ? 0.75 : 0.35,
+          );
+    final border = onDarkBackground
+        ? Colors.white.withValues(alpha: 0.18)
+        : colorScheme.outlineVariant;
+
+    return Material(
+      color: bg,
+      shape: RoundedRectangleBorder(
+        borderRadius: AppRadius.lgBorder,
+        side: BorderSide(color: border),
+      ),
+      child: InkWell(
+        borderRadius: AppRadius.lgBorder,
+        onTap: enabled ? onTap : null,
+        child: Center(child: child),
+      ),
+    );
+  }
+}

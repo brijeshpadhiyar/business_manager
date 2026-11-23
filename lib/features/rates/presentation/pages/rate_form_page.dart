@@ -3,6 +3,7 @@ import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/processes/domain/entities/process_entities.dart';
 import 'package:business_manager/features/processes/domain/repositories/process_repository.dart';
@@ -31,8 +32,13 @@ final class RateFormPage extends StatefulWidget {
 
 final class _RateFormPageState extends State<RateFormPage> {
   final _formKey = GlobalKey<FormState>();
+  final _rateFieldKey = GlobalKey<FormFieldState<String>>();
+  final _notesFieldKey = GlobalKey<FormFieldState<String>>();
+  final _effectiveToAnchorKey = GlobalKey();
   final _rateCtrl = TextEditingController();
   final _notesCtrl = TextEditingController();
+  final _rateFocus = FocusNode();
+  final _notesFocus = FocusNode();
   final _processRepo = getIt<ProcessRepository>();
   final _rateRepo = getIt<RateRepository>();
 
@@ -45,6 +51,7 @@ final class _RateFormPageState extends State<RateFormPage> {
 
   bool _isLoading = true;
   bool _isSaving = false;
+  bool _submittedOnce = false;
   bool _isLockedByHistory = false;
   String? _loadError;
   String? _submitError;
@@ -59,14 +66,7 @@ final class _RateFormPageState extends State<RateFormPage> {
   }
 
   static int? _parseRupeesToPaise(String raw) {
-    final clean = raw.trim();
-    if (clean.isEmpty) return null;
-    final match = RegExp(r'^(\d+)(?:\.(\d{1,2}))?$').firstMatch(clean);
-    if (match == null) return null;
-    final rupees = int.parse(match.group(1)!);
-    final fracStr = (match.group(2) ?? '').padRight(2, '0');
-    final paise = int.parse(fracStr);
-    return rupees * 100 + paise;
+    return AppValidators.parseRupeesToPaiseExact(raw, allowZero: true).paise;
   }
 
   static String _paiseToEditableRupees(int paise) {
@@ -131,24 +131,44 @@ final class _RateFormPageState extends State<RateFormPage> {
   void dispose() {
     _rateCtrl.dispose();
     _notesCtrl.dispose();
+    _rateFocus.dispose();
+    _notesFocus.dispose();
     super.dispose();
   }
 
-  String _mapValidationError(BuildContext context, String code) {
-    final l10n = context.l10n;
-    return switch (code) {
-      'rate_overlap' => l10n.ratesOverlapError,
-      'rate_multiple_open_ended' => l10n.ratesMultipleOpenEndedError,
-      'rate_to_before_from' => l10n.ratesToBeforeFromError,
-      'rate_locked_by_history' => l10n.ratesLockedByHistoryError,
-      'rate_negative' => l10n.validationValidPrice,
-      _ => code,
-    };
+  String? _inlineDateRangeError(BuildContext context) {
+    if (_effectiveToUtcMillis == null) return null;
+    final fromIso = IstDateTimeHelper.toIstBusinessDate(
+      _effectiveFromUtcMillis,
+    );
+    final toIso = IstDateTimeHelper.toIstBusinessDate(_effectiveToUtcMillis!);
+    final check = AppValidators.isoDateRangeValidator(
+      startIso: fromIso,
+      endIso: toIso,
+    );
+    return check.isValid ? null : context.l10n.ratesToBeforeFromError;
   }
 
   Future<void> _save() async {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
     if (_isSaving || _isLockedByHistory) return;
+    if (!_submittedOnce) {
+      setState(() => _submittedOnce = true);
+    }
+    final formValid = FormValidationHelper.validateAndFocusFirstInvalid(
+      formKey: _formKey,
+      orderedAnchors: [
+        ValidatedFieldAnchor(fieldKey: _rateFieldKey, focusNode: _rateFocus),
+        ValidatedFieldAnchor(fieldKey: _notesFieldKey, focusNode: _notesFocus),
+      ],
+    );
+    if (!formValid) return;
+
+    final dateErr = _inlineDateRangeError(context);
+    if (dateErr != null) {
+      FormValidationHelper.scrollToAnchor(_effectiveToAnchorKey);
+      return;
+    }
+
     final processId = _selectedProcessId;
     if (processId == null) return;
 
@@ -218,7 +238,10 @@ final class _RateFormPageState extends State<RateFormPage> {
       if (!mounted) return;
       setState(() {
         _isSaving = false;
-        _submitError = _mapValidationError(context, e.code);
+        _submitError = ValidationLocalizer.localizeDomainException(
+          context.l10n,
+          e,
+        );
       });
     } catch (e) {
       if (!mounted) return;
@@ -257,7 +280,11 @@ final class _RateFormPageState extends State<RateFormPage> {
       title: title,
       body: Form(
         key: _formKey,
+        autovalidateMode: _submittedOnce
+            ? AutovalidateMode.onUserInteraction
+            : AutovalidateMode.disabled,
         child: ListView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           children: [
             AppCard(
               child: Column(
@@ -284,38 +311,47 @@ final class _RateFormPageState extends State<RateFormPage> {
                   ),
                   const SizedBox(height: AppSpacing.md),
                   AppTextField(
+                    fieldKey: _rateFieldKey,
                     controller: _rateCtrl,
+                    focusNode: _rateFocus,
                     label: l10n.ratesAmountLabel,
                     prefixIcon: Icons.currency_rupee,
                     enabled: !_isLockedByHistory,
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
-                    validator: (v) {
-                      if (v == null || v.trim().isEmpty) {
-                        return l10n.validationRequired;
+                    onChanged: (_) {
+                      if (_submitError != null) {
+                        setState(() => _submitError = null);
                       }
-                      return _parseRupeesToPaise(v) == null
-                          ? l10n.validationValidPrice
-                          : null;
                     },
+                    validator: ValidationLocalizer.wrap(
+                      l10n,
+                      (v) => AppValidators.nonNegativeAmountValidator(v),
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   AppDatePicker(
                     label: l10n.ratesEffectiveFromLabel,
                     selectedUtcMillis: _effectiveFromUtcMillis,
                     enabled: !_isLockedByHistory,
-                    onDateSelectedUtcMillis: (utc) =>
-                        setState(() => _effectiveFromUtcMillis = utc),
+                    onDateSelectedUtcMillis: (utc) => setState(() {
+                      _effectiveFromUtcMillis = utc;
+                      _submitError = null;
+                    }),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   AppDatePicker(
+                    key: _effectiveToAnchorKey,
                     label: l10n.ratesEffectiveToLabel,
                     hint: l10n.ratesOngoingLabel,
                     selectedUtcMillis: _effectiveToUtcMillis,
                     enabled: !_isLockedByHistory,
-                    onDateSelectedUtcMillis: (utc) =>
-                        setState(() => _effectiveToUtcMillis = utc),
+                    errorText: _inlineDateRangeError(context),
+                    onDateSelectedUtcMillis: (utc) => setState(() {
+                      _effectiveToUtcMillis = utc;
+                      _submitError = null;
+                    }),
                   ),
                   if (_effectiveToUtcMillis != null && !_isLockedByHistory) ...[
                     const SizedBox(height: AppSpacing.xs),
@@ -324,17 +360,29 @@ final class _RateFormPageState extends State<RateFormPage> {
                       child: AppButton(
                         label: l10n.ratesClearEffectiveTo,
                         variant: AppButtonVariant.text,
-                        onPressed: () =>
-                            setState(() => _effectiveToUtcMillis = null),
+                        onPressed: () => setState(() {
+                          _effectiveToUtcMillis = null;
+                          _submitError = null;
+                        }),
                       ),
                     ),
                   ],
                   const SizedBox(height: AppSpacing.md),
                   AppTextField(
+                    fieldKey: _notesFieldKey,
                     controller: _notesCtrl,
+                    focusNode: _notesFocus,
                     label: l10n.ratesNotesLabel,
                     enabled: !_isLockedByHistory,
                     maxLines: 2,
+                    maxLength: ValidationLimits.maxNotesLength,
+                    validator: ValidationLocalizer.wrap(
+                      l10n,
+                      (v) => AppValidators.maxLengthValidator(
+                        v,
+                        maxLength: ValidationLimits.maxNotesLength,
+                      ),
+                    ),
                   ),
                   if (_submitError != null) ...[
                     const SizedBox(height: AppSpacing.sm),

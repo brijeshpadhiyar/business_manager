@@ -1,7 +1,14 @@
 import 'package:business_manager/core/database/app_database.dart';
+import 'package:business_manager/core/utils/ist_datetime_helper.dart';
+import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:business_manager/features/accounting/domain/repositories/accounting_repository.dart';
+import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
+import 'package:business_manager/features/reports/domain/calculators/reports_analytics_calculator.dart';
+import 'package:business_manager/features/reports/domain/calculators/workshop_daily_calculator.dart';
+import 'package:business_manager/features/reports/domain/entities/advanced_report_entities.dart';
 import 'package:business_manager/features/reports/domain/entities/dashboard_report_entities.dart';
+import 'package:business_manager/features/reports/domain/entities/report_filter.dart';
 import 'package:business_manager/features/reports/domain/repositories/reports_repository.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 import 'package:business_manager/features/stock_movements/domain/repositories/stock_movement_repository.dart';
@@ -15,6 +22,188 @@ final class ReportsRepositoryImpl implements ReportsRepository {
   final StockMovementRepository _stockRepo;
   final AccountingRepository _accountingRepo;
 
+  static const WorkshopDailyCalculator _dailyCalc = WorkshopDailyCalculator();
+  static const ReportsAnalyticsCalculator _analyticsCalc =
+      ReportsAnalyticsCalculator();
+
+  StockMovementEntity _mapMovement(StockMovementRow row) => StockMovementEntity(
+    id: row.id,
+    lotId: row.lotId,
+    lotDesignId: row.lotDesignId,
+    designColourId: row.designColourId,
+    processId: row.processId,
+    memberId: row.memberId,
+    parentIssueId: row.parentIssueId,
+    reversesMovementId: row.reversesMovementId,
+    clientRequestId: row.clientRequestId,
+    movementType: StockMovementType.fromDbValue(row.movementType),
+    quantity: row.quantity,
+    sourceRateId: row.sourceRateId,
+    appliedRatePaise: row.appliedRatePaise,
+    isRateOverridden: row.isRateOverridden == 1,
+    overrideReason: row.overrideReason,
+    lockedBillingMode: row.lockedBillingMode != null
+        ? BillingMode.fromDbValue(row.lockedBillingMode!)
+        : null,
+    lockedIncludeDamaged: row.lockedIncludeDamaged == 1,
+    reason: row.reason,
+    notes: row.notes,
+    transactionAt: row.transactionAt,
+    recordedAt: row.recordedAt,
+    createdBy: row.createdBy,
+    createdAt: row.createdAt,
+    updatedAt: row.updatedAt,
+  );
+
+  LabourEntryEntity _mapLabour(LabourEntryRow r) => LabourEntryEntity(
+    id: r.id,
+    stockMovementId: r.stockMovementId,
+    reversesLabourEntryId: r.reversesLabourEntryId,
+    memberId: r.memberId,
+    processId: r.processId,
+    lotId: r.lotId,
+    basisType: LabourBasisType.fromDbValue(r.basisType),
+    quantity: r.quantity,
+    ratePaise: r.ratePaise,
+    amountPaise: r.amountPaise,
+    isPayable: r.isPayable == 1,
+    transactionAt: r.transactionAt,
+    recordedAt: r.recordedAt,
+    createdAt: r.createdAt,
+    updatedAt: r.updatedAt,
+  );
+
+  PaymentEntity _mapPayment(PaymentRow r) => PaymentEntity(
+    id: r.id,
+    memberId: r.memberId,
+    paymentType: PaymentType.fromDbValue(r.paymentType),
+    reversesPaymentId: r.reversesPaymentId,
+    clientRequestId: r.clientRequestId,
+    amountPaise: r.amountPaise,
+    paymentMode: PaymentMode.fromDbValue(r.paymentMode),
+    referenceNo: r.referenceNo,
+    reason: r.reason,
+    notes: r.notes,
+    transactionAt: r.transactionAt,
+    recordedAt: r.recordedAt,
+    createdBy: r.createdBy,
+    createdAt: r.createdAt,
+    updatedAt: r.updatedAt,
+  );
+
+  WorkerAdjustmentEntity _mapAdjustment(WorkerLedgerAdjustmentRow r) =>
+      WorkerAdjustmentEntity(
+        id: r.id,
+        memberId: r.memberId,
+        adjustmentType: WorkerAdjustmentType.fromDbValue(r.adjustmentType),
+        reversesAdjustmentId: r.reversesAdjustmentId,
+        clientRequestId: r.clientRequestId,
+        amountPaise: r.amountPaise,
+        reason: r.reason,
+        notes: r.notes,
+        transactionAt: r.transactionAt,
+        recordedAt: r.recordedAt,
+        createdBy: r.createdBy,
+        createdAt: r.createdAt,
+        updatedAt: r.updatedAt,
+      );
+
+  @override
+  Future<AdvancedReportsBundle> getAdvancedReports(ReportFilter filter) async {
+    // Single-pass load: fetch each table ONCE (no redundant 5x full scans).
+    final profile = await _db.businessProfileDao.getProfile();
+    final activeLots = await _db.lotDao.getActiveLots();
+    final activeDesigns = await _db.lotDao.getAllActiveDesigns();
+    final activeColours = await _db.lotDao.getAllActiveDesignColours();
+    final processes = await _db.processMemberDao.getNonDeletedProcesses();
+    final workers = await _db.processMemberDao.getNonDeletedMembers();
+
+    final allMovements = (await _db.stockMovementDao.getAllMovements())
+        .map(_mapMovement)
+        .toList();
+    final allLabour = (await _db.labourEntryDao.getAllEntries())
+        .map(_mapLabour)
+        .toList();
+    final allPayments = (await _db.paymentDao.getAllPayments())
+        .map(_mapPayment)
+        .toList();
+    final allAdjustments = (await _db.workerAdjustmentDao.getAllAdjustments())
+        .map(_mapAdjustment)
+        .toList();
+
+    final activeLotIds = {for (final l in activeLots) l.id};
+    final lotInputs = activeLots
+        .map(
+          (l) => ReportLotInput(
+            id: l.id,
+            lotNumber: l.lotNumber,
+            title: l.title,
+            status: LotStatus.fromDbValue(l.status),
+          ),
+        )
+        .toList();
+    final designInputs = activeDesigns
+        .where((d) => activeLotIds.contains(d.lotId))
+        .map(
+          (d) => ReportDesignInput(
+            id: d.id,
+            lotId: d.lotId,
+            designName: d.designName,
+          ),
+        )
+        .toList();
+    final activeDesignById = {for (final d in designInputs) d.id: d};
+    final colourInputs = activeColours
+        .where((c) => activeDesignById.containsKey(c.lotDesignId))
+        .map((c) {
+          final design = activeDesignById[c.lotDesignId]!;
+          return ReportColourInput(
+            id: c.id,
+            lotId: design.lotId,
+            lotDesignId: c.lotDesignId,
+            colourName: c.colourName,
+            colourHex: c.colourHex,
+            initialQuantity: c.initialQuantity,
+            unitPricePaise: c.unitPricePaise,
+          );
+        })
+        .toList();
+    final processInputs = processes
+        .map(
+          (p) => ReportProcessInput(
+            id: p.id,
+            name: p.name,
+            isActive: p.isActive == 1,
+          ),
+        )
+        .toList();
+    final workerInputs = workers
+        .map(
+          (w) => ReportWorkerInput(
+            id: w.id,
+            name: w.name,
+            phone: w.phone,
+            isActive: w.isActive == 1,
+          ),
+        )
+        .toList();
+
+    return _analyticsCalc.compute(
+      filter: filter,
+      businessNameEn: profile?.nameEn ?? 'StitchFlow',
+      businessNameGu: profile?.nameGu ?? 'સ્ટિચફ્લો',
+      lots: lotInputs,
+      designs: designInputs,
+      colours: colourInputs,
+      processes: processInputs,
+      workers: workerInputs,
+      allMovements: allMovements,
+      allLabourEntries: allLabour,
+      allPayments: allPayments,
+      allAdjustments: allAdjustments,
+    );
+  }
+
   @override
   Future<DashboardSnapshot> getDashboardSnapshot() async {
     final profile = await _db.businessProfileDao.getProfile();
@@ -25,10 +214,21 @@ final class ReportsRepositoryImpl implements ReportsRepository {
 
     final colourBalances = await _stockRepo.getAllDesignColourBalances();
     final processSummaries = await _stockRepo.getProcessStockSummaries();
+    final openIssues = await _stockRepo.getOpenIssues();
     final workerFinancials = await _accountingRepo.getAllWorkerSummaries();
     final auditRows = await _db.attachmentAuditDao.getRecentAuditLogs(
       limit: 12,
     );
+
+    final allMovements = (await _db.stockMovementDao.getAllMovements())
+        .map(_mapMovement)
+        .toList();
+    final allLabour = (await _db.labourEntryDao.getAllEntries())
+        .map(_mapLabour)
+        .toList();
+    final allPayments = (await _db.paymentDao.getAllPayments())
+        .map(_mapPayment)
+        .toList();
 
     final activeLotIds = {for (final l in activeLots) l.id};
     final validDesigns = activeDesigns
@@ -66,6 +266,24 @@ final class ReportsRepositoryImpl implements ReportsRepository {
       outstanding += w.outstandingPayablePaise;
       advCredit += w.advanceCreditBalancePaise;
     }
+
+    final procNames = {for (final p in processes) p.id: p.name};
+    final workerNames = {for (final w in workers) w.id: w.name};
+    final todaySummary = _dailyCalc.calculateDailySummary(
+      targetDayUtcMillis: IstDateTimeHelper.nowUtcMillis(),
+      allMovements: allMovements,
+      allLabourEntries: allLabour,
+      allPayments: allPayments,
+      processNamesById: procNames,
+      workerNamesById: workerNames,
+      currentTotalPendingQty: pending,
+      currentTotalDamagedQty: damaged,
+      currentTotalOutstandingPayablePaise: outstanding,
+    );
+    final importantPending = _dailyCalc.prioritizeImportantPending(
+      openIssues,
+      limit: 5,
+    );
 
     final recentActivity = auditRows
         .map(
@@ -105,6 +323,59 @@ final class ReportsRepositoryImpl implements ReportsRepository {
       totalOutstandingPayablePaise: outstanding,
       totalAdvanceCreditPaise: advCredit,
       recentActivity: recentActivity,
+      todayIstDate: todaySummary.istDateIso,
+      todayIssuedQty: todaySummary.issuedQty,
+      todayReceivedGoodQty: todaySummary.goodReturnedQty,
+      todayDamagedQty: todaySummary.damagedQty,
+      todayLostShortageQty: todaySummary.lostAndShortageQty,
+      todayLabourEarnedPaise: todaySummary.labourEarnedPaise,
+      todayPaymentsPaise: todaySummary.netPaymentsPaise,
+      importantPendingIssues: importantPending,
+    );
+  }
+
+  @override
+  Future<DailyWorkshopSummary> getDailyWorkshopSummary({
+    int? targetDayUtcMillis,
+  }) async {
+    final targetUtc = targetDayUtcMillis ?? IstDateTimeHelper.nowUtcMillis();
+    final processes = await _db.select(_db.processes).get();
+    final workers = await _db.select(_db.members).get();
+    final allMovements = (await _db.stockMovementDao.getAllMovements())
+        .map(_mapMovement)
+        .toList();
+    final allLabour = (await _db.labourEntryDao.getAllEntries())
+        .map(_mapLabour)
+        .toList();
+    final allPayments = (await _db.paymentDao.getAllPayments())
+        .map(_mapPayment)
+        .toList();
+    final colourBalances = await _stockRepo.getAllDesignColourBalances();
+    final workerFinancials = await _accountingRepo.getAllWorkerSummaries();
+
+    final currentPending = colourBalances.fold<int>(
+      0,
+      (s, b) => s + b.totalPendingWithWorkers,
+    );
+    final currentDamaged = colourBalances.fold<int>(
+      0,
+      (s, b) => s + b.damagedBucket,
+    );
+    final currentOutstanding = workerFinancials.fold<int>(
+      0,
+      (s, w) => s + w.outstandingPayablePaise,
+    );
+
+    return _dailyCalc.calculateDailySummary(
+      targetDayUtcMillis: targetUtc,
+      allMovements: allMovements,
+      allLabourEntries: allLabour,
+      allPayments: allPayments,
+      processNamesById: {for (final p in processes) p.id: p.name},
+      workerNamesById: {for (final w in workers) w.id: w.name},
+      currentTotalPendingQty: currentPending,
+      currentTotalDamagedQty: currentDamaged,
+      currentTotalOutstandingPayablePaise: currentOutstanding,
     );
   }
 

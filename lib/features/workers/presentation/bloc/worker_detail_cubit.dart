@@ -1,4 +1,8 @@
 import 'package:business_manager/core/error/exceptions.dart';
+import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
+import 'package:business_manager/features/accounting/domain/repositories/accounting_repository.dart';
+import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
+import 'package:business_manager/features/stock_movements/domain/repositories/stock_movement_repository.dart';
 import 'package:business_manager/features/workers/domain/entities/worker_entities.dart';
 import 'package:business_manager/features/workers/domain/repositories/worker_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,15 +18,23 @@ sealed class WorkerDetailState with _$WorkerDetailState {
   const factory WorkerDetailState({
     @Default(WorkerDetailStatus.initial) WorkerDetailStatus status,
     WorkerDetailAggregate? detail,
+    WorkerLedgerDetail? ledgerDetail,
+    @Default([]) List<OpenIssueSummary> openIssues,
     String? errorMessage,
   }) = _WorkerDetailState;
 }
 
 @injectable
 final class WorkerDetailCubit extends Cubit<WorkerDetailState> {
-  WorkerDetailCubit(this._repository) : super(const WorkerDetailState());
+  WorkerDetailCubit(
+    this._repository,
+    this._accountingRepository,
+    this._stockMovementRepository,
+  ) : super(const WorkerDetailState());
 
   final WorkerRepository _repository;
+  final AccountingRepository _accountingRepository;
+  final StockMovementRepository _stockMovementRepository;
 
   Future<void> loadWorker(String workerId) async {
     emit(
@@ -39,7 +51,21 @@ final class WorkerDetailCubit extends Cubit<WorkerDetailState> {
         );
         return;
       }
-      emit(state.copyWith(status: WorkerDetailStatus.loaded, detail: detail));
+      final results = await Future.wait([
+        _accountingRepository.getWorkerLedgerDetail(workerId),
+        _stockMovementRepository.getOpenIssues(workerId: workerId),
+      ]);
+      final ledger = results[0] as WorkerLedgerDetail?;
+      final openIssues = results[1] as List<OpenIssueSummary>;
+
+      emit(
+        state.copyWith(
+          status: WorkerDetailStatus.loaded,
+          detail: detail,
+          ledgerDetail: ledger,
+          openIssues: openIssues,
+        ),
+      );
     } catch (e) {
       emit(
         state.copyWith(

@@ -1,3 +1,4 @@
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:business_manager/features/accounting/domain/repositories/accounting_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +12,7 @@ final class WorkerLedgerState {
     this.detail,
     this.fromUtcMillis,
     this.toUtcMillis,
+    this.dateRangeErrorCode,
     this.errorMessage,
   });
 
@@ -18,6 +20,7 @@ final class WorkerLedgerState {
   final WorkerLedgerDetail? detail;
   final int? fromUtcMillis;
   final int? toUtcMillis;
+  final String? dateRangeErrorCode;
   final String? errorMessage;
 
   WorkerLedgerState copyWith({
@@ -27,6 +30,8 @@ final class WorkerLedgerState {
     int? toUtcMillis,
     bool clearFrom = false,
     bool clearTo = false,
+    String? dateRangeErrorCode,
+    bool clearDateRangeError = false,
     String? errorMessage,
   }) {
     return WorkerLedgerState(
@@ -34,6 +39,9 @@ final class WorkerLedgerState {
       detail: detail ?? this.detail,
       fromUtcMillis: clearFrom ? null : (fromUtcMillis ?? this.fromUtcMillis),
       toUtcMillis: clearTo ? null : (toUtcMillis ?? this.toUtcMillis),
+      dateRangeErrorCode: clearDateRangeError
+          ? null
+          : (dateRangeErrorCode ?? this.dateRangeErrorCode),
       errorMessage: errorMessage,
     );
   }
@@ -59,6 +67,15 @@ final class WorkerLedgerCubit extends Cubit<WorkerLedgerState> {
         : (fromUtcMillis ?? state.fromUtcMillis);
     final effectiveTo = clearTo ? null : (toUtcMillis ?? state.toUtcMillis);
 
+    final rangeCheck = AppValidators.dateRangeValidator(
+      startUtcMillis: effectiveFrom,
+      endUtcMillis: effectiveTo,
+    );
+    if (!rangeCheck.isValid) {
+      emit(state.copyWith(dateRangeErrorCode: 'invalid_date_range'));
+      return;
+    }
+
     emit(
       state.copyWith(
         status: WorkerLedgerStatus.loading,
@@ -66,6 +83,7 @@ final class WorkerLedgerCubit extends Cubit<WorkerLedgerState> {
         toUtcMillis: effectiveTo,
         clearFrom: clearFrom,
         clearTo: clearTo,
+        clearDateRangeError: true,
       ),
     );
 

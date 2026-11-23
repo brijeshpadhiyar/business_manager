@@ -1625,4 +1625,820 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get stockTabSummary => 'Worker & Process';
+
+  @override
+  String get auditActionDeactivate => 'Deactivated';
+
+  @override
+  String get auditActionReactivate => 'Reactivated';
+
+  @override
+  String get auditActionBackupExport => 'Backup Created';
+
+  @override
+  String get auditActionBackupRestore => 'Backup Restored';
+
+  @override
+  String get auditEntityBackup => 'Backup & Restore';
+
+  @override
+  String get auditEntityAppSecurity => 'App Security';
+
+  @override
+  String get settingsSecurityTitle => 'App Lock & Security';
+
+  @override
+  String get settingsSecuritySubtitle =>
+      'Local PIN, optional fingerprint unlock, auto-lock timeout, and recovery key.';
+
+  @override
+  String get securityBadgeEnabled => 'PIN Protected';
+
+  @override
+  String get securityBadgeOff => 'Off';
+
+  @override
+  String get securityStatusProtected => 'StitchFlow Is PIN Protected';
+
+  @override
+  String securityStatusProtectedDesc(int pinLength, String timeout) {
+    return '$pinLength-digit PIN • Auto-lock: $timeout';
+  }
+
+  @override
+  String get securityStatusOff => 'App Lock Is Off';
+
+  @override
+  String get securityStatusOffDesc =>
+      'Add a local PIN to prevent casual unauthorized access on your phone.';
+
+  @override
+  String get securitySetupPinTitle => 'Set Up App PIN';
+
+  @override
+  String get securitySetupBenefitsBody =>
+      'Keep workshop stock, rates, and karigar accounts private with a 4- or 6-digit offline PIN and optional fingerprint unlock.';
+
+  @override
+  String get securityEnablePinAction => 'Enable App PIN';
+
+  @override
+  String get securityLockNowAction => 'Lock Now';
+
+  @override
+  String get securityChangePinAction => 'Change PIN';
+
+  @override
+  String get securityDisablePinAction => 'Disable App PIN';
+
+  @override
+  String get securityDisablePinDesc =>
+      'Remove the local PIN and open StitchFlow without unlocking.';
+
+  @override
+  String get securityDisablePinConfirmTitle => 'Disable App PIN?';
+
+  @override
+  String get securityDisablePinConfirmMessage =>
+      'Anyone using this phone will be able to open StitchFlow without entering a PIN.';
+
+  @override
+  String get securityRegenerateRecoveryKeyAction => 'New Recovery Key';
+
+  @override
+  String get securityPinLength4Label => '4-Digit PIN (Fast)';
+
+  @override
+  String get securityPinLength6Label => '6-Digit PIN';
+
+  @override
+  String get securityCreatePinTitle => 'Create Your PIN';
+
+  @override
+  String get securityEnterNewPinTitle => 'Enter New PIN';
+
+  @override
+  String securityCreatePinSubtitle(int pinLength) {
+    return 'Enter a $pinLength-digit numeric PIN.';
+  }
+
+  @override
+  String get securityConfirmPinTitle => 'Confirm Your PIN';
+
+  @override
+  String get securityConfirmPinSubtitle => 'Re-enter the same PIN to confirm.';
+
+  @override
+  String get securityPinMismatchError => 'PINs do not match. Please try again.';
+
+  @override
+  String get securityStartOverAction => 'Start Over';
+
+  @override
+  String get securityRecoveryKeyTitle => 'Save Your Offline Recovery Key';
+
+  @override
+  String get securityNewRecoveryKeyTitle => 'Your New Recovery Key';
+
+  @override
+  String get securityRecoveryKeyWriteDownBody =>
+      'Write this 8-character code on paper and keep it safely in your workshop diary. It is shown only once and is the only way to reset a forgotten PIN without losing data.';
+
+  @override
+  String get securityRecoveryKeyConfirmedCheckbox =>
+      'I have written down this Recovery Key in a safe place.';
+
+  @override
+  String get securityActivateAppLockAction => 'Activate App Lock';
+
+  @override
+  String get securityPinEnabledSuccess => 'App PIN enabled successfully.';
+
+  @override
+  String get securityPinChangedSuccess => 'App PIN updated successfully.';
+
+  @override
+  String get securityPinDisabledSuccess => 'App PIN disabled.';
+
+  @override
+  String get securityUnlockOptionsTitle => 'Unlock & Privacy Options';
+
+  @override
+  String get securityEnableBiometricLabel => 'Fingerprint / Biometric Unlock';
+
+  @override
+  String get securityEnableBiometricSubtitle =>
+      'Unlock StitchFlow quickly with your phone\'s fingerprint or biometric sensor. PIN always remains available.';
+
+  @override
+  String get securityBiometricNotEnrolledHint =>
+      'No fingerprint or biometric is set up in Android Settings yet.';
+
+  @override
+  String get securityBiometricNoHardwareHint =>
+      'This device does not support biometric hardware.';
+
+  @override
+  String get securityBiometricUnavailableHint =>
+      'Biometric authentication is currently unavailable on this device.';
+
+  @override
+  String get securityScreenshotProtectionLabel =>
+      'Block Screenshots & App Preview';
+
+  @override
+  String get securityScreenshotProtectionSubtitle =>
+      'Hides workshop data in Android Recent Apps and blocks screenshots while enabled.';
+
+  @override
+  String get securityAutoLockTimeoutTitle => 'Auto-Lock Timeout';
+
+  @override
+  String get securityAutoLockTimeoutSubtitle =>
+      'Automatically lock StitchFlow after switching apps or staying idle.';
+
+  @override
+  String get securityTimeoutImmediate => 'Immediate';
+
+  @override
+  String get securityTimeout30s => '30 sec';
+
+  @override
+  String get securityTimeout1m => '1 min';
+
+  @override
+  String get securityTimeout5m => '5 min';
+
+  @override
+  String get securityTimeout15m => '15 min';
+
+  @override
+  String get securityLockScreenTitle => 'StitchFlow Locked';
+
+  @override
+  String get securityLockScreenSubtitle =>
+      'Enter your PIN to access workshop records.';
+
+  @override
+  String get securityWrongPinError => 'Incorrect PIN. Please try again.';
+
+  @override
+  String securityLockoutCountdown(String remaining) {
+    return 'Too many attempts. Try again in $remaining.';
+  }
+
+  @override
+  String get securityUseBiometricAction => 'Unlock with Biometrics';
+
+  @override
+  String get securityBiometricPromptReason =>
+      'Unlock StitchFlow workshop records';
+
+  @override
+  String get securityBiometricLockoutFallback =>
+      'Biometrics temporarily locked by device. Enter your PIN instead.';
+
+  @override
+  String get securityBiometricUnavailableFallback =>
+      'Biometric unlock unavailable. Enter your PIN.';
+
+  @override
+  String get securityBiometricFailedFallback =>
+      'Biometric check did not match. Enter your PIN.';
+
+  @override
+  String get securityForgotPinAction => 'Forgot PIN?';
+
+  @override
+  String get securityRecoveryHeading => 'PIN Recovery';
+
+  @override
+  String get securityRecoveryEnterKeyTitle => 'Enter Offline Recovery Key';
+
+  @override
+  String get securityRecoveryEnterKeySubtitle =>
+      'Enter the 8-character Recovery Key you wrote down when setting up your PIN.';
+
+  @override
+  String get securityRecoveryKeyLabel => 'Recovery Key';
+
+  @override
+  String get securityVerifyRecoveryKeyAction => 'Verify Recovery Key';
+
+  @override
+  String get securityRecoveryKeyInvalidError =>
+      'Invalid Recovery Key. Check your code and try again.';
+
+  @override
+  String get securityCompleteRecoveryAction => 'Save New PIN & Unlock';
+
+  @override
+  String get securityLostBothTitle => 'Lost Both PIN and Recovery Key?';
+
+  @override
+  String get securityLostBothBody =>
+      'For your privacy, StitchFlow never silently bypasses App Lock. If you have a saved StitchFlow .zip backup, you can clear app data or reinstall and restore your backup.';
+
+  @override
+  String get securityVerifyCurrentPinTitle => 'Enter Current PIN';
+
+  @override
+  String get securityVerifyChangePinSubtitle =>
+      'Confirm your current PIN before choosing a new PIN.';
+
+  @override
+  String get securityVerifyDisablePinSubtitle =>
+      'Confirm your current PIN before disabling App Lock.';
+
+  @override
+  String get securityVerifyRecoveryRegenSubtitle =>
+      'Confirm your current PIN to generate a new Recovery Key.';
+
+  @override
+  String get securityReauthRequiredTitle => 'Authentication Required';
+
+  @override
+  String get securityReauthRestoreSubtitle =>
+      'Verify your PIN or fingerprint before restoring a backup.';
+
+  @override
+  String get securityReauthRawSqliteSubtitle =>
+      'Verify your PIN or fingerprint before exporting the raw SQLite database.';
+
+  @override
+  String get securityPrivacyNoteTitle => 'How Local App Lock Works';
+
+  @override
+  String get securityPrivacyNoteBody =>
+      '• Your PIN is stored only as a salted PBKDF2-HMAC-SHA256 hash inside Android Keystore secure storage — never in plain text, logs, SQLite, or backup ZIPs.\n• App Lock prevents casual unauthorized access on your phone; it does not encrypt the local SQLite database file on disk. Keep Android screen lock enabled and store exported backups safely.';
+
+  @override
+  String get dashboardTodayHeading => 'Today\'s Workshop';
+
+  @override
+  String get dashboardDailySummaryAction => 'Daily Summary';
+
+  @override
+  String get dashboardTodayIssuedLabel => 'Issued Today';
+
+  @override
+  String get dashboardTodayReturnedLabel => 'Returned Good Today';
+
+  @override
+  String get dashboardTodayLabourLabel => 'Labour Earned Today';
+
+  @override
+  String get dashboardTodayPaymentsLabel => 'Payments Today';
+
+  @override
+  String get dashboardTodayDamagedLostAlert => 'Damaged / Lost Today';
+
+  @override
+  String get dashboardImportantPendingHeading => 'Important Pending Work';
+
+  @override
+  String get dashboardViewAllPendingAction => 'View All';
+
+  @override
+  String get dailySummaryHeading => 'Daily Production Summary';
+
+  @override
+  String get dailySummaryPickDateLabel => 'Select Business Date (IST)';
+
+  @override
+  String get dailySummaryDamagedLostLabel => 'Damaged / Lost';
+
+  @override
+  String get dailySummaryNoActivityTitle => 'No Workshop Activity Recorded';
+
+  @override
+  String get dailySummaryNoActivitySubtitle =>
+      'No stock issues, returns, or payments were recorded for this IST date.';
+
+  @override
+  String get dailySummaryProcessActivityHeading => 'Process-Wise Activity';
+
+  @override
+  String get dailySummaryWorkerActivityHeading => 'Worker-Wise Activity';
+
+  @override
+  String get dailySummaryLivePendingNote => 'Current Live Workshop Balances';
+
+  @override
+  String get reportPresetToday => 'Today';
+
+  @override
+  String get reportPresetYesterday => 'Yesterday';
+
+  @override
+  String pendingAgeDaysBadge(int days) {
+    return '${days}d pending';
+  }
+
+  @override
+  String get stockRecentStockSuggestionsLabel =>
+      'Recently Used In-Stock Colours';
+
+  @override
+  String get stockRecentWorkPairsLabel => 'Recent Process & Worker';
+
+  @override
+  String get stockUnusualConfirmTitle => 'Please Confirm Unusual Issue';
+
+  @override
+  String stockUnusualFullStockWarning(int qty) {
+    return 'You are issuing all $qty available pieces (100% of remaining stock).';
+  }
+
+  @override
+  String get stockUnusualRateOverrideWarning =>
+      'Manual rate override is enabled for this issue.';
+
+  @override
+  String stockUnusualBackdatedWarning(int days) {
+    return 'Transaction date is backdated by $days days.';
+  }
+
+  @override
+  String get stockSortOldestFirst => 'Oldest First';
+
+  @override
+  String get stockSortHighestPending => 'Highest Pending';
+
+  @override
+  String get stockSortNewestFirst => 'Newest First';
+
+  @override
+  String get stockShortcutHalf => 'Half';
+
+  @override
+  String get stockFillRemainingGood => 'Fill Remaining Good';
+
+  @override
+  String get workerWorkOverviewHeading => 'Live Work & Balance Overview';
+
+  @override
+  String get workerOpenIssuesCountLabel => 'open issues';
+
+  @override
+  String get workerOpenIssuesHeading => 'Open Pending Work';
+
+  @override
+  String get workerRecentPaymentsHeading => 'Recent Payments';
+
+  @override
+  String get reportPresetThisWeek => 'This Week';
+
+  @override
+  String get reportPresetThisMonth => 'This Month';
+
+  @override
+  String get reportPresetPreviousMonth => 'Prev. Month';
+
+  @override
+  String get reportPresetAllTime => 'All Time';
+
+  @override
+  String get reportPresetCustom => 'Custom';
+
+  @override
+  String get reportCategoryDaily => 'Daily Workshop';
+
+  @override
+  String get reportCategoryWorkers => 'Worker Performance';
+
+  @override
+  String get reportCategoryProcesses => 'Process Performance';
+
+  @override
+  String get reportCategoryInventory => 'Inventory';
+
+  @override
+  String get reportCategoryFinancial => 'Labour & Financial';
+
+  @override
+  String get reportCategoryInsights => 'Business Insights';
+
+  @override
+  String get reportFiltersButton => 'Filters';
+
+  @override
+  String get reportAllOption => 'All';
+
+  @override
+  String get reportIncludeReversedLabel => 'Include Reversed Movements';
+
+  @override
+  String get reportInvSubSummary => 'Stock Summary';
+
+  @override
+  String get reportInvSubLots => 'Lot-Wise';
+
+  @override
+  String get reportInvSubColours => 'Design & Colour';
+
+  @override
+  String get reportInvSubHistory => 'Movement History';
+
+  @override
+  String get reportFinSubLabour => 'Labour Earned';
+
+  @override
+  String get reportFinSubSummary => 'Worker Summary';
+
+  @override
+  String get reportFinSubPayments => 'Payments';
+
+  @override
+  String get reportRefStockValueLabel => 'Reference Stock Value';
+
+  @override
+  String get reportRefStockValueNote =>
+      'Reference value from good stock × unit cost (not sales or profit).';
+
+  @override
+  String get reportLabourCostLabel => 'Labour Cost';
+
+  @override
+  String get reportCurrentStandingBadge => 'Current Balance';
+
+  @override
+  String get reportPeriodFlowBadge => 'Selected Period';
+
+  @override
+  String get reportAvgTurnaroundLabel => 'Avg. Completion Time';
+
+  @override
+  String reportTurnaroundSampleCount(int count) {
+    return '$count settled issues';
+  }
+
+  @override
+  String get reportDefectRateLabel => 'Defect / Loss Rate';
+
+  @override
+  String get reportWorkerProcessBreakdown => 'Process-Wise Productivity';
+
+  @override
+  String get reportProcessWorkerContribution => 'Worker Contributions';
+
+  @override
+  String get reportNotAvailable => 'N/A';
+
+  @override
+  String get reportInsightsTrendsTitle => 'Production Trends';
+
+  @override
+  String get reportInsightsWeeklyNote => 'Grouped by IST week';
+
+  @override
+  String get reportInsightsDailyNote => 'Grouped by IST day';
+
+  @override
+  String get reportInsightsComparisonTitle => 'Period-over-Period Comparison';
+
+  @override
+  String get reportInsightsNoPriorData => 'No prior data';
+
+  @override
+  String get reportInsightsBottlenecksTitle => 'Process Bottlenecks';
+
+  @override
+  String get reportInsightsNoBottlenecks =>
+      'All processes are clear — no pending bottlenecks.';
+
+  @override
+  String get reportInsightsWorkerTrendsTitle => 'Top Worker Productivity';
+
+  @override
+  String get reportInsightsDefectReasonsTitle => 'Top Damaged / Lost Reasons';
+
+  @override
+  String get reportInsightsLabourShareTitle => 'Labour Cost by Process';
+
+  @override
+  String get reportExportAction => 'Export / Print';
+
+  @override
+  String get reportExportSheetTitle => 'Export & Print Report';
+
+  @override
+  String get reportExportPrintPdfTitle => 'Print / Save as PDF';
+
+  @override
+  String get reportExportPrintPdfSubtitle =>
+      'Gujarati-accurate A4 layout via Android Print dialog.';
+
+  @override
+  String get reportExportExcelTitle => 'Export Excel (.xlsx)';
+
+  @override
+  String get reportExportExcelSubtitle =>
+      'Share current report sheet to WhatsApp, Drive, or Files.';
+
+  @override
+  String get reportExportFullWorkbookTitle => 'Full Excel Workbook (.xlsx)';
+
+  @override
+  String get reportExportFullWorkbookSubtitle =>
+      'All sheets: Daily, Workers, Processes, Inventory, Labour & Payments.';
+
+  @override
+  String get reportExportCsvTitle => 'Export CSV (UTF-8)';
+
+  @override
+  String get reportExportCsvSubtitle =>
+      'Fast Gujarati-compatible CSV for Excel & large datasets.';
+
+  @override
+  String reportExportLargeNotice(int rows) {
+    return 'This view has $rows rows. Excel or CSV export is recommended over multi-page PDF printing.';
+  }
+
+  @override
+  String reportExportSuccess(String name) {
+    return 'Report exported: $name';
+  }
+
+  @override
+  String get reportExportPrintOpened => 'Android Print / PDF dialog opened.';
+
+  @override
+  String get settingsNotificationsTitle => 'Notifications & Reminders';
+
+  @override
+  String get settingsNotificationsSubtitle =>
+      'Offline reminders for pending work, karigar settlements, daily recap, and backups.';
+
+  @override
+  String get notificationsHeading => 'Notifications & Reminders';
+
+  @override
+  String get notificationsStatusTitle => 'Notification Permission';
+
+  @override
+  String get notificationsPermGranted => 'Allowed';
+
+  @override
+  String get notificationsPermNeeded => 'Permission Needed';
+
+  @override
+  String get notificationsPermBlocked => 'Blocked in Settings';
+
+  @override
+  String get notificationsPermUnsupported => 'Android Only';
+
+  @override
+  String get notificationsStatusGrantedDesc =>
+      'Local offline reminders are active on this device. No internet or cloud push is used.';
+
+  @override
+  String get notificationsStatusNeededDesc =>
+      'Allow notifications so StitchFlow can remind you locally about pending returns, settlements, and backups.';
+
+  @override
+  String get notificationsStatusBlockedDesc =>
+      'Notifications are turned off in Android Settings. Open Phone Settings -> Apps -> StitchFlow -> Notifications to re-enable.';
+
+  @override
+  String get notificationsAllowAction => 'Allow Notifications';
+
+  @override
+  String get notificationsSendTestAction => 'Send Test Notification';
+
+  @override
+  String get notificationsTestTitle => 'StitchFlow Reminder Check';
+
+  @override
+  String get notificationsTestBody =>
+      'Local workshop notifications are working properly.';
+
+  @override
+  String get notificationsTestSent => 'Test notification sent.';
+
+  @override
+  String get notificationsMasterToggle => 'Enable Local Reminders';
+
+  @override
+  String get notificationsMasterSubtitle =>
+      'Master switch for all scheduled offline reminders.';
+
+  @override
+  String get notificationsPendingWorkTitle => 'Pending Work Reminder';
+
+  @override
+  String get notificationsPendingWorkDesc =>
+      'Reminds you daily if open karigar issues stay pending beyond your chosen age.';
+
+  @override
+  String get notificationsPendingDaysLabel => 'Alert when pending at least';
+
+  @override
+  String get notificationsSettlementTitle => 'Worker Settlement Reminder';
+
+  @override
+  String get notificationsSettlementDesc =>
+      'Weekly Saturday reminder when karigars have outstanding payable balances.';
+
+  @override
+  String get notificationsMinAmountLabel => 'Minimum payable balance';
+
+  @override
+  String get notificationsDailySummaryTitle => 'Daily Workshop Summary';
+
+  @override
+  String get notificationsDailySummaryDesc =>
+      'Evening reminder to review today\'s issued, returned, and labour recap.';
+
+  @override
+  String get notificationsSkipQuietDaysLabel => 'Skip if no activity today';
+
+  @override
+  String get notificationsBackupTitle => 'Offline Backup Reminder';
+
+  @override
+  String get notificationsBackupDesc =>
+      'Reminds you periodically to save a fresh StitchFlow .zip backup.';
+
+  @override
+  String get notificationsBackupIntervalLabel => 'Remind every';
+
+  @override
+  String get notificationsAlertsTitle => 'Important Local Business Alerts';
+
+  @override
+  String get notificationsAlertsDesc =>
+      'Local alerts when damaged stock crosses 20 pcs or an issue is 14+ days overdue (max 1 per 24h).';
+
+  @override
+  String get notificationsTimeLabel => 'Reminder time';
+
+  @override
+  String get notificationsPrivacyOemTitle => 'Offline Privacy & Battery Note';
+
+  @override
+  String get notificationsPrivacyOemBody =>
+      '• 100% offline: reminders run locally on your Android phone without Firebase or internet.\n• Lock-screen privacy: when App PIN is enabled, notifications hide exact Rupee amounts and worker names.\n• Android battery note: on OPPO (ColorOS), Xiaomi, Vivo, or Samsung phones, allow StitchFlow background notifications in Phone Settings if reminders arrive late after a reboot.';
+
+  @override
+  String get validationWhitespaceOnly =>
+      'This field cannot contain only spaces.';
+
+  @override
+  String validationMaxLength(int max) {
+    return 'Maximum $max characters allowed.';
+  }
+
+  @override
+  String get validationTextTooLong =>
+      'Entered text exceeds the allowed length.';
+
+  @override
+  String get validationMobileRequired => 'Enter mobile number.';
+
+  @override
+  String get validationMobileInvalidIndian =>
+      'Enter a valid 10-digit mobile number.';
+
+  @override
+  String get validationMobileInvalidChars =>
+      'Mobile number contains invalid characters.';
+
+  @override
+  String get validationMobileInvalidInternational =>
+      'Enter a valid international mobile number with country code.';
+
+  @override
+  String get validationEmailInvalid => 'Enter a valid email address.';
+
+  @override
+  String get validationInvalidNumber => 'Enter a valid number.';
+
+  @override
+  String get validationInvalidInteger => 'Enter a valid whole number.';
+
+  @override
+  String get validationInvalidDecimal => 'Enter a valid decimal number.';
+
+  @override
+  String validationTooManyDecimals(int maxDecimals) {
+    return 'Enter up to $maxDecimals decimal places.';
+  }
+
+  @override
+  String get validationNegativeNotAllowed => 'Value cannot be negative.';
+
+  @override
+  String get validationPositiveNumber => 'Enter a number greater than 0.';
+
+  @override
+  String get validationValueTooLarge =>
+      'Entered value exceeds the maximum allowed limit.';
+
+  @override
+  String get validationNonNegativeInt => 'Enter a whole number 0 or greater.';
+
+  @override
+  String validationQuantityExceedsMax(int max) {
+    return 'Quantity cannot exceed $max.';
+  }
+
+  @override
+  String get validationPositiveAmount => 'Enter a valid amount greater than 0.';
+
+  @override
+  String get validationInvalidPercentage =>
+      'Enter a percentage between 0 and 100.';
+
+  @override
+  String get validationInvalidDate => 'Select a valid date.';
+
+  @override
+  String get validationDateRangeOrder =>
+      'End date cannot be earlier than start date.';
+
+  @override
+  String get validationDuplicateValue => 'This value already exists.';
+
+  @override
+  String get validationInvalidHexColor =>
+      'Enter a valid hex colour code (e.g. #172B4D).';
+
+  @override
+  String get validationInvalidPin => 'Enter a valid 4- or 6-digit numeric PIN.';
+
+  @override
+  String get validationRecoveryKeyRequired =>
+      'Enter your 8-character Recovery Key.';
+
+  @override
+  String get validationQuantityBelowCommittedStock =>
+      'Initial quantity cannot be less than stock already issued, damaged, or settled.';
+
+  @override
+  String get validationWorkerNotFound => 'Selected worker was not found.';
+
+  @override
+  String get validationWorkerNotAssigned =>
+      'Selected worker is not actively assigned to this process.';
+
+  @override
+  String get validationRecordNotFound =>
+      'Referenced record was not found or is no longer active.';
+
+  @override
+  String get validationOverrideReasonRequired =>
+      'Reason is required when overriding the rate.';
+
+  @override
+  String get validationParentIssueInactive =>
+      'Original stock issue is no longer active.';
+
+  @override
+  String get validationAlreadyReversed =>
+      'This entry has already been reversed.';
+
+  @override
+  String get validationCannotReverseReversal =>
+      'A reversal entry cannot itself be reversed.';
 }

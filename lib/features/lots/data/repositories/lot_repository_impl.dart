@@ -6,8 +6,12 @@ import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/platform/media_storage_service.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
+import 'package:business_manager/core/validation/validation.dart';
+import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
 import 'package:business_manager/features/lots/domain/repositories/lot_repository.dart';
+import 'package:business_manager/features/stock_movements/domain/calculators/stock_calculator.dart';
+import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 import 'package:drift/drift.dart';
 import 'package:injectable/injectable.dart';
 
@@ -89,6 +93,20 @@ final class LotRepositoryImpl implements LotRepository {
     if (cleanNumber.isEmpty) {
       throw ArgumentError('Lot number cannot be empty.');
     }
+    if (cleanNumber.length > ValidationLimits.maxShortNameLength ||
+        (title?.trim().length ?? 0) > ValidationLimits.maxPersonNameLength ||
+        (notes?.trim().length ?? 0) > ValidationLimits.maxNotesLength) {
+      throw const DomainValidationException(
+        'text_too_long',
+        'Entered lot details exceed maximum allowed length.',
+      );
+    }
+    if (!AppValidators.dateValidator(transactionAtUtcMillis).isValid) {
+      throw const DomainValidationException(
+        'invalid_date',
+        'Lot transaction date is invalid.',
+      );
+    }
 
     return _txRunner.runInTransaction(() async {
       final now = IstDateTimeHelper.nowUtcMillis();
@@ -146,6 +164,20 @@ final class LotRepositoryImpl implements LotRepository {
     final cleanNumber = lotNumber.trim();
     if (cleanNumber.isEmpty) {
       throw ArgumentError('Lot number cannot be empty.');
+    }
+    if (cleanNumber.length > ValidationLimits.maxShortNameLength ||
+        (title?.trim().length ?? 0) > ValidationLimits.maxPersonNameLength ||
+        (notes?.trim().length ?? 0) > ValidationLimits.maxNotesLength) {
+      throw const DomainValidationException(
+        'text_too_long',
+        'Entered lot details exceed maximum allowed length.',
+      );
+    }
+    if (!AppValidators.dateValidator(transactionAtUtcMillis).isValid) {
+      throw const DomainValidationException(
+        'invalid_date',
+        'Lot transaction date is invalid.',
+      );
     }
 
     return _txRunner.runInTransaction(() async {
@@ -242,6 +274,13 @@ final class LotRepositoryImpl implements LotRepository {
     if (cleanName.isEmpty) {
       throw ArgumentError('Design name cannot be empty.');
     }
+    if (cleanName.length > ValidationLimits.maxShortNameLength ||
+        (notes?.trim().length ?? 0) > ValidationLimits.maxNotesLength) {
+      throw const DomainValidationException(
+        'text_too_long',
+        'Design name or notes exceed maximum allowed length.',
+      );
+    }
 
     return _txRunner.runInTransaction(() async {
       final parentLot = await _db.lotDao.findLotById(lotId);
@@ -294,6 +333,13 @@ final class LotRepositoryImpl implements LotRepository {
     final cleanName = designName.trim();
     if (cleanName.isEmpty) {
       throw ArgumentError('Design name cannot be empty.');
+    }
+    if (cleanName.length > ValidationLimits.maxShortNameLength ||
+        (notes?.trim().length ?? 0) > ValidationLimits.maxNotesLength) {
+      throw const DomainValidationException(
+        'text_too_long',
+        'Design name or notes exceed maximum allowed length.',
+      );
     }
 
     return _txRunner.runInTransaction(() async {
@@ -380,6 +426,31 @@ final class LotRepositoryImpl implements LotRepository {
     if (unitPricePaise < 0) {
       throw ArgumentError('Unit price cannot be negative.');
     }
+    if (cleanName.length > ValidationLimits.maxShortNameLength ||
+        (notes?.trim().length ?? 0) > ValidationLimits.maxNotesLength) {
+      throw const DomainValidationException(
+        'text_too_long',
+        'Colour name or notes exceed maximum allowed length.',
+      );
+    }
+    if (initialQuantity > ValidationLimits.maxQuantity) {
+      throw const DomainValidationException(
+        'quantity_too_large',
+        'Initial quantity exceeds maximum allowed limit.',
+      );
+    }
+    if (unitPricePaise > ValidationLimits.maxAmountPaise) {
+      throw const DomainValidationException(
+        'amount_too_large',
+        'Unit price exceeds maximum allowed limit.',
+      );
+    }
+    if (!AppValidators.hexColorValidator(colourHex).isValid) {
+      throw const DomainValidationException(
+        'invalid_hex_color',
+        'Invalid hex colour code.',
+      );
+    }
 
     return _txRunner.runInTransaction(() async {
       final parentDesign = await _db.lotDao.findDesignById(lotDesignId);
@@ -450,11 +521,65 @@ final class LotRepositoryImpl implements LotRepository {
     if (unitPricePaise < 0) {
       throw ArgumentError('Unit price cannot be negative.');
     }
+    if (cleanName.length > ValidationLimits.maxShortNameLength ||
+        (notes?.trim().length ?? 0) > ValidationLimits.maxNotesLength) {
+      throw const DomainValidationException(
+        'text_too_long',
+        'Colour name or notes exceed maximum allowed length.',
+      );
+    }
+    if (initialQuantity > ValidationLimits.maxQuantity) {
+      throw const DomainValidationException(
+        'quantity_too_large',
+        'Initial quantity exceeds maximum allowed limit.',
+      );
+    }
+    if (unitPricePaise > ValidationLimits.maxAmountPaise) {
+      throw const DomainValidationException(
+        'amount_too_large',
+        'Unit price exceeds maximum allowed limit.',
+      );
+    }
+    if (!AppValidators.hexColorValidator(colourHex).isValid) {
+      throw const DomainValidationException(
+        'invalid_hex_color',
+        'Invalid hex colour code.',
+      );
+    }
 
     return _txRunner.runInTransaction(() async {
       final existing = await _db.lotDao.findDesignColourById(designColourId);
       if (existing == null || existing.deletedAt != null) {
         throw const LocalStorageException('Design colour not found.');
+      }
+
+      // Atomic stock integrity guard: never allow reducing initialQuantity below
+      // committed/damaged/settled stock (which would produce negative in-house stock).
+      if (initialQuantity < existing.initialQuantity) {
+        final movementRows = await _db.stockMovementDao
+            .getMovementsForDesignColour(designColourId);
+        if (movementRows.isNotEmpty) {
+          final movements = movementRows.map(_movementRowToEntity).toList();
+          final simulated = const StockCalculator()
+              .calculateDesignColourBalance(
+                designColourId: existing.id,
+                lotId: '',
+                lotNumber: '',
+                lotDesignId: existing.lotDesignId,
+                designName: '',
+                colourName: existing.colourName,
+                unitPricePaise: unitPricePaise,
+                initialQuantity: initialQuantity,
+                allMovementsForColour: movements,
+              );
+          if (simulated.physicalAvailableInHouse < 0 ||
+              simulated.totalGoodPhysicalStock < 0) {
+            throw const DomainValidationException(
+              'quantity_below_committed_stock',
+              'Initial quantity cannot be reduced below stock already issued, damaged, or settled.',
+            );
+          }
+        }
       }
       final now = IstDateTimeHelper.nowUtcMillis();
       final actor = await _currentActor();
@@ -707,5 +832,35 @@ final class LotRepositoryImpl implements LotRepository {
         sha256: row.sha256,
         caption: row.caption,
         createdAt: row.createdAt,
+      );
+
+  StockMovementEntity _movementRowToEntity(StockMovementRow row) =>
+      StockMovementEntity(
+        id: row.id,
+        lotId: row.lotId,
+        lotDesignId: row.lotDesignId,
+        designColourId: row.designColourId,
+        processId: row.processId,
+        memberId: row.memberId,
+        parentIssueId: row.parentIssueId,
+        reversesMovementId: row.reversesMovementId,
+        clientRequestId: row.clientRequestId,
+        movementType: StockMovementType.fromDbValue(row.movementType),
+        quantity: row.quantity,
+        sourceRateId: row.sourceRateId,
+        appliedRatePaise: row.appliedRatePaise,
+        isRateOverridden: row.isRateOverridden == 1,
+        overrideReason: row.overrideReason,
+        lockedBillingMode: row.lockedBillingMode != null
+            ? BillingMode.fromDbValue(row.lockedBillingMode!)
+            : null,
+        lockedIncludeDamaged: row.lockedIncludeDamaged == 1,
+        reason: row.reason,
+        notes: row.notes,
+        transactionAt: row.transactionAt,
+        recordedAt: row.recordedAt,
+        createdBy: row.createdBy,
+        createdAt: row.createdAt,
+        updatedAt: row.updatedAt,
       );
 }

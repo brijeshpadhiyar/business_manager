@@ -48,14 +48,38 @@ abstract final class DomainLabelLocalizer {
     };
   }
 
+  static String paymentType(AppLocalizations l10n, PaymentType type) {
+    return switch (type) {
+      PaymentType.regular => l10n.accountingPaymentTypeRegular,
+      PaymentType.advance => l10n.accountingPaymentTypeAdvance,
+      PaymentType.advanceRefund => l10n.accountingPaymentTypeRefund,
+      PaymentType.reversal => l10n.stockTypeReversal,
+    };
+  }
+
+  static String paymentMode(AppLocalizations l10n, PaymentMode mode) {
+    return switch (mode) {
+      PaymentMode.cash => l10n.accountingModeCash,
+      PaymentMode.upi => l10n.accountingModeUpi,
+      PaymentMode.bankTransfer => l10n.accountingModeBank,
+      PaymentMode.cheque => l10n.accountingModeCheque,
+      PaymentMode.other => l10n.accountingModeOther,
+    };
+  }
+
   static String auditAction(AppLocalizations l10n, String actionType) {
     final normalized = actionType.trim().toUpperCase();
     return switch (normalized) {
       'CREATE' => l10n.auditActionCreate,
       'UPDATE' => l10n.auditActionUpdate,
       'DELETE' || 'SOFT_DELETE' => l10n.auditActionDelete,
+      'DEACTIVATE' => l10n.auditActionDeactivate,
+      'REACTIVATE' => l10n.auditActionReactivate,
       'REVERSAL' => l10n.stockTypeReversal,
       'RATE_OVERRIDE' => l10n.auditActionRateOverride,
+      'DAMAGED_TO_GOOD_ADJUSTMENT' => l10n.stockTypeRepair,
+      'BACKUP_EXPORT' => l10n.auditActionBackupExport,
+      'BACKUP_RESTORE' => l10n.auditActionBackupRestore,
       'ARCHIVE' => l10n.lotsStatusArchived,
       'RESTORE' => l10n.auditActionRestore,
       _ => normalized.replaceAll('_', ' '),
@@ -77,6 +101,8 @@ abstract final class DomainLabelLocalizer {
       'labour_entries' || 'labour_entry' => l10n.accountingTabLabour,
       'worker_ledger_adjustments' => l10n.accountingAdjustmentsLabel,
       'business_profile' => l10n.businessProfileHeading,
+      'backup' => l10n.auditEntityBackup,
+      'app_security' => l10n.auditEntityAppSecurity,
       _ => normalized.replaceAll('_', ' '),
     };
   }

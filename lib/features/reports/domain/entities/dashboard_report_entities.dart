@@ -50,6 +50,14 @@ final class DashboardSnapshot {
     required this.totalOutstandingPayablePaise,
     required this.totalAdvanceCreditPaise,
     required this.recentActivity,
+    this.todayIstDate = '',
+    this.todayIssuedQty = 0,
+    this.todayReceivedGoodQty = 0,
+    this.todayDamagedQty = 0,
+    this.todayLostShortageQty = 0,
+    this.todayLabourEarnedPaise = 0,
+    this.todayPaymentsPaise = 0,
+    this.importantPendingIssues = const [],
   });
 
   final String businessNameEn;
@@ -74,6 +82,114 @@ final class DashboardSnapshot {
   final int totalOutstandingPayablePaise;
   final int totalAdvanceCreditPaise;
   final List<RecentActivityItem> recentActivity;
+  final String todayIstDate;
+  final int todayIssuedQty;
+  final int todayReceivedGoodQty;
+  final int todayDamagedQty;
+  final int todayLostShortageQty;
+  final int todayLabourEarnedPaise;
+  final int todayPaymentsPaise;
+  final List<OpenIssueSummary> importantPendingIssues;
+}
+
+/// Per-process activity totals for a single IST business day.
+final class DailyProcessActivity {
+  const DailyProcessActivity({
+    required this.processId,
+    required this.processName,
+    required this.issuedQty,
+    required this.goodReturnedQty,
+    required this.damagedQty,
+    required this.lostShortageQty,
+  });
+
+  final String processId;
+  final String processName;
+  final int issuedQty;
+  final int goodReturnedQty;
+  final int damagedQty;
+  final int lostShortageQty;
+}
+
+/// Per-worker activity totals for a single IST business day.
+final class DailyWorkerActivity {
+  const DailyWorkerActivity({
+    required this.workerId,
+    required this.workerName,
+    required this.issuedQty,
+    required this.goodReturnedQty,
+    required this.damagedQty,
+    required this.lostShortageQty,
+    required this.labourEarnedPaise,
+    required this.paymentsPaidPaise,
+  });
+
+  final String workerId;
+  final String workerName;
+  final int issuedQty;
+  final int goodReturnedQty;
+  final int damagedQty;
+  final int lostShortageQty;
+  final int labourEarnedPaise;
+  final int paymentsPaidPaise;
+}
+
+/// Complete IST daily workshop production & financial recap (`/daily-summary`).
+final class DailyWorkshopSummary {
+  const DailyWorkshopSummary({
+    required this.istDateIso,
+    required this.dayStartUtcMillis,
+    required this.dayEndUtcMillis,
+    required this.issuedQty,
+    required this.goodReturnedQty,
+    required this.damagedQty,
+    required this.lostQty,
+    required this.shortageQty,
+    required this.repairedQty,
+    required this.labourEarnedPaise,
+    required this.regularPaymentsPaise,
+    required this.advancePaymentsPaise,
+    required this.advanceRefundsPaise,
+    required this.netPaymentsPaise,
+    required this.currentTotalPendingQty,
+    required this.currentTotalDamagedQty,
+    required this.currentTotalOutstandingPayablePaise,
+    required this.processActivities,
+    required this.workerActivities,
+  });
+
+  final String istDateIso;
+  final int dayStartUtcMillis;
+  final int dayEndUtcMillis;
+  final int issuedQty;
+  final int goodReturnedQty;
+  final int damagedQty;
+  final int lostQty;
+  final int shortageQty;
+  final int repairedQty;
+  final int labourEarnedPaise;
+  final int regularPaymentsPaise;
+  final int advancePaymentsPaise;
+  final int advanceRefundsPaise;
+  final int netPaymentsPaise;
+  final int currentTotalPendingQty;
+  final int currentTotalDamagedQty;
+  final int currentTotalOutstandingPayablePaise;
+  final List<DailyProcessActivity> processActivities;
+  final List<DailyWorkerActivity> workerActivities;
+
+  int get lostAndShortageQty => lostQty + shortageQty;
+  bool get hasAnyActivity =>
+      issuedQty > 0 ||
+      goodReturnedQty > 0 ||
+      damagedQty > 0 ||
+      lostQty > 0 ||
+      shortageQty > 0 ||
+      repairedQty > 0 ||
+      labourEarnedPaise > 0 ||
+      regularPaymentsPaise > 0 ||
+      advancePaymentsPaise > 0 ||
+      advanceRefundsPaise > 0;
 }
 
 /// Lot-wise stock report row.

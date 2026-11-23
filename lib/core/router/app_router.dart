@@ -14,13 +14,19 @@ import 'package:business_manager/features/dashboard/presentation/pages/dashboard
 import 'package:business_manager/features/inventory/presentation/pages/inventory_overview_page.dart';
 import 'package:business_manager/features/lots/presentation/pages/lot_detail_page.dart';
 import 'package:business_manager/features/lots/presentation/pages/lot_list_page.dart';
+import 'package:business_manager/features/notifications/presentation/pages/notification_settings_page.dart';
 import 'package:business_manager/features/processes/presentation/pages/process_detail_page.dart';
 import 'package:business_manager/features/processes/presentation/pages/process_form_page.dart';
 import 'package:business_manager/features/processes/presentation/pages/process_list_page.dart';
 import 'package:business_manager/features/rates/presentation/pages/rate_form_page.dart';
 import 'package:business_manager/features/rates/presentation/pages/rate_history_page.dart';
+import 'package:business_manager/features/reports/presentation/pages/daily_summary_page.dart';
 import 'package:business_manager/features/reports/presentation/pages/reports_page.dart';
+import 'package:business_manager/features/security/presentation/bloc/app_lock_cubit.dart';
+import 'package:business_manager/features/security/presentation/pages/pin_setup_page.dart';
+import 'package:business_manager/features/security/presentation/pages/security_settings_page.dart';
 import 'package:business_manager/features/settings/presentation/pages/about_stitchflow_page.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:business_manager/features/settings/presentation/pages/appearance_settings_page.dart';
 import 'package:business_manager/features/settings/presentation/pages/help_guidance_page.dart';
 import 'package:business_manager/features/settings/presentation/pages/settings_home_page.dart';
@@ -157,6 +163,8 @@ GoRouter createAppRouter(AppConfig config) {
           state: state,
           child: StockIssuePage(
             initialDesignColourId: state.uri.queryParameters['designColourId'],
+            initialProcessId: state.uri.queryParameters['processId'],
+            initialWorkerId: state.uri.queryParameters['workerId'],
           ),
         ),
       ),
@@ -164,7 +172,11 @@ GoRouter createAppRouter(AppConfig config) {
         path: RoutePaths.stockReturnPicker,
         pageBuilder: (context, state) => AppMotion.buildPage(
           state: state,
-          child: const ReceiveReturnPickerPage(),
+          child: ReceiveReturnPickerPage(
+            initialWorkerId: state.uri.queryParameters['workerId'],
+            initialProcessId: state.uri.queryParameters['processId'],
+            initialLotId: state.uri.queryParameters['lotId'],
+          ),
         ),
       ),
       GoRoute(
@@ -218,11 +230,22 @@ GoRouter createAppRouter(AppConfig config) {
         pageBuilder: (context, state) =>
             AppMotion.buildPage(state: state, child: const BackupRestorePage()),
       ),
-      // Business Reports
+      // Business Reports & Daily Summary
       GoRoute(
         path: RoutePaths.reports,
         pageBuilder: (context, state) =>
             AppMotion.buildPage(state: state, child: const ReportsPage()),
+      ),
+      GoRoute(
+        path: RoutePaths.dailySummary,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: DailySummaryPage(
+            initialDayUtcMillis: int.tryParse(
+              state.uri.queryParameters['dayUtcMillis'] ?? '',
+            ),
+          ),
+        ),
       ),
       // Centralized Settings & Help Hub
       GoRoute(
@@ -251,6 +274,34 @@ GoRouter createAppRouter(AppConfig config) {
         pageBuilder: (context, state) => AppMotion.buildPage(
           state: state,
           child: const StockLabourSettingsPage(),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.settingsSecurity,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: const SecuritySettingsPage(),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.settingsSecurityPinSetup,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: const PinSetupPage(isChangeMode: false),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.settingsSecurityPinChange,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: const PinSetupPage(isChangeMode: true),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.settingsNotifications,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: const NotificationSettingsPage(),
         ),
       ),
       GoRoute(
@@ -311,6 +362,16 @@ final class _StitchFlowShellPageState extends State<StitchFlowShellPage> {
       selectedIndex: _selectedIndex,
       onDestinationSelected: (index) => setState(() => _selectedIndex = index),
       actions: [
+        BlocBuilder<AppLockCubit, AppLockState>(
+          builder: (context, lockState) {
+            if (!lockState.isPinEnabled) return const SizedBox.shrink();
+            return AppIconButton(
+              icon: Icons.lock_outline_rounded,
+              tooltip: l10n.securityLockNowAction,
+              onPressed: () => context.read<AppLockCubit>().lockNow(),
+            );
+          },
+        ),
         AppIconButton(
           icon: Icons.account_balance_wallet_outlined,
           tooltip: l10n.navAccounting,

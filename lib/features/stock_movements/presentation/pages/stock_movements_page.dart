@@ -8,6 +8,7 @@ import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 import 'package:business_manager/features/stock_movements/domain/repositories/stock_movement_repository.dart';
@@ -114,6 +115,7 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
         title: Text(l10n.stockReverseConfirmTitle),
         content: Form(
           key: formKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -127,9 +129,14 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
                 controller: reasonCtrl,
                 label: l10n.stockReverseReasonLabel,
                 maxLines: 2,
-                validator: (v) => (v == null || v.trim().isEmpty)
-                    ? l10n.validationRequired
-                    : null,
+                maxLength: ValidationLimits.maxNotesLength,
+                validator: ValidationLocalizer.wrap(
+                  l10n,
+                  (v) => AppValidators.nameValidator(
+                    v,
+                    maxLength: ValidationLimits.maxNotesLength,
+                  ),
+                ),
               ),
             ],
           ),
@@ -170,14 +177,10 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
       }
     } on DomainValidationException catch (e) {
       if (!mounted) return;
-      final msg = switch (e.code) {
-        'downstream_stock_dependency' ||
-        'downstream_damaged_dependency' ||
-        'downstream_parent_dependency' => l10n.stockReverseBlockedDownstream,
-        'issue_has_active_settlements' => l10n.stockReverseBlockedChildren,
-        _ => e.message,
-      };
-      AppFeedback.showError(context, msg);
+      AppFeedback.showError(
+        context,
+        ValidationLocalizer.localizeDomainException(l10n, e),
+      );
     } catch (e) {
       if (mounted) AppFeedback.showError(context, e.toString());
     } finally {

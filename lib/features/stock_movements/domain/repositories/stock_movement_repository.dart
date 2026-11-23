@@ -44,6 +44,10 @@ abstract interface class StockMovementRepository {
   /// Returns process-wise issued/returned/pending stock totals.
   Future<List<ProcessStockSummary>> getProcessStockSummaries();
 
+  /// Returns up to 3 recent active `(process, worker)` pairs and in-stock
+  /// colours for faster daily stock issue without altering any business rules.
+  Future<RecentIssueSuggestions> getRecentIssueSuggestions();
+
   /// Atomically validates 5-point pre-issue rules, resolves/locks historical
   /// rate and billing configuration, inserts `ISSUE`, inserts matching
   /// `labour_entries`, and records `audit_logs`.

@@ -10,6 +10,7 @@ import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/accounting/domain/calculators/labour_calculator.dart';
 import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
@@ -30,9 +31,16 @@ import 'package:material_ui/material_ui.dart';
 /// 4. Confirm Issue (Compact summary + expected labour + atomic submit)
 /// 5. Success (Updated available stock + Issue More / View Details)
 final class StockIssuePage extends StatefulWidget {
-  const StockIssuePage({super.key, this.initialDesignColourId});
+  const StockIssuePage({
+    super.key,
+    this.initialDesignColourId,
+    this.initialProcessId,
+    this.initialWorkerId,
+  });
 
   final String? initialDesignColourId;
+  final String? initialProcessId;
+  final String? initialWorkerId;
 
   @override
   State<StockIssuePage> createState() => _StockIssuePageState();
@@ -66,6 +74,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
   List<DesignColourStockBalance> _allBalances = const [];
   List<ProcessEntity> _activeProcesses = const [];
   List<ProcessAssignedWorkerSummary> _eligibleWorkers = const [];
+  RecentIssueSuggestions _recentSuggestions = const RecentIssueSuggestions();
   BillingMode _globalBillingMode = BillingMode.receivedQty;
 
   String? _selectedColourId;
@@ -155,10 +164,12 @@ final class _StockIssuePageState extends State<StockIssuePage> {
         _stockRepo.getAllDesignColourBalances(),
         _processRepo.getProcesses(isActiveFilter: true),
         _profileRepo.getProfile(),
+        _stockRepo.getRecentIssueSuggestions(),
       ]);
       final balances = results[0] as List<DesignColourStockBalance>;
       final procs = results[1] as List<ProcessEntity>;
       final profile = results[2] as BusinessProfileEntity;
+      final recents = results[3] as RecentIssueSuggestions;
 
       final requestedColour = preserveColourId ?? widget.initialDesignColourId;
       String? initialColour;
@@ -170,22 +181,34 @@ final class _StockIssuePageState extends State<StockIssuePage> {
         initialColour = balances.first.designColourId;
       }
 
+      final requestedProc = widget.initialProcessId;
+      String? nextProcessId;
+      if (_selectedProcessId != null &&
+          procs.any((p) => p.id == _selectedProcessId)) {
+        nextProcessId = _selectedProcessId;
+      } else if (requestedProc != null &&
+          procs.any((p) => p.id == requestedProc)) {
+        nextProcessId = requestedProc;
+      } else if (procs.isNotEmpty) {
+        nextProcessId = procs.first.id;
+      }
+
       if (!mounted) return;
       setState(() {
         _allBalances = balances;
         _activeProcesses = procs;
+        _recentSuggestions = recents;
         _globalBillingMode = profile.defaultBillingMode;
         _selectedColourId = initialColour;
         _pickingStock = initialColour == null;
-        _selectedProcessId =
-            _selectedProcessId != null &&
-                procs.any((p) => p.id == _selectedProcessId)
-            ? _selectedProcessId
-            : (procs.isNotEmpty ? procs.first.id : null);
+        _selectedProcessId = nextProcessId;
         _loading = false;
       });
       if (_selectedProcessId != null) {
-        await _loadWorkersForProcess(_selectedProcessId!);
+        await _loadWorkersForProcess(
+          _selectedProcessId!,
+          preferredWorkerId: widget.initialWorkerId,
+        );
       }
     } catch (e) {
       if (!mounted) return;
@@ -196,17 +219,25 @@ final class _StockIssuePageState extends State<StockIssuePage> {
     }
   }
 
-  Future<void> _loadWorkersForProcess(String processId) async {
+  Future<void> _loadWorkersForProcess(
+    String processId, {
+    String? preferredWorkerId,
+  }) async {
     final detail = await _processRepo.getProcessDetail(processId);
     final activeAssigned = (detail?.assignedWorkers ?? const [])
         .where((w) => w.workerIsActive)
         .toList();
     if (!mounted) return;
+    String? chosenWorkerId;
+    if (preferredWorkerId != null &&
+        activeAssigned.any((w) => w.workerId == preferredWorkerId)) {
+      chosenWorkerId = preferredWorkerId;
+    } else if (activeAssigned.isNotEmpty) {
+      chosenWorkerId = activeAssigned.first.workerId;
+    }
     setState(() {
       _eligibleWorkers = activeAssigned;
-      _selectedWorkerId = activeAssigned.isNotEmpty
-          ? activeAssigned.first.workerId
-          : null;
+      _selectedWorkerId = chosenWorkerId;
       _ratePreview = null;
       _submitError = null;
     });
@@ -228,11 +259,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
   }
 
   int? _parseRupeesToPaise(String text) {
-    final cleaned = text.trim();
-    if (cleaned.isEmpty) return null;
-    final parsed = double.tryParse(cleaned);
-    if (parsed == null || parsed < 0) return null;
-    return (parsed * 100).round();
+    return AppValidators.parseRupeesToPaiseExact(text, allowZero: true).paise;
   }
 
   void _selectStock(DesignColourStockBalance b) {
@@ -296,6 +323,32 @@ final class _StockIssuePageState extends State<StockIssuePage> {
       }
     }
 
+    // Unusual-action confirmation guard (never interrupts routine issues)
+    final warnings = <String>[];
+    if (qty == balance.physicalAvailableInHouse &&
+        balance.physicalAvailableInHouse >= 50) {
+      warnings.add(l10n.stockUnusualFullStockWarning(qty));
+    }
+    if (_overrideRate) {
+      warnings.add(l10n.stockUnusualRateOverrideWarning);
+    }
+    final daysBackdated =
+        (IstDateTimeHelper.nowUtcMillis() - _transactionAtUtc) ~/
+        Duration.millisecondsPerDay;
+    if (daysBackdated > 7) {
+      warnings.add(l10n.stockUnusualBackdatedWarning(daysBackdated));
+    }
+    if (warnings.isNotEmpty) {
+      final confirmed = await AppDialog.showConfirmation(
+        context,
+        title: l10n.stockUnusualConfirmTitle,
+        message: warnings.map((w) => '• $w').join('\n'),
+        confirmLabel: l10n.stockConfirmIssueAction,
+        cancelLabel: l10n.actionCancel,
+      );
+      if (confirmed != true || !mounted) return;
+    }
+
     setState(() {
       _saving = true;
       _submitError = null;
@@ -340,13 +393,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
       if (!mounted) return;
       setState(() {
         _saving = false;
-        _submitError = switch (e.code) {
-          'insufficient_good_stock' => l10n.stockInsufficientGoodError,
-          'invalid_quantity' => l10n.stockInvalidQtyError,
-          'rate_missing' => l10n.stockRateMissingWarning,
-          'rate_conflict' => l10n.stockRateConflictWarning,
-          _ => e.message,
-        };
+        _submitError = ValidationLocalizer.localizeDomainException(l10n, e);
       });
     } catch (e) {
       if (!mounted) return;
@@ -583,6 +630,32 @@ final class _StockIssuePageState extends State<StockIssuePage> {
             ],
           ),
           const SizedBox(height: AppSpacing.sm),
+          if (_recentSuggestions.inStockDesignColourIds.isNotEmpty &&
+              query.isEmpty) ...[
+            AppText(
+              l10n.stockRecentStockSuggestionsLabel,
+              variant: AppTextVariant.label,
+              color: colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Wrap(
+              spacing: AppSpacing.xs,
+              runSpacing: AppSpacing.xs,
+              children: [
+                for (final id in _recentSuggestions.inStockDesignColourIds)
+                  for (final b in _allBalances)
+                    if (b.designColourId == id)
+                      ActionChip(
+                        avatar: const Icon(Icons.history_rounded, size: 16),
+                        label: Text(
+                          '${b.lotNumber} • ${b.colourName} (${b.physicalAvailableInHouse})',
+                        ),
+                        onPressed: () => _selectStock(b),
+                      ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.sm),
+          ],
           AppTextField(
             controller: _stockSearchCtrl,
             label: l10n.stockSearchStockHint,
@@ -696,6 +769,33 @@ final class _StockIssuePageState extends State<StockIssuePage> {
             ],
           ),
           const SizedBox(height: AppSpacing.md),
+          if (_recentSuggestions.workPairs.isNotEmpty) ...[
+            AppText(
+              l10n.stockRecentWorkPairsLabel,
+              variant: AppTextVariant.label,
+              color: colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Wrap(
+              spacing: AppSpacing.xs,
+              runSpacing: AppSpacing.xs,
+              children: [
+                for (final pair in _recentSuggestions.workPairs)
+                  ActionChip(
+                    avatar: const Icon(Icons.bolt_rounded, size: 16),
+                    label: Text('${pair.processName} • ${pair.workerName}'),
+                    onPressed: () async {
+                      setState(() => _selectedProcessId = pair.processId);
+                      await _loadWorkersForProcess(
+                        pair.processId,
+                        preferredWorkerId: pair.workerId,
+                      );
+                    },
+                  ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.md),
+          ],
           AppText(
             l10n.stockActiveProcessesLabel,
             variant: AppTextVariant.label,
@@ -793,10 +893,12 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
-                    onChanged: (_) => setState(() {}),
-                    validator: (v) =>
-                        _overrideRate && _parseRupeesToPaise(v ?? '') == null
-                        ? l10n.validationRequired
+                    onChanged: (_) => setState(() => _submitError = null),
+                    validator: (v) => _overrideRate
+                        ? ValidationLocalizer.localize(
+                            l10n,
+                            AppValidators.nonNegativeAmountValidator(v),
+                          )
                         : null,
                   ),
                   const SizedBox(height: AppSpacing.sm),
@@ -804,9 +906,15 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                     controller: _overrideReasonCtrl,
                     label: l10n.stockOverrideReasonLabel,
                     maxLines: 2,
-                    validator: (v) =>
-                        _overrideRate && (v == null || v.trim().isEmpty)
-                        ? l10n.validationRequired
+                    maxLength: ValidationLimits.maxNotesLength,
+                    validator: (v) => _overrideRate
+                        ? ValidationLocalizer.localize(
+                            l10n,
+                            AppValidators.nameValidator(
+                              v,
+                              maxLength: ValidationLimits.maxNotesLength,
+                            ),
+                          )
                         : null,
                   ),
                 ],
@@ -815,6 +923,14 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                   controller: _notesCtrl,
                   label: l10n.stockNotesLabel,
                   maxLines: 2,
+                  maxLength: ValidationLimits.maxNotesLength,
+                  validator: ValidationLocalizer.wrap(
+                    l10n,
+                    (v) => AppValidators.maxLengthValidator(
+                      v,
+                      maxLength: ValidationLimits.maxNotesLength,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: AppSpacing.sm),
               ],
@@ -958,11 +1074,14 @@ final class _StockIssuePageState extends State<StockIssuePage> {
             errorText: qtyExceeds ? l10n.stockInsufficientGoodError : null,
             onChanged: (_) => setState(() => _submitError = null),
             validator: (v) {
-              final parsed = int.tryParse(v?.trim() ?? '');
-              if (parsed == null || parsed <= 0) {
-                return l10n.stockInvalidQtyError;
+              final parsed = AppValidators.parseQuantityExact(v);
+              if (!parsed.validation.isValid) {
+                return parsed.validation.code ==
+                        ValidationErrorCode.valueTooLarge
+                    ? l10n.validationValueTooLarge
+                    : l10n.stockInvalidQtyError;
               }
-              if (parsed > available) {
+              if (parsed.value! > available) {
                 return l10n.stockInsufficientGoodError;
               }
               return null;
