@@ -290,7 +290,7 @@ final class _WorkerDetailView extends StatelessWidget {
                       ? '${MoneyFormatter.formatPaise(currentRate.ratePaise)} ${l10n.ratesPerPieceSuffix}'
                       : l10n.ratesNoCurrentRate;
                   final periodText = currentRate != null
-                      ? '${currentRate.effectiveFrom} → ${currentRate.effectiveTo ?? l10n.ratesOngoingLabel}'
+                      ? '${currentRate.effectiveFrom} - ${currentRate.effectiveTo ?? l10n.ratesOngoingLabel}'
                       : null;
 
                   return Padding(

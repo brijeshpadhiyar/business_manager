@@ -1,71 +1,106 @@
 import 'package:material_ui/material_ui.dart';
 
-/// Compact Material 3 typography powered by offline-bundled `NotoSansGujarati`
-/// for clean bilingual English & Gujarati rendering across all platforms.
+/// Material 3 typography powered by offline-bundled `NotoSansGujarati` with
+/// calibrated line-heights (`>= 1.38`) and even leading distribution so
+/// Gujarati vowel signs (matras), conjuncts, and descenders render cleanly
+/// without vertical clipping across Android, iOS, Web, and Desktop.
 abstract final class AppTypography {
   static const String fontFamily = 'NotoSansGujarati';
+  static const List<String> fontFamilyFallback = <String>[
+    'NotoSansGujarati',
+    'Roboto',
+    'sans-serif',
+  ];
+
+  static TextStyle _style({
+    required double fontSize,
+    required FontWeight fontWeight,
+    required double height,
+    double? letterSpacing,
+  }) {
+    return TextStyle(
+      fontFamily: fontFamily,
+      fontFamilyFallback: fontFamilyFallback,
+      fontSize: fontSize,
+      fontWeight: fontWeight,
+      height: height,
+      letterSpacing: letterSpacing,
+      leadingDistribution: TextLeadingDistribution.even,
+    );
+  }
 
   static TextTheme buildTextTheme(ColorScheme colorScheme) {
     final base = TextTheme(
-      headlineSmall: const TextStyle(
-        fontFamily: fontFamily,
+      displayLarge: _style(
+        fontSize: 34,
+        fontWeight: FontWeight.w700,
+        height: 1.32,
+      ),
+      displayMedium: _style(
+        fontSize: 28,
+        fontWeight: FontWeight.w700,
+        height: 1.35,
+      ),
+      displaySmall: _style(
+        fontSize: 24,
+        fontWeight: FontWeight.w700,
+        height: 1.36,
+      ),
+      headlineLarge: _style(
+        fontSize: 24,
+        fontWeight: FontWeight.w700,
+        height: 1.38,
+      ),
+      headlineMedium: _style(
+        fontSize: 22,
+        fontWeight: FontWeight.w700,
+        height: 1.38,
+      ),
+      headlineSmall: _style(
         fontSize: 20,
         fontWeight: FontWeight.w700,
-        height: 1.3,
-      ),
-      titleLarge: const TextStyle(
-        fontFamily: fontFamily,
-        fontSize: 18,
-        fontWeight: FontWeight.w600,
-        height: 1.35,
-      ),
-      titleMedium: const TextStyle(
-        fontFamily: fontFamily,
-        fontSize: 15,
-        fontWeight: FontWeight.w600,
-        height: 1.35,
-      ),
-      titleSmall: const TextStyle(
-        fontFamily: fontFamily,
-        fontSize: 13,
-        fontWeight: FontWeight.w600,
-        height: 1.35,
-      ),
-      bodyLarge: const TextStyle(
-        fontFamily: fontFamily,
-        fontSize: 15,
-        fontWeight: FontWeight.w400,
-        height: 1.45,
-      ),
-      bodyMedium: const TextStyle(
-        fontFamily: fontFamily,
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
-        height: 1.45,
-      ),
-      bodySmall: const TextStyle(
-        fontFamily: fontFamily,
-        fontSize: 12,
-        fontWeight: FontWeight.w400,
         height: 1.4,
       ),
-      labelLarge: const TextStyle(
-        fontFamily: fontFamily,
-        fontSize: 13,
+      titleLarge: _style(
+        fontSize: 18,
         fontWeight: FontWeight.w600,
-        height: 1.25,
+        height: 1.42,
       ),
-      labelMedium: const TextStyle(
-        fontFamily: fontFamily,
-        fontSize: 12,
-        fontWeight: FontWeight.w500,
-        height: 1.25,
+      titleMedium: _style(
+        fontSize: 15.5,
+        fontWeight: FontWeight.w600,
+        height: 1.42,
       ),
-      labelSmall: const TextStyle(
-        fontFamily: fontFamily,
-        fontSize: 11,
+      titleSmall: _style(
+        fontSize: 13.5,
+        fontWeight: FontWeight.w600,
+        height: 1.42,
+      ),
+      bodyLarge: _style(fontSize: 15, fontWeight: FontWeight.w400, height: 1.5),
+      bodyMedium: _style(
+        fontSize: 14,
+        fontWeight: FontWeight.w400,
+        height: 1.5,
+      ),
+      bodySmall: _style(
+        fontSize: 12.5,
+        fontWeight: FontWeight.w400,
+        height: 1.48,
+      ),
+      labelLarge: _style(
+        fontSize: 13.5,
+        fontWeight: FontWeight.w600,
+        height: 1.4,
+      ),
+      labelMedium: _style(
+        fontSize: 12.5,
         fontWeight: FontWeight.w500,
-        height: 1.2,
+        height: 1.4,
+      ),
+      labelSmall: _style(
+        fontSize: 11.5,
+        fontWeight: FontWeight.w500,
+        height: 1.38,
       ),
     );
 

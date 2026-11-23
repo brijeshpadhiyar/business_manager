@@ -3,4 +3,6 @@
     <color name="ic_launcher_background">#172B4D</color>
     <color name="splash_background_light">#F5F7FA</color>
     <color name="splash_background_dark">#172B4D</color>
+    <color name="normal_background_light">#F5F7FA</color>
+    <color name="normal_background_dark">#0D1422</color>
 </resources>

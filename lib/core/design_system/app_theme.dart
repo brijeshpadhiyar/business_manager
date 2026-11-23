@@ -8,7 +8,7 @@ import 'package:material_ui/material_ui.dart';
 
 /// Centralized Material 3 Light and Dark theme definitions built on
 /// `package:material_ui/material_ui.dart` with StitchFlow's brand identity,
-/// selective glass tokens, and high-contrast business readability.
+/// selective glass tokens, and high-contrast bilingual readability.
 abstract final class AppTheme {
   static ThemeData light() => _build(Brightness.light);
 
@@ -62,6 +62,7 @@ abstract final class AppTheme {
       colorScheme: colorScheme,
       scaffoldBackgroundColor: colorScheme.surface,
       fontFamily: AppTypography.fontFamily,
+      fontFamilyFallback: AppTypography.fontFamilyFallback,
       textTheme: textTheme,
       extensions: [semanticColors, surfaceTokens],
       visualDensity: VisualDensity.standard,
@@ -85,6 +86,7 @@ abstract final class AppTheme {
         ),
       ),
       navigationBarTheme: NavigationBarThemeData(
+        height: 70,
         backgroundColor: surfaceTokens.navGlassFill,
         indicatorColor: colorScheme.secondary.withValues(
           alpha: isDark ? 0.24 : 0.16,
@@ -106,6 +108,13 @@ abstract final class AppTheme {
         indicatorColor: colorScheme.secondary.withValues(
           alpha: isDark ? 0.24 : 0.16,
         ),
+        selectedLabelTextStyle: textTheme.labelSmall?.copyWith(
+          fontWeight: FontWeight.w700,
+          color: colorScheme.primary,
+        ),
+        unselectedLabelTextStyle: textTheme.labelSmall?.copyWith(
+          color: colorScheme.onSurfaceVariant,
+        ),
       ),
       navigationDrawerTheme: NavigationDrawerThemeData(
         backgroundColor: colorScheme.surfaceContainerLow,
@@ -119,6 +128,7 @@ abstract final class AppTheme {
       chipTheme: ChipThemeData(
         shape: const RoundedRectangleBorder(borderRadius: AppRadius.fullBorder),
         side: BorderSide(color: colorScheme.outlineVariant),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
         selectedColor: colorScheme.secondary.withValues(
           alpha: isDark ? 0.26 : 0.14,
         ),
@@ -133,18 +143,32 @@ abstract final class AppTheme {
           side: WidgetStatePropertyAll(
             BorderSide(color: colorScheme.outlineVariant),
           ),
-          visualDensity: VisualDensity.compact,
+          padding: const WidgetStatePropertyAll(
+            EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+          ),
+          textStyle: WidgetStatePropertyAll(textTheme.labelMedium),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
-        isDense: true,
         filled: true,
         fillColor: colorScheme.surfaceContainerLowest,
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: 12,
+          horizontal: AppSpacing.md + 2,
+          vertical: 14,
         ),
         constraints: const BoxConstraints(minHeight: AppSizing.inputHeight),
+        labelStyle: textTheme.bodyMedium?.copyWith(
+          color: colorScheme.onSurfaceVariant,
+        ),
+        floatingLabelStyle: textTheme.bodySmall?.copyWith(
+          color: colorScheme.secondary,
+          fontWeight: FontWeight.w600,
+        ),
+        hintStyle: textTheme.bodyMedium?.copyWith(
+          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.72),
+        ),
+        helperMaxLines: 3,
+        errorMaxLines: 3,
         border: outlineBorder,
         enabledBorder: outlineBorder,
         focusedBorder: OutlineInputBorder(
@@ -163,7 +187,11 @@ abstract final class AppTheme {
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           minimumSize: const Size(0, AppSizing.buttonHeight),
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+          tapTargetSize: MaterialTapTargetSize.padded,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: 10,
+          ),
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdBorder),
           textStyle: textTheme.labelLarge,
         ),
@@ -171,7 +199,11 @@ abstract final class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           minimumSize: const Size(0, AppSizing.buttonHeight),
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+          tapTargetSize: MaterialTapTargetSize.padded,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: 10,
+          ),
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdBorder),
           side: BorderSide(color: colorScheme.outlineVariant),
           textStyle: textTheme.labelLarge,
@@ -180,7 +212,11 @@ abstract final class AppTheme {
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           minimumSize: const Size(0, AppSizing.buttonHeight),
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
+          tapTargetSize: MaterialTapTargetSize.padded,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md,
+            vertical: 10,
+          ),
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdBorder),
           textStyle: textTheme.labelLarge,
         ),

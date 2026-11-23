@@ -1283,4 +1283,346 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get reportsEmptySubtitle =>
       'Adjust your date range or filters to view matching business data.';
+
+  @override
+  String get navSettings => 'Settings';
+
+  @override
+  String get navStockShort => 'Stock';
+
+  @override
+  String get actionDone => 'Done';
+
+  @override
+  String get lotLabelShort => 'Lot';
+
+  @override
+  String get refLabelShort => 'Ref';
+
+  @override
+  String get inventoryUpdatedNote =>
+      'Shows recorded initial quantities across lots, designs, and colours. Open Stock Movements for live balances.';
+
+  @override
+  String get auditActionCreate => 'Created';
+
+  @override
+  String get auditActionUpdate => 'Updated';
+
+  @override
+  String get auditActionDelete => 'Removed';
+
+  @override
+  String get auditActionRateOverride => 'Rate Override';
+
+  @override
+  String get auditActionRestore => 'Restored';
+
+  @override
+  String get settingsHeading => 'Settings';
+
+  @override
+  String get settingsSubtitle =>
+      'Manage appearance, business profile, stock rules, backups, and workshop guidance.';
+
+  @override
+  String get settingsAppearanceTitle => 'Appearance';
+
+  @override
+  String get settingsAppearanceSubtitle =>
+      'Theme mode (System / Light / Dark) and app language (English / Gujarati).';
+
+  @override
+  String get settingsAppearancePreviewTitle => 'Live Preview';
+
+  @override
+  String get settingsAppearancePreviewBody =>
+      'Verify text readability, Gujarati script clarity, and contrast before returning to daily work.';
+
+  @override
+  String get settingsBusinessTitle => 'Business Profile';
+
+  @override
+  String get settingsBusinessSubtitle =>
+      'Workshop names in English & Gujarati, owner, phone, address, and default billing.';
+
+  @override
+  String get settingsStockLabourTitle => 'Stock & Labour Preferences';
+
+  @override
+  String get settingsStockLabourSubtitle =>
+      'Global billing rule and per-process labour override overview.';
+
+  @override
+  String get settingsGlobalBillingSectionTitle =>
+      'Global Default Labour Billing Mode';
+
+  @override
+  String get settingsGlobalBillingExplanationReceived =>
+      'Workers earn labour when returned good pieces are recorded. Damaged pieces are excluded unless enabled on a specific process.';
+
+  @override
+  String get settingsGlobalBillingExplanationGiven =>
+      'Workers earn labour immediately when stock is issued to them. Return entries stay informational to prevent double-counting.';
+
+  @override
+  String get settingsProcessOverridesTitle => 'Process-Level Rules';
+
+  @override
+  String get settingsProcessOverridesSubtitle =>
+      'Each process inherits the global billing mode unless overridden. Tap any process to configure.';
+
+  @override
+  String get settingsProcessInheritsGlobal => 'Inherits Global Default';
+
+  @override
+  String get settingsProcessOverridesGlobal => 'Process Override';
+
+  @override
+  String get settingsDamagedIncludedShort => 'Damaged Included';
+
+  @override
+  String get settingsDamagedExcludedShort => 'Damaged Excluded';
+
+  @override
+  String get settingsNoProcessesYet => 'No production processes created yet.';
+
+  @override
+  String get settingsBackupTitle => 'Backup & Data Safety';
+
+  @override
+  String get settingsBackupSubtitle =>
+      'Create full ZIP backups, restore safely, or export raw SQLite.';
+
+  @override
+  String get settingsHelpTitle => 'Help & Guidance';
+
+  @override
+  String get settingsHelpSubtitle =>
+      'Step-by-step workshop instructions for every StitchFlow workflow.';
+
+  @override
+  String get settingsAboutTitle => 'About StitchFlow';
+
+  @override
+  String get settingsAboutSubtitle =>
+      'Version, flavor, local data privacy, and open-source licenses.';
+
+  @override
+  String get helpSearchHint =>
+      'Search help topics (e.g. issue, return, rate, backup)...';
+
+  @override
+  String get helpWhenToUseLabel => 'When to Use';
+
+  @override
+  String get helpStepsLabel => 'Step-by-Step Guide';
+
+  @override
+  String get helpExampleLabel => 'Practical Workshop Example';
+
+  @override
+  String get helpNoResults => 'No help topics match your search.';
+
+  @override
+  String get aboutVersionLabel => 'Version';
+
+  @override
+  String get aboutBuildLabel => 'Build';
+
+  @override
+  String get aboutPrivacyTitle => '100% Offline & Private Local Data';
+
+  @override
+  String get aboutPrivacyBody =>
+      'All lots, stock movements, worker rates, ledgers, and photos stay strictly on your device in local SQLite storage. StitchFlow never uploads your business records to external servers.';
+
+  @override
+  String get aboutDescriptionBody =>
+      'StitchFlow is an offline-first garment workshop production, stock movement, and worker accounting application built for fast daily shop-floor operations.';
+
+  @override
+  String get aboutLicensesAction => 'Open-Source Licenses';
+
+  @override
+  String get stockStepSelectStock => 'Select Stock';
+
+  @override
+  String get stockStepSelectWork => 'Select Work';
+
+  @override
+  String get stockStepEnterQty => 'Quantity';
+
+  @override
+  String get stockStepConfirm => 'Confirm';
+
+  @override
+  String get stockSearchStockHint => 'Search by lot, design, or colour...';
+
+  @override
+  String get stockOnlyAvailableFilter => 'In Stock Only';
+
+  @override
+  String get stockOutOfStockBadge => 'Out of Stock';
+
+  @override
+  String get stockNoStockItemsTitle => 'No Stock Available';
+
+  @override
+  String get stockNoStockItemsSubtitle =>
+      'Create a lot with designs and colours first, or receive returned stock to replenish in-house good stock.';
+
+  @override
+  String get stockSelectedLabel => 'Selected';
+
+  @override
+  String get stockChangeSelection => 'Change';
+
+  @override
+  String get stockActiveProcessesLabel => 'Active Process';
+
+  @override
+  String get stockEligibleWorkersLabel => 'Eligible Assigned Worker';
+
+  @override
+  String get stockNoActiveProcessesWarning =>
+      'No active processes exist. Create a process before issuing stock.';
+
+  @override
+  String get stockBillingModePreviewLabel => 'Locked Billing Mode';
+
+  @override
+  String get stockExpectedLabourLabel => 'Estimated Labour';
+
+  @override
+  String get stockPayableOnIssueNote =>
+      'Payable immediately on issue (Given Qty mode).';
+
+  @override
+  String get stockPayableOnReturnNote =>
+      'Earned when good pieces are returned (Received Qty mode).';
+
+  @override
+  String get stockAdvancedOptionsTitle =>
+      'Date/Time, Notes & Audited Rate Override';
+
+  @override
+  String get stockQuickAllAvailable => 'All Available';
+
+  @override
+  String get stockConfirmSummaryTitle => 'Confirm Stock Issue';
+
+  @override
+  String get stockConfirmIssueAction => 'Confirm & Issue Stock';
+
+  @override
+  String get stockIssueSuccessTitle => 'Stock Issued Successfully';
+
+  @override
+  String get stockIssueSuccessSubtitle =>
+      'The issue and locked rate have been saved in the stock ledger.';
+
+  @override
+  String get stockUpdatedAvailableLabel => 'Updated Available Good Stock';
+
+  @override
+  String get stockIssueMoreAction => 'Issue More Stock';
+
+  @override
+  String get stockViewIssueDetailsAction => 'View Issue / Receive Return';
+
+  @override
+  String get stockReceiveReturnHeading => 'Receive Return';
+
+  @override
+  String get stockSelectPendingIssueTitle => 'Select Pending Issue';
+
+  @override
+  String get stockSelectPendingIssueSubtitle =>
+      'Choose an open issue below to record returned good, damaged, lost, or shortage pieces.';
+
+  @override
+  String get stockFilterAllWorkers => 'All Workers';
+
+  @override
+  String get stockFilterAllProcesses => 'All Processes';
+
+  @override
+  String get stockPreviouslyReturnedLabel => 'Returned';
+
+  @override
+  String get stockFillAllRemaining => 'All Good';
+
+  @override
+  String get stockLiveRemainingAfterReturn => 'Remaining Pending After Save';
+
+  @override
+  String get stockOverReturnErrorLive =>
+      'Total entered exceeds remaining pending quantity.';
+
+  @override
+  String get stockConsequencesTitle => 'What Will Happen on Save';
+
+  @override
+  String get stockConsequenceGood => 'Returning to in-house good stock';
+
+  @override
+  String get stockConsequenceDamaged => 'Moving into damaged inventory bucket';
+
+  @override
+  String get stockConsequenceLost => 'Recorded as permanently lost stock';
+
+  @override
+  String get stockConsequenceShortage => 'Recorded as shortage discrepancy';
+
+  @override
+  String get stockConsequencePending => 'Remaining pending with worker';
+
+  @override
+  String get stockConsequenceLabourEarned =>
+      'Payable labour credited to worker';
+
+  @override
+  String get stockConsequenceLabourAlreadyGiven =>
+      'Labour was already credited on Issue (Given Qty mode) — no duplicate labour added.';
+
+  @override
+  String get stockConsequenceLabourNone =>
+      'No additional payable labour for this entry.';
+
+  @override
+  String get stockLostHelper =>
+      'Pieces physically lost or misplaced (cannot be recovered).';
+
+  @override
+  String get stockShortageHelper =>
+      'Count difference / short pieces reported during settlement.';
+
+  @override
+  String get stockConfirmSaveReturnAction => 'Confirm & Save Return';
+
+  @override
+  String get stockReturnSuccessTitle => 'Return Recorded Successfully';
+
+  @override
+  String get stockReturnFullySettledBadge => 'Fully Settled';
+
+  @override
+  String get stockReturnUpdatedPendingLabel => 'Updated Remaining Pending';
+
+  @override
+  String get stockIssueNextProcessAction =>
+      'Issue Returned Stock to Next Process';
+
+  @override
+  String get stockReceiveAnotherReturnAction => 'Receive Another Return';
+
+  @override
+  String get stockTabPendingReturns => 'Pending Returns';
+
+  @override
+  String get stockTabMovementHistory => 'Movement History';
+
+  @override
+  String get stockTabSummary => 'Worker & Process';
 }

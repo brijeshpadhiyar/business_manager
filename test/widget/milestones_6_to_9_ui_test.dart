@@ -93,8 +93,10 @@ void main() {
       await tester.pageBack();
       await tester.pumpAndSettle();
 
-      // Open Backup & Restore screen
-      await tester.tap(find.text('Backup & Restore').first);
+      // Open Settings -> Backup & Data Safety screen
+      await tester.tap(find.text('Settings').last);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Backup & Data Safety').first);
       await tester.pumpAndSettle();
       expect(find.text('Create Full Backup (.zip)'), findsWidgets);
       await tester.scrollUntilVisible(

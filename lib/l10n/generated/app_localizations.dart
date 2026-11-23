@@ -2515,6 +2515,630 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Adjust your date range or filters to view matching business data.'**
   String get reportsEmptySubtitle;
+
+  /// No description provided for @navSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get navSettings;
+
+  /// No description provided for @navStockShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock'**
+  String get navStockShort;
+
+  /// No description provided for @actionDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get actionDone;
+
+  /// No description provided for @lotLabelShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot'**
+  String get lotLabelShort;
+
+  /// No description provided for @refLabelShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Ref'**
+  String get refLabelShort;
+
+  /// No description provided for @inventoryUpdatedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows recorded initial quantities across lots, designs, and colours. Open Stock Movements for live balances.'**
+  String get inventoryUpdatedNote;
+
+  /// No description provided for @auditActionCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Created'**
+  String get auditActionCreate;
+
+  /// No description provided for @auditActionUpdate.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated'**
+  String get auditActionUpdate;
+
+  /// No description provided for @auditActionDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Removed'**
+  String get auditActionDelete;
+
+  /// No description provided for @auditActionRateOverride.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate Override'**
+  String get auditActionRateOverride;
+
+  /// No description provided for @auditActionRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Restored'**
+  String get auditActionRestore;
+
+  /// No description provided for @settingsHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsHeading;
+
+  /// No description provided for @settingsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage appearance, business profile, stock rules, backups, and workshop guidance.'**
+  String get settingsSubtitle;
+
+  /// No description provided for @settingsAppearanceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get settingsAppearanceTitle;
+
+  /// No description provided for @settingsAppearanceSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme mode (System / Light / Dark) and app language (English / Gujarati).'**
+  String get settingsAppearanceSubtitle;
+
+  /// No description provided for @settingsAppearancePreviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Preview'**
+  String get settingsAppearancePreviewTitle;
+
+  /// No description provided for @settingsAppearancePreviewBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify text readability, Gujarati script clarity, and contrast before returning to daily work.'**
+  String get settingsAppearancePreviewBody;
+
+  /// No description provided for @settingsBusinessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Profile'**
+  String get settingsBusinessTitle;
+
+  /// No description provided for @settingsBusinessSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Workshop names in English & Gujarati, owner, phone, address, and default billing.'**
+  String get settingsBusinessSubtitle;
+
+  /// No description provided for @settingsStockLabourTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock & Labour Preferences'**
+  String get settingsStockLabourTitle;
+
+  /// No description provided for @settingsStockLabourSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Global billing rule and per-process labour override overview.'**
+  String get settingsStockLabourSubtitle;
+
+  /// No description provided for @settingsGlobalBillingSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Global Default Labour Billing Mode'**
+  String get settingsGlobalBillingSectionTitle;
+
+  /// No description provided for @settingsGlobalBillingExplanationReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Workers earn labour when returned good pieces are recorded. Damaged pieces are excluded unless enabled on a specific process.'**
+  String get settingsGlobalBillingExplanationReceived;
+
+  /// No description provided for @settingsGlobalBillingExplanationGiven.
+  ///
+  /// In en, this message translates to:
+  /// **'Workers earn labour immediately when stock is issued to them. Return entries stay informational to prevent double-counting.'**
+  String get settingsGlobalBillingExplanationGiven;
+
+  /// No description provided for @settingsProcessOverridesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Process-Level Rules'**
+  String get settingsProcessOverridesTitle;
+
+  /// No description provided for @settingsProcessOverridesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Each process inherits the global billing mode unless overridden. Tap any process to configure.'**
+  String get settingsProcessOverridesSubtitle;
+
+  /// No description provided for @settingsProcessInheritsGlobal.
+  ///
+  /// In en, this message translates to:
+  /// **'Inherits Global Default'**
+  String get settingsProcessInheritsGlobal;
+
+  /// No description provided for @settingsProcessOverridesGlobal.
+  ///
+  /// In en, this message translates to:
+  /// **'Process Override'**
+  String get settingsProcessOverridesGlobal;
+
+  /// No description provided for @settingsDamagedIncludedShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Damaged Included'**
+  String get settingsDamagedIncludedShort;
+
+  /// No description provided for @settingsDamagedExcludedShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Damaged Excluded'**
+  String get settingsDamagedExcludedShort;
+
+  /// No description provided for @settingsNoProcessesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No production processes created yet.'**
+  String get settingsNoProcessesYet;
+
+  /// No description provided for @settingsBackupTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup & Data Safety'**
+  String get settingsBackupTitle;
+
+  /// No description provided for @settingsBackupSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create full ZIP backups, restore safely, or export raw SQLite.'**
+  String get settingsBackupSubtitle;
+
+  /// No description provided for @settingsHelpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Help & Guidance'**
+  String get settingsHelpTitle;
+
+  /// No description provided for @settingsHelpSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Step-by-step workshop instructions for every StitchFlow workflow.'**
+  String get settingsHelpSubtitle;
+
+  /// No description provided for @settingsAboutTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'About StitchFlow'**
+  String get settingsAboutTitle;
+
+  /// No description provided for @settingsAboutSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Version, flavor, local data privacy, and open-source licenses.'**
+  String get settingsAboutSubtitle;
+
+  /// No description provided for @helpSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search help topics (e.g. issue, return, rate, backup)...'**
+  String get helpSearchHint;
+
+  /// No description provided for @helpWhenToUseLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'When to Use'**
+  String get helpWhenToUseLabel;
+
+  /// No description provided for @helpStepsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Step-by-Step Guide'**
+  String get helpStepsLabel;
+
+  /// No description provided for @helpExampleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Practical Workshop Example'**
+  String get helpExampleLabel;
+
+  /// No description provided for @helpNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No help topics match your search.'**
+  String get helpNoResults;
+
+  /// No description provided for @aboutVersionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Version'**
+  String get aboutVersionLabel;
+
+  /// No description provided for @aboutBuildLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Build'**
+  String get aboutBuildLabel;
+
+  /// No description provided for @aboutPrivacyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'100% Offline & Private Local Data'**
+  String get aboutPrivacyTitle;
+
+  /// No description provided for @aboutPrivacyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'All lots, stock movements, worker rates, ledgers, and photos stay strictly on your device in local SQLite storage. StitchFlow never uploads your business records to external servers.'**
+  String get aboutPrivacyBody;
+
+  /// No description provided for @aboutDescriptionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'StitchFlow is an offline-first garment workshop production, stock movement, and worker accounting application built for fast daily shop-floor operations.'**
+  String get aboutDescriptionBody;
+
+  /// No description provided for @aboutLicensesAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Open-Source Licenses'**
+  String get aboutLicensesAction;
+
+  /// No description provided for @stockStepSelectStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Stock'**
+  String get stockStepSelectStock;
+
+  /// No description provided for @stockStepSelectWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Work'**
+  String get stockStepSelectWork;
+
+  /// No description provided for @stockStepEnterQty.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get stockStepEnterQty;
+
+  /// No description provided for @stockStepConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get stockStepConfirm;
+
+  /// No description provided for @stockSearchStockHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by lot, design, or colour...'**
+  String get stockSearchStockHint;
+
+  /// No description provided for @stockOnlyAvailableFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'In Stock Only'**
+  String get stockOnlyAvailableFilter;
+
+  /// No description provided for @stockOutOfStockBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Out of Stock'**
+  String get stockOutOfStockBadge;
+
+  /// No description provided for @stockNoStockItemsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Stock Available'**
+  String get stockNoStockItemsTitle;
+
+  /// No description provided for @stockNoStockItemsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a lot with designs and colours first, or receive returned stock to replenish in-house good stock.'**
+  String get stockNoStockItemsSubtitle;
+
+  /// No description provided for @stockSelectedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected'**
+  String get stockSelectedLabel;
+
+  /// No description provided for @stockChangeSelection.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get stockChangeSelection;
+
+  /// No description provided for @stockActiveProcessesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Process'**
+  String get stockActiveProcessesLabel;
+
+  /// No description provided for @stockEligibleWorkersLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Eligible Assigned Worker'**
+  String get stockEligibleWorkersLabel;
+
+  /// No description provided for @stockNoActiveProcessesWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'No active processes exist. Create a process before issuing stock.'**
+  String get stockNoActiveProcessesWarning;
+
+  /// No description provided for @stockBillingModePreviewLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Locked Billing Mode'**
+  String get stockBillingModePreviewLabel;
+
+  /// No description provided for @stockExpectedLabourLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Estimated Labour'**
+  String get stockExpectedLabourLabel;
+
+  /// No description provided for @stockPayableOnIssueNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Payable immediately on issue (Given Qty mode).'**
+  String get stockPayableOnIssueNote;
+
+  /// No description provided for @stockPayableOnReturnNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Earned when good pieces are returned (Received Qty mode).'**
+  String get stockPayableOnReturnNote;
+
+  /// No description provided for @stockAdvancedOptionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Date/Time, Notes & Audited Rate Override'**
+  String get stockAdvancedOptionsTitle;
+
+  /// No description provided for @stockQuickAllAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'All Available'**
+  String get stockQuickAllAvailable;
+
+  /// No description provided for @stockConfirmSummaryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Stock Issue'**
+  String get stockConfirmSummaryTitle;
+
+  /// No description provided for @stockConfirmIssueAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm & Issue Stock'**
+  String get stockConfirmIssueAction;
+
+  /// No description provided for @stockIssueSuccessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock Issued Successfully'**
+  String get stockIssueSuccessTitle;
+
+  /// No description provided for @stockIssueSuccessSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'The issue and locked rate have been saved in the stock ledger.'**
+  String get stockIssueSuccessSubtitle;
+
+  /// No description provided for @stockUpdatedAvailableLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated Available Good Stock'**
+  String get stockUpdatedAvailableLabel;
+
+  /// No description provided for @stockIssueMoreAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Issue More Stock'**
+  String get stockIssueMoreAction;
+
+  /// No description provided for @stockViewIssueDetailsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'View Issue / Receive Return'**
+  String get stockViewIssueDetailsAction;
+
+  /// No description provided for @stockReceiveReturnHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive Return'**
+  String get stockReceiveReturnHeading;
+
+  /// No description provided for @stockSelectPendingIssueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Pending Issue'**
+  String get stockSelectPendingIssueTitle;
+
+  /// No description provided for @stockSelectPendingIssueSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an open issue below to record returned good, damaged, lost, or shortage pieces.'**
+  String get stockSelectPendingIssueSubtitle;
+
+  /// No description provided for @stockFilterAllWorkers.
+  ///
+  /// In en, this message translates to:
+  /// **'All Workers'**
+  String get stockFilterAllWorkers;
+
+  /// No description provided for @stockFilterAllProcesses.
+  ///
+  /// In en, this message translates to:
+  /// **'All Processes'**
+  String get stockFilterAllProcesses;
+
+  /// No description provided for @stockPreviouslyReturnedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Returned'**
+  String get stockPreviouslyReturnedLabel;
+
+  /// No description provided for @stockFillAllRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'All Good'**
+  String get stockFillAllRemaining;
+
+  /// No description provided for @stockLiveRemainingAfterReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining Pending After Save'**
+  String get stockLiveRemainingAfterReturn;
+
+  /// No description provided for @stockOverReturnErrorLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Total entered exceeds remaining pending quantity.'**
+  String get stockOverReturnErrorLive;
+
+  /// No description provided for @stockConsequencesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What Will Happen on Save'**
+  String get stockConsequencesTitle;
+
+  /// No description provided for @stockConsequenceGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Returning to in-house good stock'**
+  String get stockConsequenceGood;
+
+  /// No description provided for @stockConsequenceDamaged.
+  ///
+  /// In en, this message translates to:
+  /// **'Moving into damaged inventory bucket'**
+  String get stockConsequenceDamaged;
+
+  /// No description provided for @stockConsequenceLost.
+  ///
+  /// In en, this message translates to:
+  /// **'Recorded as permanently lost stock'**
+  String get stockConsequenceLost;
+
+  /// No description provided for @stockConsequenceShortage.
+  ///
+  /// In en, this message translates to:
+  /// **'Recorded as shortage discrepancy'**
+  String get stockConsequenceShortage;
+
+  /// No description provided for @stockConsequencePending.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining pending with worker'**
+  String get stockConsequencePending;
+
+  /// No description provided for @stockConsequenceLabourEarned.
+  ///
+  /// In en, this message translates to:
+  /// **'Payable labour credited to worker'**
+  String get stockConsequenceLabourEarned;
+
+  /// No description provided for @stockConsequenceLabourAlreadyGiven.
+  ///
+  /// In en, this message translates to:
+  /// **'Labour was already credited on Issue (Given Qty mode) — no duplicate labour added.'**
+  String get stockConsequenceLabourAlreadyGiven;
+
+  /// No description provided for @stockConsequenceLabourNone.
+  ///
+  /// In en, this message translates to:
+  /// **'No additional payable labour for this entry.'**
+  String get stockConsequenceLabourNone;
+
+  /// No description provided for @stockLostHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Pieces physically lost or misplaced (cannot be recovered).'**
+  String get stockLostHelper;
+
+  /// No description provided for @stockShortageHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Count difference / short pieces reported during settlement.'**
+  String get stockShortageHelper;
+
+  /// No description provided for @stockConfirmSaveReturnAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm & Save Return'**
+  String get stockConfirmSaveReturnAction;
+
+  /// No description provided for @stockReturnSuccessTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Return Recorded Successfully'**
+  String get stockReturnSuccessTitle;
+
+  /// No description provided for @stockReturnFullySettledBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Fully Settled'**
+  String get stockReturnFullySettledBadge;
+
+  /// No description provided for @stockReturnUpdatedPendingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Updated Remaining Pending'**
+  String get stockReturnUpdatedPendingLabel;
+
+  /// No description provided for @stockIssueNextProcessAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Issue Returned Stock to Next Process'**
+  String get stockIssueNextProcessAction;
+
+  /// No description provided for @stockReceiveAnotherReturnAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive Another Return'**
+  String get stockReceiveAnotherReturnAction;
+
+  /// No description provided for @stockTabPendingReturns.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Returns'**
+  String get stockTabPendingReturns;
+
+  /// No description provided for @stockTabMovementHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Movement History'**
+  String get stockTabMovementHistory;
+
+  /// No description provided for @stockTabSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker & Process'**
+  String get stockTabSummary;
 }
 
 class _AppLocalizationsDelegate

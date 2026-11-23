@@ -63,14 +63,20 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('No Lots Yet'), findsOneWidget);
 
-      // Navigate to Inventory tab -> verify empty initial inventory state
-      await tester.tap(find.text('Inventory').last);
+      // Return to Dashboard -> open Inventory -> verify empty initial inventory state
+      await tester.tap(find.text('Dashboard').last);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Inventory').first);
       await tester.pumpAndSettle();
       expect(find.text('Initial Inventory Overview'), findsOneWidget);
       expect(find.text('No Initial Inventory Yet'), findsOneWidget);
+      await tester.pageBack();
+      await tester.pumpAndSettle();
 
-      // Navigate to Business Profile tab -> verify seeded profile & validation
-      await tester.tap(find.text('Business Profile').last);
+      // Navigate to Settings tab -> Business Profile -> verify seeded profile
+      await tester.tap(find.text('Settings').last);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Business Profile').first);
       await tester.pumpAndSettle();
       expect(find.text('Business Profile'), findsWidgets);
       expect(find.text('Business Manager'), findsOneWidget);

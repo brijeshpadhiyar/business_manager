@@ -49,83 +49,93 @@ final class _LotListViewState extends State<_LotListView> {
     int txDateUtc = IstDateTimeHelper.nowUtcMillis();
     String? submitError;
 
-    await AppBottomSheet.show<void>(
-      context,
-      title: l10n.lotCreateAction,
-      builder: (sheetCtx) => StatefulBuilder(
-        builder: (ctx, setSheetState) {
-          return Form(
-            key: formKey,
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  AppTextField(
-                    controller: numberCtrl,
-                    label: l10n.lotNumberLabel,
-                    prefixIcon: Icons.tag,
-                    validator: (v) => (v == null || v.trim().isEmpty)
-                        ? l10n.validationRequired
-                        : null,
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppTextField(
-                    controller: titleCtrl,
-                    label: l10n.lotTitleLabel,
-                    prefixIcon: Icons.title,
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppDatePicker(
-                    label: l10n.lotDateLabel,
-                    selectedUtcMillis: txDateUtc,
-                    onDateSelectedUtcMillis: (utc) =>
-                        setSheetState(() => txDateUtc = utc),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppTextField(
-                    controller: notesCtrl,
-                    label: l10n.lotNotesLabel,
-                    maxLines: 2,
-                  ),
-                  if (submitError != null) ...[
-                    const SizedBox(height: AppSpacing.sm),
-                    AppText(
-                      submitError!,
-                      color: Theme.of(ctx).colorScheme.error,
+    try {
+      await AppBottomSheet.show<void>(
+        context,
+        title: l10n.lotCreateAction,
+        builder: (sheetCtx) => StatefulBuilder(
+          builder: (ctx, setSheetState) {
+            return Form(
+              key: formKey,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    AppTextField(
+                      controller: numberCtrl,
+                      label: l10n.lotNumberLabel,
+                      prefixIcon: Icons.tag,
+                      textInputAction: TextInputAction.next,
+                      validator: (v) => (v == null || v.trim().isEmpty)
+                          ? l10n.validationRequired
+                          : null,
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    AppTextField(
+                      controller: titleCtrl,
+                      label: l10n.lotTitleLabel,
+                      prefixIcon: Icons.title,
+                      textInputAction: TextInputAction.next,
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    AppDatePicker(
+                      label: l10n.lotDateLabel,
+                      selectedUtcMillis: txDateUtc,
+                      onDateSelectedUtcMillis: (utc) =>
+                          setSheetState(() => txDateUtc = utc),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    AppTextField(
+                      controller: notesCtrl,
+                      label: l10n.lotNotesLabel,
+                      maxLines: 2,
+                    ),
+                    if (submitError != null) ...[
+                      const SizedBox(height: AppSpacing.sm),
+                      AppText(
+                        submitError!,
+                        color: Theme.of(ctx).colorScheme.error,
+                      ),
+                    ],
+                    const SizedBox(height: AppSpacing.lg),
+                    AppButton(
+                      label: l10n.actionSave,
+                      icon: Icons.check,
+                      isExpanded: true,
+                      onPressed: () async {
+                        if (!(formKey.currentState?.validate() ?? false)) {
+                          return;
+                        }
+                        final err = await cubit.createLot(
+                          lotNumber: numberCtrl.text,
+                          title: titleCtrl.text,
+                          notes: notesCtrl.text,
+                          transactionAtUtcMillis: txDateUtc,
+                        );
+                        if (err != null) {
+                          setSheetState(() {
+                            submitError = err.contains('UNIQUE')
+                                ? l10n.lotDuplicateError
+                                : err;
+                          });
+                        } else if (sheetCtx.mounted) {
+                          Navigator.of(sheetCtx).pop();
+                        }
+                      },
                     ),
                   ],
-                  const SizedBox(height: AppSpacing.lg),
-                  AppButton(
-                    label: l10n.actionSave,
-                    icon: Icons.check,
-                    isExpanded: true,
-                    onPressed: () async {
-                      if (!(formKey.currentState?.validate() ?? false)) return;
-                      final err = await cubit.createLot(
-                        lotNumber: numberCtrl.text,
-                        title: titleCtrl.text,
-                        notes: notesCtrl.text,
-                        transactionAtUtcMillis: txDateUtc,
-                      );
-                      if (err != null) {
-                        setSheetState(() {
-                          submitError = err.contains('UNIQUE')
-                              ? l10n.lotDuplicateError
-                              : err;
-                        });
-                      } else if (sheetCtx.mounted) {
-                        Navigator.of(sheetCtx).pop();
-                      }
-                    },
-                  ),
-                ],
+                ),
               ),
-            ),
-          );
-        },
-      ),
-    );
+            );
+          },
+        ),
+      );
+    } finally {
+      numberCtrl.dispose();
+      titleCtrl.dispose();
+      notesCtrl.dispose();
+    }
   }
 
   @override

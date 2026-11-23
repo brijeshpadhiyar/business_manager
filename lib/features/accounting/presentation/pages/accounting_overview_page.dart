@@ -1,6 +1,7 @@
 import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
+import 'package:business_manager/core/localization/domain_label_localizer.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
@@ -275,23 +276,26 @@ final class _AccountingOverviewViewState
                 variant: AppTextVariant.bodySmall,
               ),
               const SizedBox(height: AppSpacing.md),
-              SegmentedButton<int>(
-                segments: [
-                  ButtonSegment(
-                    value: 0,
+              Wrap(
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.sm,
+                children: [
+                  ChoiceChip(
                     label: Text(l10n.accountingTabWorkers),
+                    selected: _tab == 0,
+                    onSelected: (_) => setState(() => _tab = 0),
                   ),
-                  ButtonSegment(
-                    value: 1,
+                  ChoiceChip(
                     label: Text(l10n.accountingTabPayments),
+                    selected: _tab == 1,
+                    onSelected: (_) => setState(() => _tab = 1),
                   ),
-                  ButtonSegment(
-                    value: 2,
+                  ChoiceChip(
                     label: Text(l10n.accountingTabLabour),
+                    selected: _tab == 2,
+                    onSelected: (_) => setState(() => _tab = 2),
                   ),
                 ],
-                selected: {_tab},
-                onSelectionChanged: (s) => setState(() => _tab = s.first),
               ),
               const SizedBox(height: AppSpacing.md),
               switch (_tab) {
@@ -345,24 +349,26 @@ final class _AccountingOverviewViewState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
+                      Wrap(
+                        spacing: AppSpacing.sm,
+                        runSpacing: AppSpacing.xs,
+                        alignment: WrapAlignment.spaceBetween,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AppText(
+                                items[i].workerName,
+                                variant: AppTextVariant.bodyLarge,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              if (items[i].workerPhone != null)
                                 AppText(
-                                  items[i].workerName,
-                                  variant: AppTextVariant.bodyLarge,
-                                  fontWeight: FontWeight.w700,
+                                  items[i].workerPhone!,
+                                  variant: AppTextVariant.bodySmall,
                                 ),
-                                if (items[i].workerPhone != null)
-                                  AppText(
-                                    items[i].workerPhone!,
-                                    variant: AppTextVariant.bodySmall,
-                                  ),
-                              ],
-                            ),
+                            ],
                           ),
                           if (items[i].outstandingPayablePaise > 0)
                             AppStatusBadge(
@@ -403,8 +409,10 @@ final class _AccountingOverviewViewState
                         ],
                       ),
                       const SizedBox(height: AppSpacing.sm),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                      Wrap(
+                        spacing: AppSpacing.sm,
+                        runSpacing: AppSpacing.sm,
+                        alignment: WrapAlignment.end,
                         children: [
                           AppButton(
                             label: l10n.accountingOpenLedgerAction,
@@ -412,7 +420,6 @@ final class _AccountingOverviewViewState
                             onPressed: () =>
                                 _openWorkerLedger(items[i].workerId),
                           ),
-                          const SizedBox(width: AppSpacing.sm),
                           AppButton(
                             label: l10n.accountingRecordPaymentAction,
                             variant: AppButtonVariant.secondary,
@@ -491,7 +498,7 @@ final class _AccountingOverviewViewState
                   ),
                   if (view.payment.referenceNo != null)
                     AppText(
-                      'Ref: ${view.payment.referenceNo!}',
+                      '${l10n.refLabelShort}: ${view.payment.referenceNo!}',
                       variant: AppTextVariant.bodySmall,
                     ),
                   if (view.payment.reason != null)
@@ -553,7 +560,9 @@ final class _AccountingOverviewViewState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
+                        Wrap(
+                          spacing: AppSpacing.xs,
+                          runSpacing: AppSpacing.xs,
                           children: [
                             AppStatusBadge(
                               label: view.entry.isPayable
@@ -563,27 +572,27 @@ final class _AccountingOverviewViewState
                                   ? AppStatusTone.good
                                   : AppStatusTone.neutral,
                             ),
-                            const SizedBox(width: AppSpacing.xs),
                             AppStatusBadge(
-                              label: view.entry.basisType.dbValue,
+                              label: DomainLabelLocalizer.labourBasis(
+                                l10n,
+                                view.entry.basisType,
+                              ),
                               tone:
                                   view.entry.basisType ==
                                       LabourBasisType.reversal
                                   ? AppStatusTone.damaged
                                   : AppStatusTone.info,
                             ),
-                            if (view.isReversed) ...[
-                              const SizedBox(width: AppSpacing.xs),
+                            if (view.isReversed)
                               AppStatusBadge(
                                 label: l10n.stockReversedBadge,
                                 tone: AppStatusTone.neutral,
                               ),
-                            ],
                           ],
                         ),
                         const SizedBox(height: AppSpacing.xs),
                         AppText(
-                          '${view.workerName} • ${view.processName} • Lot ${view.lotNumber}',
+                          '${view.workerName} • ${view.processName} • ${l10n.lotLabelShort} ${view.lotNumber}',
                           fontWeight: FontWeight.w600,
                         ),
                         AppText(

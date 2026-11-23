@@ -140,6 +140,7 @@ final class ResponsiveNavigation extends StatelessWidget {
                       size: AppSizing.iconMd,
                     ),
                     label: d.label,
+                    tooltip: d.label,
                   ),
                 )
                 .toList(),

@@ -4,7 +4,28 @@ All notable changes to the **Business Manager (`બિઝનેસ મેને�
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.1.0] - 2026-11-23
+
+### Added
+- **Centralized Settings & Bilingual Help Hub (`lib/features/settings/`)**:
+  - Dedicated **Settings** destination organizing **Appearance** (System/Light/Dark + System/English/Gujarati with live readability preview), **Business Profile** (single source of truth), **Stock & Labour Preferences** (global billing mode + per-process override overview), **Backup & Data Safety**, **Help & Guidance**, and **About StitchFlow** (`1.1.0+2`, flavor info, offline privacy guarantee, licenses).
+  - Added searchable 15-topic practical garment workshop **Help & Guidance** guide in both English and Gujarati with *When to Use*, numbered step cards, and practical examples.
+- **Redesigned Stock Issue & Receive Return Workflows**:
+  - Streamlined 4-step guided **Stock Issue** flow (+ Step 5 Success screen with updated available stock, *Issue More Stock*, and *View Issue / Receive Return* shortcuts), searchable in-stock selector, tap-friendly Process/Worker chips, live locked rate & billing mode preview, quick-fill quantity chips, and live over-stock validation.
+  - Added searchable/filterable **Receive Return** Pending Issue picker (`ReceiveReturnPickerPage`) and redesigned settlement flow with live dynamic remaining pending bar, `All Good` quick fill, clear Lost vs. Shortage helpers, live stock & labour consequences preview powered by `LabourCalculator`, mandatory reason guard, and post-save *Issue Returned Stock to Next Process* shortcut.
+  - Added `DomainLabelLocalizer` to localize all stock movement types, labour basis types, billing modes, and audit log actions/entities (zero raw database enum strings in UI).
+  - Added 112 new EN/GU localization keys (`0` untranslated) and `test/widget/v1_1_ux_settings_stock_workflows_test.dart` (`77/77` total tests passing).
+- **Documentation**: Created `docs/40_STITCHFLOW_V1_1_UX_IMPROVEMENT_REPORT.md`.
+
+### Fixed
+- **Android 12+ & Legacy Branded Splash Screen**:
+  - Fixed blank `drawable-v21/launch_background.xml`, added `drawable-night-v21/launch_background.xml`, added Android 12+ `values-v31/styles.xml` and `values-night-v31/styles.xml` with safe-zone `splash_icon_android12.png` and `splash_branding_light/dark.png`, replaced unscaled `nodpi` splash bitmaps with density-bucketed (`mdpi`–`xxxhdpi`) drawables, and aligned `NormalTheme` window backgrounds (`#F5F7FA` / `#0D1422`) to eliminate launch flashes.
+- **Gujarati & Responsive Text/Layout Fixes**:
+  - Calibrated `AppTypography` line heights (`1.38–1.50`) with `TextLeadingDistribution.even` and `fontFamilyFallback` to prevent Gujarati matra/descender clipping; replaced missing `→` (`U+2192`) glyph across rate displays.
+  - Upgraded `AppAnimatedNumber` with `FittedBox(fit: BoxFit.scaleDown)` (zero silent currency/quantity truncation), `AppButton` & `AppStatusBadge` to wrap gracefully in Gujarati, `AppDropdown` to synchronize controlled selections cleanly, and mobile `NavigationBar` to 5 spacious tabs (`Dashboard`, `Lots`, `Stock`, `Workers`, `Settings`).
+  - Fixed 360dp wrapping, responsive KPI grids, and modal controller disposal across Dashboard, Lots, Inventory, Processes, Workers, Rates, Stock, Accounting, Worker Ledger, Reports, and Help screens.
+
+## [1.0.0] - V1 Release
 
 ### Added
 - **Premium UI/UX Transformation & Design System (`docs/34_UI_UX_DESIGN_SYSTEM.md`)**:

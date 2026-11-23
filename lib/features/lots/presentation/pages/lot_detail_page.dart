@@ -70,86 +70,98 @@ final class _LotDetailView extends StatelessWidget {
     var txDateUtc = lot.transactionAt;
     String? submitError;
 
-    await AppBottomSheet.show<void>(
-      context,
-      title: l10n.lotEditAction,
-      builder: (sheetCtx) => StatefulBuilder(
-        builder: (ctx, setSheetState) => Form(
-          key: formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                AppTextField(
-                  controller: numberCtrl,
-                  label: l10n.lotNumberLabel,
-                  validator: (v) => (v == null || v.trim().isEmpty)
-                      ? l10n.validationRequired
-                      : null,
-                ),
-                const SizedBox(height: AppSpacing.md),
-                AppTextField(controller: titleCtrl, label: l10n.lotTitleLabel),
-                const SizedBox(height: AppSpacing.md),
-                AppDropdown<LotStatus>(
-                  label: l10n.lotStatusLabel,
-                  value: status,
-                  items: const [LotStatus.active, LotStatus.completed],
-                  itemLabelBuilder: (s) => s == LotStatus.active
-                      ? l10n.lotsStatusActive
-                      : l10n.lotsStatusCompleted,
-                  onChanged: (v) {
-                    if (v != null) setSheetState(() => status = v);
-                  },
-                ),
-                const SizedBox(height: AppSpacing.md),
-                AppDatePicker(
-                  label: l10n.lotDateLabel,
-                  selectedUtcMillis: txDateUtc,
-                  onDateSelectedUtcMillis: (utc) =>
-                      setSheetState(() => txDateUtc = utc),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                AppTextField(
-                  controller: notesCtrl,
-                  label: l10n.lotNotesLabel,
-                  maxLines: 2,
-                ),
-                if (submitError != null) ...[
-                  const SizedBox(height: AppSpacing.sm),
-                  AppText(submitError!, color: Theme.of(ctx).colorScheme.error),
+    try {
+      await AppBottomSheet.show<void>(
+        context,
+        title: l10n.lotEditAction,
+        builder: (sheetCtx) => StatefulBuilder(
+          builder: (ctx, setSheetState) => Form(
+            key: formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  AppTextField(
+                    controller: numberCtrl,
+                    label: l10n.lotNumberLabel,
+                    validator: (v) => (v == null || v.trim().isEmpty)
+                        ? l10n.validationRequired
+                        : null,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  AppTextField(
+                    controller: titleCtrl,
+                    label: l10n.lotTitleLabel,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  AppDropdown<LotStatus>(
+                    label: l10n.lotStatusLabel,
+                    value: status,
+                    items: const [LotStatus.active, LotStatus.completed],
+                    itemLabelBuilder: (s) => s == LotStatus.active
+                        ? l10n.lotsStatusActive
+                        : l10n.lotsStatusCompleted,
+                    onChanged: (v) {
+                      if (v != null) setSheetState(() => status = v);
+                    },
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  AppDatePicker(
+                    label: l10n.lotDateLabel,
+                    selectedUtcMillis: txDateUtc,
+                    onDateSelectedUtcMillis: (utc) =>
+                        setSheetState(() => txDateUtc = utc),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  AppTextField(
+                    controller: notesCtrl,
+                    label: l10n.lotNotesLabel,
+                    maxLines: 2,
+                  ),
+                  if (submitError != null) ...[
+                    const SizedBox(height: AppSpacing.sm),
+                    AppText(
+                      submitError!,
+                      color: Theme.of(ctx).colorScheme.error,
+                    ),
+                  ],
+                  const SizedBox(height: AppSpacing.lg),
+                  AppButton(
+                    label: l10n.actionSave,
+                    isExpanded: true,
+                    onPressed: () async {
+                      if (!(formKey.currentState?.validate() ?? false)) return;
+                      final err = await cubit.updateLot(
+                        lotId: lot.id,
+                        lotNumber: numberCtrl.text,
+                        title: titleCtrl.text,
+                        notes: notesCtrl.text,
+                        status: status,
+                        transactionAtUtcMillis: txDateUtc,
+                      );
+                      if (err != null) {
+                        setSheetState(() {
+                          submitError = err.contains('UNIQUE')
+                              ? l10n.lotDuplicateError
+                              : err;
+                        });
+                      } else if (sheetCtx.mounted) {
+                        Navigator.of(sheetCtx).pop();
+                      }
+                    },
+                  ),
                 ],
-                const SizedBox(height: AppSpacing.lg),
-                AppButton(
-                  label: l10n.actionSave,
-                  isExpanded: true,
-                  onPressed: () async {
-                    if (!(formKey.currentState?.validate() ?? false)) return;
-                    final err = await cubit.updateLot(
-                      lotId: lot.id,
-                      lotNumber: numberCtrl.text,
-                      title: titleCtrl.text,
-                      notes: notesCtrl.text,
-                      status: status,
-                      transactionAtUtcMillis: txDateUtc,
-                    );
-                    if (err != null) {
-                      setSheetState(() {
-                        submitError = err.contains('UNIQUE')
-                            ? l10n.lotDuplicateError
-                            : err;
-                      });
-                    } else if (sheetCtx.mounted) {
-                      Navigator.of(sheetCtx).pop();
-                    }
-                  },
-                ),
-              ],
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
+    } finally {
+      numberCtrl.dispose();
+      titleCtrl.dispose();
+      notesCtrl.dispose();
+    }
   }
 
   Future<void> _showDesignSheet(
@@ -163,67 +175,77 @@ final class _LotDetailView extends StatelessWidget {
     final notesCtrl = TextEditingController(text: existing?.notes ?? '');
     String? submitError;
 
-    await AppBottomSheet.show<void>(
-      context,
-      title: existing == null ? l10n.designAddAction : l10n.designEditAction,
-      builder: (sheetCtx) => StatefulBuilder(
-        builder: (ctx, setSheetState) => Form(
-          key: formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              AppTextField(
-                controller: nameCtrl,
-                label: l10n.designNameLabel,
-                validator: (v) => (v == null || v.trim().isEmpty)
-                    ? l10n.validationRequired
-                    : null,
+    try {
+      await AppBottomSheet.show<void>(
+        context,
+        title: existing == null ? l10n.designAddAction : l10n.designEditAction,
+        builder: (sheetCtx) => StatefulBuilder(
+          builder: (ctx, setSheetState) => Form(
+            key: formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  AppTextField(
+                    controller: nameCtrl,
+                    label: l10n.designNameLabel,
+                    validator: (v) => (v == null || v.trim().isEmpty)
+                        ? l10n.validationRequired
+                        : null,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  AppTextField(
+                    controller: notesCtrl,
+                    label: l10n.lotNotesLabel,
+                    maxLines: 2,
+                  ),
+                  if (submitError != null) ...[
+                    const SizedBox(height: AppSpacing.sm),
+                    AppText(
+                      submitError!,
+                      color: Theme.of(ctx).colorScheme.error,
+                    ),
+                  ],
+                  const SizedBox(height: AppSpacing.lg),
+                  AppButton(
+                    label: l10n.actionSave,
+                    isExpanded: true,
+                    onPressed: () async {
+                      if (!(formKey.currentState?.validate() ?? false)) return;
+                      final err = existing == null
+                          ? await cubit.addDesign(
+                              lotId: lotId,
+                              designName: nameCtrl.text,
+                              notes: notesCtrl.text,
+                            )
+                          : await cubit.editDesign(
+                              lotId: lotId,
+                              designId: existing.id,
+                              designName: nameCtrl.text,
+                              notes: notesCtrl.text,
+                            );
+                      if (err != null) {
+                        setSheetState(() {
+                          submitError = err.contains('UNIQUE')
+                              ? l10n.designDuplicateError
+                              : err;
+                        });
+                      } else if (sheetCtx.mounted) {
+                        Navigator.of(sheetCtx).pop();
+                      }
+                    },
+                  ),
+                ],
               ),
-              const SizedBox(height: AppSpacing.md),
-              AppTextField(
-                controller: notesCtrl,
-                label: l10n.lotNotesLabel,
-                maxLines: 2,
-              ),
-              if (submitError != null) ...[
-                const SizedBox(height: AppSpacing.sm),
-                AppText(submitError!, color: Theme.of(ctx).colorScheme.error),
-              ],
-              const SizedBox(height: AppSpacing.lg),
-              AppButton(
-                label: l10n.actionSave,
-                isExpanded: true,
-                onPressed: () async {
-                  if (!(formKey.currentState?.validate() ?? false)) return;
-                  final err = existing == null
-                      ? await cubit.addDesign(
-                          lotId: lotId,
-                          designName: nameCtrl.text,
-                          notes: notesCtrl.text,
-                        )
-                      : await cubit.editDesign(
-                          lotId: lotId,
-                          designId: existing.id,
-                          designName: nameCtrl.text,
-                          notes: notesCtrl.text,
-                        );
-                  if (err != null) {
-                    setSheetState(() {
-                      submitError = err.contains('UNIQUE')
-                          ? l10n.designDuplicateError
-                          : err;
-                    });
-                  } else if (sheetCtx.mounted) {
-                    Navigator.of(sheetCtx).pop();
-                  }
-                },
-              ),
-            ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    } finally {
+      nameCtrl.dispose();
+      notesCtrl.dispose();
+    }
   }
 
   Future<void> _showColourSheet(
@@ -254,95 +276,108 @@ final class _LotDetailView extends StatelessWidget {
       return (parsed * 100).round();
     }
 
-    await AppBottomSheet.show<void>(
-      context,
-      title: existing == null ? l10n.colourAddAction : l10n.colourEditAction,
-      builder: (sheetCtx) => StatefulBuilder(
-        builder: (ctx, setSheetState) => Form(
-          key: formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                AppTextField(
-                  controller: nameCtrl,
-                  label: l10n.colourNameLabel,
-                  validator: (v) => (v == null || v.trim().isEmpty)
-                      ? l10n.validationRequired
-                      : null,
-                ),
-                const SizedBox(height: AppSpacing.md),
-                AppTextField(
-                  controller: qtyCtrl,
-                  label: l10n.colourInitialQtyLabel,
-                  keyboardType: TextInputType.number,
-                  validator: (v) {
-                    final qty = int.tryParse(v?.trim() ?? '');
-                    return (qty == null || qty <= 0)
-                        ? l10n.validationPositiveInt
-                        : null;
-                  },
-                ),
-                const SizedBox(height: AppSpacing.md),
-                AppTextField(
-                  controller: priceCtrl,
-                  label: l10n.colourUnitPriceLabel,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
+    try {
+      await AppBottomSheet.show<void>(
+        context,
+        title: existing == null ? l10n.colourAddAction : l10n.colourEditAction,
+        builder: (sheetCtx) => StatefulBuilder(
+          builder: (ctx, setSheetState) => Form(
+            key: formKey,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  AppTextField(
+                    controller: nameCtrl,
+                    label: l10n.colourNameLabel,
+                    validator: (v) => (v == null || v.trim().isEmpty)
+                        ? l10n.validationRequired
+                        : null,
                   ),
-                  validator: (v) => parsePaise(v ?? '') == null
-                      ? l10n.validationValidPrice
-                      : null,
-                ),
-                const SizedBox(height: AppSpacing.md),
-                AppTextField(controller: notesCtrl, label: l10n.lotNotesLabel),
-                if (submitError != null) ...[
-                  const SizedBox(height: AppSpacing.sm),
-                  AppText(submitError!, color: Theme.of(ctx).colorScheme.error),
+                  const SizedBox(height: AppSpacing.md),
+                  AppTextField(
+                    controller: qtyCtrl,
+                    label: l10n.colourInitialQtyLabel,
+                    keyboardType: TextInputType.number,
+                    validator: (v) {
+                      final qty = int.tryParse(v?.trim() ?? '');
+                      return (qty == null || qty <= 0)
+                          ? l10n.validationPositiveInt
+                          : null;
+                    },
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  AppTextField(
+                    controller: priceCtrl,
+                    label: l10n.colourUnitPriceLabel,
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    validator: (v) => parsePaise(v ?? '') == null
+                        ? l10n.validationValidPrice
+                        : null,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  AppTextField(
+                    controller: notesCtrl,
+                    label: l10n.lotNotesLabel,
+                  ),
+                  if (submitError != null) ...[
+                    const SizedBox(height: AppSpacing.sm),
+                    AppText(
+                      submitError!,
+                      color: Theme.of(ctx).colorScheme.error,
+                    ),
+                  ],
+                  const SizedBox(height: AppSpacing.lg),
+                  AppButton(
+                    label: l10n.actionSave,
+                    isExpanded: true,
+                    onPressed: () async {
+                      if (!(formKey.currentState?.validate() ?? false)) return;
+                      final qty = int.parse(qtyCtrl.text.trim());
+                      final paise = parsePaise(priceCtrl.text)!;
+                      final err = existing == null
+                          ? await cubit.addColour(
+                              lotId: lotId,
+                              lotDesignId: lotDesignId,
+                              colourName: nameCtrl.text,
+                              initialQuantity: qty,
+                              unitPricePaise: paise,
+                              notes: notesCtrl.text,
+                            )
+                          : await cubit.editColour(
+                              lotId: lotId,
+                              designColourId: existing.id,
+                              colourName: nameCtrl.text,
+                              initialQuantity: qty,
+                              unitPricePaise: paise,
+                              notes: notesCtrl.text,
+                            );
+                      if (err != null) {
+                        setSheetState(() {
+                          submitError = err.contains('UNIQUE')
+                              ? l10n.colourDuplicateError
+                              : err;
+                        });
+                      } else if (sheetCtx.mounted) {
+                        Navigator.of(sheetCtx).pop();
+                      }
+                    },
+                  ),
                 ],
-                const SizedBox(height: AppSpacing.lg),
-                AppButton(
-                  label: l10n.actionSave,
-                  isExpanded: true,
-                  onPressed: () async {
-                    if (!(formKey.currentState?.validate() ?? false)) return;
-                    final qty = int.parse(qtyCtrl.text.trim());
-                    final paise = parsePaise(priceCtrl.text)!;
-                    final err = existing == null
-                        ? await cubit.addColour(
-                            lotId: lotId,
-                            lotDesignId: lotDesignId,
-                            colourName: nameCtrl.text,
-                            initialQuantity: qty,
-                            unitPricePaise: paise,
-                            notes: notesCtrl.text,
-                          )
-                        : await cubit.editColour(
-                            lotId: lotId,
-                            designColourId: existing.id,
-                            colourName: nameCtrl.text,
-                            initialQuantity: qty,
-                            unitPricePaise: paise,
-                            notes: notesCtrl.text,
-                          );
-                    if (err != null) {
-                      setSheetState(() {
-                        submitError = err.contains('UNIQUE')
-                            ? l10n.colourDuplicateError
-                            : err;
-                      });
-                    } else if (sheetCtx.mounted) {
-                      Navigator.of(sheetCtx).pop();
-                    }
-                  },
-                ),
-              ],
+              ),
             ),
           ),
         ),
-      ),
-    );
+      );
+    } finally {
+      nameCtrl.dispose();
+      qtyCtrl.dispose();
+      priceCtrl.dispose();
+      notesCtrl.dispose();
+    }
   }
 
   @override
@@ -454,27 +489,25 @@ final class _LotDetailView extends StatelessWidget {
           ),
         ),
         const SizedBox(height: AppSpacing.lg),
-        AppHeading(
-          l10n.lotPhotosHeading,
-          level: AppHeadingLevel.h3,
-          trailing: Wrap(
-            spacing: AppSpacing.xs,
-            children: [
-              AppButton(
-                label: l10n.lotAddPhotoCamera,
-                icon: Icons.photo_camera_outlined,
-                variant: AppButtonVariant.outlined,
-                onPressed: () => _pickAndSavePhoto(context, ImageSource.camera),
-              ),
-              AppButton(
-                label: l10n.lotAddPhotoGallery,
-                icon: Icons.photo_library_outlined,
-                variant: AppButtonVariant.secondary,
-                onPressed: () =>
-                    _pickAndSavePhoto(context, ImageSource.gallery),
-              ),
-            ],
-          ),
+        AppHeading(l10n.lotPhotosHeading, level: AppHeadingLevel.h3),
+        const SizedBox(height: AppSpacing.sm),
+        Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: [
+            AppButton(
+              label: l10n.lotAddPhotoCamera,
+              icon: Icons.photo_camera_outlined,
+              variant: AppButtonVariant.outlined,
+              onPressed: () => _pickAndSavePhoto(context, ImageSource.camera),
+            ),
+            AppButton(
+              label: l10n.lotAddPhotoGallery,
+              icon: Icons.photo_library_outlined,
+              variant: AppButtonVariant.secondary,
+              onPressed: () => _pickAndSavePhoto(context, ImageSource.gallery),
+            ),
+          ],
         ),
         const SizedBox(height: AppSpacing.sm),
         if (detail.photos.isEmpty)
@@ -549,21 +582,13 @@ final class _LotDetailView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Expanded(
                         child: AppText(
                           item.design.designName,
                           variant: AppTextVariant.bodyLarge,
                           fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      AppButton(
-                        label: l10n.colourAddAction,
-                        icon: Icons.palette_outlined,
-                        variant: AppButtonVariant.secondary,
-                        onPressed: () => _showColourSheet(
-                          context,
-                          lotDesignId: item.design.id,
                         ),
                       ),
                       AppIconButton(
@@ -594,6 +619,19 @@ final class _LotDetailView extends StatelessWidget {
                       ),
                     ],
                   ),
+                  const SizedBox(height: AppSpacing.xs),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: AppButton(
+                      label: l10n.colourAddAction,
+                      icon: Icons.palette_outlined,
+                      variant: AppButtonVariant.secondary,
+                      onPressed: () => _showColourSheet(
+                        context,
+                        lotDesignId: item.design.id,
+                      ),
+                    ),
+                  ),
                   if (item.colours.isNotEmpty) ...[
                     const SizedBox(height: AppSpacing.sm),
                     const Divider(),
@@ -607,7 +645,9 @@ final class _LotDetailView extends StatelessWidget {
                         ),
                         subtitle: AppText(
                           '${l10n.colourInitialQtyLabel}: ${c.initialQuantity} ${l10n.piecesUnit}  •  ${MoneyFormatter.formatPaise(c.unitPricePaise)}',
-                          variant: AppTextVariant.bodySmall,
+                          variant: AppTextVariant.numeric,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          fontWeight: FontWeight.w500,
                         ),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,

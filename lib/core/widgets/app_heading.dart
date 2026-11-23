@@ -3,7 +3,8 @@ import 'package:material_ui/material_ui.dart';
 
 enum AppHeadingLevel { h1, h2, h3 }
 
-/// Semantic section or page heading with optional trailing action widget.
+/// Semantic section or page heading with optional trailing action widget that
+/// gracefully stacks on narrow phones when labels are long (e.g. Gujarati).
 final class AppHeading extends StatelessWidget {
   const AppHeading(
     this.text, {
@@ -28,34 +29,52 @@ final class AppHeading extends StatelessWidget {
       AppHeadingLevel.h3 => textTheme.titleMedium,
     };
 
+    final titleBlock = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(text, style: style, softWrap: true),
+        if (subtitle != null) ...[
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            subtitle!,
+            style: textTheme.bodySmall?.copyWith(
+              color: colorScheme.onSurfaceVariant,
+            ),
+            softWrap: true,
+          ),
+        ],
+      ],
+    );
+
+    if (trailing == null) {
+      return Semantics(header: true, child: titleBlock);
+    }
+
     return Semantics(
       header: true,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-            child: Column(
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          if (constraints.maxWidth < 340) {
+            return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(text, style: style),
-                if (subtitle != null) ...[
-                  const SizedBox(height: AppSpacing.xs),
-                  Text(
-                    subtitle!,
-                    style: textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
+                titleBlock,
+                const SizedBox(height: AppSpacing.sm),
+                trailing!,
               ],
-            ),
-          ),
-          if (trailing != null) ...[
-            const SizedBox(width: AppSpacing.sm),
-            trailing!,
-          ],
-        ],
+            );
+          }
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(child: titleBlock),
+              const SizedBox(width: AppSpacing.sm),
+              Flexible(flex: 0, child: trailing!),
+            ],
+          );
+        },
       ),
     );
   }

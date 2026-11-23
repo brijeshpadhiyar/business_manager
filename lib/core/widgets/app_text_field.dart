@@ -1,12 +1,13 @@
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Compact `44dp` Material 3 form text field with consistent decoration,
-/// validation, disabled styling, and prefix/suffix icon support.
+/// Accessible Material 3 form text field with consistent decoration,
+/// validation, disabled styling, focus control, and prefix/suffix support.
 final class AppTextField extends StatelessWidget {
   const AppTextField({
     super.key,
     this.controller,
+    this.focusNode,
     this.initialValue,
     required this.label,
     this.hint,
@@ -14,6 +15,7 @@ final class AppTextField extends StatelessWidget {
     this.errorText,
     this.prefixIcon,
     this.suffixIcon,
+    this.suffixText,
     this.keyboardType,
     this.textInputAction,
     this.inputFormatters,
@@ -23,11 +25,15 @@ final class AppTextField extends StatelessWidget {
     this.enabled = true,
     this.readOnly = false,
     this.obscureText = false,
+    this.autofocus = false,
     this.maxLines = 1,
+    this.textAlign = TextAlign.start,
+    this.style,
     this.autovalidateMode,
   });
 
   final TextEditingController? controller;
+  final FocusNode? focusNode;
   final String? initialValue;
   final String label;
   final String? hint;
@@ -35,6 +41,7 @@ final class AppTextField extends StatelessWidget {
   final String? errorText;
   final IconData? prefixIcon;
   final Widget? suffixIcon;
+  final String? suffixText;
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
   final List<TextInputFormatter>? inputFormatters;
@@ -44,18 +51,25 @@ final class AppTextField extends StatelessWidget {
   final bool enabled;
   final bool readOnly;
   final bool obscureText;
+  final bool autofocus;
   final int maxLines;
+  final TextAlign textAlign;
+  final TextStyle? style;
   final AutovalidateMode? autovalidateMode;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
+      focusNode: focusNode,
       initialValue: initialValue,
       enabled: enabled,
       readOnly: readOnly,
       obscureText: obscureText,
+      autofocus: autofocus,
       maxLines: maxLines,
+      textAlign: textAlign,
+      style: style,
       keyboardType: keyboardType,
       textInputAction: textInputAction,
       inputFormatters: inputFormatters,
@@ -68,6 +82,7 @@ final class AppTextField extends StatelessWidget {
         hintText: hint,
         helperText: helperText,
         errorText: errorText,
+        suffixText: suffixText,
         prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
         suffixIcon: suffixIcon,
       ),

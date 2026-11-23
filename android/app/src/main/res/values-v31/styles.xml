@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android 12+ (API 31+) Splash Screen (Light Mode) -->
+    <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowBackground">@drawable/launch_background</item>
+        <item name="android:windowSplashScreenBackground">@color/splash_background_light</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_icon_android12</item>
+        <item name="android:windowSplashScreenBrandingImage">@drawable/splash_branding_light</item>
+    </style>
+    <!-- Seamless transition into StitchFlow Light scaffold surface -->
+    <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowBackground">@color/normal_background_light</item>
+    </style>
+</resources>

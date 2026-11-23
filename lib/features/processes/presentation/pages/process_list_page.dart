@@ -10,19 +10,23 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 final class ProcessListPage extends StatelessWidget {
-  const ProcessListPage({super.key});
+  const ProcessListPage({super.key, this.showAppBar = false});
+
+  final bool showAppBar;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ProcessListCubit>(
       create: (_) => getIt<ProcessListCubit>()..loadProcesses(),
-      child: const _ProcessListView(),
+      child: _ProcessListView(showAppBar: showAppBar),
     );
   }
 }
 
 final class _ProcessListView extends StatefulWidget {
-  const _ProcessListView();
+  const _ProcessListView({required this.showAppBar});
+
+  final bool showAppBar;
 
   @override
   State<_ProcessListView> createState() => _ProcessListViewState();
@@ -47,7 +51,7 @@ final class _ProcessListViewState extends State<_ProcessListView> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return Align(
+    final body = Align(
       alignment: Alignment.topCenter,
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: AppSizing.maxContentWidth),
@@ -86,6 +90,7 @@ final class _ProcessListViewState extends State<_ProcessListView> {
                     builder: (context, state) {
                       return Wrap(
                         spacing: AppSpacing.sm,
+                        runSpacing: AppSpacing.xs,
                         children: [
                           FilterChip(
                             label: Text(l10n.filterAll),
@@ -208,5 +213,15 @@ final class _ProcessListViewState extends State<_ProcessListView> {
         ),
       ),
     );
+
+    if (widget.showAppBar) {
+      return AppScaffold(
+        title: l10n.navProcesses,
+        padding: EdgeInsets.zero,
+        constrainMaxWidth: false,
+        body: body,
+      );
+    }
+    return body;
   }
 }

@@ -3,6 +3,10 @@ abstract final class RoutePaths {
   static const String showcase = '/showcase';
   static const String lotDetailPattern = '/lots/:id';
 
+  // Processes & Inventory standalone routes (clean back navigation from Dashboard/Settings)
+  static const String processes = '/processes';
+  static const String inventory = '/inventory';
+
   // Milestone 5 — Processes, Workers, Assignments & Historical Rates
   static const String processCreate = '/processes/new';
   static const String processDetailPattern = '/processes/:id';
@@ -16,9 +20,10 @@ abstract final class RoutePaths {
   static const String workerRateCreatePattern = '/workers/:id/rates/new';
   static const String workerRateEditPattern = '/workers/:id/rates/:rateId/edit';
 
-  // Milestone 6 — Stock Movements
+  // Stock Movements & Redesigned Issue / Return Workflows
   static const String stockMovements = '/stock';
   static const String stockIssuePath = '/stock/issue';
+  static const String stockReturnPicker = '/stock/return';
   static const String stockReturnPattern = '/stock/return/:issueId';
   static const String stockRepair = '/stock/repair';
 
@@ -29,11 +34,21 @@ abstract final class RoutePaths {
   static const String workerAdjustmentCreatePattern =
       '/workers/:id/adjustments/new';
 
-  // Milestone 8 — Backup & Restore
+  // Milestone 8 — Backup & Restore (kept as alias alongside Settings)
   static const String backupRestore = '/backup';
 
   // Milestone 9 — Reports
   static const String reports = '/reports';
+
+  // V1.1 — Centralized Settings & Help Hub
+  static const String settings = '/settings';
+  static const String settingsAppearance = '/settings/appearance';
+  static const String settingsBusinessProfile = '/settings/business-profile';
+  static const String settingsStockLabour = '/settings/stock-labour';
+  static const String settingsBackup = '/settings/backup';
+  static const String settingsHelp = '/settings/help';
+  static const String settingsHelpTopicPattern = '/settings/help/:topicId';
+  static const String settingsAbout = '/settings/about';
 
   static String lotDetail(String lotId) => '/lots/$lotId';
   static String processDetail(String processId) => '/processes/$processId';
@@ -75,4 +90,6 @@ abstract final class RoutePaths {
 
   static String workerAdjustmentCreate(String workerId) =>
       '/workers/$workerId/adjustments/new';
+
+  static String settingsHelpTopic(String topicId) => '/settings/help/$topicId';
 }

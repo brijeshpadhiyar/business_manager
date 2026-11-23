@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
-/// Compact type-safe Material 3 dropdown field with validation and disabled support.
+/// Type-safe Material 3 dropdown field with synchronized controlled value,
+/// validation, disabled support, and clean bilingual text display.
 final class AppDropdown<T> extends StatelessWidget {
   const AppDropdown({
     super.key,
@@ -25,8 +26,11 @@ final class AppDropdown<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final safeValue = value != null && items.contains(value) ? value : null;
+
     return DropdownButtonFormField<T>(
-      initialValue: value,
+      key: ValueKey<Object?>((safeValue, items.length)),
+      initialValue: safeValue,
       isExpanded: true,
       validator: validator,
       onChanged: enabled ? onChanged : null,
@@ -35,12 +39,26 @@ final class AppDropdown<T> extends StatelessWidget {
         hintText: hint,
         enabled: enabled,
       ),
+      selectedItemBuilder: (context) => items
+          .map(
+            (item) => Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                itemLabelBuilder(item),
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ),
+          )
+          .toList(),
       items: items
           .map(
             (item) => DropdownMenuItem<T>(
               value: item,
               child: Text(
                 itemLabelBuilder(item),
+                softWrap: true,
+                maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
             ),

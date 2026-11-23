@@ -168,25 +168,26 @@ final class _RateHistoryView extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
+                                Wrap(
+                                  spacing: AppSpacing.sm,
+                                  runSpacing: AppSpacing.xs,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
                                   children: [
                                     AppText(
                                       '${MoneyFormatter.formatPaise(rate.ratePaise)} ${l10n.ratesPerPieceSuffix}',
-                                      variant: AppTextVariant.bodyLarge,
+                                      variant: AppTextVariant.numeric,
                                       fontWeight: FontWeight.w700,
                                     ),
-                                    if (isCurrent) ...[
-                                      const SizedBox(width: AppSpacing.sm),
+                                    if (isCurrent)
                                       AppStatusBadge(
                                         label: l10n.ratesCurrentRateLabel,
                                         tone: AppStatusTone.good,
                                       ),
-                                    ],
                                   ],
                                 ),
                                 const SizedBox(height: AppSpacing.xs),
                                 AppText(
-                                  '${rate.effectiveFrom} → ${rate.effectiveTo ?? l10n.ratesOngoingLabel}',
+                                  '${rate.effectiveFrom} - ${rate.effectiveTo ?? l10n.ratesOngoingLabel}',
                                   variant: AppTextVariant.bodySmall,
                                 ),
                                 if (rate.notes != null) ...[

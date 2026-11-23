@@ -1281,4 +1281,345 @@ class AppLocalizationsGu extends AppLocalizations {
   @override
   String get reportsEmptySubtitle =>
       'મેળ ખાતો વ્યવસાય ડેટા જોવા માટે તારીખ અથવા ફિલ્ટર બદલો.';
+
+  @override
+  String get navSettings => 'સેટિંગ્સ';
+
+  @override
+  String get navStockShort => 'સ્ટોક';
+
+  @override
+  String get actionDone => 'પૂર્ણ';
+
+  @override
+  String get lotLabelShort => 'લોટ';
+
+  @override
+  String get refLabelShort => 'રેફ';
+
+  @override
+  String get inventoryUpdatedNote =>
+      'લોટ્સ, ડિઝાઇન અને રંગોનો પ્રારંભિક જથ્થો બતાવે છે. લાઇવ સ્ટોક માટે સ્ટોક હિલચાલ ખોલો.';
+
+  @override
+  String get auditActionCreate => 'બનાવેલ';
+
+  @override
+  String get auditActionUpdate => 'સુધારેલ';
+
+  @override
+  String get auditActionDelete => 'દૂર કરેલ';
+
+  @override
+  String get auditActionRateOverride => 'ભાવ ફેરફાર';
+
+  @override
+  String get auditActionRestore => 'રિસ્ટોર કરેલ';
+
+  @override
+  String get settingsHeading => 'સેટિંગ્સ';
+
+  @override
+  String get settingsSubtitle =>
+      'દેખાવ, બિઝનેસ પ્રોફાઇલ, સ્ટોક નિયમો, બેકઅપ અને માર્ગદર્શન અહીંથી સંચાલિત કરો.';
+
+  @override
+  String get settingsAppearanceTitle => 'દેખાવ અને ભાષા';
+
+  @override
+  String get settingsAppearanceSubtitle =>
+      'થીમ (સિસ્ટમ / લાઇટ / ડાર્ક) અને ભાષા (અંગ્રેજી / ગુજરાતી).';
+
+  @override
+  String get settingsAppearancePreviewTitle => 'લાઇવ પૂર્વાવલોકન';
+
+  @override
+  String get settingsAppearancePreviewBody =>
+      'રોજિંદા કામ પહેલાં લખાણની સ્પષ્ટતા, ગુજરાતી અક્ષરો અને થીમ કોન્ટ્રાસ્ટ અહીં તપાસો.';
+
+  @override
+  String get settingsBusinessTitle => 'બિઝનેસ પ્રોફાઇલ';
+
+  @override
+  String get settingsBusinessSubtitle =>
+      'અંગ્રેજી અને ગુજરાતી નામ, માલિક, ફોન, સરનામું અને ડિફોલ્ટ બિલિંગ.';
+
+  @override
+  String get settingsStockLabourTitle => 'સ્ટોક અને મજૂરી પસંદગીઓ';
+
+  @override
+  String get settingsStockLabourSubtitle =>
+      'મુખ્ય મજૂરી નિયમ અને પ્રક્રિયા મુજબના ખાસ નિયમો જુઓ.';
+
+  @override
+  String get settingsGlobalBillingSectionTitle =>
+      'મુખ્ય (ગ્લોબલ) મજૂરી ગણતરી પદ્ધતિ';
+
+  @override
+  String get settingsGlobalBillingExplanationReceived =>
+      'કારીગર સારો માલ પરત આપે ત્યારે તેની મજૂરી જમા થાય છે. ખાસ પ્રક્રિયામાં ચાલુ ન હોય ત્યાં સુધી ડેમેજ પીસ ગણાતા નથી.';
+
+  @override
+  String get settingsGlobalBillingExplanationGiven =>
+      'કારીગરને સ્ટોક આપતાની સાથે જ મજૂરી જમા થાય છે. પરત એન્ટ્રી માત્ર માહિતી માટે રહે છે જેથી બેવડી ગણતરી ન થાય.';
+
+  @override
+  String get settingsProcessOverridesTitle => 'પ્રક્રિયા મુજબના નિયમો';
+
+  @override
+  String get settingsProcessOverridesSubtitle =>
+      'દરેક પ્રક્રિયા અલગ સેટિંગ ન હોય ત્યાં સુધી મુખ્ય નિયમ અનુસરે છે. બદલવા માટે પ્રક્રિયા પર ટેપ કરો.';
+
+  @override
+  String get settingsProcessInheritsGlobal => 'મુખ્ય નિયમ મુજબ';
+
+  @override
+  String get settingsProcessOverridesGlobal => 'પ્રક્રિયાનો અલગ નિયમ';
+
+  @override
+  String get settingsDamagedIncludedShort => 'ડેમેજ સામેલ';
+
+  @override
+  String get settingsDamagedExcludedShort => 'ડેમેજ બાકાત';
+
+  @override
+  String get settingsNoProcessesYet =>
+      'હજુ સુધી કોઈ પ્રોડક્શન પ્રક્રિયા બનાવેલ નથી.';
+
+  @override
+  String get settingsBackupTitle => 'બેકઅપ અને ડેટા સુરક્ષા';
+
+  @override
+  String get settingsBackupSubtitle =>
+      'સંપૂર્ણ ZIP બેકઅપ બનાવો, સુરક્ષિત રિસ્ટોર કરો અથવા SQLite એક્સપોર્ટ કરો.';
+
+  @override
+  String get settingsHelpTitle => 'મદદ અને માર્ગદર્શન';
+
+  @override
+  String get settingsHelpSubtitle =>
+      'સ્ટિચફ્લોના દરેક કામ માટે સરળ સ્ટેપ-બાય-સ્ટેપ માર્ગદર્શન.';
+
+  @override
+  String get settingsAboutTitle => 'સ્ટિચફ્લો વિશે';
+
+  @override
+  String get settingsAboutSubtitle =>
+      'વર્ઝન, ફ્લેવર, લોકલ ડેટા ગોપનીયતા અને લાઇસન્સ.';
+
+  @override
+  String get helpSearchHint =>
+      'મદદનો વિષય શોધો (દા.ત. સ્ટોક, પરત, ભાવ, બેકઅપ)...';
+
+  @override
+  String get helpWhenToUseLabel => 'ક્યારે વાપરવું';
+
+  @override
+  String get helpStepsLabel => 'સ્ટેપ-બાય-સ્ટેપ રીત';
+
+  @override
+  String get helpExampleLabel => 'કારખાનાનું વ્યવહારુ ઉદાહરણ';
+
+  @override
+  String get helpNoResults => 'તમારી શોધ મુજબ કોઈ મદદ વિષય મળ્યો નથી.';
+
+  @override
+  String get aboutVersionLabel => 'વર્ઝન';
+
+  @override
+  String get aboutBuildLabel => 'બિલ્ડ';
+
+  @override
+  String get aboutPrivacyTitle => '૧૦૦% ઓફલાઇન અને સુરક્ષિત લોકલ ડેટા';
+
+  @override
+  String get aboutPrivacyBody =>
+      'તમારા બધા લોટ્સ, સ્ટોક હિલચાલ, કારીગર ભાવ, ખાતાવહી અને ફોટા ફક્ત તમારા ફોનમાં જ લોકલ SQLite માં સુરક્ષિત રહે છે. સ્ટિચફ્લો કોઈપણ ડેટા બાહ્ય સર્વર પર મોકલતું નથી.';
+
+  @override
+  String get aboutDescriptionBody =>
+      'સ્ટિચફ્લો એ ગાર્મેન્ટ કારખાનાના ઉત્પાદન, સ્ટોક હિલચાલ અને કારીગર મજૂરી હિસાબ માટેની ઓફલાઇન-ફર્સ્ટ મોબાઇલ એપ્લિકેશન છે.';
+
+  @override
+  String get aboutLicensesAction => 'ઓપન-સોર્સ લાઇસન્સ';
+
+  @override
+  String get stockStepSelectStock => 'સ્ટોક પસંદ કરો';
+
+  @override
+  String get stockStepSelectWork => 'કામ પસંદ કરો';
+
+  @override
+  String get stockStepEnterQty => 'જથ્થો';
+
+  @override
+  String get stockStepConfirm => 'ખાતરી';
+
+  @override
+  String get stockSearchStockHint => 'લોટ, ડિઝાઇન અથવા રંગ દ્વારા શોધો...';
+
+  @override
+  String get stockOnlyAvailableFilter => 'માત્ર ઉપલબ્ધ સ્ટોક';
+
+  @override
+  String get stockOutOfStockBadge => 'સ્ટોક ખાલી';
+
+  @override
+  String get stockNoStockItemsTitle => 'કોઈ સ્ટોક ઉપલબ્ધ નથી';
+
+  @override
+  String get stockNoStockItemsSubtitle =>
+      'પહેલા લોટમાં ડિઝાઇન અને રંગ ઉમેરો અથવા કારીગર પાસેથી સારો માલ પરત લો.';
+
+  @override
+  String get stockSelectedLabel => 'પસંદ કરેલ';
+
+  @override
+  String get stockChangeSelection => 'બદલો';
+
+  @override
+  String get stockActiveProcessesLabel => 'સક્રિય પ્રક્રિયા';
+
+  @override
+  String get stockEligibleWorkersLabel => 'યોગ્ય સોંપેલા કારીગર';
+
+  @override
+  String get stockNoActiveProcessesWarning =>
+      'કોઈ સક્રિય પ્રક્રિયા નથી. સ્ટોક આપતા પહેલા પ્રક્રિયા બનાવો.';
+
+  @override
+  String get stockBillingModePreviewLabel => 'લોક કરેલ બિલિંગ નિયમ';
+
+  @override
+  String get stockExpectedLabourLabel => 'અંદાજિત મજૂરી';
+
+  @override
+  String get stockPayableOnIssueNote =>
+      'સ્ટોક આપતાની સાથે ચૂકવવાપાત્ર (આપેલા જથ્થા પદ્ધતિ).';
+
+  @override
+  String get stockPayableOnReturnNote =>
+      'સારો માલ પરત મળે ત્યારે જમા થશે (મળેલા જથ્થા પદ્ધતિ).';
+
+  @override
+  String get stockAdvancedOptionsTitle =>
+      'તારીખ/સમય, નોંધ અને મેન્યુઅલ ભાવ ફેરફાર';
+
+  @override
+  String get stockQuickAllAvailable => 'બધો ઉપલબ્ધ';
+
+  @override
+  String get stockConfirmSummaryTitle => 'સ્ટોક આપવાની ખાતરી કરો';
+
+  @override
+  String get stockConfirmIssueAction => 'ખાતરી કરી સ્ટોક આપો';
+
+  @override
+  String get stockIssueSuccessTitle => 'સ્ટોક સફળતાપૂર્વક અપાયો';
+
+  @override
+  String get stockIssueSuccessSubtitle =>
+      'સ્ટોક ઇશ્યૂ અને લોક કરેલ ભાવ ખાતાવહીમાં સાચવાઈ ગયા છે.';
+
+  @override
+  String get stockUpdatedAvailableLabel => 'હવે ઉપલબ્ધ સારો સ્ટોક';
+
+  @override
+  String get stockIssueMoreAction => 'વધુ સ્ટોક આપો';
+
+  @override
+  String get stockViewIssueDetailsAction => 'વિગતો જુઓ / પરત લો';
+
+  @override
+  String get stockReceiveReturnHeading => 'માલ પરત લો';
+
+  @override
+  String get stockSelectPendingIssueTitle => 'બાકી ઇશ્યુ પસંદ કરો';
+
+  @override
+  String get stockSelectPendingIssueSubtitle =>
+      'સારો, ડેમેજ, ખોવાયેલ અથવા ઘટ માલ નોંધવા માટે નીચેથી બાકી ઇશ્યુ પસંદ કરો.';
+
+  @override
+  String get stockFilterAllWorkers => 'બધા કારીગરો';
+
+  @override
+  String get stockFilterAllProcesses => 'બધી પ્રક્રિયાઓ';
+
+  @override
+  String get stockPreviouslyReturnedLabel => 'પરત આવેલ';
+
+  @override
+  String get stockFillAllRemaining => 'બધો સારો';
+
+  @override
+  String get stockLiveRemainingAfterReturn => 'સાચવ્યા પછી બાકી રહેશે';
+
+  @override
+  String get stockOverReturnErrorLive =>
+      'દાખલ કરેલ કુલ જથ્થો બાકી સંખ્યા કરતાં વધુ છે.';
+
+  @override
+  String get stockConsequencesTitle => 'સાચવ્યા પછી થનાર અસર';
+
+  @override
+  String get stockConsequenceGood => 'સારો માલ ગોડાઉન સ્ટોકમાં પાછો ઉમેરાશે';
+
+  @override
+  String get stockConsequenceDamaged => 'ડેમેજ સ્ટોક ખાતામાં જશે';
+
+  @override
+  String get stockConsequenceLost => 'ખોવાયેલ માલ તરીકે નોંધાશે';
+
+  @override
+  String get stockConsequenceShortage => 'ઘટ (શોર્ટેજ) તરીકે નોંધાશે';
+
+  @override
+  String get stockConsequencePending => 'કારીગર પાસે બાકી રહેશે';
+
+  @override
+  String get stockConsequenceLabourEarned => 'કારીગરના ખાતામાં જમા થનાર મજૂરી';
+
+  @override
+  String get stockConsequenceLabourAlreadyGiven =>
+      'આપેલા જથ્થા પદ્ધતિ મુજબ મજૂરી ઇશ્યૂ સમયે જમા થઈ ગઈ છે — ફરી ઉમેરાશે નહીં.';
+
+  @override
+  String get stockConsequenceLabourNone =>
+      'આ નોંધ માટે કોઈ વધારાની મજૂરી ઉમેરાશે નહીં.';
+
+  @override
+  String get stockLostHelper =>
+      'માલ ખોવાઈ ગયો હોય કે ન મળે (પાછો આવવાની શક્યતા નથી).';
+
+  @override
+  String get stockShortageHelper => 'ગણતરીમાં ખૂટતા પીસ / ઘટની નોંધ.';
+
+  @override
+  String get stockConfirmSaveReturnAction => 'ખાતરી કરી પરત સાચવો';
+
+  @override
+  String get stockReturnSuccessTitle => 'માલ પરત સફળતાપૂર્વક નોંધાયો';
+
+  @override
+  String get stockReturnFullySettledBadge => 'સંપૂર્ણ સેટલ';
+
+  @override
+  String get stockReturnUpdatedPendingLabel => 'હવે બાકી રહેલ જથ્થો';
+
+  @override
+  String get stockIssueNextProcessAction =>
+      'પરત મળેલ સ્ટોક આગળની પ્રક્રિયામાં આપો';
+
+  @override
+  String get stockReceiveAnotherReturnAction => 'બીજો માલ પરત લો';
+
+  @override
+  String get stockTabPendingReturns => 'બાકી પરત';
+
+  @override
+  String get stockTabMovementHistory => 'હિલચાલ ઇતિહાસ';
+
+  @override
+  String get stockTabSummary => 'કારીગર અને પ્રક્રિયા';
 }

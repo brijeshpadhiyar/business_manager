@@ -60,8 +60,8 @@ void main() {
       await tester.pumpWidget(BusinessManagerApp(config: config));
       await tester.pumpAndSettle();
 
-      // 1. Navigate to Processes tab -> verify empty state
-      await tester.tap(find.text('Processes').last);
+      // 1. Open Processes from Dashboard Quick Actions -> verify empty state
+      await tester.tap(find.text('Processes').first);
       await tester.pumpAndSettle();
       expect(find.text('No Processes Yet'), findsOneWidget);
 
@@ -77,7 +77,9 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Cutting'), findsOneWidget);
 
-      // 2. Navigate to Workers tab -> verify empty state -> create 'Hasmukh Bhai'
+      // Back to shell -> Navigate to Workers tab -> verify empty state -> create 'Hasmukh Bhai'
+      await tester.pageBack();
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Workers').last);
       await tester.pumpAndSettle();
       expect(find.text('No Workers Yet'), findsOneWidget);

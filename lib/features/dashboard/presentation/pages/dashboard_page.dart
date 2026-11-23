@@ -6,12 +6,9 @@ import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
+import 'package:business_manager/core/localization/domain_label_localizer.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
-import 'package:business_manager/core/localization/locale_cubit.dart';
-import 'package:business_manager/core/localization/locale_state.dart';
 import 'package:business_manager/core/router/route_paths.dart';
-import 'package:business_manager/core/theme/theme_cubit.dart';
-import 'package:business_manager/core/theme/theme_state.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
@@ -71,7 +68,7 @@ final class _DashboardView extends StatelessWidget {
               child: ListView(
                 padding: AppSpacing.screenAll,
                 children: [
-                  // 1. Branded Hero Banner with subtle gradient & glass badge
+                  // 1. Branded Hero Banner
                   AppMotionEntrance(
                     index: 0,
                     child: AppCard(
@@ -151,7 +148,7 @@ final class _DashboardView extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.lg),
 
-                  // 2. Quick Operations Dock (1-tap access to all core workflows)
+                  // 2. Daily Workshop Quick Operations Dock
                   AppHeading(
                     l10n.dashboardQuickActions,
                     level: AppHeadingLevel.h3,
@@ -168,18 +165,41 @@ final class _DashboardView extends StatelessWidget {
                             _pushAndRefresh(context, RoutePaths.stockIssue()),
                       ),
                       AppButton(
+                        label: l10n.stockReturnAction,
+                        icon: Icons.assignment_returned_outlined,
+                        variant: AppButtonVariant.secondary,
+                        onPressed: () => _pushAndRefresh(
+                          context,
+                          RoutePaths.stockReturnPicker,
+                        ),
+                      ),
+                      AppButton(
                         label: l10n.navStockMovements,
                         icon: Icons.swap_horiz_rounded,
-                        variant: AppButtonVariant.secondary,
+                        variant: AppButtonVariant.outlined,
                         onPressed: () =>
                             _pushAndRefresh(context, RoutePaths.stockMovements),
                       ),
                       AppButton(
                         label: l10n.navAccounting,
                         icon: Icons.account_balance_wallet_outlined,
-                        variant: AppButtonVariant.secondary,
+                        variant: AppButtonVariant.outlined,
                         onPressed: () =>
                             _pushAndRefresh(context, RoutePaths.accounting),
+                      ),
+                      AppButton(
+                        label: l10n.navProcesses,
+                        icon: Icons.precision_manufacturing_outlined,
+                        variant: AppButtonVariant.outlined,
+                        onPressed: () =>
+                            _pushAndRefresh(context, RoutePaths.processes),
+                      ),
+                      AppButton(
+                        label: l10n.navInventory,
+                        icon: Icons.bar_chart_outlined,
+                        variant: AppButtonVariant.outlined,
+                        onPressed: () =>
+                            _pushAndRefresh(context, RoutePaths.inventory),
                       ),
                       AppButton(
                         label: l10n.navReports,
@@ -187,13 +207,6 @@ final class _DashboardView extends StatelessWidget {
                         variant: AppButtonVariant.outlined,
                         onPressed: () =>
                             _pushAndRefresh(context, RoutePaths.reports),
-                      ),
-                      AppButton(
-                        label: l10n.navBackupRestore,
-                        icon: Icons.backup_outlined,
-                        variant: AppButtonVariant.outlined,
-                        onPressed: () =>
-                            _pushAndRefresh(context, RoutePaths.backupRestore),
                       ),
                       if (config.isDev)
                         AppButton(
@@ -263,7 +276,7 @@ final class _DashboardView extends StatelessWidget {
                                     : AppStatusTone.good,
                                 onTap: () => _pushAndRefresh(
                                   context,
-                                  RoutePaths.stockMovements,
+                                  RoutePaths.stockReturnPicker,
                                 ),
                               ),
                             ),
@@ -394,18 +407,30 @@ final class _DashboardView extends StatelessWidget {
                               i++
                             ) ...[
                               Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Expanded(
-                                    child: AppText(
-                                      snap.processPendingList[i].processName,
-                                      fontWeight: FontWeight.w600,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        AppText(
+                                          snap
+                                              .processPendingList[i]
+                                              .processName,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        AppText(
+                                          '${l10n.stockIssuedLabel}: ${snap.processPendingList[i].issued} ${l10n.piecesUnit}',
+                                          variant: AppTextVariant.bodySmall,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSurfaceVariant,
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  AppText(
-                                    '${l10n.stockIssuedLabel}: ${snap.processPendingList[i].issued}',
-                                    variant: AppTextVariant.bodySmall,
-                                  ),
-                                  const SizedBox(width: AppSpacing.md),
+                                  const SizedBox(width: AppSpacing.sm),
                                   AppStatusBadge(
                                     label:
                                         '${snap.processPendingList[i].pending} ${l10n.piecesUnit}',
@@ -428,7 +453,7 @@ final class _DashboardView extends StatelessWidget {
                       ),
                     const SizedBox(height: AppSpacing.lg),
 
-                    // 6. Recent Audit Activity
+                    // 6. Recent Audit Activity (localized labels, clean mobile wrap)
                     AppHeading(
                       l10n.dashboardRecentActivity,
                       level: AppHeadingLevel.h3,
@@ -450,22 +475,28 @@ final class _DashboardView extends StatelessWidget {
                               i < snap.recentActivity.length.clamp(0, 6);
                               i++
                             ) ...[
-                              Row(
+                              Wrap(
+                                spacing: AppSpacing.sm,
+                                runSpacing: AppSpacing.xs,
+                                crossAxisAlignment: WrapCrossAlignment.center,
                                 children: [
                                   AppStatusBadge(
-                                    label: snap.recentActivity[i].actionType,
+                                    label: DomainLabelLocalizer.auditAction(
+                                      l10n,
+                                      snap.recentActivity[i].actionType,
+                                    ),
                                     tone:
                                         snap.recentActivity[i].actionType ==
                                             'REVERSAL'
                                         ? AppStatusTone.damaged
                                         : AppStatusTone.info,
                                   ),
-                                  const SizedBox(width: AppSpacing.sm),
-                                  Expanded(
-                                    child: AppText(
+                                  AppText(
+                                    DomainLabelLocalizer.auditEntity(
+                                      l10n,
                                       snap.recentActivity[i].entityType,
-                                      fontWeight: FontWeight.w600,
                                     ),
+                                    fontWeight: FontWeight.w600,
                                   ),
                                   AppText(
                                     IstDateTimeHelper.formatIstDateTime(
@@ -473,6 +504,9 @@ final class _DashboardView extends StatelessWidget {
                                       locale: localeCode,
                                     ),
                                     variant: AppTextVariant.bodySmall,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
                                   ),
                                 ],
                               ),
@@ -480,7 +514,7 @@ final class _DashboardView extends StatelessWidget {
                                   snap.recentActivity.length.clamp(0, 6) - 1)
                                 const Padding(
                                   padding: EdgeInsets.symmetric(
-                                    vertical: AppSpacing.xs,
+                                    vertical: AppSpacing.xs + 2,
                                   ),
                                   child: Divider(),
                                 ),
@@ -489,77 +523,7 @@ final class _DashboardView extends StatelessWidget {
                         ),
                       ),
                   ],
-
                   const SizedBox(height: AppSpacing.lg),
-                  AppHeading(
-                    l10n.dashboardPreferences,
-                    level: AppHeadingLevel.h3,
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  AppCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        AppText(
-                          l10n.themeSectionTitle,
-                          variant: AppTextVariant.label,
-                        ),
-                        const SizedBox(height: AppSpacing.sm),
-                        BlocBuilder<ThemeCubit, ThemeState>(
-                          builder: (context, themeState) =>
-                              SegmentedButton<AppThemePreference>(
-                                segments: [
-                                  ButtonSegment(
-                                    value: AppThemePreference.system,
-                                    label: Text(l10n.themeSystem),
-                                  ),
-                                  ButtonSegment(
-                                    value: AppThemePreference.light,
-                                    label: Text(l10n.themeLight),
-                                  ),
-                                  ButtonSegment(
-                                    value: AppThemePreference.dark,
-                                    label: Text(l10n.themeDark),
-                                  ),
-                                ],
-                                selected: {themeState.preference},
-                                onSelectionChanged: (s) => context
-                                    .read<ThemeCubit>()
-                                    .setPreference(s.first),
-                              ),
-                        ),
-                        const SizedBox(height: AppSpacing.md),
-                        AppText(
-                          l10n.languageSectionTitle,
-                          variant: AppTextVariant.label,
-                        ),
-                        const SizedBox(height: AppSpacing.sm),
-                        BlocBuilder<LocaleCubit, LocaleState>(
-                          builder: (context, localeState) =>
-                              SegmentedButton<AppLocalePreference>(
-                                segments: [
-                                  ButtonSegment(
-                                    value: AppLocalePreference.system,
-                                    label: Text(l10n.languageSystemDefault),
-                                  ),
-                                  ButtonSegment(
-                                    value: AppLocalePreference.en,
-                                    label: Text(l10n.languageEnglish),
-                                  ),
-                                  ButtonSegment(
-                                    value: AppLocalePreference.gu,
-                                    label: Text(l10n.languageGujarati),
-                                  ),
-                                ],
-                                selected: {localeState.preference},
-                                onSelectionChanged: (s) => context
-                                    .read<LocaleCubit>()
-                                    .setPreference(s.first),
-                              ),
-                        ),
-                      ],
-                    ),
-                  ),
                 ],
               ),
             );

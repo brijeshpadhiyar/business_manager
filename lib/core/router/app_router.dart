@@ -20,7 +20,13 @@ import 'package:business_manager/features/processes/presentation/pages/process_l
 import 'package:business_manager/features/rates/presentation/pages/rate_form_page.dart';
 import 'package:business_manager/features/rates/presentation/pages/rate_history_page.dart';
 import 'package:business_manager/features/reports/presentation/pages/reports_page.dart';
+import 'package:business_manager/features/settings/presentation/pages/about_stitchflow_page.dart';
+import 'package:business_manager/features/settings/presentation/pages/appearance_settings_page.dart';
+import 'package:business_manager/features/settings/presentation/pages/help_guidance_page.dart';
+import 'package:business_manager/features/settings/presentation/pages/settings_home_page.dart';
+import 'package:business_manager/features/settings/presentation/pages/stock_labour_settings_page.dart';
 import 'package:business_manager/features/stock_movements/presentation/pages/damaged_repair_page.dart';
+import 'package:business_manager/features/stock_movements/presentation/pages/receive_return_picker_page.dart';
 import 'package:business_manager/features/stock_movements/presentation/pages/stock_issue_page.dart';
 import 'package:business_manager/features/stock_movements/presentation/pages/stock_movements_page.dart';
 import 'package:business_manager/features/stock_movements/presentation/pages/stock_settlement_page.dart';
@@ -46,7 +52,21 @@ GoRouter createAppRouter(AppConfig config) {
           child: LotDetailPage(lotId: state.pathParameters['id']!),
         ),
       ),
-      // Processes
+      // Processes & Inventory standalone screens
+      GoRoute(
+        path: RoutePaths.processes,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: const ProcessListPage(showAppBar: true),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.inventory,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: const InventoryOverviewPage(showAppBar: true),
+        ),
+      ),
       GoRoute(
         path: RoutePaths.processCreate,
         pageBuilder: (context, state) =>
@@ -123,7 +143,7 @@ GoRouter createAppRouter(AppConfig config) {
           ),
         ),
       ),
-      // Milestone 6 — Stock Movements
+      // Stock Movements, Issue & Receive Return
       GoRoute(
         path: RoutePaths.stockMovements,
         pageBuilder: (context, state) => AppMotion.buildPage(
@@ -141,6 +161,13 @@ GoRouter createAppRouter(AppConfig config) {
         ),
       ),
       GoRoute(
+        path: RoutePaths.stockReturnPicker,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: const ReceiveReturnPickerPage(),
+        ),
+      ),
+      GoRoute(
         path: RoutePaths.stockReturnPattern,
         pageBuilder: (context, state) => AppMotion.buildPage(
           state: state,
@@ -152,7 +179,7 @@ GoRouter createAppRouter(AppConfig config) {
         pageBuilder: (context, state) =>
             AppMotion.buildPage(state: state, child: const DamagedRepairPage()),
       ),
-      // Milestone 7 — Labour, Worker Ledger & Payments
+      // Labour, Worker Ledger & Payments
       GoRoute(
         path: RoutePaths.accounting,
         pageBuilder: (context, state) => AppMotion.buildPage(
@@ -185,17 +212,70 @@ GoRouter createAppRouter(AppConfig config) {
           ),
         ),
       ),
-      // Milestone 8 — Backup & Restore
+      // Backup & Restore (alias)
       GoRoute(
         path: RoutePaths.backupRestore,
         pageBuilder: (context, state) =>
             AppMotion.buildPage(state: state, child: const BackupRestorePage()),
       ),
-      // Milestone 9 — Business Reports
+      // Business Reports
       GoRoute(
         path: RoutePaths.reports,
         pageBuilder: (context, state) =>
             AppMotion.buildPage(state: state, child: const ReportsPage()),
+      ),
+      // Centralized Settings & Help Hub
+      GoRoute(
+        path: RoutePaths.settings,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: SettingsHomePage(config: config, showAppBar: true),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.settingsAppearance,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: const AppearanceSettingsPage(),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.settingsBusinessProfile,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: const BusinessProfilePage(showAppBar: true),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.settingsStockLabour,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: const StockLabourSettingsPage(),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.settingsBackup,
+        pageBuilder: (context, state) =>
+            AppMotion.buildPage(state: state, child: const BackupRestorePage()),
+      ),
+      GoRoute(
+        path: RoutePaths.settingsHelp,
+        pageBuilder: (context, state) =>
+            AppMotion.buildPage(state: state, child: const HelpGuidancePage()),
+      ),
+      GoRoute(
+        path: RoutePaths.settingsHelpTopicPattern,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: HelpTopicDetailPage(topicId: state.pathParameters['topicId']!),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.settingsAbout,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: AboutStitchFlowPage(config: config),
+        ),
       ),
       GoRoute(
         path: RoutePaths.showcase,
@@ -232,11 +312,6 @@ final class _StitchFlowShellPageState extends State<StitchFlowShellPage> {
       onDestinationSelected: (index) => setState(() => _selectedIndex = index),
       actions: [
         AppIconButton(
-          icon: Icons.swap_horiz_rounded,
-          tooltip: l10n.navStockMovements,
-          onPressed: () => context.push(RoutePaths.stockMovements),
-        ),
-        AppIconButton(
           icon: Icons.account_balance_wallet_outlined,
           tooltip: l10n.navAccounting,
           onPressed: () => context.push(RoutePaths.accounting),
@@ -246,12 +321,22 @@ final class _StitchFlowShellPageState extends State<StitchFlowShellPage> {
           tooltip: l10n.navReports,
           onPressed: () => context.push(RoutePaths.reports),
         ),
+        AppIconButton(
+          icon: Icons.help_outline_rounded,
+          tooltip: l10n.settingsHelpTitle,
+          onPressed: () => context.push(RoutePaths.settingsHelp),
+        ),
       ],
       sidebarExtraActions: [
         ResponsiveNavActionItem(
-          label: l10n.navStockMovements,
-          icon: Icons.swap_horiz_rounded,
-          onTap: () => context.push(RoutePaths.stockMovements),
+          label: l10n.navProcesses,
+          icon: Icons.precision_manufacturing_outlined,
+          onTap: () => context.push(RoutePaths.processes),
+        ),
+        ResponsiveNavActionItem(
+          label: l10n.navInventory,
+          icon: Icons.bar_chart_outlined,
+          onTap: () => context.push(RoutePaths.inventory),
         ),
         ResponsiveNavActionItem(
           label: l10n.navAccounting,
@@ -264,11 +349,12 @@ final class _StitchFlowShellPageState extends State<StitchFlowShellPage> {
           onTap: () => context.push(RoutePaths.reports),
         ),
         ResponsiveNavActionItem(
-          label: l10n.navBackupRestore,
-          icon: Icons.backup_outlined,
-          onTap: () => context.push(RoutePaths.backupRestore),
+          label: l10n.settingsHelpTitle,
+          icon: Icons.menu_book_outlined,
+          onTap: () => context.push(RoutePaths.settingsHelp),
         ),
       ],
+      // 5 spacious primary tabs (72dp each on 360dp phones — zero Gujarati clipping!)
       destinations: [
         ResponsiveNavDestination(
           label: l10n.navDashboard,
@@ -281,9 +367,9 @@ final class _StitchFlowShellPageState extends State<StitchFlowShellPage> {
           selectedIcon: Icons.inventory_2,
         ),
         ResponsiveNavDestination(
-          label: l10n.navProcesses,
-          icon: Icons.precision_manufacturing_outlined,
-          selectedIcon: Icons.precision_manufacturing,
+          label: l10n.navStockShort,
+          icon: Icons.swap_horiz_rounded,
+          selectedIcon: Icons.swap_horiz_rounded,
         ),
         ResponsiveNavDestination(
           label: l10n.navWorkers,
@@ -291,14 +377,9 @@ final class _StitchFlowShellPageState extends State<StitchFlowShellPage> {
           selectedIcon: Icons.people,
         ),
         ResponsiveNavDestination(
-          label: l10n.navInventory,
-          icon: Icons.bar_chart_outlined,
-          selectedIcon: Icons.bar_chart,
-        ),
-        ResponsiveNavDestination(
-          label: l10n.navBusinessProfile,
-          icon: Icons.storefront_outlined,
-          selectedIcon: Icons.storefront,
+          label: l10n.navSettings,
+          icon: Icons.settings_outlined,
+          selectedIcon: Icons.settings,
         ),
       ],
       body: switch (_selectedIndex) {
@@ -307,10 +388,9 @@ final class _StitchFlowShellPageState extends State<StitchFlowShellPage> {
           onNavigateTab: (idx) => setState(() => _selectedIndex = idx),
         ),
         1 => const LotListPage(),
-        2 => const ProcessListPage(),
+        2 => const StockMovementsPage(embedded: true),
         3 => const WorkerListPage(),
-        4 => const InventoryOverviewPage(),
-        _ => const BusinessProfilePage(),
+        _ => SettingsHomePage(config: widget.config),
       },
     );
   }

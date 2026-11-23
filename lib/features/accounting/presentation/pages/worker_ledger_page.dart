@@ -356,14 +356,17 @@ final class _WorkerLedgerView extends StatelessWidget {
                     if (state.fromUtcMillis != null ||
                         state.toUtcMillis != null) ...[
                       const SizedBox(height: AppSpacing.sm),
-                      Row(
+                      Wrap(
+                        spacing: AppSpacing.sm,
+                        runSpacing: AppSpacing.xs,
+                        alignment: WrapAlignment.spaceBetween,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           AppText(
                             '${l10n.accountingOpeningBalanceLabel}: ${MoneyFormatter.formatPaise(detail.openingBalancePaise)}',
                             variant: AppTextVariant.numeric,
                             fontWeight: FontWeight.w600,
                           ),
-                          const Spacer(),
                           AppButton(
                             label: l10n.accountingClearFilters,
                             variant: AppButtonVariant.text,
@@ -458,17 +461,18 @@ final class _WorkerLedgerView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          Wrap(
+            spacing: AppSpacing.xs,
+            runSpacing: AppSpacing.xs,
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               AppStatusBadge(label: badgeText, tone: tone),
-              if (line.isReversed) ...[
-                const SizedBox(width: AppSpacing.xs),
+              if (line.isReversed)
                 AppStatusBadge(
                   label: l10n.stockReversedBadge,
                   tone: AppStatusTone.neutral,
                 ),
-              ],
-              const Spacer(),
               AppText(
                 line.isInformational
                     ? MoneyFormatter.formatPaise(line.amountPaise)
@@ -483,30 +487,39 @@ final class _WorkerLedgerView extends StatelessWidget {
           if (line.subtitle != null && line.subtitle!.isNotEmpty)
             AppText(line.subtitle!, variant: AppTextVariant.bodySmall),
           const SizedBox(height: AppSpacing.xs),
-          Row(
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.xs,
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              Expanded(
-                child: AppText(
-                  IstDateTimeHelper.formatIstDateTime(
-                    line.transactionAt,
-                    locale: localeCode,
-                  ),
-                  variant: AppTextVariant.bodySmall,
-                ),
-              ),
               AppText(
-                '${l10n.accountingRunningBalanceLabel}: ${MoneyFormatter.formatPaise(line.runningBalancePaise)}',
-                variant: AppTextVariant.numeric,
-                fontWeight: FontWeight.w600,
-              ),
-              if (canReverse) ...[
-                const SizedBox(width: AppSpacing.xs),
-                AppIconButton(
-                  icon: Icons.undo_rounded,
-                  tooltip: l10n.stockReverseAction,
-                  onPressed: () => _reverseLine(context, line),
+                IstDateTimeHelper.formatIstDateTime(
+                  line.transactionAt,
+                  locale: localeCode,
                 ),
-              ],
+                variant: AppTextVariant.bodySmall,
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: AppText(
+                      '${l10n.accountingRunningBalanceLabel}: ${MoneyFormatter.formatPaise(line.runningBalancePaise)}',
+                      variant: AppTextVariant.numeric,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  if (canReverse) ...[
+                    const SizedBox(width: AppSpacing.xs),
+                    AppIconButton(
+                      icon: Icons.undo_rounded,
+                      tooltip: l10n.stockReverseAction,
+                      onPressed: () => _reverseLine(context, line),
+                    ),
+                  ],
+                ],
+              ),
             ],
           ),
         ],

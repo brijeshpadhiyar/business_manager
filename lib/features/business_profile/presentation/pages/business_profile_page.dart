@@ -2,29 +2,31 @@ import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
-import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
 import 'package:business_manager/features/business_profile/presentation/bloc/business_profile_cubit.dart';
 import 'package:business_manager/features/business_profile/presentation/bloc/business_profile_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 final class BusinessProfilePage extends StatelessWidget {
-  const BusinessProfilePage({super.key});
+  const BusinessProfilePage({super.key, this.showAppBar = false});
+
+  final bool showAppBar;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<BusinessProfileCubit>(
       create: (_) => getIt<BusinessProfileCubit>()..loadProfile(),
-      child: const _BusinessProfileView(),
+      child: _BusinessProfileView(showAppBar: showAppBar),
     );
   }
 }
 
 final class _BusinessProfileView extends StatefulWidget {
-  const _BusinessProfileView();
+  const _BusinessProfileView({required this.showAppBar});
+
+  final bool showAppBar;
 
   @override
   State<_BusinessProfileView> createState() => _BusinessProfileViewState();
@@ -76,14 +78,13 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return BlocConsumer<BusinessProfileCubit, BusinessProfileState>(
+    final body = BlocConsumer<BusinessProfileCubit, BusinessProfileState>(
       listener: (context, state) {
         if (state.profile != null) {
           _hydrateFrom(state.profile!);
         }
         if (state.status == BusinessProfileStatus.saved) {
-          ScaffoldMessenger.of(context)
-              .showSnackBar(SnackBar(content: Text(l10n.businessProfileSaved)));
+          AppFeedback.showSuccess(context, l10n.businessProfileSaved);
         }
       },
       builder: (context, state) {
@@ -115,14 +116,25 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
             child: Form(
               key: _formKey,
               child: ListView(
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
                 padding: AppSpacing.screenAll,
                 children: [
-                  AppHeading(
-                    l10n.businessProfileHeading,
-                    level: AppHeadingLevel.h2,
-                    subtitle: l10n.businessProfileSubtitle,
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
+                  if (!widget.showAppBar) ...[
+                    AppHeading(
+                      l10n.businessProfileHeading,
+                      level: AppHeadingLevel.h2,
+                      subtitle: l10n.businessProfileSubtitle,
+                    ),
+                    const SizedBox(height: AppSpacing.lg),
+                  ] else ...[
+                    AppText(
+                      l10n.businessProfileSubtitle,
+                      variant: AppTextVariant.bodySmall,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                  ],
                   AppCard(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -131,6 +143,7 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
                           controller: _nameEnController,
                           label: l10n.businessNameEnLabel,
                           prefixIcon: Icons.storefront_outlined,
+                          textInputAction: TextInputAction.next,
                           validator: (v) => (v == null || v.trim().isEmpty)
                               ? l10n.validationRequired
                               : null,
@@ -140,6 +153,7 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
                           controller: _nameGuController,
                           label: l10n.businessNameGuLabel,
                           prefixIcon: Icons.translate,
+                          textInputAction: TextInputAction.next,
                           validator: (v) => (v == null || v.trim().isEmpty)
                               ? l10n.validationRequired
                               : null,
@@ -149,6 +163,7 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
                           controller: _ownerController,
                           label: l10n.businessOwnerLabel,
                           prefixIcon: Icons.person_outline,
+                          textInputAction: TextInputAction.next,
                         ),
                         const SizedBox(height: AppSpacing.md),
                         AppTextField(
@@ -156,6 +171,7 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
                           label: l10n.businessPhoneLabel,
                           prefixIcon: Icons.phone_outlined,
                           keyboardType: TextInputType.phone,
+                          textInputAction: TextInputAction.next,
                         ),
                         const SizedBox(height: AppSpacing.md),
                         AppTextField(
@@ -181,10 +197,14 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
                             AppRadioOption(
                               value: BillingMode.receivedQty,
                               label: l10n.billingModeReceivedQty,
+                              subtitle:
+                                  l10n.settingsGlobalBillingExplanationReceived,
                             ),
                             AppRadioOption(
                               value: BillingMode.givenQty,
                               label: l10n.billingModeGivenQty,
+                              subtitle:
+                                  l10n.settingsGlobalBillingExplanationGiven,
                             ),
                           ],
                         ),
@@ -207,33 +227,6 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.lg),
-                  AppCard(
-                    onTap: () => context.push(RoutePaths.backupRestore),
-                    child: Row(
-                      children: [
-                        const Icon(Icons.backup_outlined, size: 24),
-                        const SizedBox(width: AppSpacing.md),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              AppText(
-                                l10n.backupHeading,
-                                variant: AppTextVariant.bodyLarge,
-                                fontWeight: FontWeight.w700,
-                              ),
-                              AppText(
-                                l10n.backupSubtitle,
-                                variant: AppTextVariant.bodySmall,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Icon(Icons.chevron_right_rounded),
-                      ],
-                    ),
-                  ),
                 ],
               ),
             ),
@@ -241,5 +234,15 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
         );
       },
     );
+
+    if (widget.showAppBar) {
+      return AppScaffold(
+        title: l10n.businessProfileHeading,
+        padding: EdgeInsets.zero,
+        constrainMaxWidth: false,
+        body: body,
+      );
+    }
+    return body;
   }
 }

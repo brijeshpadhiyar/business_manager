@@ -2,7 +2,7 @@
 
 An **offline-first, multi-platform Flutter Garment & Production Management System**. Built with **Android as the primary target** and full cross-platform support for iOS, Web, Windows, macOS, and Linux from a single Flutter codebase.
 
-> **Project Phase:** **Complete V1 Production-Ready Release (Milestones 1–10 + Premium UI/UX Transformation)** — Verified & Tested.
+> **Project Phase:** **V1.1 UX, Branded Splash, Centralized Settings & Stock Workflow Release** — Verified & Tested (`77/77` tests passing, `0` analyzer issues).
 
 ---
 
@@ -76,6 +76,7 @@ An **offline-first, multi-platform Flutter Garment & Production Management Syste
 | 37 | [docs/37_MILESTONE_8_BACKUP_RESTORE_REPORT.md](docs/37_MILESTONE_8_BACKUP_RESTORE_REPORT.md) | Milestone 8 offline WAL-safe backup & atomic restore report |
 | 38 | [docs/38_MILESTONE_9_DASHBOARD_REPORTS_REPORT.md](docs/38_MILESTONE_9_DASHBOARD_REPORTS_REPORT.md) | Milestone 9 live dashboard & 10 business reports report |
 | 39 | [docs/39_MILESTONE_10_FINAL_QA_RELEASE_REPORT.md](docs/39_MILESTONE_10_FINAL_QA_RELEASE_REPORT.md) | Milestone 10 full QA, performance & release readiness report |
+| 40 | [docs/40_STITCHFLOW_V1_1_UX_IMPROVEMENT_REPORT.md](docs/40_STITCHFLOW_V1_1_UX_IMPROVEMENT_REPORT.md) | V1.1 UI/typography fixes, Android 12+ splash, centralized Settings/Help & redesigned Stock workflows |
 
 ### Governance Files
 - [CHANGELOG.md](CHANGELOG.md) — Version history and milestone tracking

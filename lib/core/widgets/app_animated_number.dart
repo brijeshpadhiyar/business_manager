@@ -6,7 +6,8 @@ import 'package:material_ui/material_ui.dart';
 /// Smoothly animates integer counts or integer paise currency values on
 /// dashboards and summary headers using tabular numerals.
 ///
-/// Automatically snaps without animation when reduced motion is enabled.
+/// Uses `FittedBox(fit: BoxFit.scaleDown)` so important monetary values and
+/// stock counts never silently truncate with an ellipsis on narrow phones.
 final class AppAnimatedNumber extends StatelessWidget {
   const AppAnimatedNumber({
     super.key,
@@ -15,7 +16,7 @@ final class AppAnimatedNumber extends StatelessWidget {
     this.suffix,
     this.style,
     this.color,
-    this.maxLines = 1,
+    this.alignment = Alignment.centerLeft,
   });
 
   final int value;
@@ -23,7 +24,7 @@ final class AppAnimatedNumber extends StatelessWidget {
   final String? suffix;
   final TextStyle? style;
   final Color? color;
-  final int maxLines;
+  final AlignmentGeometry alignment;
 
   String _format(int current) {
     if (isCurrencyPaise) {
@@ -32,6 +33,14 @@ final class AppAnimatedNumber extends StatelessWidget {
     return suffix != null && suffix!.isNotEmpty
         ? '$current $suffix'
         : '$current';
+  }
+
+  Widget _buildFittedText(String text, TextStyle style) {
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      alignment: alignment,
+      child: Text(text, style: style, maxLines: 1, softWrap: false),
+    );
   }
 
   @override
@@ -47,12 +56,7 @@ final class AppAnimatedNumber extends StatelessWidget {
 
     final duration = AppMotion.duration(context, AppMotion.numberCount);
     if (duration == Duration.zero) {
-      return Text(
-        _format(value),
-        style: effectiveStyle,
-        maxLines: maxLines,
-        overflow: TextOverflow.ellipsis,
-      );
+      return _buildFittedText(_format(value), effectiveStyle);
     }
 
     return TweenAnimationBuilder<double>(
@@ -60,12 +64,7 @@ final class AppAnimatedNumber extends StatelessWidget {
       duration: duration,
       curve: AppMotion.standardCurve,
       builder: (context, animatedValue, _) {
-        return Text(
-          _format(animatedValue.round()),
-          style: effectiveStyle,
-          maxLines: maxLines,
-          overflow: TextOverflow.ellipsis,
-        );
+        return _buildFittedText(_format(animatedValue.round()), effectiveStyle);
       },
     );
   }

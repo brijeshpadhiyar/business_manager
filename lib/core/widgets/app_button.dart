@@ -6,8 +6,8 @@ import 'package:material_ui/material_ui.dart';
 
 enum AppButtonVariant { primary, secondary, outlined, destructive, text }
 
-/// Compact `40dp` Material 3 button with variants, icon, disabled, loading,
-/// and subtle tactile micro-interaction scale feedback.
+/// Touch-friendly Material 3 button with variants, icon, disabled, loading,
+/// graceful bilingual wrapping (English & Gujarati), and subtle tactile feedback.
 final class AppButton extends StatefulWidget {
   const AppButton({
     super.key,
@@ -65,8 +65,10 @@ final class _AppButtonState extends State<AppButton> {
         Flexible(
           child: Text(
             widget.label,
+            textAlign: TextAlign.center,
+            softWrap: true,
+            maxLines: 2,
             overflow: TextOverflow.ellipsis,
-            maxLines: 1,
           ),
         ),
       ],
@@ -77,28 +79,49 @@ final class _AppButtonState extends State<AppButton> {
       AppSizing.buttonHeight,
     );
     const shape = RoundedRectangleBorder(borderRadius: AppRadius.mdBorder);
+    const padding = EdgeInsets.symmetric(
+      horizontal: AppSpacing.md + 2,
+      vertical: 10,
+    );
 
     final button = switch (widget.variant) {
       AppButtonVariant.primary => FilledButton(
         onPressed: effectiveOnPressed,
-        style: FilledButton.styleFrom(minimumSize: minSize, shape: shape),
+        style: FilledButton.styleFrom(
+          minimumSize: minSize,
+          padding: padding,
+          shape: shape,
+          tapTargetSize: MaterialTapTargetSize.padded,
+        ),
         child: content,
       ),
       AppButtonVariant.secondary => FilledButton.tonal(
         onPressed: effectiveOnPressed,
-        style: FilledButton.styleFrom(minimumSize: minSize, shape: shape),
+        style: FilledButton.styleFrom(
+          minimumSize: minSize,
+          padding: padding,
+          shape: shape,
+          tapTargetSize: MaterialTapTargetSize.padded,
+        ),
         child: content,
       ),
       AppButtonVariant.outlined => OutlinedButton(
         onPressed: effectiveOnPressed,
-        style: OutlinedButton.styleFrom(minimumSize: minSize, shape: shape),
+        style: OutlinedButton.styleFrom(
+          minimumSize: minSize,
+          padding: padding,
+          shape: shape,
+          tapTargetSize: MaterialTapTargetSize.padded,
+        ),
         child: content,
       ),
       AppButtonVariant.destructive => FilledButton(
         onPressed: effectiveOnPressed,
         style: FilledButton.styleFrom(
           minimumSize: minSize,
+          padding: padding,
           shape: shape,
+          tapTargetSize: MaterialTapTargetSize.padded,
           backgroundColor: colorScheme.error,
           foregroundColor: colorScheme.onError,
         ),
@@ -106,7 +129,12 @@ final class _AppButtonState extends State<AppButton> {
       ),
       AppButtonVariant.text => TextButton(
         onPressed: effectiveOnPressed,
-        style: TextButton.styleFrom(minimumSize: minSize, shape: shape),
+        style: TextButton.styleFrom(
+          minimumSize: minSize,
+          padding: padding,
+          shape: shape,
+          tapTargetSize: MaterialTapTargetSize.padded,
+        ),
         child: content,
       ),
     };

@@ -6,7 +6,7 @@ import 'package:business_manager/core/widgets/app_card.dart';
 import 'package:business_manager/core/widgets/app_status_badge.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Premium KPI summary tile for dashboards, inventory, and accounting headers.
+/// KPI summary tile for dashboards, inventory, stock, and accounting headers.
 final class AppMetricTile extends StatelessWidget {
   const AppMetricTile({
     super.key,
@@ -60,6 +60,7 @@ final class AppMetricTile extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (icon != null) ...[
                 Container(
@@ -81,28 +82,35 @@ final class AppMetricTile extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                   maxLines: 2,
+                  softWrap: true,
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
               if (onTap != null)
-                Icon(
-                  Icons.arrow_forward_ios_rounded,
-                  size: 13,
-                  color: colorScheme.onSurfaceVariant,
+                Padding(
+                  padding: const EdgeInsets.only(top: 2, left: 4),
+                  child: Icon(
+                    Icons.arrow_forward_ios_rounded,
+                    size: 13,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
                 ),
             ],
           ),
           const SizedBox(height: AppSpacing.sm),
-          AppAnimatedNumber(
-            value: value,
-            isCurrencyPaise: isCurrencyPaise,
-            suffix: suffix,
-            color: tone == AppStatusTone.neutral
-                ? colorScheme.onSurface
-                : accent,
-            style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w700,
-              fontSize: 19,
+          SizedBox(
+            width: double.infinity,
+            child: AppAnimatedNumber(
+              value: value,
+              isCurrencyPaise: isCurrencyPaise,
+              suffix: suffix,
+              color: tone == AppStatusTone.neutral
+                  ? colorScheme.onSurface
+                  : accent,
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.w700,
+                fontSize: 19,
+              ),
             ),
           ),
           if (subtitle != null && subtitle!.isNotEmpty) ...[
@@ -112,7 +120,8 @@ final class AppMetricTile extends StatelessWidget {
               style: theme.textTheme.bodySmall?.copyWith(
                 color: colorScheme.onSurfaceVariant,
               ),
-              maxLines: 1,
+              maxLines: 2,
+              softWrap: true,
               overflow: TextOverflow.ellipsis,
             ),
           ],

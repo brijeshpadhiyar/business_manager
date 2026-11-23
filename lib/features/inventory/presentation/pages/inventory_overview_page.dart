@@ -12,19 +12,23 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 final class InventoryOverviewPage extends StatelessWidget {
-  const InventoryOverviewPage({super.key});
+  const InventoryOverviewPage({super.key, this.showAppBar = false});
+
+  final bool showAppBar;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<InventoryOverviewCubit>(
       create: (_) => getIt<InventoryOverviewCubit>()..loadOverview(),
-      child: const _InventoryOverviewView(),
+      child: _InventoryOverviewView(showAppBar: showAppBar),
     );
   }
 }
 
 final class _InventoryOverviewView extends StatefulWidget {
-  const _InventoryOverviewView();
+  const _InventoryOverviewView({required this.showAppBar});
+
+  final bool showAppBar;
 
   @override
   State<_InventoryOverviewView> createState() => _InventoryOverviewViewState();
@@ -36,11 +40,11 @@ final class _InventoryOverviewViewState extends State<_InventoryOverviewView> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return BlocBuilder<InventoryOverviewCubit, InventoryOverviewState>(
+    final content = BlocBuilder<InventoryOverviewCubit, InventoryOverviewState>(
       builder: (context, state) {
         if (state.status == InventoryOverviewStatus.initial ||
             state.status == InventoryOverviewStatus.loading) {
-          return const AppLoader();
+          return const AppSkeletonList(itemCount: 4);
         }
         if (state.status == InventoryOverviewStatus.error) {
           return AppErrorView(
@@ -65,7 +69,7 @@ final class _InventoryOverviewViewState extends State<_InventoryOverviewView> {
                 AppHeading(
                   l10n.inventoryHeading,
                   level: AppHeadingLevel.h2,
-                  subtitle: l10n.inventoryNote,
+                  subtitle: l10n.inventoryUpdatedNote,
                   trailing: AppIconButton(
                     icon: Icons.refresh,
                     tooltip: l10n.actionRetry,
@@ -98,44 +102,76 @@ final class _InventoryOverviewViewState extends State<_InventoryOverviewView> {
                   ],
                 ),
                 const SizedBox(height: AppSpacing.md),
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isWide = constraints.maxWidth >= 680;
+                    final tileW = isWide
+                        ? (constraints.maxWidth - AppSpacing.sm * 3) / 4
+                        : (constraints.maxWidth - AppSpacing.sm) / 2;
+                    return Wrap(
+                      spacing: AppSpacing.sm,
+                      runSpacing: AppSpacing.sm,
+                      children: [
+                        SizedBox(
+                          width: tileW,
+                          child: AppMetricTile(
+                            label: l10n.inventoryTotalLots,
+                            value: overview.totalActiveLots,
+                            icon: Icons.inventory_2_outlined,
+                          ),
+                        ),
+                        SizedBox(
+                          width: tileW,
+                          child: AppMetricTile(
+                            label: l10n.inventoryTotalDesigns,
+                            value: overview.totalDesigns,
+                            icon: Icons.style_outlined,
+                            tone: AppStatusTone.info,
+                          ),
+                        ),
+                        SizedBox(
+                          width: tileW,
+                          child: AppMetricTile(
+                            label: l10n.inventoryTotalCombinations,
+                            value: overview.totalDesignColourCombinations,
+                            icon: Icons.palette_outlined,
+                          ),
+                        ),
+                        SizedBox(
+                          width: tileW,
+                          child: AppMetricTile(
+                            label: l10n.inventoryTotalInitialQty,
+                            value: overview.totalInitialQuantity,
+                            suffix: l10n.piecesUnit,
+                            icon: Icons.check_circle_outline_rounded,
+                            tone: AppStatusTone.good,
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+                const SizedBox(height: AppSpacing.lg),
                 Wrap(
                   spacing: AppSpacing.sm,
                   runSpacing: AppSpacing.sm,
                   children: [
-                    _KpiCard(
-                      label: l10n.inventoryTotalLots,
-                      value: '${overview.totalActiveLots}',
+                    ChoiceChip(
+                      label: Text(l10n.inventoryTabLots),
+                      selected: _tab == 0,
+                      onSelected: (_) => setState(() => _tab = 0),
                     ),
-                    _KpiCard(
-                      label: l10n.inventoryTotalDesigns,
-                      value: '${overview.totalDesigns}',
-                    ),
-                    _KpiCard(
-                      label: l10n.inventoryTotalCombinations,
-                      value: '${overview.totalDesignColourCombinations}',
-                    ),
-                    _KpiCard(
-                      label: l10n.inventoryTotalInitialQty,
-                      value:
-                          '${overview.totalInitialQuantity} ${l10n.piecesUnit}',
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                SegmentedButton<int>(
-                  segments: [
-                    ButtonSegment(value: 0, label: Text(l10n.inventoryTabLots)),
-                    ButtonSegment(
-                      value: 1,
+                    ChoiceChip(
                       label: Text(l10n.inventoryTabDesigns),
+                      selected: _tab == 1,
+                      onSelected: (_) => setState(() => _tab = 1),
                     ),
-                    ButtonSegment(
-                      value: 2,
+                    ChoiceChip(
                       label: Text(l10n.inventoryTabColours),
+                      selected: _tab == 2,
+                      onSelected: (_) => setState(() => _tab = 2),
                     ),
                   ],
-                  selected: {_tab},
-                  onSelectionChanged: (s) => setState(() => _tab = s.first),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 if (overview.totalActiveLots == 0)
@@ -156,6 +192,16 @@ final class _InventoryOverviewViewState extends State<_InventoryOverviewView> {
         );
       },
     );
+
+    if (widget.showAppBar) {
+      return AppScaffold(
+        title: l10n.navInventory,
+        padding: EdgeInsets.zero,
+        constrainMaxWidth: false,
+        body: content,
+      );
+    }
+    return content;
   }
 
   Widget _buildLotTable(BuildContext context, List<LotQuantitySummary> items) {
@@ -176,18 +222,21 @@ final class _InventoryOverviewViewState extends State<_InventoryOverviewView> {
         ),
       ],
       mobileCardBuilder: (_, item) => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AppText(item.lotNumber, fontWeight: FontWeight.w700),
-              AppText(
-                '${item.designCount} ${l10n.inventoryTotalDesigns} • ${item.colourCount} ${l10n.colourNameLabel}',
-                variant: AppTextVariant.bodySmall,
-              ),
-            ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppText(item.lotNumber, fontWeight: FontWeight.w700),
+                AppText(
+                  '${item.designCount} ${l10n.inventoryTotalDesigns} • ${item.colourCount} ${l10n.colourNameLabel}',
+                  variant: AppTextVariant.bodySmall,
+                ),
+              ],
+            ),
           ),
+          const SizedBox(width: AppSpacing.sm),
           AppText(
             '${item.totalInitialQuantity} ${l10n.piecesUnit}',
             variant: AppTextVariant.numeric,
@@ -218,15 +267,18 @@ final class _InventoryOverviewViewState extends State<_InventoryOverviewView> {
         ),
       ],
       mobileCardBuilder: (_, item) => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AppText(item.designName, fontWeight: FontWeight.w700),
-              AppText(item.lotNumber, variant: AppTextVariant.bodySmall),
-            ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppText(item.designName, fontWeight: FontWeight.w700),
+                AppText(item.lotNumber, variant: AppTextVariant.bodySmall),
+              ],
+            ),
           ),
+          const SizedBox(width: AppSpacing.sm),
           AppText(
             '${item.totalInitialQuantity} ${l10n.piecesUnit}',
             variant: AppTextVariant.numeric,
@@ -264,18 +316,21 @@ final class _InventoryOverviewViewState extends State<_InventoryOverviewView> {
         ),
       ],
       mobileCardBuilder: (_, item) => Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AppText(
-                '${item.designName} • ${item.colourName}',
-                fontWeight: FontWeight.w700,
-              ),
-              AppText(item.lotNumber, variant: AppTextVariant.bodySmall),
-            ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppText(
+                  '${item.designName} • ${item.colourName}',
+                  fontWeight: FontWeight.w700,
+                ),
+                AppText(item.lotNumber, variant: AppTextVariant.bodySmall),
+              ],
+            ),
           ),
+          const SizedBox(width: AppSpacing.sm),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
@@ -285,39 +340,13 @@ final class _InventoryOverviewViewState extends State<_InventoryOverviewView> {
               ),
               AppText(
                 MoneyFormatter.formatPaise(item.unitPricePaise),
-                variant: AppTextVariant.bodySmall,
+                variant: AppTextVariant.numeric,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w500,
               ),
             ],
           ),
         ],
-      ),
-    );
-  }
-}
-
-final class _KpiCard extends StatelessWidget {
-  const _KpiCard({required this.label, required this.value});
-
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 164,
-      child: AppCard(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            AppText(label, variant: AppTextVariant.bodySmall),
-            const SizedBox(height: AppSpacing.xs),
-            AppText(
-              value,
-              variant: AppTextVariant.numeric,
-              fontWeight: FontWeight.w700,
-            ),
-          ],
-        ),
       ),
     );
   }

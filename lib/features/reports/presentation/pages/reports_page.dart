@@ -1,5 +1,6 @@
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
+import 'package:business_manager/core/localization/domain_label_localizer.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
@@ -279,64 +280,79 @@ final class _ReportsViewState extends State<_ReportsView> {
       (s, b) => s + b.totalShortage,
     );
 
-    return Wrap(
-      spacing: AppSpacing.sm,
-      runSpacing: AppSpacing.sm,
-      children: [
-        SizedBox(
-          width: 170,
-          child: AppMetricTile(
-            label: l10n.colourInitialQtyLabel,
-            value: initQty,
-            suffix: l10n.piecesUnit,
-          ),
-        ),
-        SizedBox(
-          width: 170,
-          child: AppMetricTile(
-            label: l10n.stockAvailableGoodLabel,
-            value: good,
-            suffix: l10n.piecesUnit,
-            tone: AppStatusTone.good,
-          ),
-        ),
-        SizedBox(
-          width: 170,
-          child: AppMetricTile(
-            label: l10n.stockPendingWorkerLabel,
-            value: pending,
-            suffix: l10n.piecesUnit,
-            tone: AppStatusTone.pending,
-          ),
-        ),
-        SizedBox(
-          width: 170,
-          child: AppMetricTile(
-            label: l10n.stockDamagedBucketLabel,
-            value: damaged,
-            suffix: l10n.piecesUnit,
-            tone: damaged > 0 ? AppStatusTone.damaged : AppStatusTone.neutral,
-          ),
-        ),
-        SizedBox(
-          width: 170,
-          child: AppMetricTile(
-            label: l10n.stockLostLabel,
-            value: lost,
-            suffix: l10n.piecesUnit,
-            tone: lost > 0 ? AppStatusTone.damaged : AppStatusTone.neutral,
-          ),
-        ),
-        SizedBox(
-          width: 170,
-          child: AppMetricTile(
-            label: l10n.stockShortageLabel,
-            value: shortage,
-            suffix: l10n.piecesUnit,
-            tone: shortage > 0 ? AppStatusTone.damaged : AppStatusTone.neutral,
-          ),
-        ),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final cols = constraints.maxWidth >= 700 ? 3 : 2;
+        final tileW =
+            (constraints.maxWidth - AppSpacing.sm * (cols - 1)) / cols;
+        return Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: [
+            SizedBox(
+              width: tileW,
+              child: AppMetricTile(
+                label: l10n.colourInitialQtyLabel,
+                value: initQty,
+                suffix: l10n.piecesUnit,
+                icon: Icons.inventory_2_outlined,
+              ),
+            ),
+            SizedBox(
+              width: tileW,
+              child: AppMetricTile(
+                label: l10n.stockAvailableGoodLabel,
+                value: good,
+                suffix: l10n.piecesUnit,
+                icon: Icons.check_circle_outline_rounded,
+                tone: AppStatusTone.good,
+              ),
+            ),
+            SizedBox(
+              width: tileW,
+              child: AppMetricTile(
+                label: l10n.stockPendingWorkerLabel,
+                value: pending,
+                suffix: l10n.piecesUnit,
+                icon: Icons.pending_actions_rounded,
+                tone: AppStatusTone.pending,
+              ),
+            ),
+            SizedBox(
+              width: tileW,
+              child: AppMetricTile(
+                label: l10n.stockDamagedBucketLabel,
+                value: damaged,
+                suffix: l10n.piecesUnit,
+                icon: Icons.report_problem_outlined,
+                tone: damaged > 0
+                    ? AppStatusTone.damaged
+                    : AppStatusTone.neutral,
+              ),
+            ),
+            SizedBox(
+              width: tileW,
+              child: AppMetricTile(
+                label: l10n.stockLostLabel,
+                value: lost,
+                suffix: l10n.piecesUnit,
+                icon: Icons.help_outline_rounded,
+                tone: lost > 0 ? AppStatusTone.info : AppStatusTone.neutral,
+              ),
+            ),
+            SizedBox(
+              width: tileW,
+              child: AppMetricTile(
+                label: l10n.stockShortageLabel,
+                value: shortage,
+                suffix: l10n.piecesUnit,
+                icon: Icons.remove_circle_outline_rounded,
+                tone: shortage > 0 ? AppStatusTone.info : AppStatusTone.neutral,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -604,12 +620,11 @@ final class _ReportsViewState extends State<_ReportsView> {
       cellsBuilder: (r) => [
         AppText('${r.lotNumber} / ${r.designName} / ${r.colourName}'),
         AppStatusBadge(
-          label: r.movement.movementType.dbValue,
-          tone:
-              r.movement.movementType ==
-                  StockMovementType.adjustmentDamagedToGood
-              ? AppStatusTone.good
-              : AppStatusTone.damaged,
+          label: DomainLabelLocalizer.movementType(
+            l10n,
+            r.movement.movementType,
+          ),
+          tone: DomainLabelLocalizer.movementTone(r.movement.movementType),
         ),
         AppText(r.workerName ?? '-'),
         AppText('${r.movement.quantity}', variant: AppTextVariant.numeric),
@@ -620,11 +635,18 @@ final class _ReportsViewState extends State<_ReportsView> {
         children: [
           Row(
             children: [
-              AppStatusBadge(
-                label: r.movement.movementType.dbValue,
-                tone: AppStatusTone.damaged,
+              Flexible(
+                child: AppStatusBadge(
+                  label: DomainLabelLocalizer.movementType(
+                    l10n,
+                    r.movement.movementType,
+                  ),
+                  tone: DomainLabelLocalizer.movementTone(
+                    r.movement.movementType,
+                  ),
+                ),
               ),
-              const Spacer(),
+              const SizedBox(width: AppSpacing.sm),
               AppText(
                 '${r.movement.quantity} ${l10n.piecesUnit}',
                 variant: AppTextVariant.numeric,
@@ -700,7 +722,7 @@ final class _ReportsViewState extends State<_ReportsView> {
                       fontWeight: FontWeight.w700,
                     ),
                     AppText(
-                      'Lot ${r.lotNumber} • ${r.entry.quantity} pcs • ${IstDateTimeHelper.formatIstDate(r.entry.transactionAt, locale: localeCode)}',
+                      '${l10n.lotLabelShort} ${r.lotNumber} • ${r.entry.quantity} ${l10n.piecesUnit} • ${IstDateTimeHelper.formatIstDate(r.entry.transactionAt, locale: localeCode)}',
                       variant: AppTextVariant.bodySmall,
                     ),
                   ],
