@@ -176,8 +176,10 @@ void main() {
         await tester.pumpWidget(BusinessManagerApp(config: config));
         await tester.pumpAndSettle();
 
-        // Verify English initial render
-        expect(find.text('StitchFlow Dev'), findsOneWidget);
+        // Verify English initial render & navigate to Design System Showcase
+        expect(find.text('StitchFlow Dev'), findsWidgets);
+        await tester.tap(find.text('Design System Showcase'));
+        await tester.pumpAndSettle();
 
         // Switch to Dark theme & Gujarati
         await getIt<ThemeCubit>().setPreference(AppThemePreference.dark);

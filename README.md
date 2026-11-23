@@ -2,7 +2,7 @@
 
 An **offline-first, multi-platform Flutter Garment & Production Management System**. Built with **Android as the primary target** and full cross-platform support for iOS, Web, Windows, macOS, and Linux from a single Flutter codebase.
 
-> **Project Phase:** Milestone 3.5 (StitchFlow Branding & Application Identity) Complete — Ready for Milestone 4 Review.
+> **Project Phase:** Milestone 4 (StitchFlow Business Foundation — Modules A–F) Complete — Ready for Milestone 5 Review.
 
 ---
 
@@ -66,6 +66,9 @@ An **offline-first, multi-platform Flutter Garment & Production Management Syste
 | 27 | [docs/27_MILESTONE_3_IMPLEMENTATION_REPORT.md](docs/27_MILESTONE_3_IMPLEMENTATION_REPORT.md) | Milestone 3 offline database core & media storage report |
 | 28 | [docs/28_STITCHFLOW_BRAND_AND_APP_IDENTITY.md](docs/28_STITCHFLOW_BRAND_AND_APP_IDENTITY.md) | Official StitchFlow brand, logo, colors & identity spec |
 | 29 | [docs/29_MILESTONE_3_5_IMPLEMENTATION_REPORT.md](docs/29_MILESTONE_3_5_IMPLEMENTATION_REPORT.md) | Milestone 3.5 branding & platform identity report |
+| 30 | [docs/30_MILESTONE_4_IMPLEMENTATION_REPORT.md](docs/30_MILESTONE_4_IMPLEMENTATION_REPORT.md) | Milestone 4 business foundation (Modules A–F) report |
+| 31 | [docs/31_STITCHFLOW_BUILD_AUTOMATION.md](docs/31_STITCHFLOW_BUILD_AUTOMATION.md) | One-command Windows APK build automation guide |
+| 32 | [docs/32_MILESTONE_3_6_IMPLEMENTATION_REPORT.md](docs/32_MILESTONE_3_6_IMPLEMENTATION_REPORT.md) | Milestone 3.6 APK build automation report |
 
 ### Governance Files
 - [CHANGELOG.md](CHANGELOG.md) — Version history and milestone tracking
@@ -73,6 +76,20 @@ An **offline-first, multi-platform Flutter Garment & Production Management Syste
 - [AGENT_RULES.md](AGENT_RULES.md) — Non-negotiable architectural and AI/developer rules
 
 ---
+
+## One-Command Android APK Builds (Windows)
+
+```powershell
+# Development Release APK -> build/releases/dev/StitchFlow_Dev_YYYYMMDD_HHMMSS.apk
+.\build_apk.bat dev
+
+# Production Release APK -> build/releases/prod/StitchFlow_Prod_YYYYMMDD_HHMMSS.apk
+.\build_apk.bat prod
+
+# Optional Debug Builds
+.\build_apk.bat dev debug
+.\build_apk.bat prod debug
+```
 
 ## Planned Flavor Commands (Post-Implementation)
 

@@ -23,6 +23,22 @@ import 'package:business_manager/core/platform/media_storage_service.dart'
     as _i586;
 import 'package:business_manager/core/theme/theme_cubit.dart' as _i772;
 import 'package:business_manager/core/utils/id_generator.dart' as _i656;
+import 'package:business_manager/features/business_profile/data/repositories/business_profile_repository_impl.dart'
+    as _i930;
+import 'package:business_manager/features/business_profile/domain/repositories/business_profile_repository.dart'
+    as _i521;
+import 'package:business_manager/features/business_profile/presentation/bloc/business_profile_cubit.dart'
+    as _i1018;
+import 'package:business_manager/features/inventory/presentation/bloc/inventory_overview_cubit.dart'
+    as _i931;
+import 'package:business_manager/features/lots/data/repositories/lot_repository_impl.dart'
+    as _i1010;
+import 'package:business_manager/features/lots/domain/repositories/lot_repository.dart'
+    as _i932;
+import 'package:business_manager/features/lots/presentation/bloc/lot_detail_cubit.dart'
+    as _i309;
+import 'package:business_manager/features/lots/presentation/bloc/lot_list_cubit.dart'
+    as _i548;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
@@ -67,6 +83,33 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i177.AppDatabase>(),
         gh<_i790.AppLogger>(),
       ),
+    );
+    gh.lazySingleton<_i932.LotRepository>(
+      () => _i1010.LotRepositoryImpl(
+        gh<_i177.AppDatabase>(),
+        gh<_i665.DatabaseTransactionRunner>(),
+        gh<_i656.IdGenerator>(),
+        gh<_i586.MediaStorageService>(),
+      ),
+    );
+    gh.factory<_i309.LotDetailCubit>(
+      () => _i309.LotDetailCubit(gh<_i932.LotRepository>()),
+    );
+    gh.factory<_i548.LotListCubit>(
+      () => _i548.LotListCubit(gh<_i932.LotRepository>()),
+    );
+    gh.lazySingleton<_i521.BusinessProfileRepository>(
+      () => _i930.BusinessProfileRepositoryImpl(
+        gh<_i177.AppDatabase>(),
+        gh<_i665.DatabaseTransactionRunner>(),
+        gh<_i656.IdGenerator>(),
+      ),
+    );
+    gh.factory<_i931.InventoryOverviewCubit>(
+      () => _i931.InventoryOverviewCubit(gh<_i932.LotRepository>()),
+    );
+    gh.factory<_i1018.BusinessProfileCubit>(
+      () => _i1018.BusinessProfileCubit(gh<_i521.BusinessProfileRepository>()),
     );
     return this;
   }

@@ -210,4 +210,254 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get showcaseLoadingMessage => 'Loading preview...';
+
+  @override
+  String get navDashboard => 'Dashboard';
+
+  @override
+  String get navLots => 'Lots';
+
+  @override
+  String get navInventory => 'Inventory';
+
+  @override
+  String get navBusinessProfile => 'Business Profile';
+
+  @override
+  String get navDesignShowcase => 'Design System Showcase';
+
+  @override
+  String get dashboardWelcomeSubtitle =>
+      'Offline-first Garment & Production Management';
+
+  @override
+  String get dashboardQuickActions => 'Quick Actions';
+
+  @override
+  String get dashboardPreferences => 'App Preferences';
+
+  @override
+  String get businessProfileHeading => 'Business Profile';
+
+  @override
+  String get businessProfileSubtitle =>
+      'Configure your workshop details separately from the StitchFlow app name.';
+
+  @override
+  String get businessNameEnLabel => 'Business Name (English)';
+
+  @override
+  String get businessNameGuLabel => 'Business Name (Gujarati)';
+
+  @override
+  String get businessOwnerLabel => 'Owner / Operator Name';
+
+  @override
+  String get businessPhoneLabel => 'Contact Number';
+
+  @override
+  String get businessAddressLabel => 'Workshop Address';
+
+  @override
+  String get businessDefaultBillingLabel => 'Default Labour Billing Mode';
+
+  @override
+  String get billingModeReceivedQty => 'Pay on Received Quantity (Default)';
+
+  @override
+  String get billingModeGivenQty => 'Pay on Given Quantity';
+
+  @override
+  String get businessProfileSaved => 'Business profile saved.';
+
+  @override
+  String get lotsHeading => 'Lots';
+
+  @override
+  String get lotsSearchHint => 'Search by lot number, title, or notes';
+
+  @override
+  String get lotsFilterAll => 'All';
+
+  @override
+  String get lotsStatusActive => 'Active';
+
+  @override
+  String get lotsStatusCompleted => 'Completed';
+
+  @override
+  String get lotsStatusArchived => 'Archived';
+
+  @override
+  String get lotsEmptyTitle => 'No Lots Yet';
+
+  @override
+  String get lotsEmptySubtitle =>
+      'Create your first lot to start tracking designs, colours, and initial quantities.';
+
+  @override
+  String get lotCreateAction => 'New Lot';
+
+  @override
+  String get lotEditAction => 'Edit Lot';
+
+  @override
+  String get lotArchiveAction => 'Archive Lot';
+
+  @override
+  String get lotArchiveConfirmTitle => 'Archive Lot?';
+
+  @override
+  String get lotArchiveConfirmMessage =>
+      'This lot will be archived without deleting historical records.';
+
+  @override
+  String get lotNumberLabel => 'Lot Number';
+
+  @override
+  String get lotTitleLabel => 'Title (Optional)';
+
+  @override
+  String get lotNotesLabel => 'Notes (Optional)';
+
+  @override
+  String get lotDateLabel => 'Lot Date (IST)';
+
+  @override
+  String get lotStatusLabel => 'Status';
+
+  @override
+  String get lotDuplicateError =>
+      'An active lot with this lot number already exists.';
+
+  @override
+  String get lotPhotosHeading => 'Lot Photos';
+
+  @override
+  String get lotPhotosEmpty => 'No photos attached yet.';
+
+  @override
+  String get lotAddPhotoCamera => 'Camera';
+
+  @override
+  String get lotAddPhotoGallery => 'Gallery';
+
+  @override
+  String get lotPhotoRemoveConfirm => 'Remove this photo from the lot?';
+
+  @override
+  String get lotPhotoMissing => 'Photo file is unavailable.';
+
+  @override
+  String get designsHeading => 'Designs & Colours';
+
+  @override
+  String get designsSearchHint => 'Filter designs or colours';
+
+  @override
+  String get designsEmptyTitle => 'No Designs Added';
+
+  @override
+  String get designsEmptySubtitle =>
+      'Add a design to this lot, then add independent colour quantities and prices.';
+
+  @override
+  String get designAddAction => 'Add Design';
+
+  @override
+  String get designEditAction => 'Edit Design';
+
+  @override
+  String get designDeleteConfirmTitle => 'Remove Design?';
+
+  @override
+  String get designDeleteConfirmMessage =>
+      'This design will be archived from active listings.';
+
+  @override
+  String get designNameLabel => 'Design Name / Code';
+
+  @override
+  String get designDuplicateError =>
+      'A design with this name already exists in this lot.';
+
+  @override
+  String get colourAddAction => 'Add Colour';
+
+  @override
+  String get colourEditAction => 'Edit Colour';
+
+  @override
+  String get colourDeleteConfirmTitle => 'Remove Colour?';
+
+  @override
+  String get colourDeleteConfirmMessage =>
+      'This colour entry will be archived from active listings.';
+
+  @override
+  String get colourNameLabel => 'Colour Name';
+
+  @override
+  String get colourInitialQtyLabel => 'Initial Quantity';
+
+  @override
+  String get colourUnitPriceLabel => 'Price per Piece (₹)';
+
+  @override
+  String get colourDuplicateError =>
+      'This colour already exists in this design.';
+
+  @override
+  String get validationPositiveInt => 'Enter a whole number greater than 0.';
+
+  @override
+  String get validationValidPrice =>
+      'Enter a valid non-negative price (e.g. 250 or 250.50).';
+
+  @override
+  String get inventoryHeading => 'Initial Inventory Overview';
+
+  @override
+  String get inventoryNote =>
+      'Shows recorded Initial Quantities only. Stock movements and pending balances arrive in later milestones.';
+
+  @override
+  String get inventoryTotalLots => 'Active Lots';
+
+  @override
+  String get inventoryTotalDesigns => 'Designs';
+
+  @override
+  String get inventoryTotalCombinations => 'Design + Colour';
+
+  @override
+  String get inventoryTotalInitialQty => 'Total Initial Qty';
+
+  @override
+  String get inventoryTabLots => 'Lot-wise';
+
+  @override
+  String get inventoryTabDesigns => 'Design-wise';
+
+  @override
+  String get inventoryTabColours => 'Colour-wise';
+
+  @override
+  String get inventoryEmptyTitle => 'No Initial Inventory Yet';
+
+  @override
+  String get inventoryEmptySubtitle =>
+      'Add lots, designs, and colours to see initial quantity totals here.';
+
+  @override
+  String get actionEdit => 'Edit';
+
+  @override
+  String get actionDelete => 'Remove';
+
+  @override
+  String get actionClose => 'Close';
+
+  @override
+  String get piecesUnit => 'pcs';
 }

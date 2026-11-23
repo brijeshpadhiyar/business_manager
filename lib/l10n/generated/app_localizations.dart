@@ -493,6 +493,480 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Loading preview...'**
   String get showcaseLoadingMessage;
+
+  /// No description provided for @navDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard'**
+  String get navDashboard;
+
+  /// No description provided for @navLots.
+  ///
+  /// In en, this message translates to:
+  /// **'Lots'**
+  String get navLots;
+
+  /// No description provided for @navInventory.
+  ///
+  /// In en, this message translates to:
+  /// **'Inventory'**
+  String get navInventory;
+
+  /// No description provided for @navBusinessProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Profile'**
+  String get navBusinessProfile;
+
+  /// No description provided for @navDesignShowcase.
+  ///
+  /// In en, this message translates to:
+  /// **'Design System Showcase'**
+  String get navDesignShowcase;
+
+  /// No description provided for @dashboardWelcomeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline-first Garment & Production Management'**
+  String get dashboardWelcomeSubtitle;
+
+  /// No description provided for @dashboardQuickActions.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Actions'**
+  String get dashboardQuickActions;
+
+  /// No description provided for @dashboardPreferences.
+  ///
+  /// In en, this message translates to:
+  /// **'App Preferences'**
+  String get dashboardPreferences;
+
+  /// No description provided for @businessProfileHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Profile'**
+  String get businessProfileHeading;
+
+  /// No description provided for @businessProfileSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure your workshop details separately from the StitchFlow app name.'**
+  String get businessProfileSubtitle;
+
+  /// No description provided for @businessNameEnLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Name (English)'**
+  String get businessNameEnLabel;
+
+  /// No description provided for @businessNameGuLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Name (Gujarati)'**
+  String get businessNameGuLabel;
+
+  /// No description provided for @businessOwnerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner / Operator Name'**
+  String get businessOwnerLabel;
+
+  /// No description provided for @businessPhoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Number'**
+  String get businessPhoneLabel;
+
+  /// No description provided for @businessAddressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Workshop Address'**
+  String get businessAddressLabel;
+
+  /// No description provided for @businessDefaultBillingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Labour Billing Mode'**
+  String get businessDefaultBillingLabel;
+
+  /// No description provided for @billingModeReceivedQty.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay on Received Quantity (Default)'**
+  String get billingModeReceivedQty;
+
+  /// No description provided for @billingModeGivenQty.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay on Given Quantity'**
+  String get billingModeGivenQty;
+
+  /// No description provided for @businessProfileSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Business profile saved.'**
+  String get businessProfileSaved;
+
+  /// No description provided for @lotsHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Lots'**
+  String get lotsHeading;
+
+  /// No description provided for @lotsSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by lot number, title, or notes'**
+  String get lotsSearchHint;
+
+  /// No description provided for @lotsFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get lotsFilterAll;
+
+  /// No description provided for @lotsStatusActive.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get lotsStatusActive;
+
+  /// No description provided for @lotsStatusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get lotsStatusCompleted;
+
+  /// No description provided for @lotsStatusArchived.
+  ///
+  /// In en, this message translates to:
+  /// **'Archived'**
+  String get lotsStatusArchived;
+
+  /// No description provided for @lotsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Lots Yet'**
+  String get lotsEmptyTitle;
+
+  /// No description provided for @lotsEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your first lot to start tracking designs, colours, and initial quantities.'**
+  String get lotsEmptySubtitle;
+
+  /// No description provided for @lotCreateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'New Lot'**
+  String get lotCreateAction;
+
+  /// No description provided for @lotEditAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Lot'**
+  String get lotEditAction;
+
+  /// No description provided for @lotArchiveAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive Lot'**
+  String get lotArchiveAction;
+
+  /// No description provided for @lotArchiveConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive Lot?'**
+  String get lotArchiveConfirmTitle;
+
+  /// No description provided for @lotArchiveConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This lot will be archived without deleting historical records.'**
+  String get lotArchiveConfirmMessage;
+
+  /// No description provided for @lotNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot Number'**
+  String get lotNumberLabel;
+
+  /// No description provided for @lotTitleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Title (Optional)'**
+  String get lotTitleLabel;
+
+  /// No description provided for @lotNotesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (Optional)'**
+  String get lotNotesLabel;
+
+  /// No description provided for @lotDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot Date (IST)'**
+  String get lotDateLabel;
+
+  /// No description provided for @lotStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get lotStatusLabel;
+
+  /// No description provided for @lotDuplicateError.
+  ///
+  /// In en, this message translates to:
+  /// **'An active lot with this lot number already exists.'**
+  String get lotDuplicateError;
+
+  /// No description provided for @lotPhotosHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot Photos'**
+  String get lotPhotosHeading;
+
+  /// No description provided for @lotPhotosEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No photos attached yet.'**
+  String get lotPhotosEmpty;
+
+  /// No description provided for @lotAddPhotoCamera.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get lotAddPhotoCamera;
+
+  /// No description provided for @lotAddPhotoGallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery'**
+  String get lotAddPhotoGallery;
+
+  /// No description provided for @lotPhotoRemoveConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove this photo from the lot?'**
+  String get lotPhotoRemoveConfirm;
+
+  /// No description provided for @lotPhotoMissing.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo file is unavailable.'**
+  String get lotPhotoMissing;
+
+  /// No description provided for @designsHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Designs & Colours'**
+  String get designsHeading;
+
+  /// No description provided for @designsSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter designs or colours'**
+  String get designsSearchHint;
+
+  /// No description provided for @designsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Designs Added'**
+  String get designsEmptyTitle;
+
+  /// No description provided for @designsEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a design to this lot, then add independent colour quantities and prices.'**
+  String get designsEmptySubtitle;
+
+  /// No description provided for @designAddAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Design'**
+  String get designAddAction;
+
+  /// No description provided for @designEditAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Design'**
+  String get designEditAction;
+
+  /// No description provided for @designDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Design?'**
+  String get designDeleteConfirmTitle;
+
+  /// No description provided for @designDeleteConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This design will be archived from active listings.'**
+  String get designDeleteConfirmMessage;
+
+  /// No description provided for @designNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Design Name / Code'**
+  String get designNameLabel;
+
+  /// No description provided for @designDuplicateError.
+  ///
+  /// In en, this message translates to:
+  /// **'A design with this name already exists in this lot.'**
+  String get designDuplicateError;
+
+  /// No description provided for @colourAddAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Colour'**
+  String get colourAddAction;
+
+  /// No description provided for @colourEditAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Colour'**
+  String get colourEditAction;
+
+  /// No description provided for @colourDeleteConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Colour?'**
+  String get colourDeleteConfirmTitle;
+
+  /// No description provided for @colourDeleteConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This colour entry will be archived from active listings.'**
+  String get colourDeleteConfirmMessage;
+
+  /// No description provided for @colourNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Colour Name'**
+  String get colourNameLabel;
+
+  /// No description provided for @colourInitialQtyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Initial Quantity'**
+  String get colourInitialQtyLabel;
+
+  /// No description provided for @colourUnitPriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Price per Piece (₹)'**
+  String get colourUnitPriceLabel;
+
+  /// No description provided for @colourDuplicateError.
+  ///
+  /// In en, this message translates to:
+  /// **'This colour already exists in this design.'**
+  String get colourDuplicateError;
+
+  /// No description provided for @validationPositiveInt.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a whole number greater than 0.'**
+  String get validationPositiveInt;
+
+  /// No description provided for @validationValidPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid non-negative price (e.g. 250 or 250.50).'**
+  String get validationValidPrice;
+
+  /// No description provided for @inventoryHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Initial Inventory Overview'**
+  String get inventoryHeading;
+
+  /// No description provided for @inventoryNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Shows recorded Initial Quantities only. Stock movements and pending balances arrive in later milestones.'**
+  String get inventoryNote;
+
+  /// No description provided for @inventoryTotalLots.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Lots'**
+  String get inventoryTotalLots;
+
+  /// No description provided for @inventoryTotalDesigns.
+  ///
+  /// In en, this message translates to:
+  /// **'Designs'**
+  String get inventoryTotalDesigns;
+
+  /// No description provided for @inventoryTotalCombinations.
+  ///
+  /// In en, this message translates to:
+  /// **'Design + Colour'**
+  String get inventoryTotalCombinations;
+
+  /// No description provided for @inventoryTotalInitialQty.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Initial Qty'**
+  String get inventoryTotalInitialQty;
+
+  /// No description provided for @inventoryTabLots.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot-wise'**
+  String get inventoryTabLots;
+
+  /// No description provided for @inventoryTabDesigns.
+  ///
+  /// In en, this message translates to:
+  /// **'Design-wise'**
+  String get inventoryTabDesigns;
+
+  /// No description provided for @inventoryTabColours.
+  ///
+  /// In en, this message translates to:
+  /// **'Colour-wise'**
+  String get inventoryTabColours;
+
+  /// No description provided for @inventoryEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Initial Inventory Yet'**
+  String get inventoryEmptyTitle;
+
+  /// No description provided for @inventoryEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add lots, designs, and colours to see initial quantity totals here.'**
+  String get inventoryEmptySubtitle;
+
+  /// No description provided for @actionEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get actionEdit;
+
+  /// No description provided for @actionDelete.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get actionDelete;
+
+  /// No description provided for @actionClose.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get actionClose;
+
+  /// No description provided for @piecesUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'pcs'**
+  String get piecesUnit;
 }
 
 class _AppLocalizationsDelegate

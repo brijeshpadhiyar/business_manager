@@ -12,7 +12,7 @@ void main() {
     SharedPreferences.setMockInitialValues({});
   });
 
-  testWidgets('Renders EN and switches live to Gujarati (બિઝનેસ મેનેજર)', (
+  testWidgets('Renders StitchFlow EN Dashboard and switches live to Gujarati', (
     tester,
   ) async {
     final config = AppConfig.dev();
@@ -21,15 +21,14 @@ void main() {
     await tester.pumpWidget(BusinessManagerApp(config: config));
     await tester.pumpAndSettle();
 
-    expect(find.text('StitchFlow Dev'), findsOneWidget);
-    expect(find.text('Project Foundation Ready'), findsOneWidget);
-    expect(find.text('business_manager_dev.sqlite'), findsOneWidget);
+    expect(find.text('StitchFlow Dev'), findsWidgets);
+    expect(find.text('From Fabric to Finished.'), findsOneWidget);
 
     // Switch to Gujarati via LocaleCubit and verify immediate localized render.
     await getIt<LocaleCubit>().setPreference(AppLocalePreference.gu);
     await tester.pumpAndSettle();
 
-    expect(find.text('સ્ટિચફ્લો (Dev)'), findsOneWidget);
-    expect(find.text('પ્રોજેક્ટ ફાઉન્ડેશન તૈયાર છે'), findsOneWidget);
+    expect(find.text('સ્ટિચફ્લો (Dev)'), findsWidgets);
+    expect(find.text('કાપડથી તૈયાર વસ્ત્ર સુધી.'), findsOneWidget);
   });
 }
