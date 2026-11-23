@@ -23,8 +23,8 @@ class Attachments extends Table {
 
   @override
   List<String> get customConstraints => const [
-        "CHECK(entity_type IN ('LOT', 'STOCK_MOVEMENT', 'PAYMENT', 'BUSINESS_PROFILE'))",
-      ];
+    "CHECK(entity_type IN ('LOT', 'STOCK_MOVEMENT', 'PAYMENT', 'BUSINESS_PROFILE'))",
+  ];
 }
 
 /// 2.13 `audit_logs` — Complete immutable audit trail across all entities.
@@ -49,6 +49,6 @@ class AuditLogs extends Table {
 
   @override
   List<String> get customConstraints => const [
-        "CHECK(action_type IN ('CREATE', 'UPDATE', 'SOFT_DELETE', 'DEACTIVATE', 'REACTIVATE', 'RATE_OVERRIDE', 'REVERSAL', 'DAMAGED_TO_GOOD_ADJUSTMENT', 'BACKUP_EXPORT', 'BACKUP_RESTORE'))",
-      ];
+    "CHECK(action_type IN ('CREATE', 'UPDATE', 'SOFT_DELETE', 'DEACTIVATE', 'REACTIVATE', 'RATE_OVERRIDE', 'REVERSAL', 'DAMAGED_TO_GOOD_ADJUSTMENT', 'BACKUP_EXPORT', 'BACKUP_RESTORE'))",
+  ];
 }

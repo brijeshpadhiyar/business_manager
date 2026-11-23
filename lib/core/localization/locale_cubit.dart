@@ -8,13 +8,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 @lazySingleton
 final class LocaleCubit extends Cubit<LocaleState> {
   LocaleCubit(this._prefs)
-      : super(
-          LocaleState(
-            preference: AppLocalePreference.fromStorageKey(
-              _prefs.getString(_localePreferenceKey),
-            ),
+    : super(
+        LocaleState(
+          preference: AppLocalePreference.fromStorageKey(
+            _prefs.getString(_localePreferenceKey),
           ),
-        );
+        ),
+      );
 
   static const String _localePreferenceKey = 'app_locale_preference';
 

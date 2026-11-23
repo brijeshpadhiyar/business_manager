@@ -15,8 +15,7 @@ class StockMovementDao extends DatabaseAccessor<AppDatabase>
       into(stockMovements).insert(entry);
 
   Future<StockMovementRow?> findById(String id) =>
-      (select(stockMovements)..where((t) => t.id.equals(id)))
-          .getSingleOrNull();
+      (select(stockMovements)..where((t) => t.id.equals(id))).getSingleOrNull();
 
   Future<StockMovementRow?> findByClientRequestId(String clientRequestId) =>
       (select(stockMovements)

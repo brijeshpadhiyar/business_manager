@@ -14,10 +14,10 @@ enum AppLocalePreference {
   final String storageKey;
 
   Locale? get locale => switch (this) {
-        AppLocalePreference.system => null,
-        AppLocalePreference.en => const Locale('en'),
-        AppLocalePreference.gu => const Locale('gu'),
-      };
+    AppLocalePreference.system => null,
+    AppLocalePreference.en => const Locale('en'),
+    AppLocalePreference.gu => const Locale('gu'),
+  };
 
   static AppLocalePreference fromStorageKey(String? raw) {
     return AppLocalePreference.values.firstWhere(

@@ -177,17 +177,18 @@ void main() {
         await tester.pumpAndSettle();
 
         // Verify English initial render
-        expect(find.text('Business Manager Dev'), findsOneWidget);
+        expect(find.text('StitchFlow Dev'), findsOneWidget);
 
         // Switch to Dark theme & Gujarati
         await getIt<ThemeCubit>().setPreference(AppThemePreference.dark);
         await getIt<LocaleCubit>().setPreference(AppLocalePreference.gu);
         await tester.pumpAndSettle();
 
-        final materialApp =
-            tester.widget<MaterialApp>(find.byType(MaterialApp));
+        final materialApp = tester.widget<MaterialApp>(
+          find.byType(MaterialApp),
+        );
         expect(materialApp.themeMode, ThemeMode.dark);
-        expect(find.text('બિઝનેસ મેનેજર (Dev)'), findsOneWidget);
+        expect(find.text('સ્ટિચફ્લો (Dev)'), findsOneWidget);
         expect(
           find.text('ટાઇપોગ્રાફી અને લાંબા ગુજરાતી લખાણનો નમૂનો'),
           findsOneWidget,

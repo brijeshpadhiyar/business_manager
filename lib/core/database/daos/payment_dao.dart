@@ -13,10 +13,9 @@ class PaymentDao extends DatabaseAccessor<AppDatabase> with _$PaymentDaoMixin {
   Future<void> insertPayment(PaymentsCompanion entry) =>
       into(payments).insert(entry);
 
-  Future<PaymentRow?> findByClientRequestId(String clientRequestId) =>
-      (select(payments)
-            ..where((t) => t.clientRequestId.equals(clientRequestId)))
-          .getSingleOrNull();
+  Future<PaymentRow?> findByClientRequestId(String clientRequestId) => (select(
+    payments,
+  )..where((t) => t.clientRequestId.equals(clientRequestId))).getSingleOrNull();
 
   Future<List<PaymentRow>> getPaymentsForMember(String memberId) {
     return (select(payments)

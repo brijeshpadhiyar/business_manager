@@ -22,8 +22,8 @@ class LabourEntryDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<List<LabourEntryRow>> getEntriesForMovement(String stockMovementId) {
-    return (select(labourEntries)
-          ..where((t) => t.stockMovementId.equals(stockMovementId)))
-        .get();
+    return (select(
+      labourEntries,
+    )..where((t) => t.stockMovementId.equals(stockMovementId))).get();
   }
 }

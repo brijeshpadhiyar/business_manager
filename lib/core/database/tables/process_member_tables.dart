@@ -24,10 +24,10 @@ class Processes extends Table {
 
   @override
   List<String> get customConstraints => const [
-        'CHECK(is_active IN (0, 1))',
-        "CHECK(billing_mode_override IS NULL OR billing_mode_override IN ('RECEIVED_QTY', 'GIVEN_QTY'))",
-        'CHECK(include_damaged_in_labour IN (0, 1))',
-      ];
+    'CHECK(is_active IN (0, 1))',
+    "CHECK(billing_mode_override IS NULL OR billing_mode_override IN ('RECEIVED_QTY', 'GIVEN_QTY'))",
+    'CHECK(include_damaged_in_labour IN (0, 1))',
+  ];
 }
 
 /// 2.6 `members` — Workers / Karigars.
@@ -52,9 +52,7 @@ class Members extends Table {
   Set<Column<Object>> get primaryKey => {id};
 
   @override
-  List<String> get customConstraints => const [
-        'CHECK(is_active IN (0, 1))',
-      ];
+  List<String> get customConstraints => const ['CHECK(is_active IN (0, 1))'];
 }
 
 /// 2.7 `member_processes` — Many-to-many Member <-> Process linkage.
@@ -76,9 +74,7 @@ class MemberProcesses extends Table {
   Set<Column<Object>> get primaryKey => {id};
 
   @override
-  List<String> get customConstraints => const [
-        'CHECK(is_active IN (0, 1))',
-      ];
+  List<String> get customConstraints => const ['CHECK(is_active IN (0, 1))'];
 }
 
 /// 2.8 `member_process_rates` — Historical effective-dated piece rates (IST YYYY-MM-DD).
@@ -107,7 +103,7 @@ class MemberProcessRates extends Table {
 
   @override
   List<String> get customConstraints => const [
-        'CHECK(rate_paise >= 0)',
-        'CHECK(effective_to IS NULL OR effective_to >= effective_from)',
-      ];
+    'CHECK(rate_paise >= 0)',
+    'CHECK(effective_to IS NULL OR effective_to >= effective_from)',
+  ];
 }

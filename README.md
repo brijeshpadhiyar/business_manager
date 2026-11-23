@@ -1,8 +1,8 @@
-# Business Manager (`બિઝનેસ મેનેજર`)
+# StitchFlow (`સ્ટિચફ્લો`) — From Fabric to Finished.
 
-An **offline-first, multi-platform Flutter Business Management System** designed for garment/silai manufacturing operations. Built with **Android as the primary target** and full cross-platform support for iOS, Web, Windows, macOS, and Linux from a single Flutter codebase.
+An **offline-first, multi-platform Flutter Garment & Production Management System**. Built with **Android as the primary target** and full cross-platform support for iOS, Web, Windows, macOS, and Linux from a single Flutter codebase.
 
-> **Project Phase:** Milestone 3 (Offline Database Core — Drift + SQLite) Complete — Ready for Milestone 4 Review.
+> **Project Phase:** Milestone 3.5 (StitchFlow Branding & Application Identity) Complete — Ready for Milestone 4 Review.
 
 ---
 
@@ -64,6 +64,8 @@ An **offline-first, multi-platform Flutter Business Management System** designed
 | 25 | [docs/25_MILESTONE_1_IMPLEMENTATION_REPORT.md](docs/25_MILESTONE_1_IMPLEMENTATION_REPORT.md) | Milestone 1 foundation implementation & validation report |
 | 26 | [docs/26_MILESTONE_2_IMPLEMENTATION_REPORT.md](docs/26_MILESTONE_2_IMPLEMENTATION_REPORT.md) | Milestone 2 design system & common widgets report |
 | 27 | [docs/27_MILESTONE_3_IMPLEMENTATION_REPORT.md](docs/27_MILESTONE_3_IMPLEMENTATION_REPORT.md) | Milestone 3 offline database core & media storage report |
+| 28 | [docs/28_STITCHFLOW_BRAND_AND_APP_IDENTITY.md](docs/28_STITCHFLOW_BRAND_AND_APP_IDENTITY.md) | Official StitchFlow brand, logo, colors & identity spec |
+| 29 | [docs/29_MILESTONE_3_5_IMPLEMENTATION_REPORT.md](docs/29_MILESTONE_3_5_IMPLEMENTATION_REPORT.md) | Milestone 3.5 branding & platform identity report |
 
 ### Governance Files
 - [CHANGELOG.md](CHANGELOG.md) — Version history and milestone tracking

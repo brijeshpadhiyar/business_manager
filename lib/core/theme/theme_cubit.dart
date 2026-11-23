@@ -8,13 +8,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 @lazySingleton
 final class ThemeCubit extends Cubit<ThemeState> {
   ThemeCubit(this._prefs)
-      : super(
-          ThemeState(
-            preference: AppThemePreference.fromStorageKey(
-              _prefs.getString(_themePreferenceKey),
-            ),
+    : super(
+        ThemeState(
+          preference: AppThemePreference.fromStorageKey(
+            _prefs.getString(_themePreferenceKey),
           ),
-        );
+        ),
+      );
 
   static const String _themePreferenceKey = 'app_theme_preference';
 

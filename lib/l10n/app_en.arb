@@ -1,12 +1,16 @@
 {
   "@@locale": "en",
-  "appTitle": "Business Manager",
+  "appTitle": "StitchFlow",
   "@appTitle": {
-    "description": "Default English display name of the application."
+    "description": "Official English display name of the application."
   },
-  "appTitleDev": "Business Manager Dev",
+  "appTitleDev": "StitchFlow Dev",
   "@appTitleDev": {
     "description": "Development flavor display name of the application."
+  },
+  "appTagline": "From Fabric to Finished.",
+  "@appTagline": {
+    "description": "Official StitchFlow brand tagline."
   },
   "foundationTitle": "Project Foundation Ready",
   "@foundationTitle": {

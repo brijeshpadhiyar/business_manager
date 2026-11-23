@@ -19,19 +19,16 @@ class LotDao extends DatabaseAccessor<AppDatabase> with _$LotDaoMixin {
   Future<void> insertDesign(LotDesignsCompanion entry) =>
       into(lotDesigns).insert(entry);
 
-  Future<List<LotDesignRow>> getDesignsForLot(String lotId) =>
-      (select(lotDesigns)
-            ..where((t) => t.lotId.equals(lotId) & t.deletedAt.isNull()))
-          .get();
+  Future<List<LotDesignRow>> getDesignsForLot(String lotId) => (select(
+    lotDesigns,
+  )..where((t) => t.lotId.equals(lotId) & t.deletedAt.isNull())).get();
 
   Future<void> insertDesignColour(DesignColoursCompanion entry) =>
       into(designColours).insert(entry);
 
   Future<List<DesignColourRow>> getColoursForDesign(String lotDesignId) =>
-      (select(designColours)
-            ..where(
-              (t) =>
-                  t.lotDesignId.equals(lotDesignId) & t.deletedAt.isNull(),
-            ))
+      (select(designColours)..where(
+            (t) => t.lotDesignId.equals(lotDesignId) & t.deletedAt.isNull(),
+          ))
           .get();
 }

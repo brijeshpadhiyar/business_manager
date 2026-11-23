@@ -1,11 +1,11 @@
 {
-    "name": "business_manager",
-    "short_name": "business_manager",
+    "name": "StitchFlow",
+    "short_name": "StitchFlow",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#172B4D",
+    "theme_color": "#172B4D",
+    "description": "StitchFlow — From Fabric to Finished. Offline-first Garment & Production Management.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

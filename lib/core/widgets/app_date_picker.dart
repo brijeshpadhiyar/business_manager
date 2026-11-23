@@ -38,8 +38,11 @@ final class AppDatePicker extends StatelessWidget {
       lastDate: lastDate ?? DateTime(2100),
     );
     if (picked == null) return;
-    final utcMillis =
-        DateTime.utc(picked.year, picked.month, picked.day).millisecondsSinceEpoch;
+    final utcMillis = DateTime.utc(
+      picked.year,
+      picked.month,
+      picked.day,
+    ).millisecondsSinceEpoch;
     onDateSelectedUtcMillis(utcMillis);
   }
 
@@ -60,10 +63,7 @@ final class AppDatePicker extends StatelessWidget {
           enabled: enabled,
           suffixIcon: const Icon(Icons.calendar_today, size: AppSizing.iconMd),
         ),
-        child: Text(
-          displayText,
-          style: Theme.of(context).textTheme.bodyMedium,
-        ),
+        child: Text(displayText, style: Theme.of(context).textTheme.bodyMedium),
       ),
     );
   }

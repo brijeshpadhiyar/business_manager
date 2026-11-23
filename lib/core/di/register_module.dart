@@ -19,8 +19,7 @@ abstract class RegisterModule {
   MediaStorageService mediaStorageService(
     AppConfig config,
     IdGenerator idGenerator,
-  ) =>
-      createPlatformMediaStorageService(config, idGenerator);
+  ) => createPlatformMediaStorageService(config, idGenerator);
 }
 
 Future<void> disposeAppDatabase(AppDatabase db) => db.close();

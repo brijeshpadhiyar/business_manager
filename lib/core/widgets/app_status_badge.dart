@@ -28,13 +28,13 @@ final class AppStatusBadge extends StatelessWidget {
       AppStatusTone.pending => (semantic.pending, semantic.pendingContainer),
       AppStatusTone.damaged => (semantic.damaged, semantic.damagedContainer),
       AppStatusTone.info => (
-          semantic.advanceCredit,
-          semantic.advanceCreditContainer,
-        ),
+        semantic.advanceCredit,
+        semantic.advanceCreditContainer,
+      ),
       AppStatusTone.neutral => (
-          colorScheme.onSurfaceVariant,
-          colorScheme.surfaceContainerHighest,
-        ),
+        colorScheme.onSurfaceVariant,
+        colorScheme.surfaceContainerHighest,
+      ),
     };
 
     return Semantics(
@@ -44,10 +44,7 @@ final class AppStatusBadge extends StatelessWidget {
           horizontal: AppSpacing.sm,
           vertical: AppSpacing.xs,
         ),
-        decoration: BoxDecoration(
-          color: bg,
-          borderRadius: AppRadius.smBorder,
-        ),
+        decoration: BoxDecoration(color: bg, borderRadius: AppRadius.smBorder),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -58,10 +55,8 @@ final class AppStatusBadge extends StatelessWidget {
             Flexible(
               child: Text(
                 label,
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: fg,
-                      fontWeight: FontWeight.w600,
-                    ),
+                style: Theme.of(context).textTheme.labelMedium
+                    ?.copyWith(color: fg, fontWeight: FontWeight.w600),
                 overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),

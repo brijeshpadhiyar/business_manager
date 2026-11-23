@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 560" width="512" height="560">
+  <rect width="512" height="560" rx="48" fill="#F5F7FA"/>
+  <g transform="translate(86, 28) scale(0.66)">
+  <!-- Continuous Thread S (Teal) -->
+  <path d="M 358 138
+           C 358 84, 294 64, 236 74
+           C 172 85, 138 128, 146 178
+           C 155 232, 214 246, 266 262
+           C 322 279, 368 302, 366 356
+           C 364 414, 304 446, 234 442
+           C 178 439, 144 410, 142 368"
+        fill="none" stroke="#0D9488" stroke-width="58"
+        stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Amber Needle & Thread Accent crossing the S flow -->
+  <path d="M 118 304 L 392 184"
+        fill="none" stroke="#F4A340" stroke-width="22"
+        stroke-linecap="round"/>
+  <circle cx="384" cy="188" r="17" fill="#F4A340"/>
+  <circle cx="384" cy="188" r="6" fill="#172B4D"/>
+</g>
+  <text x="256" y="446" text-anchor="middle" font-family="Noto Sans, Segoe UI, sans-serif" font-size="64" font-weight="700" fill="#172B4D" letter-spacing="-1">StitchFlow</text>
+  <text x="256" y="494" text-anchor="middle" font-family="Noto Sans, Segoe UI, sans-serif" font-size="24" font-weight="500" fill="#0D9488" letter-spacing="0.5">From Fabric to Finished.</text>
+</svg>

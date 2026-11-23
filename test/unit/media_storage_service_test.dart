@@ -21,45 +21,47 @@ void main() {
     }
   });
 
-  test('saves, reads, checksums, and isolates dev vs prod private media',
-      () async {
-    final devMedia = NativeMediaStorageService(
-      config: AppConfig.dev(),
-      idGenerator: IdGenerator(),
-      baseDirectoryOverride: tempDir,
-    );
-    final prodMedia = NativeMediaStorageService(
-      config: AppConfig.prod(),
-      idGenerator: IdGenerator(),
-      baseDirectoryOverride: tempDir,
-    );
+  test(
+    'saves, reads, checksums, and isolates dev vs prod private media',
+    () async {
+      final devMedia = NativeMediaStorageService(
+        config: AppConfig.dev(),
+        idGenerator: IdGenerator(),
+        baseDirectoryOverride: tempDir,
+      );
+      final prodMedia = NativeMediaStorageService(
+        config: AppConfig.prod(),
+        idGenerator: IdGenerator(),
+        baseDirectoryOverride: tempDir,
+      );
 
-    final payload = Uint8List.fromList([10, 20, 30, 40, 50]);
-    final saved = await devMedia.saveBytes(
-      bytes: payload,
-      category: MediaCategory.lots,
-      entityId: 'lot-1001',
-      fileExtension: '.jpg',
-      mimeType: 'image/jpeg',
-    );
+      final payload = Uint8List.fromList([10, 20, 30, 40, 50]);
+      final saved = await devMedia.saveBytes(
+        bytes: payload,
+        category: MediaCategory.lots,
+        entityId: 'lot-1001',
+        fileExtension: '.jpg',
+        mimeType: 'image/jpeg',
+      );
 
-    expect(saved.relativePath, startsWith('lots/lot-1001/'));
-    expect(saved.relativePath, endsWith('.jpg'));
-    expect(saved.fileSizeBytes, 5);
-    expect(saved.sha256Hex, devMedia.computeSha256(payload));
+      expect(saved.relativePath, startsWith('lots/lot-1001/'));
+      expect(saved.relativePath, endsWith('.jpg'));
+      expect(saved.fileSizeBytes, 5);
+      expect(saved.sha256Hex, devMedia.computeSha256(payload));
 
-    expect(await devMedia.exists(saved.relativePath), isTrue);
-    expect(await devMedia.readBytes(saved.relativePath), equals(payload));
+      expect(await devMedia.exists(saved.relativePath), isTrue);
+      expect(await devMedia.readBytes(saved.relativePath), equals(payload));
 
-    // Prod media directory is completely isolated from dev
-    expect(await prodMedia.exists(saved.relativePath), isFalse);
-    expect(await prodMedia.readBytes(saved.relativePath), isNull);
+      // Prod media directory is completely isolated from dev
+      expect(await prodMedia.exists(saved.relativePath), isFalse);
+      expect(await prodMedia.readBytes(saved.relativePath), isNull);
 
-    // Safe deletion & missing file handling
-    expect(await devMedia.deleteIfExists(saved.relativePath), isTrue);
-    expect(await devMedia.deleteIfExists(saved.relativePath), isFalse);
-    expect(await devMedia.readBytes(saved.relativePath), isNull);
-  });
+      // Safe deletion & missing file handling
+      expect(await devMedia.deleteIfExists(saved.relativePath), isTrue);
+      expect(await devMedia.deleteIfExists(saved.relativePath), isFalse);
+      expect(await devMedia.readBytes(saved.relativePath), isNull);
+    },
+  );
 
   test('blocks directory traversal paths cleanly', () async {
     final media = NativeMediaStorageService(

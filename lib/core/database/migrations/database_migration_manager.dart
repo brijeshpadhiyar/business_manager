@@ -8,10 +8,7 @@ abstract final class DatabaseMigrationManager {
   static const int currentSchemaVersion = 1;
   static const String defaultBusinessProfileId = 'default';
 
-  static Future<void> handleOnCreate(
-    Migrator m,
-    GeneratedDatabase db,
-  ) async {
+  static Future<void> handleOnCreate(Migrator m, GeneratedDatabase db) async {
     await m.createAll();
     for (final statement in SchemaIndexes.v1IndexStatements) {
       await db.customStatement(statement);

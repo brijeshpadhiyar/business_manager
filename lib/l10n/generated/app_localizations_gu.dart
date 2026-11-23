@@ -10,10 +10,13 @@ class AppLocalizationsGu extends AppLocalizations {
   AppLocalizationsGu([String locale = 'gu']) : super(locale);
 
   @override
-  String get appTitle => 'બિઝનેસ મેનેજર';
+  String get appTitle => 'સ્ટિચફ્લો';
 
   @override
-  String get appTitleDev => 'બિઝનેસ મેનેજર (Dev)';
+  String get appTitleDev => 'સ્ટિચફ્લો (Dev)';
+
+  @override
+  String get appTagline => 'કાપડથી તૈયાર વસ્ત્ર સુધી.';
 
   @override
   String get foundationTitle => 'પ્રોજેક્ટ ફાઉન્ડેશન તૈયાર છે';

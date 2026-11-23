@@ -46,7 +46,10 @@ final class AppConfig {
   }
 
   factory AppConfig.fromEnvironment() {
-    const flavorName = String.fromEnvironment('APP_FLAVOR', defaultValue: 'dev');
+    const flavorName = String.fromEnvironment(
+      'APP_FLAVOR',
+      defaultValue: 'dev',
+    );
     return flavorName == 'prod' ? AppConfig.prod() : AppConfig.dev();
   }
 

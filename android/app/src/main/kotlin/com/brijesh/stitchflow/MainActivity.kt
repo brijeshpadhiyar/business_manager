@@ -1,4 +1,4 @@
-package com.brijesh.business_manager
+package com.brijesh.stitchflow
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -17,13 +17,12 @@ class AttachmentAuditDao extends DatabaseAccessor<AppDatabase>
     String entityType,
     String entityId,
   ) {
-    return (select(attachments)
-          ..where(
-            (t) =>
-                t.entityType.equals(entityType) &
-                t.entityId.equals(entityId) &
-                t.deletedAt.isNull(),
-          ))
+    return (select(attachments)..where(
+          (t) =>
+              t.entityType.equals(entityType) &
+              t.entityId.equals(entityId) &
+              t.deletedAt.isNull(),
+        ))
         .get();
   }
 
@@ -47,8 +46,7 @@ class AttachmentAuditDao extends DatabaseAccessor<AppDatabase>
     return (select(auditLogs)
           ..where(
             (t) =>
-                t.entityType.equals(entityType) &
-                t.entityId.equals(entityId),
+                t.entityType.equals(entityType) & t.entityId.equals(entityId),
           )
           ..orderBy([(t) => OrderingTerm.desc(t.recordedAt)]))
         .get();

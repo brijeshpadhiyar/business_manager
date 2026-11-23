@@ -38,7 +38,10 @@ final class DatabaseInitializer {
       _initFuture = null;
       _logger.error('Database initialization failed', error: error);
       if (error is LocalStorageException) rethrow;
-      throw LocalStorageException('Failed to initialize SQLite database.', error);
+      throw LocalStorageException(
+        'Failed to initialize SQLite database.',
+        error,
+      );
     }
   }
 }

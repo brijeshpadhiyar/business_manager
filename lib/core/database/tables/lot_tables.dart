@@ -24,8 +24,8 @@ class Lots extends Table {
 
   @override
   List<String> get customConstraints => const [
-        "CHECK(status IN ('ACTIVE', 'COMPLETED', 'ARCHIVED'))",
-      ];
+    "CHECK(status IN ('ACTIVE', 'COMPLETED', 'ARCHIVED'))",
+  ];
 }
 
 /// 2.3 `lot_designs` — Designs nested within a lot.
@@ -74,7 +74,7 @@ class DesignColours extends Table {
 
   @override
   List<String> get customConstraints => const [
-        'CHECK(initial_quantity > 0)',
-        'CHECK(unit_price_paise >= 0)',
-      ];
+    'CHECK(initial_quantity > 0)',
+    'CHECK(unit_price_paise >= 0)',
+  ];
 }

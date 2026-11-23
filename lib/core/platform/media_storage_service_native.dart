@@ -40,9 +40,7 @@ final class NativeMediaStorageService implements MediaStorageService {
         normalized.startsWith('/') ||
         normalized.startsWith('..') ||
         normalized.split('/').contains('..')) {
-      throw LocalStorageException(
-        'Invalid relative media path: $relativePath',
-      );
+      throw LocalStorageException('Invalid relative media path: $relativePath');
     }
     final root = await _resolveMediaRoot();
     final segments = normalized.split('/');
@@ -66,8 +64,11 @@ final class NativeMediaStorageService implements MediaStorageService {
       final ext = cleanExt.isEmpty ? 'bin' : cleanExt.toLowerCase();
       final safeEntityId = entityId.replaceAll(RegExp(r'[^a-zA-Z0-9_-]'), '_');
       final fileName = '${idGenerator.nextEntityId()}.$ext';
-      final relativePath =
-          p.posix.join(category.folderName, safeEntityId, fileName);
+      final relativePath = p.posix.join(
+        category.folderName,
+        safeEntityId,
+        fileName,
+      );
 
       final file = await resolveSafeFile(relativePath);
       if (!file.parent.existsSync()) {

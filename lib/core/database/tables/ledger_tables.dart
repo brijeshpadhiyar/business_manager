@@ -15,24 +15,34 @@ class StockMovements extends Table {
       text().references(LotDesigns, #id, onDelete: KeyAction.restrict)();
   TextColumn get designColourId =>
       text().references(DesignColours, #id, onDelete: KeyAction.restrict)();
-  TextColumn get processId => text()
-      .nullable()
-      .references(Processes, #id, onDelete: KeyAction.restrict)();
-  TextColumn get memberId => text()
-      .nullable()
-      .references(Members, #id, onDelete: KeyAction.restrict)();
-  TextColumn get parentIssueId => text()
-      .nullable()
-      .references(StockMovements, #id, onDelete: KeyAction.restrict)();
-  TextColumn get reversesMovementId => text()
-      .nullable()
-      .references(StockMovements, #id, onDelete: KeyAction.restrict)();
+  TextColumn get processId => text().nullable().references(
+    Processes,
+    #id,
+    onDelete: KeyAction.restrict,
+  )();
+  TextColumn get memberId => text().nullable().references(
+    Members,
+    #id,
+    onDelete: KeyAction.restrict,
+  )();
+  TextColumn get parentIssueId => text().nullable().references(
+    StockMovements,
+    #id,
+    onDelete: KeyAction.restrict,
+  )();
+  TextColumn get reversesMovementId => text().nullable().references(
+    StockMovements,
+    #id,
+    onDelete: KeyAction.restrict,
+  )();
   TextColumn get clientRequestId => text().nullable()();
   TextColumn get movementType => text()();
   IntColumn get quantity => integer()();
-  TextColumn get sourceRateId => text()
-      .nullable()
-      .references(MemberProcessRates, #id, onDelete: KeyAction.restrict)();
+  TextColumn get sourceRateId => text().nullable().references(
+    MemberProcessRates,
+    #id,
+    onDelete: KeyAction.restrict,
+  )();
   IntColumn get appliedRatePaise => integer().withDefault(const Constant(0))();
   IntColumn get isRateOverridden => integer().withDefault(const Constant(0))();
   TextColumn get overrideReason => text().nullable()();
@@ -54,13 +64,13 @@ class StockMovements extends Table {
 
   @override
   List<String> get customConstraints => const [
-        "CHECK(movement_type IN ('ISSUE', 'RETURN_GOOD', 'RETURN_DAMAGED', 'SETTLEMENT_LOST', 'SETTLEMENT_SHORTAGE', 'ADJUSTMENT_DAMAGED_TO_GOOD', 'REVERSAL'))",
-        'CHECK(quantity > 0)',
-        'CHECK(applied_rate_paise >= 0)',
-        'CHECK(is_rate_overridden IN (0, 1))',
-        "CHECK(locked_billing_mode IS NULL OR locked_billing_mode IN ('RECEIVED_QTY', 'GIVEN_QTY'))",
-        'CHECK(locked_include_damaged IN (0, 1))',
-      ];
+    "CHECK(movement_type IN ('ISSUE', 'RETURN_GOOD', 'RETURN_DAMAGED', 'SETTLEMENT_LOST', 'SETTLEMENT_SHORTAGE', 'ADJUSTMENT_DAMAGED_TO_GOOD', 'REVERSAL'))",
+    'CHECK(quantity > 0)',
+    'CHECK(applied_rate_paise >= 0)',
+    'CHECK(is_rate_overridden IN (0, 1))',
+    "CHECK(locked_billing_mode IS NULL OR locked_billing_mode IN ('RECEIVED_QTY', 'GIVEN_QTY'))",
+    'CHECK(locked_include_damaged IN (0, 1))',
+  ];
 }
 
 /// 2.10 `labour_entries` — Append-only labour ledger with strict idempotency.
@@ -72,9 +82,11 @@ class LabourEntries extends Table {
   TextColumn get id => text()();
   TextColumn get stockMovementId =>
       text().references(StockMovements, #id, onDelete: KeyAction.restrict)();
-  TextColumn get reversesLabourEntryId => text()
-      .nullable()
-      .references(LabourEntries, #id, onDelete: KeyAction.restrict)();
+  TextColumn get reversesLabourEntryId => text().nullable().references(
+    LabourEntries,
+    #id,
+    onDelete: KeyAction.restrict,
+  )();
   TextColumn get memberId =>
       text().references(Members, #id, onDelete: KeyAction.restrict)();
   TextColumn get processId =>
@@ -97,10 +109,10 @@ class LabourEntries extends Table {
 
   @override
   List<String> get customConstraints => const [
-        "CHECK(basis_type IN ('ISSUED', 'RECEIVED_GOOD', 'RECEIVED_DAMAGED', 'REVERSAL'))",
-        'CHECK(rate_paise >= 0)',
-        'CHECK(is_payable IN (0, 1))',
-      ];
+    "CHECK(basis_type IN ('ISSUED', 'RECEIVED_GOOD', 'RECEIVED_DAMAGED', 'REVERSAL'))",
+    'CHECK(rate_paise >= 0)',
+    'CHECK(is_payable IN (0, 1))',
+  ];
 }
 
 /// 2.11 `payments` — Append-only worker regular payments, advances, refunds & reversals.
@@ -113,9 +125,11 @@ class Payments extends Table {
   TextColumn get memberId =>
       text().references(Members, #id, onDelete: KeyAction.restrict)();
   TextColumn get paymentType => text()();
-  TextColumn get reversesPaymentId => text()
-      .nullable()
-      .references(Payments, #id, onDelete: KeyAction.restrict)();
+  TextColumn get reversesPaymentId => text().nullable().references(
+    Payments,
+    #id,
+    onDelete: KeyAction.restrict,
+  )();
   TextColumn get clientRequestId => text().nullable()();
   IntColumn get amountPaise => integer()();
   TextColumn get paymentMode => text()();
@@ -135,8 +149,8 @@ class Payments extends Table {
 
   @override
   List<String> get customConstraints => const [
-        "CHECK(payment_type IN ('REGULAR', 'ADVANCE', 'ADVANCE_REFUND', 'REVERSAL'))",
-        'CHECK(amount_paise > 0)',
-        "CHECK(payment_mode IN ('CASH', 'UPI', 'BANK_TRANSFER', 'CHEQUE', 'OTHER'))",
-      ];
+    "CHECK(payment_type IN ('REGULAR', 'ADVANCE', 'ADVANCE_REFUND', 'REVERSAL'))",
+    'CHECK(amount_paise > 0)',
+    "CHECK(payment_mode IN ('CASH', 'UPI', 'BANK_TRANSFER', 'CHEQUE', 'OTHER'))",
+  ];
 }

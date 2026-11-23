@@ -1,10 +1,17 @@
 import 'package:material_ui/material_ui.dart';
 
-/// Centralized color palette & semantic status tokens (WCAG AA compliant).
+/// Centralized StitchFlow brand palette & semantic status tokens (WCAG AA compliant).
 abstract final class AppColors {
-  // Brand seeds
-  static const Color primarySeed = Color(0xFF1E40AF); // Deep Indigo
-  static const Color secondarySeed = Color(0xFF0F766E); // Business Teal
+  // Official StitchFlow brand colors (FINAL)
+  static const Color brandNavy = Color(0xFF172B4D); // Deep Navy (Primary)
+  static const Color brandTeal = Color(0xFF0D9488); // Teal (Secondary)
+  static const Color brandAmber = Color(0xFFF4A340); // Amber (Accent)
+  static const Color brandSoftWhite = Color(0xFFF5F7FA); // Soft White Surface
+
+  // Theme seed aliases
+  static const Color primarySeed = brandNavy;
+  static const Color secondarySeed = brandTeal;
+  static const Color accentSeed = brandAmber;
 
   // Light semantic colors
   static const Color lightGoodStock = Color(0xFF15803D);
@@ -102,17 +109,29 @@ final class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
     if (other is! AppSemanticColors) return this;
     return AppSemanticColors(
       goodStock: Color.lerp(goodStock, other.goodStock, t)!,
-      goodStockContainer:
-          Color.lerp(goodStockContainer, other.goodStockContainer, t)!,
+      goodStockContainer: Color.lerp(
+        goodStockContainer,
+        other.goodStockContainer,
+        t,
+      )!,
       pending: Color.lerp(pending, other.pending, t)!,
-      pendingContainer:
-          Color.lerp(pendingContainer, other.pendingContainer, t)!,
+      pendingContainer: Color.lerp(
+        pendingContainer,
+        other.pendingContainer,
+        t,
+      )!,
       damaged: Color.lerp(damaged, other.damaged, t)!,
-      damagedContainer:
-          Color.lerp(damagedContainer, other.damagedContainer, t)!,
+      damagedContainer: Color.lerp(
+        damagedContainer,
+        other.damagedContainer,
+        t,
+      )!,
       advanceCredit: Color.lerp(advanceCredit, other.advanceCredit, t)!,
-      advanceCreditContainer:
-          Color.lerp(advanceCreditContainer, other.advanceCreditContainer, t)!,
+      advanceCreditContainer: Color.lerp(
+        advanceCreditContainer,
+        other.advanceCreditContainer,
+        t,
+      )!,
     );
   }
 }

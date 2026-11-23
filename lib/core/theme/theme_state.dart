@@ -14,10 +14,10 @@ enum AppThemePreference {
   final String storageKey;
 
   ThemeMode get themeMode => switch (this) {
-        AppThemePreference.system => ThemeMode.system,
-        AppThemePreference.light => ThemeMode.light,
-        AppThemePreference.dark => ThemeMode.dark,
-      };
+    AppThemePreference.system => ThemeMode.system,
+    AppThemePreference.light => ThemeMode.light,
+    AppThemePreference.dark => ThemeMode.dark,
+  };
 
   static AppThemePreference fromStorageKey(String? raw) {
     return AppThemePreference.values.firstWhere(

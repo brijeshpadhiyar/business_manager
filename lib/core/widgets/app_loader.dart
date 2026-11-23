@@ -3,11 +3,7 @@ import 'package:material_ui/material_ui.dart';
 
 /// Consistent inline or centered loading indicator with optional localized label.
 final class AppLoader extends StatelessWidget {
-  const AppLoader({
-    super.key,
-    this.message,
-    this.size = 24,
-  });
+  const AppLoader({super.key, this.message, this.size = 24});
 
   final String? message;
   final double size;

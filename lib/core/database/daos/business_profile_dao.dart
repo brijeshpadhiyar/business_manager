@@ -10,15 +10,15 @@ class BusinessProfileDao extends DatabaseAccessor<AppDatabase>
   BusinessProfileDao(super.db);
 
   Future<BusinessProfileRow?> getProfile() {
-    return (select(businessProfiles)
-          ..where((t) => t.id.equals('default')))
-        .getSingleOrNull();
+    return (select(
+      businessProfiles,
+    )..where((t) => t.id.equals('default'))).getSingleOrNull();
   }
 
   Stream<BusinessProfileRow?> watchProfile() {
-    return (select(businessProfiles)
-          ..where((t) => t.id.equals('default')))
-        .watchSingleOrNull();
+    return (select(
+      businessProfiles,
+    )..where((t) => t.id.equals('default'))).watchSingleOrNull();
   }
 
   Future<void> upsertProfile(BusinessProfilesCompanion entry) {

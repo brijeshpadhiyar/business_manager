@@ -73,6 +73,10 @@ flutter:
   uses-material-design: true
   generate: true
 
+  assets:
+    - assets/branding/logo/
+    - assets/branding/splash/
+
   fonts:
     - family: NotoSansGujarati
       fonts:

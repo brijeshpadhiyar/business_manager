@@ -30,11 +30,9 @@ class ProcessMemberDao extends DatabaseAccessor<AppDatabase>
     String memberId,
     String processId,
   ) {
-    return (select(memberProcesses)
-          ..where(
-            (t) =>
-                t.memberId.equals(memberId) & t.processId.equals(processId),
-          ))
+    return (select(memberProcesses)..where(
+          (t) => t.memberId.equals(memberId) & t.processId.equals(processId),
+        ))
         .getSingleOrNull();
   }
 

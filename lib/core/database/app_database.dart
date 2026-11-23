@@ -57,16 +57,16 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
-        onCreate: (m) => DatabaseMigrationManager.handleOnCreate(m, this),
-        onUpgrade: (m, from, to) =>
-            DatabaseMigrationManager.handleOnUpgrade(m, this, from, to),
-        beforeOpen: (details) async {
-          await customStatement('PRAGMA foreign_keys = ON;');
-          await customStatement('PRAGMA journal_mode = WAL;');
-          await customStatement('PRAGMA synchronous = FULL;');
-          await customStatement('PRAGMA busy_timeout = 5000;');
-        },
-      );
+    onCreate: (m) => DatabaseMigrationManager.handleOnCreate(m, this),
+    onUpgrade: (m, from, to) =>
+        DatabaseMigrationManager.handleOnUpgrade(m, this, from, to),
+    beforeOpen: (details) async {
+      await customStatement('PRAGMA foreign_keys = ON;');
+      await customStatement('PRAGMA journal_mode = WAL;');
+      await customStatement('PRAGMA synchronous = FULL;');
+      await customStatement('PRAGMA busy_timeout = 5000;');
+    },
+  );
 
   /// Queries SQLite directly to verify effective PRAGMA values after open.
   Future<DatabasePragmaStatus> verifyPragmas() async {

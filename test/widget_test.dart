@@ -21,7 +21,7 @@ void main() {
     await tester.pumpWidget(BusinessManagerApp(config: config));
     await tester.pumpAndSettle();
 
-    expect(find.text('Business Manager Dev'), findsOneWidget);
+    expect(find.text('StitchFlow Dev'), findsOneWidget);
     expect(find.text('Project Foundation Ready'), findsOneWidget);
     expect(find.text('business_manager_dev.sqlite'), findsOneWidget);
 
@@ -29,7 +29,7 @@ void main() {
     await getIt<LocaleCubit>().setPreference(AppLocalePreference.gu);
     await tester.pumpAndSettle();
 
-    expect(find.text('બિઝનેસ મેનેજર (Dev)'), findsOneWidget);
+    expect(find.text('સ્ટિચફ્લો (Dev)'), findsOneWidget);
     expect(find.text('પ્રોજેક્ટ ફાઉન્ડેશન તૈયાર છે'), findsOneWidget);
   });
 }

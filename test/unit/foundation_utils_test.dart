@@ -36,13 +36,25 @@ void main() {
 
   group('IstDateTimeHelper UTC -> Asia/Kolkata boundary', () {
     test('converts UTC 19:00 on Nov 30 to Dec 1 IST business date', () {
-      final utcMillis = DateTime.utc(2026, 11, 30, 19, 0).millisecondsSinceEpoch;
+      final utcMillis = DateTime.utc(
+        2026,
+        11,
+        30,
+        19,
+        0,
+      ).millisecondsSinceEpoch;
       expect(IstDateTimeHelper.toIstBusinessDate(utcMillis), '2026-12-01');
     });
 
     test('converts UTC 18:29:59 on Nov 30 to Nov 30 IST business date', () {
-      final utcMillis =
-          DateTime.utc(2026, 11, 30, 18, 29, 59).millisecondsSinceEpoch;
+      final utcMillis = DateTime.utc(
+        2026,
+        11,
+        30,
+        18,
+        29,
+        59,
+      ).millisecondsSinceEpoch;
       expect(IstDateTimeHelper.toIstBusinessDate(utcMillis), '2026-11-30');
     });
   });

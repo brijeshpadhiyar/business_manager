@@ -120,9 +120,7 @@ final class _DesignSystemShowcasePageState
                     ],
                     selected: {themeState.preference},
                     onSelectionChanged: (selection) {
-                      context
-                          .read<ThemeCubit>()
-                          .setPreference(selection.first);
+                      context.read<ThemeCubit>().setPreference(selection.first);
                     },
                   );
                 },
@@ -156,9 +154,9 @@ final class _DesignSystemShowcasePageState
                     ],
                     selected: {localeState.preference},
                     onSelectionChanged: (selection) {
-                      context
-                          .read<LocaleCubit>()
-                          .setPreference(selection.first);
+                      context.read<LocaleCubit>().setPreference(
+                        selection.first,
+                      );
                     },
                   );
                 },
@@ -370,10 +368,7 @@ final class _DesignSystemShowcasePageState
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AppHeading(
-                l10n.showcaseBadgesHeading,
-                level: AppHeadingLevel.h3,
-              ),
+              AppHeading(l10n.showcaseBadgesHeading, level: AppHeadingLevel.h3),
               const SizedBox(height: AppSpacing.sm),
               Wrap(
                 spacing: AppSpacing.sm,

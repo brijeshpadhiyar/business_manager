@@ -1,7 +1,8 @@
 {
   "@@locale": "gu",
-  "appTitle": "બિઝનેસ મેનેજર",
-  "appTitleDev": "બિઝનેસ મેનેજર (Dev)",
+  "appTitle": "સ્ટિચફ્લો",
+  "appTitleDev": "સ્ટિચફ્લો (Dev)",
+  "appTagline": "કાપડથી તૈયાર વસ્ત્ર સુધી.",
   "foundationTitle": "પ્રોજેક્ટ ફાઉન્ડેશન તૈયાર છે",
   "foundationSubtitle": "ઓફલાઇન-ફર્સ્ટ આર્કિટેક્ચર, ફ્લેવર્સ, મટીરીયલ ૩ ડિઝાઇન સિસ્ટમ અને દ્વિભાષી લોકલાઇઝેશન સેટઅપ થઈ ગયું છે.",
   "environmentSectionTitle": "એન્વાયર્નમેન્ટ",

@@ -10,10 +10,13 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'Business Manager';
+  String get appTitle => 'StitchFlow';
 
   @override
-  String get appTitleDev => 'Business Manager Dev';
+  String get appTitleDev => 'StitchFlow Dev';
+
+  @override
+  String get appTagline => 'From Fabric to Finished.';
 
   @override
   String get foundationTitle => 'Project Foundation Ready';

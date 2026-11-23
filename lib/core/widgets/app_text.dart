@@ -34,8 +34,8 @@ final class AppText extends StatelessWidget {
       AppTextVariant.bodySmall => textTheme.bodySmall!,
       AppTextVariant.label => textTheme.labelMedium!,
       AppTextVariant.numeric => AppTypography.tabular(
-          textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w600),
-        ),
+        textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.w600),
+      ),
     };
 
     if (color != null || fontWeight != null) {

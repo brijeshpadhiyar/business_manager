@@ -68,8 +68,9 @@ final class AppDataTable<T> extends StatelessWidget {
               rows: items
                   .map(
                     (item) => DataRow(
-                      onSelectChanged:
-                          onRowTap != null ? (_) => onRowTap!(item) : null,
+                      onSelectChanged: onRowTap != null
+                          ? (_) => onRowTap!(item)
+                          : null,
                       cells: cellsBuilder(item)
                           .map((cell) => DataCell(cell))
                           .toList(),

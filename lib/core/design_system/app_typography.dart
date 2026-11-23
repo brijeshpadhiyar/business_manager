@@ -77,8 +77,6 @@ abstract final class AppTypography {
 
   /// Applies tabular numerals so quantities, rates, and ledgers align vertically.
   static TextStyle tabular(TextStyle style) {
-    return style.copyWith(
-      fontFeatures: const [FontFeature.tabularFigures()],
-    );
+    return style.copyWith(fontFeatures: const [FontFeature.tabularFigures()]);
   }
 }

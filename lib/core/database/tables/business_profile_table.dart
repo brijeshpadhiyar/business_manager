@@ -15,9 +15,11 @@ class BusinessProfiles extends Table {
   TextColumn get ownerName => text().nullable()();
   TextColumn get phone => text().nullable()();
   TextColumn get address => text().nullable()();
-  TextColumn get logoAttachmentId => text()
-      .nullable()
-      .references(Attachments, #id, onDelete: KeyAction.restrict)();
+  TextColumn get logoAttachmentId => text().nullable().references(
+    Attachments,
+    #id,
+    onDelete: KeyAction.restrict,
+  )();
   TextColumn get defaultBillingMode =>
       text().withDefault(const Constant('RECEIVED_QTY'))();
   IntColumn get createdAt => integer()();
@@ -28,6 +30,6 @@ class BusinessProfiles extends Table {
 
   @override
   List<String> get customConstraints => const [
-        "CHECK(default_billing_mode IN ('RECEIVED_QTY', 'GIVEN_QTY'))",
-      ];
+    "CHECK(default_billing_mode IN ('RECEIVED_QTY', 'GIVEN_QTY'))",
+  ];
 }

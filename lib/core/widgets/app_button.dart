@@ -44,8 +44,7 @@ final class AppButton extends StatelessWidget {
                 AppButtonVariant.secondary => colorScheme.onSecondaryContainer,
                 AppButtonVariant.destructive => colorScheme.onError,
                 AppButtonVariant.outlined ||
-                AppButtonVariant.text =>
-                  colorScheme.primary,
+                AppButtonVariant.text => colorScheme.primary,
               },
             ),
           ),
@@ -55,11 +54,7 @@ final class AppButton extends StatelessWidget {
           const SizedBox(width: AppSpacing.sm),
         ],
         Flexible(
-          child: Text(
-            label,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
-          ),
+          child: Text(label, overflow: TextOverflow.ellipsis, maxLines: 1),
         ),
       ],
     );
@@ -72,35 +67,35 @@ final class AppButton extends StatelessWidget {
 
     return switch (variant) {
       AppButtonVariant.primary => FilledButton(
-          onPressed: effectiveOnPressed,
-          style: FilledButton.styleFrom(minimumSize: minSize, shape: shape),
-          child: content,
-        ),
+        onPressed: effectiveOnPressed,
+        style: FilledButton.styleFrom(minimumSize: minSize, shape: shape),
+        child: content,
+      ),
       AppButtonVariant.secondary => FilledButton.tonal(
-          onPressed: effectiveOnPressed,
-          style: FilledButton.styleFrom(minimumSize: minSize, shape: shape),
-          child: content,
-        ),
+        onPressed: effectiveOnPressed,
+        style: FilledButton.styleFrom(minimumSize: minSize, shape: shape),
+        child: content,
+      ),
       AppButtonVariant.outlined => OutlinedButton(
-          onPressed: effectiveOnPressed,
-          style: OutlinedButton.styleFrom(minimumSize: minSize, shape: shape),
-          child: content,
-        ),
+        onPressed: effectiveOnPressed,
+        style: OutlinedButton.styleFrom(minimumSize: minSize, shape: shape),
+        child: content,
+      ),
       AppButtonVariant.destructive => FilledButton(
-          onPressed: effectiveOnPressed,
-          style: FilledButton.styleFrom(
-            minimumSize: minSize,
-            shape: shape,
-            backgroundColor: colorScheme.error,
-            foregroundColor: colorScheme.onError,
-          ),
-          child: content,
+        onPressed: effectiveOnPressed,
+        style: FilledButton.styleFrom(
+          minimumSize: minSize,
+          shape: shape,
+          backgroundColor: colorScheme.error,
+          foregroundColor: colorScheme.onError,
         ),
+        child: content,
+      ),
       AppButtonVariant.text => TextButton(
-          onPressed: effectiveOnPressed,
-          style: TextButton.styleFrom(minimumSize: minSize, shape: shape),
-          child: content,
-        ),
+        onPressed: effectiveOnPressed,
+        style: TextButton.styleFrom(minimumSize: minSize, shape: shape),
+        child: content,
+      ),
     };
   }
 }

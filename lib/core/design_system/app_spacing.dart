@@ -8,8 +8,9 @@ abstract final class AppSpacing {
   static const double lg = 16; // Screen horizontal padding
   static const double xl = 24;
 
-  static const EdgeInsets screenHorizontal =
-      EdgeInsets.symmetric(horizontal: lg);
+  static const EdgeInsets screenHorizontal = EdgeInsets.symmetric(
+    horizontal: lg,
+  );
   static const EdgeInsets screenAll = EdgeInsets.all(lg);
   static const EdgeInsets cardPadding = EdgeInsets.all(md);
 }

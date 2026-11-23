@@ -9,22 +9,24 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   group('AppTheme', () {
-    test('light and dark themes expose correct brightness and semantic tokens',
-        () {
-      final light = AppTheme.light();
-      final dark = AppTheme.dark();
+    test(
+      'light and dark themes expose correct brightness and semantic tokens',
+      () {
+        final light = AppTheme.light();
+        final dark = AppTheme.dark();
 
-      expect(light.brightness, Brightness.light);
-      expect(dark.brightness, Brightness.dark);
-      expect(
-        light.extension<AppSemanticColors>()?.goodStock,
-        AppColors.lightGoodStock,
-      );
-      expect(
-        dark.extension<AppSemanticColors>()?.goodStock,
-        AppColors.darkGoodStock,
-      );
-    });
+        expect(light.brightness, Brightness.light);
+        expect(dark.brightness, Brightness.dark);
+        expect(
+          light.extension<AppSemanticColors>()?.goodStock,
+          AppColors.lightGoodStock,
+        );
+        expect(
+          dark.extension<AppSemanticColors>()?.goodStock,
+          AppColors.darkGoodStock,
+        );
+      },
+    );
   });
 
   group('ThemeCubit persistence', () {

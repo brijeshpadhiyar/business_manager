@@ -98,17 +98,23 @@ abstract class AppLocalizations {
     Locale('gu'),
   ];
 
-  /// Default English display name of the application.
+  /// Official English display name of the application.
   ///
   /// In en, this message translates to:
-  /// **'Business Manager'**
+  /// **'StitchFlow'**
   String get appTitle;
 
   /// Development flavor display name of the application.
   ///
   /// In en, this message translates to:
-  /// **'Business Manager Dev'**
+  /// **'StitchFlow Dev'**
   String get appTitleDev;
+
+  /// Official StitchFlow brand tagline.
+  ///
+  /// In en, this message translates to:
+  /// **'From Fabric to Finished.'**
+  String get appTagline;
 
   /// Heading on the foundation status section.
   ///

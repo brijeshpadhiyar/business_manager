@@ -15,14 +15,27 @@ abstract final class AppTheme {
 
   static ThemeData _build(Brightness brightness) {
     final isDark = brightness == Brightness.dark;
-    final colorScheme = ColorScheme.fromSeed(
-      seedColor: AppColors.primarySeed,
-      secondary: AppColors.secondarySeed,
+    final baseScheme = ColorScheme.fromSeed(
+      seedColor: AppColors.brandNavy,
+      secondary: AppColors.brandTeal,
+      tertiary: AppColors.brandAmber,
       brightness: brightness,
     );
+    final colorScheme = isDark
+        ? baseScheme.copyWith(
+            secondary: AppColors.brandTeal,
+            tertiary: AppColors.brandAmber,
+          )
+        : baseScheme.copyWith(
+            primary: AppColors.brandNavy,
+            secondary: AppColors.brandTeal,
+            tertiary: AppColors.brandAmber,
+            surface: AppColors.brandSoftWhite,
+          );
     final textTheme = AppTypography.buildTextTheme(colorScheme);
-    final semanticColors =
-        isDark ? AppSemanticColors.dark : AppSemanticColors.light;
+    final semanticColors = isDark
+        ? AppSemanticColors.dark
+        : AppSemanticColors.light;
 
     final outlineBorder = OutlineInputBorder(
       borderRadius: AppRadius.mdBorder,
