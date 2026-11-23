@@ -1,0 +1,83 @@
+{
+  "@@locale": "en",
+  "appTitle": "Business Manager",
+  "@appTitle": {
+    "description": "Default English display name of the application."
+  },
+  "appTitleDev": "Business Manager Dev",
+  "@appTitleDev": {
+    "description": "Development flavor display name of the application."
+  },
+  "foundationTitle": "Project Foundation Ready",
+  "@foundationTitle": {
+    "description": "Heading on the Milestone 1 foundation status screen."
+  },
+  "foundationSubtitle": "Offline-first architecture, flavors, and bilingual localization are configured.",
+  "@foundationSubtitle": {
+    "description": "Subtitle on the Milestone 1 foundation status screen."
+  },
+  "environmentSectionTitle": "Environment",
+  "@environmentSectionTitle": {
+    "description": "Section heading for flavor and environment metadata."
+  },
+  "environmentFlavorLabel": "Flavor",
+  "@environmentFlavorLabel": {
+    "description": "Label for active flavor name."
+  },
+  "environmentFlavorDev": "Development",
+  "@environmentFlavorDev": {
+    "description": "Human-readable label for the dev flavor."
+  },
+  "environmentFlavorProd": "Production",
+  "@environmentFlavorProd": {
+    "description": "Human-readable label for the prod flavor."
+  },
+  "environmentDatabaseLabel": "Database File",
+  "@environmentDatabaseLabel": {
+    "description": "Label for configured local SQLite database filename."
+  },
+  "environmentLoggingLabel": "Debug Logging",
+  "@environmentLoggingLabel": {
+    "description": "Label for debug logging status."
+  },
+  "statusEnabled": "Enabled",
+  "@statusEnabled": {
+    "description": "Generic enabled status label."
+  },
+  "statusDisabled": "Disabled",
+  "@statusDisabled": {
+    "description": "Generic disabled status label."
+  },
+  "languageSectionTitle": "Language",
+  "@languageSectionTitle": {
+    "description": "Section heading for language selector."
+  },
+  "languageSystemDefault": "System Default",
+  "@languageSystemDefault": {
+    "description": "Option to follow device system language."
+  },
+  "languageEnglish": "English",
+  "@languageEnglish": {
+    "description": "Option to select English language."
+  },
+  "languageGujarati": "ગુજરાતી (Gujarati)",
+  "@languageGujarati": {
+    "description": "Option to select Gujarati language."
+  },
+  "actionSave": "Save",
+  "@actionSave": {
+    "description": "Common save button label."
+  },
+  "actionCancel": "Cancel",
+  "@actionCancel": {
+    "description": "Common cancel button label."
+  },
+  "actionRetry": "Retry",
+  "@actionRetry": {
+    "description": "Common retry button label."
+  },
+  "errorUnexpected": "An unexpected error occurred. Please try again.",
+  "@errorUnexpected": {
+    "description": "Generic fallback error message."
+  }
+}

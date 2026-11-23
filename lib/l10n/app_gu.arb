@@ -1,0 +1,23 @@
+{
+  "@@locale": "gu",
+  "appTitle": "બિઝનેસ મેનેજર",
+  "appTitleDev": "બિઝનેસ મેનેજર (Dev)",
+  "foundationTitle": "પ્રોજેક્ટ ફાઉન્ડેશન તૈયાર છે",
+  "foundationSubtitle": "ઓફલાઇન-ફર્સ્ટ આર્કિટેક્ચર, ફ્લેવર્સ અને દ્વિભાષી લોકલાઇઝેશન સેટઅપ થઈ ગયું છે.",
+  "environmentSectionTitle": "એન્વાયર્નમેન્ટ",
+  "environmentFlavorLabel": "ફ્લેવર",
+  "environmentFlavorDev": "ડેવલપમેન્ટ",
+  "environmentFlavorProd": "પ્રોડક્શન",
+  "environmentDatabaseLabel": "ડેટાબેઝ ફાઇલ",
+  "environmentLoggingLabel": "ડીબગ લોગિંગ",
+  "statusEnabled": "ચાલુ",
+  "statusDisabled": "બંધ",
+  "languageSectionTitle": "ભાષા",
+  "languageSystemDefault": "સિસ્ટમ ડિફોલ્ટ",
+  "languageEnglish": "English (અંગ્રેજી)",
+  "languageGujarati": "ગુજરાતી",
+  "actionSave": "સાચવો",
+  "actionCancel": "રદ કરો",
+  "actionRetry": "ફરી પ્રયાસ કરો",
+  "errorUnexpected": "અનપેક્ષિત ભૂલ આવી છે. કૃપા કરીને ફરી પ્રયાસ કરો."
+}
