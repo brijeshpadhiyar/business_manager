@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/features/security/domain/entities/security_entities.dart';
 import 'package:business_manager/features/security/domain/repositories/security_repository.dart';
 import 'package:business_manager/features/security/domain/services/pin_hasher.dart';
@@ -513,6 +515,18 @@ final class AppLockCubit extends Cubit<AppLockState> {
     LockTimeoutOption timeout = LockTimeoutOption.minute1,
     bool screenshotProtectionEnabled = true,
   }) async {
+    if (!AppValidators.pinValidator(pin).isValid) {
+      throw const DomainValidationException(
+        'invalid_pin',
+        'PIN must be 4 or 6 numeric digits.',
+      );
+    }
+    if (!AppValidators.recoveryKeyValidator(recoveryKey).isValid) {
+      throw const DomainValidationException(
+        'invalid_recovery_key',
+        'Invalid recovery key format.',
+      );
+    }
     final bioEnabled =
         enableBiometric &&
         state.biometricAvailability == BiometricAvailability.available;
@@ -540,6 +554,19 @@ final class AppLockCubit extends Cubit<AppLockState> {
     required String newPin,
     String? newRecoveryKey,
   }) async {
+    if (!AppValidators.pinValidator(newPin).isValid) {
+      throw const DomainValidationException(
+        'invalid_pin',
+        'PIN must be 4 or 6 numeric digits.',
+      );
+    }
+    if (newRecoveryKey != null &&
+        !AppValidators.recoveryKeyValidator(newRecoveryKey).isValid) {
+      throw const DomainValidationException(
+        'invalid_recovery_key',
+        'Invalid recovery key format.',
+      );
+    }
     final updated = await _repository.updatePin(
       newPin: newPin,
       newRecoveryKey: newRecoveryKey,

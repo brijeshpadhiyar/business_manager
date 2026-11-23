@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:business_manager/features/reports/domain/entities/advanced_report_entities.dart';
 import 'package:business_manager/features/reports/domain/entities/report_filter.dart';
@@ -21,6 +22,7 @@ final class ReportsState {
     this.isExporting = false,
     this.exportFeedbackMessage,
     this.exportSucceeded,
+    this.dateRangeErrorCode,
     this.errorMessage,
   });
 
@@ -33,6 +35,7 @@ final class ReportsState {
   final bool isExporting;
   final String? exportFeedbackMessage;
   final bool? exportSucceeded;
+  final String? dateRangeErrorCode;
   final String? errorMessage;
 
   ReportsState copyWith({
@@ -46,6 +49,8 @@ final class ReportsState {
     String? exportFeedbackMessage,
     bool? exportSucceeded,
     bool clearExportFeedback = false,
+    String? dateRangeErrorCode,
+    bool clearDateRangeError = false,
     String? errorMessage,
   }) {
     return ReportsState(
@@ -62,6 +67,9 @@ final class ReportsState {
       exportSucceeded: clearExportFeedback
           ? null
           : (exportSucceeded ?? this.exportSucceeded),
+      dateRangeErrorCode: clearDateRangeError
+          ? null
+          : (dateRangeErrorCode ?? this.dateRangeErrorCode),
       errorMessage: errorMessage,
     );
   }
@@ -106,18 +114,23 @@ final class ReportsCubit extends Cubit<ReportsState> {
     await loadReports(filterOverride: nextFilter);
   }
 
-  Future<void> setCustomDateRange({int? fromUtcMillis, int? toUtcMillis}) {
-    var from = fromUtcMillis ?? state.filter.fromUtcMillis;
-    var to = toUtcMillis ?? state.filter.toUtcMillis;
-    if (from != null && to != null && to < from) {
-      to = IstDateRangePresets.endOfIstDay(from);
+  Future<void> setCustomDateRange({int? fromUtcMillis, int? toUtcMillis}) async {
+    final from = fromUtcMillis ?? state.filter.fromUtcMillis;
+    final to = toUtcMillis ?? state.filter.toUtcMillis;
+    final check = AppValidators.dateRangeValidator(
+      startUtcMillis: from,
+      endUtcMillis: to,
+    );
+    if (!check.isValid) {
+      emit(state.copyWith(dateRangeErrorCode: 'invalid_date_range'));
+      return;
     }
     final nextFilter = state.filter.copyWith(
       preset: ReportDatePreset.custom,
       fromUtcMillis: from,
       toUtcMillis: to,
     );
-    return loadReports(filterOverride: nextFilter);
+    await loadReports(filterOverride: nextFilter);
   }
 
   Future<void> setWorkerFilter(String? workerId) {
@@ -194,7 +207,10 @@ final class ReportsCubit extends Cubit<ReportsState> {
 
   void updateSearchQuery(String query) {
     _searchDebounce?.cancel();
-    final updated = state.filter.copyWith(searchQuery: query);
+    final bounded = query.length > ValidationLimits.maxSearchLength
+        ? query.substring(0, ValidationLimits.maxSearchLength)
+        : query;
+    final updated = state.filter.copyWith(searchQuery: bounded);
     emit(state.copyWith(filter: updated, clearExportFeedback: true));
     _searchDebounce = Timer(const Duration(milliseconds: 250), () {
       if (!isClosed) {
@@ -217,6 +233,7 @@ final class ReportsCubit extends Cubit<ReportsState> {
         status: ReportsStatus.loading,
         filter: targetFilter,
         clearExportFeedback: true,
+        clearDateRangeError: true,
       ),
     );
     try {

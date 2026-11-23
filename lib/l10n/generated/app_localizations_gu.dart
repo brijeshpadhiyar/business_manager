@@ -2321,4 +2321,125 @@ class AppLocalizationsGu extends AppLocalizations {
   @override
   String get notificationsPrivacyOemBody =>
       '• ૧૦૦% ઓફલાઇન: બધી યાદ અપાવણી ઇન્ટરનેટ કે ફાયરબેઝ વિના તમારા ફોનમાં જ ચાલે છે.\n• લોક-સ્ક્રીન સુરક્ષા: App PIN ચાલુ હોય ત્યારે નોટિફિકેશનમાં ચોક્કસ રકમ કે કારીગરનું નામ દેખાતું નથી.\n• બેટરી નોંધ: OPPO (ColorOS), Xiaomi, Vivo અથવા Samsung ફોનમાં ફોન રીસ્ટાર્ટ પછી યાદ અપાવણી સમયસર મળે તે માટે Phone Settings માં બેટરી પ્રતિબંધ હળવો રાખો.';
+
+  @override
+  String get validationWhitespaceOnly =>
+      'આ વિગતમાં ફક્ત ખાલી જગ્યા (સ્પેસ) હોઈ શકે નહીં.';
+
+  @override
+  String validationMaxLength(int max) {
+    return 'વધુમાં વધુ $max અક્ષરો દાખલ કરી શકાય છે.';
+  }
+
+  @override
+  String get validationTextTooLong =>
+      'દાખલ કરેલ લખાણ મહત્તમ મર્યાદા કરતાં વધુ લાંબું છે.';
+
+  @override
+  String get validationMobileRequired => 'મોબાઇલ નંબર દાખલ કરો.';
+
+  @override
+  String get validationMobileInvalidIndian =>
+      'માન્ય 10 અંકનો મોબાઇલ નંબર દાખલ કરો.';
+
+  @override
+  String get validationMobileInvalidChars => 'મોબાઇલ નંબરમાં અમાન્ય અક્ષરો છે.';
+
+  @override
+  String get validationMobileInvalidInternational =>
+      'દેશના કોડ સાથે માન્ય આંતરરાષ્ટ્રીય મોબાઇલ નંબર દાખલ કરો.';
+
+  @override
+  String get validationEmailInvalid => 'માન્ય ઇમેઇલ સરનામું દાખલ કરો.';
+
+  @override
+  String get validationInvalidNumber => 'માન્ય સંખ્યા દાખલ કરો.';
+
+  @override
+  String get validationInvalidInteger => 'માન્ય પૂર્ણ સંખ્યા દાખલ કરો.';
+
+  @override
+  String get validationInvalidDecimal => 'માન્ય દશાંશ સંખ્યા દાખલ કરો.';
+
+  @override
+  String validationTooManyDecimals(int maxDecimals) {
+    return 'વધુમાં વધુ $maxDecimals દશાંશ સ્થાન સુધી દાખલ કરો.';
+  }
+
+  @override
+  String get validationNegativeNotAllowed => 'મૂલ્ય ઋણ હોઈ શકતું નથી.';
+
+  @override
+  String get validationPositiveNumber => '0 થી મોટી સંખ્યા દાખલ કરો.';
+
+  @override
+  String get validationValueTooLarge =>
+      'દાખલ કરેલ મૂલ્ય મહત્તમ મર્યાદા કરતાં વધુ છે.';
+
+  @override
+  String get validationNonNegativeInt =>
+      '0 અથવા તેથી મોટી પૂર્ણ સંખ્યા દાખલ કરો.';
+
+  @override
+  String validationQuantityExceedsMax(int max) {
+    return 'સંખ્યા $max કરતાં વધુ હોઈ શકે નહીં.';
+  }
+
+  @override
+  String get validationPositiveAmount => '0 થી વધુ માન્ય રકમ દાખલ કરો.';
+
+  @override
+  String get validationInvalidPercentage =>
+      '0 થી 100 વચ્ચેની ટકાવારી દાખલ કરો.';
+
+  @override
+  String get validationInvalidDate => 'માન્ય તારીખ પસંદ કરો.';
+
+  @override
+  String get validationDateRangeOrder =>
+      'અંતિમ તારીખ શરૂઆતની તારીખથી પહેલાની હોઈ શકે નહીં.';
+
+  @override
+  String get validationDuplicateValue => 'આ માહિતી પહેલેથી અસ્તિત્વમાં છે.';
+
+  @override
+  String get validationInvalidHexColor =>
+      'માન્ય હેક્સ કલર કોડ દાખલ કરો (દા.ત. #172B4D).';
+
+  @override
+  String get validationInvalidPin => 'માન્ય 4 અથવા 6 અંકનો PIN દાખલ કરો.';
+
+  @override
+  String get validationRecoveryKeyRequired =>
+      'તમારી 8-અક્ષરની રિકવરી કી દાખલ કરો.';
+
+  @override
+  String get validationQuantityBelowCommittedStock =>
+      'પ્રારંભિક જથ્થો પહેલેથી આપેલ, ડેમેજ અથવા સેટલ થયેલા સ્ટોક કરતાં ઓછો હોઈ શકે નહીં.';
+
+  @override
+  String get validationWorkerNotFound => 'પસંદ કરેલ કારીગર મળ્યો નથી.';
+
+  @override
+  String get validationWorkerNotAssigned =>
+      'પસંદ કરેલા કારીગરને આ પ્રક્રિયા સોંપાયેલી નથી.';
+
+  @override
+  String get validationRecordNotFound =>
+      'સંબંધિત રેકોર્ડ મળ્યો નથી અથવા હવે સક્રિય નથી.';
+
+  @override
+  String get validationOverrideReasonRequired =>
+      'ભાવમાં ફેરફાર કરવા માટે કારણ ફરજિયાત છે.';
+
+  @override
+  String get validationParentIssueInactive => 'મૂળ સ્ટોક ઇશ્યુ હવે સક્રિય નથી.';
+
+  @override
+  String get validationAlreadyReversed =>
+      'આ એન્ટ્રી પહેલેથી રિવર્સ થઈ ચૂકી છે.';
+
+  @override
+  String get validationCannotReverseReversal =>
+      'રિવર્સલ એન્ટ્રીને ફરી રિવર્સ કરી શકાતી નથી.';
 }

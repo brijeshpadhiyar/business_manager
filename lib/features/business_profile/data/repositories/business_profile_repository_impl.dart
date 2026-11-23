@@ -5,6 +5,7 @@ import 'package:business_manager/core/database/database_transaction_runner.dart'
 import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
 import 'package:business_manager/features/business_profile/domain/repositories/business_profile_repository.dart';
 import 'package:drift/drift.dart';
@@ -43,6 +44,25 @@ final class BusinessProfileRepositoryImpl implements BusinessProfileRepository {
     }
     if (trimmedGu.isEmpty) {
       throw ArgumentError('Business Gujarati name cannot be empty.');
+    }
+    if (trimmedEn.length > ValidationLimits.maxPersonNameLength ||
+        trimmedGu.length > ValidationLimits.maxPersonNameLength ||
+        (ownerName?.trim().length ?? 0) > ValidationLimits.maxPersonNameLength ||
+        (address?.trim().length ?? 0) > ValidationLimits.maxAddressLength) {
+      throw const DomainValidationException(
+        'text_too_long',
+        'Entered text exceeds maximum allowed length.',
+      );
+    }
+    final phoneRes = AppValidators.mobileNumberValidator(phone);
+    if (!phoneRes.isValid) {
+      final code = switch (phoneRes.code) {
+        ValidationErrorCode.mobileInvalidChars => 'mobile_invalid_chars',
+        ValidationErrorCode.mobileInvalidInternational =>
+          'mobile_invalid_international',
+        _ => 'mobile_invalid_indian',
+      };
+      throw DomainValidationException(code, 'Invalid mobile number.');
     }
 
     return _txRunner.runInTransaction(() async {

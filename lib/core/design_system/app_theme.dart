@@ -26,6 +26,10 @@ abstract final class AppTheme {
         ? baseScheme.copyWith(
             secondary: AppColors.brandTeal,
             tertiary: AppColors.brandAmber,
+            error: const Color(0xFFFCA5A5),
+            onError: const Color(0xFF450A0A),
+            errorContainer: AppColors.darkDamagedContainer,
+            onErrorContainer: const Color(0xFFFEE2E2),
             surface: AppColors.darkSurface,
             surfaceContainerLowest: const Color(0xFF0A101C),
             surfaceContainerLow: AppColors.darkSurfaceLow,
@@ -37,6 +41,10 @@ abstract final class AppTheme {
             primary: AppColors.brandNavy,
             secondary: AppColors.brandTeal,
             tertiary: AppColors.brandAmber,
+            error: AppColors.lightDamaged,
+            onError: Colors.white,
+            errorContainer: AppColors.lightDamagedContainer,
+            onErrorContainer: const Color(0xFF7F1D1D),
             surface: AppColors.brandSoftWhite,
             surfaceContainerLowest: AppColors.lightCardSurface,
             surfaceContainerLow: AppColors.lightCardSurface,
@@ -169,6 +177,10 @@ abstract final class AppTheme {
         ),
         helperMaxLines: 3,
         errorMaxLines: 3,
+        errorStyle: textTheme.bodySmall?.copyWith(
+          color: colorScheme.error,
+          fontWeight: FontWeight.w500,
+        ),
         border: outlineBorder,
         enabledBorder: outlineBorder,
         focusedBorder: OutlineInputBorder(
@@ -177,11 +189,11 @@ abstract final class AppTheme {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: AppRadius.mdBorder,
-          borderSide: BorderSide(color: colorScheme.error),
+          borderSide: BorderSide(color: colorScheme.error, width: 1.3),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: AppRadius.mdBorder,
-          borderSide: BorderSide(color: colorScheme.error, width: 1.6),
+          borderSide: BorderSide(color: colorScheme.error, width: 1.8),
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(

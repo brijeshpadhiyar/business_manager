@@ -37,6 +37,7 @@ final class _WorkerAssignmentsView extends StatefulWidget {
 final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
   String? _selectedProcessId;
   String? _actionError;
+  bool _isAssigning = false;
 
   String _mapError(BuildContext context, String code) {
     final l10n = context.l10n;
@@ -50,16 +51,25 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
 
   Future<void> _assign(BuildContext context) async {
     final procId = _selectedProcessId;
-    if (procId == null) return;
-    setState(() => _actionError = null);
+    if (procId == null || _isAssigning) return;
+    setState(() {
+      _isAssigning = true;
+      _actionError = null;
+    });
     final err = await context.read<WorkerAssignmentsCubit>().assignProcess(
       procId,
     );
     if (!mounted) return;
     if (err != null) {
-      setState(() => _actionError = _mapError(this.context, err));
+      setState(() {
+        _isAssigning = false;
+        _actionError = _mapError(this.context, err);
+      });
     } else {
-      setState(() => _selectedProcessId = null);
+      setState(() {
+        _isAssigning = false;
+        _selectedProcessId = null;
+      });
     }
   }
 
@@ -174,7 +184,8 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
                         label: l10n.assignmentsAddAction,
                         icon: Icons.add_link,
                         isExpanded: true,
-                        onPressed: effectiveSelection == null
+                        isLoading: _isAssigning,
+                        onPressed: effectiveSelection == null || _isAssigning
                             ? null
                             : () => _assign(context),
                       ),

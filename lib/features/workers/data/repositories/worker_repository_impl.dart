@@ -5,6 +5,7 @@ import 'package:business_manager/core/database/database_transaction_runner.dart'
 import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/features/rates/domain/entities/rate_entities.dart';
 import 'package:business_manager/features/rates/domain/services/member_process_rate_resolver.dart';
 import 'package:business_manager/features/workers/domain/entities/worker_entities.dart';
@@ -95,13 +96,12 @@ final class WorkerRepositoryImpl implements WorkerRepository {
     );
   }
 
-  @override
-  Future<WorkerEntity> createWorker({
+  void _validateWorkerInputs({
     required String name,
     String? phone,
     String? address,
     String? notes,
-  }) async {
+  }) {
     final cleanName = name.trim();
     if (cleanName.isEmpty) {
       throw const DomainValidationException(
@@ -109,6 +109,50 @@ final class WorkerRepositoryImpl implements WorkerRepository {
         'Worker name cannot be empty.',
       );
     }
+    if (cleanName.length > ValidationLimits.maxPersonNameLength) {
+      throw const DomainValidationException(
+        'text_too_long',
+        'Worker name exceeds maximum allowed length.',
+      );
+    }
+    final phoneRes = AppValidators.mobileNumberValidator(phone);
+    if (!phoneRes.isValid) {
+      final code = switch (phoneRes.code) {
+        ValidationErrorCode.mobileInvalidChars => 'mobile_invalid_chars',
+        ValidationErrorCode.mobileInvalidInternational =>
+          'mobile_invalid_international',
+        _ => 'mobile_invalid_indian',
+      };
+      throw DomainValidationException(code, 'Invalid mobile number.');
+    }
+    if ((address?.trim().length ?? 0) > ValidationLimits.maxAddressLength) {
+      throw const DomainValidationException(
+        'text_too_long',
+        'Address exceeds maximum allowed length.',
+      );
+    }
+    if ((notes?.trim().length ?? 0) > ValidationLimits.maxNotesLength) {
+      throw const DomainValidationException(
+        'text_too_long',
+        'Notes exceed maximum allowed length.',
+      );
+    }
+  }
+
+  @override
+  Future<WorkerEntity> createWorker({
+    required String name,
+    String? phone,
+    String? address,
+    String? notes,
+  }) async {
+    _validateWorkerInputs(
+      name: name,
+      phone: phone,
+      address: address,
+      notes: notes,
+    );
+    final cleanName = name.trim();
 
     return _txRunner.runInTransaction(() async {
       final now = IstDateTimeHelper.nowUtcMillis();
@@ -167,13 +211,13 @@ final class WorkerRepositoryImpl implements WorkerRepository {
     String? address,
     String? notes,
   }) async {
+    _validateWorkerInputs(
+      name: name,
+      phone: phone,
+      address: address,
+      notes: notes,
+    );
     final cleanName = name.trim();
-    if (cleanName.isEmpty) {
-      throw const DomainValidationException(
-        'worker_name_required',
-        'Worker name cannot be empty.',
-      );
-    }
 
     return _txRunner.runInTransaction(() async {
       final existing = await _db.processMemberDao.findMemberById(workerId);

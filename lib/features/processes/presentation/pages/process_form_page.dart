@@ -2,6 +2,7 @@ import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/processes/domain/entities/process_entities.dart';
 import 'package:business_manager/features/processes/domain/repositories/process_repository.dart';
@@ -22,8 +23,12 @@ final class ProcessFormPage extends StatefulWidget {
 
 final class _ProcessFormPageState extends State<ProcessFormPage> {
   final _formKey = GlobalKey<FormState>();
+  final _nameFieldKey = GlobalKey<FormFieldState<String>>();
+  final _descFieldKey = GlobalKey<FormFieldState<String>>();
   final _nameCtrl = TextEditingController();
   final _descCtrl = TextEditingController();
+  final _nameFocus = FocusNode();
+  final _descFocus = FocusNode();
   final _repository = getIt<ProcessRepository>();
 
   // Uses sentinel 'GLOBAL' in dropdown because DropdownButtonFormField null value shows hint.
@@ -31,6 +36,7 @@ final class _ProcessFormPageState extends State<ProcessFormPage> {
   bool _includeDamaged = false;
   bool _isLoading = false;
   bool _isSaving = false;
+  bool _submittedOnce = false;
   String? _loadError;
   String? _submitError;
 
@@ -76,12 +82,24 @@ final class _ProcessFormPageState extends State<ProcessFormPage> {
   void dispose() {
     _nameCtrl.dispose();
     _descCtrl.dispose();
+    _nameFocus.dispose();
+    _descFocus.dispose();
     super.dispose();
   }
 
   Future<void> _save() async {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
     if (_isSaving) return;
+    if (!_submittedOnce) {
+      setState(() => _submittedOnce = true);
+    }
+    final valid = FormValidationHelper.validateAndFocusFirstInvalid(
+      formKey: _formKey,
+      orderedAnchors: [
+        ValidatedFieldAnchor(fieldKey: _nameFieldKey, focusNode: _nameFocus),
+        ValidatedFieldAnchor(fieldKey: _descFieldKey, focusNode: _descFocus),
+      ],
+    );
+    if (!valid) return;
     setState(() {
       _isSaving = true;
       _submitError = null;
@@ -113,14 +131,12 @@ final class _ProcessFormPageState extends State<ProcessFormPage> {
       }
     } on DomainValidationException catch (e) {
       if (!mounted) return;
-      final l10n = context.l10n;
       setState(() {
         _isSaving = false;
-        _submitError = switch (e.code) {
-          'duplicate_process_name' => l10n.processDuplicateNameError,
-          'process_name_required' => l10n.validationRequired,
-          _ => e.message,
-        };
+        _submitError = ValidationLocalizer.localizeDomainException(
+          context.l10n,
+          e,
+        );
       });
     } catch (e) {
       if (!mounted) return;
@@ -157,25 +173,52 @@ final class _ProcessFormPageState extends State<ProcessFormPage> {
       title: title,
       body: Form(
         key: _formKey,
+        autovalidateMode: _submittedOnce
+            ? AutovalidateMode.onUserInteraction
+            : AutovalidateMode.disabled,
         child: ListView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           children: [
             AppCard(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   AppTextField(
+                    fieldKey: _nameFieldKey,
                     controller: _nameCtrl,
+                    focusNode: _nameFocus,
                     label: l10n.processNameLabel,
                     prefixIcon: Icons.precision_manufacturing_outlined,
-                    validator: (v) => (v == null || v.trim().isEmpty)
-                        ? l10n.validationRequired
-                        : null,
+                    textInputAction: TextInputAction.next,
+                    maxLength: ValidationLimits.maxShortNameLength,
+                    onChanged: (_) {
+                      if (_submitError != null) {
+                        setState(() => _submitError = null);
+                      }
+                    },
+                    validator: ValidationLocalizer.wrap(
+                      l10n,
+                      (v) => AppValidators.nameValidator(
+                        v,
+                        maxLength: ValidationLimits.maxShortNameLength,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   AppTextField(
+                    fieldKey: _descFieldKey,
                     controller: _descCtrl,
+                    focusNode: _descFocus,
                     label: l10n.processDescriptionLabel,
                     maxLines: 3,
+                    maxLength: ValidationLimits.maxNotesLength,
+                    validator: ValidationLocalizer.wrap(
+                      l10n,
+                      (v) => AppValidators.maxLengthValidator(
+                        v,
+                        maxLength: ValidationLimits.maxNotesLength,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   AppDropdown<String>(

@@ -5,6 +5,7 @@ import 'package:business_manager/core/database/database_transaction_runner.dart'
 import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/features/accounting/domain/calculators/ledger_calculator.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:business_manager/features/accounting/domain/repositories/accounting_repository.dart';
@@ -360,6 +361,26 @@ final class AccountingRepositoryImpl implements AccountingRepository {
         'Payment amount must be greater than zero.',
       );
     }
+    if (amountPaise > ValidationLimits.maxAmountPaise) {
+      throw const DomainValidationException(
+        'amount_too_large',
+        'Payment amount exceeds maximum allowed limit.',
+      );
+    }
+    if (!AppValidators.dateValidator(transactionAtUtcMillis).isValid) {
+      throw const DomainValidationException(
+        'invalid_date',
+        'Transaction date is invalid.',
+      );
+    }
+    if ((referenceNo?.trim().length ?? 0) >
+            ValidationLimits.maxShortNameLength ||
+        (notes?.trim().length ?? 0) > ValidationLimits.maxNotesLength) {
+      throw const DomainValidationException(
+        'text_too_long',
+        'Reference number or notes exceed maximum allowed length.',
+      );
+    }
 
     final reqId = clientRequestId?.trim().isEmpty ?? true
         ? _idGenerator.nextRequestId()
@@ -555,10 +576,29 @@ final class AccountingRepositoryImpl implements AccountingRepository {
         'Adjustment amount must be greater than zero.',
       );
     }
+    if (amountPaise > ValidationLimits.maxAmountPaise) {
+      throw const DomainValidationException(
+        'amount_too_large',
+        'Adjustment amount exceeds maximum allowed limit.',
+      );
+    }
+    if (!AppValidators.dateValidator(transactionAtUtcMillis).isValid) {
+      throw const DomainValidationException(
+        'invalid_date',
+        'Transaction date is invalid.',
+      );
+    }
     if (reason.trim().isEmpty) {
       throw const DomainValidationException(
         'reason_required',
         'A reason is required for a worker ledger adjustment.',
+      );
+    }
+    if (reason.trim().length > ValidationLimits.maxNotesLength ||
+        (notes?.trim().length ?? 0) > ValidationLimits.maxNotesLength) {
+      throw const DomainValidationException(
+        'text_too_long',
+        'Reason or notes exceed maximum allowed length.',
       );
     }
 

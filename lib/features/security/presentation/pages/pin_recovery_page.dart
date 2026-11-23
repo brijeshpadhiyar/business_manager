@@ -3,6 +3,7 @@ import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/design_system/app_typography.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/security/domain/services/pin_hasher.dart';
 import 'package:business_manager/features/security/presentation/bloc/app_lock_cubit.dart';
@@ -24,6 +25,7 @@ final class PinRecoveryPage extends StatefulWidget {
 }
 
 final class _PinRecoveryPageState extends State<PinRecoveryPage> {
+  final _formKey = GlobalKey<FormState>();
   final _keyCtrl = TextEditingController();
   _RecoveryStep _step = _RecoveryStep.verifyKey;
   int _pinLength = 4;
@@ -32,6 +34,7 @@ final class _PinRecoveryPageState extends State<PinRecoveryPage> {
   String? _freshRecoveryKey;
   bool _freshKeyConfirmed = false;
   bool _working = false;
+  bool _submittedKeyOnce = false;
   String? _errorText;
   late final AppLockCubit _lockCubit;
 
@@ -54,11 +57,11 @@ final class _PinRecoveryPageState extends State<PinRecoveryPage> {
 
   Future<void> _verifyRecoveryKey() async {
     if (_working) return;
-    final raw = _keyCtrl.text.trim();
-    if (!PinHasher.isValidRecoveryKeyFormat(raw)) {
-      setState(() => _errorText = context.l10n.securityRecoveryKeyInvalidError);
-      return;
+    if (!_submittedKeyOnce) {
+      setState(() => _submittedKeyOnce = true);
     }
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+    final raw = _keyCtrl.text.trim();
 
     setState(() {
       _working = true;
@@ -169,46 +172,56 @@ final class _PinRecoveryPageState extends State<PinRecoveryPage> {
           return ListView(
             children: [
               if (_step == _RecoveryStep.verifyKey) ...[
-                AppCard(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      AppHeading(
-                        l10n.securityRecoveryEnterKeyTitle,
-                        level: AppHeadingLevel.h3,
-                        subtitle: l10n.securityRecoveryEnterKeySubtitle,
-                      ),
-                      const SizedBox(height: AppSpacing.md),
-                      AppTextField(
-                        controller: _keyCtrl,
-                        label: l10n.securityRecoveryKeyLabel,
-                        hint: 'XXXX-XXXX',
-                        prefixIcon: Icons.vpn_key_outlined,
-                        onChanged: (_) => setState(() => _errorText = null),
-                      ),
-                      if (_errorText != null || state.isLockedOut) ...[
-                        const SizedBox(height: AppSpacing.sm),
-                        AppStatusBadge(
-                          label: state.isLockedOut
-                              ? l10n.securityLockoutCountdown(
-                                  '${state.remainingLockoutSeconds}s',
-                                )
-                              : _errorText!,
-                          tone: AppStatusTone.damaged,
-                          icon: Icons.error_outline_rounded,
+                Form(
+                  key: _formKey,
+                  autovalidateMode: _submittedKeyOnce
+                      ? AutovalidateMode.onUserInteraction
+                      : AutovalidateMode.disabled,
+                  child: AppCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        AppHeading(
+                          l10n.securityRecoveryEnterKeyTitle,
+                          level: AppHeadingLevel.h3,
+                          subtitle: l10n.securityRecoveryEnterKeySubtitle,
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        AppTextField(
+                          controller: _keyCtrl,
+                          label: l10n.securityRecoveryKeyLabel,
+                          hint: 'XXXX-XXXX',
+                          prefixIcon: Icons.vpn_key_outlined,
+                          onChanged: (_) => setState(() => _errorText = null),
+                          validator: ValidationLocalizer.wrap(
+                            l10n,
+                            AppValidators.recoveryKeyValidator,
+                          ),
+                        ),
+                        if (_errorText != null || state.isLockedOut) ...[
+                          const SizedBox(height: AppSpacing.sm),
+                          AppStatusBadge(
+                            label: state.isLockedOut
+                                ? l10n.securityLockoutCountdown(
+                                    '${state.remainingLockoutSeconds}s',
+                                  )
+                                : _errorText!,
+                            tone: AppStatusTone.damaged,
+                            icon: Icons.error_outline_rounded,
+                          ),
+                        ],
+                        const SizedBox(height: AppSpacing.lg),
+                        AppButton(
+                          label: l10n.securityVerifyRecoveryKeyAction,
+                          icon: Icons.verified_user_outlined,
+                          isExpanded: true,
+                          isLoading: _working,
+                          onPressed: !_working && !state.isLockedOut
+                              ? _verifyRecoveryKey
+                              : null,
                         ),
                       ],
-                      const SizedBox(height: AppSpacing.lg),
-                      AppButton(
-                        label: l10n.securityVerifyRecoveryKeyAction,
-                        icon: Icons.verified_user_outlined,
-                        isExpanded: true,
-                        isLoading: _working,
-                        onPressed: !_working && !state.isLockedOut
-                            ? _verifyRecoveryKey
-                            : null,
-                      ),
-                    ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: AppSpacing.md),

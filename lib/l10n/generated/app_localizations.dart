@@ -4393,6 +4393,204 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'• 100% offline: reminders run locally on your Android phone without Firebase or internet.\n• Lock-screen privacy: when App PIN is enabled, notifications hide exact Rupee amounts and worker names.\n• Android battery note: on OPPO (ColorOS), Xiaomi, Vivo, or Samsung phones, allow StitchFlow background notifications in Phone Settings if reminders arrive late after a reboot.'**
   String get notificationsPrivacyOemBody;
+
+  /// No description provided for @validationWhitespaceOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'This field cannot contain only spaces.'**
+  String get validationWhitespaceOnly;
+
+  /// No description provided for @validationMaxLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum {max} characters allowed.'**
+  String validationMaxLength(int max);
+
+  /// No description provided for @validationTextTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Entered text exceeds the allowed length.'**
+  String get validationTextTooLong;
+
+  /// No description provided for @validationMobileRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter mobile number.'**
+  String get validationMobileRequired;
+
+  /// No description provided for @validationMobileInvalidIndian.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid 10-digit mobile number.'**
+  String get validationMobileInvalidIndian;
+
+  /// No description provided for @validationMobileInvalidChars.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile number contains invalid characters.'**
+  String get validationMobileInvalidChars;
+
+  /// No description provided for @validationMobileInvalidInternational.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid international mobile number with country code.'**
+  String get validationMobileInvalidInternational;
+
+  /// No description provided for @validationEmailInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email address.'**
+  String get validationEmailInvalid;
+
+  /// No description provided for @validationInvalidNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid number.'**
+  String get validationInvalidNumber;
+
+  /// No description provided for @validationInvalidInteger.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid whole number.'**
+  String get validationInvalidInteger;
+
+  /// No description provided for @validationInvalidDecimal.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid decimal number.'**
+  String get validationInvalidDecimal;
+
+  /// No description provided for @validationTooManyDecimals.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter up to {maxDecimals} decimal places.'**
+  String validationTooManyDecimals(int maxDecimals);
+
+  /// No description provided for @validationNegativeNotAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Value cannot be negative.'**
+  String get validationNegativeNotAllowed;
+
+  /// No description provided for @validationPositiveNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a number greater than 0.'**
+  String get validationPositiveNumber;
+
+  /// No description provided for @validationValueTooLarge.
+  ///
+  /// In en, this message translates to:
+  /// **'Entered value exceeds the maximum allowed limit.'**
+  String get validationValueTooLarge;
+
+  /// No description provided for @validationNonNegativeInt.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a whole number 0 or greater.'**
+  String get validationNonNegativeInt;
+
+  /// No description provided for @validationQuantityExceedsMax.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity cannot exceed {max}.'**
+  String validationQuantityExceedsMax(int max);
+
+  /// No description provided for @validationPositiveAmount.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid amount greater than 0.'**
+  String get validationPositiveAmount;
+
+  /// No description provided for @validationInvalidPercentage.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a percentage between 0 and 100.'**
+  String get validationInvalidPercentage;
+
+  /// No description provided for @validationInvalidDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a valid date.'**
+  String get validationInvalidDate;
+
+  /// No description provided for @validationDateRangeOrder.
+  ///
+  /// In en, this message translates to:
+  /// **'End date cannot be earlier than start date.'**
+  String get validationDateRangeOrder;
+
+  /// No description provided for @validationDuplicateValue.
+  ///
+  /// In en, this message translates to:
+  /// **'This value already exists.'**
+  String get validationDuplicateValue;
+
+  /// No description provided for @validationInvalidHexColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid hex colour code (e.g. #172B4D).'**
+  String get validationInvalidHexColor;
+
+  /// No description provided for @validationInvalidPin.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid 4- or 6-digit numeric PIN.'**
+  String get validationInvalidPin;
+
+  /// No description provided for @validationRecoveryKeyRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your 8-character Recovery Key.'**
+  String get validationRecoveryKeyRequired;
+
+  /// No description provided for @validationQuantityBelowCommittedStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Initial quantity cannot be less than stock already issued, damaged, or settled.'**
+  String get validationQuantityBelowCommittedStock;
+
+  /// No description provided for @validationWorkerNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected worker was not found.'**
+  String get validationWorkerNotFound;
+
+  /// No description provided for @validationWorkerNotAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected worker is not actively assigned to this process.'**
+  String get validationWorkerNotAssigned;
+
+  /// No description provided for @validationRecordNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Referenced record was not found or is no longer active.'**
+  String get validationRecordNotFound;
+
+  /// No description provided for @validationOverrideReasonRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason is required when overriding the rate.'**
+  String get validationOverrideReasonRequired;
+
+  /// No description provided for @validationParentIssueInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Original stock issue is no longer active.'**
+  String get validationParentIssueInactive;
+
+  /// No description provided for @validationAlreadyReversed.
+  ///
+  /// In en, this message translates to:
+  /// **'This entry has already been reversed.'**
+  String get validationAlreadyReversed;
+
+  /// No description provided for @validationCannotReverseReversal.
+  ///
+  /// In en, this message translates to:
+  /// **'A reversal entry cannot itself be reversed.'**
+  String get validationCannotReverseReversal;
 }
 
 class _AppLocalizationsDelegate

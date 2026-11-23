@@ -2319,4 +2319,126 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get notificationsPrivacyOemBody =>
       '• 100% offline: reminders run locally on your Android phone without Firebase or internet.\n• Lock-screen privacy: when App PIN is enabled, notifications hide exact Rupee amounts and worker names.\n• Android battery note: on OPPO (ColorOS), Xiaomi, Vivo, or Samsung phones, allow StitchFlow background notifications in Phone Settings if reminders arrive late after a reboot.';
+
+  @override
+  String get validationWhitespaceOnly =>
+      'This field cannot contain only spaces.';
+
+  @override
+  String validationMaxLength(int max) {
+    return 'Maximum $max characters allowed.';
+  }
+
+  @override
+  String get validationTextTooLong =>
+      'Entered text exceeds the allowed length.';
+
+  @override
+  String get validationMobileRequired => 'Enter mobile number.';
+
+  @override
+  String get validationMobileInvalidIndian =>
+      'Enter a valid 10-digit mobile number.';
+
+  @override
+  String get validationMobileInvalidChars =>
+      'Mobile number contains invalid characters.';
+
+  @override
+  String get validationMobileInvalidInternational =>
+      'Enter a valid international mobile number with country code.';
+
+  @override
+  String get validationEmailInvalid => 'Enter a valid email address.';
+
+  @override
+  String get validationInvalidNumber => 'Enter a valid number.';
+
+  @override
+  String get validationInvalidInteger => 'Enter a valid whole number.';
+
+  @override
+  String get validationInvalidDecimal => 'Enter a valid decimal number.';
+
+  @override
+  String validationTooManyDecimals(int maxDecimals) {
+    return 'Enter up to $maxDecimals decimal places.';
+  }
+
+  @override
+  String get validationNegativeNotAllowed => 'Value cannot be negative.';
+
+  @override
+  String get validationPositiveNumber => 'Enter a number greater than 0.';
+
+  @override
+  String get validationValueTooLarge =>
+      'Entered value exceeds the maximum allowed limit.';
+
+  @override
+  String get validationNonNegativeInt => 'Enter a whole number 0 or greater.';
+
+  @override
+  String validationQuantityExceedsMax(int max) {
+    return 'Quantity cannot exceed $max.';
+  }
+
+  @override
+  String get validationPositiveAmount => 'Enter a valid amount greater than 0.';
+
+  @override
+  String get validationInvalidPercentage =>
+      'Enter a percentage between 0 and 100.';
+
+  @override
+  String get validationInvalidDate => 'Select a valid date.';
+
+  @override
+  String get validationDateRangeOrder =>
+      'End date cannot be earlier than start date.';
+
+  @override
+  String get validationDuplicateValue => 'This value already exists.';
+
+  @override
+  String get validationInvalidHexColor =>
+      'Enter a valid hex colour code (e.g. #172B4D).';
+
+  @override
+  String get validationInvalidPin => 'Enter a valid 4- or 6-digit numeric PIN.';
+
+  @override
+  String get validationRecoveryKeyRequired =>
+      'Enter your 8-character Recovery Key.';
+
+  @override
+  String get validationQuantityBelowCommittedStock =>
+      'Initial quantity cannot be less than stock already issued, damaged, or settled.';
+
+  @override
+  String get validationWorkerNotFound => 'Selected worker was not found.';
+
+  @override
+  String get validationWorkerNotAssigned =>
+      'Selected worker is not actively assigned to this process.';
+
+  @override
+  String get validationRecordNotFound =>
+      'Referenced record was not found or is no longer active.';
+
+  @override
+  String get validationOverrideReasonRequired =>
+      'Reason is required when overriding the rate.';
+
+  @override
+  String get validationParentIssueInactive =>
+      'Original stock issue is no longer active.';
+
+  @override
+  String get validationAlreadyReversed =>
+      'This entry has already been reversed.';
+
+  @override
+  String get validationCannotReverseReversal =>
+      'A reversal entry cannot itself be reversed.';
 }

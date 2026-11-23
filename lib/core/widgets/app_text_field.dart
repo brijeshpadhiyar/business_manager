@@ -6,6 +6,7 @@ import 'package:material_ui/material_ui.dart';
 final class AppTextField extends StatelessWidget {
   const AppTextField({
     super.key,
+    this.fieldKey,
     this.controller,
     this.focusNode,
     this.initialValue,
@@ -27,11 +28,14 @@ final class AppTextField extends StatelessWidget {
     this.obscureText = false,
     this.autofocus = false,
     this.maxLines = 1,
+    this.maxLength,
+    this.showCounter = false,
     this.textAlign = TextAlign.start,
     this.style,
     this.autovalidateMode,
   });
 
+  final GlobalKey<FormFieldState<String>>? fieldKey;
   final TextEditingController? controller;
   final FocusNode? focusNode;
   final String? initialValue;
@@ -53,6 +57,8 @@ final class AppTextField extends StatelessWidget {
   final bool obscureText;
   final bool autofocus;
   final int maxLines;
+  final int? maxLength;
+  final bool showCounter;
   final TextAlign textAlign;
   final TextStyle? style;
   final AutovalidateMode? autovalidateMode;
@@ -60,6 +66,7 @@ final class AppTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      key: fieldKey,
       controller: controller,
       focusNode: focusNode,
       initialValue: initialValue,
@@ -68,6 +75,8 @@ final class AppTextField extends StatelessWidget {
       obscureText: obscureText,
       autofocus: autofocus,
       maxLines: maxLines,
+      maxLength: maxLength,
+      maxLengthEnforcement: MaxLengthEnforcement.none,
       textAlign: textAlign,
       style: style,
       keyboardType: keyboardType,
@@ -83,6 +92,7 @@ final class AppTextField extends StatelessWidget {
         helperText: helperText,
         errorText: errorText,
         suffixText: suffixText,
+        counterText: showCounter ? null : '',
         prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
         suffixIcon: suffixIcon,
       ),

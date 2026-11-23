@@ -4,6 +4,7 @@ import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:business_manager/features/accounting/domain/repositories/accounting_repository.dart';
@@ -24,9 +25,17 @@ final class WorkerAdjustmentFormPage extends StatefulWidget {
 final class _WorkerAdjustmentFormPageState
     extends State<WorkerAdjustmentFormPage> {
   final _formKey = GlobalKey<FormState>();
+  final _amountFieldKey = GlobalKey<FormFieldState<String>>();
+  final _reasonFieldKey = GlobalKey<FormFieldState<String>>();
+  final _notesFieldKey = GlobalKey<FormFieldState<String>>();
+
   final _amountCtrl = TextEditingController();
   final _reasonCtrl = TextEditingController();
   final _notesCtrl = TextEditingController();
+
+  final _amountFocus = FocusNode();
+  final _reasonFocus = FocusNode();
+  final _notesFocus = FocusNode();
 
   final _repo = getIt<AccountingRepository>();
   final _clientRequestId = getIt<IdGenerator>().nextRequestId();
@@ -34,6 +43,7 @@ final class _WorkerAdjustmentFormPageState
   WorkerAdjustmentType _type = WorkerAdjustmentType.credit;
   int _transactionAtUtc = IstDateTimeHelper.nowUtcMillis();
   bool _saving = false;
+  bool _submittedOnce = false;
   String? _submitError;
 
   @override
@@ -41,18 +51,36 @@ final class _WorkerAdjustmentFormPageState
     _amountCtrl.dispose();
     _reasonCtrl.dispose();
     _notesCtrl.dispose();
+    _amountFocus.dispose();
+    _reasonFocus.dispose();
+    _notesFocus.dispose();
     super.dispose();
   }
 
   int? _parsePaise(String text) {
-    final parsed = double.tryParse(text.trim());
-    if (parsed == null || parsed <= 0) return null;
-    return (parsed * 100).round();
+    return AppValidators.parseRupeesToPaiseExact(text, allowZero: false).paise;
   }
 
   Future<void> _submit() async {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
     if (_saving) return;
+    if (!_submittedOnce) {
+      setState(() => _submittedOnce = true);
+    }
+    final valid = FormValidationHelper.validateAndFocusFirstInvalid(
+      formKey: _formKey,
+      orderedAnchors: [
+        ValidatedFieldAnchor(
+          fieldKey: _amountFieldKey,
+          focusNode: _amountFocus,
+        ),
+        ValidatedFieldAnchor(
+          fieldKey: _reasonFieldKey,
+          focusNode: _reasonFocus,
+        ),
+        ValidatedFieldAnchor(fieldKey: _notesFieldKey, focusNode: _notesFocus),
+      ],
+    );
+    if (!valid) return;
     final paise = _parsePaise(_amountCtrl.text);
     if (paise == null) return;
 
@@ -81,7 +109,10 @@ final class _WorkerAdjustmentFormPageState
       if (!mounted) return;
       setState(() {
         _saving = false;
-        _submitError = e.message;
+        _submitError = ValidationLocalizer.localizeDomainException(
+          context.l10n,
+          e,
+        );
       });
     } catch (e) {
       if (!mounted) return;
@@ -99,7 +130,11 @@ final class _WorkerAdjustmentFormPageState
       title: l10n.accountingAddAdjustmentAction,
       body: Form(
         key: _formKey,
+        autovalidateMode: _submittedOnce
+            ? AutovalidateMode.onUserInteraction
+            : AutovalidateMode.disabled,
         child: ListView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           children: [
             AppCard(
               child: Column(
@@ -121,15 +156,24 @@ final class _WorkerAdjustmentFormPageState
                   ),
                   const SizedBox(height: AppSpacing.md),
                   AppTextField(
+                    fieldKey: _amountFieldKey,
                     controller: _amountCtrl,
+                    focusNode: _amountFocus,
                     label: l10n.accountingAmountLabel,
                     prefixIcon: Icons.currency_rupee,
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
-                    validator: (v) => _parsePaise(v ?? '') == null
-                        ? l10n.validationRequired
-                        : null,
+                    textInputAction: TextInputAction.next,
+                    onChanged: (_) {
+                      if (_submitError != null) {
+                        setState(() => _submitError = null);
+                      }
+                    },
+                    validator: ValidationLocalizer.wrap(
+                      l10n,
+                      (v) => AppValidators.amountValidator(v),
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   AppDatePicker(
@@ -141,18 +185,35 @@ final class _WorkerAdjustmentFormPageState
                   ),
                   const SizedBox(height: AppSpacing.md),
                   AppTextField(
+                    fieldKey: _reasonFieldKey,
                     controller: _reasonCtrl,
+                    focusNode: _reasonFocus,
                     label: l10n.accountingAdjustmentReasonLabel,
                     maxLines: 2,
-                    validator: (v) => (v == null || v.trim().isEmpty)
-                        ? l10n.validationRequired
-                        : null,
+                    maxLength: ValidationLimits.maxNotesLength,
+                    validator: ValidationLocalizer.wrap(
+                      l10n,
+                      (v) => AppValidators.nameValidator(
+                        v,
+                        maxLength: ValidationLimits.maxNotesLength,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.md),
                   AppTextField(
+                    fieldKey: _notesFieldKey,
                     controller: _notesCtrl,
+                    focusNode: _notesFocus,
                     label: l10n.stockNotesLabel,
                     maxLines: 2,
+                    maxLength: ValidationLimits.maxNotesLength,
+                    validator: ValidationLocalizer.wrap(
+                      l10n,
+                      (v) => AppValidators.maxLengthValidator(
+                        v,
+                        maxLength: ValidationLimits.maxNotesLength,
+                      ),
+                    ),
                   ),
                   if (_submitError != null) ...[
                     const SizedBox(height: AppSpacing.sm),

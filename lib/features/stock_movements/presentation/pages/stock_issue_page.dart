@@ -10,6 +10,7 @@ import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/accounting/domain/calculators/labour_calculator.dart';
 import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
@@ -258,11 +259,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
   }
 
   int? _parseRupeesToPaise(String text) {
-    final cleaned = text.trim();
-    if (cleaned.isEmpty) return null;
-    final parsed = double.tryParse(cleaned);
-    if (parsed == null || parsed < 0) return null;
-    return (parsed * 100).round();
+    return AppValidators.parseRupeesToPaiseExact(text, allowZero: true).paise;
   }
 
   void _selectStock(DesignColourStockBalance b) {
@@ -396,13 +393,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
       if (!mounted) return;
       setState(() {
         _saving = false;
-        _submitError = switch (e.code) {
-          'insufficient_good_stock' => l10n.stockInsufficientGoodError,
-          'invalid_quantity' => l10n.stockInvalidQtyError,
-          'rate_missing' => l10n.stockRateMissingWarning,
-          'rate_conflict' => l10n.stockRateConflictWarning,
-          _ => e.message,
-        };
+        _submitError = ValidationLocalizer.localizeDomainException(l10n, e);
       });
     } catch (e) {
       if (!mounted) return;
@@ -902,10 +893,12 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
-                    onChanged: (_) => setState(() {}),
-                    validator: (v) =>
-                        _overrideRate && _parseRupeesToPaise(v ?? '') == null
-                        ? l10n.validationRequired
+                    onChanged: (_) => setState(() => _submitError = null),
+                    validator: (v) => _overrideRate
+                        ? ValidationLocalizer.localize(
+                            l10n,
+                            AppValidators.nonNegativeAmountValidator(v),
+                          )
                         : null,
                   ),
                   const SizedBox(height: AppSpacing.sm),
@@ -913,9 +906,15 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                     controller: _overrideReasonCtrl,
                     label: l10n.stockOverrideReasonLabel,
                     maxLines: 2,
-                    validator: (v) =>
-                        _overrideRate && (v == null || v.trim().isEmpty)
-                        ? l10n.validationRequired
+                    maxLength: ValidationLimits.maxNotesLength,
+                    validator: (v) => _overrideRate
+                        ? ValidationLocalizer.localize(
+                            l10n,
+                            AppValidators.nameValidator(
+                              v,
+                              maxLength: ValidationLimits.maxNotesLength,
+                            ),
+                          )
                         : null,
                   ),
                 ],
@@ -924,6 +923,14 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                   controller: _notesCtrl,
                   label: l10n.stockNotesLabel,
                   maxLines: 2,
+                  maxLength: ValidationLimits.maxNotesLength,
+                  validator: ValidationLocalizer.wrap(
+                    l10n,
+                    (v) => AppValidators.maxLengthValidator(
+                      v,
+                      maxLength: ValidationLimits.maxNotesLength,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: AppSpacing.sm),
               ],
@@ -1067,11 +1074,14 @@ final class _StockIssuePageState extends State<StockIssuePage> {
             errorText: qtyExceeds ? l10n.stockInsufficientGoodError : null,
             onChanged: (_) => setState(() => _submitError = null),
             validator: (v) {
-              final parsed = int.tryParse(v?.trim() ?? '');
-              if (parsed == null || parsed <= 0) {
-                return l10n.stockInvalidQtyError;
+              final parsed = AppValidators.parseQuantityExact(v);
+              if (!parsed.validation.isValid) {
+                return parsed.validation.code ==
+                        ValidationErrorCode.valueTooLarge
+                    ? l10n.validationValueTooLarge
+                    : l10n.stockInvalidQtyError;
               }
-              if (parsed > available) {
+              if (parsed.value! > available) {
                 return l10n.stockInsufficientGoodError;
               }
               return null;

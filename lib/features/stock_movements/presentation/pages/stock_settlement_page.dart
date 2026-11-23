@@ -10,6 +10,7 @@ import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/accounting/domain/calculators/labour_calculator.dart';
 import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
@@ -34,12 +35,21 @@ final class StockSettlementPage extends StatefulWidget {
 
 final class _StockSettlementPageState extends State<StockSettlementPage> {
   final _formKey = GlobalKey<FormState>();
+  final _goodFieldKey = GlobalKey<FormFieldState<String>>();
+  final _damagedFieldKey = GlobalKey<FormFieldState<String>>();
+  final _lostFieldKey = GlobalKey<FormFieldState<String>>();
+  final _shortageFieldKey = GlobalKey<FormFieldState<String>>();
+  final _reasonFieldKey = GlobalKey<FormFieldState<String>>();
+  final _notesFieldKey = GlobalKey<FormFieldState<String>>();
+
   final _goodCtrl = TextEditingController();
   final _damagedCtrl = TextEditingController();
   final _lostCtrl = TextEditingController();
   final _shortageCtrl = TextEditingController();
   final _reasonCtrl = TextEditingController();
   final _notesCtrl = TextEditingController();
+
+  final _reasonFocus = FocusNode();
 
   final _repo = getIt<StockMovementRepository>();
   final _processRepo = getIt<ProcessRepository>();
@@ -52,6 +62,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
   List<ProcessEntity> _otherActiveProcesses = const [];
   bool _loading = true;
   bool _saving = false;
+  bool _submittedOnce = false;
   bool _showAdvanced = false;
   String? _loadError;
   String? _submitError;
@@ -75,6 +86,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
     _shortageCtrl.dispose();
     _reasonCtrl.dispose();
     _notesCtrl.dispose();
+    _reasonFocus.dispose();
     super.dispose();
   }
 
@@ -179,8 +191,25 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
   }
 
   Future<void> _submit() async {
-    if (!(_formKey.currentState?.validate() ?? false)) return;
     if (_saving || _detail == null) return;
+    if (!_submittedOnce) {
+      setState(() => _submittedOnce = true);
+    }
+    final valid = FormValidationHelper.validateAndFocusFirstInvalid(
+      formKey: _formKey,
+      orderedAnchors: [
+        ValidatedFieldAnchor(fieldKey: _goodFieldKey),
+        ValidatedFieldAnchor(fieldKey: _damagedFieldKey),
+        ValidatedFieldAnchor(fieldKey: _lostFieldKey),
+        ValidatedFieldAnchor(fieldKey: _shortageFieldKey),
+        ValidatedFieldAnchor(
+          fieldKey: _reasonFieldKey,
+          focusNode: _reasonFocus,
+        ),
+        ValidatedFieldAnchor(fieldKey: _notesFieldKey),
+      ],
+    );
+    if (!valid) return;
     final l10n = context.l10n;
 
     final good = _qtyOf(_goodCtrl);
@@ -252,12 +281,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
       if (!mounted) return;
       setState(() {
         _saving = false;
-        _submitError = switch (e.code) {
-          'exceeds_pending_quantity' => l10n.stockSettlementTotalExceedsError,
-          'settlement_empty' => l10n.stockSettlementEmptyError,
-          'reason_required' => l10n.stockSettlementReasonRequiredError,
-          _ => e.message,
-        };
+        _submitError = ValidationLocalizer.localizeDomainException(l10n, e);
       });
     } catch (e) {
       if (!mounted) return;
@@ -340,6 +364,9 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
       title: l10n.stockSettlementHeading,
       body: Form(
         key: _formKey,
+        autovalidateMode: _submittedOnce
+            ? AutovalidateMode.onUserInteraction
+            : AutovalidateMode.disabled,
         child: ListView(
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           children: [
@@ -535,6 +562,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                     const SizedBox(height: AppSpacing.sm),
                     // Good Returned (Primary Green)
                     AppTextField(
+                      fieldKey: _goodFieldKey,
                       controller: _goodCtrl,
                       label: l10n.stockGoodReturnQtyLabel,
                       prefixIcon: Icons.check_circle_outline_rounded,
@@ -547,11 +575,16 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                           fontWeight: FontWeight.w700,
                         ),
                       ),
+                      validator: ValidationLocalizer.wrap(
+                        l10n,
+                        (v) => AppValidators.nonNegativeQuantityValidator(v),
+                      ),
                       onChanged: (_) => setState(() => _submitError = null),
                     ),
                     const SizedBox(height: AppSpacing.md),
                     // Damaged Returned (Red)
                     AppTextField(
+                      fieldKey: _damagedFieldKey,
                       controller: _damagedCtrl,
                       label: l10n.stockDamagedReturnQtyLabel,
                       prefixIcon: Icons.report_problem_outlined,
@@ -564,11 +597,16 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                           fontWeight: FontWeight.w600,
                         ),
                       ),
+                      validator: ValidationLocalizer.wrap(
+                        l10n,
+                        (v) => AppValidators.nonNegativeQuantityValidator(v),
+                      ),
                       onChanged: (_) => setState(() => _submitError = null),
                     ),
                     const SizedBox(height: AppSpacing.md),
                     // Lost vs Shortage clearly separated with helper text
                     AppTextField(
+                      fieldKey: _lostFieldKey,
                       controller: _lostCtrl,
                       label: l10n.stockLostQtyLabel,
                       helperText: l10n.stockLostHelper,
@@ -579,10 +617,15 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                       style: AppTypography.tabular(
                         Theme.of(context).textTheme.titleMedium!,
                       ),
+                      validator: ValidationLocalizer.wrap(
+                        l10n,
+                        (v) => AppValidators.nonNegativeQuantityValidator(v),
+                      ),
                       onChanged: (_) => setState(() => _submitError = null),
                     ),
                     const SizedBox(height: AppSpacing.md),
                     AppTextField(
+                      fieldKey: _shortageFieldKey,
                       controller: _shortageCtrl,
                       label: l10n.stockShortageQtyLabel,
                       helperText: l10n.stockShortageHelper,
@@ -593,18 +636,31 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                       style: AppTypography.tabular(
                         Theme.of(context).textTheme.titleMedium!,
                       ),
+                      validator: ValidationLocalizer.wrap(
+                        l10n,
+                        (v) => AppValidators.nonNegativeQuantityValidator(v),
+                      ),
                       onChanged: (_) => setState(() => _submitError = null),
                     ),
                     const SizedBox(height: AppSpacing.md),
                     AppTextField(
+                      fieldKey: _reasonFieldKey,
                       controller: _reasonCtrl,
+                      focusNode: _reasonFocus,
                       label: l10n.stockSettlementReasonLabel,
                       maxLines: 2,
+                      maxLength: ValidationLimits.maxNotesLength,
                       validator: (v) {
                         if (needsReason && (v == null || v.trim().isEmpty)) {
                           return l10n.stockSettlementReasonRequiredError;
                         }
-                        return null;
+                        return ValidationLocalizer.localize(
+                          l10n,
+                          AppValidators.maxLengthValidator(
+                            v,
+                            maxLength: ValidationLimits.maxNotesLength,
+                          ),
+                        );
                       },
                       onChanged: (_) => setState(() => _submitError = null),
                     ),
@@ -632,9 +688,18 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                           ),
                           const SizedBox(height: AppSpacing.sm),
                           AppTextField(
+                            fieldKey: _notesFieldKey,
                             controller: _notesCtrl,
                             label: l10n.stockNotesLabel,
                             maxLines: 2,
+                            maxLength: ValidationLimits.maxNotesLength,
+                            validator: ValidationLocalizer.wrap(
+                              l10n,
+                              (v) => AppValidators.maxLengthValidator(
+                                v,
+                                maxLength: ValidationLimits.maxNotesLength,
+                              ),
+                            ),
                           ),
                           const SizedBox(height: AppSpacing.sm),
                         ],

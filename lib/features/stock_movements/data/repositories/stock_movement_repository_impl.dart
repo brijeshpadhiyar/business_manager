@@ -5,6 +5,7 @@ import 'package:business_manager/core/database/database_transaction_runner.dart'
 import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/features/accounting/domain/calculators/labour_calculator.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
@@ -606,6 +607,26 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
               'Issue quantity must be greater than zero.',
             );
           }
+          if (quantity > ValidationLimits.maxQuantity) {
+            throw const DomainValidationException(
+              'quantity_too_large',
+              'Issue quantity exceeds maximum allowed limit.',
+            );
+          }
+          if (!AppValidators.dateValidator(transactionAtUtcMillis).isValid) {
+            throw const DomainValidationException(
+              'invalid_date',
+              'Transaction date is invalid.',
+            );
+          }
+          if ((notes?.trim().length ?? 0) > ValidationLimits.maxNotesLength ||
+              (overrideReason?.trim().length ?? 0) >
+                  ValidationLimits.maxNotesLength) {
+            throw const DomainValidationException(
+              'text_too_long',
+              'Notes or override reason exceeds maximum allowed length.',
+            );
+          }
 
           // Verify design colour -> design -> lot hierarchy
           final colour = await _db.lotDao.findDesignColourById(designColourId);
@@ -682,11 +703,17 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
           bool isOverridden = false;
           String? cleanedOverrideReason;
 
-          if (allowRateOverride && overrideRatePaise != null) {
-            if (overrideRatePaise < 0) {
+          if (allowRateOverride) {
+            if (overrideRatePaise == null || overrideRatePaise < 0) {
               throw const DomainValidationException(
                 'invalid_rate',
                 'Rate cannot be negative.',
+              );
+            }
+            if (overrideRatePaise > ValidationLimits.maxAmountPaise) {
+              throw const DomainValidationException(
+                'rate_too_large',
+                'Override rate exceeds maximum allowed limit.',
               );
             }
             if (overrideReason == null || overrideReason.trim().isEmpty) {
@@ -925,6 +952,29 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
             }
           }
 
+          if (!AppValidators.dateValidator(transactionAtUtcMillis).isValid) {
+            throw const DomainValidationException(
+              'invalid_date',
+              'Transaction date is invalid.',
+            );
+          }
+          if (goodQuantity > ValidationLimits.maxQuantity ||
+              damagedQuantity > ValidationLimits.maxQuantity ||
+              lostQuantity > ValidationLimits.maxQuantity ||
+              shortageQuantity > ValidationLimits.maxQuantity) {
+            throw const DomainValidationException(
+              'quantity_too_large',
+              'Settlement quantity exceeds maximum allowed limit.',
+            );
+          }
+          if ((reason?.trim().length ?? 0) > ValidationLimits.maxNotesLength ||
+              (notes?.trim().length ?? 0) > ValidationLimits.maxNotesLength) {
+            throw const DomainValidationException(
+              'text_too_long',
+              'Reason or notes exceed maximum allowed length.',
+            );
+          }
+
           // Validate batch against remaining pending & reason requirement
           final validationErr = _stockCalc.validateSettlementBatch(
             parentIssue: parentIssue,
@@ -1085,6 +1135,26 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
               .findByClientRequestId(reqId);
           if (existingByReq != null) {
             return _mapRow(existingByReq);
+          }
+
+          if (!AppValidators.dateValidator(transactionAtUtcMillis).isValid) {
+            throw const DomainValidationException(
+              'invalid_date',
+              'Transaction date is invalid.',
+            );
+          }
+          if (quantity > ValidationLimits.maxQuantity) {
+            throw const DomainValidationException(
+              'quantity_too_large',
+              'Repair quantity exceeds maximum allowed limit.',
+            );
+          }
+          if (reason.trim().length > ValidationLimits.maxNotesLength ||
+              (notes?.trim().length ?? 0) > ValidationLimits.maxNotesLength) {
+            throw const DomainValidationException(
+              'text_too_long',
+              'Reason or notes exceed maximum allowed length.',
+            );
           }
 
           final colour = await _db.lotDao.findDesignColourById(designColourId);

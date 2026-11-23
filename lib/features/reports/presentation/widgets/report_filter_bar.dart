@@ -1,5 +1,6 @@
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/reports/domain/entities/advanced_report_entities.dart';
 import 'package:business_manager/features/reports/domain/entities/report_filter.dart';
@@ -93,6 +94,7 @@ final class _ReportFilterBarState extends State<ReportFilterBar> {
                   controller: widget.searchController,
                   label: l10n.reportsSearchHint,
                   prefixIcon: Icons.search_rounded,
+                  maxLength: ValidationLimits.maxSearchLength,
                   onChanged: cubit.updateSearchQuery,
                 ),
               ),
@@ -130,6 +132,12 @@ final class _ReportFilterBarState extends State<ReportFilterBar> {
                   child: AppDatePicker(
                     label: l10n.accountingToDateLabel,
                     selectedUtcMillis: filter.toUtcMillis,
+                    errorText: widget.state.dateRangeErrorCode != null
+                        ? ValidationLocalizer.localizeDomainCode(
+                            l10n,
+                            widget.state.dateRangeErrorCode!,
+                          )
+                        : null,
                     onDateSelectedUtcMillis: (utc) => cubit.setCustomDateRange(
                       toUtcMillis: IstDateRangePresets.endOfIstDay(utc),
                     ),

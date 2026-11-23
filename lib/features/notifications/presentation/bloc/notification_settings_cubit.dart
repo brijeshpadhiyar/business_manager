@@ -77,11 +77,26 @@ final class NotificationSettingsCubit extends Cubit<NotificationSettingsState> {
   }
 
   Future<void> updateSettings(NotificationSettings next) async {
-    emit(state.copyWith(settings: next, isSaving: true, clearFeedback: true));
-    await _settingsRepo.saveSettings(next);
+    final sanitized = next.copyWith(
+      pendingWorkDaysThreshold: next.pendingWorkDaysThreshold.clamp(1, 365),
+      pendingWorkHour: next.pendingWorkHour.clamp(0, 23),
+      pendingWorkMinute: next.pendingWorkMinute.clamp(0, 59),
+      workerSettlementMinPaise: next.workerSettlementMinPaise < 0
+          ? 0
+          : next.workerSettlementMinPaise,
+      workerSettlementHour: next.workerSettlementHour.clamp(0, 23),
+      workerSettlementMinute: next.workerSettlementMinute.clamp(0, 59),
+      dailySummaryHour: next.dailySummaryHour.clamp(0, 23),
+      dailySummaryMinute: next.dailySummaryMinute.clamp(0, 59),
+      backupReminderIntervalDays: next.backupReminderIntervalDays.clamp(1, 365),
+    );
+    emit(
+      state.copyWith(settings: sanitized, isSaving: true, clearFeedback: true),
+    );
+    await _settingsRepo.saveSettings(sanitized);
     await _coordinator.refreshIfPermitted(forceReschedule: true);
     if (isClosed) return;
-    emit(state.copyWith(isSaving: false, settings: next));
+    emit(state.copyWith(isSaving: false, settings: sanitized));
   }
 
   Future<bool> sendTestNotification({
