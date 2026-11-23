@@ -12,8 +12,15 @@
 
 import 'package:business_manager/core/config/app_config.dart' as _i516;
 import 'package:business_manager/core/config/app_logger.dart' as _i790;
+import 'package:business_manager/core/database/app_database.dart' as _i177;
+import 'package:business_manager/core/database/database_initializer.dart'
+    as _i934;
+import 'package:business_manager/core/database/database_transaction_runner.dart'
+    as _i665;
 import 'package:business_manager/core/di/register_module.dart' as _i453;
 import 'package:business_manager/core/localization/locale_cubit.dart' as _i588;
+import 'package:business_manager/core/platform/media_storage_service.dart'
+    as _i586;
 import 'package:business_manager/core/theme/theme_cubit.dart' as _i772;
 import 'package:business_manager/core/utils/id_generator.dart' as _i656;
 import 'package:get_it/get_it.dart' as _i174;
@@ -33,6 +40,10 @@ extension GetItInjectableX on _i174.GetIt {
       preResolve: true,
     );
     gh.lazySingleton<_i656.IdGenerator>(() => _i656.IdGenerator());
+    gh.lazySingleton<_i177.AppDatabase>(
+      () => registerModule.appDatabase(gh<_i516.AppConfig>()),
+      dispose: _i453.disposeAppDatabase,
+    );
     gh.lazySingleton<_i790.AppLogger>(
       () => _i790.AppLogger(gh<_i516.AppConfig>()),
     );
@@ -41,6 +52,21 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i772.ThemeCubit>(
       () => _i772.ThemeCubit(gh<_i460.SharedPreferences>()),
+    );
+    gh.lazySingleton<_i586.MediaStorageService>(
+      () => registerModule.mediaStorageService(
+        gh<_i516.AppConfig>(),
+        gh<_i656.IdGenerator>(),
+      ),
+    );
+    gh.lazySingleton<_i665.DatabaseTransactionRunner>(
+      () => _i665.DatabaseTransactionRunner(gh<_i177.AppDatabase>()),
+    );
+    gh.lazySingleton<_i934.DatabaseInitializer>(
+      () => _i934.DatabaseInitializer(
+        gh<_i177.AppDatabase>(),
+        gh<_i790.AppLogger>(),
+      ),
     );
     return this;
   }

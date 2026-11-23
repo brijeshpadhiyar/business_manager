@@ -22,6 +22,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   - Added single-reversal `UNIQUE` partial indexes on `stock_movements`, `labour_entries`, and `payments`, plus `labour_entries.reverses_labour_entry_id`, `members.address`, `payments.reason`, and uniform `created_by`/`updated_by` audit columns in `docs/07_database_schema.md`.
   - Updated `docs/05_system_architecture.md` settlement flow to read + validate + insert inside a single atomic Drift transaction (eliminating TOCTOU race risk).
   - Clarified reversed-labour active-row filtering (`docs/10_labour_calculation_rules.md`), native `image_picker` compression (`docs/04_technology_stack.md`, `docs/13_offline_storage_strategy.md`), Web WASM byte export vs native `VACUUM INTO` (`docs/14_backup_restore_strategy.md`), and added Test #27 (`docs/20_testing_strategy.md`).
+- **Milestone 3 — Offline Database Core (Drift + SQLite) (`docs/27_MILESTONE_3_IMPLEMENTATION_REPORT.md`)**:
+  - Implemented all 13 documented Drift tables, 20 SQLite indexes/partial unique constraints (active uniqueness, single-reversal guards, labour idempotency, `client_request_id` idempotency), and `CHECK` constraints.
+  - Implemented 7 persistence-only DAOs (with strictly append-only `StockMovementDao`, `LabourEntryDao`, `PaymentDao`, and `AuditLogs`), `AppDatabase`, `DatabaseInitializer`, `DatabaseTransactionRunner`, and `DatabaseMigrationManager` (seeding default `business_profile`).
+  - Verified effective SQLite PRAGMAs (`foreign_keys = ON`, `journal_mode = WAL`, `synchronous = FULL`, `busy_timeout = 5000`) and implemented private flavor-isolated `NativeMediaStorageService` with SHA-256 checksums and path-traversal protection.
+  - Added 12 database/rollback/persistence/migration/media tests (`30/30` passing, `flutter analyze` 0 issues, Android `dev` APK built).
 - **Milestone 2 — Material 3 Design System & Common Widget Library (`docs/26_MILESTONE_2_IMPLEMENTATION_REPORT.md`)**:
   - Implemented centralized Material 3 tokens (`AppColors`, `AppSemanticColors`, `AppSpacing`, `AppSizing`, `AppRadius`, `AppElevation`, `AppBreakpoints`, `AppTypography`, `AppTheme.light()` / `AppTheme.dark()`) built on `material_ui: ^1.11.1`.
   - Implemented persistent `ThemeCubit` (`System`, `Light`, `Dark`) saved in `SharedPreferences` and wired reactively in `lib/app.dart`.
