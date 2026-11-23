@@ -4,9 +4,9 @@ import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:drift/drift.dart';
 
 /// Coordinates initial schema creation, default singleton seeding, and
-/// step-by-step schema upgrades (`v1 -> v2 -> ...`).
+/// step-by-step schema upgrades (`v1 -> v2 -> v3`).
 abstract final class DatabaseMigrationManager {
-  static const int currentSchemaVersion = 2;
+  static const int currentSchemaVersion = 3;
   static const String defaultBusinessProfileId = 'default';
 
   static Future<void> handleOnCreate(Migrator m, AppDatabase db) async {

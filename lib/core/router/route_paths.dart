@@ -45,10 +45,18 @@ abstract final class RoutePaths {
   static const String settingsAppearance = '/settings/appearance';
   static const String settingsBusinessProfile = '/settings/business-profile';
   static const String settingsStockLabour = '/settings/stock-labour';
+  static const String settingsSecurity = '/settings/security';
+  static const String settingsSecurityPinSetup = '/settings/security/pin-setup';
+  static const String settingsSecurityPinChange =
+      '/settings/security/pin-change';
+  static const String settingsNotifications = '/settings/notifications';
   static const String settingsBackup = '/settings/backup';
   static const String settingsHelp = '/settings/help';
   static const String settingsHelpTopicPattern = '/settings/help/:topicId';
   static const String settingsAbout = '/settings/about';
+
+  // V1.2 — Daily Production Summary
+  static const String dailySummary = '/daily-summary';
 
   static String lotDetail(String lotId) => '/lots/$lotId';
   static String processDetail(String processId) => '/processes/$processId';
@@ -72,10 +80,36 @@ abstract final class RoutePaths {
   static String workerRateEdit(String workerId, String rateId) =>
       '/workers/$workerId/rates/$rateId/edit';
 
-  static String stockIssue({String? designColourId}) {
-    return designColourId != null
-        ? '$stockIssuePath?designColourId=$designColourId'
-        : stockIssuePath;
+  static String stockIssue({
+    String? designColourId,
+    String? processId,
+    String? workerId,
+  }) {
+    final params = <String, String>{};
+    if (designColourId != null) params['designColourId'] = designColourId;
+    if (processId != null) params['processId'] = processId;
+    if (workerId != null) params['workerId'] = workerId;
+    if (params.isEmpty) return stockIssuePath;
+    final qs = params.entries
+        .map((e) => '${e.key}=${Uri.encodeQueryComponent(e.value)}')
+        .join('&');
+    return '$stockIssuePath?$qs';
+  }
+
+  static String stockReturnPickerFiltered({
+    String? workerId,
+    String? processId,
+    String? lotId,
+  }) {
+    final params = <String, String>{};
+    if (workerId != null) params['workerId'] = workerId;
+    if (processId != null) params['processId'] = processId;
+    if (lotId != null) params['lotId'] = lotId;
+    if (params.isEmpty) return stockReturnPicker;
+    final qs = params.entries
+        .map((e) => '${e.key}=${Uri.encodeQueryComponent(e.value)}')
+        .join('&');
+    return '$stockReturnPicker?$qs';
   }
 
   static String stockReturn(String issueId) => '/stock/return/$issueId';

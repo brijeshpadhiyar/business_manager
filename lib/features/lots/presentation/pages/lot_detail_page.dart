@@ -9,6 +9,7 @@ import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
 import 'package:business_manager/features/lots/presentation/bloc/lot_detail_cubit.dart';
+import 'package:business_manager/features/security/presentation/bloc/app_lock_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -39,11 +40,13 @@ final class _LotDetailView extends StatelessWidget {
   ) async {
     final cubit = context.read<LotDetailCubit>();
     final picker = ImagePicker();
-    final picked = await picker.pickImage(
-      source: source,
-      maxWidth: 1600,
-      maxHeight: 1600,
-      imageQuality: 80,
+    final picked = await getIt<AppLockCubit>().runWithSystemPicker(
+      () => picker.pickImage(
+        source: source,
+        maxWidth: 1600,
+        maxHeight: 1600,
+        imageQuality: 80,
+      ),
     );
     if (picked == null) return;
     final bytes = await picked.readAsBytes();

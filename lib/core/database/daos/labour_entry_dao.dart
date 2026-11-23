@@ -41,4 +41,28 @@ class LabourEntryDao extends DatabaseAccessor<AppDatabase>
       labourEntries,
     )..where((t) => t.stockMovementId.equals(stockMovementId))).get();
   }
+
+  /// Bounded read-only date-range query accelerated by `idx_labour_tx_payable`.
+  Future<List<LabourEntryRow>> getEntriesInRange({
+    int? fromUtcMillis,
+    int? toUtcMillis,
+  }) {
+    final query = select(labourEntries);
+    if (fromUtcMillis != null && toUtcMillis != null) {
+      query.where(
+        (t) =>
+            t.transactionAt.isBiggerOrEqualValue(fromUtcMillis) &
+            t.transactionAt.isSmallerOrEqualValue(toUtcMillis),
+      );
+    } else if (fromUtcMillis != null) {
+      query.where((t) => t.transactionAt.isBiggerOrEqualValue(fromUtcMillis));
+    } else if (toUtcMillis != null) {
+      query.where((t) => t.transactionAt.isSmallerOrEqualValue(toUtcMillis));
+    }
+    query.orderBy([
+      (t) => OrderingTerm.desc(t.transactionAt),
+      (t) => OrderingTerm.desc(t.recordedAt),
+    ]);
+    return query.get();
+  }
 }

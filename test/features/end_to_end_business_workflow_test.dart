@@ -13,6 +13,11 @@ import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/features/accounting/data/repositories/accounting_repository_impl.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:business_manager/features/backup/data/services/native_backup_restore_service.dart';
+import 'package:business_manager/features/notifications/domain/calculators/notification_plan_calculator.dart';
+import 'package:business_manager/features/notifications/domain/entities/notification_entities.dart';
+import 'package:business_manager/features/reports/domain/entities/report_filter.dart';
+import 'package:business_manager/features/security/data/repositories/secure_storage_security_repository.dart';
+import 'package:business_manager/features/security/domain/services/pin_hasher.dart';
 import 'package:business_manager/features/lots/data/repositories/lot_repository_impl.dart';
 import 'package:business_manager/features/processes/data/repositories/process_repository_impl.dart';
 import 'package:business_manager/features/processes/domain/entities/process_entities.dart';
@@ -297,6 +302,46 @@ void main() {
     expect(reports.damagedLostShortageMovements.length, 3);
     expect(reports.payments.length, 2);
 
+    // V1.2 Advanced Reports & Insights parity check
+    final advReports = await reportsRepo.getAdvancedReports(
+      const ReportFilter(preset: ReportDatePreset.allTime),
+    );
+    expect(advReports.inventory.availableGoodStock, 17);
+    expect(advReports.inventory.damagedBucket, 1);
+    expect(advReports.inventory.pendingWithWorkers, 80);
+    expect(advReports.financial.totalCurrentOutstandingPayablePaise, 50000);
+    expect(advReports.insights.bottlenecks.length, 1);
+    expect(advReports.insights.bottlenecks.first.processName, 'Stitching');
+
+    // V1.2 Local Notification plan sync check
+    const notifCalc = NotificationPlanCalculator();
+    final notifPlan = notifCalc.computePlan(
+      settings: const NotificationSettings(),
+      nowUtcMillis: dec05Ist + 5 * 86400000,
+      localeCode: 'en',
+      isAppLockEnabled: true,
+      openIssues: advReports.inventory.openIssues,
+      workerFinancials: advReports.financial.workerSummaries,
+      hasActivityToday: false,
+      todayIssuedQty: 0,
+      todayReturnedGoodQty: 0,
+      totalDamagedQty: advReports.inventory.damagedBucket,
+      lastBackupExportUtcMillis: null,
+    );
+    expect(notifPlan.planned.any((n) => n.id == 1001), isTrue);
+    expect(notifPlan.planned.any((n) => n.id == 1002), isTrue);
+
+    // Enable local PIN prior to backup & restore -> verify PIN survives restore!
+    final secRepo = SecureStorageSecurityRepository(
+      config,
+      db,
+      idGen,
+      hasherOverride: const PinHasher(iterations: 1000),
+      runHashInIsolate: false,
+    );
+    await secRepo.setupPin(pin: '2468', recoveryKey: 'WXYZ-2345');
+    expect((await secRepo.loadSettings()).pinEnabled, isTrue);
+
     // 16. Export Raw SQLite + Full ZIP Backup
     final rawExport = await backupSvc.exportRawSqlite(
       destinationDirectoryPath: tempDir.path,
@@ -386,6 +431,15 @@ void main() {
     // BACKUP_RESTORE audit log present!
     final auditLogs = await db.attachmentAuditDao.getRecentAuditLogs(limit: 5);
     expect(auditLogs.any((a) => a.actionType == 'BACKUP_RESTORE'), isTrue);
+
+    // Active PIN in secure storage is strictly preserved across SQLite restore
+    // and is never stored inside SQLite or exported backup ZIPs!
+    expect((await secRepo.loadSettings()).pinEnabled, isTrue);
+    final pinVerify = await secRepo.verifyPin(
+      '2468',
+      nowUtcMillis: dec05Ist + 10000,
+    );
+    expect(pinVerify.success, isTrue);
 
     await db.close();
   });

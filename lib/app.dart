@@ -7,6 +7,9 @@ import 'package:business_manager/core/localization/locale_state.dart';
 import 'package:business_manager/core/router/app_router.dart';
 import 'package:business_manager/core/theme/theme_cubit.dart';
 import 'package:business_manager/core/theme/theme_state.dart';
+import 'package:business_manager/features/security/domain/entities/security_entities.dart';
+import 'package:business_manager/features/security/presentation/bloc/app_lock_cubit.dart';
+import 'package:business_manager/features/security/presentation/widgets/app_lock_gate.dart';
 import 'package:business_manager/l10n/generated/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -29,6 +32,10 @@ final class _BusinessManagerAppState extends State<BusinessManagerApp> {
     super.initState();
     _router = createAppRouter(widget.config);
     AppSessionController.instance.addListener(_onSessionReloaded);
+    final lockCubit = getIt<AppLockCubit>();
+    if (lockCubit.state.status == AppLockStatus.initializing) {
+      lockCubit.initialize();
+    }
   }
 
   void _onSessionReloaded() {
@@ -56,6 +63,7 @@ final class _BusinessManagerAppState extends State<BusinessManagerApp> {
         providers: [
           BlocProvider<LocaleCubit>.value(value: getIt<LocaleCubit>()),
           BlocProvider<ThemeCubit>.value(value: getIt<ThemeCubit>()),
+          BlocProvider<AppLockCubit>.value(value: getIt<AppLockCubit>()),
         ],
         child: BlocBuilder<LocaleCubit, LocaleState>(
           builder: (context, localeState) {
@@ -79,6 +87,10 @@ final class _BusinessManagerAppState extends State<BusinessManagerApp> {
                   theme: AppTheme.light(),
                   darkTheme: AppTheme.dark(),
                   routerConfig: _router,
+                  builder: (context, child) => AppLockGate(
+                    onNavigateDeepLink: (routePath) => _router.push(routePath),
+                    child: child ?? const SizedBox.shrink(),
+                  ),
                 );
               },
             );

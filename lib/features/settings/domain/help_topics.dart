@@ -60,7 +60,7 @@ final class HelpTopic {
   }
 }
 
-/// Complete 15-topic practical garment workshop guidance catalog in English & Gujarati.
+/// Complete 19-topic practical garment workshop guidance catalog in English & Gujarati.
 abstract final class StitchFlowHelpCatalog {
   static const List<HelpTopic> topics = <HelpTopic>[
     HelpTopic(
@@ -446,6 +446,107 @@ abstract final class StitchFlowHelpCatalog {
       ],
       exampleEn: 'Every Saturday evening: Create Full Backup (.zip) -> Share to workshop Drive folder -> Peace of mind if phone is lost.',
       exampleGu: 'દર શનિવારે સાંજે: સંપૂર્ણ બેકઅપ (.zip) બનાવો -> સુરક્ષિત ફોલ્ડરમાં સાચવો -> ફોન બગડે તો પણ બધો હિસાબ સલામત.',
+    ),
+    HelpTopic(
+      id: 'app-pin-and-biometrics',
+      order: 16,
+      icon: Icons.lock_outline_rounded,
+      titleEn: 'App PIN & Fingerprint Unlock',
+      titleGu: 'એપ પિન અને ફિંગરપ્રિન્ટ લોક',
+      summaryEn: 'Protect workshop stock, rates, and karigar accounts with an optional local 4- or 6-digit PIN and fingerprint unlock.',
+      summaryGu: 'કારખાનાનો સ્ટોક, ભાવ અને કારીગર હિસાબ સુરક્ષિત રાખવા માટે વૈકલ્પિક ૪ કે ૬ અંકનો ઓફલાઇન PIN અને ફિંગરપ્રિન્ટ લોક સેટ કરો.',
+      whenToUseEn: 'When multiple family members or helpers may occasionally pick up your phone.',
+      whenToUseGu: 'જ્યારે ઘરના સભ્યો કે અન્ય વ્યક્તિ ક્યારેક તમારો ફોન હાથમાં લેતા હોય ત્યારે.',
+      stepsEn: [
+        'Open Settings -> Security & App Lock and tap Enable App PIN.',
+        'Choose a 4-digit (fast) or 6-digit numeric PIN and confirm it.',
+        'Write down the 8-character offline Recovery Key on paper in your workshop diary, tick the confirmation box, and tap Activate App Lock.',
+        'Optionally turn on Fingerprint / Biometric Unlock, choose your Auto-Lock Timeout (Immediate, 30s, 1m, 5m, 15m), and keep Screenshot & Recent Apps Protection ON.',
+      ],
+      stepsGu: [
+        'સેટિંગ્સ -> સુરક્ષા અને એપ લોક ખોલી "App PIN ચાલુ કરો" પર ટેપ કરો.',
+        '૪-અંકનો (ઝડપી) અથવા ૬-અંકનો PIN પસંદ કરો અને ફરીથી દાખલ કરીને ખાતરી કરો.',
+        '૮-અક્ષરની ઓફલાઇન રિકવરી કી તમારી વર્કશોપ ડાયરીમાં લખી લો, ચેકબોક્સ ટિક કરો અને "એપ લોક ચાલુ કરો" ટેપ કરો.',
+        'જરૂર મુજબ ફિંગરપ્રિન્ટ અનલોક, ઓટો-લોક સમય અને સ્ક્રીનશોટ સુરક્ષા ચાલુ રાખો.',
+      ],
+      exampleEn: 'Set 1-minute Auto-Lock + Fingerprint Unlock -> Tap the Lock icon in Dashboard top bar whenever handing your phone to someone.',
+      exampleGu: '૧ મિનિટ ઓટો-લોક + ફિંગરપ્રિન્ટ ચાલુ રાખો -> કોઈને ફોન આપતા પહેલાં ડેશબોર્ડ ઉપરના લોક આઇકન પર ટેપ કરો.',
+    ),
+    HelpTopic(
+      id: 'pin-recovery-and-lock-safety',
+      order: 17,
+      icon: Icons.vpn_key_outlined,
+      titleEn: 'Recovery Key & App Lock Safety',
+      titleGu: 'રિકવરી કી અને લોક સુરક્ષા',
+      summaryEn: 'Reset a forgotten PIN offline using your written Recovery Key and understand what App Lock protects.',
+      summaryGu: 'ભૂલાઈ ગયેલ PIN તમારી લખેલી રિકવરી કી વડે ઓફલાઇન રીસેટ કરો અને સુરક્ષા મર્યાદાઓ સમજો.',
+      whenToUseEn: 'If you forget your App PIN, want a fresh Recovery Key, or need to restore a backup safely.',
+      whenToUseGu: 'જો તમે App PIN ભૂલી જાઓ, નવી રિકવરી કી બનાવવી હોય અથવા સુરક્ષિત બેકઅપ રિસ્ટોર કરવો હોય.',
+      stepsEn: [
+        'On the Lock Screen, tap Forgot PIN? and enter your 8-character Recovery Key.',
+        'Create and confirm a new PIN, then write down the newly generated Recovery Key.',
+        'Note: App PIN protects against casual phone access and protects Backup Restore & Raw SQLite export with re-authentication.',
+        'App PIN does not encrypt the local SQLite file on disk — always keep Android screen lock enabled and store backup ZIPs safely.',
+      ],
+      stepsGu: [
+        'લોક સ્ક્રીન પર "PIN ભૂલી ગયા?" ટેપ કરો અને તમારી ૮-અક્ષરની રિકવરી કી દાખલ કરો.',
+        'નવો PIN બનાવો અને નવી બનેલી રિકવરી કી ડાયરીમાં લખી લો.',
+        'નોંધ: App PIN ફોન પર અનધિકૃત ઉપયોગ અટકાવે છે અને બેકઅપ રિસ્ટોર કે SQLite એક્સપોર્ટ પહેલાં ચકાસણી માંગે છે.',
+        'App PIN ફોનની ડિસ્ક પર SQLite ફાઇલને એન્ક્રિપ્ટ કરતું નથી — હંમેશા ફોનનો સ્ક્રીન લોક ચાલુ રાખો.',
+      ],
+      exampleEn: 'Forgot PIN? Tap Forgot PIN? -> Enter ABCD-2345 from workshop diary -> Set a fresh PIN without losing any lots or worker balances.',
+      exampleGu: 'PIN ભૂલી ગયા? "PIN ભૂલી ગયા?" ટેપ કરો -> ડાયરીમાંથી રિકવરી કી નાખો -> કોઈપણ ડેટા ગુમાવ્યા વિના નવો PIN સેટ કરો.',
+    ),
+    HelpTopic(
+      id: 'advanced-reports-and-export',
+      order: 18,
+      icon: Icons.ios_share_rounded,
+      titleEn: 'Advanced Reports, PDF & Excel Export',
+      titleGu: 'એડવાન્સ રિપોર્ટ્સ, PDF અને એક્સેલ એક્સપોર્ટ',
+      summaryEn: 'Filter 6 unified report categories by IST dates, worker, process, or lot, and export Gujarati-safe PDF, Excel (.xlsx), or CSV.',
+      summaryGu: '૬ રિપોર્ટ વિભાગોને તારીખ, કારીગર, પ્રક્રિયા કે લોટ મુજબ ફિલ્ટર કરો અને ગુજરાતીમાં PDF, Excel (.xlsx) કે CSV એક્સપોર્ટ કરો.',
+      whenToUseEn: 'For weekly worker settlements, monthly workshop reviews, or sharing reports with your accountant/partner.',
+      whenToUseGu: 'સાપ્તાહિક હિસાબ, માસિક સમીક્ષા અથવા એકાઉન્ટન્ટ/ભાગીદાર સાથે રિપોર્ટ શેર કરવા માટે.',
+      stepsEn: [
+        'Open Reports and tap any IST Date Preset (Today, Yesterday, This Week, This Month, Prev. Month, All Time).',
+        'Tap Filters to narrow by Worker, Process, Lot, Design, or Colour.',
+        'Switch across the 6 categories: Daily Workshop, Worker Performance, Process Performance, Inventory, Labour & Financial, and Business Insights.',
+        'Tap the Export / Print icon in the top bar to Print / Save as PDF (with full Gujarati font support), share an Excel (.xlsx) workbook, or export UTF-8 CSV.',
+      ],
+      stepsGu: [
+        'રિપોર્ટ્સ ખોલો અને સમયગાળો પસંદ કરો (આજે, ગઈકાલે, આ અઠવાડિયું, આ મહિનો, ગયા મહિના, બધો સમય).',
+        'કારીગર, પ્રક્રિયા, લોટ, ડિઝાઇન કે રંગ મુજબ ફિલ્ટર કરવા માટે "ફિલ્ટર" પર ટેપ કરો.',
+        '૬ વિભાગો જુઓ: દૈનિક વર્કશોપ, કારીગર કામગીરી, પ્રક્રિયા કામગીરી, સ્ટોક/ઇન્વેન્ટરી, મજૂરી અને હિસાબ, અને વ્યવસાયિક વિશ્લેષણ.',
+        'ઉપરના "એક્સપોર્ટ / પ્રિન્ટ" બટન પર ટેપ કરીને ગુજરાતી ફોન્ટ સાથે PDF સેવ કરો, Excel (.xlsx) શેર કરો અથવા CSV બનાવો.',
+      ],
+      exampleEn: 'Select "This Month" -> Open "Business Insights" to inspect Process Bottlenecks -> Tap Export / Print -> Full Excel Workbook (.xlsx).',
+      exampleGu: '"આ મહિનો" પસંદ કરો -> "વ્યવસાયિક વિશ્લેષણ" માં બાકી અવરોધો જુઓ -> "એક્સપોર્ટ / પ્રિન્ટ" -> સંપૂર્ણ એક્સેલ વર્કબુક (.xlsx).',
+    ),
+    HelpTopic(
+      id: 'local-reminders-notifications',
+      order: 19,
+      icon: Icons.notifications_outlined,
+      titleEn: 'Local Reminders & Android Battery Settings',
+      titleGu: 'ઓફલાઇન યાદ અપાવણી અને બેટરી સેટિંગ્સ',
+      summaryEn: 'Configure 100% offline Android reminders for pending returns, weekly settlements, evening recap, and backups.',
+      summaryGu: 'બાકી કામ, સાપ્તાહિક હિસાબ, સાંજના સારાંશ અને બેકઅપ માટે ૧૦૦% ઓફલાઇન એન્ડ્રોઇડ યાદ અપાવણી સેટ કરો.',
+      whenToUseEn: 'To receive timely local workshop reminders without internet or Firebase.',
+      whenToUseGu:
+          'ઇન્ટરનેટ કે ફાયરબેઝ વિના સમયસર વર્કશોપની યાદ અપાવણી મેળવવા માટે.',
+      stepsEn: [
+        'Open Settings -> Notifications & Reminders and tap Allow Notifications.',
+        'Customize thresholds and IST times for Pending Work, Worker Settlement, Daily Summary, Backup Reminder, and Important Alerts.',
+        'Reminders cancel automatically as soon as pending work or worker balances are cleared.',
+        'On OPPO (ColorOS), Xiaomi, Vivo, or Samsung phones, if reminders arrive late after a reboot, open Android Phone Settings -> Apps -> StitchFlow -> Battery and allow background activity.',
+      ],
+      stepsGu: [
+        'સેટિંગ્સ -> નોટિફિકેશન અને યાદ અપાવણી ખોલી "નોટિફિકેશન ચાલુ કરો" પર ટેપ કરો.',
+        'બાકી કામ, કારીગર હિસાબ, દૈનિક સારાંશ, બેકઅપ અને ચેતવણી માટે સમય અને મર્યાદા પસંદ કરો.',
+        'જેવું બાકી કામ કે હિસાબ પૂર્ણ થાય, તે યાદ અપાવણી આપમેળે રદ થઈ જાય છે.',
+        'OPPO (ColorOS), Xiaomi, Vivo અથવા Samsung ફોનમાં રીસ્ટાર્ટ પછી નોટિફિકેશન મોડા આવે તો Phone Settings -> Apps -> StitchFlow -> Battery માં બેકગ્રાઉન્ડ પ્રવૃત્તિ ચાલુ કરો.',
+      ],
+      exampleEn: 'Set Pending Work reminder to 3 days @ 10:00 AM IST -> If all karigar returns are settled before 10:00 AM, StitchFlow cancels the alert automatically.',
+      exampleGu: 'બાકી કામની યાદ અપાવણી ૩ દિવસ / સવારે ૧૦:૦૦ વાગ્યે સેટ કરો -> ૧૦ વાગ્યા પહેલાં બધો માલ પરત આવી જાય તો એલર્ટ આપમેળે રદ થશે.',
     ),
   ];
 

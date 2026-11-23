@@ -13,6 +13,8 @@ import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/accounting/domain/calculators/labour_calculator.dart';
 import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
+import 'package:business_manager/features/processes/domain/entities/process_entities.dart';
+import 'package:business_manager/features/processes/domain/repositories/process_repository.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 import 'package:business_manager/features/stock_movements/domain/repositories/stock_movement_repository.dart';
 import 'package:flutter/services.dart';
@@ -40,12 +42,14 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
   final _notesCtrl = TextEditingController();
 
   final _repo = getIt<StockMovementRepository>();
+  final _processRepo = getIt<ProcessRepository>();
   final _idGen = getIt<IdGenerator>();
   static const LabourCalculator _labourCalc = LabourCalculator();
 
   late String _clientRequestId;
 
   OpenIssueSummary? _detail;
+  List<ProcessEntity> _otherActiveProcesses = const [];
   bool _loading = true;
   bool _saving = false;
   bool _showAdvanced = false;
@@ -80,7 +84,12 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
       _loadError = null;
     });
     try {
-      final detail = await _repo.getIssueDetail(widget.issueId);
+      final results = await Future.wait([
+        _repo.getIssueDetail(widget.issueId),
+        _processRepo.getProcesses(isActiveFilter: true),
+      ]);
+      final detail = results[0] as OpenIssueSummary?;
+      final activeProcs = results[1] as List<ProcessEntity>;
       if (!mounted) return;
       if (detail == null) {
         setState(() {
@@ -89,8 +98,12 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
         });
         return;
       }
+      final currentProcId = detail.issueView.movement.processId;
       setState(() {
         _detail = detail;
+        _otherActiveProcesses = activeProcs
+            .where((p) => p.id != currentProcId)
+            .toList();
         _goodCtrl.text = detail.remainingPending > 0
             ? '${detail.remainingPending}'
             : '';
@@ -119,6 +132,14 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
       _damagedCtrl.text = '0';
       _lostCtrl.text = '0';
       _shortageCtrl.text = '0';
+      _submitError = null;
+    });
+  }
+
+  void _setGoodQtyClamped(int target, int maxGood) {
+    final clamped = target.clamp(0, maxGood);
+    setState(() {
+      _goodCtrl.text = '$clamped';
       _submitError = null;
     });
   }
@@ -447,19 +468,69 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.md),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: ActionChip(
-                        avatar: Icon(
-                          Icons.done_all_rounded,
-                          size: 16,
-                          color: semantic.goodStock,
+                    Wrap(
+                      spacing: AppSpacing.xs,
+                      runSpacing: AppSpacing.xs,
+                      children: [
+                        ActionChip(
+                          avatar: Icon(
+                            Icons.done_all_rounded,
+                            size: 16,
+                            color: semantic.goodStock,
+                          ),
+                          label: Text(
+                            '${l10n.stockFillAllRemaining} (${detail.remainingPending})',
+                          ),
+                          onPressed: () =>
+                              _fillAllGood(detail.remainingPending),
                         ),
-                        label: Text(
-                          '${l10n.stockFillAllRemaining} (${detail.remainingPending})',
-                        ),
-                        onPressed: () => _fillAllGood(detail.remainingPending),
-                      ),
+                        if (detail.remainingPending >= 4)
+                          ActionChip(
+                            label: Text(
+                              '${l10n.stockShortcutHalf} (${detail.remainingPending ~/ 2})',
+                            ),
+                            onPressed: () => _setGoodQtyClamped(
+                              detail.remainingPending ~/ 2,
+                              detail.remainingPending -
+                                  (damaged + lost + shortage),
+                            ),
+                          ),
+                        if (detail.remainingPending >= 10)
+                          ActionChip(
+                            label: const Text('+10'),
+                            onPressed: () => _setGoodQtyClamped(
+                              good + 10,
+                              detail.remainingPending -
+                                  (damaged + lost + shortage),
+                            ),
+                          ),
+                        if (detail.remainingPending >= 25)
+                          ActionChip(
+                            label: const Text('+25'),
+                            onPressed: () => _setGoodQtyClamped(
+                              good + 25,
+                              detail.remainingPending -
+                                  (damaged + lost + shortage),
+                            ),
+                          ),
+                        if ((damaged + lost + shortage) > 0 &&
+                            remainingAfter > 0)
+                          ActionChip(
+                            avatar: Icon(
+                              Icons.auto_fix_high_rounded,
+                              size: 16,
+                              color: semantic.goodStock,
+                            ),
+                            label: Text(
+                              '${l10n.stockFillRemainingGood} (${detail.remainingPending - (damaged + lost + shortage)})',
+                            ),
+                            onPressed: () => _setGoodQtyClamped(
+                              detail.remainingPending -
+                                  (damaged + lost + shortage),
+                              detail.remainingPending,
+                            ),
+                          ),
+                      ],
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     // Good Returned (Primary Green)
@@ -856,6 +927,27 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                       ),
                     ),
                   ),
+                  if (_otherActiveProcesses.isNotEmpty) ...[
+                    const SizedBox(height: AppSpacing.sm),
+                    Wrap(
+                      alignment: WrapAlignment.center,
+                      spacing: AppSpacing.xs,
+                      runSpacing: AppSpacing.xs,
+                      children: [
+                        for (final proc in _otherActiveProcesses.take(4))
+                          ActionChip(
+                            avatar: const Icon(Icons.outbox_rounded, size: 16),
+                            label: Text(proc.name),
+                            onPressed: () => context.pushReplacement(
+                              RoutePaths.stockIssue(
+                                designColourId: info.designColourId,
+                                processId: proc.id,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
                   const SizedBox(height: AppSpacing.sm),
                 ],
                 AppButton(

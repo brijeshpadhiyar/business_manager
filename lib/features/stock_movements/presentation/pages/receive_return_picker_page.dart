@@ -5,16 +5,27 @@ import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
+import 'package:business_manager/features/reports/domain/calculators/workshop_daily_calculator.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 import 'package:business_manager/features/stock_movements/domain/repositories/stock_movement_repository.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Step 1 of Receive Return workflow: searchable & filterable Pending Issues
-/// selector showing Worker, Process, Lot/Design/Colour, Issued, Returned,
-/// Remaining Pending, and Issue Date.
+enum _PendingSortMode { oldestFirst, highestPending, newestFirst }
+
+/// Step 1 of Receive Return workflow: searchable, sortable & filterable Pending
+/// Issues selector defaulting to Oldest First with IST pending-age badges.
 final class ReceiveReturnPickerPage extends StatefulWidget {
-  const ReceiveReturnPickerPage({super.key});
+  const ReceiveReturnPickerPage({
+    super.key,
+    this.initialWorkerId,
+    this.initialProcessId,
+    this.initialLotId,
+  });
+
+  final String? initialWorkerId;
+  final String? initialProcessId;
+  final String? initialLotId;
 
   @override
   State<ReceiveReturnPickerPage> createState() =>
@@ -29,6 +40,7 @@ final class _ReceiveReturnPickerPageState
   List<OpenIssueSummary> _issues = const [];
   String? _workerFilter;
   String? _processFilter;
+  _PendingSortMode _sortMode = _PendingSortMode.oldestFirst;
   bool _loading = true;
   String? _error;
 
@@ -50,7 +62,11 @@ final class _ReceiveReturnPickerPageState
       _error = null;
     });
     try {
-      final issues = await _repo.getOpenIssues();
+      final issues = await _repo.getOpenIssues(
+        workerId: widget.initialWorkerId,
+        processId: widget.initialProcessId,
+        lotId: widget.initialLotId,
+      );
       if (!mounted) return;
       setState(() {
         _issues = issues;
@@ -113,6 +129,22 @@ final class _ReceiveReturnPickerPageState
       return hay.contains(query);
     }).toList();
 
+    filtered.sort((a, b) {
+      return switch (_sortMode) {
+        _PendingSortMode.oldestFirst =>
+          a.issueView.movement.transactionAt.compareTo(
+            b.issueView.movement.transactionAt,
+          ),
+        _PendingSortMode.highestPending => b.remainingPending.compareTo(
+          a.remainingPending,
+        ),
+        _PendingSortMode.newestFirst =>
+          b.issueView.movement.transactionAt.compareTo(
+            a.issueView.movement.transactionAt,
+          ),
+      };
+    });
+
     return AppScaffold(
       title: l10n.stockReceiveReturnHeading,
       actions: [
@@ -147,6 +179,37 @@ final class _ReceiveReturnPickerPageState
                   label: l10n.stockSearchHint,
                   prefixIcon: Icons.search_rounded,
                   onChanged: (_) => setState(() {}),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      ChoiceChip(
+                        label: Text(l10n.stockSortOldestFirst),
+                        selected: _sortMode == _PendingSortMode.oldestFirst,
+                        onSelected: (_) => setState(
+                          () => _sortMode = _PendingSortMode.oldestFirst,
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.xs),
+                      ChoiceChip(
+                        label: Text(l10n.stockSortHighestPending),
+                        selected: _sortMode == _PendingSortMode.highestPending,
+                        onSelected: (_) => setState(
+                          () => _sortMode = _PendingSortMode.highestPending,
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.xs),
+                      ChoiceChip(
+                        label: Text(l10n.stockSortNewestFirst),
+                        selected: _sortMode == _PendingSortMode.newestFirst,
+                        onSelected: (_) => setState(
+                          () => _sortMode = _PendingSortMode.newestFirst,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 if (workerNames.length > 1) ...[
                   const SizedBox(height: AppSpacing.sm),
@@ -259,6 +322,16 @@ final class _PendingIssueSelectionCard extends StatelessWidget {
         view.returnedDamagedQty +
         view.lostQty +
         view.shortageQty;
+    final ageDays = WorkshopDailyCalculator.pendingAgeDays(
+      m.transactionAt,
+      IstDateTimeHelper.nowUtcMillis(),
+    );
+    final ageLabel = ageDays == 0
+        ? l10n.reportPresetToday
+        : l10n.pendingAgeDaysBadge(ageDays);
+    final ageTone = ageDays >= 7
+        ? AppStatusTone.damaged
+        : (ageDays >= 3 ? AppStatusTone.pending : AppStatusTone.info);
 
     return AppCard(
       onTap: onSelect,
@@ -286,11 +359,18 @@ final class _PendingIssueSelectionCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: AppSpacing.sm),
-              AppStatusBadge(
-                label:
-                    '${l10n.stockRemainingPendingLabel}: ${item.remainingPending} ${l10n.piecesUnit}',
-                tone: AppStatusTone.pending,
-                icon: Icons.hourglass_bottom_rounded,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  AppStatusBadge(
+                    label:
+                        '${l10n.stockRemainingPendingLabel}: ${item.remainingPending} ${l10n.piecesUnit}',
+                    tone: AppStatusTone.pending,
+                    icon: Icons.hourglass_bottom_rounded,
+                  ),
+                  const SizedBox(height: 4),
+                  AppStatusBadge(label: ageLabel, tone: ageTone),
+                ],
               ),
             ],
           ),

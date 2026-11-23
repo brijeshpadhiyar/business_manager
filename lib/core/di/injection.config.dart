@@ -55,6 +55,16 @@ import 'package:business_manager/features/lots/presentation/bloc/lot_detail_cubi
     as _i309;
 import 'package:business_manager/features/lots/presentation/bloc/lot_list_cubit.dart'
     as _i548;
+import 'package:business_manager/features/notifications/data/repositories/notification_settings_repository.dart'
+    as _i837;
+import 'package:business_manager/features/notifications/data/services/flutter_local_notifications_adapter.dart'
+    as _i925;
+import 'package:business_manager/features/notifications/data/services/notification_refresh_coordinator.dart'
+    as _i754;
+import 'package:business_manager/features/notifications/domain/services/local_notification_service.dart'
+    as _i105;
+import 'package:business_manager/features/notifications/presentation/bloc/notification_settings_cubit.dart'
+    as _i245;
 import 'package:business_manager/features/processes/data/repositories/process_repository_impl.dart'
     as _i658;
 import 'package:business_manager/features/processes/domain/repositories/process_repository.dart'
@@ -71,10 +81,28 @@ import 'package:business_manager/features/rates/presentation/bloc/rate_history_c
     as _i576;
 import 'package:business_manager/features/reports/data/repositories/reports_repository_impl.dart'
     as _i546;
+import 'package:business_manager/features/reports/data/services/android_report_print_channel.dart'
+    as _i17;
+import 'package:business_manager/features/reports/data/services/excel_csv_export_service.dart'
+    as _i335;
 import 'package:business_manager/features/reports/domain/repositories/reports_repository.dart'
     as _i617;
+import 'package:business_manager/features/reports/domain/services/report_export_service.dart'
+    as _i647;
+import 'package:business_manager/features/reports/presentation/bloc/daily_summary_cubit.dart'
+    as _i198;
 import 'package:business_manager/features/reports/presentation/bloc/reports_cubit.dart'
     as _i507;
+import 'package:business_manager/features/security/data/repositories/secure_storage_security_repository.dart'
+    as _i933;
+import 'package:business_manager/features/security/data/services/local_auth_biometric_service.dart'
+    as _i19;
+import 'package:business_manager/features/security/data/services/window_security_channel.dart'
+    as _i128;
+import 'package:business_manager/features/security/domain/repositories/security_repository.dart'
+    as _i391;
+import 'package:business_manager/features/security/presentation/bloc/app_lock_cubit.dart'
+    as _i263;
 import 'package:business_manager/features/stock_movements/data/repositories/stock_movement_repository_impl.dart'
     as _i945;
 import 'package:business_manager/features/stock_movements/domain/repositories/stock_movement_repository.dart'
@@ -108,12 +136,31 @@ extension GetItInjectableX on _i174.GetIt {
       preResolve: true,
     );
     gh.lazySingleton<_i656.IdGenerator>(() => _i656.IdGenerator());
+    gh.lazySingleton<_i17.AndroidReportPrintChannel>(
+      () => _i17.AndroidReportPrintChannel(),
+    );
     gh.lazySingleton<_i177.AppDatabase>(
       () => registerModule.appDatabase(gh<_i516.AppConfig>()),
       dispose: _i453.disposeAppDatabase,
     );
     gh.lazySingleton<_i790.AppLogger>(
       () => _i790.AppLogger(gh<_i516.AppConfig>()),
+    );
+    gh.lazySingleton<_i837.NotificationSettingsRepository>(
+      () => _i837.NotificationSettingsRepository(gh<_i516.AppConfig>()),
+    );
+    gh.lazySingleton<_i391.WindowSecurityService>(
+      () => _i128.MethodChannelWindowSecurityService(),
+    );
+    gh.lazySingleton<_i391.BiometricAuthService>(
+      () => _i19.LocalAuthBiometricService(),
+    );
+    gh.lazySingleton<_i391.SecurityRepository>(
+      () => _i933.SecureStorageSecurityRepository(
+        gh<_i516.AppConfig>(),
+        gh<_i177.AppDatabase>(),
+        gh<_i656.IdGenerator>(),
+      ),
     );
     gh.lazySingleton<_i588.LocaleCubit>(
       () => _i588.LocaleCubit(gh<_i460.SharedPreferences>()),
@@ -137,11 +184,23 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i665.DatabaseTransactionRunner>(
       () => _i665.DatabaseTransactionRunner(gh<_i177.AppDatabase>()),
     );
+    gh.lazySingleton<_i263.AppLockCubit>(
+      () => _i263.AppLockCubit(
+        gh<_i391.SecurityRepository>(),
+        gh<_i391.BiometricAuthService>(),
+        gh<_i391.WindowSecurityService>(),
+      ),
+    );
     gh.lazySingleton<_i762.AccountingRepository>(
       () => _i134.AccountingRepositoryImpl(
         gh<_i177.AppDatabase>(),
         gh<_i665.DatabaseTransactionRunner>(),
         gh<_i656.IdGenerator>(),
+      ),
+    );
+    gh.lazySingleton<_i105.LocalNotificationService>(
+      () => _i925.FlutterLocalNotificationsAdapter(
+        gh<_i837.NotificationSettingsRepository>(),
       ),
     );
     gh.lazySingleton<_i934.DatabaseInitializer>(
@@ -175,6 +234,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i177.AppDatabase>(),
         gh<_i665.DatabaseTransactionRunner>(),
         gh<_i656.IdGenerator>(),
+      ),
+    );
+    gh.lazySingleton<_i647.ReportExportService>(
+      () => _i335.ExcelCsvExportService(
+        gh<_i17.AndroidReportPrintChannel>(),
+        gh<_i263.AppLockCubit>(),
       ),
     );
     gh.lazySingleton<_i307.RateRepository>(
@@ -221,14 +286,18 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i307.RateRepository>(),
       ),
     );
-    gh.factory<_i506.WorkerDetailCubit>(
-      () => _i506.WorkerDetailCubit(gh<_i291.WorkerRepository>()),
-    );
     gh.factory<_i249.WorkerListCubit>(
       () => _i249.WorkerListCubit(gh<_i291.WorkerRepository>()),
     );
     gh.factory<_i971.StockMovementsCubit>(
       () => _i971.StockMovementsCubit(gh<_i306.StockMovementRepository>()),
+    );
+    gh.factory<_i506.WorkerDetailCubit>(
+      () => _i506.WorkerDetailCubit(
+        gh<_i291.WorkerRepository>(),
+        gh<_i762.AccountingRepository>(),
+        gh<_i306.StockMovementRepository>(),
+      ),
     );
     gh.factory<_i515.ProcessDetailCubit>(
       () => _i515.ProcessDetailCubit(gh<_i926.ProcessRepository>()),
@@ -252,11 +321,36 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i762.AccountingRepository>(),
       ),
     );
+    gh.factory<_i507.ReportsCubit>(
+      () => _i507.ReportsCubit(
+        gh<_i617.ReportsRepository>(),
+        gh<_i647.ReportExportService>(),
+      ),
+    );
+    gh.lazySingleton<_i754.NotificationRefreshCoordinator>(
+      () => _i754.NotificationRefreshCoordinator(
+        gh<_i177.AppDatabase>(),
+        gh<_i306.StockMovementRepository>(),
+        gh<_i762.AccountingRepository>(),
+        gh<_i617.ReportsRepository>(),
+        gh<_i391.SecurityRepository>(),
+        gh<_i588.LocaleCubit>(),
+        gh<_i837.NotificationSettingsRepository>(),
+        gh<_i105.LocalNotificationService>(),
+      ),
+    );
+    gh.factory<_i245.NotificationSettingsCubit>(
+      () => _i245.NotificationSettingsCubit(
+        gh<_i837.NotificationSettingsRepository>(),
+        gh<_i105.LocalNotificationService>(),
+        gh<_i754.NotificationRefreshCoordinator>(),
+      ),
+    );
     gh.factory<_i736.DashboardCubit>(
       () => _i736.DashboardCubit(gh<_i617.ReportsRepository>()),
     );
-    gh.factory<_i507.ReportsCubit>(
-      () => _i507.ReportsCubit(gh<_i617.ReportsRepository>()),
+    gh.factory<_i198.DailySummaryCubit>(
+      () => _i198.DailySummaryCubit(gh<_i617.ReportsRepository>()),
     );
     return this;
   }

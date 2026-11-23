@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$WorkerDetailState {
 
- WorkerDetailStatus get status; WorkerDetailAggregate? get detail; String? get errorMessage;
+ WorkerDetailStatus get status; WorkerDetailAggregate? get detail; WorkerLedgerDetail? get ledgerDetail; List<OpenIssueSummary> get openIssues; String? get errorMessage;
 /// Create a copy of WorkerDetailState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $WorkerDetailStateCopyWith<WorkerDetailState> get copyWith => _$WorkerDetailStat
 @override
 bool operator ==(Object other) {
   final _this = this as WorkerDetailState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is WorkerDetailState&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.detail, _this.detail) || other.detail == _this.detail)&&(identical(other.errorMessage, _this.errorMessage) || other.errorMessage == _this.errorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is WorkerDetailState&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.detail, _this.detail) || other.detail == _this.detail)&&(identical(other.ledgerDetail, _this.ledgerDetail) || other.ledgerDetail == _this.ledgerDetail)&&const DeepCollectionEquality().equals(other.openIssues, _this.openIssues)&&(identical(other.errorMessage, _this.errorMessage) || other.errorMessage == _this.errorMessage));
 }
 
 
 @override
 int get hashCode {
   final _this = this as WorkerDetailState;
-  return Object.hash(runtimeType,_this.status,_this.detail,_this.errorMessage);
+  return Object.hash(runtimeType,_this.status,_this.detail,_this.ledgerDetail,const DeepCollectionEquality().hash(_this.openIssues),_this.errorMessage);
 }
 
 @override
 String toString() {
   final _this = this as WorkerDetailState;
-  return 'WorkerDetailState(status: ${_this.status}, detail: ${_this.detail}, errorMessage: ${_this.errorMessage})';
+  return 'WorkerDetailState(status: ${_this.status}, detail: ${_this.detail}, ledgerDetail: ${_this.ledgerDetail}, openIssues: ${_this.openIssues}, errorMessage: ${_this.errorMessage})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $WorkerDetailStateCopyWith<$Res>  {
   factory $WorkerDetailStateCopyWith(WorkerDetailState value, $Res Function(WorkerDetailState) _then) = _$WorkerDetailStateCopyWithImpl;
 @useResult
 $Res call({
- WorkerDetailStatus status, WorkerDetailAggregate? detail, String? errorMessage
+ WorkerDetailStatus status, WorkerDetailAggregate? detail, WorkerLedgerDetail? ledgerDetail, List<OpenIssueSummary> openIssues, String? errorMessage
 });
 
 
@@ -68,11 +68,13 @@ class _$WorkerDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of WorkerDetailState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? detail = freezed,Object? errorMessage = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? detail = freezed,Object? ledgerDetail = freezed,Object? openIssues = null,Object? errorMessage = freezed,}) {
   return _then(WorkerDetailState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as WorkerDetailStatus,detail: freezed == detail ? _self.detail : detail // ignore: cast_nullable_to_non_nullable
-as WorkerDetailAggregate?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as WorkerDetailAggregate?,ledgerDetail: freezed == ledgerDetail ? _self.ledgerDetail : ledgerDetail // ignore: cast_nullable_to_non_nullable
+as WorkerLedgerDetail?,openIssues: null == openIssues ? _self.openIssues : openIssues // ignore: cast_nullable_to_non_nullable
+as List<OpenIssueSummary>,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }
@@ -167,10 +169,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( WorkerDetailStatus status,  WorkerDetailAggregate? detail,  String? errorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( WorkerDetailStatus status,  WorkerDetailAggregate? detail,  WorkerLedgerDetail? ledgerDetail,  List<OpenIssueSummary> openIssues,  String? errorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _WorkerDetailState() when $default != null:
-return $default(_that.status,_that.detail,_that.errorMessage);case _:
+return $default(_that.status,_that.detail,_that.ledgerDetail,_that.openIssues,_that.errorMessage);case _:
   return orElse();
 
 }
@@ -188,10 +190,10 @@ return $default(_that.status,_that.detail,_that.errorMessage);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( WorkerDetailStatus status,  WorkerDetailAggregate? detail,  String? errorMessage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( WorkerDetailStatus status,  WorkerDetailAggregate? detail,  WorkerLedgerDetail? ledgerDetail,  List<OpenIssueSummary> openIssues,  String? errorMessage)  $default,) {final _that = this;
 switch (_that) {
 case _WorkerDetailState():
-return $default(_that.status,_that.detail,_that.errorMessage);}
+return $default(_that.status,_that.detail,_that.ledgerDetail,_that.openIssues,_that.errorMessage);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -205,10 +207,10 @@ return $default(_that.status,_that.detail,_that.errorMessage);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( WorkerDetailStatus status,  WorkerDetailAggregate? detail,  String? errorMessage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( WorkerDetailStatus status,  WorkerDetailAggregate? detail,  WorkerLedgerDetail? ledgerDetail,  List<OpenIssueSummary> openIssues,  String? errorMessage)?  $default,) {final _that = this;
 switch (_that) {
 case _WorkerDetailState() when $default != null:
-return $default(_that.status,_that.detail,_that.errorMessage);case _:
+return $default(_that.status,_that.detail,_that.ledgerDetail,_that.openIssues,_that.errorMessage);case _:
   return null;
 
 }
@@ -220,11 +222,19 @@ return $default(_that.status,_that.detail,_that.errorMessage);case _:
 
 
 class _WorkerDetailState implements WorkerDetailState {
-  const _WorkerDetailState({this.status = WorkerDetailStatus.initial, this.detail, this.errorMessage});
+  const _WorkerDetailState({this.status = WorkerDetailStatus.initial, this.detail, this.ledgerDetail,  List<OpenIssueSummary> openIssues = const [], this.errorMessage}): _openIssues = openIssues;
   
 
 @override@JsonKey() final  WorkerDetailStatus status;
 @override final  WorkerDetailAggregate? detail;
+@override final  WorkerLedgerDetail? ledgerDetail;
+ final  List<OpenIssueSummary> _openIssues;
+@override@JsonKey() List<OpenIssueSummary> get openIssues {
+  if (_openIssues is EqualUnmodifiableListView) return _openIssues;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_openIssues);
+}
+
 @override final  String? errorMessage;
 
 /// Create a copy of WorkerDetailState
@@ -237,18 +247,18 @@ _$WorkerDetailStateCopyWith<_WorkerDetailState> get copyWith => __$WorkerDetailS
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _WorkerDetailState&&(identical(other.status, status) || other.status == status)&&(identical(other.detail, detail) || other.detail == detail)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _WorkerDetailState&&(identical(other.status, status) || other.status == status)&&(identical(other.detail, detail) || other.detail == detail)&&(identical(other.ledgerDetail, ledgerDetail) || other.ledgerDetail == ledgerDetail)&&const DeepCollectionEquality().equals(other.openIssues, _openIssues)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,status,detail,errorMessage);
+    return Object.hash(runtimeType,status,detail,ledgerDetail,const DeepCollectionEquality().hash(_openIssues),errorMessage);
 }
 
 @override
 String toString() {
-    return 'WorkerDetailState(status: $status, detail: $detail, errorMessage: $errorMessage)';
+    return 'WorkerDetailState(status: $status, detail: $detail, ledgerDetail: $ledgerDetail, openIssues: $openIssues, errorMessage: $errorMessage)';
 }
 
 
@@ -259,7 +269,7 @@ abstract mixin class _$WorkerDetailStateCopyWith<$Res> implements $WorkerDetailS
   factory _$WorkerDetailStateCopyWith(_WorkerDetailState value, $Res Function(_WorkerDetailState) _then) = __$WorkerDetailStateCopyWithImpl;
 @override @useResult
 $Res call({
- WorkerDetailStatus status, WorkerDetailAggregate? detail, String? errorMessage
+ WorkerDetailStatus status, WorkerDetailAggregate? detail, WorkerLedgerDetail? ledgerDetail, List<OpenIssueSummary> openIssues, String? errorMessage
 });
 
 
@@ -276,11 +286,13 @@ class __$WorkerDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of WorkerDetailState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? detail = freezed,Object? errorMessage = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? detail = freezed,Object? ledgerDetail = freezed,Object? openIssues = null,Object? errorMessage = freezed,}) {
   return _then(_WorkerDetailState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as WorkerDetailStatus,detail: freezed == detail ? _self.detail : detail // ignore: cast_nullable_to_non_nullable
-as WorkerDetailAggregate?,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
+as WorkerDetailAggregate?,ledgerDetail: freezed == ledgerDetail ? _self.ledgerDetail : ledgerDetail // ignore: cast_nullable_to_non_nullable
+as WorkerLedgerDetail?,openIssues: null == openIssues ? _self._openIssues : openIssues // ignore: cast_nullable_to_non_nullable
+as List<OpenIssueSummary>,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
 }

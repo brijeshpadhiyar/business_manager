@@ -1622,4 +1622,703 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get stockTabSummary => 'કારીગર અને પ્રક્રિયા';
+
+  @override
+  String get auditActionDeactivate => 'નિષ્ક્રિય કર્યું';
+
+  @override
+  String get auditActionReactivate => 'ફરી સક્રિય કર્યું';
+
+  @override
+  String get auditActionBackupExport => 'બેકઅપ બનાવ્યું';
+
+  @override
+  String get auditActionBackupRestore => 'બેકઅપ રિસ્ટોર કર્યું';
+
+  @override
+  String get auditEntityBackup => 'બેકઅપ અને રિસ્ટોર';
+
+  @override
+  String get auditEntityAppSecurity => 'એપ સુરક્ષા';
+
+  @override
+  String get settingsSecurityTitle => 'એપ લોક અને સુરક્ષા';
+
+  @override
+  String get settingsSecuritySubtitle =>
+      'લોકલ PIN, વૈકલ્પિક ફિંગરપ્રિન્ટ અનલોક, ઓટો-લોક સમય અને રિકવરી કી.';
+
+  @override
+  String get securityBadgeEnabled => 'PIN સુરક્ષિત';
+
+  @override
+  String get securityBadgeOff => 'બંધ';
+
+  @override
+  String get securityStatusProtected => 'StitchFlow PIN થી સુરક્ષિત છે';
+
+  @override
+  String securityStatusProtectedDesc(int pinLength, String timeout) {
+    return '$pinLength-અંકનો PIN • ઓટો-લોક: $timeout';
+  }
+
+  @override
+  String get securityStatusOff => 'એપ લોક બંધ છે';
+
+  @override
+  String get securityStatusOffDesc =>
+      'ફોન પર અનધિકૃત ઉપયોગ રોકવા માટે લોકલ PIN ચાલુ કરો.';
+
+  @override
+  String get securitySetupPinTitle => 'એપ PIN સેટ કરો';
+
+  @override
+  String get securitySetupBenefitsBody =>
+      'વર્કશોપનો સ્ટોક, ભાવ અને કારીગર હિસાબ ખાનગી રાખવા ૪ અથવા ૬ અંકનો ઓફલાઇન PIN અને ફિંગરપ્રિન્ટ અનલોક ઉમેરો.';
+
+  @override
+  String get securityEnablePinAction => 'એપ PIN ચાલુ કરો';
+
+  @override
+  String get securityLockNowAction => 'હમણાં લોક કરો';
+
+  @override
+  String get securityChangePinAction => 'PIN બદલો';
+
+  @override
+  String get securityDisablePinAction => 'એપ PIN બંધ કરો';
+
+  @override
+  String get securityDisablePinDesc =>
+      'લોકલ PIN દૂર કરો અને લોક વગર StitchFlow ખોલો.';
+
+  @override
+  String get securityDisablePinConfirmTitle => 'એપ PIN બંધ કરવું છે?';
+
+  @override
+  String get securityDisablePinConfirmMessage =>
+      'આ ફોન વાપરનાર કોઈપણ વ્યક્તિ PIN વગર StitchFlow ખોલી શકશે.';
+
+  @override
+  String get securityRegenerateRecoveryKeyAction => 'નવી રિકવરી કી';
+
+  @override
+  String get securityPinLength4Label => '૪-અંકનો PIN (ઝડપી)';
+
+  @override
+  String get securityPinLength6Label => '૬-અંકનો PIN';
+
+  @override
+  String get securityCreatePinTitle => 'તમારો PIN બનાવો';
+
+  @override
+  String get securityEnterNewPinTitle => 'નવો PIN દાખલ કરો';
+
+  @override
+  String securityCreatePinSubtitle(int pinLength) {
+    return '$pinLength અંકનો નંબર PIN દાખલ કરો.';
+  }
+
+  @override
+  String get securityConfirmPinTitle => 'PIN ની ખાતરી કરો';
+
+  @override
+  String get securityConfirmPinSubtitle =>
+      'ખાતરી કરવા માટે તે જ PIN ફરી દાખલ કરો.';
+
+  @override
+  String get securityPinMismatchError =>
+      'PIN મેળ ખાતા નથી. કૃપા કરીને ફરી પ્રયાસ કરો.';
+
+  @override
+  String get securityStartOverAction => 'ફરીથી શરૂ કરો';
+
+  @override
+  String get securityRecoveryKeyTitle => 'તમારી ઓફલાઇન રિકવરી કી સાચવો';
+
+  @override
+  String get securityNewRecoveryKeyTitle => 'તમારી નવી રિકવરી કી';
+
+  @override
+  String get securityRecoveryKeyWriteDownBody =>
+      'આ ૮-અક્ષરનો કોડ કાગળ કે વર્કશોપ ડાયરીમાં સુરક્ષિત લખી રાખો. આ માત્ર એક જ વાર દેખાશે અને PIN ભૂલી જાઓ ત્યારે ડેટા ગુમાવ્યા વિના નવો PIN સેટ કરવાનો એકમાત્ર રસ્તો છે.';
+
+  @override
+  String get securityRecoveryKeyConfirmedCheckbox =>
+      'મેં આ રિકવરી કી સુરક્ષિત જગ્યાએ લખી લીધી છે.';
+
+  @override
+  String get securityActivateAppLockAction => 'એપ લોક ચાલુ કરો';
+
+  @override
+  String get securityPinEnabledSuccess => 'એપ PIN સફળતાપૂર્વક ચાલુ થઈ ગયો.';
+
+  @override
+  String get securityPinChangedSuccess => 'એપ PIN સફળતાપૂર્વક બદલાઈ ગયો.';
+
+  @override
+  String get securityPinDisabledSuccess => 'એપ PIN બંધ કરી દેવાયો છે.';
+
+  @override
+  String get securityUnlockOptionsTitle => 'અનલોક અને ગોપનીયતા વિકલ્પો';
+
+  @override
+  String get securityEnableBiometricLabel => 'ફિંગરપ્રિન્ટ / બાયોમેટ્રિક અનલોક';
+
+  @override
+  String get securityEnableBiometricSubtitle =>
+      'ફોનના ફિંગરપ્રિન્ટ સેન્સરથી ઝડપથી StitchFlow અનલોક કરો. PIN હંમેશા ઉપલબ્ધ રહેશે.';
+
+  @override
+  String get securityBiometricNotEnrolledHint =>
+      'ફોનના Android Settings માં હજુ સુધી ફિંગરપ્રિન્ટ સેટ નથી.';
+
+  @override
+  String get securityBiometricNoHardwareHint =>
+      'આ ફોનમાં બાયોમેટ્રિક સેન્સર ઉપલબ્ધ નથી.';
+
+  @override
+  String get securityBiometricUnavailableHint =>
+      'આ ફોનમાં હાલ બાયોમેટ્રિક અનલોક ઉપલબ્ધ નથી.';
+
+  @override
+  String get securityScreenshotProtectionLabel =>
+      'સ્ક્રીનશોટ અને પ્રિવ્યુ સુરક્ષા';
+
+  @override
+  String get securityScreenshotProtectionSubtitle =>
+      'ચાલુ હોય ત્યારે Recent Apps માં વર્કશોપ ડેટા છુપાવે છે અને સ્ક્રીનશોટ અટકાવે છે.';
+
+  @override
+  String get securityAutoLockTimeoutTitle => 'ઓટો-લોક સમય';
+
+  @override
+  String get securityAutoLockTimeoutSubtitle =>
+      'એપ બદલ્યા પછી અથવા નિષ્ક્રિય રહ્યા પછી આપમેળે લોક થવાનો સમય.';
+
+  @override
+  String get securityTimeoutImmediate => 'તરત જ';
+
+  @override
+  String get securityTimeout30s => '૩૦ સેકન્ડ';
+
+  @override
+  String get securityTimeout1m => '૧ મિનિટ';
+
+  @override
+  String get securityTimeout5m => '૫ મિનિટ';
+
+  @override
+  String get securityTimeout15m => '૧૫ મિનિટ';
+
+  @override
+  String get securityLockScreenTitle => 'StitchFlow લોક છે';
+
+  @override
+  String get securityLockScreenSubtitle =>
+      'વર્કશોપ વિગતો જોવા માટે તમારો PIN દાખલ કરો.';
+
+  @override
+  String get securityWrongPinError => 'ખોટો PIN છે. કૃપા કરીને ફરી પ્રયાસ કરો.';
+
+  @override
+  String securityLockoutCountdown(String remaining) {
+    return 'ઘણા ખોટા પ્રયાસો થયા. $remaining પછી ફરી પ્રયાસ કરો.';
+  }
+
+  @override
+  String get securityUseBiometricAction => 'ફિંગરપ્રિન્ટથી અનલોક કરો';
+
+  @override
+  String get securityBiometricPromptReason =>
+      'StitchFlow વર્કશોપ રેકોર્ડ્સ અનલોક કરો';
+
+  @override
+  String get securityBiometricLockoutFallback =>
+      'ફોન દ્વારા બાયોમેટ્રિક અસ્થાયી રૂપે લોક છે. તમારો PIN દાખલ કરો.';
+
+  @override
+  String get securityBiometricUnavailableFallback =>
+      'બાયોમેટ્રિક ઉપલબ્ધ નથી. તમારો PIN દાખલ કરો.';
+
+  @override
+  String get securityBiometricFailedFallback =>
+      'ફિંગરપ્રિન્ટ મેળ ખાધી નહીં. તમારો PIN દાખલ કરો.';
+
+  @override
+  String get securityForgotPinAction => 'PIN ભૂલી ગયા?';
+
+  @override
+  String get securityRecoveryHeading => 'PIN રિકવરી';
+
+  @override
+  String get securityRecoveryEnterKeyTitle => 'ઓફલાઇન રિકવરી કી દાખલ કરો';
+
+  @override
+  String get securityRecoveryEnterKeySubtitle =>
+      'PIN સેટ કરતી વખતે લખેલો ૮-અક્ષરનો રિકવરી કોડ દાખલ કરો.';
+
+  @override
+  String get securityRecoveryKeyLabel => 'રિકવરી કી';
+
+  @override
+  String get securityVerifyRecoveryKeyAction => 'રિકવરી કી ચકાસો';
+
+  @override
+  String get securityRecoveryKeyInvalidError =>
+      'રિકવરી કી ખોટી છે. કોડ ચકાસીને ફરી પ્રયાસ કરો.';
+
+  @override
+  String get securityCompleteRecoveryAction => 'નવો PIN સાચવો અને અનલોક કરો';
+
+  @override
+  String get securityLostBothTitle => 'PIN અને રિકવરી કી બંને ખોવાઈ ગયા છે?';
+
+  @override
+  String get securityLostBothBody =>
+      'તમારી સુરક્ષા માટે StitchFlow ક્યારેય PIN વગર લોક ખોલતું નથી. જો તમારી પાસે સાચવેલું StitchFlow .zip બેકઅપ હોય, તો એપ ફરી ઇન્સ્ટોલ કરીને બેકઅપ રિસ્ટોર કરી શકાય છે.';
+
+  @override
+  String get securityVerifyCurrentPinTitle => 'હાલનો PIN દાખલ કરો';
+
+  @override
+  String get securityVerifyChangePinSubtitle =>
+      'નવો PIN બનાવતા પહેલા તમારો હાલનો PIN ચકાસો.';
+
+  @override
+  String get securityVerifyDisablePinSubtitle =>
+      'એપ લોક બંધ કરતા પહેલા તમારો હાલનો PIN ચકાસો.';
+
+  @override
+  String get securityVerifyRecoveryRegenSubtitle =>
+      'નવી રિકવરી કી બનાવતા પહેલા તમારો હાલનો PIN ચકાસો.';
+
+  @override
+  String get securityReauthRequiredTitle => 'ઓળખ ચકાસણી જરૂરી છે';
+
+  @override
+  String get securityReauthRestoreSubtitle =>
+      'બેકઅપ રિસ્ટોર કરતા પહેલા PIN અથવા ફિંગરપ્રિન્ટ ચકાસો.';
+
+  @override
+  String get securityReauthRawSqliteSubtitle =>
+      'SQLite ફાઇલ એક્સપોર્ટ કરતા પહેલા PIN અથવા ફિંગરપ્રિન્ટ ચકાસો.';
+
+  @override
+  String get securityPrivacyNoteTitle => 'લોકલ એપ લોક કેવી રીતે કામ કરે છે';
+
+  @override
+  String get securityPrivacyNoteBody =>
+      '• તમારો PIN માત્ર Android Keystore સુરક્ષિત સ્ટોરેજમાં સૉલ્ટેડ PBKDF2-HMAC-SHA256 હેશ તરીકે સાચવાય છે — ક્યારેય સાદા ટેક્સ્ટ, લોગ, SQLite કે બેકઅપ ZIP માં નહીં.\n• એપ લોક ફોન પર અનધિકૃત ઉપયોગ અટકાવે છે; તે ડિસ્ક પરની SQLite ડેટાબેઝ ફાઇલને એન્ક્રિપ્ટ કરતું નથી. ફોનનો સ્ક્રીન લોક ચાલુ રાખો અને બેકઅપ સુરક્ષિત રાખો.';
+
+  @override
+  String get dashboardTodayHeading => 'આજનું વર્કશોપ';
+
+  @override
+  String get dashboardDailySummaryAction => 'દૈનિક સારાંશ';
+
+  @override
+  String get dashboardTodayIssuedLabel => 'આજે આપેલ';
+
+  @override
+  String get dashboardTodayReturnedLabel => 'આજે પરત સારો માલ';
+
+  @override
+  String get dashboardTodayLabourLabel => 'આજની મજૂરી';
+
+  @override
+  String get dashboardTodayPaymentsLabel => 'આજની ચૂકવણી';
+
+  @override
+  String get dashboardTodayDamagedLostAlert => 'આજે ડેમેજ / ખોવાયેલ';
+
+  @override
+  String get dashboardImportantPendingHeading => 'મહત્વનું બાકી કામ';
+
+  @override
+  String get dashboardViewAllPendingAction => 'બધું જુઓ';
+
+  @override
+  String get dailySummaryHeading => 'દૈનિક ઉત્પાદન સારાંશ';
+
+  @override
+  String get dailySummaryPickDateLabel => 'વ્યવહાર તારીખ પસંદ કરો (IST)';
+
+  @override
+  String get dailySummaryDamagedLostLabel => 'ડેમેજ / ખોવાયેલ';
+
+  @override
+  String get dailySummaryNoActivityTitle => 'કોઈ વર્કશોપ પ્રવૃત્તિ નથી';
+
+  @override
+  String get dailySummaryNoActivitySubtitle =>
+      'આ તારીખે કોઈ સ્ટોક ઇશ્યૂ, પરત અથવા ચૂકવણી નોંધાઈ નથી.';
+
+  @override
+  String get dailySummaryProcessActivityHeading => 'પ્રક્રિયા મુજબ પ્રવૃત્તિ';
+
+  @override
+  String get dailySummaryWorkerActivityHeading => 'કારીગર મુજબ પ્રવૃત્તિ';
+
+  @override
+  String get dailySummaryLivePendingNote => 'હાલની વર્કશોપ બાકી વિગત';
+
+  @override
+  String get reportPresetToday => 'આજે';
+
+  @override
+  String get reportPresetYesterday => 'ગઈકાલે';
+
+  @override
+  String pendingAgeDaysBadge(int days) {
+    return '$days દિવસથી બાકી';
+  }
+
+  @override
+  String get stockRecentStockSuggestionsLabel =>
+      'તાજેતરમાં વપરાયેલ ઉપલબ્ધ સ્ટોક';
+
+  @override
+  String get stockRecentWorkPairsLabel => 'તાજેતરની પ્રક્રિયા અને કારીગર';
+
+  @override
+  String get stockUnusualConfirmTitle => 'અસામાન્ય ઇશ્યૂની ખાતરી કરો';
+
+  @override
+  String stockUnusualFullStockWarning(int qty) {
+    return 'તમે ઉપલબ્ધ બધા $qty પીસ (૧૦૦% બાકી સ્ટોક) આપી રહ્યા છો.';
+  }
+
+  @override
+  String get stockUnusualRateOverrideWarning =>
+      'આ ઇશ્યૂ માટે મેન્યુઅલ ભાવ ફેરફાર ચાલુ છે.';
+
+  @override
+  String stockUnusualBackdatedWarning(int days) {
+    return 'વ્યવહારની તારીખ $days દિવસ જૂની છે.';
+  }
+
+  @override
+  String get stockSortOldestFirst => 'સૌથી જૂનું પહેલા';
+
+  @override
+  String get stockSortHighestPending => 'સૌથી વધુ બાકી';
+
+  @override
+  String get stockSortNewestFirst => 'નવું પહેલા';
+
+  @override
+  String get stockShortcutHalf => 'અડધું';
+
+  @override
+  String get stockFillRemainingGood => 'બાકી સારામાં ભરો';
+
+  @override
+  String get workerWorkOverviewHeading => 'હાલનું કામ અને હિસાબ સારાંશ';
+
+  @override
+  String get workerOpenIssuesCountLabel => 'બાકી ઇશ્યૂ';
+
+  @override
+  String get workerOpenIssuesHeading => 'બાકી કામની યાદી';
+
+  @override
+  String get workerRecentPaymentsHeading => 'તાજેતરની ચૂકવણી';
+
+  @override
+  String get reportPresetThisWeek => 'આ અઠવાડિયું';
+
+  @override
+  String get reportPresetThisMonth => 'આ મહિનો';
+
+  @override
+  String get reportPresetPreviousMonth => 'ગયા મહિના';
+
+  @override
+  String get reportPresetAllTime => 'બધો સમય';
+
+  @override
+  String get reportPresetCustom => 'પસંદગી';
+
+  @override
+  String get reportCategoryDaily => 'દૈનિક વર્કશોપ';
+
+  @override
+  String get reportCategoryWorkers => 'કારીગર કામગીરી';
+
+  @override
+  String get reportCategoryProcesses => 'પ્રક્રિયા કામગીરી';
+
+  @override
+  String get reportCategoryInventory => 'સ્ટોક / ઇન્વેન્ટરી';
+
+  @override
+  String get reportCategoryFinancial => 'મજૂરી અને હિસાબ';
+
+  @override
+  String get reportCategoryInsights => 'વ્યવસાયિક વિશ્લેષણ';
+
+  @override
+  String get reportFiltersButton => 'ફિલ્ટર';
+
+  @override
+  String get reportAllOption => 'બધા';
+
+  @override
+  String get reportIncludeReversedLabel => 'રિવર્સ થયેલ વ્યવહારો બતાવો';
+
+  @override
+  String get reportInvSubSummary => 'સ્ટોક સારાંશ';
+
+  @override
+  String get reportInvSubLots => 'લોટ મુજબ';
+
+  @override
+  String get reportInvSubColours => 'ડિઝાઇન અને રંગ';
+
+  @override
+  String get reportInvSubHistory => 'વ્યવહાર ઇતિહાસ';
+
+  @override
+  String get reportFinSubLabour => 'કમાયેલી મજૂરી';
+
+  @override
+  String get reportFinSubSummary => 'કારીગર સારાંશ';
+
+  @override
+  String get reportFinSubPayments => 'ચુકવણી ઇતિહાસ';
+
+  @override
+  String get reportRefStockValueLabel => 'અંદાજિત સ્ટોક કિંમત';
+
+  @override
+  String get reportRefStockValueNote =>
+      'સારા સ્ટોક × એકમ કિંમત પરથી અંદાજિત મૂલ્ય (વેચાણ કે નફો નથી).';
+
+  @override
+  String get reportLabourCostLabel => 'મજૂરી ખર્ચ';
+
+  @override
+  String get reportCurrentStandingBadge => 'હાલનું બાકી';
+
+  @override
+  String get reportPeriodFlowBadge => 'પસંદ કરેલ સમયગાળો';
+
+  @override
+  String get reportAvgTurnaroundLabel => 'સરેરાશ પૂર્ણતા સમય';
+
+  @override
+  String reportTurnaroundSampleCount(int count) {
+    return '$count પૂર્ણ ઇશ્યૂ';
+  }
+
+  @override
+  String get reportDefectRateLabel => 'નુકસાન / ઘટ દર';
+
+  @override
+  String get reportWorkerProcessBreakdown => 'પ્રક્રિયા મુજબ ઉત્પાદકતા';
+
+  @override
+  String get reportProcessWorkerContribution => 'કારીગર ફાળો';
+
+  @override
+  String get reportNotAvailable => 'ઉપલબ્ધ નથી';
+
+  @override
+  String get reportInsightsTrendsTitle => 'ઉત્પાદન વલણ (Trends)';
+
+  @override
+  String get reportInsightsWeeklyNote => 'અઠવાડિયા મુજબ (IST)';
+
+  @override
+  String get reportInsightsDailyNote => 'દિવસ મુજબ (IST)';
+
+  @override
+  String get reportInsightsComparisonTitle => 'અગાઉના સમયગાળા સાથે સરખામણી';
+
+  @override
+  String get reportInsightsNoPriorData => 'અગાઉનો ડેટા નથી';
+
+  @override
+  String get reportInsightsBottlenecksTitle => 'પ્રક્રિયા અવરોધો (બાકી કામ)';
+
+  @override
+  String get reportInsightsNoBottlenecks =>
+      'કોઈ પ્રક્રિયામાં અવરોધ નથી — બધું કામ સમયસર છે.';
+
+  @override
+  String get reportInsightsWorkerTrendsTitle => 'ટોચના કારીગર ઉત્પાદકતા';
+
+  @override
+  String get reportInsightsDefectReasonsTitle =>
+      'નુકસાન / ગુમ થવાના મુખ્ય કારણો';
+
+  @override
+  String get reportInsightsLabourShareTitle => 'પ્રક્રિયા મુજબ મજૂરી ખર્ચ';
+
+  @override
+  String get reportExportAction => 'એક્સપોર્ટ / પ્રિન્ટ';
+
+  @override
+  String get reportExportSheetTitle => 'રિપોર્ટ એક્સપોર્ટ અને પ્રિન્ટ';
+
+  @override
+  String get reportExportPrintPdfTitle => 'પ્રિન્ટ / PDF સેવ કરો';
+
+  @override
+  String get reportExportPrintPdfSubtitle =>
+      'ગુજરાતી ફોન્ટ સાથે A4 પ્રિન્ટ અથવા PDF સેવ કરો.';
+
+  @override
+  String get reportExportExcelTitle => 'એક્સેલ (.xlsx) એક્સપોર્ટ';
+
+  @override
+  String get reportExportExcelSubtitle =>
+      'હાલનો રિપોર્ટ એક્સેલ ફાઇલ તરીકે શેર કરો.';
+
+  @override
+  String get reportExportFullWorkbookTitle => 'સંપૂર્ણ એક્સેલ વર્કબુક (.xlsx)';
+
+  @override
+  String get reportExportFullWorkbookSubtitle =>
+      'બધા રિપોર્ટ એક જ એક્સેલ ફાઇલમાં (દૈનિક, કારીગર, પ્રક્રિયા, સ્ટોક, મજૂરી, ચુકવણી).';
+
+  @override
+  String get reportExportCsvTitle => 'CSV (UTF-8) એક્સપોર્ટ';
+
+  @override
+  String get reportExportCsvSubtitle =>
+      'મોટા ડેટા અને એક્સેલ માટે ઝડપી ગુજરાતી CSV ફાઇલ.';
+
+  @override
+  String reportExportLargeNotice(int rows) {
+    return 'આ રિપોર્ટમાં $rows લાઇન છે. લાંબા PDF કરતાં Excel અથવા CSV એક્સપોર્ટ વધુ ઝડપી રહેશે.';
+  }
+
+  @override
+  String reportExportSuccess(String name) {
+    return 'રિપોર્ટ એક્સપોર્ટ થયો: $name';
+  }
+
+  @override
+  String get reportExportPrintOpened =>
+      'એન્ડ્રોઇડ પ્રિન્ટ / PDF ડાયલોગ ખૂલ્યો.';
+
+  @override
+  String get settingsNotificationsTitle => 'નોટિફિકેશન અને યાદ અપાવણી';
+
+  @override
+  String get settingsNotificationsSubtitle =>
+      'બાકી કામ, કારીગર હિસાબ, દૈનિક સારાંશ અને બેકઅપ માટે ઓફલાઇન યાદ અપાવણી.';
+
+  @override
+  String get notificationsHeading => 'નોટિફિકેશન અને યાદ અપાવણી';
+
+  @override
+  String get notificationsStatusTitle => 'નોટિફિકેશન પરવાનગી';
+
+  @override
+  String get notificationsPermGranted => 'ચાલુ છે';
+
+  @override
+  String get notificationsPermNeeded => 'પરવાનગી જરૂરી';
+
+  @override
+  String get notificationsPermBlocked => 'સેટિંગ્સમાં બંધ';
+
+  @override
+  String get notificationsPermUnsupported => 'ફક્ત એન્ડ્રોઇડ';
+
+  @override
+  String get notificationsStatusGrantedDesc =>
+      'આ ફોન પર ઓફલાઇન યાદ અપાવણી ચાલુ છે. ઇન્ટરનેટ કે ક્લાઉડની જરૂર નથી.';
+
+  @override
+  String get notificationsStatusNeededDesc =>
+      'બાકી કામ, કારીગર હિસાબ અને બેકઅપની યાદ અપાવણી માટે નોટિફિકેશનની પરવાનગી આપો.';
+
+  @override
+  String get notificationsStatusBlockedDesc =>
+      'એન્ડ્રોઇડ સેટિંગ્સમાં નોટિફિકેશન બંધ છે. Phone Settings -> Apps -> StitchFlow -> Notifications માં જઈ ચાલુ કરો.';
+
+  @override
+  String get notificationsAllowAction => 'નોટિફિકેશન ચાલુ કરો';
+
+  @override
+  String get notificationsSendTestAction => 'ટેસ્ટ નોટિફિકેશન મોકલો';
+
+  @override
+  String get notificationsTestTitle => 'સ્ટિચફ્લો નોટિફિકેશન તપાસ';
+
+  @override
+  String get notificationsTestBody =>
+      'વર્કશોપની સ્થાનિક યાદ અપાવણી બરાબર કામ કરી રહી છે.';
+
+  @override
+  String get notificationsTestSent => 'ટેસ્ટ નોટિફિકેશન મોકલવામાં આવ્યું.';
+
+  @override
+  String get notificationsMasterToggle => 'બધી ઓફલાઇન યાદ અપાવણી ચાલુ રાખો';
+
+  @override
+  String get notificationsMasterSubtitle =>
+      'બધા સ્થાનિક નોટિફિકેશન માટે મુખ્ય સ્વિચ.';
+
+  @override
+  String get notificationsPendingWorkTitle => 'બાકી કામની યાદ અપાવણી';
+
+  @override
+  String get notificationsPendingWorkDesc =>
+      'કારીગર પાસે પસંદ કરેલ દિવસો કરતાં વધુ સમયથી કામ બાકી હોય તો રોજ યાદ અપાવે છે.';
+
+  @override
+  String get notificationsPendingDaysLabel => 'ઓછામાં ઓછા કેટલા દિવસ બાકી હોય';
+
+  @override
+  String get notificationsSettlementTitle => 'કારીગર હિસાબ ચુકવણી યાદ';
+
+  @override
+  String get notificationsSettlementDesc =>
+      'શનિવારે કારીગરોના બાકી લેણાં તપાસવા માટે સાપ્તાહિક યાદ અપાવણી.';
+
+  @override
+  String get notificationsMinAmountLabel => 'ઓછામાં ઓછી બાકી રકમ';
+
+  @override
+  String get notificationsDailySummaryTitle => 'દૈનિક વર્કશોપ સારાંશ';
+
+  @override
+  String get notificationsDailySummaryDesc =>
+      'સાંજે આજના ઇશ્યુ, પરત અને મજૂરીનો સારાંશ જોવા માટે યાદ અપાવણી.';
+
+  @override
+  String get notificationsSkipQuietDaysLabel =>
+      'આજે કોઈ કામ ન થયું હોય તો ન મોકલો';
+
+  @override
+  String get notificationsBackupTitle => 'ઓફલાઇન બેકઅપ યાદ અપાવણી';
+
+  @override
+  String get notificationsBackupDesc =>
+      'નિયમિત સમયે નવો StitchFlow .zip બેકઅપ લેવાની યાદ અપાવે છે.';
+
+  @override
+  String get notificationsBackupIntervalLabel => 'કેટલા દિવસે યાદ અપાવવી';
+
+  @override
+  String get notificationsAlertsTitle => 'મહત્વપૂર્ણ વર્કશોપ ચેતવણીઓ';
+
+  @override
+  String get notificationsAlertsDesc =>
+      'નુકસાન સ્ટોક ૨૦+ પીસ થાય કે કોઈ ઇશ્યુ ૧૪+ દિવસ બાકી હોય ત્યારે સ્થાનિક ચેતવણી (૨૪ કલાકમાં વધુમાં વધુ ૧).';
+
+  @override
+  String get notificationsTimeLabel => 'યાદ અપાવવાનો સમય';
+
+  @override
+  String get notificationsPrivacyOemTitle => 'ઓફલાઇન ગોપનીયતા અને બેટરી નોંધ';
+
+  @override
+  String get notificationsPrivacyOemBody =>
+      '• ૧૦૦% ઓફલાઇન: બધી યાદ અપાવણી ઇન્ટરનેટ કે ફાયરબેઝ વિના તમારા ફોનમાં જ ચાલે છે.\n• લોક-સ્ક્રીન સુરક્ષા: App PIN ચાલુ હોય ત્યારે નોટિફિકેશનમાં ચોક્કસ રકમ કે કારીગરનું નામ દેખાતું નથી.\n• બેટરી નોંધ: OPPO (ColorOS), Xiaomi, Vivo અથવા Samsung ફોનમાં ફોન રીસ્ટાર્ટ પછી યાદ અપાવણી સમયસર મળે તે માટે Phone Settings માં બેટરી પ્રતિબંધ હળવો રાખો.';
 }

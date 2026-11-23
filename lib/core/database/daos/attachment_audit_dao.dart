@@ -65,4 +65,14 @@ class AttachmentAuditDao extends DatabaseAccessor<AppDatabase>
           ..limit(limit))
         .get();
   }
+
+  /// Fast lookup of the latest audit log for a specific action (e.g.,
+  /// `BACKUP_EXPORT`), accelerated by `idx_audit_action_rec`.
+  Future<AuditLogRow?> getLatestAuditByAction(String actionType) {
+    return (select(auditLogs)
+          ..where((t) => t.actionType.equals(actionType))
+          ..orderBy([(t) => OrderingTerm.desc(t.recordedAt)])
+          ..limit(1))
+        .getSingleOrNull();
+  }
 }

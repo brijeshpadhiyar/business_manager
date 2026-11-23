@@ -169,8 +169,8 @@ void main() {
     expect(gradleText, contains('com.brijesh.stitchflow'));
   });
 
-  test('Help & Guidance catalog contains all 15 bilingual workshop topics', () {
-    expect(StitchFlowHelpCatalog.topics.length, 15);
+  test('Help & Guidance catalog contains all 19 bilingual workshop topics', () {
+    expect(StitchFlowHelpCatalog.topics.length, 19);
     for (final topic in StitchFlowHelpCatalog.topics) {
       expect(topic.titleEn.trim(), isNotEmpty);
       expect(topic.titleGu.trim(), isNotEmpty);
@@ -319,7 +319,7 @@ void main() {
         scrollable: find.byType(Scrollable).last,
       );
       expect(find.text('100% Offline & Private Local Data'), findsOneWidget);
-      expect(find.textContaining('1.1.0'), findsWidgets);
+      expect(find.textContaining('1.2.0'), findsWidgets);
 
       // Ensure zero overflow or layout exceptions occurred
       expect(tester.takeException(), isNull);

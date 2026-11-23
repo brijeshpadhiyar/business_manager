@@ -5,6 +5,8 @@ import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/backup/domain/entities/backup_entities.dart';
 import 'package:business_manager/features/backup/presentation/bloc/backup_restore_cubit.dart';
+import 'package:business_manager/features/security/presentation/bloc/app_lock_cubit.dart';
+import 'package:business_manager/features/security/presentation/widgets/security_reauth_dialog.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
@@ -30,8 +32,10 @@ final class _BackupRestoreView extends StatelessWidget {
     BackupExportResult result,
   ) async {
     try {
-      await SharePlus.instance.share(
-        ShareParams(files: [XFile(result.filePath)], text: result.fileName),
+      await context.read<AppLockCubit>().runWithSystemPicker(
+        () => SharePlus.instance.share(
+          ShareParams(files: [XFile(result.filePath)], text: result.fileName),
+        ),
       );
     } catch (e) {
       if (context.mounted) {
@@ -41,9 +45,11 @@ final class _BackupRestoreView extends StatelessWidget {
   }
 
   Future<void> _pickAndInspectBackup(BuildContext context) async {
-    final picked = await FilePicker.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: const ['zip'],
+    final picked = await context.read<AppLockCubit>().runWithSystemPicker(
+      () => FilePicker.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: const ['zip'],
+      ),
     );
     final path = picked.isNotEmpty ? picked.first.path : null;
     if (path == null || !context.mounted) return;
@@ -56,6 +62,14 @@ final class _BackupRestoreView extends StatelessWidget {
     BackupManifest manifest,
   ) async {
     final l10n = context.l10n;
+    final authed = await SecurityReauthDialog.verify(
+      context,
+      title: l10n.securityReauthRequiredTitle,
+      subtitle: l10n.securityReauthRestoreSubtitle,
+      allowBiometric: true,
+    );
+    if (!authed || !context.mounted) return;
+
     final confirmed = await AppDialog.showConfirmation(
       context,
       title: l10n.backupConfirmRestoreTitle,
@@ -71,6 +85,18 @@ final class _BackupRestoreView extends StatelessWidget {
     );
     if (confirmed != true || !context.mounted) return;
     await context.read<BackupRestoreCubit>().executeConfirmedRestore(zipPath);
+  }
+
+  Future<void> _exportRawSqliteWithAuth(BuildContext context) async {
+    final l10n = context.l10n;
+    final authed = await SecurityReauthDialog.verify(
+      context,
+      title: l10n.securityReauthRequiredTitle,
+      subtitle: l10n.securityReauthRawSqliteSubtitle,
+      allowBiometric: true,
+    );
+    if (!authed || !context.mounted) return;
+    await context.read<BackupRestoreCubit>().exportRawSqlite();
   }
 
   String _formatSize(int bytes) {
@@ -314,8 +340,7 @@ final class _BackupRestoreView extends StatelessWidget {
                       icon: Icons.download_outlined,
                       variant: AppButtonVariant.outlined,
                       isLoading: isWorking,
-                      onPressed: () =>
-                          context.read<BackupRestoreCubit>().exportRawSqlite(),
+                      onPressed: () => _exportRawSqliteWithAuth(context),
                     ),
                   ],
                 ),
