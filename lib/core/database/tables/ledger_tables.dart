@@ -154,3 +154,43 @@ class Payments extends Table {
     "CHECK(payment_mode IN ('CASH', 'UPI', 'BANK_TRANSFER', 'CHEQUE', 'OTHER'))",
   ];
 }
+
+/// 2.14 `worker_ledger_adjustments` — Append-only audited worker ledger
+/// adjustments (`CREDIT` increases worker payable, `DEBIT` reduces payable,
+/// `REVERSAL` reverses an earlier adjustment). Added in schema v2.
+@DataClassName('WorkerLedgerAdjustmentRow')
+class WorkerLedgerAdjustments extends Table {
+  @override
+  String get tableName => 'worker_ledger_adjustments';
+
+  TextColumn get id => text()();
+  TextColumn get memberId =>
+      text().references(Members, #id, onDelete: KeyAction.restrict)();
+  TextColumn get adjustmentType => text()();
+  TextColumn get reversesAdjustmentId => text().nullable().references(
+    WorkerLedgerAdjustments,
+    #id,
+    onDelete: KeyAction.restrict,
+  )();
+  TextColumn get clientRequestId => text().nullable()();
+  IntColumn get amountPaise => integer()();
+  TextColumn get reason => text()();
+  TextColumn get notes => text().nullable()();
+  IntColumn get transactionAt => integer()();
+  IntColumn get recordedAt => integer()();
+  TextColumn get createdBy => text().nullable()();
+  TextColumn get updatedBy => text().nullable()();
+  IntColumn get createdAt => integer()();
+  IntColumn get updatedAt => integer()();
+  IntColumn get deletedAt => integer().nullable()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {id};
+
+  @override
+  List<String> get customConstraints => const [
+    "CHECK(adjustment_type IN ('CREDIT', 'DEBIT', 'REVERSAL'))",
+    'CHECK(amount_paise > 0)',
+    "CHECK(length(trim(reason)) > 0)",
+  ];
+}

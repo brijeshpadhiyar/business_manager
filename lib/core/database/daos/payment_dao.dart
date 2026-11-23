@@ -13,14 +13,32 @@ class PaymentDao extends DatabaseAccessor<AppDatabase> with _$PaymentDaoMixin {
   Future<void> insertPayment(PaymentsCompanion entry) =>
       into(payments).insert(entry);
 
+  Future<PaymentRow?> findById(String id) =>
+      (select(payments)..where((t) => t.id.equals(id))).getSingleOrNull();
+
   Future<PaymentRow?> findByClientRequestId(String clientRequestId) => (select(
     payments,
   )..where((t) => t.clientRequestId.equals(clientRequestId))).getSingleOrNull();
 
+  Future<PaymentRow?> findReversalForPayment(String paymentId) => (select(
+    payments,
+  )..where((t) => t.reversesPaymentId.equals(paymentId))).getSingleOrNull();
+
+  Future<List<PaymentRow>> getAllPayments() {
+    return (select(payments)..orderBy([
+          (t) => OrderingTerm.desc(t.transactionAt),
+          (t) => OrderingTerm.desc(t.recordedAt),
+        ]))
+        .get();
+  }
+
   Future<List<PaymentRow>> getPaymentsForMember(String memberId) {
     return (select(payments)
           ..where((t) => t.memberId.equals(memberId))
-          ..orderBy([(t) => OrderingTerm.desc(t.transactionAt)]))
+          ..orderBy([
+            (t) => OrderingTerm.desc(t.transactionAt),
+            (t) => OrderingTerm.desc(t.recordedAt),
+          ]))
         .get();
   }
 }

@@ -26,6 +26,13 @@ class AttachmentAuditDao extends DatabaseAccessor<AppDatabase>
         .get();
   }
 
+  Future<List<AttachmentRow>> getAllActiveAttachments() {
+    return (select(attachments)
+          ..where((t) => t.deletedAt.isNull())
+          ..orderBy([(t) => OrderingTerm.asc(t.createdAt)]))
+        .get();
+  }
+
   Future<int> softDeleteAttachment(String id, int deletedAtUtcMillis) {
     return (update(attachments)..where((t) => t.id.equals(id))).write(
       AttachmentsCompanion(
@@ -49,6 +56,13 @@ class AttachmentAuditDao extends DatabaseAccessor<AppDatabase>
                 t.entityType.equals(entityType) & t.entityId.equals(entityId),
           )
           ..orderBy([(t) => OrderingTerm.desc(t.recordedAt)]))
+        .get();
+  }
+
+  Future<List<AuditLogRow>> getRecentAuditLogs({int limit = 25}) {
+    return (select(auditLogs)
+          ..orderBy([(t) => OrderingTerm.desc(t.recordedAt)])
+          ..limit(limit))
         .get();
   }
 }

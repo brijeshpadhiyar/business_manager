@@ -32,6 +32,27 @@ abstract final class IstDateTimeHelper {
     return tz.TZDateTime.fromMillisecondsSinceEpoch(istLocation, utcMillis);
   }
 
+  /// Converts wall-clock date/time components in `Asia/Kolkata` (IST) to UTC epoch ms.
+  static int istDateTimeToUtcMillis({
+    required int year,
+    required int month,
+    required int day,
+    int hour = 0,
+    int minute = 0,
+    int second = 0,
+  }) {
+    final ist = tz.TZDateTime(
+      istLocation,
+      year,
+      month,
+      day,
+      hour,
+      minute,
+      second,
+    );
+    return ist.toUtc().millisecondsSinceEpoch;
+  }
+
   /// Extracts the `Asia/Kolkata` business date in strict ISO `YYYY-MM-DD` format.
   /// Used for effective-dated historical rate lookups (`member_process_rates`).
   static String toIstBusinessDate(int utcMillis) {
@@ -46,5 +67,36 @@ abstract final class IstDateTimeHelper {
   static String formatIstDateTime(int utcMillis, {String locale = 'en'}) {
     final ist = fromUtcMillisToIst(utcMillis);
     return DateFormat('dd MMM yyyy, hh:mm a', locale).format(ist);
+  }
+
+  /// Formats UTC epoch milliseconds as a compact `Asia/Kolkata` date string.
+  static String formatIstDate(int utcMillis, {String locale = 'en'}) {
+    final ist = fromUtcMillisToIst(utcMillis);
+    return DateFormat('dd MMM yyyy', locale).format(ist);
+  }
+
+  /// Formats UTC epoch milliseconds as deterministic ISO IST (`YYYY-MM-DD HH:MM:SS IST`)
+  /// without requiring `intl` locale tables (safe for background jobs & manifests).
+  static String formatIstIsoDateTime(int utcMillis) {
+    final ist = fromUtcMillisToIst(utcMillis);
+    final y = ist.year.toString().padLeft(4, '0');
+    final mo = ist.month.toString().padLeft(2, '0');
+    final d = ist.day.toString().padLeft(2, '0');
+    final h = ist.hour.toString().padLeft(2, '0');
+    final mi = ist.minute.toString().padLeft(2, '0');
+    final s = ist.second.toString().padLeft(2, '0');
+    return '$y-$mo-$d $h:$mi:$s IST';
+  }
+
+  /// Formats UTC epoch milliseconds for deterministic IST filenames (`YYYYMMDD_HHMMSS`).
+  static String formatIstFileTimestamp(int utcMillis) {
+    final ist = fromUtcMillisToIst(utcMillis);
+    final y = ist.year.toString().padLeft(4, '0');
+    final mo = ist.month.toString().padLeft(2, '0');
+    final d = ist.day.toString().padLeft(2, '0');
+    final h = ist.hour.toString().padLeft(2, '0');
+    final mi = ist.minute.toString().padLeft(2, '0');
+    final s = ist.second.toString().padLeft(2, '0');
+    return '$y$mo${d}_$h$mi$s';
   }
 }

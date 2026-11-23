@@ -2,11 +2,13 @@ import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
+import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
 import 'package:business_manager/features/business_profile/presentation/bloc/business_profile_cubit.dart';
 import 'package:business_manager/features/business_profile/presentation/bloc/business_profile_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 final class BusinessProfilePage extends StatelessWidget {
@@ -202,6 +204,33 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
                           isExpanded: true,
                           onPressed: _submit,
                         ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.lg),
+                  AppCard(
+                    onTap: () => context.push(RoutePaths.backupRestore),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.backup_outlined, size: 24),
+                        const SizedBox(width: AppSpacing.md),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AppText(
+                                l10n.backupHeading,
+                                variant: AppTextVariant.bodyLarge,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              AppText(
+                                l10n.backupSubtitle,
+                                variant: AppTextVariant.bodySmall,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Icon(Icons.chevron_right_rounded),
                       ],
                     ),
                   ),

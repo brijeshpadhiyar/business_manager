@@ -745,4 +745,542 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get ratesHistoricalNotice =>
       'Historical rates are preserved. To change a rate, add a new effective-dated entry.';
+
+  @override
+  String get navStockMovements => 'Stock Movements';
+
+  @override
+  String get navAccounting => 'Labour & Payments';
+
+  @override
+  String get navReports => 'Reports';
+
+  @override
+  String get navBackupRestore => 'Backup & Restore';
+
+  @override
+  String get stockHeading => 'Stock Movements';
+
+  @override
+  String get stockIssueAction => 'Issue Stock';
+
+  @override
+  String get stockReturnAction => 'Receive Return';
+
+  @override
+  String get stockRepairAction => 'Repair Damaged';
+
+  @override
+  String get stockTabOpenIssues => 'Pending Issues';
+
+  @override
+  String get stockTabBalances => 'Live Stock';
+
+  @override
+  String get stockTabHistory => 'Timeline';
+
+  @override
+  String get stockTabWorkers => 'By Worker';
+
+  @override
+  String get stockTabProcesses => 'By Process';
+
+  @override
+  String get stockAvailableGoodLabel => 'Available Good';
+
+  @override
+  String get stockPendingWorkerLabel => 'Pending w/ Workers';
+
+  @override
+  String get stockDamagedBucketLabel => 'Damaged Stock';
+
+  @override
+  String get stockLostLabel => 'Lost';
+
+  @override
+  String get stockShortageLabel => 'Shortage';
+
+  @override
+  String get stockIssuedLabel => 'Issued';
+
+  @override
+  String get stockGoodReturnedLabel => 'Good Returned';
+
+  @override
+  String get stockRemainingPendingLabel => 'Remaining Pending';
+
+  @override
+  String get stockSelectLotLabel => 'Select Lot';
+
+  @override
+  String get stockSelectDesignLabel => 'Select Design';
+
+  @override
+  String get stockSelectColourLabel => 'Select Colour';
+
+  @override
+  String get stockSelectProcessLabel => 'Select Process';
+
+  @override
+  String get stockSelectWorkerLabel => 'Select Eligible Worker';
+
+  @override
+  String get stockIssueQuantityLabel => 'Issue Quantity (pcs)';
+
+  @override
+  String get stockTransactionDateTimeLabel => 'Transaction Date & Time (IST)';
+
+  @override
+  String get stockResolvedRateLabel => 'Locked Per-Piece Rate';
+
+  @override
+  String get stockRateMissingWarning =>
+      'No effective historical rate exists for this worker and process on the chosen IST date.';
+
+  @override
+  String get stockRateConflictWarning =>
+      'Conflicting overlapping rates exist on this date.';
+
+  @override
+  String get stockRateOverrideToggle => 'Manual Rate Override (Audited)';
+
+  @override
+  String get stockOverrideRateLabel => 'Override Rate (₹ / pc)';
+
+  @override
+  String get stockOverrideReasonLabel => 'Override Reason (Required)';
+
+  @override
+  String get stockNotesLabel => 'Notes (Optional)';
+
+  @override
+  String get stockIssueSuccess => 'Stock issued successfully.';
+
+  @override
+  String get stockNoEligibleWorkers =>
+      'No active workers are assigned to this process.';
+
+  @override
+  String get stockInsufficientGoodError =>
+      'Cannot issue more than available good stock.';
+
+  @override
+  String get stockInvalidQtyError => 'Enter a valid positive piece quantity.';
+
+  @override
+  String get stockSettlementHeading => 'Receive Return / Settlement';
+
+  @override
+  String get stockGoodReturnQtyLabel => 'Good Returned (pcs)';
+
+  @override
+  String get stockDamagedReturnQtyLabel => 'Damaged Returned (pcs)';
+
+  @override
+  String get stockLostQtyLabel => 'Lost (pcs)';
+
+  @override
+  String get stockShortageQtyLabel => 'Shortage / Missing (pcs)';
+
+  @override
+  String get stockSettlementReasonLabel =>
+      'Reason (Required for Damaged / Lost / Shortage)';
+
+  @override
+  String get stockSettlementTotalExceedsError =>
+      'Total settled quantity exceeds remaining pending quantity.';
+
+  @override
+  String get stockSettlementEmptyError =>
+      'Enter at least one quantity greater than zero.';
+
+  @override
+  String get stockSettlementReasonRequiredError =>
+      'Reason is required for damaged, lost, or shortage settlements.';
+
+  @override
+  String get stockSettlementSuccess => 'Return / settlement recorded.';
+
+  @override
+  String get stockInheritedRateNotice =>
+      'Original locked issue rate and billing rule will be inherited automatically.';
+
+  @override
+  String get stockRepairHeading => 'Damaged-to-Good Repair Adjustment';
+
+  @override
+  String get stockRepairQuantityLabel => 'Repaired Quantity (pcs)';
+
+  @override
+  String get stockRepairReasonLabel => 'Repair Reason (Required)';
+
+  @override
+  String get stockRepairExceedsDamagedError =>
+      'Quantity exceeds current damaged stock bucket.';
+
+  @override
+  String get stockRepairSuccess => 'Damaged stock adjusted back to good stock.';
+
+  @override
+  String get stockNoDamagedAvailable =>
+      'No damaged stock is currently available for repair.';
+
+  @override
+  String get stockReverseAction => 'Reverse Entry';
+
+  @override
+  String get stockReverseConfirmTitle => 'Reverse Movement?';
+
+  @override
+  String get stockReverseReasonLabel => 'Reversal Reason (Required)';
+
+  @override
+  String get stockReverseSuccess => 'Movement reversed with full audit trail.';
+
+  @override
+  String get stockReverseBlockedDownstream =>
+      'Cannot reverse: downstream stock movements depend on these pieces.';
+
+  @override
+  String get stockReverseBlockedChildren =>
+      'Reverse child returns/settlements before reversing this issue.';
+
+  @override
+  String get stockReversedBadge => 'Reversed';
+
+  @override
+  String get stockEmptyIssuesTitle => 'No Pending Issues';
+
+  @override
+  String get stockEmptyIssuesSubtitle =>
+      'All issued pieces have been settled, or no stock has been issued yet.';
+
+  @override
+  String get stockEmptyHistoryTitle => 'No Stock Movements Yet';
+
+  @override
+  String get stockEmptyHistorySubtitle =>
+      'Issue stock to a worker and process to start tracking movements.';
+
+  @override
+  String get stockSearchHint =>
+      'Search lot, design, colour, worker, process...';
+
+  @override
+  String get stockFilterAllTypes => 'All Types';
+
+  @override
+  String get stockTypeIssue => 'Issue';
+
+  @override
+  String get stockTypeReturnGood => 'Good Return';
+
+  @override
+  String get stockTypeReturnDamaged => 'Damaged Return';
+
+  @override
+  String get stockTypeLost => 'Lost';
+
+  @override
+  String get stockTypeShortage => 'Shortage';
+
+  @override
+  String get stockTypeRepair => 'Damaged -> Good';
+
+  @override
+  String get stockTypeReversal => 'Reversal';
+
+  @override
+  String get stockDetailsHeading => 'Issue & Return Details';
+
+  @override
+  String get accountingHeading => 'Labour & Worker Accounts';
+
+  @override
+  String get accountingTabWorkers => 'Worker Balances';
+
+  @override
+  String get accountingTabPayments => 'Payments';
+
+  @override
+  String get accountingTabLabour => 'Labour Entries';
+
+  @override
+  String get accountingEarnedLabourLabel => 'Earned Labour';
+
+  @override
+  String get accountingIssuedLabourInfoLabel => 'Issued Labour (Info)';
+
+  @override
+  String get accountingReceivedLabourInfoLabel => 'Received Labour (Info)';
+
+  @override
+  String get accountingRegularPaidLabel => 'Regular Payments';
+
+  @override
+  String get accountingAdvancePaidLabel => 'Advances Paid';
+
+  @override
+  String get accountingAdvanceRefundLabel => 'Advance Refunds';
+
+  @override
+  String get accountingAdjustmentsLabel => 'Adjustments';
+
+  @override
+  String get accountingOutstandingPayableLabel => 'Outstanding Payable';
+
+  @override
+  String get accountingAdvanceCreditLabel => 'Advance Credit';
+
+  @override
+  String get accountingNetBalanceLabel => 'Net Balance';
+
+  @override
+  String get accountingRecordPaymentAction => 'Record Payment / Advance';
+
+  @override
+  String get accountingAddAdjustmentAction => 'Add Adjustment';
+
+  @override
+  String get accountingOpenLedgerAction => 'Worker Ledger';
+
+  @override
+  String get accountingPaymentTypeLabel => 'Payment Type';
+
+  @override
+  String get accountingPaymentTypeRegular => 'Regular Payment';
+
+  @override
+  String get accountingPaymentTypeAdvance => 'Advance Payment';
+
+  @override
+  String get accountingPaymentTypeRefund => 'Advance Refund';
+
+  @override
+  String get accountingPaymentModeLabel => 'Payment Mode';
+
+  @override
+  String get accountingModeCash => 'Cash';
+
+  @override
+  String get accountingModeUpi => 'UPI';
+
+  @override
+  String get accountingModeBank => 'Bank Transfer';
+
+  @override
+  String get accountingModeCheque => 'Cheque';
+
+  @override
+  String get accountingModeOther => 'Other';
+
+  @override
+  String get accountingAmountLabel => 'Amount (₹)';
+
+  @override
+  String get accountingReferenceLabel => 'Reference / Receipt No. (Optional)';
+
+  @override
+  String get accountingPaymentSaved => 'Payment recorded successfully.';
+
+  @override
+  String get accountingAdjustmentTypeLabel => 'Adjustment Type';
+
+  @override
+  String get accountingAdjustmentCredit => 'Credit (+ Add to Payable)';
+
+  @override
+  String get accountingAdjustmentDebit => 'Debit (- Deduct from Payable)';
+
+  @override
+  String get accountingAdjustmentReasonLabel => 'Adjustment Reason (Required)';
+
+  @override
+  String get accountingAdjustmentSaved => 'Worker ledger adjustment recorded.';
+
+  @override
+  String get accountingReversePaymentTitle => 'Reverse Payment?';
+
+  @override
+  String get accountingReversePaymentSuccess => 'Payment reversed cleanly.';
+
+  @override
+  String get accountingReverseAdjustmentTitle => 'Reverse Adjustment?';
+
+  @override
+  String get accountingReverseAdjustmentSuccess =>
+      'Adjustment reversed cleanly.';
+
+  @override
+  String get accountingLedgerHeading => 'Worker Ledger';
+
+  @override
+  String get accountingOpeningBalanceLabel => 'Opening Balance';
+
+  @override
+  String get accountingRunningBalanceLabel => 'Running Bal.';
+
+  @override
+  String get accountingFromDateLabel => 'From Date (IST)';
+
+  @override
+  String get accountingToDateLabel => 'To Date (IST)';
+
+  @override
+  String get accountingClearFilters => 'Clear Filters';
+
+  @override
+  String get accountingEmptyLedgerTitle => 'No Ledger Entries';
+
+  @override
+  String get accountingEmptyLedgerSubtitle =>
+      'Earned labour, advances, payments, and adjustments will appear here.';
+
+  @override
+  String get accountingAdvanceNote =>
+      'Advances are tracked separately and never counted as earned labour.';
+
+  @override
+  String get accountingPayableBadge => 'Payable';
+
+  @override
+  String get accountingInfoBadge => 'Info Only';
+
+  @override
+  String get backupHeading => 'Backup, Restore & Data Safety';
+
+  @override
+  String get backupSubtitle =>
+      '100% offline local backup of your SQLite database and private lot photos.';
+
+  @override
+  String get backupCreateFullAction => 'Create Full Backup (.zip)';
+
+  @override
+  String get backupCreateFullDesc =>
+      'Packages a WAL-consistent SQLite snapshot, all private lot photos, and an integrity manifest into a portable ZIP archive.';
+
+  @override
+  String get backupRestoreFullAction => 'Restore from Backup (.zip)';
+
+  @override
+  String get backupRestoreFullDesc =>
+      'Validates archive integrity, checksums, and schema compatibility before atomically replacing local data with automatic rollback protection.';
+
+  @override
+  String get backupRawSqliteAction => 'Export Raw SQLite (.sqlite)';
+
+  @override
+  String get backupRawSqliteDesc =>
+      'Creates a clean standalone .sqlite file for inspection in external SQLite viewers. Does not include photos.';
+
+  @override
+  String get backupShareLastAction => 'Share / Save File';
+
+  @override
+  String get backupLastCreatedLabel => 'Last Exported File';
+
+  @override
+  String get backupValidationPassed => 'Backup Archive Verified';
+
+  @override
+  String get backupValidationFailed => 'Backup Validation Failed';
+
+  @override
+  String get backupConfirmRestoreTitle => 'Overwrite Local Data?';
+
+  @override
+  String get backupConfirmRestoreMessage =>
+      'Restoring this backup will replace your current local database and photos. A temporary rollback safety copy will be made automatically before swapping.';
+
+  @override
+  String get backupConfirmRestoreAction => 'Yes, Restore Now';
+
+  @override
+  String get backupRestoreSuccess =>
+      'Backup restored and verified successfully.';
+
+  @override
+  String get backupExportSuccess => 'Backup created successfully.';
+
+  @override
+  String get backupProgressWorking => 'Processing securely...';
+
+  @override
+  String get backupLimitationsTitle => 'Offline Backup Notes';
+
+  @override
+  String get backupLimitationsBody =>
+      '• Backups are unencrypted in V1 so you can inspect .sqlite files directly.\n• Keep backup ZIP files in a safe personal folder or external drive.\n• Restoring a Dev backup into Production StitchFlow is blocked for safety.';
+
+  @override
+  String get dashboardLiveOverview => 'Business Overview';
+
+  @override
+  String get dashboardStockHealth => 'Inventory & Production Health';
+
+  @override
+  String get dashboardFinanceHealth => 'Worker Accounting Summary';
+
+  @override
+  String get dashboardProcessPending => 'Process-Wise Pending Work';
+
+  @override
+  String get dashboardRecentActivity => 'Recent Audit Activity';
+
+  @override
+  String get dashboardNoProcessPending => 'No pending stock across processes.';
+
+  @override
+  String get dashboardNoRecentActivity => 'No activity logged yet.';
+
+  @override
+  String get dashboardTotalLotsLabel => 'Active Lots';
+
+  @override
+  String get dashboardTotalDesignsColoursLabel => 'Designs / Colours';
+
+  @override
+  String get reportsHeading => 'Business Reports';
+
+  @override
+  String get reportsTabStockSummary => 'Stock Summary';
+
+  @override
+  String get reportsTabLots => 'Lot-Wise';
+
+  @override
+  String get reportsTabColours => 'Design / Colour';
+
+  @override
+  String get reportsTabWorkers => 'Worker Stock';
+
+  @override
+  String get reportsTabProcesses => 'Process Stock';
+
+  @override
+  String get reportsTabPending => 'Pending Stock';
+
+  @override
+  String get reportsTabDamagedLost => 'Damaged & Lost';
+
+  @override
+  String get reportsTabLabour => 'Labour';
+
+  @override
+  String get reportsTabWorkerLedger => 'Worker Accounts';
+
+  @override
+  String get reportsTabPayments => 'Payments';
+
+  @override
+  String get reportsSearchHint =>
+      'Filter reports by lot, design, colour, worker...';
+
+  @override
+  String get reportsEmptyTitle => 'No Matching Records';
+
+  @override
+  String get reportsEmptySubtitle =>
+      'Adjust your date range or filters to view matching business data.';
 }

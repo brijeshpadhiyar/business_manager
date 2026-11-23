@@ -745,4 +745,540 @@ class AppLocalizationsGu extends AppLocalizations {
   @override
   String get ratesHistoricalNotice =>
       'ઐતિહાસિક ભાવ સુરક્ષિત રહે છે. ભાવ બદલવા માટે નવી અમલી તારીખ સાથે નવી નોંધ ઉમેરો.';
+
+  @override
+  String get navStockMovements => 'સ્ટોક હિલચાલ';
+
+  @override
+  String get navAccounting => 'મજૂરી અને ચુકવણી';
+
+  @override
+  String get navReports => 'રિપોર્ટ્સ';
+
+  @override
+  String get navBackupRestore => 'બેકઅપ અને રિસ્ટોર';
+
+  @override
+  String get stockHeading => 'સ્ટોક હિલચાલ';
+
+  @override
+  String get stockIssueAction => 'સ્ટોક આપો';
+
+  @override
+  String get stockReturnAction => 'માલ પરત લો';
+
+  @override
+  String get stockRepairAction => 'ડેમેજ રિપેર';
+
+  @override
+  String get stockTabOpenIssues => 'બાકી માલ';
+
+  @override
+  String get stockTabBalances => 'લાઇવ સ્ટોક';
+
+  @override
+  String get stockTabHistory => 'ઇતિહાસ';
+
+  @override
+  String get stockTabWorkers => 'કારીગર મુજબ';
+
+  @override
+  String get stockTabProcesses => 'પ્રક્રિયા મુજબ';
+
+  @override
+  String get stockAvailableGoodLabel => 'ઉપલબ્ધ સારો સ્ટોક';
+
+  @override
+  String get stockPendingWorkerLabel => 'કારીગર પાસે બાકી';
+
+  @override
+  String get stockDamagedBucketLabel => 'ડેમેજ સ્ટોક';
+
+  @override
+  String get stockLostLabel => 'ખોવાયેલ';
+
+  @override
+  String get stockShortageLabel => 'ઘટ';
+
+  @override
+  String get stockIssuedLabel => 'આપેલ';
+
+  @override
+  String get stockGoodReturnedLabel => 'સારો પરત';
+
+  @override
+  String get stockRemainingPendingLabel => 'હવે બાકી';
+
+  @override
+  String get stockSelectLotLabel => 'લોટ પસંદ કરો';
+
+  @override
+  String get stockSelectDesignLabel => 'ડિઝાઇન પસંદ કરો';
+
+  @override
+  String get stockSelectColourLabel => 'રંગ પસંદ કરો';
+
+  @override
+  String get stockSelectProcessLabel => 'પ્રક્રિયા પસંદ કરો';
+
+  @override
+  String get stockSelectWorkerLabel => 'યોગ્ય કારીગર પસંદ કરો';
+
+  @override
+  String get stockIssueQuantityLabel => 'આપવાની સંખ્યા (પીસ)';
+
+  @override
+  String get stockTransactionDateTimeLabel => 'વ્યવહારની તારીખ અને સમય (IST)';
+
+  @override
+  String get stockResolvedRateLabel => 'લોક કરેલ પીસ દીઠ ભાવ';
+
+  @override
+  String get stockRateMissingWarning =>
+      'પસંદ કરેલી IST તારીખે આ કારીગર અને પ્રક્રિયા માટે કોઈ અમલી ભાવ નથી.';
+
+  @override
+  String get stockRateConflictWarning => 'આ તારીખે એકથી વધુ ઓવરલેપ થતા ભાવ છે.';
+
+  @override
+  String get stockRateOverrideToggle => 'મેન્યુઅલ ભાવ બદલો (ઓડિટ સાથે)';
+
+  @override
+  String get stockOverrideRateLabel => 'નવો ભાવ (₹ / પીસ)';
+
+  @override
+  String get stockOverrideReasonLabel => 'ભાવ બદલવાનું કારણ (ફરજિયાત)';
+
+  @override
+  String get stockNotesLabel => 'નોંધ (વૈકલ્પિક)';
+
+  @override
+  String get stockIssueSuccess => 'સ્ટોક સફળતાપૂર્વક આપવામાં આવ્યો.';
+
+  @override
+  String get stockNoEligibleWorkers =>
+      'આ પ્રક્રિયા માટે કોઈ સક્રિય કારીગર સોંપેલ નથી.';
+
+  @override
+  String get stockInsufficientGoodError =>
+      'ઉપલબ્ધ સારા સ્ટોક કરતાં વધુ માલ આપી શકાય નહીં.';
+
+  @override
+  String get stockInvalidQtyError => 'માન્ય ધન પીસ સંખ્યા દાખલ કરો.';
+
+  @override
+  String get stockSettlementHeading => 'માલ પરત / સેટલમેન્ટ';
+
+  @override
+  String get stockGoodReturnQtyLabel => 'સારો પરત માલ (પીસ)';
+
+  @override
+  String get stockDamagedReturnQtyLabel => 'ડેમેજ પરત માલ (પીસ)';
+
+  @override
+  String get stockLostQtyLabel => 'ખોવાયેલ માલ (પીસ)';
+
+  @override
+  String get stockShortageQtyLabel => 'ઘટ / ખૂટતો માલ (પીસ)';
+
+  @override
+  String get stockSettlementReasonLabel =>
+      'કારણ (ડેમેજ / ખોવાયેલ / ઘટ માટે ફરજિયાત)';
+
+  @override
+  String get stockSettlementTotalExceedsError =>
+      'કુલ સેટલ સંખ્યા બાકી સંખ્યા કરતાં વધુ છે.';
+
+  @override
+  String get stockSettlementEmptyError =>
+      'ઓછામાં ઓછી એક સંખ્યા શૂન્યથી વધુ દાખલ કરો.';
+
+  @override
+  String get stockSettlementReasonRequiredError =>
+      'ડેમેજ, ખોવાયેલ અથવા ઘટ માટે કારણ ફરજિયાત છે.';
+
+  @override
+  String get stockSettlementSuccess => 'માલ પરત / સેટલમેન્ટ નોંધાયું.';
+
+  @override
+  String get stockInheritedRateNotice =>
+      'મૂળ ઇશ્યુનો લોક કરેલ ભાવ અને બિલિંગ નિયમ આપમેળે લાગુ થશે.';
+
+  @override
+  String get stockRepairHeading => 'ડેમેજ થી સારો સ્ટોક સમાયોજન';
+
+  @override
+  String get stockRepairQuantityLabel => 'રિપેર થયેલ સંખ્યા (પીસ)';
+
+  @override
+  String get stockRepairReasonLabel => 'રિપેરનું કારણ (ફરજિયાત)';
+
+  @override
+  String get stockRepairExceedsDamagedError =>
+      'સંખ્યા હાલના ડેમેજ સ્ટોક કરતાં વધુ છે.';
+
+  @override
+  String get stockRepairSuccess => 'ડેમેજ સ્ટોક સારા સ્ટોકમાં સમાયોજિત થયો.';
+
+  @override
+  String get stockNoDamagedAvailable =>
+      'રિપેર માટે હાલ કોઈ ડેમેજ સ્ટોક ઉપલબ્ધ નથી.';
+
+  @override
+  String get stockReverseAction => 'એન્ટ્રી રદ (રિવર્સ)';
+
+  @override
+  String get stockReverseConfirmTitle => 'હિલચાલ રિવર્સ કરવી છે?';
+
+  @override
+  String get stockReverseReasonLabel => 'રિવર્સ કરવાનું કારણ (ફરજિયાત)';
+
+  @override
+  String get stockReverseSuccess => 'સંપૂર્ણ ઓડિટ સાથે હિલચાલ રિવર્સ થઈ.';
+
+  @override
+  String get stockReverseBlockedDownstream =>
+      'રિવર્સ કરી શકાતું નથી: આગળની સ્ટોક હિલચાલ આ પીસ પર આધારિત છે.';
+
+  @override
+  String get stockReverseBlockedChildren =>
+      'આ ઇશ્યુ રિવર્સ કરતા પહેલા તેની પરત/સેટલમેન્ટ એન્ટ્રીઓ રિવર્સ કરો.';
+
+  @override
+  String get stockReversedBadge => 'રિવર્સ થયેલ';
+
+  @override
+  String get stockEmptyIssuesTitle => 'કોઈ બાકી ઇશ્યુ નથી';
+
+  @override
+  String get stockEmptyIssuesSubtitle =>
+      'બધો આપેલ માલ સેટલ થઈ ગયો છે અથવા હજુ સુધી કોઈ સ્ટોક આપ્યો નથી.';
+
+  @override
+  String get stockEmptyHistoryTitle => 'હજુ કોઈ સ્ટોક હિલચાલ નથી';
+
+  @override
+  String get stockEmptyHistorySubtitle =>
+      'હિલચાલ ટ્રેક કરવા માટે કારીગર અને પ્રક્રિયાને સ્ટોક આપો.';
+
+  @override
+  String get stockSearchHint => 'લોટ, ડિઝાઇન, રંગ, કારીગર, પ્રક્રિયા શોધો...';
+
+  @override
+  String get stockFilterAllTypes => 'બધા પ્રકાર';
+
+  @override
+  String get stockTypeIssue => 'આપેલ';
+
+  @override
+  String get stockTypeReturnGood => 'સારો પરત';
+
+  @override
+  String get stockTypeReturnDamaged => 'ડેમેજ પરત';
+
+  @override
+  String get stockTypeLost => 'ખોવાયેલ';
+
+  @override
+  String get stockTypeShortage => 'ઘટ';
+
+  @override
+  String get stockTypeRepair => 'ડેમેજ -> સારો';
+
+  @override
+  String get stockTypeReversal => 'રિવર્સલ';
+
+  @override
+  String get stockDetailsHeading => 'ઇશ્યુ અને પરત વિગતો';
+
+  @override
+  String get accountingHeading => 'મજૂરી અને કારીગર ખાતા';
+
+  @override
+  String get accountingTabWorkers => 'કારીગર બેલેન્સ';
+
+  @override
+  String get accountingTabPayments => 'ચુકવણી';
+
+  @override
+  String get accountingTabLabour => 'મજૂરી નોંધો';
+
+  @override
+  String get accountingEarnedLabourLabel => 'કમાયેલ મજૂરી';
+
+  @override
+  String get accountingIssuedLabourInfoLabel => 'આપેલ મજૂરી (માહિતી)';
+
+  @override
+  String get accountingReceivedLabourInfoLabel => 'મળેલ મજૂરી (માહિતી)';
+
+  @override
+  String get accountingRegularPaidLabel => 'નિયમિત ચુકવણી';
+
+  @override
+  String get accountingAdvancePaidLabel => 'એડવાન્સ આપેલ';
+
+  @override
+  String get accountingAdvanceRefundLabel => 'એડવાન્સ પરત';
+
+  @override
+  String get accountingAdjustmentsLabel => 'સમાયોજન';
+
+  @override
+  String get accountingOutstandingPayableLabel => 'ચૂકવવાની બાકી';
+
+  @override
+  String get accountingAdvanceCreditLabel => 'એડવાન્સ જમા';
+
+  @override
+  String get accountingNetBalanceLabel => 'ચોખ્ખું બેલેન્સ';
+
+  @override
+  String get accountingRecordPaymentAction => 'ચુકવણી / એડવાન્સ નોંધો';
+
+  @override
+  String get accountingAddAdjustmentAction => 'સમાયોજન ઉમેરો';
+
+  @override
+  String get accountingOpenLedgerAction => 'કારીગર ખાતાવહી';
+
+  @override
+  String get accountingPaymentTypeLabel => 'ચુકવણીનો પ્રકાર';
+
+  @override
+  String get accountingPaymentTypeRegular => 'નિયમિત ચુકવણી';
+
+  @override
+  String get accountingPaymentTypeAdvance => 'એડવાન્સ ચુકવણી';
+
+  @override
+  String get accountingPaymentTypeRefund => 'એડવાન્સ પરત';
+
+  @override
+  String get accountingPaymentModeLabel => 'ચુકવણીની રીત';
+
+  @override
+  String get accountingModeCash => 'રોકડ';
+
+  @override
+  String get accountingModeUpi => 'UPI';
+
+  @override
+  String get accountingModeBank => 'બેંક ટ્રાન્સફર';
+
+  @override
+  String get accountingModeCheque => 'ચેક';
+
+  @override
+  String get accountingModeOther => 'અન્ય';
+
+  @override
+  String get accountingAmountLabel => 'રકમ (₹)';
+
+  @override
+  String get accountingReferenceLabel => 'રેફરન્સ / રસીદ નંબર (વૈકલ્પિક)';
+
+  @override
+  String get accountingPaymentSaved => 'ચુકવણી સફળતાપૂર્વક નોંધાઈ.';
+
+  @override
+  String get accountingAdjustmentTypeLabel => 'સમાયોજનનો પ્રકાર';
+
+  @override
+  String get accountingAdjustmentCredit => 'જમા (+ બાકીમાં ઉમેરો)';
+
+  @override
+  String get accountingAdjustmentDebit => 'ઉધાર (- બાકીમાંથી ઘટાડો)';
+
+  @override
+  String get accountingAdjustmentReasonLabel => 'સમાયોજનનું કારણ (ફરજિયાત)';
+
+  @override
+  String get accountingAdjustmentSaved => 'કારીગર ખાતાવહી સમાયોજન નોંધાયું.';
+
+  @override
+  String get accountingReversePaymentTitle => 'ચુકવણી રિવર્સ કરવી છે?';
+
+  @override
+  String get accountingReversePaymentSuccess => 'ચુકવણી સફળતાપૂર્વક રિવર્સ થઈ.';
+
+  @override
+  String get accountingReverseAdjustmentTitle => 'સમાયોજન રિવર્સ કરવું છે?';
+
+  @override
+  String get accountingReverseAdjustmentSuccess =>
+      'સમાયોજન સફળતાપૂર્વક રિવર્સ થયું.';
+
+  @override
+  String get accountingLedgerHeading => 'કારીગર ખાતાવહી';
+
+  @override
+  String get accountingOpeningBalanceLabel => 'શરૂઆતનું બેલેન્સ';
+
+  @override
+  String get accountingRunningBalanceLabel => 'ચાલુ બેલેન્સ';
+
+  @override
+  String get accountingFromDateLabel => 'તારીખ થી (IST)';
+
+  @override
+  String get accountingToDateLabel => 'તારીખ સુધી (IST)';
+
+  @override
+  String get accountingClearFilters => 'ફિલ્ટર સાફ કરો';
+
+  @override
+  String get accountingEmptyLedgerTitle => 'ખાતાવહીમાં કોઈ નોંધ નથી';
+
+  @override
+  String get accountingEmptyLedgerSubtitle =>
+      'કમાયેલ મજૂરી, એડવાન્સ, ચુકવણી અને સમાયોજન અહીં દેખાશે.';
+
+  @override
+  String get accountingAdvanceNote =>
+      'એડવાન્સ અલગથી ટ્રેક થાય છે અને તેને ક્યારેય કમાયેલ મજૂરી ગણવામાં આવતું નથી.';
+
+  @override
+  String get accountingPayableBadge => 'ચૂકવવાપાત્ર';
+
+  @override
+  String get accountingInfoBadge => 'માત્ર માહિતી';
+
+  @override
+  String get backupHeading => 'બેકઅપ, રિસ્ટોર અને ડેટા સુરક્ષા';
+
+  @override
+  String get backupSubtitle =>
+      'તમારા SQLite ડેટાબેઝ અને ખાનગી લોટ ફોટાઓનો ૧૦૦% ઓફલાઇન લોકલ બેકઅપ.';
+
+  @override
+  String get backupCreateFullAction => 'સંપૂર્ણ બેકઅપ બનાવો (.zip)';
+
+  @override
+  String get backupCreateFullDesc =>
+      'WAL-સુરક્ષિત SQLite સ્નેપશોટ, બધા ખાનગી લોટ ફોટા અને ચકાસણી મેનિફેસ્ટને પોર્ટેબલ ZIP ફાઇલમાં પેક કરે છે.';
+
+  @override
+  String get backupRestoreFullAction => 'બેકઅપમાંથી રિસ્ટોર કરો (.zip)';
+
+  @override
+  String get backupRestoreFullDesc =>
+      'લોકલ ડેટા બદલતા પહેલા ફાઇલની શુદ્ધતા, ચેકસમ અને સ્કીમા ચકાસે છે અને ભૂલ થાય તો આપમેળે રોલબેક કરે છે.';
+
+  @override
+  String get backupRawSqliteAction => 'રો SQLite એક્સપોર્ટ (.sqlite)';
+
+  @override
+  String get backupRawSqliteDesc =>
+      'બાહ્ય SQLite વ્યુઅરમાં તપાસ માટે સ્વચ્છ .sqlite ફાઇલ બનાવે છે. આમાં ફોટા સામેલ નથી.';
+
+  @override
+  String get backupShareLastAction => 'ફાઇલ શેર / સેવ કરો';
+
+  @override
+  String get backupLastCreatedLabel => 'છેલ્લે એક્સપોર્ટ કરેલી ફાઇલ';
+
+  @override
+  String get backupValidationPassed => 'બેકઅપ ફાઇલ ચકાસાયેલ છે';
+
+  @override
+  String get backupValidationFailed => 'બેકઅપ ચકાસણી નિષ્ફળ';
+
+  @override
+  String get backupConfirmRestoreTitle => 'લોકલ ડેટા બદલવો છે?';
+
+  @override
+  String get backupConfirmRestoreMessage =>
+      'આ બેકઅપ રિસ્ટોર કરવાથી તમારો હાલનો લોકલ ડેટાબેઝ અને ફોટા બદલાઈ જશે. સુરક્ષા માટે પહેલા આપમેળે રોલબેક કોપી લેવામાં આવશે.';
+
+  @override
+  String get backupConfirmRestoreAction => 'હા, હમણાં રિસ્ટોર કરો';
+
+  @override
+  String get backupRestoreSuccess => 'બેકઅપ સફળતાપૂર્વક રિસ્ટોર અને ચકાસાયો.';
+
+  @override
+  String get backupExportSuccess => 'બેકઅપ સફળતાપૂર્વક બની ગયો.';
+
+  @override
+  String get backupProgressWorking => 'સુરક્ષિત પ્રક્રિયા ચાલુ છે...';
+
+  @override
+  String get backupLimitationsTitle => 'ઓફલાઇન બેકઅપ નોંધ';
+
+  @override
+  String get backupLimitationsBody =>
+      '• V1 માં બેકઅપ અનએન્ક્રિપ્ટેડ છે જેથી તમે .sqlite ફાઇલ સીધી તપાસી શકો.\n• બેકઅપ ZIP ફાઇલોને સુરક્ષિત જગ્યાએ અથવા બાહ્ય ડ્રાઇવમાં સાચવો.\n• સુરક્ષા માટે Dev બેકઅપને Production StitchFlow માં રિસ્ટોર કરી શકાતું નથી.';
+
+  @override
+  String get dashboardLiveOverview => 'વ્યવસાય ઝાંખી';
+
+  @override
+  String get dashboardStockHealth => 'સ્ટોક અને ઉત્પાદન સ્થિતિ';
+
+  @override
+  String get dashboardFinanceHealth => 'કારીગર હિસાબ સારાંશ';
+
+  @override
+  String get dashboardProcessPending => 'પ્રક્રિયા મુજબ બાકી કામ';
+
+  @override
+  String get dashboardRecentActivity => 'તાજેતરની ઓડિટ પ્રવૃત્તિ';
+
+  @override
+  String get dashboardNoProcessPending => 'કોઈપણ પ્રક્રિયામાં બાકી સ્ટોક નથી.';
+
+  @override
+  String get dashboardNoRecentActivity =>
+      'હજુ સુધી કોઈ પ્રવૃત્તિ નોંધાયેલ નથી.';
+
+  @override
+  String get dashboardTotalLotsLabel => 'સક્રિય લોટ્સ';
+
+  @override
+  String get dashboardTotalDesignsColoursLabel => 'ડિઝાઇન / રંગ';
+
+  @override
+  String get reportsHeading => 'વ્યવસાય રિપોર્ટ્સ';
+
+  @override
+  String get reportsTabStockSummary => 'સ્ટોક સારાંશ';
+
+  @override
+  String get reportsTabLots => 'લોટ મુજબ';
+
+  @override
+  String get reportsTabColours => 'ડિઝાઇન / રંગ';
+
+  @override
+  String get reportsTabWorkers => 'કારીગર સ્ટોક';
+
+  @override
+  String get reportsTabProcesses => 'પ્રક્રિયા સ્ટોક';
+
+  @override
+  String get reportsTabPending => 'બાકી સ્ટોક';
+
+  @override
+  String get reportsTabDamagedLost => 'ડેમેજ અને ખોવાયેલ';
+
+  @override
+  String get reportsTabLabour => 'મજૂરી';
+
+  @override
+  String get reportsTabWorkerLedger => 'કારીગર ખાતા';
+
+  @override
+  String get reportsTabPayments => 'ચુકવણી';
+
+  @override
+  String get reportsSearchHint =>
+      'લોટ, ડિઝાઇન, રંગ, કારીગર દ્વારા રિપોર્ટ ફિલ્ટર કરો...';
+
+  @override
+  String get reportsEmptyTitle => 'કોઈ મેળ ખાતી નોંધ નથી';
+
+  @override
+  String get reportsEmptySubtitle =>
+      'મેળ ખાતો વ્યવસાય ડેટા જોવા માટે તારીખ અથવા ફિલ્ટર બદલો.';
 }

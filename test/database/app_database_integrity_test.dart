@@ -81,7 +81,7 @@ void main() {
     );
   }
 
-  test('creates all 13 tables and seeds default business_profile', () async {
+  test('creates all 14 tables and seeds default business_profile', () async {
     final rows = await db
         .customSelect(
           "SELECT name FROM sqlite_master WHERE type = 'table' "
@@ -104,6 +104,7 @@ void main() {
       'payments',
       'processes',
       'stock_movements',
+      'worker_ledger_adjustments',
     });
 
     final profile = await db.businessProfileDao.getProfile();

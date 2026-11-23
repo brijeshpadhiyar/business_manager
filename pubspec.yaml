@@ -52,6 +52,8 @@ dependencies:
   # IDs & integrity checksums
   uuid: ^4.6.0
   crypto: ^3.0.6
+  animations: 3.0.0
+  flutter_animate: 4.5.2
 
 dev_dependencies:
   flutter_test:

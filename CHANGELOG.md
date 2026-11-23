@@ -7,6 +7,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ## [Unreleased]
 
 ### Added
+- **Premium UI/UX Transformation & Design System (`docs/34_UI_UX_DESIGN_SYSTEM.md`)**:
+  - Upgraded StitchFlow Material 3 design tokens (`AppColors`, `AppSurfaceTokens`, `AppRadius`, `AppTheme`, `AppMotion`) while preserving official brand colors (`#172B4D`, `#0D9488`, `#F4A340`, `#F5F7FA`).
+  - Added selective glassmorphism (`AppGlassSurface`), animated KPI counters (`AppAnimatedNumber`, `AppMetricTile`), skeleton placeholders (`AppSkeletonBox`, `AppSkeletonList`), styled feedback (`AppFeedback`), and reduced-motion-safe Material 3 motion transitions (`animations: ^3.0.0`, `flutter_animate: ^4.5.2`).
+  - Upgraded `AppCard`, `AppButton`, `AppStatusBadge`, `AppDialog`, `AppBottomSheet`, `AppDataTable`, `AppEmptyState`, `AppErrorView`, `AppDatePicker` (with IST date+time mode), and `ResponsiveNavigation` (fade-through tab switching + branded sidebar).
+- **Milestone 6 — Stock Movements (`docs/35_MILESTONE_6_STOCK_MOVEMENTS_REPORT.md`)**:
+  - Implemented pure Dart `StockCalculator` with multi-process independent flow, physical stock cap, combined Good/Damaged/Lost/Shortage settlements, damaged-to-good repair adjustments, and chronological prefix replay reversal protection.
+  - Implemented atomic `StockMovementRepositoryImpl` (5-point pre-issue validation, historical rate & billing lock via `MemberProcessRateResolver`, idempotent `client_request_id`, append-only history) and full UI (`StockMovementsPage`, `StockIssuePage`, `StockSettlementPage`, `DamagedRepairPage`).
+- **Milestone 7 — Labour, Worker Ledger & Payments (`docs/36_MILESTONE_7_LABOUR_AND_WORKER_ACCOUNTS_REPORT.md`)**:
+  - Implemented pure Dart `LabourCalculator` (default `RECEIVED_QTY`, per-process overrides, optional damaged inclusion, anti-double-counting lock) and `LedgerCalculator` (earned labour, advances, negative advance credit balances, adjustments, running balance, IST date filters).
+  - Executed additive, zero-data-loss SQLite schema migration `v1 → v2` adding `worker_ledger_adjustments` + `WorkerAdjustmentDao` with automated file-backed migration tests.
+  - Implemented `AccountingRepositoryImpl` and full UI (`AccountingOverviewPage`, `WorkerLedgerPage`, `PaymentFormPage`, `WorkerAdjustmentFormPage`).
+- **Milestone 8 — Offline Backup, Restore & Data Safety (`docs/37_MILESTONE_8_BACKUP_RESTORE_REPORT.md`)**:
+  - Implemented `NativeBackupRestoreService` with WAL-safe `PRAGMA wal_checkpoint(TRUNCATE)` + `VACUUM INTO` snapshots, `PRAGMA integrity_check`, full `.zip` backup (DB + private media + SHA-256 `manifest.json`), clearly separated raw `.sqlite` inspection export, cross-flavor (`dev → prod`) protection, and atomic fail-safe restore with automatic rollback + `AppSessionController` DI reload.
+  - Added `BackupRestorePage` with progress tracking, manifest verification preview, and explicit overwrite confirmation.
+- **Milestone 9 — Live Dashboard & 10 Business Reports (`docs/38_MILESTONE_9_DASHBOARD_REPORTS_REPORT.md`)**:
+  - Upgraded `DashboardPage` to live database-backed KPIs (inventory health, separate worker accounting metrics, process-wise pending work, recent audit activity) and implemented `ReportsPage` covering all 10 filterable bilingual business reports.
+- **Milestone 10 — Final QA & Release Readiness (`docs/39_MILESTONE_10_FINAL_QA_RELEASE_REPORT.md`)**:
+  - Added 177 bilingual EN/GU localization keys (`0` untranslated), full 18-step E2E workflow tests, pure Dart calculator tests, `v1 → v2` migration tests, responsive EN/GU Light/Dark widget tests, and verified `dev`/`prod` Android APK builds.
 - **Phase 0 — Complete Technical Blueprint & Project Documentation (`docs/00` – `docs/22`)**:
   - Project overview, confirmed V1 business requirements, functional requirements, and non-functional requirements.
   - Verified 2026 Flutter `3.50.1` / Dart `3.14.0` technology stack and 6-platform compatibility matrix (`drift ^2.35.3`, `drift_flutter ^0.3.1`, `sqlite3 ^3.9.1`, `flutter_bloc ^9.1.1`, `go_router ^18.1.4`, `freezed ^4.0.2`, `injectable ^3.0.0`, `get_it ^8.0.2`).

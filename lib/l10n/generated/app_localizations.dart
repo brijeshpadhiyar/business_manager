@@ -1495,6 +1495,1026 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Historical rates are preserved. To change a rate, add a new effective-dated entry.'**
   String get ratesHistoricalNotice;
+
+  /// No description provided for @navStockMovements.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock Movements'**
+  String get navStockMovements;
+
+  /// No description provided for @navAccounting.
+  ///
+  /// In en, this message translates to:
+  /// **'Labour & Payments'**
+  String get navAccounting;
+
+  /// No description provided for @navReports.
+  ///
+  /// In en, this message translates to:
+  /// **'Reports'**
+  String get navReports;
+
+  /// No description provided for @navBackupRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup & Restore'**
+  String get navBackupRestore;
+
+  /// No description provided for @stockHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock Movements'**
+  String get stockHeading;
+
+  /// No description provided for @stockIssueAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Issue Stock'**
+  String get stockIssueAction;
+
+  /// No description provided for @stockReturnAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive Return'**
+  String get stockReturnAction;
+
+  /// No description provided for @stockRepairAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Repair Damaged'**
+  String get stockRepairAction;
+
+  /// No description provided for @stockTabOpenIssues.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Issues'**
+  String get stockTabOpenIssues;
+
+  /// No description provided for @stockTabBalances.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Stock'**
+  String get stockTabBalances;
+
+  /// No description provided for @stockTabHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Timeline'**
+  String get stockTabHistory;
+
+  /// No description provided for @stockTabWorkers.
+  ///
+  /// In en, this message translates to:
+  /// **'By Worker'**
+  String get stockTabWorkers;
+
+  /// No description provided for @stockTabProcesses.
+  ///
+  /// In en, this message translates to:
+  /// **'By Process'**
+  String get stockTabProcesses;
+
+  /// No description provided for @stockAvailableGoodLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Good'**
+  String get stockAvailableGoodLabel;
+
+  /// No description provided for @stockPendingWorkerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending w/ Workers'**
+  String get stockPendingWorkerLabel;
+
+  /// No description provided for @stockDamagedBucketLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Damaged Stock'**
+  String get stockDamagedBucketLabel;
+
+  /// No description provided for @stockLostLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Lost'**
+  String get stockLostLabel;
+
+  /// No description provided for @stockShortageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Shortage'**
+  String get stockShortageLabel;
+
+  /// No description provided for @stockIssuedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Issued'**
+  String get stockIssuedLabel;
+
+  /// No description provided for @stockGoodReturnedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Returned'**
+  String get stockGoodReturnedLabel;
+
+  /// No description provided for @stockRemainingPendingLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining Pending'**
+  String get stockRemainingPendingLabel;
+
+  /// No description provided for @stockSelectLotLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Lot'**
+  String get stockSelectLotLabel;
+
+  /// No description provided for @stockSelectDesignLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Design'**
+  String get stockSelectDesignLabel;
+
+  /// No description provided for @stockSelectColourLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Colour'**
+  String get stockSelectColourLabel;
+
+  /// No description provided for @stockSelectProcessLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Process'**
+  String get stockSelectProcessLabel;
+
+  /// No description provided for @stockSelectWorkerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Eligible Worker'**
+  String get stockSelectWorkerLabel;
+
+  /// No description provided for @stockIssueQuantityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Issue Quantity (pcs)'**
+  String get stockIssueQuantityLabel;
+
+  /// No description provided for @stockTransactionDateTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction Date & Time (IST)'**
+  String get stockTransactionDateTimeLabel;
+
+  /// No description provided for @stockResolvedRateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Locked Per-Piece Rate'**
+  String get stockResolvedRateLabel;
+
+  /// No description provided for @stockRateMissingWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'No effective historical rate exists for this worker and process on the chosen IST date.'**
+  String get stockRateMissingWarning;
+
+  /// No description provided for @stockRateConflictWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflicting overlapping rates exist on this date.'**
+  String get stockRateConflictWarning;
+
+  /// No description provided for @stockRateOverrideToggle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual Rate Override (Audited)'**
+  String get stockRateOverrideToggle;
+
+  /// No description provided for @stockOverrideRateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Override Rate (₹ / pc)'**
+  String get stockOverrideRateLabel;
+
+  /// No description provided for @stockOverrideReasonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Override Reason (Required)'**
+  String get stockOverrideReasonLabel;
+
+  /// No description provided for @stockNotesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (Optional)'**
+  String get stockNotesLabel;
+
+  /// No description provided for @stockIssueSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock issued successfully.'**
+  String get stockIssueSuccess;
+
+  /// No description provided for @stockNoEligibleWorkers.
+  ///
+  /// In en, this message translates to:
+  /// **'No active workers are assigned to this process.'**
+  String get stockNoEligibleWorkers;
+
+  /// No description provided for @stockInsufficientGoodError.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot issue more than available good stock.'**
+  String get stockInsufficientGoodError;
+
+  /// No description provided for @stockInvalidQtyError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid positive piece quantity.'**
+  String get stockInvalidQtyError;
+
+  /// No description provided for @stockSettlementHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive Return / Settlement'**
+  String get stockSettlementHeading;
+
+  /// No description provided for @stockGoodReturnQtyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Returned (pcs)'**
+  String get stockGoodReturnQtyLabel;
+
+  /// No description provided for @stockDamagedReturnQtyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Damaged Returned (pcs)'**
+  String get stockDamagedReturnQtyLabel;
+
+  /// No description provided for @stockLostQtyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Lost (pcs)'**
+  String get stockLostQtyLabel;
+
+  /// No description provided for @stockShortageQtyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Shortage / Missing (pcs)'**
+  String get stockShortageQtyLabel;
+
+  /// No description provided for @stockSettlementReasonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason (Required for Damaged / Lost / Shortage)'**
+  String get stockSettlementReasonLabel;
+
+  /// No description provided for @stockSettlementTotalExceedsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Total settled quantity exceeds remaining pending quantity.'**
+  String get stockSettlementTotalExceedsError;
+
+  /// No description provided for @stockSettlementEmptyError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter at least one quantity greater than zero.'**
+  String get stockSettlementEmptyError;
+
+  /// No description provided for @stockSettlementReasonRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason is required for damaged, lost, or shortage settlements.'**
+  String get stockSettlementReasonRequiredError;
+
+  /// No description provided for @stockSettlementSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Return / settlement recorded.'**
+  String get stockSettlementSuccess;
+
+  /// No description provided for @stockInheritedRateNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Original locked issue rate and billing rule will be inherited automatically.'**
+  String get stockInheritedRateNotice;
+
+  /// No description provided for @stockRepairHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Damaged-to-Good Repair Adjustment'**
+  String get stockRepairHeading;
+
+  /// No description provided for @stockRepairQuantityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Repaired Quantity (pcs)'**
+  String get stockRepairQuantityLabel;
+
+  /// No description provided for @stockRepairReasonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Repair Reason (Required)'**
+  String get stockRepairReasonLabel;
+
+  /// No description provided for @stockRepairExceedsDamagedError.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity exceeds current damaged stock bucket.'**
+  String get stockRepairExceedsDamagedError;
+
+  /// No description provided for @stockRepairSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Damaged stock adjusted back to good stock.'**
+  String get stockRepairSuccess;
+
+  /// No description provided for @stockNoDamagedAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No damaged stock is currently available for repair.'**
+  String get stockNoDamagedAvailable;
+
+  /// No description provided for @stockReverseAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Reverse Entry'**
+  String get stockReverseAction;
+
+  /// No description provided for @stockReverseConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reverse Movement?'**
+  String get stockReverseConfirmTitle;
+
+  /// No description provided for @stockReverseReasonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reversal Reason (Required)'**
+  String get stockReverseReasonLabel;
+
+  /// No description provided for @stockReverseSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Movement reversed with full audit trail.'**
+  String get stockReverseSuccess;
+
+  /// No description provided for @stockReverseBlockedDownstream.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot reverse: downstream stock movements depend on these pieces.'**
+  String get stockReverseBlockedDownstream;
+
+  /// No description provided for @stockReverseBlockedChildren.
+  ///
+  /// In en, this message translates to:
+  /// **'Reverse child returns/settlements before reversing this issue.'**
+  String get stockReverseBlockedChildren;
+
+  /// No description provided for @stockReversedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Reversed'**
+  String get stockReversedBadge;
+
+  /// No description provided for @stockEmptyIssuesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Pending Issues'**
+  String get stockEmptyIssuesTitle;
+
+  /// No description provided for @stockEmptyIssuesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'All issued pieces have been settled, or no stock has been issued yet.'**
+  String get stockEmptyIssuesSubtitle;
+
+  /// No description provided for @stockEmptyHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Stock Movements Yet'**
+  String get stockEmptyHistoryTitle;
+
+  /// No description provided for @stockEmptyHistorySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Issue stock to a worker and process to start tracking movements.'**
+  String get stockEmptyHistorySubtitle;
+
+  /// No description provided for @stockSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search lot, design, colour, worker, process...'**
+  String get stockSearchHint;
+
+  /// No description provided for @stockFilterAllTypes.
+  ///
+  /// In en, this message translates to:
+  /// **'All Types'**
+  String get stockFilterAllTypes;
+
+  /// No description provided for @stockTypeIssue.
+  ///
+  /// In en, this message translates to:
+  /// **'Issue'**
+  String get stockTypeIssue;
+
+  /// No description provided for @stockTypeReturnGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Return'**
+  String get stockTypeReturnGood;
+
+  /// No description provided for @stockTypeReturnDamaged.
+  ///
+  /// In en, this message translates to:
+  /// **'Damaged Return'**
+  String get stockTypeReturnDamaged;
+
+  /// No description provided for @stockTypeLost.
+  ///
+  /// In en, this message translates to:
+  /// **'Lost'**
+  String get stockTypeLost;
+
+  /// No description provided for @stockTypeShortage.
+  ///
+  /// In en, this message translates to:
+  /// **'Shortage'**
+  String get stockTypeShortage;
+
+  /// No description provided for @stockTypeRepair.
+  ///
+  /// In en, this message translates to:
+  /// **'Damaged -> Good'**
+  String get stockTypeRepair;
+
+  /// No description provided for @stockTypeReversal.
+  ///
+  /// In en, this message translates to:
+  /// **'Reversal'**
+  String get stockTypeReversal;
+
+  /// No description provided for @stockDetailsHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Issue & Return Details'**
+  String get stockDetailsHeading;
+
+  /// No description provided for @accountingHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Labour & Worker Accounts'**
+  String get accountingHeading;
+
+  /// No description provided for @accountingTabWorkers.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker Balances'**
+  String get accountingTabWorkers;
+
+  /// No description provided for @accountingTabPayments.
+  ///
+  /// In en, this message translates to:
+  /// **'Payments'**
+  String get accountingTabPayments;
+
+  /// No description provided for @accountingTabLabour.
+  ///
+  /// In en, this message translates to:
+  /// **'Labour Entries'**
+  String get accountingTabLabour;
+
+  /// No description provided for @accountingEarnedLabourLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Earned Labour'**
+  String get accountingEarnedLabourLabel;
+
+  /// No description provided for @accountingIssuedLabourInfoLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Issued Labour (Info)'**
+  String get accountingIssuedLabourInfoLabel;
+
+  /// No description provided for @accountingReceivedLabourInfoLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Received Labour (Info)'**
+  String get accountingReceivedLabourInfoLabel;
+
+  /// No description provided for @accountingRegularPaidLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Regular Payments'**
+  String get accountingRegularPaidLabel;
+
+  /// No description provided for @accountingAdvancePaidLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Advances Paid'**
+  String get accountingAdvancePaidLabel;
+
+  /// No description provided for @accountingAdvanceRefundLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Advance Refunds'**
+  String get accountingAdvanceRefundLabel;
+
+  /// No description provided for @accountingAdjustmentsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjustments'**
+  String get accountingAdjustmentsLabel;
+
+  /// No description provided for @accountingOutstandingPayableLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Outstanding Payable'**
+  String get accountingOutstandingPayableLabel;
+
+  /// No description provided for @accountingAdvanceCreditLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Advance Credit'**
+  String get accountingAdvanceCreditLabel;
+
+  /// No description provided for @accountingNetBalanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Net Balance'**
+  String get accountingNetBalanceLabel;
+
+  /// No description provided for @accountingRecordPaymentAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Record Payment / Advance'**
+  String get accountingRecordPaymentAction;
+
+  /// No description provided for @accountingAddAdjustmentAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Adjustment'**
+  String get accountingAddAdjustmentAction;
+
+  /// No description provided for @accountingOpenLedgerAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker Ledger'**
+  String get accountingOpenLedgerAction;
+
+  /// No description provided for @accountingPaymentTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Type'**
+  String get accountingPaymentTypeLabel;
+
+  /// No description provided for @accountingPaymentTypeRegular.
+  ///
+  /// In en, this message translates to:
+  /// **'Regular Payment'**
+  String get accountingPaymentTypeRegular;
+
+  /// No description provided for @accountingPaymentTypeAdvance.
+  ///
+  /// In en, this message translates to:
+  /// **'Advance Payment'**
+  String get accountingPaymentTypeAdvance;
+
+  /// No description provided for @accountingPaymentTypeRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'Advance Refund'**
+  String get accountingPaymentTypeRefund;
+
+  /// No description provided for @accountingPaymentModeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Mode'**
+  String get accountingPaymentModeLabel;
+
+  /// No description provided for @accountingModeCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash'**
+  String get accountingModeCash;
+
+  /// No description provided for @accountingModeUpi.
+  ///
+  /// In en, this message translates to:
+  /// **'UPI'**
+  String get accountingModeUpi;
+
+  /// No description provided for @accountingModeBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank Transfer'**
+  String get accountingModeBank;
+
+  /// No description provided for @accountingModeCheque.
+  ///
+  /// In en, this message translates to:
+  /// **'Cheque'**
+  String get accountingModeCheque;
+
+  /// No description provided for @accountingModeOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get accountingModeOther;
+
+  /// No description provided for @accountingAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount (₹)'**
+  String get accountingAmountLabel;
+
+  /// No description provided for @accountingReferenceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference / Receipt No. (Optional)'**
+  String get accountingReferenceLabel;
+
+  /// No description provided for @accountingPaymentSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment recorded successfully.'**
+  String get accountingPaymentSaved;
+
+  /// No description provided for @accountingAdjustmentTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjustment Type'**
+  String get accountingAdjustmentTypeLabel;
+
+  /// No description provided for @accountingAdjustmentCredit.
+  ///
+  /// In en, this message translates to:
+  /// **'Credit (+ Add to Payable)'**
+  String get accountingAdjustmentCredit;
+
+  /// No description provided for @accountingAdjustmentDebit.
+  ///
+  /// In en, this message translates to:
+  /// **'Debit (- Deduct from Payable)'**
+  String get accountingAdjustmentDebit;
+
+  /// No description provided for @accountingAdjustmentReasonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjustment Reason (Required)'**
+  String get accountingAdjustmentReasonLabel;
+
+  /// No description provided for @accountingAdjustmentSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker ledger adjustment recorded.'**
+  String get accountingAdjustmentSaved;
+
+  /// No description provided for @accountingReversePaymentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reverse Payment?'**
+  String get accountingReversePaymentTitle;
+
+  /// No description provided for @accountingReversePaymentSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment reversed cleanly.'**
+  String get accountingReversePaymentSuccess;
+
+  /// No description provided for @accountingReverseAdjustmentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reverse Adjustment?'**
+  String get accountingReverseAdjustmentTitle;
+
+  /// No description provided for @accountingReverseAdjustmentSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjustment reversed cleanly.'**
+  String get accountingReverseAdjustmentSuccess;
+
+  /// No description provided for @accountingLedgerHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker Ledger'**
+  String get accountingLedgerHeading;
+
+  /// No description provided for @accountingOpeningBalanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening Balance'**
+  String get accountingOpeningBalanceLabel;
+
+  /// No description provided for @accountingRunningBalanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Running Bal.'**
+  String get accountingRunningBalanceLabel;
+
+  /// No description provided for @accountingFromDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'From Date (IST)'**
+  String get accountingFromDateLabel;
+
+  /// No description provided for @accountingToDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'To Date (IST)'**
+  String get accountingToDateLabel;
+
+  /// No description provided for @accountingClearFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Filters'**
+  String get accountingClearFilters;
+
+  /// No description provided for @accountingEmptyLedgerTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Ledger Entries'**
+  String get accountingEmptyLedgerTitle;
+
+  /// No description provided for @accountingEmptyLedgerSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Earned labour, advances, payments, and adjustments will appear here.'**
+  String get accountingEmptyLedgerSubtitle;
+
+  /// No description provided for @accountingAdvanceNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Advances are tracked separately and never counted as earned labour.'**
+  String get accountingAdvanceNote;
+
+  /// No description provided for @accountingPayableBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Payable'**
+  String get accountingPayableBadge;
+
+  /// No description provided for @accountingInfoBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Info Only'**
+  String get accountingInfoBadge;
+
+  /// No description provided for @backupHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup, Restore & Data Safety'**
+  String get backupHeading;
+
+  /// No description provided for @backupSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'100% offline local backup of your SQLite database and private lot photos.'**
+  String get backupSubtitle;
+
+  /// No description provided for @backupCreateFullAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Full Backup (.zip)'**
+  String get backupCreateFullAction;
+
+  /// No description provided for @backupCreateFullDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Packages a WAL-consistent SQLite snapshot, all private lot photos, and an integrity manifest into a portable ZIP archive.'**
+  String get backupCreateFullDesc;
+
+  /// No description provided for @backupRestoreFullAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore from Backup (.zip)'**
+  String get backupRestoreFullAction;
+
+  /// No description provided for @backupRestoreFullDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Validates archive integrity, checksums, and schema compatibility before atomically replacing local data with automatic rollback protection.'**
+  String get backupRestoreFullDesc;
+
+  /// No description provided for @backupRawSqliteAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Export Raw SQLite (.sqlite)'**
+  String get backupRawSqliteAction;
+
+  /// No description provided for @backupRawSqliteDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Creates a clean standalone .sqlite file for inspection in external SQLite viewers. Does not include photos.'**
+  String get backupRawSqliteDesc;
+
+  /// No description provided for @backupShareLastAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Share / Save File'**
+  String get backupShareLastAction;
+
+  /// No description provided for @backupLastCreatedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Exported File'**
+  String get backupLastCreatedLabel;
+
+  /// No description provided for @backupValidationPassed.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup Archive Verified'**
+  String get backupValidationPassed;
+
+  /// No description provided for @backupValidationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup Validation Failed'**
+  String get backupValidationFailed;
+
+  /// No description provided for @backupConfirmRestoreTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Overwrite Local Data?'**
+  String get backupConfirmRestoreTitle;
+
+  /// No description provided for @backupConfirmRestoreMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Restoring this backup will replace your current local database and photos. A temporary rollback safety copy will be made automatically before swapping.'**
+  String get backupConfirmRestoreMessage;
+
+  /// No description provided for @backupConfirmRestoreAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, Restore Now'**
+  String get backupConfirmRestoreAction;
+
+  /// No description provided for @backupRestoreSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup restored and verified successfully.'**
+  String get backupRestoreSuccess;
+
+  /// No description provided for @backupExportSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup created successfully.'**
+  String get backupExportSuccess;
+
+  /// No description provided for @backupProgressWorking.
+  ///
+  /// In en, this message translates to:
+  /// **'Processing securely...'**
+  String get backupProgressWorking;
+
+  /// No description provided for @backupLimitationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline Backup Notes'**
+  String get backupLimitationsTitle;
+
+  /// No description provided for @backupLimitationsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'• Backups are unencrypted in V1 so you can inspect .sqlite files directly.\n• Keep backup ZIP files in a safe personal folder or external drive.\n• Restoring a Dev backup into Production StitchFlow is blocked for safety.'**
+  String get backupLimitationsBody;
+
+  /// No description provided for @dashboardLiveOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Overview'**
+  String get dashboardLiveOverview;
+
+  /// No description provided for @dashboardStockHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Inventory & Production Health'**
+  String get dashboardStockHealth;
+
+  /// No description provided for @dashboardFinanceHealth.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker Accounting Summary'**
+  String get dashboardFinanceHealth;
+
+  /// No description provided for @dashboardProcessPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Process-Wise Pending Work'**
+  String get dashboardProcessPending;
+
+  /// No description provided for @dashboardRecentActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Audit Activity'**
+  String get dashboardRecentActivity;
+
+  /// No description provided for @dashboardNoProcessPending.
+  ///
+  /// In en, this message translates to:
+  /// **'No pending stock across processes.'**
+  String get dashboardNoProcessPending;
+
+  /// No description provided for @dashboardNoRecentActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'No activity logged yet.'**
+  String get dashboardNoRecentActivity;
+
+  /// No description provided for @dashboardTotalLotsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Lots'**
+  String get dashboardTotalLotsLabel;
+
+  /// No description provided for @dashboardTotalDesignsColoursLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Designs / Colours'**
+  String get dashboardTotalDesignsColoursLabel;
+
+  /// No description provided for @reportsHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Reports'**
+  String get reportsHeading;
+
+  /// No description provided for @reportsTabStockSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock Summary'**
+  String get reportsTabStockSummary;
+
+  /// No description provided for @reportsTabLots.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot-Wise'**
+  String get reportsTabLots;
+
+  /// No description provided for @reportsTabColours.
+  ///
+  /// In en, this message translates to:
+  /// **'Design / Colour'**
+  String get reportsTabColours;
+
+  /// No description provided for @reportsTabWorkers.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker Stock'**
+  String get reportsTabWorkers;
+
+  /// No description provided for @reportsTabProcesses.
+  ///
+  /// In en, this message translates to:
+  /// **'Process Stock'**
+  String get reportsTabProcesses;
+
+  /// No description provided for @reportsTabPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Stock'**
+  String get reportsTabPending;
+
+  /// No description provided for @reportsTabDamagedLost.
+  ///
+  /// In en, this message translates to:
+  /// **'Damaged & Lost'**
+  String get reportsTabDamagedLost;
+
+  /// No description provided for @reportsTabLabour.
+  ///
+  /// In en, this message translates to:
+  /// **'Labour'**
+  String get reportsTabLabour;
+
+  /// No description provided for @reportsTabWorkerLedger.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker Accounts'**
+  String get reportsTabWorkerLedger;
+
+  /// No description provided for @reportsTabPayments.
+  ///
+  /// In en, this message translates to:
+  /// **'Payments'**
+  String get reportsTabPayments;
+
+  /// No description provided for @reportsSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter reports by lot, design, colour, worker...'**
+  String get reportsSearchHint;
+
+  /// No description provided for @reportsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Matching Records'**
+  String get reportsEmptyTitle;
+
+  /// No description provided for @reportsEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Adjust your date range or filters to view matching business data.'**
+  String get reportsEmptySubtitle;
 }
 
 class _AppLocalizationsDelegate

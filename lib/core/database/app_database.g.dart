@@ -9191,6 +9191,905 @@ class PaymentsCompanion extends UpdateCompanion<PaymentRow> {
   }
 }
 
+class $WorkerLedgerAdjustmentsTable extends WorkerLedgerAdjustments
+    with TableInfo<$WorkerLedgerAdjustmentsTable, WorkerLedgerAdjustmentRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $WorkerLedgerAdjustmentsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _memberIdMeta = const VerificationMeta(
+    'memberId',
+  );
+  @override
+  late final GeneratedColumn<String> memberId = GeneratedColumn<String>(
+    'member_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES members (id) ON DELETE RESTRICT',
+    ),
+  );
+  static const VerificationMeta _adjustmentTypeMeta = const VerificationMeta(
+    'adjustmentType',
+  );
+  @override
+  late final GeneratedColumn<String> adjustmentType = GeneratedColumn<String>(
+    'adjustment_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _reversesAdjustmentIdMeta =
+      const VerificationMeta('reversesAdjustmentId');
+  @override
+  late final GeneratedColumn<String> reversesAdjustmentId =
+      GeneratedColumn<String>(
+        'reverses_adjustment_id',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES worker_ledger_adjustments (id) ON DELETE RESTRICT',
+        ),
+      );
+  static const VerificationMeta _clientRequestIdMeta = const VerificationMeta(
+    'clientRequestId',
+  );
+  @override
+  late final GeneratedColumn<String> clientRequestId = GeneratedColumn<String>(
+    'client_request_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _amountPaiseMeta = const VerificationMeta(
+    'amountPaise',
+  );
+  @override
+  late final GeneratedColumn<int> amountPaise = GeneratedColumn<int>(
+    'amount_paise',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _reasonMeta = const VerificationMeta('reason');
+  @override
+  late final GeneratedColumn<String> reason = GeneratedColumn<String>(
+    'reason',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _transactionAtMeta = const VerificationMeta(
+    'transactionAt',
+  );
+  @override
+  late final GeneratedColumn<int> transactionAt = GeneratedColumn<int>(
+    'transaction_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _recordedAtMeta = const VerificationMeta(
+    'recordedAt',
+  );
+  @override
+  late final GeneratedColumn<int> recordedAt = GeneratedColumn<int>(
+    'recorded_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdByMeta = const VerificationMeta(
+    'createdBy',
+  );
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedByMeta = const VerificationMeta(
+    'updatedBy',
+  );
+  @override
+  late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>(
+    'updated_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<int> deletedAt = GeneratedColumn<int>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    memberId,
+    adjustmentType,
+    reversesAdjustmentId,
+    clientRequestId,
+    amountPaise,
+    reason,
+    notes,
+    transactionAt,
+    recordedAt,
+    createdBy,
+    updatedBy,
+    createdAt,
+    updatedAt,
+    deletedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'worker_ledger_adjustments';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<WorkerLedgerAdjustmentRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('member_id')) {
+      context.handle(
+        _memberIdMeta,
+        memberId.isAcceptableOrUnknown(data['member_id']!, _memberIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_memberIdMeta);
+    }
+    if (data.containsKey('adjustment_type')) {
+      context.handle(
+        _adjustmentTypeMeta,
+        adjustmentType.isAcceptableOrUnknown(
+          data['adjustment_type']!,
+          _adjustmentTypeMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_adjustmentTypeMeta);
+    }
+    if (data.containsKey('reverses_adjustment_id')) {
+      context.handle(
+        _reversesAdjustmentIdMeta,
+        reversesAdjustmentId.isAcceptableOrUnknown(
+          data['reverses_adjustment_id']!,
+          _reversesAdjustmentIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('client_request_id')) {
+      context.handle(
+        _clientRequestIdMeta,
+        clientRequestId.isAcceptableOrUnknown(
+          data['client_request_id']!,
+          _clientRequestIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('amount_paise')) {
+      context.handle(
+        _amountPaiseMeta,
+        amountPaise.isAcceptableOrUnknown(
+          data['amount_paise']!,
+          _amountPaiseMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_amountPaiseMeta);
+    }
+    if (data.containsKey('reason')) {
+      context.handle(
+        _reasonMeta,
+        reason.isAcceptableOrUnknown(data['reason']!, _reasonMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_reasonMeta);
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    if (data.containsKey('transaction_at')) {
+      context.handle(
+        _transactionAtMeta,
+        transactionAt.isAcceptableOrUnknown(
+          data['transaction_at']!,
+          _transactionAtMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_transactionAtMeta);
+    }
+    if (data.containsKey('recorded_at')) {
+      context.handle(
+        _recordedAtMeta,
+        recordedAt.isAcceptableOrUnknown(data['recorded_at']!, _recordedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_recordedAtMeta);
+    }
+    if (data.containsKey('created_by')) {
+      context.handle(
+        _createdByMeta,
+        createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('updated_by')) {
+      context.handle(
+        _updatedByMeta,
+        updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  WorkerLedgerAdjustmentRow map(
+    Map<String, dynamic> data, {
+    String? tablePrefix,
+  }) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return WorkerLedgerAdjustmentRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      memberId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}member_id'],
+      )!,
+      adjustmentType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}adjustment_type'],
+      )!,
+      reversesAdjustmentId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}reverses_adjustment_id'],
+      ),
+      clientRequestId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}client_request_id'],
+      ),
+      amountPaise: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_paise'],
+      )!,
+      reason: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}reason'],
+      )!,
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      transactionAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}transaction_at'],
+      )!,
+      recordedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}recorded_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
+  }
+
+  @override
+  $WorkerLedgerAdjustmentsTable createAlias(String alias) {
+    return $WorkerLedgerAdjustmentsTable(attachedDatabase, alias);
+  }
+}
+
+class WorkerLedgerAdjustmentRow extends DataClass
+    implements Insertable<WorkerLedgerAdjustmentRow> {
+  final String id;
+  final String memberId;
+  final String adjustmentType;
+  final String? reversesAdjustmentId;
+  final String? clientRequestId;
+  final int amountPaise;
+  final String reason;
+  final String? notes;
+  final int transactionAt;
+  final int recordedAt;
+  final String? createdBy;
+  final String? updatedBy;
+  final int createdAt;
+  final int updatedAt;
+  final int? deletedAt;
+  const WorkerLedgerAdjustmentRow({
+    required this.id,
+    required this.memberId,
+    required this.adjustmentType,
+    this.reversesAdjustmentId,
+    this.clientRequestId,
+    required this.amountPaise,
+    required this.reason,
+    this.notes,
+    required this.transactionAt,
+    required this.recordedAt,
+    this.createdBy,
+    this.updatedBy,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['member_id'] = Variable<String>(memberId);
+    map['adjustment_type'] = Variable<String>(adjustmentType);
+    if (!nullToAbsent || reversesAdjustmentId != null) {
+      map['reverses_adjustment_id'] = Variable<String>(reversesAdjustmentId);
+    }
+    if (!nullToAbsent || clientRequestId != null) {
+      map['client_request_id'] = Variable<String>(clientRequestId);
+    }
+    map['amount_paise'] = Variable<int>(amountPaise);
+    map['reason'] = Variable<String>(reason);
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    map['transaction_at'] = Variable<int>(transactionAt);
+    map['recorded_at'] = Variable<int>(recordedAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['created_at'] = Variable<int>(createdAt);
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  WorkerLedgerAdjustmentsCompanion toCompanion(bool nullToAbsent) {
+    return WorkerLedgerAdjustmentsCompanion(
+      id: Value(id),
+      memberId: Value(memberId),
+      adjustmentType: Value(adjustmentType),
+      reversesAdjustmentId: reversesAdjustmentId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(reversesAdjustmentId),
+      clientRequestId: clientRequestId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(clientRequestId),
+      amountPaise: Value(amountPaise),
+      reason: Value(reason),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      transactionAt: Value(transactionAt),
+      recordedAt: Value(recordedAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory WorkerLedgerAdjustmentRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return WorkerLedgerAdjustmentRow(
+      id: serializer.fromJson<String>(json['id']),
+      memberId: serializer.fromJson<String>(json['memberId']),
+      adjustmentType: serializer.fromJson<String>(json['adjustmentType']),
+      reversesAdjustmentId: serializer.fromJson<String?>(
+        json['reversesAdjustmentId'],
+      ),
+      clientRequestId: serializer.fromJson<String?>(json['clientRequestId']),
+      amountPaise: serializer.fromJson<int>(json['amountPaise']),
+      reason: serializer.fromJson<String>(json['reason']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      transactionAt: serializer.fromJson<int>(json['transactionAt']),
+      recordedAt: serializer.fromJson<int>(json['recordedAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'memberId': serializer.toJson<String>(memberId),
+      'adjustmentType': serializer.toJson<String>(adjustmentType),
+      'reversesAdjustmentId': serializer.toJson<String?>(reversesAdjustmentId),
+      'clientRequestId': serializer.toJson<String?>(clientRequestId),
+      'amountPaise': serializer.toJson<int>(amountPaise),
+      'reason': serializer.toJson<String>(reason),
+      'notes': serializer.toJson<String?>(notes),
+      'transactionAt': serializer.toJson<int>(transactionAt),
+      'recordedAt': serializer.toJson<int>(recordedAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  WorkerLedgerAdjustmentRow copyWith({
+    String? id,
+    String? memberId,
+    String? adjustmentType,
+    Value<String?> reversesAdjustmentId = const Value.absent(),
+    Value<String?> clientRequestId = const Value.absent(),
+    int? amountPaise,
+    String? reason,
+    Value<String?> notes = const Value.absent(),
+    int? transactionAt,
+    int? recordedAt,
+    Value<String?> createdBy = const Value.absent(),
+    Value<String?> updatedBy = const Value.absent(),
+    int? createdAt,
+    int? updatedAt,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => WorkerLedgerAdjustmentRow(
+    id: id ?? this.id,
+    memberId: memberId ?? this.memberId,
+    adjustmentType: adjustmentType ?? this.adjustmentType,
+    reversesAdjustmentId: reversesAdjustmentId.present
+        ? reversesAdjustmentId.value
+        : this.reversesAdjustmentId,
+    clientRequestId: clientRequestId.present
+        ? clientRequestId.value
+        : this.clientRequestId,
+    amountPaise: amountPaise ?? this.amountPaise,
+    reason: reason ?? this.reason,
+    notes: notes.present ? notes.value : this.notes,
+    transactionAt: transactionAt ?? this.transactionAt,
+    recordedAt: recordedAt ?? this.recordedAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  WorkerLedgerAdjustmentRow copyWithCompanion(
+    WorkerLedgerAdjustmentsCompanion data,
+  ) {
+    return WorkerLedgerAdjustmentRow(
+      id: data.id.present ? data.id.value : this.id,
+      memberId: data.memberId.present ? data.memberId.value : this.memberId,
+      adjustmentType: data.adjustmentType.present
+          ? data.adjustmentType.value
+          : this.adjustmentType,
+      reversesAdjustmentId: data.reversesAdjustmentId.present
+          ? data.reversesAdjustmentId.value
+          : this.reversesAdjustmentId,
+      clientRequestId: data.clientRequestId.present
+          ? data.clientRequestId.value
+          : this.clientRequestId,
+      amountPaise: data.amountPaise.present
+          ? data.amountPaise.value
+          : this.amountPaise,
+      reason: data.reason.present ? data.reason.value : this.reason,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      transactionAt: data.transactionAt.present
+          ? data.transactionAt.value
+          : this.transactionAt,
+      recordedAt: data.recordedAt.present
+          ? data.recordedAt.value
+          : this.recordedAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('WorkerLedgerAdjustmentRow(')
+          ..write('id: $id, ')
+          ..write('memberId: $memberId, ')
+          ..write('adjustmentType: $adjustmentType, ')
+          ..write('reversesAdjustmentId: $reversesAdjustmentId, ')
+          ..write('clientRequestId: $clientRequestId, ')
+          ..write('amountPaise: $amountPaise, ')
+          ..write('reason: $reason, ')
+          ..write('notes: $notes, ')
+          ..write('transactionAt: $transactionAt, ')
+          ..write('recordedAt: $recordedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    memberId,
+    adjustmentType,
+    reversesAdjustmentId,
+    clientRequestId,
+    amountPaise,
+    reason,
+    notes,
+    transactionAt,
+    recordedAt,
+    createdBy,
+    updatedBy,
+    createdAt,
+    updatedAt,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is WorkerLedgerAdjustmentRow &&
+          other.id == this.id &&
+          other.memberId == this.memberId &&
+          other.adjustmentType == this.adjustmentType &&
+          other.reversesAdjustmentId == this.reversesAdjustmentId &&
+          other.clientRequestId == this.clientRequestId &&
+          other.amountPaise == this.amountPaise &&
+          other.reason == this.reason &&
+          other.notes == this.notes &&
+          other.transactionAt == this.transactionAt &&
+          other.recordedAt == this.recordedAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedBy == this.updatedBy &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt);
+}
+
+class WorkerLedgerAdjustmentsCompanion
+    extends UpdateCompanion<WorkerLedgerAdjustmentRow> {
+  final Value<String> id;
+  final Value<String> memberId;
+  final Value<String> adjustmentType;
+  final Value<String?> reversesAdjustmentId;
+  final Value<String?> clientRequestId;
+  final Value<int> amountPaise;
+  final Value<String> reason;
+  final Value<String?> notes;
+  final Value<int> transactionAt;
+  final Value<int> recordedAt;
+  final Value<String?> createdBy;
+  final Value<String?> updatedBy;
+  final Value<int> createdAt;
+  final Value<int> updatedAt;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const WorkerLedgerAdjustmentsCompanion({
+    this.id = const Value.absent(),
+    this.memberId = const Value.absent(),
+    this.adjustmentType = const Value.absent(),
+    this.reversesAdjustmentId = const Value.absent(),
+    this.clientRequestId = const Value.absent(),
+    this.amountPaise = const Value.absent(),
+    this.reason = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.transactionAt = const Value.absent(),
+    this.recordedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  WorkerLedgerAdjustmentsCompanion.insert({
+    required String id,
+    required String memberId,
+    required String adjustmentType,
+    this.reversesAdjustmentId = const Value.absent(),
+    this.clientRequestId = const Value.absent(),
+    required int amountPaise,
+    required String reason,
+    this.notes = const Value.absent(),
+    required int transactionAt,
+    required int recordedAt,
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    required int createdAt,
+    required int updatedAt,
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       memberId = Value(memberId),
+       adjustmentType = Value(adjustmentType),
+       amountPaise = Value(amountPaise),
+       reason = Value(reason),
+       transactionAt = Value(transactionAt),
+       recordedAt = Value(recordedAt),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<WorkerLedgerAdjustmentRow> custom({
+    Expression<String>? id,
+    Expression<String>? memberId,
+    Expression<String>? adjustmentType,
+    Expression<String>? reversesAdjustmentId,
+    Expression<String>? clientRequestId,
+    Expression<int>? amountPaise,
+    Expression<String>? reason,
+    Expression<String>? notes,
+    Expression<int>? transactionAt,
+    Expression<int>? recordedAt,
+    Expression<String>? createdBy,
+    Expression<String>? updatedBy,
+    Expression<int>? createdAt,
+    Expression<int>? updatedAt,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (memberId != null) 'member_id': memberId,
+      if (adjustmentType != null) 'adjustment_type': adjustmentType,
+      if (reversesAdjustmentId != null)
+        'reverses_adjustment_id': reversesAdjustmentId,
+      if (clientRequestId != null) 'client_request_id': clientRequestId,
+      if (amountPaise != null) 'amount_paise': amountPaise,
+      if (reason != null) 'reason': reason,
+      if (notes != null) 'notes': notes,
+      if (transactionAt != null) 'transaction_at': transactionAt,
+      if (recordedAt != null) 'recorded_at': recordedAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  WorkerLedgerAdjustmentsCompanion copyWith({
+    Value<String>? id,
+    Value<String>? memberId,
+    Value<String>? adjustmentType,
+    Value<String?>? reversesAdjustmentId,
+    Value<String?>? clientRequestId,
+    Value<int>? amountPaise,
+    Value<String>? reason,
+    Value<String?>? notes,
+    Value<int>? transactionAt,
+    Value<int>? recordedAt,
+    Value<String?>? createdBy,
+    Value<String?>? updatedBy,
+    Value<int>? createdAt,
+    Value<int>? updatedAt,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return WorkerLedgerAdjustmentsCompanion(
+      id: id ?? this.id,
+      memberId: memberId ?? this.memberId,
+      adjustmentType: adjustmentType ?? this.adjustmentType,
+      reversesAdjustmentId: reversesAdjustmentId ?? this.reversesAdjustmentId,
+      clientRequestId: clientRequestId ?? this.clientRequestId,
+      amountPaise: amountPaise ?? this.amountPaise,
+      reason: reason ?? this.reason,
+      notes: notes ?? this.notes,
+      transactionAt: transactionAt ?? this.transactionAt,
+      recordedAt: recordedAt ?? this.recordedAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedBy: updatedBy ?? this.updatedBy,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (memberId.present) {
+      map['member_id'] = Variable<String>(memberId.value);
+    }
+    if (adjustmentType.present) {
+      map['adjustment_type'] = Variable<String>(adjustmentType.value);
+    }
+    if (reversesAdjustmentId.present) {
+      map['reverses_adjustment_id'] = Variable<String>(
+        reversesAdjustmentId.value,
+      );
+    }
+    if (clientRequestId.present) {
+      map['client_request_id'] = Variable<String>(clientRequestId.value);
+    }
+    if (amountPaise.present) {
+      map['amount_paise'] = Variable<int>(amountPaise.value);
+    }
+    if (reason.present) {
+      map['reason'] = Variable<String>(reason.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (transactionAt.present) {
+      map['transaction_at'] = Variable<int>(transactionAt.value);
+    }
+    if (recordedAt.present) {
+      map['recorded_at'] = Variable<int>(recordedAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('WorkerLedgerAdjustmentsCompanion(')
+          ..write('id: $id, ')
+          ..write('memberId: $memberId, ')
+          ..write('adjustmentType: $adjustmentType, ')
+          ..write('reversesAdjustmentId: $reversesAdjustmentId, ')
+          ..write('clientRequestId: $clientRequestId, ')
+          ..write('amountPaise: $amountPaise, ')
+          ..write('reason: $reason, ')
+          ..write('notes: $notes, ')
+          ..write('transactionAt: $transactionAt, ')
+          ..write('recordedAt: $recordedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $AuditLogsTable extends AuditLogs
     with TableInfo<$AuditLogsTable, AuditLogRow> {
   @override
@@ -9845,6 +10744,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $StockMovementsTable stockMovements = $StockMovementsTable(this);
   late final $LabourEntriesTable labourEntries = $LabourEntriesTable(this);
   late final $PaymentsTable payments = $PaymentsTable(this);
+  late final $WorkerLedgerAdjustmentsTable workerLedgerAdjustments =
+      $WorkerLedgerAdjustmentsTable(this);
   late final $AuditLogsTable auditLogs = $AuditLogsTable(this);
   late final BusinessProfileDao businessProfileDao = BusinessProfileDao(
     this as AppDatabase,
@@ -9860,6 +10761,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     this as AppDatabase,
   );
   late final PaymentDao paymentDao = PaymentDao(this as AppDatabase);
+  late final WorkerAdjustmentDao workerAdjustmentDao = WorkerAdjustmentDao(
+    this as AppDatabase,
+  );
   late final AttachmentAuditDao attachmentAuditDao = AttachmentAuditDao(
     this as AppDatabase,
   );
@@ -9880,6 +10784,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     stockMovements,
     labourEntries,
     payments,
+    workerLedgerAdjustments,
     auditLogs,
   ];
 }
@@ -13340,6 +14245,31 @@ final class $$MembersTableReferences
       manager.$state.copyWith(prefetchedData: cache),
     );
   }
+
+  static MultiTypedResultKey<
+    $WorkerLedgerAdjustmentsTable,
+    List<WorkerLedgerAdjustmentRow>
+  >
+  _workerLedgerAdjustmentsRefsTable(_$AppDatabase db) =>
+      MultiTypedResultKey.fromTable(
+        db.workerLedgerAdjustments,
+        aliasName: 'members__id__worker_ledger_adjustments__member_id',
+      );
+
+  $$WorkerLedgerAdjustmentsTableProcessedTableManager
+  get workerLedgerAdjustmentsRefs {
+    final manager = $$WorkerLedgerAdjustmentsTableTableManager(
+      $_db,
+      $_db.workerLedgerAdjustments,
+    ).filter((f) => f.memberId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _workerLedgerAdjustmentsRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
 }
 
 class $$MembersTableFilterComposer
@@ -13528,6 +14458,32 @@ class $$MembersTableFilterComposer
                 $removeJoinBuilderFromRootComposer,
           ),
     );
+    return f(composer);
+  }
+
+  Expression<bool> workerLedgerAdjustmentsRefs(
+    Expression<bool> Function($$WorkerLedgerAdjustmentsTableFilterComposer f) f,
+  ) {
+    final $$WorkerLedgerAdjustmentsTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.workerLedgerAdjustments,
+          getReferencedColumn: (t) => t.memberId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$WorkerLedgerAdjustmentsTableFilterComposer(
+                $db: $db,
+                $table: $db.workerLedgerAdjustments,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
     return f(composer);
   }
 }
@@ -13764,6 +14720,33 @@ class $$MembersTableAnnotationComposer
     );
     return f(composer);
   }
+
+  Expression<T> workerLedgerAdjustmentsRefs<T extends Object>(
+    Expression<T> Function($$WorkerLedgerAdjustmentsTableAnnotationComposer a)
+    f,
+  ) {
+    final $$WorkerLedgerAdjustmentsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.id,
+          referencedTable: $db.workerLedgerAdjustments,
+          getReferencedColumn: (t) => t.memberId,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$WorkerLedgerAdjustmentsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.workerLedgerAdjustments,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return f(composer);
+  }
 }
 
 class $$MembersTableTableManager
@@ -13785,6 +14768,7 @@ class $$MembersTableTableManager
             bool stockMovementsRefs,
             bool labourEntriesRefs,
             bool paymentsRefs,
+            bool workerLedgerAdjustmentsRefs,
           })
         > {
   $$MembersTableTableManager(_$AppDatabase db, $MembersTable table)
@@ -13869,6 +14853,7 @@ class $$MembersTableTableManager
                 stockMovementsRefs = false,
                 labourEntriesRefs = false,
                 paymentsRefs = false,
+                workerLedgerAdjustmentsRefs = false,
               }) {
                 return PrefetchHooks(
                   db: db,
@@ -13878,6 +14863,7 @@ class $$MembersTableTableManager
                     if (stockMovementsRefs) db.stockMovements,
                     if (labourEntriesRefs) db.labourEntries,
                     if (paymentsRefs) db.payments,
+                    if (workerLedgerAdjustmentsRefs) db.workerLedgerAdjustments,
                   ],
                   addJoins: null,
                   getPrefetchedDataCallback: (items) async {
@@ -13982,6 +14968,26 @@ class $$MembersTableTableManager
                           referencedColumn: 'member_id',
                           typedResults: items,
                         ),
+                      if (workerLedgerAdjustmentsRefs)
+                        await $_getPrefetchedDataByColumns<
+                          MemberRow,
+                          $MembersTable,
+                          WorkerLedgerAdjustmentRow,
+                          $WorkerLedgerAdjustmentsTable
+                        >(
+                          currentTable: table,
+                          referencedTable: $$MembersTableReferences
+                              ._workerLedgerAdjustmentsRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$MembersTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).workerLedgerAdjustmentsRefs,
+                          currentColumn: 'id',
+                          referencedColumn: 'member_id',
+                          typedResults: items,
+                        ),
                     ];
                   },
                 );
@@ -14008,6 +15014,7 @@ typedef $$MembersTableProcessedTableManager =
         bool stockMovementsRefs,
         bool labourEntriesRefs,
         bool paymentsRefs,
+        bool workerLedgerAdjustmentsRefs,
       })
     >;
 typedef $$MemberProcessesTableCreateCompanionBuilder =
@@ -18082,6 +19089,642 @@ typedef $$PaymentsTableProcessedTableManager =
       PaymentRow,
       PrefetchHooks Function({bool memberId, bool reversesPaymentId})
     >;
+typedef $$WorkerLedgerAdjustmentsTableCreateCompanionBuilder =
+    WorkerLedgerAdjustmentsCompanion Function({
+      required String id,
+      required String memberId,
+      required String adjustmentType,
+      Value<String?> reversesAdjustmentId,
+      Value<String?> clientRequestId,
+      required int amountPaise,
+      required String reason,
+      Value<String?> notes,
+      required int transactionAt,
+      required int recordedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
+      required int createdAt,
+      required int updatedAt,
+      Value<int?> deletedAt,
+      Value<int> rowid,
+    });
+typedef $$WorkerLedgerAdjustmentsTableUpdateCompanionBuilder =
+    WorkerLedgerAdjustmentsCompanion Function({
+      Value<String> id,
+      Value<String> memberId,
+      Value<String> adjustmentType,
+      Value<String?> reversesAdjustmentId,
+      Value<String?> clientRequestId,
+      Value<int> amountPaise,
+      Value<String> reason,
+      Value<String?> notes,
+      Value<int> transactionAt,
+      Value<int> recordedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
+      Value<int> createdAt,
+      Value<int> updatedAt,
+      Value<int?> deletedAt,
+      Value<int> rowid,
+    });
+
+final class $$WorkerLedgerAdjustmentsTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $WorkerLedgerAdjustmentsTable,
+          WorkerLedgerAdjustmentRow
+        > {
+  $$WorkerLedgerAdjustmentsTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $MembersTable _memberIdTable(_$AppDatabase db) => db.members
+      .createAlias('worker_ledger_adjustments__member_id__members__id');
+
+  $$MembersTableProcessedTableManager get memberId {
+    final $_column = $_itemColumn<String>('member_id')!;
+
+    final manager = $$MembersTableTableManager(
+      $_db,
+      $_db.members,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_memberIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $WorkerLedgerAdjustmentsTable _reversesAdjustmentIdTable(
+    _$AppDatabase db,
+  ) => db.workerLedgerAdjustments.createAlias(
+    'worker_ledger_adjustments__reverses_adjustment_id__worker_ledger_adjustments__id',
+  );
+
+  $$WorkerLedgerAdjustmentsTableProcessedTableManager?
+  get reversesAdjustmentId {
+    final $_column = $_itemColumn<String>('reverses_adjustment_id');
+    if ($_column == null) return null;
+    final manager = $$WorkerLedgerAdjustmentsTableTableManager(
+      $_db,
+      $_db.workerLedgerAdjustments,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(
+      _reversesAdjustmentIdTable($_db),
+    );
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$WorkerLedgerAdjustmentsTableFilterComposer
+    extends Composer<_$AppDatabase, $WorkerLedgerAdjustmentsTable> {
+  $$WorkerLedgerAdjustmentsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get adjustmentType => $composableBuilder(
+    column: $table.adjustmentType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get clientRequestId => $composableBuilder(
+    column: $table.clientRequestId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get amountPaise => $composableBuilder(
+    column: $table.amountPaise,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get reason => $composableBuilder(
+    column: $table.reason,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get transactionAt => $composableBuilder(
+    column: $table.transactionAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get recordedAt => $composableBuilder(
+    column: $table.recordedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$MembersTableFilterComposer get memberId {
+    final $$MembersTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.memberId,
+      referencedTable: $db.members,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MembersTableFilterComposer(
+            $db: $db,
+            $table: $db.members,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$WorkerLedgerAdjustmentsTableFilterComposer get reversesAdjustmentId {
+    final $$WorkerLedgerAdjustmentsTableFilterComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.reversesAdjustmentId,
+          referencedTable: $db.workerLedgerAdjustments,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$WorkerLedgerAdjustmentsTableFilterComposer(
+                $db: $db,
+                $table: $db.workerLedgerAdjustments,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+}
+
+class $$WorkerLedgerAdjustmentsTableOrderingComposer
+    extends Composer<_$AppDatabase, $WorkerLedgerAdjustmentsTable> {
+  $$WorkerLedgerAdjustmentsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get adjustmentType => $composableBuilder(
+    column: $table.adjustmentType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get clientRequestId => $composableBuilder(
+    column: $table.clientRequestId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get amountPaise => $composableBuilder(
+    column: $table.amountPaise,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get reason => $composableBuilder(
+    column: $table.reason,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get transactionAt => $composableBuilder(
+    column: $table.transactionAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get recordedAt => $composableBuilder(
+    column: $table.recordedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$MembersTableOrderingComposer get memberId {
+    final $$MembersTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.memberId,
+      referencedTable: $db.members,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MembersTableOrderingComposer(
+            $db: $db,
+            $table: $db.members,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$WorkerLedgerAdjustmentsTableOrderingComposer get reversesAdjustmentId {
+    final $$WorkerLedgerAdjustmentsTableOrderingComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.reversesAdjustmentId,
+          referencedTable: $db.workerLedgerAdjustments,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$WorkerLedgerAdjustmentsTableOrderingComposer(
+                $db: $db,
+                $table: $db.workerLedgerAdjustments,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+}
+
+class $$WorkerLedgerAdjustmentsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $WorkerLedgerAdjustmentsTable> {
+  $$WorkerLedgerAdjustmentsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get adjustmentType => $composableBuilder(
+    column: $table.adjustmentType,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get clientRequestId => $composableBuilder(
+    column: $table.clientRequestId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get amountPaise => $composableBuilder(
+    column: $table.amountPaise,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get reason =>
+      $composableBuilder(column: $table.reason, builder: (column) => column);
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<int> get transactionAt => $composableBuilder(
+    column: $table.transactionAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get recordedAt => $composableBuilder(
+    column: $table.recordedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get updatedBy =>
+      $composableBuilder(column: $table.updatedBy, builder: (column) => column);
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  $$MembersTableAnnotationComposer get memberId {
+    final $$MembersTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.memberId,
+      referencedTable: $db.members,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$MembersTableAnnotationComposer(
+            $db: $db,
+            $table: $db.members,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$WorkerLedgerAdjustmentsTableAnnotationComposer get reversesAdjustmentId {
+    final $$WorkerLedgerAdjustmentsTableAnnotationComposer composer =
+        $composerBuilder(
+          composer: this,
+          getCurrentColumn: (t) => t.reversesAdjustmentId,
+          referencedTable: $db.workerLedgerAdjustments,
+          getReferencedColumn: (t) => t.id,
+          builder:
+              (
+                joinBuilder, {
+                $addJoinBuilderToRootComposer,
+                $removeJoinBuilderFromRootComposer,
+              }) => $$WorkerLedgerAdjustmentsTableAnnotationComposer(
+                $db: $db,
+                $table: $db.workerLedgerAdjustments,
+                $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+                joinBuilder: joinBuilder,
+                $removeJoinBuilderFromRootComposer:
+                    $removeJoinBuilderFromRootComposer,
+              ),
+        );
+    return composer;
+  }
+}
+
+class $$WorkerLedgerAdjustmentsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $WorkerLedgerAdjustmentsTable,
+          WorkerLedgerAdjustmentRow,
+          $$WorkerLedgerAdjustmentsTableFilterComposer,
+          $$WorkerLedgerAdjustmentsTableOrderingComposer,
+          $$WorkerLedgerAdjustmentsTableAnnotationComposer,
+          $$WorkerLedgerAdjustmentsTableCreateCompanionBuilder,
+          $$WorkerLedgerAdjustmentsTableUpdateCompanionBuilder,
+          (WorkerLedgerAdjustmentRow, $$WorkerLedgerAdjustmentsTableReferences),
+          WorkerLedgerAdjustmentRow,
+          PrefetchHooks Function({bool memberId, bool reversesAdjustmentId})
+        > {
+  $$WorkerLedgerAdjustmentsTableTableManager(
+    _$AppDatabase db,
+    $WorkerLedgerAdjustmentsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$WorkerLedgerAdjustmentsTableFilterComposer(
+                $db: db,
+                $table: table,
+              ),
+          createOrderingComposer: () =>
+              $$WorkerLedgerAdjustmentsTableOrderingComposer(
+                $db: db,
+                $table: table,
+              ),
+          createComputedFieldComposer: () =>
+              $$WorkerLedgerAdjustmentsTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> memberId = const Value.absent(),
+                Value<String> adjustmentType = const Value.absent(),
+                Value<String?> reversesAdjustmentId = const Value.absent(),
+                Value<String?> clientRequestId = const Value.absent(),
+                Value<int> amountPaise = const Value.absent(),
+                Value<String> reason = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<int> transactionAt = const Value.absent(),
+                Value<int> recordedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => WorkerLedgerAdjustmentsCompanion(
+                id: id,
+                memberId: memberId,
+                adjustmentType: adjustmentType,
+                reversesAdjustmentId: reversesAdjustmentId,
+                clientRequestId: clientRequestId,
+                amountPaise: amountPaise,
+                reason: reason,
+                notes: notes,
+                transactionAt: transactionAt,
+                recordedAt: recordedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String memberId,
+                required String adjustmentType,
+                Value<String?> reversesAdjustmentId = const Value.absent(),
+                Value<String?> clientRequestId = const Value.absent(),
+                required int amountPaise,
+                required String reason,
+                Value<String?> notes = const Value.absent(),
+                required int transactionAt,
+                required int recordedAt,
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
+                required int createdAt,
+                required int updatedAt,
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => WorkerLedgerAdjustmentsCompanion.insert(
+                id: id,
+                memberId: memberId,
+                adjustmentType: adjustmentType,
+                reversesAdjustmentId: reversesAdjustmentId,
+                clientRequestId: clientRequestId,
+                amountPaise: amountPaise,
+                reason: reason,
+                notes: notes,
+                transactionAt: transactionAt,
+                recordedAt: recordedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<
+                    $WorkerLedgerAdjustmentsTable,
+                    WorkerLedgerAdjustmentRow
+                  >(table),
+                  $$WorkerLedgerAdjustmentsTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({memberId = false, reversesAdjustmentId = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (memberId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.memberId,
+                            referencedTable:
+                                $$WorkerLedgerAdjustmentsTableReferences
+                                    ._memberIdTable(db),
+                            referencedColumn:
+                                $$WorkerLedgerAdjustmentsTableReferences
+                                    ._memberIdTable(db)
+                                    .id,
+                          ) as T;
+                        }
+                        if (reversesAdjustmentId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.reversesAdjustmentId,
+                            referencedTable:
+                                $$WorkerLedgerAdjustmentsTableReferences
+                                    ._reversesAdjustmentIdTable(db),
+                            referencedColumn:
+                                $$WorkerLedgerAdjustmentsTableReferences
+                                    ._reversesAdjustmentIdTable(db)
+                                    .id,
+                          ) as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$WorkerLedgerAdjustmentsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $WorkerLedgerAdjustmentsTable,
+      WorkerLedgerAdjustmentRow,
+      $$WorkerLedgerAdjustmentsTableFilterComposer,
+      $$WorkerLedgerAdjustmentsTableOrderingComposer,
+      $$WorkerLedgerAdjustmentsTableAnnotationComposer,
+      $$WorkerLedgerAdjustmentsTableCreateCompanionBuilder,
+      $$WorkerLedgerAdjustmentsTableUpdateCompanionBuilder,
+      (WorkerLedgerAdjustmentRow, $$WorkerLedgerAdjustmentsTableReferences),
+      WorkerLedgerAdjustmentRow,
+      PrefetchHooks Function({bool memberId, bool reversesAdjustmentId})
+    >;
 typedef $$AuditLogsTableCreateCompanionBuilder = AuditLogsCompanion Function({
   required String id,
   required String entityType,
@@ -18423,6 +20066,11 @@ class $AppDatabaseManager {
       $$LabourEntriesTableTableManager(_db, _db.labourEntries);
   $$PaymentsTableTableManager get payments =>
       $$PaymentsTableTableManager(_db, _db.payments);
+  $$WorkerLedgerAdjustmentsTableTableManager get workerLedgerAdjustments =>
+      $$WorkerLedgerAdjustmentsTableTableManager(
+        _db,
+        _db.workerLedgerAdjustments,
+      );
   $$AuditLogsTableTableManager get auditLogs =>
       $$AuditLogsTableTableManager(_db, _db.auditLogs);
 }

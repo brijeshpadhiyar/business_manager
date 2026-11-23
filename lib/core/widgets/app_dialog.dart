@@ -1,9 +1,12 @@
+import 'package:animations/animations.dart';
+import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/widgets/app_button.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Adaptive Material 3 dialog helper with max-width constraint and consistent actions.
+/// Adaptive Material 3 dialog helper with smooth fade-scale entrance,
+/// max-width constraint, and consistent actions.
 final class AppDialog extends StatelessWidget {
   const AppDialog({
     super.key,
@@ -30,8 +33,13 @@ final class AppDialog extends StatelessWidget {
     required String cancelLabel,
     bool isDestructive = false,
   }) {
-    return showDialog<bool>(
+    final reduce = AppMotion.reduceMotion(context);
+    return showModal<bool>(
       context: context,
+      configuration: FadeScaleTransitionConfiguration(
+        transitionDuration: reduce ? Duration.zero : AppMotion.fast,
+        reverseTransitionDuration: reduce ? Duration.zero : AppMotion.fast,
+      ),
       builder: (dialogContext) => AppDialog(
         title: title,
         content: Text(message),
@@ -40,6 +48,23 @@ final class AppDialog extends StatelessWidget {
         isDestructive: isDestructive,
         onConfirm: () => Navigator.of(dialogContext).pop(true),
       ),
+    );
+  }
+
+  static Future<T?> showCustom<T>(
+    BuildContext context, {
+    required WidgetBuilder builder,
+    bool barrierDismissible = true,
+  }) {
+    final reduce = AppMotion.reduceMotion(context);
+    return showModal<T>(
+      context: context,
+      configuration: FadeScaleTransitionConfiguration(
+        barrierDismissible: barrierDismissible,
+        transitionDuration: reduce ? Duration.zero : AppMotion.fast,
+        reverseTransitionDuration: reduce ? Duration.zero : AppMotion.fast,
+      ),
+      builder: builder,
     );
   }
 

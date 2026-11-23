@@ -6,7 +6,7 @@ import 'package:material_ui/material_ui.dart';
 
 enum AppStatusTone { good, pending, damaged, info, neutral }
 
-/// Compact semantic pill backed by `AppSemanticColors` for status indicators.
+/// Compact semantic pill backed by `AppSemanticColors` with crisp tonal border.
 final class AppStatusBadge extends StatelessWidget {
   const AppStatusBadge({
     super.key,
@@ -41,15 +41,19 @@ final class AppStatusBadge extends StatelessWidget {
       label: label,
       child: Container(
         padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.sm,
+          horizontal: AppSpacing.sm + 2,
           vertical: AppSpacing.xs,
         ),
-        decoration: BoxDecoration(color: bg, borderRadius: AppRadius.smBorder),
+        decoration: BoxDecoration(
+          color: bg,
+          borderRadius: AppRadius.fullBorder,
+          border: Border.all(color: fg.withValues(alpha: 0.22), width: 0.8),
+        ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (icon != null) ...[
-              Icon(icon, size: AppSizing.iconSm, color: fg),
+              Icon(icon, size: AppSizing.iconSm - 2, color: fg),
               const SizedBox(width: AppSpacing.xs),
             ],
             Flexible(

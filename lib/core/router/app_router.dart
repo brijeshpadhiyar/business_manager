@@ -1,8 +1,14 @@
 import 'package:business_manager/core/config/app_config.dart';
+import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/design_system_showcase_page.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
+import 'package:business_manager/features/accounting/presentation/pages/accounting_overview_page.dart';
+import 'package:business_manager/features/accounting/presentation/pages/payment_form_page.dart';
+import 'package:business_manager/features/accounting/presentation/pages/worker_adjustment_form_page.dart';
+import 'package:business_manager/features/accounting/presentation/pages/worker_ledger_page.dart';
+import 'package:business_manager/features/backup/presentation/pages/backup_restore_page.dart';
 import 'package:business_manager/features/business_profile/presentation/pages/business_profile_page.dart';
 import 'package:business_manager/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:business_manager/features/inventory/presentation/pages/inventory_overview_page.dart';
@@ -13,6 +19,11 @@ import 'package:business_manager/features/processes/presentation/pages/process_f
 import 'package:business_manager/features/processes/presentation/pages/process_list_page.dart';
 import 'package:business_manager/features/rates/presentation/pages/rate_form_page.dart';
 import 'package:business_manager/features/rates/presentation/pages/rate_history_page.dart';
+import 'package:business_manager/features/reports/presentation/pages/reports_page.dart';
+import 'package:business_manager/features/stock_movements/presentation/pages/damaged_repair_page.dart';
+import 'package:business_manager/features/stock_movements/presentation/pages/stock_issue_page.dart';
+import 'package:business_manager/features/stock_movements/presentation/pages/stock_movements_page.dart';
+import 'package:business_manager/features/stock_movements/presentation/pages/stock_settlement_page.dart';
 import 'package:business_manager/features/workers/presentation/pages/worker_assignments_page.dart';
 import 'package:business_manager/features/workers/presentation/pages/worker_detail_page.dart';
 import 'package:business_manager/features/workers/presentation/pages/worker_form_page.dart';
@@ -30,68 +41,168 @@ GoRouter createAppRouter(AppConfig config) {
       ),
       GoRoute(
         path: RoutePaths.lotDetailPattern,
-        builder: (context, state) =>
-            LotDetailPage(lotId: state.pathParameters['id']!),
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: LotDetailPage(lotId: state.pathParameters['id']!),
+        ),
       ),
       // Processes
       GoRoute(
         path: RoutePaths.processCreate,
-        builder: (context, state) => const ProcessFormPage(),
+        pageBuilder: (context, state) =>
+            AppMotion.buildPage(state: state, child: const ProcessFormPage()),
       ),
       GoRoute(
         path: RoutePaths.processDetailPattern,
-        builder: (context, state) =>
-            ProcessDetailPage(processId: state.pathParameters['id']!),
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: ProcessDetailPage(processId: state.pathParameters['id']!),
+        ),
       ),
       GoRoute(
         path: RoutePaths.processEditPattern,
-        builder: (context, state) =>
-            ProcessFormPage(processId: state.pathParameters['id']!),
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: ProcessFormPage(processId: state.pathParameters['id']!),
+        ),
       ),
       // Workers, Assignments & Historical Rates
       GoRoute(
         path: RoutePaths.workerCreate,
-        builder: (context, state) => const WorkerFormPage(),
+        pageBuilder: (context, state) =>
+            AppMotion.buildPage(state: state, child: const WorkerFormPage()),
       ),
       GoRoute(
         path: RoutePaths.workerDetailPattern,
-        builder: (context, state) =>
-            WorkerDetailPage(workerId: state.pathParameters['id']!),
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: WorkerDetailPage(workerId: state.pathParameters['id']!),
+        ),
       ),
       GoRoute(
         path: RoutePaths.workerEditPattern,
-        builder: (context, state) =>
-            WorkerFormPage(workerId: state.pathParameters['id']!),
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: WorkerFormPage(workerId: state.pathParameters['id']!),
+        ),
       ),
       GoRoute(
         path: RoutePaths.workerAssignmentsPattern,
-        builder: (context, state) =>
-            WorkerAssignmentsPage(workerId: state.pathParameters['id']!),
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: WorkerAssignmentsPage(workerId: state.pathParameters['id']!),
+        ),
       ),
       GoRoute(
         path: RoutePaths.workerRatesPattern,
-        builder: (context, state) => RateHistoryPage(
-          workerId: state.pathParameters['id']!,
-          processId: state.uri.queryParameters['processId'],
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: RateHistoryPage(
+            workerId: state.pathParameters['id']!,
+            processId: state.uri.queryParameters['processId'],
+          ),
         ),
       ),
       GoRoute(
         path: RoutePaths.workerRateCreatePattern,
-        builder: (context, state) => RateFormPage(
-          workerId: state.pathParameters['id']!,
-          initialProcessId: state.uri.queryParameters['processId'],
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: RateFormPage(
+            workerId: state.pathParameters['id']!,
+            initialProcessId: state.uri.queryParameters['processId'],
+          ),
         ),
       ),
       GoRoute(
         path: RoutePaths.workerRateEditPattern,
-        builder: (context, state) => RateFormPage(
-          workerId: state.pathParameters['id']!,
-          rateId: state.pathParameters['rateId']!,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: RateFormPage(
+            workerId: state.pathParameters['id']!,
+            rateId: state.pathParameters['rateId']!,
+          ),
+        ),
+      ),
+      // Milestone 6 — Stock Movements
+      GoRoute(
+        path: RoutePaths.stockMovements,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: const StockMovementsPage(),
         ),
       ),
       GoRoute(
+        path: RoutePaths.stockIssuePath,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: StockIssuePage(
+            initialDesignColourId: state.uri.queryParameters['designColourId'],
+          ),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.stockReturnPattern,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: StockSettlementPage(issueId: state.pathParameters['issueId']!),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.stockRepair,
+        pageBuilder: (context, state) =>
+            AppMotion.buildPage(state: state, child: const DamagedRepairPage()),
+      ),
+      // Milestone 7 — Labour, Worker Ledger & Payments
+      GoRoute(
+        path: RoutePaths.accounting,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: const AccountingOverviewPage(),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.workerLedgerPattern,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: WorkerLedgerPage(workerId: state.pathParameters['id']!),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.paymentCreatePath,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: PaymentFormPage(
+            initialWorkerId: state.uri.queryParameters['workerId'],
+          ),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.workerAdjustmentCreatePattern,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: WorkerAdjustmentFormPage(
+            workerId: state.pathParameters['id']!,
+          ),
+        ),
+      ),
+      // Milestone 8 — Backup & Restore
+      GoRoute(
+        path: RoutePaths.backupRestore,
+        pageBuilder: (context, state) =>
+            AppMotion.buildPage(state: state, child: const BackupRestorePage()),
+      ),
+      // Milestone 9 — Business Reports
+      GoRoute(
+        path: RoutePaths.reports,
+        pageBuilder: (context, state) =>
+            AppMotion.buildPage(state: state, child: const ReportsPage()),
+      ),
+      GoRoute(
         path: RoutePaths.showcase,
-        builder: (context, state) => DesignSystemShowcasePage(config: config),
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: DesignSystemShowcasePage(config: config),
+        ),
       ),
     ],
   );
@@ -116,8 +227,48 @@ final class _StitchFlowShellPageState extends State<StitchFlowShellPage> {
 
     return ResponsiveNavigation(
       title: appTitle,
+      subtitle: l10n.appTagline,
       selectedIndex: _selectedIndex,
       onDestinationSelected: (index) => setState(() => _selectedIndex = index),
+      actions: [
+        AppIconButton(
+          icon: Icons.swap_horiz_rounded,
+          tooltip: l10n.navStockMovements,
+          onPressed: () => context.push(RoutePaths.stockMovements),
+        ),
+        AppIconButton(
+          icon: Icons.account_balance_wallet_outlined,
+          tooltip: l10n.navAccounting,
+          onPressed: () => context.push(RoutePaths.accounting),
+        ),
+        AppIconButton(
+          icon: Icons.analytics_outlined,
+          tooltip: l10n.navReports,
+          onPressed: () => context.push(RoutePaths.reports),
+        ),
+      ],
+      sidebarExtraActions: [
+        ResponsiveNavActionItem(
+          label: l10n.navStockMovements,
+          icon: Icons.swap_horiz_rounded,
+          onTap: () => context.push(RoutePaths.stockMovements),
+        ),
+        ResponsiveNavActionItem(
+          label: l10n.navAccounting,
+          icon: Icons.account_balance_wallet_outlined,
+          onTap: () => context.push(RoutePaths.accounting),
+        ),
+        ResponsiveNavActionItem(
+          label: l10n.navReports,
+          icon: Icons.analytics_outlined,
+          onTap: () => context.push(RoutePaths.reports),
+        ),
+        ResponsiveNavActionItem(
+          label: l10n.navBackupRestore,
+          icon: Icons.backup_outlined,
+          onTap: () => context.push(RoutePaths.backupRestore),
+        ),
+      ],
       destinations: [
         ResponsiveNavDestination(
           label: l10n.navDashboard,

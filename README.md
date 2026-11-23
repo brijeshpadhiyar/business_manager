@@ -2,7 +2,7 @@
 
 An **offline-first, multi-platform Flutter Garment & Production Management System**. Built with **Android as the primary target** and full cross-platform support for iOS, Web, Windows, macOS, and Linux from a single Flutter codebase.
 
-> **Project Phase:** Milestone 5 (StitchFlow Processes, Workers, Assignments & Historical Rates) Complete — Ready for Review.
+> **Project Phase:** **Complete V1 Production-Ready Release (Milestones 1–10 + Premium UI/UX Transformation)** — Verified & Tested.
 
 ---
 
@@ -70,6 +70,12 @@ An **offline-first, multi-platform Flutter Garment & Production Management Syste
 | 31 | [docs/31_STITCHFLOW_BUILD_AUTOMATION.md](docs/31_STITCHFLOW_BUILD_AUTOMATION.md) | One-command Windows APK build automation guide |
 | 32 | [docs/32_MILESTONE_3_6_IMPLEMENTATION_REPORT.md](docs/32_MILESTONE_3_6_IMPLEMENTATION_REPORT.md) | Milestone 3.6 APK build automation report |
 | 33 | [docs/33_MILESTONE_5_IMPLEMENTATION_REPORT.md](docs/33_MILESTONE_5_IMPLEMENTATION_REPORT.md) | Milestone 5 processes, workers & historical rates report |
+| 34 | [docs/34_UI_UX_DESIGN_SYSTEM.md](docs/34_UI_UX_DESIGN_SYSTEM.md) | StitchFlow Premium Material 3 UI/UX design system & motion spec |
+| 35 | [docs/35_MILESTONE_6_STOCK_MOVEMENTS_REPORT.md](docs/35_MILESTONE_6_STOCK_MOVEMENTS_REPORT.md) | Milestone 6 stock movements, settlements & reversal safeguards report |
+| 36 | [docs/36_MILESTONE_7_LABOUR_AND_WORKER_ACCOUNTS_REPORT.md](docs/36_MILESTONE_7_LABOUR_AND_WORKER_ACCOUNTS_REPORT.md) | Milestone 7 labour calculation, worker ledger & payments report |
+| 37 | [docs/37_MILESTONE_8_BACKUP_RESTORE_REPORT.md](docs/37_MILESTONE_8_BACKUP_RESTORE_REPORT.md) | Milestone 8 offline WAL-safe backup & atomic restore report |
+| 38 | [docs/38_MILESTONE_9_DASHBOARD_REPORTS_REPORT.md](docs/38_MILESTONE_9_DASHBOARD_REPORTS_REPORT.md) | Milestone 9 live dashboard & 10 business reports report |
+| 39 | [docs/39_MILESTONE_10_FINAL_QA_RELEASE_REPORT.md](docs/39_MILESTONE_10_FINAL_QA_RELEASE_REPORT.md) | Milestone 10 full QA, performance & release readiness report |
 
 ### Governance Files
 - [CHANGELOG.md](CHANGELOG.md) — Version history and milestone tracking

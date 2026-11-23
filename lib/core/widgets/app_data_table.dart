@@ -11,7 +11,8 @@ final class AppDataColumn {
 }
 
 /// Responsive data table: renders compact scannable cards on mobile (`< 600dp`)
-/// and a horizontally scrollable Material 3 `DataTable` on tablet/desktop (`>= 600dp`).
+/// and a horizontally scrollable Material 3 `DataTable` with subtle header tint
+/// and alternating row depth on tablet/desktop (`>= 600dp`).
 final class AppDataTable<T> extends StatelessWidget {
   const AppDataTable({
     super.key,
@@ -30,6 +31,9 @@ final class AppDataTable<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return LayoutBuilder(
       builder: (context, constraints) {
         final sizeClass = AppBreakpoints.fromWidth(constraints.maxWidth);
@@ -52,31 +56,47 @@ final class AppDataTable<T> extends StatelessWidget {
           padding: EdgeInsets.zero,
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
-            child: DataTable(
-              headingRowHeight: 44,
-              dataRowMinHeight: 44,
-              dataRowMaxHeight: 56,
-              columnSpacing: AppSpacing.xl,
-              columns: columns
-                  .map(
-                    (col) => DataColumn(
-                      numeric: col.numeric,
-                      label: Text(col.label),
-                    ),
-                  )
-                  .toList(),
-              rows: items
-                  .map(
-                    (item) => DataRow(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minWidth: constraints.maxWidth - 2),
+              child: DataTable(
+                headingRowHeight: 46,
+                dataRowMinHeight: 46,
+                dataRowMaxHeight: 60,
+                columnSpacing: AppSpacing.xl,
+                headingRowColor: WidgetStatePropertyAll(
+                  colorScheme.surfaceContainerHighest.withValues(alpha: 0.55),
+                ),
+                headingTextStyle: theme.textTheme.labelLarge?.copyWith(
+                  color: colorScheme.onSurface,
+                  fontWeight: FontWeight.w700,
+                ),
+                columns: columns
+                    .map(
+                      (col) => DataColumn(
+                        numeric: col.numeric,
+                        label: Text(col.label),
+                      ),
+                    )
+                    .toList(),
+                rows: [
+                  for (int i = 0; i < items.length; i++)
+                    DataRow(
+                      color: WidgetStatePropertyAll(
+                        i.isOdd
+                            ? colorScheme.surfaceContainer.withValues(
+                                alpha: 0.45,
+                              )
+                            : Colors.transparent,
+                      ),
                       onSelectChanged: onRowTap != null
-                          ? (_) => onRowTap!(item)
+                          ? (_) => onRowTap!(items[i])
                           : null,
-                      cells: cellsBuilder(item)
+                      cells: cellsBuilder(items[i])
                           .map((cell) => DataCell(cell))
                           .toList(),
                     ),
-                  )
-                  .toList(),
+                ],
+              ),
             ),
           ),
         );

@@ -62,4 +62,21 @@ abstract final class SchemaIndexes {
     'CREATE INDEX IF NOT EXISTS idx_audit_entity '
         'ON audit_logs(entity_type, entity_id, recorded_at DESC);',
   ];
+
+  /// Additive indexes introduced in schema v2 (`worker_ledger_adjustments`).
+  static const List<String> v2IndexStatements = [
+    'CREATE INDEX IF NOT EXISTS idx_wla_member_tx '
+        'ON worker_ledger_adjustments(member_id, transaction_at DESC);',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_wla_single_reversal '
+        'ON worker_ledger_adjustments(reverses_adjustment_id) '
+        'WHERE reverses_adjustment_id IS NOT NULL;',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_wla_client_request_id '
+        'ON worker_ledger_adjustments(client_request_id) '
+        'WHERE client_request_id IS NOT NULL;',
+  ];
+
+  static const List<String> allIndexStatements = [
+    ...v1IndexStatements,
+    ...v2IndexStatements,
+  ];
 }

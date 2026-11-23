@@ -7,6 +7,7 @@ import 'package:business_manager/core/database/daos/lot_dao.dart';
 import 'package:business_manager/core/database/daos/payment_dao.dart';
 import 'package:business_manager/core/database/daos/process_member_dao.dart';
 import 'package:business_manager/core/database/daos/stock_movement_dao.dart';
+import 'package:business_manager/core/database/daos/worker_adjustment_dao.dart';
 import 'package:business_manager/core/database/database_pragma_status.dart';
 import 'package:business_manager/core/database/migrations/database_migration_manager.dart';
 import 'package:business_manager/core/database/tables/attachment_audit_tables.dart';
@@ -18,8 +19,8 @@ import 'package:drift/drift.dart';
 
 part 'app_database.g.dart';
 
-/// Root offline-first Drift SQLite database containing all 13 documented tables
-/// and 7 persistence-only DAOs (`docs/07_database_schema.md`).
+/// Root offline-first Drift SQLite database containing all 14 tables
+/// (13 v1 tables + additive v2 `worker_ledger_adjustments`) and 8 DAOs.
 @DriftDatabase(
   tables: [
     BusinessProfiles,
@@ -33,6 +34,7 @@ part 'app_database.g.dart';
     StockMovements,
     LabourEntries,
     Payments,
+    WorkerLedgerAdjustments,
     Attachments,
     AuditLogs,
   ],
@@ -43,6 +45,7 @@ part 'app_database.g.dart';
     StockMovementDao,
     LabourEntryDao,
     PaymentDao,
+    WorkerAdjustmentDao,
     AttachmentAuditDao,
   ],
 )

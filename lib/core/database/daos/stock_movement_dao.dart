@@ -22,11 +22,69 @@ class StockMovementDao extends DatabaseAccessor<AppDatabase>
             ..where((t) => t.clientRequestId.equals(clientRequestId)))
           .getSingleOrNull();
 
+  Future<StockMovementRow?> findReversalForMovement(String movementId) =>
+      (select(stockMovements)
+            ..where((t) => t.reversesMovementId.equals(movementId)))
+          .getSingleOrNull();
+
+  Future<List<StockMovementRow>> getAllMovements() {
+    return (select(stockMovements)..orderBy([
+          (t) => OrderingTerm.asc(t.transactionAt),
+          (t) => OrderingTerm.asc(t.recordedAt),
+          (t) => OrderingTerm.asc(t.id),
+        ]))
+        .get();
+  }
+
   Future<List<StockMovementRow>> getMovementsForDesignColour(
     String designColourId,
   ) {
     return (select(stockMovements)
           ..where((t) => t.designColourId.equals(designColourId))
+          ..orderBy([
+            (t) => OrderingTerm.asc(t.transactionAt),
+            (t) => OrderingTerm.asc(t.recordedAt),
+            (t) => OrderingTerm.asc(t.id),
+          ]))
+        .get();
+  }
+
+  Future<List<StockMovementRow>> getMovementsForLot(String lotId) {
+    return (select(stockMovements)
+          ..where((t) => t.lotId.equals(lotId))
+          ..orderBy([
+            (t) => OrderingTerm.asc(t.transactionAt),
+            (t) => OrderingTerm.asc(t.recordedAt),
+            (t) => OrderingTerm.asc(t.id),
+          ]))
+        .get();
+  }
+
+  Future<List<StockMovementRow>> getMovementsForMember(String memberId) {
+    return (select(stockMovements)
+          ..where((t) => t.memberId.equals(memberId))
+          ..orderBy([
+            (t) => OrderingTerm.desc(t.transactionAt),
+            (t) => OrderingTerm.desc(t.recordedAt),
+          ]))
+        .get();
+  }
+
+  Future<List<StockMovementRow>> getMovementsForProcess(String processId) {
+    return (select(stockMovements)
+          ..where((t) => t.processId.equals(processId))
+          ..orderBy([
+            (t) => OrderingTerm.desc(t.transactionAt),
+            (t) => OrderingTerm.desc(t.recordedAt),
+          ]))
+        .get();
+  }
+
+  Future<List<StockMovementRow>> getMovementsByParentIssue(
+    String parentIssueId,
+  ) {
+    return (select(stockMovements)
+          ..where((t) => t.parentIssueId.equals(parentIssueId))
           ..orderBy([
             (t) => OrderingTerm.asc(t.transactionAt),
             (t) => OrderingTerm.asc(t.recordedAt),

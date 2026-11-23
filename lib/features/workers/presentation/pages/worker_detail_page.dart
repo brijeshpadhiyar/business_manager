@@ -203,6 +203,21 @@ final class _WorkerDetailView extends StatelessWidget {
                           },
                         ),
                         AppButton(
+                          label: l10n.accountingOpenLedgerAction,
+                          icon: Icons.account_balance_wallet_outlined,
+                          variant: AppButtonVariant.secondary,
+                          onPressed: () =>
+                              context.push(RoutePaths.workerLedger(worker.id)),
+                        ),
+                        AppButton(
+                          label: l10n.accountingRecordPaymentAction,
+                          icon: Icons.payments_outlined,
+                          variant: AppButtonVariant.outlined,
+                          onPressed: () => context.push(
+                            RoutePaths.paymentCreate(workerId: worker.id),
+                          ),
+                        ),
+                        AppButton(
                           label: worker.isActive
                               ? l10n.workerDeactivateAction
                               : l10n.workerActivateAction,

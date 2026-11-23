@@ -2,14 +2,15 @@ import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Compact date picker field that displays selected date in `Asia/Kolkata` (IST)
-/// and emits UTC epoch milliseconds to callers.
+/// Compact date (or date+time) picker field that displays values in
+/// `Asia/Kolkata` (IST) and emits exact UTC epoch milliseconds to callers.
 final class AppDatePicker extends StatelessWidget {
   const AppDatePicker({
     super.key,
     required this.label,
     required this.selectedUtcMillis,
     required this.onDateSelectedUtcMillis,
+    this.includeTime = false,
     this.hint,
     this.firstDate,
     this.lastDate,
@@ -20,6 +21,7 @@ final class AppDatePicker extends StatelessWidget {
   final String label;
   final int? selectedUtcMillis;
   final ValueChanged<int> onDateSelectedUtcMillis;
+  final bool includeTime;
   final String? hint;
   final DateTime? firstDate;
   final DateTime? lastDate;
@@ -38,18 +40,45 @@ final class AppDatePicker extends StatelessWidget {
       lastDate: lastDate ?? DateTime(2100),
     );
     if (picked == null) return;
-    final utcMillis = DateTime.utc(
-      picked.year,
-      picked.month,
-      picked.day,
-    ).millisecondsSinceEpoch;
+
+    if (includeTime) {
+      if (!context.mounted) return;
+      final pickedTime = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay(hour: nowIst.hour, minute: nowIst.minute),
+      );
+      final hour = pickedTime?.hour ?? nowIst.hour;
+      final minute = pickedTime?.minute ?? nowIst.minute;
+      final utcMillis = IstDateTimeHelper.istDateTimeToUtcMillis(
+        year: picked.year,
+        month: picked.month,
+        day: picked.day,
+        hour: hour,
+        minute: minute,
+      );
+      onDateSelectedUtcMillis(utcMillis);
+      return;
+    }
+
+    final utcMillis = IstDateTimeHelper.istDateTimeToUtcMillis(
+      year: picked.year,
+      month: picked.month,
+      day: picked.day,
+      hour: 12,
+    );
     onDateSelectedUtcMillis(utcMillis);
   }
 
   @override
   Widget build(BuildContext context) {
+    final localeCode = Localizations.localeOf(context).languageCode;
     final displayText = selectedUtcMillis != null
-        ? IstDateTimeHelper.toIstBusinessDate(selectedUtcMillis!)
+        ? (includeTime
+              ? IstDateTimeHelper.formatIstDateTime(
+                  selectedUtcMillis!,
+                  locale: localeCode,
+                )
+              : IstDateTimeHelper.toIstBusinessDate(selectedUtcMillis!))
         : '';
 
     return InkWell(
@@ -61,7 +90,10 @@ final class AppDatePicker extends StatelessWidget {
           hintText: hint,
           errorText: errorText,
           enabled: enabled,
-          suffixIcon: const Icon(Icons.calendar_today, size: AppSizing.iconMd),
+          suffixIcon: Icon(
+            includeTime ? Icons.schedule_rounded : Icons.calendar_today_rounded,
+            size: AppSizing.iconMd,
+          ),
         ),
         child: Text(displayText, style: Theme.of(context).textTheme.bodyMedium),
       ),

@@ -14,10 +14,25 @@ class LabourEntryDao extends DatabaseAccessor<AppDatabase>
   Future<void> insertEntry(LabourEntriesCompanion entry) =>
       into(labourEntries).insert(entry);
 
+  Future<LabourEntryRow?> findReversalForEntry(String entryId) => (select(
+    labourEntries,
+  )..where((t) => t.reversesLabourEntryId.equals(entryId))).getSingleOrNull();
+
+  Future<List<LabourEntryRow>> getAllEntries() {
+    return (select(labourEntries)..orderBy([
+          (t) => OrderingTerm.desc(t.transactionAt),
+          (t) => OrderingTerm.desc(t.recordedAt),
+        ]))
+        .get();
+  }
+
   Future<List<LabourEntryRow>> getEntriesForMember(String memberId) {
     return (select(labourEntries)
           ..where((t) => t.memberId.equals(memberId))
-          ..orderBy([(t) => OrderingTerm.desc(t.transactionAt)]))
+          ..orderBy([
+            (t) => OrderingTerm.desc(t.transactionAt),
+            (t) => OrderingTerm.desc(t.recordedAt),
+          ]))
         .get();
   }
 

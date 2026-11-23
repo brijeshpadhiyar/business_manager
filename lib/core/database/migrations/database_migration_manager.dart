@@ -1,34 +1,57 @@
+import 'package:business_manager/core/database/app_database.dart';
 import 'package:business_manager/core/database/migrations/schema_indexes.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:drift/drift.dart';
 
-/// Coordinates initial schema creation, default singleton seeding, and future
+/// Coordinates initial schema creation, default singleton seeding, and
 /// step-by-step schema upgrades (`v1 -> v2 -> ...`).
 abstract final class DatabaseMigrationManager {
-  static const int currentSchemaVersion = 1;
+  static const int currentSchemaVersion = 2;
   static const String defaultBusinessProfileId = 'default';
 
-  static Future<void> handleOnCreate(Migrator m, GeneratedDatabase db) async {
+  static Future<void> handleOnCreate(Migrator m, AppDatabase db) async {
     await m.createAll();
-    for (final statement in SchemaIndexes.v1IndexStatements) {
+    for (final statement in SchemaIndexes.allIndexStatements) {
       await db.customStatement(statement);
     }
     await seedDefaultBusinessProfile(db);
   }
 
-  /// Step-by-step upgrade entrypoint. Future schema changes must increment
-  /// [currentSchemaVersion] and add an explicit `if (from < N)` migration block
-  /// with matching automated migration tests.
+  /// Step-by-step upgrade entrypoint. Preserves 100% of existing user data
+  /// via additive, idempotent DDL statements.
   static Future<void> handleOnUpgrade(
     Migrator m,
-    GeneratedDatabase db,
+    AppDatabase db,
     int from,
     int to,
   ) async {
-    // Example template for future schema version 2:
-    // if (from < 2) { ... }
-    // Always ensure idempotent indexes exist after any upgrade.
-    for (final statement in SchemaIndexes.v1IndexStatements) {
+    if (from < 2) {
+      await db.customStatement('''
+        CREATE TABLE IF NOT EXISTS worker_ledger_adjustments (
+          id TEXT NOT NULL PRIMARY KEY,
+          member_id TEXT NOT NULL REFERENCES members(id) ON DELETE RESTRICT,
+          adjustment_type TEXT NOT NULL,
+          reverses_adjustment_id TEXT NULL REFERENCES worker_ledger_adjustments(id) ON DELETE RESTRICT,
+          client_request_id TEXT NULL,
+          amount_paise INTEGER NOT NULL,
+          reason TEXT NOT NULL,
+          notes TEXT NULL,
+          transaction_at INTEGER NOT NULL,
+          recorded_at INTEGER NOT NULL,
+          created_by TEXT NULL,
+          updated_by TEXT NULL,
+          created_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL,
+          deleted_at INTEGER NULL,
+          CHECK(adjustment_type IN ('CREDIT', 'DEBIT', 'REVERSAL')),
+          CHECK(amount_paise > 0),
+          CHECK(length(trim(reason)) > 0)
+        );
+      ''');
+    }
+
+    // Ensure all idempotent indexes exist after any upgrade.
+    for (final statement in SchemaIndexes.allIndexStatements) {
       await db.customStatement(statement);
     }
   }

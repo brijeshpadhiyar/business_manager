@@ -23,12 +23,28 @@ import 'package:business_manager/core/platform/media_storage_service.dart'
     as _i586;
 import 'package:business_manager/core/theme/theme_cubit.dart' as _i772;
 import 'package:business_manager/core/utils/id_generator.dart' as _i656;
+import 'package:business_manager/features/accounting/data/repositories/accounting_repository_impl.dart'
+    as _i134;
+import 'package:business_manager/features/accounting/domain/repositories/accounting_repository.dart'
+    as _i762;
+import 'package:business_manager/features/accounting/presentation/bloc/accounting_overview_cubit.dart'
+    as _i1023;
+import 'package:business_manager/features/accounting/presentation/bloc/worker_ledger_cubit.dart'
+    as _i711;
+import 'package:business_manager/features/backup/data/services/native_backup_restore_service.dart'
+    as _i397;
+import 'package:business_manager/features/backup/domain/services/backup_restore_service.dart'
+    as _i744;
+import 'package:business_manager/features/backup/presentation/bloc/backup_restore_cubit.dart'
+    as _i74;
 import 'package:business_manager/features/business_profile/data/repositories/business_profile_repository_impl.dart'
     as _i930;
 import 'package:business_manager/features/business_profile/domain/repositories/business_profile_repository.dart'
     as _i521;
 import 'package:business_manager/features/business_profile/presentation/bloc/business_profile_cubit.dart'
     as _i1018;
+import 'package:business_manager/features/dashboard/presentation/bloc/dashboard_cubit.dart'
+    as _i736;
 import 'package:business_manager/features/inventory/presentation/bloc/inventory_overview_cubit.dart'
     as _i931;
 import 'package:business_manager/features/lots/data/repositories/lot_repository_impl.dart'
@@ -53,6 +69,18 @@ import 'package:business_manager/features/rates/domain/repositories/rate_reposit
     as _i307;
 import 'package:business_manager/features/rates/presentation/bloc/rate_history_cubit.dart'
     as _i576;
+import 'package:business_manager/features/reports/data/repositories/reports_repository_impl.dart'
+    as _i546;
+import 'package:business_manager/features/reports/domain/repositories/reports_repository.dart'
+    as _i617;
+import 'package:business_manager/features/reports/presentation/bloc/reports_cubit.dart'
+    as _i507;
+import 'package:business_manager/features/stock_movements/data/repositories/stock_movement_repository_impl.dart'
+    as _i945;
+import 'package:business_manager/features/stock_movements/domain/repositories/stock_movement_repository.dart'
+    as _i306;
+import 'package:business_manager/features/stock_movements/presentation/bloc/stock_movements_cubit.dart'
+    as _i971;
 import 'package:business_manager/features/workers/data/repositories/worker_repository_impl.dart'
     as _i966;
 import 'package:business_manager/features/workers/domain/repositories/worker_repository.dart'
@@ -93,6 +121,13 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i772.ThemeCubit>(
       () => _i772.ThemeCubit(gh<_i460.SharedPreferences>()),
     );
+    gh.lazySingleton<_i744.BackupRestoreService>(
+      () => _i397.NativeBackupRestoreService(
+        gh<_i177.AppDatabase>(),
+        gh<_i516.AppConfig>(),
+        gh<_i656.IdGenerator>(),
+      ),
+    );
     gh.lazySingleton<_i586.MediaStorageService>(
       () => registerModule.mediaStorageService(
         gh<_i516.AppConfig>(),
@@ -102,10 +137,23 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i665.DatabaseTransactionRunner>(
       () => _i665.DatabaseTransactionRunner(gh<_i177.AppDatabase>()),
     );
+    gh.lazySingleton<_i762.AccountingRepository>(
+      () => _i134.AccountingRepositoryImpl(
+        gh<_i177.AppDatabase>(),
+        gh<_i665.DatabaseTransactionRunner>(),
+        gh<_i656.IdGenerator>(),
+      ),
+    );
     gh.lazySingleton<_i934.DatabaseInitializer>(
       () => _i934.DatabaseInitializer(
         gh<_i177.AppDatabase>(),
         gh<_i790.AppLogger>(),
+      ),
+    );
+    gh.factory<_i74.BackupRestoreCubit>(
+      () => _i74.BackupRestoreCubit(
+        gh<_i744.BackupRestoreService>(),
+        gh<_i516.AppConfig>(),
       ),
     );
     gh.lazySingleton<_i932.LotRepository>(
@@ -136,6 +184,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i656.IdGenerator>(),
       ),
     );
+    gh.factory<_i1023.AccountingOverviewCubit>(
+      () => _i1023.AccountingOverviewCubit(gh<_i762.AccountingRepository>()),
+    );
+    gh.factory<_i711.WorkerLedgerCubit>(
+      () => _i711.WorkerLedgerCubit(gh<_i762.AccountingRepository>()),
+    );
     gh.lazySingleton<_i926.ProcessRepository>(
       () => _i658.ProcessRepositoryImpl(
         gh<_i177.AppDatabase>(),
@@ -153,6 +207,13 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i931.InventoryOverviewCubit>(
       () => _i931.InventoryOverviewCubit(gh<_i932.LotRepository>()),
     );
+    gh.lazySingleton<_i306.StockMovementRepository>(
+      () => _i945.StockMovementRepositoryImpl(
+        gh<_i177.AppDatabase>(),
+        gh<_i665.DatabaseTransactionRunner>(),
+        gh<_i656.IdGenerator>(),
+      ),
+    );
     gh.factory<_i576.RateHistoryCubit>(
       () => _i576.RateHistoryCubit(
         gh<_i291.WorkerRepository>(),
@@ -165,6 +226,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i249.WorkerListCubit>(
       () => _i249.WorkerListCubit(gh<_i291.WorkerRepository>()),
+    );
+    gh.factory<_i971.StockMovementsCubit>(
+      () => _i971.StockMovementsCubit(gh<_i306.StockMovementRepository>()),
     );
     gh.factory<_i515.ProcessDetailCubit>(
       () => _i515.ProcessDetailCubit(gh<_i926.ProcessRepository>()),
@@ -180,6 +244,19 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i1018.BusinessProfileCubit>(
       () => _i1018.BusinessProfileCubit(gh<_i521.BusinessProfileRepository>()),
+    );
+    gh.lazySingleton<_i617.ReportsRepository>(
+      () => _i546.ReportsRepositoryImpl(
+        gh<_i177.AppDatabase>(),
+        gh<_i306.StockMovementRepository>(),
+        gh<_i762.AccountingRepository>(),
+      ),
+    );
+    gh.factory<_i736.DashboardCubit>(
+      () => _i736.DashboardCubit(gh<_i617.ReportsRepository>()),
+    );
+    gh.factory<_i507.ReportsCubit>(
+      () => _i507.ReportsCubit(gh<_i617.ReportsRepository>()),
     );
     return this;
   }

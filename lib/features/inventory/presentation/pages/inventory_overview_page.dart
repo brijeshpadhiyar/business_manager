@@ -2,11 +2,13 @@ import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
+import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/inventory/domain/calculators/inventory_overview_calculator.dart';
 import 'package:business_manager/features/inventory/presentation/bloc/inventory_overview_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 final class InventoryOverviewPage extends StatelessWidget {
@@ -70,6 +72,30 @@ final class _InventoryOverviewViewState extends State<_InventoryOverviewView> {
                     onPressed: () =>
                         context.read<InventoryOverviewCubit>().loadOverview(),
                   ),
+                ),
+                const SizedBox(height: AppSpacing.md),
+                Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
+                  children: [
+                    AppButton(
+                      label: l10n.navStockMovements,
+                      icon: Icons.swap_horiz_rounded,
+                      onPressed: () => context.push(RoutePaths.stockMovements),
+                    ),
+                    AppButton(
+                      label: l10n.stockIssueAction,
+                      icon: Icons.outbox_rounded,
+                      variant: AppButtonVariant.secondary,
+                      onPressed: () => context.push(RoutePaths.stockIssue()),
+                    ),
+                    AppButton(
+                      label: l10n.navReports,
+                      icon: Icons.analytics_outlined,
+                      variant: AppButtonVariant.outlined,
+                      onPressed: () => context.push(RoutePaths.reports),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: AppSpacing.md),
                 Wrap(

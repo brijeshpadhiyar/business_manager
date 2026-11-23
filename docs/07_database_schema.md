@@ -265,3 +265,29 @@
 | `recorded_at` | `INTEGER` | `NOT NULL` | System log timestamp (UTC) |
 
 *Index:* `idx_audit_entity ON audit_logs(entity_type, entity_id, recorded_at DESC);`
+
+---
+
+### 2.14 `worker_ledger_adjustments` (Append-Only Worker Ledger Adjustments — Schema v2)
+| Column | SQLite Type | Constraints | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | `TEXT` | `PRIMARY KEY` | UUIDv7 |
+| `member_id` | `TEXT` | `NOT NULL REFERENCES members(id) ON DELETE RESTRICT` | Worker |
+| `adjustment_type` | `TEXT` | `NOT NULL CHECK(IN ('CREDIT','DEBIT','REVERSAL'))` | `CREDIT` increases payable, `DEBIT` deducts payable |
+| `reverses_adjustment_id` | `TEXT` | `NULL REFERENCES worker_ledger_adjustments(id) ON DELETE RESTRICT` | Populated only on `REVERSAL` |
+| `client_request_id` | `TEXT` | `NULL` | Optional UUIDv4 idempotency token |
+| `amount_paise` | `INTEGER` | `NOT NULL CHECK(amount_paise > 0)` | Positive amount in paise |
+| `reason` | `TEXT` | `NOT NULL CHECK(length(trim(reason)) > 0)` | Mandatory adjustment or reversal reason |
+| `notes` | `TEXT` | `NULL` | Optional notes |
+| `transaction_at` | `INTEGER` | `NOT NULL` | Business date/time (UTC) |
+| `recorded_at` | `INTEGER` | `NOT NULL` | Entry timestamp (UTC) |
+| `created_by` | `TEXT` | `NULL` | Local operator label |
+| `updated_by` | `TEXT` | `NULL` | Local operator label |
+| `created_at` | `INTEGER` | `NOT NULL` | UTC epoch ms |
+| `updated_at` | `INTEGER` | `NOT NULL` | UTC epoch ms |
+| `deleted_at` | `INTEGER` | `NULL` | Soft delete (unused for immutable ledger) |
+
+*Indexes (v2):*
+- `idx_wla_member_tx ON worker_ledger_adjustments(member_id, transaction_at DESC)`
+- `CREATE UNIQUE INDEX idx_wla_single_reversal ON worker_ledger_adjustments(reverses_adjustment_id) WHERE reverses_adjustment_id IS NOT NULL;`
+- `CREATE UNIQUE INDEX idx_wla_client_request_id ON worker_ledger_adjustments(client_request_id) WHERE client_request_id IS NOT NULL;`
