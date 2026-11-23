@@ -10,11 +10,11 @@
   },
   "foundationTitle": "Project Foundation Ready",
   "@foundationTitle": {
-    "description": "Heading on the Milestone 1 foundation status screen."
+    "description": "Heading on the foundation status section."
   },
-  "foundationSubtitle": "Offline-first architecture, flavors, and bilingual localization are configured.",
+  "foundationSubtitle": "Offline-first architecture, flavors, Material 3 design system, and bilingual localization are configured.",
   "@foundationSubtitle": {
-    "description": "Subtitle on the Milestone 1 foundation status screen."
+    "description": "Subtitle on the foundation status section."
   },
   "environmentSectionTitle": "Environment",
   "@environmentSectionTitle": {
@@ -64,6 +64,22 @@
   "@languageGujarati": {
     "description": "Option to select Gujarati language."
   },
+  "themeSectionTitle": "Theme",
+  "@themeSectionTitle": {
+    "description": "Section heading for theme mode selector."
+  },
+  "themeSystem": "System",
+  "@themeSystem": {
+    "description": "Option to follow system theme mode."
+  },
+  "themeLight": "Light",
+  "@themeLight": {
+    "description": "Option to select light theme."
+  },
+  "themeDark": "Dark",
+  "@themeDark": {
+    "description": "Option to select dark theme."
+  },
   "actionSave": "Save",
   "@actionSave": {
     "description": "Common save button label."
@@ -72,6 +88,10 @@
   "@actionCancel": {
     "description": "Common cancel button label."
   },
+  "actionConfirm": "Confirm",
+  "@actionConfirm": {
+    "description": "Common confirm button label."
+  },
   "actionRetry": "Retry",
   "@actionRetry": {
     "description": "Common retry button label."
@@ -79,5 +99,165 @@
   "errorUnexpected": "An unexpected error occurred. Please try again.",
   "@errorUnexpected": {
     "description": "Generic fallback error message."
+  },
+  "navOverview": "Overview",
+  "@navOverview": {
+    "description": "Showcase navigation tab for overview and settings."
+  },
+  "navInputs": "Inputs",
+  "@navInputs": {
+    "description": "Showcase navigation tab for form inputs."
+  },
+  "navFeedback": "Feedback",
+  "@navFeedback": {
+    "description": "Showcase navigation tab for badges, dialogs, states, and tables."
+  },
+  "showcaseButtonsHeading": "Buttons & Actions",
+  "@showcaseButtonsHeading": {
+    "description": "Heading for button variants preview."
+  },
+  "showcasePrimaryAction": "Primary Action",
+  "@showcasePrimaryAction": {
+    "description": "Label for primary button preview."
+  },
+  "showcaseSecondaryAction": "Secondary",
+  "@showcaseSecondaryAction": {
+    "description": "Label for secondary button preview."
+  },
+  "showcaseOutlinedAction": "Outlined",
+  "@showcaseOutlinedAction": {
+    "description": "Label for outlined button preview."
+  },
+  "showcaseDestructiveAction": "Delete",
+  "@showcaseDestructiveAction": {
+    "description": "Label for destructive button preview."
+  },
+  "showcaseLoadingAction": "Saving...",
+  "@showcaseLoadingAction": {
+    "description": "Label for loading button preview."
+  },
+  "showcaseDisabledAction": "Disabled",
+  "@showcaseDisabledAction": {
+    "description": "Label for disabled button preview."
+  },
+  "showcaseInputsHeading": "Form Controls",
+  "@showcaseInputsHeading": {
+    "description": "Heading for form inputs preview."
+  },
+  "showcaseSampleFieldLabel": "Reference Name",
+  "@showcaseSampleFieldLabel": {
+    "description": "Sample text field label in design system showcase."
+  },
+  "showcaseSampleFieldHint": "Enter a sample value",
+  "@showcaseSampleFieldHint": {
+    "description": "Sample text field hint in design system showcase."
+  },
+  "validationRequired": "This field is required.",
+  "@validationRequired": {
+    "description": "Validation message when a required field is empty."
+  },
+  "showcaseDropdownLabel": "Sample Category",
+  "@showcaseDropdownLabel": {
+    "description": "Sample dropdown label in showcase."
+  },
+  "showcaseOptionOne": "Option One",
+  "@showcaseOptionOne": {
+    "description": "Sample option 1."
+  },
+  "showcaseOptionTwo": "Option Two",
+  "@showcaseOptionTwo": {
+    "description": "Sample option 2."
+  },
+  "showcaseDatePickerLabel": "Business Date (IST)",
+  "@showcaseDatePickerLabel": {
+    "description": "Sample date picker label."
+  },
+  "showcaseCheckboxLabel": "Mark as verified",
+  "@showcaseCheckboxLabel": {
+    "description": "Sample checkbox label."
+  },
+  "showcaseSwitchLabel": "Enable compact preview",
+  "@showcaseSwitchLabel": {
+    "description": "Sample switch label."
+  },
+  "showcaseValidateButton": "Validate Form",
+  "@showcaseValidateButton": {
+    "description": "Button to trigger sample form validation."
+  },
+  "showcaseBadgesHeading": "Status Badges",
+  "@showcaseBadgesHeading": {
+    "description": "Heading for semantic status badges."
+  },
+  "statusGood": "Good Stock",
+  "@statusGood": {
+    "description": "Semantic badge label for good stock."
+  },
+  "statusPending": "Pending",
+  "@statusPending": {
+    "description": "Semantic badge label for pending items."
+  },
+  "statusDamaged": "Damaged",
+  "@statusDamaged": {
+    "description": "Semantic badge label for damaged items."
+  },
+  "statusAdvanceCredit": "Advance Credit",
+  "@statusAdvanceCredit": {
+    "description": "Semantic badge label for advance credit."
+  },
+  "showcaseOpenDialog": "Open Dialog",
+  "@showcaseOpenDialog": {
+    "description": "Button label to preview AppDialog."
+  },
+  "showcaseOpenSheet": "Open Adaptive Sheet",
+  "@showcaseOpenSheet": {
+    "description": "Button label to preview AppBottomSheet."
+  },
+  "showcaseDialogTitle": "Confirm Action",
+  "@showcaseDialogTitle": {
+    "description": "Title of preview dialog."
+  },
+  "showcaseDialogMessage": "This preview verifies consistent Material 3 spacing, typography, and bilingual wrapping.",
+  "@showcaseDialogMessage": {
+    "description": "Body text of preview dialog."
+  },
+  "showcaseLongTextHeading": "Typography & Long Text Sample",
+  "@showcaseLongTextHeading": {
+    "description": "Heading for typography and long text wrapping verification."
+  },
+  "showcaseLongTextSample": "All design tokens, typography weights, and bilingual labels wrap cleanly across compact Android phones, tablets, and desktop layouts without clipping or overflow.",
+  "@showcaseLongTextSample": {
+    "description": "Long paragraph sample to verify English and Gujarati wrapping."
+  },
+  "showcaseTableHeading": "Responsive Data Table",
+  "@showcaseTableHeading": {
+    "description": "Heading for AppDataTable preview."
+  },
+  "showcaseColName": "Item",
+  "@showcaseColName": {
+    "description": "Sample table column 1."
+  },
+  "showcaseColQty": "Quantity",
+  "@showcaseColQty": {
+    "description": "Sample table column 2."
+  },
+  "showcaseColAmount": "Amount",
+  "@showcaseColAmount": {
+    "description": "Sample table column 3."
+  },
+  "showcaseEmptyTitle": "No Records Yet",
+  "@showcaseEmptyTitle": {
+    "description": "Preview title for AppEmptyState."
+  },
+  "showcaseEmptySubtitle": "Items will appear here once added.",
+  "@showcaseEmptySubtitle": {
+    "description": "Preview subtitle for AppEmptyState."
+  },
+  "showcaseErrorTitle": "Unable to Load Preview",
+  "@showcaseErrorTitle": {
+    "description": "Preview title for AppErrorView."
+  },
+  "showcaseLoadingMessage": "Loading preview...",
+  "@showcaseLoadingMessage": {
+    "description": "Preview message for AppLoader."
   }
 }

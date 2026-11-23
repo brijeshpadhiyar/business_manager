@@ -1,3 +1,3 @@
 abstract final class RoutePaths {
-  static const String foundation = '/';
+  static const String showcase = '/';
 }

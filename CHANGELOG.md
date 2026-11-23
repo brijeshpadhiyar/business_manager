@@ -22,6 +22,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   - Added single-reversal `UNIQUE` partial indexes on `stock_movements`, `labour_entries`, and `payments`, plus `labour_entries.reverses_labour_entry_id`, `members.address`, `payments.reason`, and uniform `created_by`/`updated_by` audit columns in `docs/07_database_schema.md`.
   - Updated `docs/05_system_architecture.md` settlement flow to read + validate + insert inside a single atomic Drift transaction (eliminating TOCTOU race risk).
   - Clarified reversed-labour active-row filtering (`docs/10_labour_calculation_rules.md`), native `image_picker` compression (`docs/04_technology_stack.md`, `docs/13_offline_storage_strategy.md`), Web WASM byte export vs native `VACUUM INTO` (`docs/14_backup_restore_strategy.md`), and added Test #27 (`docs/20_testing_strategy.md`).
+- **Milestone 2 — Material 3 Design System & Common Widget Library (`docs/26_MILESTONE_2_IMPLEMENTATION_REPORT.md`)**:
+  - Implemented centralized Material 3 tokens (`AppColors`, `AppSemanticColors`, `AppSpacing`, `AppSizing`, `AppRadius`, `AppElevation`, `AppBreakpoints`, `AppTypography`, `AppTheme.light()` / `AppTheme.dark()`) built on `material_ui: ^1.11.1`.
+  - Implemented persistent `ThemeCubit` (`System`, `Light`, `Dark`) saved in `SharedPreferences` and wired reactively in `lib/app.dart`.
+  - Implemented all 20 centralized common widgets (`AppScaffold` through `AppDataTable` & `ResponsiveNavigation`) in `lib/core/widgets/`.
+  - Added bilingual EN/GU `DesignSystemShowcasePage` (`0` untranslated ARB keys) and 11 new unit/widget tests (`18/18` passing, `flutter analyze` 0 issues, Android `dev` APK built).
 - **Milestone 1 — Flutter Project Foundation (`docs/25_MILESTONE_1_IMPLEMENTATION_REPORT.md`)**:
   - Configured verified V1 dependencies in `pubspec.yaml` (keeping official `material_ui: ^1.11.1`, `flutter_bloc`, `drift`/`sqlite3`, `go_router`, `freezed`, `get_it`/`injectable`, `intl`, `timezone`, `shared_preferences`, media/backup packages, and `build_runner: ^2.16.1`).
   - Bundled Noto Sans Gujarati (`Regular`, `Medium`, `SemiBold`, `Bold`) offline font assets in `assets/fonts/`.

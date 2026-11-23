@@ -14,6 +14,7 @@ import 'package:business_manager/core/config/app_config.dart' as _i516;
 import 'package:business_manager/core/config/app_logger.dart' as _i790;
 import 'package:business_manager/core/di/register_module.dart' as _i453;
 import 'package:business_manager/core/localization/locale_cubit.dart' as _i588;
+import 'package:business_manager/core/theme/theme_cubit.dart' as _i772;
 import 'package:business_manager/core/utils/id_generator.dart' as _i656;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
@@ -37,6 +38,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i588.LocaleCubit>(
       () => _i588.LocaleCubit(gh<_i460.SharedPreferences>()),
+    );
+    gh.lazySingleton<_i772.ThemeCubit>(
+      () => _i772.ThemeCubit(gh<_i460.SharedPreferences>()),
     );
     return this;
   }

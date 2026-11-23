@@ -110,16 +110,16 @@ abstract class AppLocalizations {
   /// **'Business Manager Dev'**
   String get appTitleDev;
 
-  /// Heading on the Milestone 1 foundation status screen.
+  /// Heading on the foundation status section.
   ///
   /// In en, this message translates to:
   /// **'Project Foundation Ready'**
   String get foundationTitle;
 
-  /// Subtitle on the Milestone 1 foundation status screen.
+  /// Subtitle on the foundation status section.
   ///
   /// In en, this message translates to:
-  /// **'Offline-first architecture, flavors, and bilingual localization are configured.'**
+  /// **'Offline-first architecture, flavors, Material 3 design system, and bilingual localization are configured.'**
   String get foundationSubtitle;
 
   /// Section heading for flavor and environment metadata.
@@ -194,6 +194,30 @@ abstract class AppLocalizations {
   /// **'ગુજરાતી (Gujarati)'**
   String get languageGujarati;
 
+  /// Section heading for theme mode selector.
+  ///
+  /// In en, this message translates to:
+  /// **'Theme'**
+  String get themeSectionTitle;
+
+  /// Option to follow system theme mode.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get themeSystem;
+
+  /// Option to select light theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get themeLight;
+
+  /// Option to select dark theme.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get themeDark;
+
   /// Common save button label.
   ///
   /// In en, this message translates to:
@@ -206,6 +230,12 @@ abstract class AppLocalizations {
   /// **'Cancel'**
   String get actionCancel;
 
+  /// Common confirm button label.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get actionConfirm;
+
   /// Common retry button label.
   ///
   /// In en, this message translates to:
@@ -217,6 +247,246 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'An unexpected error occurred. Please try again.'**
   String get errorUnexpected;
+
+  /// Showcase navigation tab for overview and settings.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get navOverview;
+
+  /// Showcase navigation tab for form inputs.
+  ///
+  /// In en, this message translates to:
+  /// **'Inputs'**
+  String get navInputs;
+
+  /// Showcase navigation tab for badges, dialogs, states, and tables.
+  ///
+  /// In en, this message translates to:
+  /// **'Feedback'**
+  String get navFeedback;
+
+  /// Heading for button variants preview.
+  ///
+  /// In en, this message translates to:
+  /// **'Buttons & Actions'**
+  String get showcaseButtonsHeading;
+
+  /// Label for primary button preview.
+  ///
+  /// In en, this message translates to:
+  /// **'Primary Action'**
+  String get showcasePrimaryAction;
+
+  /// Label for secondary button preview.
+  ///
+  /// In en, this message translates to:
+  /// **'Secondary'**
+  String get showcaseSecondaryAction;
+
+  /// Label for outlined button preview.
+  ///
+  /// In en, this message translates to:
+  /// **'Outlined'**
+  String get showcaseOutlinedAction;
+
+  /// Label for destructive button preview.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get showcaseDestructiveAction;
+
+  /// Label for loading button preview.
+  ///
+  /// In en, this message translates to:
+  /// **'Saving...'**
+  String get showcaseLoadingAction;
+
+  /// Label for disabled button preview.
+  ///
+  /// In en, this message translates to:
+  /// **'Disabled'**
+  String get showcaseDisabledAction;
+
+  /// Heading for form inputs preview.
+  ///
+  /// In en, this message translates to:
+  /// **'Form Controls'**
+  String get showcaseInputsHeading;
+
+  /// Sample text field label in design system showcase.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference Name'**
+  String get showcaseSampleFieldLabel;
+
+  /// Sample text field hint in design system showcase.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a sample value'**
+  String get showcaseSampleFieldHint;
+
+  /// Validation message when a required field is empty.
+  ///
+  /// In en, this message translates to:
+  /// **'This field is required.'**
+  String get validationRequired;
+
+  /// Sample dropdown label in showcase.
+  ///
+  /// In en, this message translates to:
+  /// **'Sample Category'**
+  String get showcaseDropdownLabel;
+
+  /// Sample option 1.
+  ///
+  /// In en, this message translates to:
+  /// **'Option One'**
+  String get showcaseOptionOne;
+
+  /// Sample option 2.
+  ///
+  /// In en, this message translates to:
+  /// **'Option Two'**
+  String get showcaseOptionTwo;
+
+  /// Sample date picker label.
+  ///
+  /// In en, this message translates to:
+  /// **'Business Date (IST)'**
+  String get showcaseDatePickerLabel;
+
+  /// Sample checkbox label.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as verified'**
+  String get showcaseCheckboxLabel;
+
+  /// Sample switch label.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable compact preview'**
+  String get showcaseSwitchLabel;
+
+  /// Button to trigger sample form validation.
+  ///
+  /// In en, this message translates to:
+  /// **'Validate Form'**
+  String get showcaseValidateButton;
+
+  /// Heading for semantic status badges.
+  ///
+  /// In en, this message translates to:
+  /// **'Status Badges'**
+  String get showcaseBadgesHeading;
+
+  /// Semantic badge label for good stock.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Stock'**
+  String get statusGood;
+
+  /// Semantic badge label for pending items.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get statusPending;
+
+  /// Semantic badge label for damaged items.
+  ///
+  /// In en, this message translates to:
+  /// **'Damaged'**
+  String get statusDamaged;
+
+  /// Semantic badge label for advance credit.
+  ///
+  /// In en, this message translates to:
+  /// **'Advance Credit'**
+  String get statusAdvanceCredit;
+
+  /// Button label to preview AppDialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Dialog'**
+  String get showcaseOpenDialog;
+
+  /// Button label to preview AppBottomSheet.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Adaptive Sheet'**
+  String get showcaseOpenSheet;
+
+  /// Title of preview dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Action'**
+  String get showcaseDialogTitle;
+
+  /// Body text of preview dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'This preview verifies consistent Material 3 spacing, typography, and bilingual wrapping.'**
+  String get showcaseDialogMessage;
+
+  /// Heading for typography and long text wrapping verification.
+  ///
+  /// In en, this message translates to:
+  /// **'Typography & Long Text Sample'**
+  String get showcaseLongTextHeading;
+
+  /// Long paragraph sample to verify English and Gujarati wrapping.
+  ///
+  /// In en, this message translates to:
+  /// **'All design tokens, typography weights, and bilingual labels wrap cleanly across compact Android phones, tablets, and desktop layouts without clipping or overflow.'**
+  String get showcaseLongTextSample;
+
+  /// Heading for AppDataTable preview.
+  ///
+  /// In en, this message translates to:
+  /// **'Responsive Data Table'**
+  String get showcaseTableHeading;
+
+  /// Sample table column 1.
+  ///
+  /// In en, this message translates to:
+  /// **'Item'**
+  String get showcaseColName;
+
+  /// Sample table column 2.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get showcaseColQty;
+
+  /// Sample table column 3.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get showcaseColAmount;
+
+  /// Preview title for AppEmptyState.
+  ///
+  /// In en, this message translates to:
+  /// **'No Records Yet'**
+  String get showcaseEmptyTitle;
+
+  /// Preview subtitle for AppEmptyState.
+  ///
+  /// In en, this message translates to:
+  /// **'Items will appear here once added.'**
+  String get showcaseEmptySubtitle;
+
+  /// Preview title for AppErrorView.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to Load Preview'**
+  String get showcaseErrorTitle;
+
+  /// Preview message for AppLoader.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading preview...'**
+  String get showcaseLoadingMessage;
 }
 
 class _AppLocalizationsDelegate

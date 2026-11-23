@@ -38,4 +38,4 @@ All shared UI components live in `lib/core/widgets/` and are built on Flutter's 
 | 17 | `AppErrorView` | Consistent error presentation with localized message and Retry button. |
 | 18 | `AppStatusBadge` | Compact semantic pill (`Good`, `Pending`, `Damaged`, `Lost`, `Advance Credit`, `Active`, `Inactive`) backed by `AppSemanticColors`. |
 | 19 | `AppDataTable<T>` | Responsive data display: renders compact card list on mobile (`< 600dp`) and sortable scrollable `DataTable` on tablet/desktop (`>= 600dp`). |
-| 20 | `AdaptiveShellScaffold` | Responsive navigation shell switching between Mobile Bottom Navigation Bar, Tablet NavigationRail, and Desktop Navigation Sidebar. |
+| 20 | `ResponsiveNavigation` | Responsive navigation shell switching between Mobile Bottom Navigation Bar, Tablet NavigationRail, and Desktop Navigation Sidebar. |
