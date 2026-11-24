@@ -130,9 +130,9 @@ final class _ReportsViewState extends State<_ReportsView> {
                 const SizedBox(height: AppSpacing.sm),
               ],
 
-              // 3. Active Category Body
-              AppStateTransition(
-                stateKey: ValueKey<(ReportsStatus, ReportCategory)>(
+              // 3. Active Category Body (instant swap without full-list fade/slide)
+              KeyedSubtree(
+                key: ValueKey<(ReportsStatus, ReportCategory)>(
                   (state.status, state.category),
                 ),
                 child: state.status == ReportsStatus.initial ||
@@ -361,7 +361,8 @@ final class _ReportsViewState extends State<_ReportsView> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         for (final w in b.workerPerformance) ...[
-          AppCard(
+          AppCard.listItem(
+            key: ValueKey<String>(w.workerId),
             padding: const EdgeInsets.all(AppSpacing.md),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -514,7 +515,8 @@ final class _ReportsViewState extends State<_ReportsView> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         for (final p in b.processPerformance) ...[
-          AppCard(
+          AppCard.listItem(
+            key: ValueKey<String>(p.processId),
             padding: const EdgeInsets.all(AppSpacing.md),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

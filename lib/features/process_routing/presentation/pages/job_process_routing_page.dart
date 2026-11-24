@@ -1565,10 +1565,9 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
     final cubit = context.read<JobRoutingCubit>();
     final colorScheme = Theme.of(context).colorScheme;
 
-    return AppMotionEntrance(
-      index: index + 3,
-      child: AppCard(
-        child: Column(
+    return AppCard.listItem(
+      key: ValueKey<String>(jp.id),
+      child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
@@ -1751,7 +1750,6 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
             ),
           ],
         ),
-      ),
     );
   }
 

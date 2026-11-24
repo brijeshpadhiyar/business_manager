@@ -48,8 +48,12 @@ final class AppDialog extends StatelessWidget {
       context: context,
       configuration: FadeScaleTransitionConfiguration(
         barrierColor: Colors.black.withValues(alpha: isDark ? 0.56 : 0.34),
-        transitionDuration: reduce ? Duration.zero : AppMotion.normal,
-        reverseTransitionDuration: reduce ? Duration.zero : AppMotion.fast,
+        transitionDuration: reduce
+            ? Duration.zero
+            : const Duration(milliseconds: 200),
+        reverseTransitionDuration: reduce
+            ? Duration.zero
+            : const Duration(milliseconds: 150),
       ),
       builder: (dialogContext) => AppDialog(
         title: title,
@@ -74,8 +78,12 @@ final class AppDialog extends StatelessWidget {
       configuration: FadeScaleTransitionConfiguration(
         barrierDismissible: barrierDismissible,
         barrierColor: Colors.black.withValues(alpha: isDark ? 0.56 : 0.34),
-        transitionDuration: reduce ? Duration.zero : AppMotion.normal,
-        reverseTransitionDuration: reduce ? Duration.zero : AppMotion.fast,
+        transitionDuration: reduce
+            ? Duration.zero
+            : const Duration(milliseconds: 200),
+        reverseTransitionDuration: reduce
+            ? Duration.zero
+            : const Duration(milliseconds: 150),
       ),
       builder: builder,
     );
@@ -111,7 +119,7 @@ final class AppDialog extends StatelessWidget {
             child: ClipRRect(
               borderRadius: AppRadius.xlBorder,
               child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 22, sigmaY: 22),
+                filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     color: tokens.dialogGlassFill,

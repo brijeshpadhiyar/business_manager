@@ -272,6 +272,25 @@ final class AppSurfaceTokens extends ThemeExtension<AppSurfaceTokens> {
     stops: const [0.0, 0.45, 1.0],
   );
 
+  /// Lightweight frosted-glass specular gradient for dense scrolling list rows
+  /// and nested cards where per-item `BackdropFilter` readbacks are avoided.
+  /// Retains translucent glass luminosity and depth over `AppGlassBackdrop` in
+  /// both Light Glass and Dark Glass modes with zero GPU blur overhead.
+  LinearGradient get lightweightGlassGradient => LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      glassHighlightTop.withValues(
+        alpha: (glassHighlightTop.a + 0.10).clamp(0.0, 0.92),
+      ),
+      glassFillStrong,
+      glassHighlightBottom.withValues(
+        alpha: (glassHighlightBottom.a + 0.16).clamp(0.0, 0.84),
+      ),
+    ],
+    stops: const [0.0, 0.48, 1.0],
+  );
+
   @override
   AppSurfaceTokens copyWith({
     Color? glassFill,

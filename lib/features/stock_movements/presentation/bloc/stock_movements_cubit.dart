@@ -54,12 +54,17 @@ final class StockMovementsCubit extends Cubit<StockMovementsState> {
   StockMovementsCubit(this._repository) : super(const StockMovementsState());
 
   final StockMovementRepository _repository;
+  int _requestSeq = 0;
 
   Future<void> loadAll({StockMovementFilter? filter}) async {
+    final seq = ++_requestSeq;
     final effectiveFilter = filter ?? state.filter;
+    final showLoader =
+        state.status == StockMovementsStatus.initial ||
+        state.status == StockMovementsStatus.error;
     emit(
       state.copyWith(
-        status: StockMovementsStatus.loading,
+        status: showLoader ? StockMovementsStatus.loading : state.status,
         filter: effectiveFilter,
       ),
     );
@@ -76,6 +81,7 @@ final class StockMovementsCubit extends Cubit<StockMovementsState> {
         _repository.getProcessStockSummaries(),
       ]);
 
+      if (seq != _requestSeq || isClosed) return;
       emit(
         state.copyWith(
           status: StockMovementsStatus.loaded,
@@ -87,6 +93,7 @@ final class StockMovementsCubit extends Cubit<StockMovementsState> {
         ),
       );
     } catch (e) {
+      if (seq != _requestSeq || isClosed) return;
       emit(
         state.copyWith(
           status: StockMovementsStatus.error,

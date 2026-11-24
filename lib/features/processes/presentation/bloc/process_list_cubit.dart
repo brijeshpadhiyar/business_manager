@@ -25,19 +25,24 @@ final class ProcessListCubit extends Cubit<ProcessListState> {
   ProcessListCubit(this._repository) : super(const ProcessListState());
 
   final ProcessRepository _repository;
+  int _requestSeq = 0;
 
   Future<void> loadProcesses({
     String? searchQuery,
     bool? activeFilter,
     bool clearActiveFilter = false,
   }) async {
+    final seq = ++_requestSeq;
     final nextQuery = searchQuery ?? state.searchQuery;
     final nextFilter = clearActiveFilter
         ? null
         : (activeFilter ?? state.activeFilter);
+    final showLoader =
+        state.status == ProcessListStatus.initial ||
+        state.status == ProcessListStatus.error;
     emit(
       state.copyWith(
-        status: ProcessListStatus.loading,
+        status: showLoader ? ProcessListStatus.loading : state.status,
         searchQuery: nextQuery,
         activeFilter: nextFilter,
         errorMessage: null,
@@ -48,8 +53,10 @@ final class ProcessListCubit extends Cubit<ProcessListState> {
         searchQuery: nextQuery,
         isActiveFilter: nextFilter,
       );
+      if (seq != _requestSeq || isClosed) return;
       emit(state.copyWith(status: ProcessListStatus.loaded, processes: list));
     } catch (e) {
+      if (seq != _requestSeq || isClosed) return;
       emit(
         state.copyWith(
           status: ProcessListStatus.error,

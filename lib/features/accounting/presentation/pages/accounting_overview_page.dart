@@ -1,4 +1,3 @@
-import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/domain_label_localizer.dart';
@@ -155,22 +154,10 @@ final class _AccountingOverviewViewState
 
     return BlocBuilder<AccountingOverviewCubit, AccountingOverviewState>(
       builder: (context, state) {
-        final totalEarned = state.workerSummaries.fold<int>(
-          0,
-          (s, w) => s + w.earnedLabourPaise,
-        );
-        final totalOutstanding = state.workerSummaries.fold<int>(
-          0,
-          (s, w) => s + w.outstandingPayablePaise,
-        );
-        final totalAdvanceCredit = state.workerSummaries.fold<int>(
-          0,
-          (s, w) => s + w.advanceCreditBalancePaise,
-        );
-        final totalPaid = state.workerSummaries.fold<int>(
-          0,
-          (s, w) => s + w.netPaidToWorkerPaise,
-        );
+        final totalEarned = state.totalEarnedPaise;
+        final totalOutstanding = state.totalOutstandingPaise;
+        final totalAdvanceCredit = state.totalAdvanceCreditPaise;
+        final totalPaid = state.totalPaidPaise;
 
         final List<Widget> slivers;
         if (state.status == AccountingOverviewStatus.initial ||
@@ -201,7 +188,7 @@ final class _AccountingOverviewViewState
                 AppSpacing.lg,
                 AppSpacing.md,
                 AppSpacing.lg,
-                96,
+                AppSpacing.md,
               ),
               sliver: SliverToBoxAdapter(
                 child: Column(
@@ -221,23 +208,41 @@ final class _AccountingOverviewViewState
                       l10n.accountingAdvanceNote,
                       variant: AppTextVariant.bodySmall,
                     ),
-                    const SizedBox(height: AppSpacing.md),
-                    switch (_tab) {
-                      0 => _buildWorkerBalances(context, state),
-                      1 => _buildPaymentsList(
-                        context,
-                        state.recentPayments,
-                        localeCode,
+                    if (_tab == 0) ...[
+                      const SizedBox(height: AppSpacing.md),
+                      AppSearchField(
+                        controller: _searchCtrl,
+                        label: l10n.workersSearchHint,
+                        debounceDuration: const Duration(milliseconds: 160),
+                        onChanged: (q) => context
+                            .read<AccountingOverviewCubit>()
+                            .updateSearch(q),
                       ),
-                      _ => _buildLabourList(
-                        context,
-                        state.labourEntries,
-                        localeCode,
-                      ),
-                    },
+                    ],
                   ],
                 ),
               ),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                0,
+                AppSpacing.lg,
+                96,
+              ),
+              sliver: switch (_tab) {
+                0 => _buildWorkerBalancesSliver(context, state),
+                1 => _buildPaymentsSliver(
+                  context,
+                  state.recentPayments,
+                  localeCode,
+                ),
+                _ => _buildLabourSliver(
+                  context,
+                  state.labourEntries,
+                  localeCode,
+                ),
+              },
             ),
           ];
         }
@@ -315,304 +320,290 @@ final class _AccountingOverviewViewState
     );
   }
 
-  Widget _buildWorkerBalances(
+  Widget _buildWorkerBalancesSliver(
     BuildContext context,
     AccountingOverviewState state,
   ) {
     final l10n = context.l10n;
     final items = state.filteredSummaries;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        AppTextField(
-          controller: _searchCtrl,
-          label: l10n.workersSearchHint,
-          prefixIcon: Icons.search_rounded,
-          onChanged: (q) =>
-              context.read<AccountingOverviewCubit>().updateSearch(q),
+    if (items.isEmpty) {
+      return SliverToBoxAdapter(
+        child: AppEmptyState(
+          icon: Icons.people_outline_rounded,
+          title: l10n.workersEmptyTitle,
+          subtitle: l10n.workersEmptySubtitle,
         ),
-        const SizedBox(height: AppSpacing.md),
-        if (items.isEmpty)
-          AppEmptyState(
-            icon: Icons.people_outline_rounded,
-            title: l10n.workersEmptyTitle,
-            subtitle: l10n.workersEmptySubtitle,
-          )
-        else
-          for (int i = 0; i < items.length; i++)
-            Padding(
-              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-              child: AppMotionEntrance(
-                index: i,
-                child: AppCard(
-                  onTap: () => _openWorkerLedger(items[i].workerId),
-                  child: Column(
+      );
+    }
+
+    return SliverList.separated(
+      itemCount: items.length,
+      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
+      itemBuilder: (context, i) {
+        final item = items[i];
+        return AppCard.listItem(
+          key: ValueKey<String>(item.workerId),
+          onTap: () => _openWorkerLedger(item.workerId),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Wrap(
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.xs,
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Wrap(
-                        spacing: AppSpacing.sm,
-                        runSpacing: AppSpacing.xs,
-                        alignment: WrapAlignment.spaceBetween,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              AppText(
-                                items[i].workerName,
-                                variant: AppTextVariant.bodyLarge,
-                                fontWeight: FontWeight.w700,
-                              ),
-                              if (items[i].workerPhone != null)
-                                AppText(
-                                  items[i].workerPhone!,
-                                  variant: AppTextVariant.bodySmall,
-                                ),
-                            ],
-                          ),
-                          if (items[i].outstandingPayablePaise > 0)
-                            AppStatusBadge(
-                              label:
-                                  '${l10n.accountingOutstandingPayableLabel}: ${MoneyFormatter.formatPaise(items[i].outstandingPayablePaise)}',
-                              tone: AppStatusTone.pending,
-                            )
-                          else if (items[i].advanceCreditBalancePaise > 0)
-                            AppStatusBadge(
-                              label:
-                                  '${l10n.accountingAdvanceCreditLabel}: ${MoneyFormatter.formatPaise(items[i].advanceCreditBalancePaise)}',
-                              tone: AppStatusTone.info,
-                            )
-                          else
-                            AppStatusBadge(
-                              label: MoneyFormatter.formatPaise(0),
-                              tone: AppStatusTone.good,
-                            ),
-                        ],
+                      AppText(
+                        item.workerName,
+                        variant: AppTextVariant.bodyLarge,
+                        fontWeight: FontWeight.w700,
                       ),
-                      const SizedBox(height: AppSpacing.sm),
-                      Wrap(
-                        spacing: AppSpacing.md,
-                        runSpacing: AppSpacing.xs,
-                        children: [
-                          AppText(
-                            '${l10n.accountingEarnedLabourLabel}: ${MoneyFormatter.formatPaise(items[i].earnedLabourPaise)}',
-                            variant: AppTextVariant.numeric,
-                          ),
-                          AppText(
-                            '${l10n.accountingAdvancePaidLabel}: ${MoneyFormatter.formatPaise(items[i].advancePaymentsPaise)}',
-                            variant: AppTextVariant.numeric,
-                          ),
-                          AppText(
-                            '${l10n.accountingRegularPaidLabel}: ${MoneyFormatter.formatPaise(items[i].regularPaymentsPaise)}',
-                            variant: AppTextVariant.numeric,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      Wrap(
-                        spacing: AppSpacing.sm,
-                        runSpacing: AppSpacing.sm,
-                        alignment: WrapAlignment.end,
-                        children: [
-                          AppButton(
-                            label: l10n.accountingOpenLedgerAction,
-                            variant: AppButtonVariant.outlined,
-                            onPressed: () =>
-                                _openWorkerLedger(items[i].workerId),
-                          ),
-                          AppButton(
-                            label: l10n.accountingRecordPaymentAction,
-                            variant: AppButtonVariant.secondary,
-                            onPressed: () =>
-                                _openRecordPayment(workerId: items[i].workerId),
-                          ),
-                        ],
-                      ),
+                      if (item.workerPhone != null)
+                        AppText(
+                          item.workerPhone!,
+                          variant: AppTextVariant.bodySmall,
+                        ),
                     ],
                   ),
-                ),
+                  if (item.outstandingPayablePaise > 0)
+                    AppStatusBadge(
+                      label:
+                          '${l10n.accountingOutstandingPayableLabel}: ${MoneyFormatter.formatPaise(item.outstandingPayablePaise)}',
+                      tone: AppStatusTone.pending,
+                    )
+                  else if (item.advanceCreditBalancePaise > 0)
+                    AppStatusBadge(
+                      label:
+                          '${l10n.accountingAdvanceCreditLabel}: ${MoneyFormatter.formatPaise(item.advanceCreditBalancePaise)}',
+                      tone: AppStatusTone.info,
+                    )
+                  else
+                    AppStatusBadge(
+                      label: MoneyFormatter.formatPaise(0),
+                      tone: AppStatusTone.good,
+                    ),
+                ],
               ),
-            ),
-      ],
+              const SizedBox(height: AppSpacing.sm),
+              Wrap(
+                spacing: AppSpacing.md,
+                runSpacing: AppSpacing.xs,
+                children: [
+                  AppText(
+                    '${l10n.accountingEarnedLabourLabel}: ${MoneyFormatter.formatPaise(item.earnedLabourPaise)}',
+                    variant: AppTextVariant.numeric,
+                  ),
+                  AppText(
+                    '${l10n.accountingAdvancePaidLabel}: ${MoneyFormatter.formatPaise(item.advancePaymentsPaise)}',
+                    variant: AppTextVariant.numeric,
+                  ),
+                  AppText(
+                    '${l10n.accountingRegularPaidLabel}: ${MoneyFormatter.formatPaise(item.regularPaymentsPaise)}',
+                    variant: AppTextVariant.numeric,
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              Wrap(
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.sm,
+                alignment: WrapAlignment.end,
+                children: [
+                  AppButton(
+                    label: l10n.accountingOpenLedgerAction,
+                    variant: AppButtonVariant.outlined,
+                    onPressed: () => _openWorkerLedger(item.workerId),
+                  ),
+                  AppButton(
+                    label: l10n.accountingRecordPaymentAction,
+                    variant: AppButtonVariant.secondary,
+                    onPressed: () =>
+                        _openRecordPayment(workerId: item.workerId),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 
-  Widget _buildPaymentsList(
+  Widget _buildPaymentsSliver(
     BuildContext context,
     List<PaymentView> payments,
     String localeCode,
   ) {
     final l10n = context.l10n;
     if (payments.isEmpty) {
-      return AppEmptyState(
-        icon: Icons.payments_outlined,
-        title: l10n.accountingEmptyLedgerTitle,
-        subtitle: l10n.accountingEmptyLedgerSubtitle,
-        actionLabel: l10n.accountingRecordPaymentAction,
-        onAction: _openRecordPayment,
+      return SliverToBoxAdapter(
+        child: AppEmptyState(
+          icon: Icons.payments_outlined,
+          title: l10n.accountingEmptyLedgerTitle,
+          subtitle: l10n.accountingEmptyLedgerSubtitle,
+          actionLabel: l10n.accountingRecordPaymentAction,
+          onAction: _openRecordPayment,
+        ),
       );
     }
 
-    return Column(
-      children: [
-        for (final view in payments)
-          Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-            child: AppCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+    return SliverList.separated(
+      itemCount: payments.length,
+      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
+      itemBuilder: (context, i) {
+        final view = payments[i];
+        return AppCard.listItem(
+          key: ValueKey<String>(view.payment.id),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  Row(
-                    children: [
-                      AppStatusBadge(
-                        label: _paymentTypeLabel(
-                          context,
-                          view.payment.paymentType,
-                        ),
-                        tone: switch (view.payment.paymentType) {
-                          PaymentType.advance => AppStatusTone.info,
-                          PaymentType.regular => AppStatusTone.good,
-                          PaymentType.advanceRefund => AppStatusTone.pending,
-                          PaymentType.reversal => AppStatusTone.neutral,
-                        },
-                      ),
-                      if (view.isReversed) ...[
-                        const SizedBox(width: AppSpacing.xs),
-                        AppStatusBadge(
-                          label: l10n.stockReversedBadge,
-                          tone: AppStatusTone.neutral,
-                        ),
-                      ],
-                      const Spacer(),
-                      AppText(
-                        MoneyFormatter.formatPaise(view.payment.amountPaise),
-                        variant: AppTextVariant.numeric,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ],
+                  AppStatusBadge(
+                    label: _paymentTypeLabel(context, view.payment.paymentType),
+                    tone: switch (view.payment.paymentType) {
+                      PaymentType.advance => AppStatusTone.info,
+                      PaymentType.regular => AppStatusTone.good,
+                      PaymentType.advanceRefund => AppStatusTone.pending,
+                      PaymentType.reversal => AppStatusTone.neutral,
+                    },
                   ),
-                  const SizedBox(height: AppSpacing.xs),
+                  if (view.isReversed) ...[
+                    const SizedBox(width: AppSpacing.xs),
+                    AppStatusBadge(
+                      label: l10n.stockReversedBadge,
+                      tone: AppStatusTone.neutral,
+                    ),
+                  ],
+                  const Spacer(),
                   AppText(
-                    '${view.workerName} • ${_paymentModeLabel(context, view.payment.paymentMode)}',
-                    fontWeight: FontWeight.w600,
-                  ),
-                  if (view.payment.referenceNo != null)
-                    AppText(
-                      '${l10n.refLabelShort}: ${view.payment.referenceNo!}',
-                      variant: AppTextVariant.bodySmall,
-                    ),
-                  if (view.payment.reason != null)
-                    AppText(
-                      view.payment.reason!,
-                      variant: AppTextVariant.bodySmall,
-                    ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: AppText(
-                          IstDateTimeHelper.formatIstDateTime(
-                            view.payment.transactionAt,
-                            locale: localeCode,
-                          ),
-                          variant: AppTextVariant.bodySmall,
-                        ),
-                      ),
-                      if (!view.isReversed &&
-                          view.payment.paymentType != PaymentType.reversal)
-                        AppButton(
-                          label: l10n.stockReverseAction,
-                          variant: AppButtonVariant.text,
-                          onPressed: () => _confirmReversePayment(view),
-                        ),
-                    ],
+                    MoneyFormatter.formatPaise(view.payment.amountPaise),
+                    variant: AppTextVariant.numeric,
+                    fontWeight: FontWeight.w700,
                   ),
                 ],
               ),
-            ),
+              const SizedBox(height: AppSpacing.xs),
+              AppText(
+                '${view.workerName} • ${_paymentModeLabel(context, view.payment.paymentMode)}',
+                fontWeight: FontWeight.w600,
+              ),
+              if (view.payment.referenceNo != null)
+                AppText(
+                  '${l10n.refLabelShort}: ${view.payment.referenceNo!}',
+                  variant: AppTextVariant.bodySmall,
+                ),
+              if (view.payment.reason != null)
+                AppText(view.payment.reason!, variant: AppTextVariant.bodySmall),
+              Row(
+                children: [
+                  Expanded(
+                    child: AppText(
+                      IstDateTimeHelper.formatIstDateTime(
+                        view.payment.transactionAt,
+                        locale: localeCode,
+                      ),
+                      variant: AppTextVariant.bodySmall,
+                    ),
+                  ),
+                  if (!view.isReversed &&
+                      view.payment.paymentType != PaymentType.reversal)
+                    AppButton(
+                      label: l10n.stockReverseAction,
+                      variant: AppButtonVariant.text,
+                      onPressed: () => _confirmReversePayment(view),
+                    ),
+                ],
+              ),
+            ],
           ),
-      ],
+        );
+      },
     );
   }
 
-  Widget _buildLabourList(
+  Widget _buildLabourSliver(
     BuildContext context,
     List<LabourEntryView> entries,
     String localeCode,
   ) {
     final l10n = context.l10n;
     if (entries.isEmpty) {
-      return AppEmptyState(
-        icon: Icons.work_history_outlined,
-        title: l10n.accountingEmptyLedgerTitle,
-        subtitle: l10n.accountingEmptyLedgerSubtitle,
+      return SliverToBoxAdapter(
+        child: AppEmptyState(
+          icon: Icons.work_history_outlined,
+          title: l10n.accountingEmptyLedgerTitle,
+          subtitle: l10n.accountingEmptyLedgerSubtitle,
+        ),
       );
     }
 
-    return Column(
-      children: [
-        for (final view in entries)
-          Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-            child: AppCard(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+    return SliverList.separated(
+      itemCount: entries.length,
+      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
+      itemBuilder: (context, i) {
+        final view = entries[i];
+        return AppCard.listItem(
+          key: ValueKey<String>(view.entry.id),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Wrap(
+                      spacing: AppSpacing.xs,
+                      runSpacing: AppSpacing.xs,
                       children: [
-                        Wrap(
-                          spacing: AppSpacing.xs,
-                          runSpacing: AppSpacing.xs,
-                          children: [
-                            AppStatusBadge(
-                              label: view.entry.isPayable
-                                  ? l10n.accountingPayableBadge
-                                  : l10n.accountingInfoBadge,
-                              tone: view.entry.isPayable
-                                  ? AppStatusTone.good
-                                  : AppStatusTone.neutral,
-                            ),
-                            AppStatusBadge(
-                              label: DomainLabelLocalizer.labourBasis(
-                                l10n,
-                                view.entry.basisType,
-                              ),
-                              tone:
-                                  view.entry.basisType ==
-                                      LabourBasisType.reversal
-                                  ? AppStatusTone.damaged
-                                  : AppStatusTone.info,
-                            ),
-                            if (view.isReversed)
-                              AppStatusBadge(
-                                label: l10n.stockReversedBadge,
-                                tone: AppStatusTone.neutral,
-                              ),
-                          ],
+                        AppStatusBadge(
+                          label: view.entry.isPayable
+                              ? l10n.accountingPayableBadge
+                              : l10n.accountingInfoBadge,
+                          tone: view.entry.isPayable
+                              ? AppStatusTone.good
+                              : AppStatusTone.neutral,
                         ),
-                        const SizedBox(height: AppSpacing.xs),
-                        AppText(
-                          '${view.workerName} • ${view.processName} • ${l10n.lotLabelShort} ${view.lotNumber}',
-                          fontWeight: FontWeight.w600,
+                        AppStatusBadge(
+                          label: DomainLabelLocalizer.labourBasis(
+                            l10n,
+                            view.entry.basisType,
+                          ),
+                          tone: view.entry.basisType == LabourBasisType.reversal
+                              ? AppStatusTone.damaged
+                              : AppStatusTone.info,
                         ),
-                        AppText(
-                          '${view.entry.quantity} ${l10n.piecesUnit} × ${MoneyFormatter.formatPaise(view.entry.ratePaise)} • ${IstDateTimeHelper.formatIstDateTime(view.entry.transactionAt, locale: localeCode)}',
-                          variant: AppTextVariant.bodySmall,
-                        ),
+                        if (view.isReversed)
+                          AppStatusBadge(
+                            label: l10n.stockReversedBadge,
+                            tone: AppStatusTone.neutral,
+                          ),
                       ],
                     ),
-                  ),
-                  AppText(
-                    MoneyFormatter.formatPaise(view.entry.amountPaise),
-                    variant: AppTextVariant.numeric,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ],
+                    const SizedBox(height: AppSpacing.xs),
+                    AppText(
+                      '${view.workerName} • ${view.processName} • ${l10n.lotLabelShort} ${view.lotNumber}',
+                      fontWeight: FontWeight.w600,
+                    ),
+                    AppText(
+                      '${view.entry.quantity} ${l10n.piecesUnit} × ${MoneyFormatter.formatPaise(view.entry.ratePaise)} • ${IstDateTimeHelper.formatIstDateTime(view.entry.transactionAt, locale: localeCode)}',
+                      variant: AppTextVariant.bodySmall,
+                    ),
+                  ],
+                ),
               ),
-            ),
+              AppText(
+                MoneyFormatter.formatPaise(view.entry.amountPaise),
+                variant: AppTextVariant.numeric,
+                fontWeight: FontWeight.w700,
+              ),
+            ],
           ),
-      ],
+        );
+      },
     );
   }
 }

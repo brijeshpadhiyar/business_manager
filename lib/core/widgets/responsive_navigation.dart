@@ -53,6 +53,7 @@ final class ResponsiveNavigation extends StatelessWidget {
     this.actions,
     this.sidebarExtraActions = const [],
     this.floatingActionButton,
+    this.enableBodyTransition = false,
   });
 
   final String title;
@@ -64,14 +65,14 @@ final class ResponsiveNavigation extends StatelessWidget {
   final List<Widget>? actions;
   final List<ResponsiveNavActionItem> sidebarExtraActions;
   final Widget? floatingActionButton;
+  final bool enableBodyTransition;
 
   Widget _animatedBody(BuildContext context) {
-    final reduce = AppMotion.reduceMotion(context);
-    if (reduce) {
-      return KeyedSubtree(key: ValueKey<int>(selectedIndex), child: body);
+    if (!enableBodyTransition || AppMotion.reduceMotion(context)) {
+      return body;
     }
     return PageTransitionSwitcher(
-      duration: AppMotion.normal,
+      duration: AppMotion.fast,
       transitionBuilder: (child, primaryAnimation, secondaryAnimation) {
         return FadeThroughTransition(
           animation: primaryAnimation,
@@ -92,6 +93,8 @@ final class ResponsiveNavigation extends StatelessWidget {
           AppIdentity.symbolPngAsset,
           width: 26,
           height: 26,
+          cacheWidth: 96,
+          cacheHeight: 96,
           errorBuilder: (_, _, _) => const Icon(Icons.auto_awesome, size: 22),
         ),
         const SizedBox(width: AppSpacing.sm),
@@ -119,7 +122,7 @@ final class ResponsiveNavigation extends StatelessWidget {
       actions: actions,
       flexibleSpace: ClipRect(
         child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
           child: DecoratedBox(
             decoration: BoxDecoration(
               color: tokens.navGlassFill,
@@ -173,7 +176,7 @@ final class ResponsiveNavigation extends StatelessWidget {
                 top: Radius.circular(AppRadius.xl),
               ),
               child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     color: tokens.navGlassFill,
@@ -241,7 +244,7 @@ final class ResponsiveNavigation extends StatelessWidget {
                 RepaintBoundary(
                   child: ClipRect(
                     child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+                      filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                       child: DecoratedBox(
                         decoration: BoxDecoration(
                           color: tokens.navGlassFill,
@@ -313,7 +316,7 @@ final class ResponsiveNavigation extends StatelessWidget {
                   width: AppSizing.desktopSidebarWidth,
                   child: ClipRect(
                     child: BackdropFilter(
-                      filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+                      filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                       child: DecoratedBox(
                         decoration: BoxDecoration(
                           color: tokens.navGlassFill,
@@ -344,6 +347,8 @@ final class ResponsiveNavigation extends StatelessWidget {
                                     AppIdentity.symbolPngAsset,
                                     width: 34,
                                     height: 34,
+                                    cacheWidth: 96,
+                                    cacheHeight: 96,
                                     errorBuilder: (_, _, _) =>
                                         const Icon(Icons.auto_awesome),
                                   ),

@@ -233,9 +233,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i586.MediaStorageService>(),
       ),
     );
-    gh.factory<_i309.LotDetailCubit>(
-      () => _i309.LotDetailCubit(gh<_i932.LotRepository>()),
-    );
     gh.factory<_i548.LotListCubit>(
       () => _i548.LotListCubit(gh<_i932.LotRepository>()),
     );
@@ -356,6 +353,12 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i507.ReportsCubit(
         gh<_i617.ReportsRepository>(),
         gh<_i647.ReportExportService>(),
+      ),
+    );
+    gh.factory<_i309.LotDetailCubit>(
+      () => _i309.LotDetailCubit(
+        gh<_i932.LotRepository>(),
+        gh<_i1058.ProcessRoutingRepository>(),
       ),
     );
     gh.lazySingleton<_i754.NotificationRefreshCoordinator>(

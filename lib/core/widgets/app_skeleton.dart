@@ -67,6 +67,8 @@ final class AppSkeletonList extends StatelessWidget {
         return AppMotionEntrance(
           index: index,
           child: const AppGlassSurface(
+            glassStyle: AppGlassStyle.lightweight,
+            blurSigma: 0,
             padding: AppSpacing.cardPadding,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

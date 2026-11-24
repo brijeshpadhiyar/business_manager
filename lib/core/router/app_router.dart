@@ -372,6 +372,31 @@ final class StitchFlowShellPage extends StatefulWidget {
 
 final class _StitchFlowShellPageState extends State<StitchFlowShellPage> {
   int _selectedIndex = 0;
+  final Set<int> _initializedTabs = <int>{0};
+  final List<ValueNotifier<int>> _tabRefreshTicks = List<ValueNotifier<int>>.generate(
+    5,
+    (_) => ValueNotifier<int>(0),
+  );
+
+  void _selectTab(int index) {
+    if (index == _selectedIndex) return;
+    final alreadyInitialized = _initializedTabs.contains(index);
+    setState(() {
+      _selectedIndex = index;
+      _initializedTabs.add(index);
+    });
+    if (alreadyInitialized) {
+      _tabRefreshTicks[index].value++;
+    }
+  }
+
+  @override
+  void dispose() {
+    for (final tick in _tabRefreshTicks) {
+      tick.dispose();
+    }
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -382,7 +407,7 @@ final class _StitchFlowShellPageState extends State<StitchFlowShellPage> {
       title: appTitle,
       subtitle: l10n.appTagline,
       selectedIndex: _selectedIndex,
-      onDestinationSelected: (index) => setState(() => _selectedIndex = index),
+      onDestinationSelected: _selectTab,
       actions: [
         BlocBuilder<AppLockCubit, AppLockState>(
           builder: (context, lockState) {
@@ -465,16 +490,33 @@ final class _StitchFlowShellPageState extends State<StitchFlowShellPage> {
           selectedIcon: Icons.settings,
         ),
       ],
-      body: switch (_selectedIndex) {
-        0 => DashboardPage(
-          config: widget.config,
-          onNavigateTab: (idx) => setState(() => _selectedIndex = idx),
-        ),
-        1 => const LotListPage(),
-        2 => const StockMovementsPage(embedded: true),
-        3 => const WorkerListPage(),
-        _ => SettingsHomePage(config: widget.config),
-      },
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: [
+          _initializedTabs.contains(0)
+              ? DashboardPage(
+                  config: widget.config,
+                  onNavigateTab: _selectTab,
+                  refreshSignal: _tabRefreshTicks[0],
+                )
+              : const SizedBox.shrink(),
+          _initializedTabs.contains(1)
+              ? LotListPage(refreshSignal: _tabRefreshTicks[1])
+              : const SizedBox.shrink(),
+          _initializedTabs.contains(2)
+              ? StockMovementsPage(
+                  embedded: true,
+                  refreshSignal: _tabRefreshTicks[2],
+                )
+              : const SizedBox.shrink(),
+          _initializedTabs.contains(3)
+              ? WorkerListPage(refreshSignal: _tabRefreshTicks[3])
+              : const SizedBox.shrink(),
+          _initializedTabs.contains(4)
+              ? SettingsHomePage(config: widget.config)
+              : const SizedBox.shrink(),
+        ],
+      ),
     );
   }
 }

@@ -26,43 +26,58 @@ abstract final class AppMotion {
     return reduceMotion(context) ? Duration.zero : preferred;
   }
 
-  /// Builds a smooth Material 3 shared-axis page transition for `go_router`
-  /// with transparent fill so the layered glass backdrop shines seamlessly.
+  /// Builds a lightweight, 120Hz-friendly incoming slide + fade transition for
+  /// `go_router` that avoids double-page GPU compositing over glass backdrops.
   static CustomTransitionPage<T> buildPage<T>({
     required GoRouterState state,
     required Widget child,
     SharedAxisTransitionType axis = SharedAxisTransitionType.horizontal,
   }) {
+    final beginOffset = switch (axis) {
+      SharedAxisTransitionType.horizontal => const Offset(0.04, 0),
+      SharedAxisTransitionType.vertical => const Offset(0, 0.04),
+      SharedAxisTransitionType.scaled => Offset.zero,
+    };
     return CustomTransitionPage<T>(
       key: state.pageKey,
-      transitionDuration: normal,
-      reverseTransitionDuration: fast,
+      transitionDuration: const Duration(milliseconds: 200),
+      reverseTransitionDuration: const Duration(milliseconds: 160),
       child: child,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         if (reduceMotion(context)) {
           return child;
         }
-        return SharedAxisTransition(
-          animation: animation,
-          secondaryAnimation: secondaryAnimation,
-          transitionType: axis,
-          fillColor: Colors.transparent,
-          child: child,
+        final curved = CurvedAnimation(
+          parent: animation,
+          curve: standardCurve,
+          reverseCurve: Curves.easeInCubic,
+        );
+        return FadeTransition(
+          opacity: curved,
+          child: beginOffset == Offset.zero
+              ? child
+              : SlideTransition(
+                  position: Tween<Offset>(
+                    begin: beginOffset,
+                    end: Offset.zero,
+                  ).animate(curved),
+                  child: child,
+                ),
         );
       },
     );
   }
 }
 
-/// Smooth, reduced-motion-safe staggered fade + slide entrance wrapper for
-/// screen sections, dashboard cards, and list items.
-/// Caps stagger delay so long lists remain snappy and responsive.
+/// Snappy, reduced-motion-safe entrance wrapper for top-level screen sections.
+/// Uses short 180ms motion and tightly capped stagger (max 60ms) so content
+/// never feels delayed when navigating or scrolling at 120Hz.
 final class AppMotionEntrance extends StatelessWidget {
   const AppMotionEntrance({
     super.key,
     required this.child,
     this.index = 0,
-    this.slideOffsetY = 16,
+    this.slideOffsetY = 8,
   });
 
   final Widget child;
@@ -74,15 +89,16 @@ final class AppMotionEntrance extends StatelessWidget {
     if (AppMotion.reduceMotion(context)) {
       return child;
     }
-    final cappedIndex = index.clamp(0, 7);
-    final delay = Duration(milliseconds: cappedIndex * 40);
+    final cappedIndex = index.clamp(0, 3);
+    final delay = Duration(milliseconds: cappedIndex * 20);
+    const enterDuration = Duration(milliseconds: 180);
     return child
         .animate(delay: delay)
-        .fadeIn(duration: AppMotion.emphasized, curve: AppMotion.standardCurve)
+        .fadeIn(duration: enterDuration, curve: AppMotion.standardCurve)
         .moveY(
           begin: slideOffsetY,
           end: 0,
-          duration: AppMotion.emphasized,
+          duration: enterDuration,
           curve: AppMotion.standardCurve,
         );
   }
@@ -108,6 +124,7 @@ final class AppPressable extends StatefulWidget {
 
 final class _AppPressableState extends State<AppPressable> {
   bool _pressed = false;
+  Offset? _downPosition;
 
   void _setPressed(bool value) {
     if (_pressed == value) return;
@@ -121,9 +138,26 @@ final class _AppPressableState extends State<AppPressable> {
     }
     return Listener(
       behavior: HitTestBehavior.translucent,
-      onPointerDown: (_) => _setPressed(true),
-      onPointerUp: (_) => _setPressed(false),
-      onPointerCancel: (_) => _setPressed(false),
+      onPointerDown: (e) {
+        _downPosition = e.position;
+        _setPressed(true);
+      },
+      onPointerMove: (e) {
+        if (_pressed && _downPosition != null) {
+          if ((e.position - _downPosition!).distanceSquared > 100) {
+            _downPosition = null;
+            _setPressed(false);
+          }
+        }
+      },
+      onPointerUp: (_) {
+        _downPosition = null;
+        _setPressed(false);
+      },
+      onPointerCancel: (_) {
+        _downPosition = null;
+        _setPressed(false);
+      },
       child: AnimatedScale(
         scale: _pressed ? widget.pressedScale : 1.0,
         duration: AppMotion.micro,
@@ -182,13 +216,16 @@ final class AppStateTransition extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final duration = AppMotion.duration(context, AppMotion.normal);
+    final duration = AppMotion.duration(
+      context,
+      const Duration(milliseconds: 180),
+    );
     if (duration == Duration.zero) {
       return KeyedSubtree(key: stateKey, child: child);
     }
     return AnimatedSwitcher(
       duration: duration,
-      reverseDuration: AppMotion.fast,
+      reverseDuration: const Duration(milliseconds: 120),
       switchInCurve: AppMotion.standardCurve,
       switchOutCurve: Curves.easeInCubic,
       transitionBuilder: (child, animation) {

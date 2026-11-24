@@ -1,4 +1,3 @@
-import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
@@ -8,24 +7,29 @@ import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
 import 'package:business_manager/features/lots/presentation/bloc/lot_list_cubit.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 final class LotListPage extends StatelessWidget {
-  const LotListPage({super.key});
+  const LotListPage({super.key, this.refreshSignal});
+
+  final ValueListenable<int>? refreshSignal;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<LotListCubit>(
       create: (_) => getIt<LotListCubit>()..loadLots(),
-      child: const _LotListView(),
+      child: _LotListView(refreshSignal: refreshSignal),
     );
   }
 }
 
 final class _LotListView extends StatefulWidget {
-  const _LotListView();
+  const _LotListView({this.refreshSignal});
+
+  final ValueListenable<int>? refreshSignal;
 
   @override
   State<_LotListView> createState() => _LotListViewState();
@@ -35,7 +39,29 @@ final class _LotListViewState extends State<_LotListView> {
   final _searchController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    widget.refreshSignal?.addListener(_onSilentRefresh);
+  }
+
+  @override
+  void didUpdateWidget(covariant _LotListView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.refreshSignal != widget.refreshSignal) {
+      oldWidget.refreshSignal?.removeListener(_onSilentRefresh);
+      widget.refreshSignal?.addListener(_onSilentRefresh);
+    }
+  }
+
+  void _onSilentRefresh() {
+    if (mounted) {
+      context.read<LotListCubit>().loadLots();
+    }
+  }
+
+  @override
   void dispose() {
+    widget.refreshSignal?.removeListener(_onSilentRefresh);
     _searchController.dispose();
     super.dispose();
   }
@@ -279,57 +305,54 @@ final class _LotListViewState extends State<_LotListView> {
                     const SizedBox(height: AppSpacing.sm),
                 itemBuilder: (context, index) {
                   final lot = state.lots[index];
-                  return AppMotionEntrance(
+                  return AppCard.listItem(
                     key: ValueKey<String>(lot.id),
-                    index: index,
-                    child: AppCard(
-                      onTap: () async {
-                        await context.push(RoutePaths.lotDetail(lot.id));
-                        if (context.mounted) {
-                          await context.read<LotListCubit>().loadLots();
-                        }
-                      },
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                AppText(
-                                  lot.lotNumber,
-                                  variant: AppTextVariant.bodyLarge,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                                if (lot.title != null) ...[
-                                  const SizedBox(height: AppSpacing.xs),
-                                  AppText(lot.title!),
-                                ],
+                    onTap: () async {
+                      await context.push(RoutePaths.lotDetail(lot.id));
+                      if (context.mounted) {
+                        await context.read<LotListCubit>().loadLots();
+                      }
+                    },
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AppText(
+                                lot.lotNumber,
+                                variant: AppTextVariant.bodyLarge,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              if (lot.title != null) ...[
                                 const SizedBox(height: AppSpacing.xs),
-                                AppText(
-                                  IstDateTimeHelper.toIstBusinessDate(
-                                    lot.transactionAt,
-                                  ),
-                                  variant: AppTextVariant.bodySmall,
-                                ),
+                                AppText(lot.title!),
                               ],
-                            ),
+                              const SizedBox(height: AppSpacing.xs),
+                              AppText(
+                                IstDateTimeHelper.toIstBusinessDate(
+                                  lot.transactionAt,
+                                ),
+                                variant: AppTextVariant.bodySmall,
+                              ),
+                            ],
                           ),
-                          AppStatusBadge(
-                            label: switch (lot.status) {
-                              LotStatus.active => l10n.lotsStatusActive,
-                              LotStatus.completed => l10n.lotsStatusCompleted,
-                              LotStatus.archived => l10n.lotsStatusArchived,
-                            },
-                            tone: switch (lot.status) {
-                              LotStatus.active => AppStatusTone.good,
-                              LotStatus.completed => AppStatusTone.info,
-                              LotStatus.archived => AppStatusTone.neutral,
-                            },
-                          ),
-                          const SizedBox(width: AppSpacing.xs),
-                          const Icon(Icons.chevron_right),
-                        ],
-                      ),
+                        ),
+                        AppStatusBadge(
+                          label: switch (lot.status) {
+                            LotStatus.active => l10n.lotsStatusActive,
+                            LotStatus.completed => l10n.lotsStatusCompleted,
+                            LotStatus.archived => l10n.lotsStatusArchived,
+                          },
+                          tone: switch (lot.status) {
+                            LotStatus.active => AppStatusTone.good,
+                            LotStatus.completed => AppStatusTone.info,
+                            LotStatus.archived => AppStatusTone.neutral,
+                          },
+                        ),
+                        const SizedBox(width: AppSpacing.xs),
+                        const Icon(Icons.chevron_right),
+                      ],
                     ),
                   );
                 },
@@ -384,6 +407,7 @@ final class _LotListViewState extends State<_LotListView> {
               AppSearchField(
                 controller: _searchController,
                 label: l10n.lotsSearchHint,
+                debounceDuration: const Duration(milliseconds: 220),
                 onChanged: (q) =>
                     context.read<LotListCubit>().loadLots(searchQuery: q),
               ),

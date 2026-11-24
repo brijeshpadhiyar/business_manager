@@ -152,6 +152,8 @@ final class _PrivacyShieldOverlay extends StatelessWidget {
                 ),
                 child: Image.asset(
                   AppIdentity.symbolPngAsset,
+                  cacheWidth: 192,
+                  cacheHeight: 192,
                   errorBuilder: (_, _, _) => const Icon(
                     Icons.shield_outlined,
                     color: Colors.white,

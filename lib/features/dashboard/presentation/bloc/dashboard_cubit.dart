@@ -36,11 +36,15 @@ final class DashboardCubit extends Cubit<DashboardState> {
   final ReportsRepository _repository;
 
   Future<void> loadDashboard() async {
-    emit(state.copyWith(status: DashboardStatus.loading));
+    if (state.snapshot == null) {
+      emit(state.copyWith(status: DashboardStatus.loading));
+    }
     try {
       final snapshot = await _repository.getDashboardSnapshot();
+      if (isClosed) return;
       emit(state.copyWith(status: DashboardStatus.loaded, snapshot: snapshot));
     } catch (e) {
+      if (isClosed) return;
       emit(
         state.copyWith(
           status: DashboardStatus.error,

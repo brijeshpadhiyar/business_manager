@@ -10,7 +10,6 @@ import 'package:business_manager/features/lots/domain/entities/lot_entities.dart
 import 'package:business_manager/features/lots/presentation/bloc/lot_detail_cubit.dart';
 import 'package:business_manager/features/lots/presentation/widgets/visual_colour_picker_sheet.dart';
 import 'package:business_manager/features/process_routing/domain/entities/process_routing_entities.dart';
-import 'package:business_manager/features/process_routing/domain/repositories/process_routing_repository.dart';
 import 'package:business_manager/features/security/presentation/bloc/app_lock_cubit.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 import 'package:flutter/services.dart';
@@ -522,9 +521,14 @@ final class _LotDetailView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return BlocBuilder<LotDetailCubit, LotDetailState>(
-      builder: (context, state) {
-        final detail = state.detail;
+    return BlocSelector<
+      LotDetailCubit,
+      LotDetailState,
+      ({LotDetailStatus status, LotDetailAggregate? detail, String? error})
+    >(
+      selector: (s) => (status: s.status, detail: s.detail, error: s.errorMessage),
+      builder: (context, slice) {
+        final detail = slice.detail;
         return AppScaffold(
           title: detail?.lot.lotNumber ?? l10n.lotsHeading,
           actions: detail == null
@@ -557,16 +561,16 @@ final class _LotDetailView extends StatelessWidget {
                   ),
                 ],
           padding: EdgeInsets.zero,
-          body: switch (state.status) {
+          body: switch (slice.status) {
             LotDetailStatus.initial ||
             LotDetailStatus.loading => const AppLoader(),
             LotDetailStatus.error => AppErrorView(
               title: l10n.errorUnexpected,
-              message: state.errorMessage,
+              message: slice.error,
               retryLabel: l10n.actionRetry,
               onRetry: () => context.read<LotDetailCubit>().loadLot(lotId),
             ),
-            LotDetailStatus.loaded => _buildLoaded(context, state, detail!),
+            LotDetailStatus.loaded => _buildLoaded(context, detail!),
           },
         );
       },
@@ -627,198 +631,266 @@ final class _LotDetailView extends StatelessWidget {
     }
   }
 
-  Widget _buildLoaded(
-    BuildContext context,
-    LotDetailState state,
-    LotDetailAggregate detail,
-  ) {
+  Widget _buildLoaded(BuildContext context, LotDetailAggregate detail) {
     final l10n = context.l10n;
-    final query = state.designSearchQuery.trim().toLowerCase();
-    final filteredDesigns = detail.designs.where((d) {
-      if (query.isEmpty) return true;
-      return d.design.designName.toLowerCase().contains(query) ||
-          d.colours.any((c) => c.colourName.toLowerCase().contains(query));
-    }).toList();
+    final totalInitialPieces = detail.designs.fold<int>(
+      0,
+      (s, d) => s + d.colours.fold<int>(0, (cs, c) => cs + c.initialQuantity),
+    );
 
-    return ListView(
-      padding: AppSpacing.screenAll,
-      children: [
-        AppCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  AppText(
-                    detail.lot.lotNumber,
-                    variant: AppTextVariant.bodyLarge,
-                    fontWeight: FontWeight.w700,
+    return CustomScrollView(
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.lg,
+            AppSpacing.lg,
+            0,
+          ),
+          sliver: SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                AppCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          AppText(
+                            detail.lot.lotNumber,
+                            variant: AppTextVariant.bodyLarge,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          AppStatusBadge(
+                            label: detail.lot.status == LotStatus.active
+                                ? l10n.lotsStatusActive
+                                : l10n.lotsStatusCompleted,
+                            tone: detail.lot.status == LotStatus.active
+                                ? AppStatusTone.good
+                                : AppStatusTone.info,
+                          ),
+                        ],
+                      ),
+                      if (detail.lot.title != null) ...[
+                        const SizedBox(height: AppSpacing.xs),
+                        AppText(detail.lot.title!),
+                      ],
+                      const SizedBox(height: AppSpacing.xs),
+                      AppText(
+                        '${l10n.lotDateLabel}: ${IstDateTimeHelper.toIstBusinessDate(detail.lot.transactionAt)}',
+                        variant: AppTextVariant.bodySmall,
+                      ),
+                      if (detail.lot.notes != null) ...[
+                        const SizedBox(height: AppSpacing.xs),
+                        AppText(
+                          detail.lot.notes!,
+                          variant: AppTextVariant.bodySmall,
+                        ),
+                      ],
+                      const SizedBox(height: AppSpacing.md),
+                      AppButton(
+                        label: 'Multi-Process Routing & Handovers',
+                        icon: Icons.account_tree_outlined,
+                        isExpanded: true,
+                        onPressed: () =>
+                            context.push(RoutePaths.lotRouting(lotId)),
+                      ),
+                    ],
                   ),
-                  AppStatusBadge(
-                    label: detail.lot.status == LotStatus.active
-                        ? l10n.lotsStatusActive
-                        : l10n.lotsStatusCompleted,
-                    tone: detail.lot.status == LotStatus.active
-                        ? AppStatusTone.good
-                        : AppStatusTone.info,
-                  ),
-                ],
-              ),
-              if (detail.lot.title != null) ...[
-                const SizedBox(height: AppSpacing.xs),
-                AppText(detail.lot.title!),
-              ],
-              const SizedBox(height: AppSpacing.xs),
-              AppText(
-                '${l10n.lotDateLabel}: ${IstDateTimeHelper.toIstBusinessDate(detail.lot.transactionAt)}',
-                variant: AppTextVariant.bodySmall,
-              ),
-              if (detail.lot.notes != null) ...[
-                const SizedBox(height: AppSpacing.xs),
-                AppText(detail.lot.notes!, variant: AppTextVariant.bodySmall),
-              ],
-              const SizedBox(height: AppSpacing.md),
-              AppButton(
-                label: 'Multi-Process Routing & Handovers',
-                icon: Icons.account_tree_outlined,
-                isExpanded: true,
-                onPressed: () => context.push(RoutePaths.lotRouting(lotId)),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: AppSpacing.lg),
-        AppHeading(l10n.lotPhotosHeading, level: AppHeadingLevel.h3),
-        const SizedBox(height: AppSpacing.sm),
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: [
-            AppButton(
-              label: l10n.lotAddPhotoCamera,
-              icon: Icons.photo_camera_outlined,
-              variant: AppButtonVariant.outlined,
-              onPressed: () => _pickAndSavePhoto(context, ImageSource.camera),
-            ),
-            AppButton(
-              label: l10n.lotAddPhotoGallery,
-              icon: Icons.photo_library_outlined,
-              variant: AppButtonVariant.secondary,
-              onPressed: () => _pickAndSavePhoto(context, ImageSource.gallery),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        if (detail.photos.isEmpty)
-          AppCard(
-            child: AppText(
-              l10n.lotPhotosEmpty,
-              variant: AppTextVariant.bodySmall,
-            ),
-          )
-        else
-          SizedBox(
-            height: 112,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: detail.photos.length,
-              separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.sm),
-              itemBuilder: (ctx, i) {
-                final photo = detail.photos[i];
-                return _LotPhotoTile(
-                  photo: photo,
-                  onRemove: () async {
-                    final ok = await AppDialog.showConfirmation(
-                      ctx,
-                      title: l10n.actionDelete,
-                      message: l10n.lotPhotoRemoveConfirm,
-                      confirmLabel: l10n.actionDelete,
-                      cancelLabel: l10n.actionCancel,
-                      isDestructive: true,
-                    );
-                    if (ok == true && ctx.mounted) {
-                      await ctx.read<LotDetailCubit>().removePhoto(
-                        lotId,
-                        photo.id,
-                      );
-                    }
-                  },
-                );
-              },
-            ),
-          ),
-        const SizedBox(height: AppSpacing.lg),
-        AppHeading(
-          '${l10n.designsHeading} (${detail.designs.fold<int>(0, (s, d) => s + d.colours.fold<int>(0, (cs, c) => cs + c.initialQuantity))} pcs)',
-          level: AppHeadingLevel.h3,
-        ),
-        const SizedBox(height: AppSpacing.xs),
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: [
-            AppButton(
-              label: 'Add Colour (No Design)',
-              icon: Icons.palette_outlined,
-              variant: AppButtonVariant.secondary,
-              onPressed: () {
-                final colourOnlyGroup = detail.designs
-                    .where(
-                      (d) => d.design.designName == kColourOnlyDesignSentinel,
-                    )
-                    .firstOrNull;
-                final existingNames = colourOnlyGroup == null
-                    ? const <String>{}
-                    : colourOnlyGroup.colours.map((c) => c.colourName).toSet();
-                _showVisualColourPicker(
-                  context,
-                  existingColourNames: existingNames,
-                );
-              },
-            ),
-            AppButton(
-              label: l10n.designAddAction,
-              icon: Icons.add,
-              onPressed: () => _showDesignSheet(context),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        if (detail.designs.isNotEmpty) ...[
-          AppTextField(
-            label: l10n.designsSearchHint,
-            prefixIcon: Icons.search,
-            onChanged: context.read<LotDetailCubit>().setDesignSearch,
-          ),
-          const SizedBox(height: AppSpacing.md),
-        ],
-        if (filteredDesigns.isEmpty)
-          AppEmptyState(
-            icon: Icons.style_outlined,
-            title: l10n.designsEmptyTitle,
-            subtitle: l10n.designsEmptySubtitle,
-            actionLabel: l10n.designAddAction,
-            onAction: () => _showDesignSheet(context),
-          )
-        else
-          FutureBuilder<JobRoutingOverview?>(
-            future: getIt.isRegistered<ProcessRoutingRepository>()
-                ? getIt<ProcessRoutingRepository>().getJobRoutingOverview(lotId)
-                : Future<JobRoutingOverview?>.value(null),
-            builder: (context, routingSnap) {
-              final routing = routingSnap.data;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  for (final item in filteredDesigns) ...[
-                    _buildDesignSectionCard(context, item, routing),
-                    const SizedBox(height: AppSpacing.md),
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                AppHeading(l10n.lotPhotosHeading, level: AppHeadingLevel.h3),
+                const SizedBox(height: AppSpacing.sm),
+                Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
+                  children: [
+                    AppButton(
+                      label: l10n.lotAddPhotoCamera,
+                      icon: Icons.photo_camera_outlined,
+                      variant: AppButtonVariant.outlined,
+                      onPressed: () =>
+                          _pickAndSavePhoto(context, ImageSource.camera),
+                    ),
+                    AppButton(
+                      label: l10n.lotAddPhotoGallery,
+                      icon: Icons.photo_library_outlined,
+                      variant: AppButtonVariant.secondary,
+                      onPressed: () =>
+                          _pickAndSavePhoto(context, ImageSource.gallery),
+                    ),
                   ],
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                if (detail.photos.isEmpty)
+                  AppCard.listItem(
+                    child: AppText(
+                      l10n.lotPhotosEmpty,
+                      variant: AppTextVariant.bodySmall,
+                    ),
+                  )
+                else
+                  SizedBox(
+                    height: 112,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: detail.photos.length,
+                      separatorBuilder: (_, _) =>
+                          const SizedBox(width: AppSpacing.sm),
+                      itemBuilder: (ctx, i) {
+                        final photo = detail.photos[i];
+                        return _LotPhotoTile(
+                          key: ValueKey<String>(photo.id),
+                          photo: photo,
+                          onRemove: () async {
+                            final ok = await AppDialog.showConfirmation(
+                              ctx,
+                              title: l10n.actionDelete,
+                              message: l10n.lotPhotoRemoveConfirm,
+                              confirmLabel: l10n.actionDelete,
+                              cancelLabel: l10n.actionCancel,
+                              isDestructive: true,
+                            );
+                            if (ok == true && ctx.mounted) {
+                              await ctx.read<LotDetailCubit>().removePhoto(
+                                lotId,
+                                photo.id,
+                              );
+                            }
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                const SizedBox(height: AppSpacing.lg),
+                AppHeading(
+                  '${l10n.designsHeading} ($totalInitialPieces pcs)',
+                  level: AppHeadingLevel.h3,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
+                  children: [
+                    AppButton(
+                      label: 'Add Colour (No Design)',
+                      icon: Icons.palette_outlined,
+                      variant: AppButtonVariant.secondary,
+                      onPressed: () {
+                        final colourOnlyGroup = detail.designs
+                            .where(
+                              (d) =>
+                                  d.design.designName ==
+                                  kColourOnlyDesignSentinel,
+                            )
+                            .firstOrNull;
+                        final existingNames = colourOnlyGroup == null
+                            ? const <String>{}
+                            : colourOnlyGroup.colours
+                                  .map((c) => c.colourName)
+                                  .toSet();
+                        _showVisualColourPicker(
+                          context,
+                          existingColourNames: existingNames,
+                        );
+                      },
+                    ),
+                    AppButton(
+                      label: l10n.designAddAction,
+                      icon: Icons.add,
+                      onPressed: () => _showDesignSheet(context),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                if (detail.designs.isNotEmpty) ...[
+                  AppSearchField(
+                    label: l10n.designsSearchHint,
+                    debounceDuration: const Duration(milliseconds: 120),
+                    onChanged: context.read<LotDetailCubit>().setDesignSearch,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
                 ],
-              );
-            },
+              ],
+            ),
           ),
+        ),
+        // Only the filtered designs sliver rebuilds on Design Search typing —
+        // zero database reads, zero disk reads, zero photo/header rebuilds.
+        BlocSelector<
+          LotDetailCubit,
+          LotDetailState,
+          ({
+            String query,
+            Map<String, DesignColourStockBalance> balancesByColourId,
+            Map<String, List<JobProcessEntity>> operationsByColourId,
+          })
+        >(
+          selector: (s) => (
+            query: s.designSearchQuery,
+            balancesByColourId: s.balancesByColourId,
+            operationsByColourId: s.operationsByColourId,
+          ),
+          builder: (context, slice) {
+            final query = slice.query.trim().toLowerCase();
+            final filteredDesigns = query.isEmpty
+                ? detail.designs
+                : detail.designs
+                      .where(
+                        (d) =>
+                            d.design.designName.toLowerCase().contains(query) ||
+                            d.colours.any(
+                              (c) => c.colourName.toLowerCase().contains(query),
+                            ),
+                      )
+                      .toList(growable: false);
+
+            if (filteredDesigns.isEmpty) {
+              return SliverPadding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.lg,
+                  0,
+                  AppSpacing.lg,
+                  AppSpacing.xl,
+                ),
+                sliver: SliverToBoxAdapter(
+                  child: AppEmptyState(
+                    icon: Icons.style_outlined,
+                    title: l10n.designsEmptyTitle,
+                    subtitle: l10n.designsEmptySubtitle,
+                    actionLabel: l10n.designAddAction,
+                    onAction: () => _showDesignSheet(context),
+                  ),
+                ),
+              );
+            }
+
+            return SliverPadding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                0,
+                AppSpacing.lg,
+                AppSpacing.xl,
+              ),
+              sliver: SliverList.separated(
+                itemCount: filteredDesigns.length,
+                separatorBuilder: (_, _) =>
+                    const SizedBox(height: AppSpacing.md),
+                itemBuilder: (ctx, i) {
+                  final item = filteredDesigns[i];
+                  return _buildDesignSectionCard(
+                    ctx,
+                    item,
+                    slice.balancesByColourId,
+                    slice.operationsByColourId,
+                  );
+                },
+              ),
+            );
+          },
+        ),
       ],
     );
   }
@@ -826,7 +898,8 @@ final class _LotDetailView extends StatelessWidget {
   Widget _buildDesignSectionCard(
     BuildContext context,
     DesignWithColours item,
-    JobRoutingOverview? routing,
+    Map<String, DesignColourStockBalance> balancesByColourId,
+    Map<String, List<JobProcessEntity>> operationsByColourId,
   ) {
     final l10n = context.l10n;
     final isColourOnly = item.design.designName == kColourOnlyDesignSentinel;
@@ -834,7 +907,8 @@ final class _LotDetailView extends StatelessWidget {
         ? 'Colours (No Design)'
         : item.design.designName;
 
-    return AppCard(
+    return AppCard.listItem(
+      key: ValueKey<String>(item.design.id),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -921,23 +995,15 @@ final class _LotDetailView extends StatelessWidget {
                       SizedBox(
                         width: cardWidth,
                         child: _PremiumLotColourCard(
+                          key: ValueKey<String>(c.id),
                           colour: c,
                           designName: isColourOnly
                               ? null
                               : item.design.designName,
-                          balance: routing?.skuBalances
-                              .where((b) => b.designColourId == c.id)
-                              .firstOrNull,
-                          operations: routing == null
-                              ? const []
-                              : routing.jobProcesses
-                                    .where(
-                                      (p) =>
-                                          p.designColourId == c.id &&
-                                          p.status !=
-                                              JobProcessStatus.cancelled,
-                                    )
-                                    .toList(),
+                          balance: balancesByColourId[c.id],
+                          operations:
+                              operationsByColourId[c.id] ??
+                              const <JobProcessEntity>[],
                           onTap: () async {
                             await context.push(
                               RoutePaths.lotColourDetail(lotId, c.id),
@@ -987,6 +1053,7 @@ final class _LotDetailView extends StatelessWidget {
 /// and current stock location.
 final class _PremiumLotColourCard extends StatelessWidget {
   const _PremiumLotColourCard({
+    super.key,
     required this.colour,
     this.designName,
     this.balance,
@@ -1055,7 +1122,7 @@ final class _PremiumLotColourCard extends StatelessWidget {
     final stageLabel = _resolveCurrentStage();
     final locationLabel = _resolveStockLocation();
 
-    return AppCard(
+    return AppCard.listItem(
       padding: EdgeInsets.zero,
       borderRadius: AppRadius.lgBorder,
       onTap: onTap,
@@ -1250,17 +1317,49 @@ final class _MiniMetric extends StatelessWidget {
   }
 }
 
-final class _LotPhotoTile extends StatelessWidget {
-  const _LotPhotoTile({required this.photo, required this.onRemove});
+final class _LotPhotoTile extends StatefulWidget {
+  const _LotPhotoTile({
+    super.key,
+    required this.photo,
+    required this.onRemove,
+  });
 
   final LotAttachmentEntity photo;
   final VoidCallback onRemove;
 
   @override
+  State<_LotPhotoTile> createState() => _LotPhotoTileState();
+}
+
+final class _LotPhotoTileState extends State<_LotPhotoTile> {
+  late Future<Uint8List?> _photoFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _photoFuture = context.read<LotDetailCubit>().readPhotoBytes(
+      widget.photo.relativePath,
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant _LotPhotoTile oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.photo.relativePath != widget.photo.relativePath) {
+      _photoFuture = context.read<LotDetailCubit>().readPhotoBytes(
+        widget.photo.relativePath,
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final dpr = MediaQuery.devicePixelRatioOf(context);
+    final thumbCachePx = (112 * dpr).round().clamp(112, 448);
+
     return FutureBuilder<Uint8List?>(
-      future: context.read<LotDetailCubit>().readPhotoBytes(photo.relativePath),
+      future: _photoFuture,
       builder: (context, snapshot) {
         Widget preview;
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -1294,12 +1393,21 @@ final class _LotPhotoTile extends StatelessWidget {
                 content: InteractiveViewer(
                   child: ClipRRect(
                     borderRadius: AppRadius.mdBorder,
-                    child: Image.memory(bytes, fit: BoxFit.contain),
+                    child: Image.memory(
+                      bytes,
+                      fit: BoxFit.contain,
+                      gaplessPlayback: true,
+                    ),
                   ),
                 ),
               ),
             ),
-            child: Image.memory(bytes, fit: BoxFit.cover),
+            child: Image.memory(
+              bytes,
+              fit: BoxFit.cover,
+              cacheWidth: thumbCachePx,
+              gaplessPlayback: true,
+            ),
           );
         }
 
@@ -1327,7 +1435,7 @@ final class _LotPhotoTile extends StatelessWidget {
                   visualDensity: VisualDensity.compact,
                   tooltip: l10n.actionDelete,
                   icon: const Icon(Icons.close, size: 16),
-                  onPressed: onRemove,
+                  onPressed: widget.onRemove,
                 ),
               ),
             ],

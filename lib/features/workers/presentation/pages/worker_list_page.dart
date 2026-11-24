@@ -1,28 +1,32 @@
-import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/workers/presentation/bloc/worker_list_cubit.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 final class WorkerListPage extends StatelessWidget {
-  const WorkerListPage({super.key});
+  const WorkerListPage({super.key, this.refreshSignal});
+
+  final ValueListenable<int>? refreshSignal;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<WorkerListCubit>(
       create: (_) => getIt<WorkerListCubit>()..loadWorkers(),
-      child: const _WorkerListView(),
+      child: _WorkerListView(refreshSignal: refreshSignal),
     );
   }
 }
 
 final class _WorkerListView extends StatefulWidget {
-  const _WorkerListView();
+  const _WorkerListView({this.refreshSignal});
+
+  final ValueListenable<int>? refreshSignal;
 
   @override
   State<_WorkerListView> createState() => _WorkerListViewState();
@@ -32,7 +36,29 @@ final class _WorkerListViewState extends State<_WorkerListView> {
   final _searchController = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+    widget.refreshSignal?.addListener(_onSilentRefresh);
+  }
+
+  @override
+  void didUpdateWidget(covariant _WorkerListView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.refreshSignal != widget.refreshSignal) {
+      oldWidget.refreshSignal?.removeListener(_onSilentRefresh);
+      widget.refreshSignal?.addListener(_onSilentRefresh);
+    }
+  }
+
+  void _onSilentRefresh() {
+    if (mounted) {
+      context.read<WorkerListCubit>().loadWorkers();
+    }
+  }
+
+  @override
   void dispose() {
+    widget.refreshSignal?.removeListener(_onSilentRefresh);
     _searchController.dispose();
     super.dispose();
   }
@@ -101,57 +127,54 @@ final class _WorkerListViewState extends State<_WorkerListView> {
                     const SizedBox(height: AppSpacing.sm),
                 itemBuilder: (context, index) {
                   final worker = state.workers[index];
-                  return AppMotionEntrance(
+                  return AppCard.listItem(
                     key: ValueKey<String>(worker.id),
-                    index: index,
-                    child: AppCard(
-                      onTap: () async {
-                        await context.push(RoutePaths.workerDetail(worker.id));
-                        if (context.mounted) {
-                          await context.read<WorkerListCubit>().loadWorkers();
-                        }
-                      },
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
+                    onTap: () async {
+                      await context.push(RoutePaths.workerDetail(worker.id));
+                      if (context.mounted) {
+                        await context.read<WorkerListCubit>().loadWorkers();
+                      }
+                    },
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AppText(
+                                worker.name,
+                                variant: AppTextVariant.bodyLarge,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              if (worker.phone != null) ...[
+                                const SizedBox(height: AppSpacing.xs),
                                 AppText(
-                                  worker.name,
-                                  variant: AppTextVariant.bodyLarge,
-                                  fontWeight: FontWeight.w700,
+                                  worker.phone!,
+                                  variant: AppTextVariant.bodySmall,
                                 ),
-                                if (worker.phone != null) ...[
-                                  const SizedBox(height: AppSpacing.xs),
-                                  AppText(
-                                    worker.phone!,
-                                    variant: AppTextVariant.bodySmall,
-                                  ),
-                                ],
-                                if (worker.address != null) ...[
-                                  const SizedBox(height: AppSpacing.xs),
-                                  AppText(
-                                    worker.address!,
-                                    variant: AppTextVariant.bodySmall,
-                                  ),
-                                ],
                               ],
-                            ),
+                              if (worker.address != null) ...[
+                                const SizedBox(height: AppSpacing.xs),
+                                AppText(
+                                  worker.address!,
+                                  variant: AppTextVariant.bodySmall,
+                                ),
+                              ],
+                            ],
                           ),
-                          const SizedBox(width: AppSpacing.sm),
-                          AppStatusBadge(
-                            label: worker.isActive
-                                ? l10n.statusActive
-                                : l10n.statusInactive,
-                            tone: worker.isActive
-                                ? AppStatusTone.good
-                                : AppStatusTone.neutral,
-                          ),
-                          const SizedBox(width: AppSpacing.xs),
-                          const Icon(Icons.chevron_right),
-                        ],
-                      ),
+                        ),
+                        const SizedBox(width: AppSpacing.sm),
+                        AppStatusBadge(
+                          label: worker.isActive
+                              ? l10n.statusActive
+                              : l10n.statusInactive,
+                          tone: worker.isActive
+                              ? AppStatusTone.good
+                              : AppStatusTone.neutral,
+                        ),
+                        const SizedBox(width: AppSpacing.xs),
+                        const Icon(Icons.chevron_right),
+                      ],
                     ),
                   );
                 },
@@ -206,6 +229,7 @@ final class _WorkerListViewState extends State<_WorkerListView> {
               AppSearchField(
                 controller: _searchController,
                 label: l10n.workersSearchHint,
+                debounceDuration: const Duration(milliseconds: 220),
                 onChanged: (q) =>
                     context.read<WorkerListCubit>().loadWorkers(searchQuery: q),
               ),

@@ -1,8 +1,11 @@
 package com.brijesh.stitchflow
 
 import android.content.Context
+import android.os.Build
+import android.os.Bundle
 import android.print.PrintAttributes
 import android.print.PrintManager
+import android.view.Display
 import android.view.WindowManager
 import android.webkit.WebResourceError
 import android.webkit.WebResourceRequest
@@ -20,6 +23,56 @@ class MainActivity : FlutterFragmentActivity() {
 
     // Hold reference until print manager finishes creating the print document adapter
     private var activePrintWebView: WebView? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        requestHighestSupportedRefreshRate()
+    }
+
+    override fun onAttachedToWindow() {
+        super.onAttachedToWindow()
+        requestHighestSupportedRefreshRate()
+    }
+
+    /**
+     * Safely requests the highest supported display refresh-rate mode matching
+     * the active display resolution on Android API 23+ without hardcoding any
+     * specific refresh rate or altering screen resolution.
+     */
+    private fun requestHighestSupportedRefreshRate() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return
+        try {
+            val activeDisplay: Display? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                display
+            } else {
+                @Suppress("DEPRECATION")
+                windowManager.defaultDisplay
+            }
+            if (activeDisplay == null) return
+
+            val currentMode = activeDisplay.mode ?: return
+            val supportedModes = activeDisplay.supportedModes
+            if (supportedModes.isNullOrEmpty()) return
+
+            // Match the current physical resolution and select the highest
+            // OEM-supported refresh rate for smooth scrolling on high-Hz panels.
+            val bestMode = supportedModes
+                .filter {
+                    it.physicalWidth == currentMode.physicalWidth &&
+                        it.physicalHeight == currentMode.physicalHeight
+                }
+                .maxByOrNull { it.refreshRate }
+                ?: return
+
+            val params = window.attributes
+            if (params.preferredDisplayModeId != bestMode.modeId) {
+                params.preferredDisplayModeId = bestMode.modeId
+                window.attributes = params
+            }
+        } catch (_: Throwable) {
+            // Fall back silently to platform default display mode on any OEM quirk.
+        }
+    }
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)

@@ -45,6 +45,8 @@ final class AboutStitchFlowPage extends StatelessWidget {
                     AppIdentity.symbolPngAsset,
                     width: 64,
                     height: 64,
+                    cacheWidth: 192,
+                    cacheHeight: 192,
                     errorBuilder: (_, _, _) => const Icon(
                       Icons.auto_awesome,
                       color: Colors.white,
@@ -149,6 +151,8 @@ final class AboutStitchFlowPage extends StatelessWidget {
                   AppIdentity.symbolPngAsset,
                   width: 48,
                   height: 48,
+                  cacheWidth: 144,
+                  cacheHeight: 144,
                   errorBuilder: (_, _, _) => const SizedBox.shrink(),
                 ),
               ),

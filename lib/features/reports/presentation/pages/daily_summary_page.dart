@@ -83,247 +83,271 @@ final class _DailySummaryView extends StatelessWidget {
             onRefresh: () => context.read<DailySummaryCubit>().loadForDay(
               state.selectedDayUtcMillis,
             ),
-            child: ListView(
-              children: [
-                // IST Date Switcher Strip
-                AppCard(
+            child: CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Wrap(
-                        spacing: AppSpacing.sm,
-                        runSpacing: AppSpacing.xs,
-                        children: [
-                          ChoiceChip(
-                            label: Text(l10n.reportPresetToday),
-                            selected: isToday,
-                            onSelected: (_) =>
-                                context.read<DailySummaryCubit>().loadToday(),
-                          ),
-                          ChoiceChip(
-                            label: Text(l10n.reportPresetYesterday),
-                            selected: isYesterday,
-                            onSelected: (_) => context
-                                .read<DailySummaryCubit>()
-                                .loadYesterday(),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      AppDatePicker(
-                        label: l10n.dailySummaryPickDateLabel,
-                        selectedUtcMillis: state.selectedDayUtcMillis,
-                        onDateSelectedUtcMillis: (utc) =>
-                            context.read<DailySummaryCubit>().loadForDay(utc),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.md),
-
-                if (state.status == DailySummaryStatus.initial ||
-                    state.status == DailySummaryStatus.loading)
-                  const AppSkeletonList(itemCount: 4)
-                else if (state.status == DailySummaryStatus.error ||
-                    summary == null)
-                  AppErrorView(
-                    title: l10n.errorUnexpected,
-                    message: state.errorMessage,
-                    retryLabel: l10n.actionRetry,
-                    onRetry: () => context.read<DailySummaryCubit>().loadForDay(
-                      state.selectedDayUtcMillis,
-                    ),
-                  )
-                else ...[
-                  AppHeading(
-                    IstDateTimeHelper.formatIstDate(
-                      state.selectedDayUtcMillis,
-                      locale: localeCode,
-                    ),
-                    level: AppHeadingLevel.h3,
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-
-                  // Production & Financial KPIs
-                  _buildKpiGrid(context, summary),
-                  const SizedBox(height: AppSpacing.md),
-
-                  if (!summary.hasAnyActivity)
-                    AppEmptyState(
-                      icon: Icons.event_available_outlined,
-                      title: l10n.dailySummaryNoActivityTitle,
-                      subtitle: l10n.dailySummaryNoActivitySubtitle,
-                      actionLabel: l10n.stockIssueAction,
-                      onAction: () => context.push(RoutePaths.stockIssue()),
-                    )
-                  else ...[
-                    // Process-wise Activity
-                    if (summary.processActivities.isNotEmpty) ...[
-                      AppHeading(
-                        l10n.dailySummaryProcessActivityHeading,
-                        level: AppHeadingLevel.h3,
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
+                      // IST Date Switcher Strip
                       AppCard(
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            for (
-                              var i = 0;
-                              i < summary.processActivities.length;
-                              i++
-                            ) ...[
-                              _ProcessActivityRow(
-                                item: summary.processActivities[i],
-                              ),
-                              if (i < summary.processActivities.length - 1)
-                                const Divider(),
-                            ],
+                            Wrap(
+                              spacing: AppSpacing.sm,
+                              runSpacing: AppSpacing.xs,
+                              children: [
+                                ChoiceChip(
+                                  label: Text(l10n.reportPresetToday),
+                                  selected: isToday,
+                                  onSelected: (_) => context
+                                      .read<DailySummaryCubit>()
+                                      .loadToday(),
+                                ),
+                                ChoiceChip(
+                                  label: Text(l10n.reportPresetYesterday),
+                                  selected: isYesterday,
+                                  onSelected: (_) => context
+                                      .read<DailySummaryCubit>()
+                                      .loadYesterday(),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: AppSpacing.sm),
+                            AppDatePicker(
+                              label: l10n.dailySummaryPickDateLabel,
+                              selectedUtcMillis: state.selectedDayUtcMillis,
+                              onDateSelectedUtcMillis: (utc) => context
+                                  .read<DailySummaryCubit>()
+                                  .loadForDay(utc),
+                            ),
                           ],
                         ),
                       ),
                       const SizedBox(height: AppSpacing.md),
-                    ],
 
-                    // Worker-wise Activity
-                    if (summary.workerActivities.isNotEmpty) ...[
-                      AppHeading(
-                        l10n.dailySummaryWorkerActivityHeading,
-                        level: AppHeadingLevel.h3,
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      for (final w in summary.workerActivities)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                          child: AppCard(
-                            onTap: () => context.push(
-                              RoutePaths.workerLedger(w.workerId),
+                      if (state.status == DailySummaryStatus.initial ||
+                          state.status == DailySummaryStatus.loading)
+                        const AppSkeletonList(itemCount: 4)
+                      else if (state.status == DailySummaryStatus.error ||
+                          summary == null)
+                        AppErrorView(
+                          title: l10n.errorUnexpected,
+                          message: state.errorMessage,
+                          retryLabel: l10n.actionRetry,
+                          onRetry: () => context
+                              .read<DailySummaryCubit>()
+                              .loadForDay(state.selectedDayUtcMillis),
+                        )
+                      else ...[
+                        AppHeading(
+                          IstDateTimeHelper.formatIstDate(
+                            state.selectedDayUtcMillis,
+                            locale: localeCode,
+                          ),
+                          level: AppHeadingLevel.h3,
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+
+                        // Production & Financial KPIs
+                        _buildKpiGrid(context, summary),
+                        const SizedBox(height: AppSpacing.md),
+
+                        if (!summary.hasAnyActivity)
+                          AppEmptyState(
+                            icon: Icons.event_available_outlined,
+                            title: l10n.dailySummaryNoActivityTitle,
+                            subtitle: l10n.dailySummaryNoActivitySubtitle,
+                            actionLabel: l10n.stockIssueAction,
+                            onAction: () =>
+                                context.push(RoutePaths.stockIssue()),
+                          )
+                        else ...[
+                          // Process-wise Activity
+                          if (summary.processActivities.isNotEmpty) ...[
+                            AppHeading(
+                              l10n.dailySummaryProcessActivityHeading,
+                              level: AppHeadingLevel.h3,
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: AppText(
-                                        w.workerName,
-                                        variant: AppTextVariant.bodyLarge,
-                                        fontWeight: FontWeight.w700,
-                                      ),
+                            const SizedBox(height: AppSpacing.sm),
+                            AppCard(
+                              child: Column(
+                                children: [
+                                  for (
+                                    var i = 0;
+                                    i < summary.processActivities.length;
+                                    i++
+                                  ) ...[
+                                    _ProcessActivityRow(
+                                      item: summary.processActivities[i],
                                     ),
-                                    if (w.labourEarnedPaise > 0)
-                                      AppStatusBadge(
-                                        label: MoneyFormatter.formatPaise(
-                                          w.labourEarnedPaise,
-                                        ),
-                                        tone: AppStatusTone.good,
-                                      ),
+                                    if (i <
+                                        summary.processActivities.length - 1)
+                                      const Divider(),
                                   ],
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: AppSpacing.md),
+                          ],
+                          if (summary.workerActivities.isNotEmpty) ...[
+                            AppHeading(
+                              l10n.dailySummaryWorkerActivityHeading,
+                              level: AppHeadingLevel.h3,
+                            ),
+                            const SizedBox(height: AppSpacing.sm),
+                          ],
+                        ],
+                      ],
+                    ],
+                  ),
+                ),
+                if (state.status == DailySummaryStatus.loaded &&
+                    summary != null &&
+                    summary.hasAnyActivity &&
+                    summary.workerActivities.isNotEmpty)
+                  SliverList.separated(
+                    itemCount: summary.workerActivities.length,
+                    separatorBuilder: (_, _) =>
+                        const SizedBox(height: AppSpacing.sm),
+                    itemBuilder: (ctx, i) {
+                      final w = summary.workerActivities[i];
+                      return AppCard.listItem(
+                        key: ValueKey<String>(w.workerId),
+                        onTap: () =>
+                            ctx.push(RoutePaths.workerLedger(w.workerId)),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: AppText(
+                                    w.workerName,
+                                    variant: AppTextVariant.bodyLarge,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
-                                const SizedBox(height: AppSpacing.xs),
-                                Wrap(
-                                  spacing: AppSpacing.md,
-                                  runSpacing: AppSpacing.xs,
-                                  children: [
-                                    if (w.issuedQty > 0)
-                                      AppText(
-                                        '${l10n.stockIssuedLabel}: ${w.issuedQty} ${l10n.piecesUnit}',
-                                        variant: AppTextVariant.bodySmall,
-                                      ),
-                                    if (w.goodReturnedQty > 0)
-                                      AppText(
-                                        '${l10n.stockGoodReturnedLabel}: ${w.goodReturnedQty} ${l10n.piecesUnit}',
-                                        variant: AppTextVariant.bodySmall,
-                                      ),
-                                    if (w.damagedQty > 0 ||
-                                        w.lostShortageQty > 0)
-                                      AppText(
-                                        '${l10n.dailySummaryDamagedLostLabel}: ${w.damagedQty + w.lostShortageQty}',
-                                        variant: AppTextVariant.bodySmall,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .error,
-                                      ),
-                                    if (w.paymentsPaidPaise != 0)
-                                      AppText(
-                                        '${l10n.accountingTabPayments}: ${MoneyFormatter.formatPaise(w.paymentsPaidPaise)}',
-                                        variant: AppTextVariant.bodySmall,
-                                      ),
-                                  ],
-                                ),
+                                if (w.labourEarnedPaise > 0)
+                                  AppStatusBadge(
+                                    label: MoneyFormatter.formatPaise(
+                                      w.labourEarnedPaise,
+                                    ),
+                                    tone: AppStatusTone.good,
+                                  ),
                               ],
                             ),
+                            const SizedBox(height: AppSpacing.xs),
+                            Wrap(
+                              spacing: AppSpacing.md,
+                              runSpacing: AppSpacing.xs,
+                              children: [
+                                if (w.issuedQty > 0)
+                                  AppText(
+                                    '${l10n.stockIssuedLabel}: ${w.issuedQty} ${l10n.piecesUnit}',
+                                    variant: AppTextVariant.bodySmall,
+                                  ),
+                                if (w.goodReturnedQty > 0)
+                                  AppText(
+                                    '${l10n.stockGoodReturnedLabel}: ${w.goodReturnedQty} ${l10n.piecesUnit}',
+                                    variant: AppTextVariant.bodySmall,
+                                  ),
+                                if (w.damagedQty > 0 || w.lostShortageQty > 0)
+                                  AppText(
+                                    '${l10n.dailySummaryDamagedLostLabel}: ${w.damagedQty + w.lostShortageQty}',
+                                    variant: AppTextVariant.bodySmall,
+                                    color: Theme.of(ctx).colorScheme.error,
+                                  ),
+                                if (w.paymentsPaidPaise != 0)
+                                  AppText(
+                                    '${l10n.accountingTabPayments}: ${MoneyFormatter.formatPaise(w.paymentsPaidPaise)}',
+                                    variant: AppTextVariant.bodySmall,
+                                  ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                if (state.status == DailySummaryStatus.loaded &&
+                    summary != null)
+                  SliverToBoxAdapter(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const SizedBox(height: AppSpacing.md),
+
+                        // Current Live Pending Snapshot + Quick Actions
+                        AppCard(
+                          color: Theme.of(context).colorScheme.surfaceContainer,
+                          elevated: false,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AppText(
+                                l10n.dailySummaryLivePendingNote,
+                                variant: AppTextVariant.label,
+                              ),
+                              const SizedBox(height: AppSpacing.xs),
+                              Wrap(
+                                spacing: AppSpacing.xs,
+                                runSpacing: AppSpacing.xs,
+                                children: [
+                                  AppStatusBadge(
+                                    label:
+                                        '${l10n.stockPendingWorkerLabel}: ${summary.currentTotalPendingQty} ${l10n.piecesUnit}',
+                                    tone: summary.currentTotalPendingQty > 0
+                                        ? AppStatusTone.pending
+                                        : AppStatusTone.good,
+                                  ),
+                                  AppStatusBadge(
+                                    label:
+                                        '${l10n.accountingOutstandingPayableLabel}: ${MoneyFormatter.formatPaise(summary.currentTotalOutstandingPayablePaise)}',
+                                    tone:
+                                        summary.currentTotalOutstandingPayablePaise >
+                                            0
+                                        ? AppStatusTone.pending
+                                        : AppStatusTone.good,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: AppSpacing.md),
+                              Wrap(
+                                spacing: AppSpacing.sm,
+                                runSpacing: AppSpacing.sm,
+                                children: [
+                                  AppButton(
+                                    label: l10n.stockIssueAction,
+                                    icon: Icons.outbox_rounded,
+                                    onPressed: () =>
+                                        context.push(RoutePaths.stockIssue()),
+                                  ),
+                                  AppButton(
+                                    label: l10n.stockReturnAction,
+                                    icon: Icons.assignment_returned_outlined,
+                                    variant: AppButtonVariant.secondary,
+                                    onPressed: () => context.push(
+                                      RoutePaths.stockReturnPicker,
+                                    ),
+                                  ),
+                                  AppButton(
+                                    label: l10n.navReports,
+                                    icon: Icons.analytics_outlined,
+                                    variant: AppButtonVariant.outlined,
+                                    onPressed: () =>
+                                        context.push(RoutePaths.reports),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
-                    ],
-                  ],
-
-                  const SizedBox(height: AppSpacing.md),
-
-                  // Current Live Pending Snapshot + Quick Actions
-                  AppCard(
-                    color: Theme.of(context).colorScheme.surfaceContainer,
-                    elevated: false,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        AppText(
-                          l10n.dailySummaryLivePendingNote,
-                          variant: AppTextVariant.label,
-                        ),
-                        const SizedBox(height: AppSpacing.xs),
-                        Wrap(
-                          spacing: AppSpacing.xs,
-                          runSpacing: AppSpacing.xs,
-                          children: [
-                            AppStatusBadge(
-                              label:
-                                  '${l10n.stockPendingWorkerLabel}: ${summary.currentTotalPendingQty} ${l10n.piecesUnit}',
-                              tone: summary.currentTotalPendingQty > 0
-                                  ? AppStatusTone.pending
-                                  : AppStatusTone.good,
-                            ),
-                            AppStatusBadge(
-                              label:
-                                  '${l10n.accountingOutstandingPayableLabel}: ${MoneyFormatter.formatPaise(summary.currentTotalOutstandingPayablePaise)}',
-                              tone:
-                                  summary.currentTotalOutstandingPayablePaise >
-                                      0
-                                  ? AppStatusTone.pending
-                                  : AppStatusTone.good,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: AppSpacing.md),
-                        Wrap(
-                          spacing: AppSpacing.sm,
-                          runSpacing: AppSpacing.sm,
-                          children: [
-                            AppButton(
-                              label: l10n.stockIssueAction,
-                              icon: Icons.outbox_rounded,
-                              onPressed: () =>
-                                  context.push(RoutePaths.stockIssue()),
-                            ),
-                            AppButton(
-                              label: l10n.stockReturnAction,
-                              icon: Icons.assignment_returned_outlined,
-                              variant: AppButtonVariant.secondary,
-                              onPressed: () =>
-                                  context.push(RoutePaths.stockReturnPicker),
-                            ),
-                            AppButton(
-                              label: l10n.navReports,
-                              icon: Icons.analytics_outlined,
-                              variant: AppButtonVariant.outlined,
-                              onPressed: () => context.push(RoutePaths.reports),
-                            ),
-                          ],
-                        ),
+                        const SizedBox(height: AppSpacing.xl),
                       ],
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.xl),
-                ],
               ],
             ),
           );

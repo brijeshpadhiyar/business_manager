@@ -35,6 +35,8 @@ final class AppGlassBackdrop extends StatelessWidget {
                 ),
               ),
               child: CustomPaint(
+                isComplex: true,
+                willChange: false,
                 painter: _AmbientOrbPainter(
                   orbPrimary: tokens.orbPrimary,
                   orbSecondary: tokens.orbSecondary,

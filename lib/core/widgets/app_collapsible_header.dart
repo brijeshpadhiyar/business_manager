@@ -48,6 +48,7 @@ final class AppCollapsibleHeader {
     BuildContext context, {
     required bool primary,
     required double effectiveExpandedHeight,
+    BackdropKey? backdropKey,
   }) {
     final theme = Theme.of(context);
     final tokens = context.surfaceTokens;
@@ -56,6 +57,8 @@ final class AppCollapsibleHeader {
     final bottomHeight = bottom?.preferredSize.height ?? 0.0;
     final minExtent = toolbarHeight + bottomHeight + topPadding;
     final maxExtent = effectiveExpandedHeight + topPadding;
+    final baseCollapsedTitleColor =
+        theme.textTheme.titleMedium?.color ?? theme.colorScheme.onSurface;
 
     return SliverAppBar(
       primary: primary,
@@ -86,10 +89,55 @@ final class AppCollapsibleHeader {
             1.0,
           );
 
+          Widget expandedContent = Transform.translate(
+            offset: Offset(0, -10 * collapseT),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Semantics(
+                  header: expandedOpacity >= 0.5,
+                  child: Text(
+                    title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+                if (subtitle != null && subtitle!.isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle!,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+                if (summary != null) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  summary!,
+                ],
+              ],
+            ),
+          );
+
+          // Avoid allocating an Opacity saveLayer when fully opaque at rest.
+          if (expandedOpacity < 0.995) {
+            expandedContent = Opacity(
+              opacity: expandedOpacity,
+              child: expandedContent,
+            );
+          }
+
           return RepaintBoundary(
             child: ClipRect(
               child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                backdropGroupKey: backdropKey,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     color: Color.lerp(
@@ -109,12 +157,14 @@ final class AppCollapsibleHeader {
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      if (background != null)
-                        Opacity(
-                          opacity: expandedOpacity,
-                          child: background!,
-                        ),
-                      // Collapsed compact toolbar title (fades in smoothly)
+                      if (background != null && expandedOpacity > 0.01)
+                        expandedOpacity < 0.995
+                            ? Opacity(
+                                opacity: expandedOpacity,
+                                child: background!,
+                              )
+                            : background!,
+                      // Collapsed compact toolbar title (fades via text alpha — zero saveLayer)
                       if (collapsedTitleOpacity > 0.01)
                         Positioned(
                           top: topPadding,
@@ -129,16 +179,19 @@ final class AppCollapsibleHeader {
                             alignment: Alignment.centerLeft,
                             child: IgnorePointer(
                               ignoring: collapsedTitleOpacity < 0.5,
-                              child: Opacity(
-                                opacity: collapsedTitleOpacity,
-                                child: Semantics(
-                                  header: collapsedTitleOpacity >= 0.5,
-                                  child: Text(
-                                    title,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: theme.textTheme.titleMedium
-                                        ?.copyWith(fontWeight: FontWeight.w700),
+                              child: Semantics(
+                                header: collapsedTitleOpacity >= 0.5,
+                                child: Text(
+                                  title,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: baseCollapsedTitleColor.withValues(
+                                      alpha:
+                                          baseCollapsedTitleColor.a *
+                                          collapsedTitleOpacity,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -153,49 +206,7 @@ final class AppCollapsibleHeader {
                           bottom: AppSpacing.md + bottomHeight,
                           child: IgnorePointer(
                             ignoring: expandedOpacity < 0.2,
-                            child: Opacity(
-                              opacity: expandedOpacity,
-                              child: Transform.translate(
-                                offset: Offset(0, -10 * collapseT),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Semantics(
-                                      header: expandedOpacity >= 0.5,
-                                      child: Text(
-                                        title,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: theme.textTheme.headlineSmall
-                                            ?.copyWith(
-                                              fontWeight: FontWeight.w800,
-                                            ),
-                                      ),
-                                    ),
-                                    if (subtitle != null &&
-                                        subtitle!.isNotEmpty) ...[
-                                      const SizedBox(height: 2),
-                                      Text(
-                                        subtitle!,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: theme.textTheme.bodySmall
-                                            ?.copyWith(
-                                              color: theme
-                                                  .colorScheme
-                                                  .onSurfaceVariant,
-                                            ),
-                                      ),
-                                    ],
-                                    if (summary != null) ...[
-                                      const SizedBox(height: AppSpacing.sm),
-                                      summary!,
-                                    ],
-                                  ],
-                                ),
-                              ),
-                            ),
+                            child: expandedContent,
                           ),
                         ),
                     ],
@@ -216,10 +227,12 @@ final class AppPinnedSliverHeader extends SliverPersistentHeaderDelegate {
   const AppPinnedSliverHeader({
     required this.height,
     required this.child,
+    this.backdropKey,
   });
 
   final double height;
   final Widget child;
+  final BackdropKey? backdropKey;
 
   @override
   double get minExtent => height;
@@ -234,32 +247,30 @@ final class AppPinnedSliverHeader extends SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     final tokens = context.surfaceTokens;
-    return RepaintBoundary(
-      child: ClipRect(
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
-          child: DecoratedBox(
-            decoration: BoxDecoration(
-              color: tokens.navGlassFill,
-              border: Border(
-                bottom: BorderSide(color: tokens.navGlassBorder, width: 0.8),
-              ),
+    // Lightweight frosted surface (zero stacked BackdropFilter directly beneath
+    // AppCollapsibleHeader) so 120Hz scrolling never executes two overlapping
+    // full-width Gaussian blur passes per frame.
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: tokens.navGlassFill.withValues(
+          alpha: (tokens.navGlassFill.a + 0.14).clamp(0.0, 0.94),
+        ),
+        border: Border(
+          bottom: BorderSide(color: tokens.navGlassBorder, width: 0.8),
+        ),
+      ),
+      child: Align(
+        alignment: Alignment.center,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: AppSizing.maxContentWidth,
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.xs,
             ),
-            child: Align(
-              alignment: Alignment.center,
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                  maxWidth: AppSizing.maxContentWidth,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.lg,
-                    vertical: AppSpacing.xs,
-                  ),
-                  child: child,
-                ),
-              ),
-            ),
+            child: child,
           ),
         ),
       ),
@@ -268,7 +279,9 @@ final class AppPinnedSliverHeader extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(covariant AppPinnedSliverHeader oldDelegate) {
-    return height != oldDelegate.height || child != oldDelegate.child;
+    return height != oldDelegate.height ||
+        child != oldDelegate.child ||
+        backdropKey != oldDelegate.backdropKey;
   }
 }
 

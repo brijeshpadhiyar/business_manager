@@ -171,10 +171,14 @@ final class _WorkerLedgerView extends StatelessWidget {
               onPressed: () => context.read<WorkerLedgerCubit>().reload(),
             ),
           ],
-          body: ListView(
-            children: [
-              // Financial KPI Grid
-              LayoutBuilder(
+          body: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Financial KPI Grid
+                    LayoutBuilder(
                 builder: (context, constraints) {
                   final isWide = constraints.maxWidth >= 680;
                   final tileW = isWide
@@ -396,18 +400,28 @@ final class _WorkerLedgerView extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
+                  ],
+                ),
+              ),
               if (detail.lines.isEmpty)
-                AppEmptyState(
-                  icon: Icons.receipt_long_outlined,
-                  title: l10n.accountingEmptyLedgerTitle,
-                  subtitle: l10n.accountingEmptyLedgerSubtitle,
+                SliverToBoxAdapter(
+                  child: AppEmptyState(
+                    icon: Icons.receipt_long_outlined,
+                    title: l10n.accountingEmptyLedgerTitle,
+                    subtitle: l10n.accountingEmptyLedgerSubtitle,
+                  ),
                 )
               else
-                for (final line in detail.lines)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                    child: _buildLedgerLineCard(context, line, localeCode),
+                SliverList.separated(
+                  itemCount: detail.lines.length,
+                  separatorBuilder: (_, _) =>
+                      const SizedBox(height: AppSpacing.sm),
+                  itemBuilder: (ctx, i) => _buildLedgerLineCard(
+                    ctx,
+                    detail.lines[i],
+                    localeCode,
                   ),
+                ),
             ],
           ),
         );
@@ -469,7 +483,8 @@ final class _WorkerLedgerView extends StatelessWidget {
       ),
     };
 
-    return AppCard(
+    return AppCard.listItem(
+      key: ValueKey<String>('${line.kind.name}_${line.sourceEntityId}'),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

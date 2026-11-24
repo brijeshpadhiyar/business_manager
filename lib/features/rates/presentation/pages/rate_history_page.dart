@@ -87,81 +87,94 @@ final class _RateHistoryView extends StatelessWidget {
               onPressed: () => _openAddRate(context, state.selectedProcessId),
             ),
           ],
-          body: ListView(
-            children: [
-              AppCard(
+          body: CustomScrollView(
+            slivers: [
+              SliverToBoxAdapter(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    if (state.processes.isNotEmpty)
-                      AppDropdown<ProcessEntity>(
-                        key: ValueKey('rate_proc_${state.selectedProcessId}'),
-                        label: l10n.ratesFilterProcessLabel,
-                        value: selectedProcess,
-                        items: state.processes,
-                        itemLabelBuilder: (p) => p.name,
-                        onChanged: (p) {
-                          if (p != null) {
-                            context.read<RateHistoryCubit>().load(
-                              workerId: workerId,
-                              processId: p.id,
-                            );
-                          }
-                        },
-                      ),
-                    const SizedBox(height: AppSpacing.md),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                    AppCard(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          if (state.processes.isNotEmpty)
+                            AppDropdown<ProcessEntity>(
+                              key: ValueKey('rate_proc_${state.selectedProcessId}'),
+                              label: l10n.ratesFilterProcessLabel,
+                              value: selectedProcess,
+                              items: state.processes,
+                              itemLabelBuilder: (p) => p.name,
+                              onChanged: (p) {
+                                if (p != null) {
+                                  context.read<RateHistoryCubit>().load(
+                                    workerId: workerId,
+                                    processId: p.id,
+                                  );
+                                }
+                              },
+                            ),
+                          const SizedBox(height: AppSpacing.md),
+                          Row(
                             children: [
-                              AppText(
-                                l10n.ratesCurrentRateLabel,
-                                variant: AppTextVariant.label,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    AppText(
+                                      l10n.ratesCurrentRateLabel,
+                                      variant: AppTextVariant.label,
+                                    ),
+                                    const SizedBox(height: AppSpacing.xs),
+                                    AppHeading(
+                                      state.currentRate != null
+                                          ? '${MoneyFormatter.formatPaise(state.currentRate!.ratePaise)} ${l10n.ratesPerPieceSuffix}'
+                                          : l10n.ratesNoCurrentRate,
+                                      level: AppHeadingLevel.h2,
+                                    ),
+                                  ],
+                                ),
                               ),
-                              const SizedBox(height: AppSpacing.xs),
-                              AppHeading(
-                                state.currentRate != null
-                                    ? '${MoneyFormatter.formatPaise(state.currentRate!.ratePaise)} ${l10n.ratesPerPieceSuffix}'
-                                    : l10n.ratesNoCurrentRate,
-                                level: AppHeadingLevel.h2,
+                              AppButton(
+                                label: l10n.workerAddRateAction,
+                                icon: Icons.add,
+                                onPressed: () =>
+                                    _openAddRate(context, state.selectedProcessId),
                               ),
                             ],
                           ),
-                        ),
-                        AppButton(
-                          label: l10n.workerAddRateAction,
-                          icon: Icons.add,
-                          onPressed: () =>
-                              _openAddRate(context, state.selectedProcessId),
-                        ),
-                      ],
+                          const SizedBox(height: AppSpacing.sm),
+                          AppText(
+                            l10n.ratesHistoricalNotice,
+                            variant: AppTextVariant.bodySmall,
+                          ),
+                        ],
+                      ),
                     ),
-                    const SizedBox(height: AppSpacing.sm),
-                    AppText(
-                      l10n.ratesHistoricalNotice,
-                      variant: AppTextVariant.bodySmall,
-                    ),
+                    const SizedBox(height: AppSpacing.lg),
                   ],
                 ),
               ),
-              const SizedBox(height: AppSpacing.lg),
               if (state.rates.isEmpty)
-                AppEmptyState(
-                  icon: Icons.currency_rupee,
-                  title: l10n.ratesEmptyTitle,
-                  subtitle: l10n.ratesEmptySubtitle,
-                  actionLabel: l10n.workerAddRateAction,
-                  onAction: () =>
-                      _openAddRate(context, state.selectedProcessId),
+                SliverToBoxAdapter(
+                  child: AppEmptyState(
+                    icon: Icons.currency_rupee,
+                    title: l10n.ratesEmptyTitle,
+                    subtitle: l10n.ratesEmptySubtitle,
+                    actionLabel: l10n.workerAddRateAction,
+                    onAction: () =>
+                        _openAddRate(context, state.selectedProcessId),
+                  ),
                 )
               else
-                ...state.rates.map((rate) {
-                  final isCurrent = state.currentRate?.id == rate.id;
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                    child: AppCard(
+                SliverList.separated(
+                  itemCount: state.rates.length,
+                  separatorBuilder: (_, _) =>
+                      const SizedBox(height: AppSpacing.sm),
+                  itemBuilder: (ctx, i) {
+                    final rate = state.rates[i];
+                    final isCurrent = state.currentRate?.id == rate.id;
+                    return AppCard.listItem(
+                      key: ValueKey<String>(rate.id),
                       child: Row(
                         children: [
                           Expanded(
@@ -204,11 +217,11 @@ final class _RateHistoryView extends StatelessWidget {
                             icon: Icons.edit_outlined,
                             tooltip: l10n.ratesEditHeading,
                             onPressed: () async {
-                              await context.push(
+                              await ctx.push(
                                 RoutePaths.workerRateEdit(workerId, rate.id),
                               );
-                              if (context.mounted) {
-                                await context.read<RateHistoryCubit>().load(
+                              if (ctx.mounted) {
+                                await ctx.read<RateHistoryCubit>().load(
                                   workerId: workerId,
                                   processId: state.selectedProcessId,
                                 );
@@ -217,9 +230,9 @@ final class _RateHistoryView extends StatelessWidget {
                           ),
                         ],
                       ),
-                    ),
-                  );
-                }),
+                    );
+                  },
+                ),
             ],
           ),
         );

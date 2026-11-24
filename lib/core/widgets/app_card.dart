@@ -5,9 +5,12 @@ import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/widgets/app_glass_surface.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Refined Material 3 StitchFlow V1.3 card defaulting to genuine frosted
-/// glassmorphism (`isGlass: true`) with BackdropFilter blur, specular highlight,
-/// subtle glass border, soft depth, and tactile press animation when tappable.
+/// Refined Material 3 StitchFlow V1.3 card defaulting to 120Hz lightweight
+/// frosted glassmorphism (`glassStyle: AppGlassStyle.lightweight`) with
+/// translucent specular highlight, luminous glass border, and soft depth.
+///
+/// Pass `glassStyle: AppGlassStyle.full, blurSigma: 12` explicitly for showcase
+/// Hero banners or standalone focal panels that benefit from live backdrop blur.
 final class AppCard extends StatelessWidget {
   const AppCard({
     super.key,
@@ -19,10 +22,33 @@ final class AppCard extends StatelessWidget {
     this.gradient,
     this.borderRadius = AppRadius.lgBorder,
     this.isGlass = true,
-    this.blurSigma = 14,
+    this.glassStyle = AppGlassStyle.lightweight,
+    this.blurSigma = 0,
     this.elevated = true,
+    this.enablePressScale = false,
+    this.backdropKey,
     this.semanticLabel,
   });
+
+  /// High-refresh-rate lightweight frosted glass card optimized for dense
+  /// scrolling lists and nested card grids (zero per-row `BackdropFilter`
+  /// readback and zero scroll-start press-scale rebuilds).
+  const AppCard.listItem({
+    super.key,
+    required this.child,
+    this.padding = AppSpacing.cardPadding,
+    this.onTap,
+    this.color,
+    this.borderColor,
+    this.gradient,
+    this.borderRadius = AppRadius.lgBorder,
+    this.elevated = true,
+    this.semanticLabel,
+  }) : isGlass = true,
+       glassStyle = AppGlassStyle.lightweight,
+       blurSigma = 0,
+       enablePressScale = false,
+       backdropKey = null;
 
   final Widget child;
   final EdgeInsetsGeometry padding;
@@ -32,8 +58,11 @@ final class AppCard extends StatelessWidget {
   final Gradient? gradient;
   final BorderRadius borderRadius;
   final bool isGlass;
+  final AppGlassStyle glassStyle;
   final double blurSigma;
   final bool elevated;
+  final bool enablePressScale;
+  final BackdropKey? backdropKey;
   final String? semanticLabel;
 
   @override
@@ -43,11 +72,14 @@ final class AppCard extends StatelessWidget {
         padding: padding,
         borderRadius: borderRadius,
         blurSigma: blurSigma,
+        glassStyle: glassStyle,
         tintColor: color,
         borderColor: borderColor,
         gradient: gradient,
         elevated: elevated,
         onTap: onTap,
+        enablePressScale: enablePressScale,
+        backdropKey: backdropKey,
         child: child,
       );
       if (semanticLabel != null) {

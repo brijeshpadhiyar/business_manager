@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$LotDetailState {
 
- LotDetailStatus get status; LotDetailAggregate? get detail; String get designSearchQuery; String? get errorMessage;
+ LotDetailStatus get status; LotDetailAggregate? get detail; JobRoutingOverview? get routingOverview; Map<String, DesignColourStockBalance> get balancesByColourId; Map<String, List<JobProcessEntity>> get operationsByColourId; String get designSearchQuery; String? get errorMessage;
 /// Create a copy of LotDetailState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $LotDetailStateCopyWith<LotDetailState> get copyWith => _$LotDetailStateCopyWith
 @override
 bool operator ==(Object other) {
   final _this = this as LotDetailState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LotDetailState&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.detail, _this.detail) || other.detail == _this.detail)&&(identical(other.designSearchQuery, _this.designSearchQuery) || other.designSearchQuery == _this.designSearchQuery)&&(identical(other.errorMessage, _this.errorMessage) || other.errorMessage == _this.errorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LotDetailState&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.detail, _this.detail) || other.detail == _this.detail)&&(identical(other.routingOverview, _this.routingOverview) || other.routingOverview == _this.routingOverview)&&const DeepCollectionEquality().equals(other.balancesByColourId, _this.balancesByColourId)&&const DeepCollectionEquality().equals(other.operationsByColourId, _this.operationsByColourId)&&(identical(other.designSearchQuery, _this.designSearchQuery) || other.designSearchQuery == _this.designSearchQuery)&&(identical(other.errorMessage, _this.errorMessage) || other.errorMessage == _this.errorMessage));
 }
 
 
 @override
 int get hashCode {
   final _this = this as LotDetailState;
-  return Object.hash(runtimeType,_this.status,_this.detail,_this.designSearchQuery,_this.errorMessage);
+  return Object.hash(runtimeType,_this.status,_this.detail,_this.routingOverview,const DeepCollectionEquality().hash(_this.balancesByColourId),const DeepCollectionEquality().hash(_this.operationsByColourId),_this.designSearchQuery,_this.errorMessage);
 }
 
 @override
 String toString() {
   final _this = this as LotDetailState;
-  return 'LotDetailState(status: ${_this.status}, detail: ${_this.detail}, designSearchQuery: ${_this.designSearchQuery}, errorMessage: ${_this.errorMessage})';
+  return 'LotDetailState(status: ${_this.status}, detail: ${_this.detail}, routingOverview: ${_this.routingOverview}, balancesByColourId: ${_this.balancesByColourId}, operationsByColourId: ${_this.operationsByColourId}, designSearchQuery: ${_this.designSearchQuery}, errorMessage: ${_this.errorMessage})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $LotDetailStateCopyWith<$Res>  {
   factory $LotDetailStateCopyWith(LotDetailState value, $Res Function(LotDetailState) _then) = _$LotDetailStateCopyWithImpl;
 @useResult
 $Res call({
- LotDetailStatus status, LotDetailAggregate? detail, String designSearchQuery, String? errorMessage
+ LotDetailStatus status, LotDetailAggregate? detail, JobRoutingOverview? routingOverview, Map<String, DesignColourStockBalance> balancesByColourId, Map<String, List<JobProcessEntity>> operationsByColourId, String designSearchQuery, String? errorMessage
 });
 
 
@@ -68,11 +68,14 @@ class _$LotDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of LotDetailState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? detail = freezed,Object? designSearchQuery = null,Object? errorMessage = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? detail = freezed,Object? routingOverview = freezed,Object? balancesByColourId = null,Object? operationsByColourId = null,Object? designSearchQuery = null,Object? errorMessage = freezed,}) {
   return _then(LotDetailState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as LotDetailStatus,detail: freezed == detail ? _self.detail : detail // ignore: cast_nullable_to_non_nullable
-as LotDetailAggregate?,designSearchQuery: null == designSearchQuery ? _self.designSearchQuery : designSearchQuery // ignore: cast_nullable_to_non_nullable
+as LotDetailAggregate?,routingOverview: freezed == routingOverview ? _self.routingOverview : routingOverview // ignore: cast_nullable_to_non_nullable
+as JobRoutingOverview?,balancesByColourId: null == balancesByColourId ? _self.balancesByColourId : balancesByColourId // ignore: cast_nullable_to_non_nullable
+as Map<String, DesignColourStockBalance>,operationsByColourId: null == operationsByColourId ? _self.operationsByColourId : operationsByColourId // ignore: cast_nullable_to_non_nullable
+as Map<String, List<JobProcessEntity>>,designSearchQuery: null == designSearchQuery ? _self.designSearchQuery : designSearchQuery // ignore: cast_nullable_to_non_nullable
 as String,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String?,
   ));
@@ -168,10 +171,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( LotDetailStatus status,  LotDetailAggregate? detail,  String designSearchQuery,  String? errorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( LotDetailStatus status,  LotDetailAggregate? detail,  JobRoutingOverview? routingOverview,  Map<String, DesignColourStockBalance> balancesByColourId,  Map<String, List<JobProcessEntity>> operationsByColourId,  String designSearchQuery,  String? errorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _LotDetailState() when $default != null:
-return $default(_that.status,_that.detail,_that.designSearchQuery,_that.errorMessage);case _:
+return $default(_that.status,_that.detail,_that.routingOverview,_that.balancesByColourId,_that.operationsByColourId,_that.designSearchQuery,_that.errorMessage);case _:
   return orElse();
 
 }
@@ -189,10 +192,10 @@ return $default(_that.status,_that.detail,_that.designSearchQuery,_that.errorMes
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( LotDetailStatus status,  LotDetailAggregate? detail,  String designSearchQuery,  String? errorMessage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( LotDetailStatus status,  LotDetailAggregate? detail,  JobRoutingOverview? routingOverview,  Map<String, DesignColourStockBalance> balancesByColourId,  Map<String, List<JobProcessEntity>> operationsByColourId,  String designSearchQuery,  String? errorMessage)  $default,) {final _that = this;
 switch (_that) {
 case _LotDetailState():
-return $default(_that.status,_that.detail,_that.designSearchQuery,_that.errorMessage);}
+return $default(_that.status,_that.detail,_that.routingOverview,_that.balancesByColourId,_that.operationsByColourId,_that.designSearchQuery,_that.errorMessage);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -206,10 +209,10 @@ return $default(_that.status,_that.detail,_that.designSearchQuery,_that.errorMes
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( LotDetailStatus status,  LotDetailAggregate? detail,  String designSearchQuery,  String? errorMessage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( LotDetailStatus status,  LotDetailAggregate? detail,  JobRoutingOverview? routingOverview,  Map<String, DesignColourStockBalance> balancesByColourId,  Map<String, List<JobProcessEntity>> operationsByColourId,  String designSearchQuery,  String? errorMessage)?  $default,) {final _that = this;
 switch (_that) {
 case _LotDetailState() when $default != null:
-return $default(_that.status,_that.detail,_that.designSearchQuery,_that.errorMessage);case _:
+return $default(_that.status,_that.detail,_that.routingOverview,_that.balancesByColourId,_that.operationsByColourId,_that.designSearchQuery,_that.errorMessage);case _:
   return null;
 
 }
@@ -221,11 +224,26 @@ return $default(_that.status,_that.detail,_that.designSearchQuery,_that.errorMes
 
 
 class _LotDetailState implements LotDetailState {
-  const _LotDetailState({this.status = LotDetailStatus.initial, this.detail, this.designSearchQuery = '', this.errorMessage});
+  const _LotDetailState({this.status = LotDetailStatus.initial, this.detail, this.routingOverview,  Map<String, DesignColourStockBalance> balancesByColourId = const <String, DesignColourStockBalance>{},  Map<String, List<JobProcessEntity>> operationsByColourId = const <String, List<JobProcessEntity>>{}, this.designSearchQuery = '', this.errorMessage}): _balancesByColourId = balancesByColourId,_operationsByColourId = operationsByColourId;
   
 
 @override@JsonKey() final  LotDetailStatus status;
 @override final  LotDetailAggregate? detail;
+@override final  JobRoutingOverview? routingOverview;
+ final  Map<String, DesignColourStockBalance> _balancesByColourId;
+@override@JsonKey() Map<String, DesignColourStockBalance> get balancesByColourId {
+  if (_balancesByColourId is EqualUnmodifiableMapView) return _balancesByColourId;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableMapView(_balancesByColourId);
+}
+
+ final  Map<String, List<JobProcessEntity>> _operationsByColourId;
+@override@JsonKey() Map<String, List<JobProcessEntity>> get operationsByColourId {
+  if (_operationsByColourId is EqualUnmodifiableMapView) return _operationsByColourId;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableMapView(_operationsByColourId);
+}
+
 @override@JsonKey() final  String designSearchQuery;
 @override final  String? errorMessage;
 
@@ -239,18 +257,18 @@ _$LotDetailStateCopyWith<_LotDetailState> get copyWith => __$LotDetailStateCopyW
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _LotDetailState&&(identical(other.status, status) || other.status == status)&&(identical(other.detail, detail) || other.detail == detail)&&(identical(other.designSearchQuery, designSearchQuery) || other.designSearchQuery == designSearchQuery)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _LotDetailState&&(identical(other.status, status) || other.status == status)&&(identical(other.detail, detail) || other.detail == detail)&&(identical(other.routingOverview, routingOverview) || other.routingOverview == routingOverview)&&const DeepCollectionEquality().equals(other.balancesByColourId, _balancesByColourId)&&const DeepCollectionEquality().equals(other.operationsByColourId, _operationsByColourId)&&(identical(other.designSearchQuery, designSearchQuery) || other.designSearchQuery == designSearchQuery)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,status,detail,designSearchQuery,errorMessage);
+    return Object.hash(runtimeType,status,detail,routingOverview,const DeepCollectionEquality().hash(_balancesByColourId),const DeepCollectionEquality().hash(_operationsByColourId),designSearchQuery,errorMessage);
 }
 
 @override
 String toString() {
-    return 'LotDetailState(status: $status, detail: $detail, designSearchQuery: $designSearchQuery, errorMessage: $errorMessage)';
+    return 'LotDetailState(status: $status, detail: $detail, routingOverview: $routingOverview, balancesByColourId: $balancesByColourId, operationsByColourId: $operationsByColourId, designSearchQuery: $designSearchQuery, errorMessage: $errorMessage)';
 }
 
 
@@ -261,7 +279,7 @@ abstract mixin class _$LotDetailStateCopyWith<$Res> implements $LotDetailStateCo
   factory _$LotDetailStateCopyWith(_LotDetailState value, $Res Function(_LotDetailState) _then) = __$LotDetailStateCopyWithImpl;
 @override @useResult
 $Res call({
- LotDetailStatus status, LotDetailAggregate? detail, String designSearchQuery, String? errorMessage
+ LotDetailStatus status, LotDetailAggregate? detail, JobRoutingOverview? routingOverview, Map<String, DesignColourStockBalance> balancesByColourId, Map<String, List<JobProcessEntity>> operationsByColourId, String designSearchQuery, String? errorMessage
 });
 
 
@@ -278,11 +296,14 @@ class __$LotDetailStateCopyWithImpl<$Res>
 
 /// Create a copy of LotDetailState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? detail = freezed,Object? designSearchQuery = null,Object? errorMessage = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? detail = freezed,Object? routingOverview = freezed,Object? balancesByColourId = null,Object? operationsByColourId = null,Object? designSearchQuery = null,Object? errorMessage = freezed,}) {
   return _then(_LotDetailState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as LotDetailStatus,detail: freezed == detail ? _self.detail : detail // ignore: cast_nullable_to_non_nullable
-as LotDetailAggregate?,designSearchQuery: null == designSearchQuery ? _self.designSearchQuery : designSearchQuery // ignore: cast_nullable_to_non_nullable
+as LotDetailAggregate?,routingOverview: freezed == routingOverview ? _self.routingOverview : routingOverview // ignore: cast_nullable_to_non_nullable
+as JobRoutingOverview?,balancesByColourId: null == balancesByColourId ? _self._balancesByColourId : balancesByColourId // ignore: cast_nullable_to_non_nullable
+as Map<String, DesignColourStockBalance>,operationsByColourId: null == operationsByColourId ? _self._operationsByColourId : operationsByColourId // ignore: cast_nullable_to_non_nullable
+as Map<String, List<JobProcessEntity>>,designSearchQuery: null == designSearchQuery ? _self.designSearchQuery : designSearchQuery // ignore: cast_nullable_to_non_nullable
 as String,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String?,
   ));

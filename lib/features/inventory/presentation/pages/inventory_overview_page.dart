@@ -69,59 +69,68 @@ final class _InventoryOverviewViewState extends State<_InventoryOverviewView> {
         } else {
           slivers = [
             SliverPadding(
-              padding: AppSpacing.screenAll,
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                AppSpacing.lg,
+                AppSpacing.lg,
+                AppSpacing.md,
+              ),
               sliver: SliverToBoxAdapter(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                child: Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
                   children: [
-                    Wrap(
-                      spacing: AppSpacing.sm,
-                      runSpacing: AppSpacing.sm,
-                      children: [
-                        AppButton(
-                          label: l10n.navStockMovements,
-                          icon: Icons.swap_horiz_rounded,
-                          onPressed: () =>
-                              context.push(RoutePaths.stockMovements),
-                        ),
-                        AppButton(
-                          label: l10n.stockIssueAction,
-                          icon: Icons.outbox_rounded,
-                          variant: AppButtonVariant.secondary,
-                          onPressed: () =>
-                              context.push(RoutePaths.stockIssue()),
-                        ),
-                        AppButton(
-                          label: l10n.navReports,
-                          icon: Icons.analytics_outlined,
-                          variant: AppButtonVariant.outlined,
-                          onPressed: () => context.push(RoutePaths.reports),
-                        ),
-                      ],
+                    AppButton(
+                      label: l10n.navStockMovements,
+                      icon: Icons.swap_horiz_rounded,
+                      onPressed: () => context.push(RoutePaths.stockMovements),
                     ),
-                    const SizedBox(height: AppSpacing.md),
-                    if (overview!.totalActiveLots == 0)
-                      AppEmptyState(
-                        icon: Icons.inventory_outlined,
-                        title: l10n.inventoryEmptyTitle,
-                        subtitle: l10n.inventoryEmptySubtitle,
-                      )
-                    else
-                      switch (_tab) {
-                        0 => _buildLotTable(context, overview.lotSummaries),
-                        1 => _buildDesignTable(
-                          context,
-                          overview.designSummaries,
-                        ),
-                        _ => _buildColourTable(
-                          context,
-                          overview.colourSummaries,
-                        ),
-                      },
+                    AppButton(
+                      label: l10n.stockIssueAction,
+                      icon: Icons.outbox_rounded,
+                      variant: AppButtonVariant.secondary,
+                      onPressed: () => context.push(RoutePaths.stockIssue()),
+                    ),
+                    AppButton(
+                      label: l10n.navReports,
+                      icon: Icons.analytics_outlined,
+                      variant: AppButtonVariant.outlined,
+                      onPressed: () => context.push(RoutePaths.reports),
+                    ),
                   ],
                 ),
               ),
             ),
+            if (overview!.totalActiveLots == 0)
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.lg,
+                  0,
+                  AppSpacing.lg,
+                  AppSpacing.xl,
+                ),
+                sliver: SliverToBoxAdapter(
+                  child: AppEmptyState(
+                    icon: Icons.inventory_outlined,
+                    title: l10n.inventoryEmptyTitle,
+                    subtitle: l10n.inventoryEmptySubtitle,
+                  ),
+                ),
+              )
+            else
+              SliverPadding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.lg,
+                  0,
+                  AppSpacing.lg,
+                  AppSpacing.xl,
+                ),
+                sliver: switch (_tab) {
+                  0 => _buildLotSliver(context, overview.lotSummaries),
+                  1 => _buildDesignSliver(context, overview.designSummaries),
+                  _ => _buildColourSliver(context, overview.colourSummaries),
+                },
+              ),
           ];
         }
 
@@ -201,9 +210,11 @@ final class _InventoryOverviewViewState extends State<_InventoryOverviewView> {
     );
   }
 
-  Widget _buildLotTable(BuildContext context, List<LotQuantitySummary> items) {
+  Widget _buildLotSliver(BuildContext context, List<LotQuantitySummary> items) {
     final l10n = context.l10n;
-    return AppDataTable<LotQuantitySummary>(
+    return AppDataTable.buildSliver<LotQuantitySummary>(
+      context,
+      itemKeyBuilder: (item) => ValueKey<String>(item.lotId),
       columns: [
         AppDataColumn(label: l10n.lotNumberLabel),
         AppDataColumn(label: l10n.inventoryTotalDesigns, numeric: true),
@@ -243,12 +254,14 @@ final class _InventoryOverviewViewState extends State<_InventoryOverviewView> {
     );
   }
 
-  Widget _buildDesignTable(
+  Widget _buildDesignSliver(
     BuildContext context,
     List<DesignQuantitySummary> items,
   ) {
     final l10n = context.l10n;
-    return AppDataTable<DesignQuantitySummary>(
+    return AppDataTable.buildSliver<DesignQuantitySummary>(
+      context,
+      itemKeyBuilder: (item) => ValueKey<String>(item.designId),
       columns: [
         AppDataColumn(label: l10n.lotNumberLabel),
         AppDataColumn(label: l10n.designNameLabel),
@@ -285,12 +298,14 @@ final class _InventoryOverviewViewState extends State<_InventoryOverviewView> {
     );
   }
 
-  Widget _buildColourTable(
+  Widget _buildColourSliver(
     BuildContext context,
     List<ColourQuantitySummary> items,
   ) {
     final l10n = context.l10n;
-    return AppDataTable<ColourQuantitySummary>(
+    return AppDataTable.buildSliver<ColourQuantitySummary>(
+      context,
+      itemKeyBuilder: (item) => ValueKey<String>(item.designColourId),
       columns: [
         AppDataColumn(label: l10n.lotNumberLabel),
         AppDataColumn(label: l10n.designNameLabel),

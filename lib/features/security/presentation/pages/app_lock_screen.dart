@@ -154,6 +154,8 @@ final class _AppLockScreenState extends State<AppLockScreen> {
                             ),
                             child: Image.asset(
                               AppIdentity.symbolPngAsset,
+                              cacheWidth: 192,
+                              cacheHeight: 192,
                               errorBuilder: (_, _, _) => const Icon(
                                 Icons.lock_outline_rounded,
                                 color: Colors.white,

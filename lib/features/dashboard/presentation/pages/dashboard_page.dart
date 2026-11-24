@@ -15,6 +15,7 @@ import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/dashboard/presentation/bloc/dashboard_cubit.dart';
 import 'package:business_manager/features/reports/domain/calculators/workshop_daily_calculator.dart';
 import 'package:business_manager/features/security/presentation/bloc/app_lock_cubit.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -24,25 +25,68 @@ final class DashboardPage extends StatelessWidget {
     super.key,
     required this.config,
     required this.onNavigateTab,
+    this.refreshSignal,
   });
 
   final AppConfig config;
   final ValueChanged<int> onNavigateTab;
+  final ValueListenable<int>? refreshSignal;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<DashboardCubit>(
       create: (_) => getIt<DashboardCubit>()..loadDashboard(),
-      child: _DashboardView(config: config, onNavigateTab: onNavigateTab),
+      child: _DashboardView(
+        config: config,
+        onNavigateTab: onNavigateTab,
+        refreshSignal: refreshSignal,
+      ),
     );
   }
 }
 
-final class _DashboardView extends StatelessWidget {
-  const _DashboardView({required this.config, required this.onNavigateTab});
+final class _DashboardView extends StatefulWidget {
+  const _DashboardView({
+    required this.config,
+    required this.onNavigateTab,
+    this.refreshSignal,
+  });
 
   final AppConfig config;
   final ValueChanged<int> onNavigateTab;
+  final ValueListenable<int>? refreshSignal;
+
+  @override
+  State<_DashboardView> createState() => _DashboardViewState();
+}
+
+final class _DashboardViewState extends State<_DashboardView> {
+  @override
+  void initState() {
+    super.initState();
+    widget.refreshSignal?.addListener(_onSilentRefresh);
+  }
+
+  @override
+  void didUpdateWidget(covariant _DashboardView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.refreshSignal != widget.refreshSignal) {
+      oldWidget.refreshSignal?.removeListener(_onSilentRefresh);
+      widget.refreshSignal?.addListener(_onSilentRefresh);
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.refreshSignal?.removeListener(_onSilentRefresh);
+    super.dispose();
+  }
+
+  void _onSilentRefresh() {
+    if (mounted) {
+      context.read<DashboardCubit>().loadDashboard();
+    }
+  }
 
   Future<void> _pushAndRefresh(BuildContext context, String path) async {
     await context.push(path);
@@ -70,100 +114,106 @@ final class _DashboardView extends StatelessWidget {
               child: ListView(
                 padding: AppSpacing.screenAll,
                 children: [
-                  // 1. Branded Hero Banner
+                  // 1. Branded Hero Banner (full glass blur preserved)
                   AppMotionEntrance(
                     index: 0,
                     child: AppCard(
+                      glassStyle: AppGlassStyle.full,
+                      blurSigma: 12,
                       gradient: isDark
                           ? AppColors.heroGradientDark
                           : AppColors.heroGradientLight,
-                      borderColor: Colors.white.withValues(alpha: 0.16),
-                      borderRadius: AppRadius.xlBorder,
-                      padding: const EdgeInsets.all(AppSpacing.lg),
-                      child: Row(
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.14),
-                              borderRadius: AppRadius.lgBorder,
-                              border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.25),
+                        borderColor: Colors.white.withValues(alpha: 0.16),
+                        borderRadius: AppRadius.xlBorder,
+                        padding: const EdgeInsets.all(AppSpacing.lg),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.14),
+                                borderRadius: AppRadius.lgBorder,
+                                border: Border.all(
+                                  color: Colors.white.withValues(alpha: 0.25),
+                                ),
+                              ),
+                              child: Image.asset(
+                                AppIdentity.symbolPngAsset,
+                                width: 40,
+                                height: 40,
+                                cacheWidth: 120,
+                                cacheHeight: 120,
+                                errorBuilder: (_, _, _) => const Icon(
+                                  Icons.auto_awesome,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
-                            child: Image.asset(
-                              AppIdentity.symbolPngAsset,
-                              width: 40,
-                              height: 40,
-                              errorBuilder: (_, _, _) => const Icon(
-                                Icons.auto_awesome,
+                            const SizedBox(width: AppSpacing.md),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    widget.config.isDev
+                                        ? l10n.appTitleDev
+                                        : l10n.appTitle,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineSmall
+                                        ?.copyWith(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    snap != null
+                                        ? (localeCode == 'gu'
+                                              ? snap.businessNameGu
+                                              : snap.businessNameEn)
+                                        : l10n.appTagline,
+                                    style: Theme.of(context).textTheme.bodySmall
+                                        ?.copyWith(
+                                          color: Colors.white.withValues(
+                                            alpha: 0.88,
+                                          ),
+                                        ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            BlocSelector<AppLockCubit, AppLockState, bool>(
+                              selector: (s) => s.isPinEnabled,
+                              builder: (context, isPinEnabled) {
+                                if (!isPinEnabled) {
+                                  return const SizedBox.shrink();
+                                }
+                                return IconButton(
+                                  tooltip: l10n.securityLockNowAction,
+                                  onPressed: () =>
+                                      context.read<AppLockCubit>().lockNow(),
+                                  icon: const Icon(
+                                    Icons.lock_outline_rounded,
+                                    color: Colors.white,
+                                  ),
+                                );
+                              },
+                            ),
+                            IconButton(
+                              tooltip: l10n.actionRetry,
+                              onPressed: () => context
+                                  .read<DashboardCubit>()
+                                  .loadDashboard(),
+                              icon: const Icon(
+                                Icons.refresh_rounded,
                                 color: Colors.white,
                               ),
                             ),
-                          ),
-                          const SizedBox(width: AppSpacing.md),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  config.isDev
-                                      ? l10n.appTitleDev
-                                      : l10n.appTitle,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineSmall
-                                      ?.copyWith(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  snap != null
-                                      ? (localeCode == 'gu'
-                                            ? snap.businessNameGu
-                                            : snap.businessNameEn)
-                                      : l10n.appTagline,
-                                  style: Theme.of(context).textTheme.bodySmall
-                                      ?.copyWith(
-                                        color: Colors.white.withValues(
-                                          alpha: 0.88,
-                                        ),
-                                      ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          BlocBuilder<AppLockCubit, AppLockState>(
-                            builder: (context, lockState) {
-                              if (!lockState.isPinEnabled) {
-                                return const SizedBox.shrink();
-                              }
-                              return IconButton(
-                                tooltip: l10n.securityLockNowAction,
-                                onPressed: () =>
-                                    context.read<AppLockCubit>().lockNow(),
-                                icon: const Icon(
-                                  Icons.lock_outline_rounded,
-                                  color: Colors.white,
-                                ),
-                              );
-                            },
-                          ),
-                          IconButton(
-                            tooltip: l10n.actionRetry,
-                            onPressed: () =>
-                                context.read<DashboardCubit>().loadDashboard(),
-                            icon: const Icon(
-                              Icons.refresh_rounded,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
                   const SizedBox(height: AppSpacing.lg),
 
                   // 2. Daily Workshop Quick Operations Dock
@@ -252,7 +302,7 @@ final class _DashboardView extends StatelessWidget {
                                 RoutePaths.reports,
                               ),
                             ),
-                            if (config.isDev)
+                            if (widget.config.isDev)
                               AppButton(
                                 label: l10n.navDesignShowcase,
                                 icon: Icons.palette_outlined,
@@ -315,6 +365,7 @@ final class _DashboardView extends StatelessWidget {
                                   SizedBox(
                                     width: tileW,
                                     child: AppMetricTile(
+                                      backdropKey: null,
                                       label: l10n.dashboardTodayReturnedLabel,
                                       value: snap.todayReceivedGoodQty,
                                       suffix: l10n.piecesUnit,
@@ -329,6 +380,7 @@ final class _DashboardView extends StatelessWidget {
                                   SizedBox(
                                     width: tileW,
                                     child: AppMetricTile(
+                                      backdropKey: null,
                                       label: l10n.dashboardTodayLabourLabel,
                                       value: snap.todayLabourEarnedPaise,
                                       isCurrencyPaise: true,
@@ -343,6 +395,7 @@ final class _DashboardView extends StatelessWidget {
                                   SizedBox(
                                     width: tileW,
                                     child: AppMetricTile(
+                                      backdropKey: null,
                                       label: l10n.dashboardTodayPaymentsLabel,
                                       value: snap.todayPaymentsPaise,
                                       isCurrencyPaise: true,
@@ -393,7 +446,7 @@ final class _DashboardView extends StatelessWidget {
                               ),
                             ),
                             const SizedBox(height: AppSpacing.xs),
-                            AppCard(
+                            AppCard.listItem(
                               child: Column(
                                 children: [
                                   for (
@@ -540,18 +593,20 @@ final class _DashboardView extends StatelessWidget {
                                         SizedBox(
                                           width: tileW,
                                           child: AppMetricTile(
+                                            backdropKey: null,
                                             label: l10n.dashboardTotalLotsLabel,
                                             value: snap.totalLots,
                                             subtitle:
                                                 '${snap.totalDesigns} / ${snap.totalColours} ${l10n.dashboardTotalDesignsColoursLabel}',
                                             icon: Icons.inventory_2_outlined,
                                             tone: AppStatusTone.neutral,
-                                            onTap: () => onNavigateTab(1),
+                                            onTap: () => widget.onNavigateTab(1),
                                           ),
                                         ),
                                         SizedBox(
                                           width: tileW,
                                           child: AppMetricTile(
+                                            backdropKey: null,
                                             label: l10n.stockAvailableGoodLabel,
                                             value: snap.availableGoodStock,
                                             suffix: l10n.piecesUnit,
@@ -567,6 +622,7 @@ final class _DashboardView extends StatelessWidget {
                                         SizedBox(
                                           width: tileW,
                                           child: AppMetricTile(
+                                            backdropKey: null,
                                             label:
                                                 l10n.stockPendingWorkerLabel,
                                             value: snap.pendingWorkerStock,
@@ -584,6 +640,7 @@ final class _DashboardView extends StatelessWidget {
                                         SizedBox(
                                           width: tileW,
                                           child: AppMetricTile(
+                                            backdropKey: null,
                                             label:
                                                 l10n.stockDamagedBucketLabel,
                                             value: snap.damagedStock,
@@ -634,6 +691,7 @@ final class _DashboardView extends StatelessWidget {
                                   SizedBox(
                                     width: tileW,
                                     child: AppMetricTile(
+                                      backdropKey: null,
                                       label: l10n.accountingEarnedLabourLabel,
                                       value: snap.totalEarnedLabourPaise,
                                       isCurrencyPaise: true,
@@ -648,6 +706,7 @@ final class _DashboardView extends StatelessWidget {
                                   SizedBox(
                                     width: tileW,
                                     child: AppMetricTile(
+                                      backdropKey: null,
                                       label: l10n
                                           .accountingOutstandingPayableLabel,
                                       value: snap.totalOutstandingPayablePaise,
@@ -667,6 +726,7 @@ final class _DashboardView extends StatelessWidget {
                                   SizedBox(
                                     width: tileW,
                                     child: AppMetricTile(
+                                      backdropKey: null,
                                       label: l10n.accountingAdvanceCreditLabel,
                                       value: snap.totalAdvanceCreditPaise,
                                       isCurrencyPaise: true,
@@ -683,6 +743,7 @@ final class _DashboardView extends StatelessWidget {
                                   SizedBox(
                                     width: tileW,
                                     child: AppMetricTile(
+                                      backdropKey: null,
                                       label: l10n.accountingRegularPaidLabel,
                                       value: snap.totalRegularPaymentsPaise,
                                       isCurrencyPaise: true,
@@ -715,14 +776,14 @@ final class _DashboardView extends StatelessWidget {
                           ),
                           const SizedBox(height: AppSpacing.sm),
                           if (snap.processPendingList.isEmpty)
-                            AppCard(
+                            AppCard.listItem(
                               child: AppText(
                                 l10n.dashboardNoProcessPending,
                                 variant: AppTextVariant.bodySmall,
                               ),
                             )
                           else
-                            AppCard(
+                            AppCard.listItem(
                               child: Column(
                                 children: [
                                   for (
@@ -822,14 +883,14 @@ final class _DashboardView extends StatelessWidget {
                           ),
                           const SizedBox(height: AppSpacing.sm),
                           if (snap.recentActivity.isEmpty)
-                            AppCard(
+                            AppCard.listItem(
                               child: AppText(
                                 l10n.dashboardNoRecentActivity,
                                 variant: AppTextVariant.bodySmall,
                               ),
                             )
                           else
-                            AppCard(
+                            AppCard.listItem(
                               child: Column(
                                 children: [
                                   for (

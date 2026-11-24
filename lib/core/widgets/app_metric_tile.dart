@@ -20,6 +20,7 @@ final class AppMetricTile extends StatelessWidget {
     this.tone = AppStatusTone.neutral,
     this.onTap,
     this.isGlass = true,
+    this.backdropKey,
   });
 
   final String label;
@@ -31,6 +32,7 @@ final class AppMetricTile extends StatelessWidget {
   final AppStatusTone tone;
   final VoidCallback? onTap;
   final bool isGlass;
+  final BackdropKey? backdropKey;
 
   @override
   Widget build(BuildContext context) {
@@ -54,6 +56,7 @@ final class AppMetricTile extends StatelessWidget {
 
     return AppCard(
       isGlass: isGlass,
+      backdropKey: backdropKey,
       onTap: onTap,
       padding: const EdgeInsets.all(AppSpacing.md),
       child: Column(

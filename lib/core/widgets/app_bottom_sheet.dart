@@ -30,8 +30,12 @@ final class AppBottomSheet {
         context: context,
         configuration: FadeScaleTransitionConfiguration(
           barrierColor: barrierColor,
-          transitionDuration: reduce ? Duration.zero : AppMotion.normal,
-          reverseTransitionDuration: reduce ? Duration.zero : AppMotion.fast,
+          transitionDuration: reduce
+              ? Duration.zero
+              : const Duration(milliseconds: 200),
+          reverseTransitionDuration: reduce
+              ? Duration.zero
+              : const Duration(milliseconds: 150),
         ),
         builder: (dialogContext) {
           final tokens = dialogContext.surfaceTokens;
@@ -47,7 +51,7 @@ final class AppBottomSheet {
                 child: ClipRRect(
                   borderRadius: AppRadius.xlBorder,
                   child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 22, sigmaY: 22),
+                    filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         color: tokens.dialogGlassFill,
@@ -105,8 +109,10 @@ final class AppBottomSheet {
       backgroundColor: Colors.transparent,
       barrierColor: barrierColor,
       sheetAnimationStyle: AnimationStyle(
-        duration: reduce ? Duration.zero : AppMotion.emphasized,
-        reverseDuration: reduce ? Duration.zero : AppMotion.normal,
+        duration: reduce ? Duration.zero : const Duration(milliseconds: 220),
+        reverseDuration: reduce
+            ? Duration.zero
+            : const Duration(milliseconds: 160),
         curve: AppMotion.standardCurve,
         reverseCurve: Curves.easeInCubic,
       ),
@@ -121,7 +127,7 @@ final class AppBottomSheet {
           child: ClipRRect(
             borderRadius: topRadius,
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+              filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   color: tokens.dialogGlassFill,

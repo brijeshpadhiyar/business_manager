@@ -105,7 +105,7 @@ final class _ProcessListViewState extends State<_ProcessListView> {
                     const SizedBox(height: AppSpacing.sm),
                 itemBuilder: (context, index) {
                   final process = state.processes[index];
-                  return AppCard(
+                  return AppCard.listItem(
                     key: ValueKey<String>(process.id),
                     onTap: () async {
                       await context.push(RoutePaths.processDetail(process.id));
@@ -202,6 +202,7 @@ final class _ProcessListViewState extends State<_ProcessListView> {
               AppSearchField(
                 controller: _searchController,
                 label: l10n.processesSearchHint,
+                debounceDuration: const Duration(milliseconds: 220),
                 onChanged: (q) => context
                     .read<ProcessListCubit>()
                     .loadProcesses(searchQuery: q),

@@ -3,6 +3,9 @@ import 'dart:typed_data';
 import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
 import 'package:business_manager/features/lots/domain/repositories/lot_repository.dart';
+import 'package:business_manager/features/process_routing/domain/entities/process_routing_entities.dart';
+import 'package:business_manager/features/process_routing/domain/repositories/process_routing_repository.dart';
+import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
@@ -16,6 +19,11 @@ sealed class LotDetailState with _$LotDetailState {
   const factory LotDetailState({
     @Default(LotDetailStatus.initial) LotDetailStatus status,
     LotDetailAggregate? detail,
+    JobRoutingOverview? routingOverview,
+    @Default(<String, DesignColourStockBalance>{})
+    Map<String, DesignColourStockBalance> balancesByColourId,
+    @Default(<String, List<JobProcessEntity>>{})
+    Map<String, List<JobProcessEntity>> operationsByColourId,
     @Default('') String designSearchQuery,
     String? errorMessage,
   }) = _LotDetailState;
@@ -23,14 +31,32 @@ sealed class LotDetailState with _$LotDetailState {
 
 @injectable
 final class LotDetailCubit extends Cubit<LotDetailState> {
-  LotDetailCubit(this._repository) : super(const LotDetailState());
+  LotDetailCubit(this._repository, this._routingRepository)
+    : super(const LotDetailState());
 
   final LotRepository _repository;
+  final ProcessRoutingRepository _routingRepository;
+
+  /// Bounded in-memory cache of photo read futures keyed by relative path so
+  /// search typing and minor rebuilds never trigger repeated disk I/O.
+  static const int _maxCachedPhotos = 48;
+  final Map<String, Future<Uint8List?>> _photoFutureCache = {};
+
+  Future<JobRoutingOverview?> _loadRoutingSafely(String lotId) async {
+    try {
+      return await _routingRepository.getJobRoutingOverview(lotId);
+    } catch (_) {
+      return null;
+    }
+  }
 
   Future<void> loadLot(String lotId) async {
     emit(state.copyWith(status: LotDetailStatus.loading, errorMessage: null));
     try {
-      final detail = await _repository.getLotDetail(lotId);
+      final detailFuture = _repository.getLotDetail(lotId);
+      final routingFuture = _loadRoutingSafely(lotId);
+
+      final detail = await detailFuture;
       if (detail == null) {
         emit(
           state.copyWith(
@@ -40,7 +66,44 @@ final class LotDetailCubit extends Cubit<LotDetailState> {
         );
         return;
       }
-      emit(state.copyWith(status: LotDetailStatus.loaded, detail: detail));
+
+      final routing = await routingFuture;
+
+      // Pre-index balances & non-cancelled operations once per load for O(1)
+      // card rendering inside build().
+      final balancesByColourId = <String, DesignColourStockBalance>{};
+      final operationsByColourId = <String, List<JobProcessEntity>>{};
+      if (routing != null) {
+        for (final balance in routing.skuBalances) {
+          balancesByColourId[balance.designColourId] = balance;
+        }
+        for (final op in routing.jobProcesses) {
+          if (op.status == JobProcessStatus.cancelled) continue;
+          operationsByColourId
+              .putIfAbsent(op.designColourId, () => <JobProcessEntity>[])
+              .add(op);
+        }
+      }
+
+      // Evict cached photo futures that no longer exist on this lot.
+      final activePaths = detail.photos.map((p) => p.relativePath).toSet();
+      _photoFutureCache.removeWhere((path, _) => !activePaths.contains(path));
+
+      emit(
+        state.copyWith(
+          status: LotDetailStatus.loaded,
+          detail: detail,
+          routingOverview: routing,
+          balancesByColourId: Map<String, DesignColourStockBalance>.unmodifiable(
+            balancesByColourId,
+          ),
+          operationsByColourId: Map<String, List<JobProcessEntity>>.unmodifiable(
+            operationsByColourId.map(
+              (k, v) => MapEntry(k, List<JobProcessEntity>.unmodifiable(v)),
+            ),
+          ),
+        ),
+      );
     } catch (e) {
       emit(
         state.copyWith(
@@ -52,6 +115,7 @@ final class LotDetailCubit extends Cubit<LotDetailState> {
   }
 
   void setDesignSearch(String query) {
+    if (query == state.designSearchQuery) return;
     emit(state.copyWith(designSearchQuery: query));
   }
 
@@ -241,10 +305,31 @@ final class LotDetailCubit extends Cubit<LotDetailState> {
   }
 
   Future<void> removePhoto(String lotId, String attachmentId) async {
+    final removedPath = state.detail?.photos
+        .where((p) => p.id == attachmentId)
+        .map((p) => p.relativePath)
+        .firstOrNull;
     await _repository.removeLotPhoto(attachmentId);
+    if (removedPath != null) {
+      _photoFutureCache.remove(removedPath);
+    }
     await loadLot(lotId);
   }
 
-  Future<Uint8List?> readPhotoBytes(String relativePath) =>
-      _repository.readPhotoBytes(relativePath);
+  Future<Uint8List?> readPhotoBytes(String relativePath) {
+    final existing = _photoFutureCache[relativePath];
+    if (existing != null) return existing;
+    if (_photoFutureCache.length >= _maxCachedPhotos) {
+      _photoFutureCache.remove(_photoFutureCache.keys.first);
+    }
+    final future = _repository.readPhotoBytes(relativePath);
+    _photoFutureCache[relativePath] = future;
+    return future;
+  }
+
+  @override
+  Future<void> close() {
+    _photoFutureCache.clear();
+    return super.close();
+  }
 }

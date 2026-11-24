@@ -10,9 +10,12 @@ import 'package:material_ui/material_ui.dart';
 /// `package:material_ui/material_ui.dart` with StitchFlow's brand identity,
 /// genuine frosted glass tokens, and high-contrast bilingual readability.
 abstract final class AppTheme {
-  static ThemeData light() => _build(Brightness.light);
+  static final ThemeData _lightTheme = _build(Brightness.light);
+  static final ThemeData _darkTheme = _build(Brightness.dark);
 
-  static ThemeData dark() => _build(Brightness.dark);
+  static ThemeData light() => _lightTheme;
+
+  static ThemeData dark() => _darkTheme;
 
   static ThemeData _build(Brightness brightness) {
     final isDark = brightness == Brightness.dark;

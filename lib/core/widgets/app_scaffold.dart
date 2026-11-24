@@ -110,7 +110,7 @@ PreferredSizeWidget _buildGlassAppBar(
     actions: actions,
     flexibleSpace: ClipRect(
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
+        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: tokens.navGlassFill,
@@ -230,13 +230,23 @@ final class _CompactScaffoldLayout extends StatelessWidget {
   }
 }
 
-final class _CollapsibleScaffoldLayout extends StatelessWidget {
+final class _CollapsibleScaffoldLayout extends StatefulWidget {
   const _CollapsibleScaffoldLayout({required this.config});
 
   final AppScaffold config;
 
   @override
+  State<_CollapsibleScaffoldLayout> createState() =>
+      _CollapsibleScaffoldLayoutState();
+}
+
+final class _CollapsibleScaffoldLayoutState
+    extends State<_CollapsibleScaffoldLayout> {
+  final BackdropKey _chromeBackdropKey = BackdropKey();
+
+  @override
   Widget build(BuildContext context) {
+    final config = widget.config;
     final hdr =
         config.header ??
         AppCollapsibleHeader(
@@ -245,125 +255,131 @@ final class _CollapsibleScaffoldLayout extends StatelessWidget {
           actions: config.actions,
         );
 
-    final scrollBody = LayoutBuilder(
-      builder: (context, constraints) {
-        final width = constraints.maxWidth.isFinite
-            ? constraints.maxWidth
-            : MediaQuery.sizeOf(context).width;
-        final sizeClass = AppBreakpoints.fromWidth(width);
-        final useDesktopCompact =
-            sizeClass.isExpanded && !config.collapseOnDesktop;
+    final scrollBody = BackdropGroup(
+      backdropKey: _chromeBackdropKey,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final width = constraints.maxWidth.isFinite
+              ? constraints.maxWidth
+              : MediaQuery.sizeOf(context).width;
+          final sizeClass = AppBreakpoints.fromWidth(width);
+          final useDesktopCompact =
+              sizeClass.isExpanded && !config.collapseOnDesktop;
 
-        final effectiveExpandedHeight = switch (sizeClass) {
-          AppWindowSizeClass.compact => hdr.expandedHeight,
-          AppWindowSizeClass.medium => (hdr.expandedHeight * 0.88).clamp(
-            132.0,
-            210.0,
-          ),
-          AppWindowSizeClass.expanded =>
-            config.collapseOnDesktop
-                ? (hdr.expandedHeight * 0.82).clamp(124.0, 190.0)
-                : AppSizing.appBarHeight,
-        };
+          final effectiveExpandedHeight = switch (sizeClass) {
+            AppWindowSizeClass.compact => hdr.expandedHeight,
+            AppWindowSizeClass.medium => (hdr.expandedHeight * 0.88).clamp(
+              132.0,
+              210.0,
+            ),
+            AppWindowSizeClass.expanded =>
+              config.collapseOnDesktop
+                  ? (hdr.expandedHeight * 0.82).clamp(124.0, 190.0)
+                  : AppSizing.appBarHeight,
+          };
 
-        final horizontalInset =
-            config.constrainMaxWidth && width > AppSizing.maxContentWidth
-            ? (width - AppSizing.maxContentWidth) / 2
-            : 0.0;
+          final horizontalInset =
+              config.constrainMaxWidth && width > AppSizing.maxContentWidth
+              ? (width - AppSizing.maxContentWidth) / 2
+              : 0.0;
 
-        final allSlivers = <Widget>[
-          if (!useDesktopCompact)
-            hdr.buildSliver(
-              context,
-              primary: !config.embedded,
-              effectiveExpandedHeight: effectiveExpandedHeight,
-            )
-          else ...[
-            // Desktop compact header preserving maximum workspace
-            SliverAppBar(
-              primary: !config.embedded,
-              pinned: hdr.pinned,
-              elevation: 0,
-              scrolledUnderElevation: 0,
-              backgroundColor: Colors.transparent,
-              surfaceTintColor: Colors.transparent,
-              toolbarHeight: AppSizing.appBarHeight,
-              leading: hdr.leading,
-              automaticallyImplyLeading: hdr.automaticallyImplyLeading,
-              title: Text(
-                hdr.title,
-                style: Theme.of(
-                  context,
-                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
-              ),
-              actions: hdr.actions,
-              flexibleSpace: ClipRect(
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      color: context.surfaceTokens.navGlassFill,
-                      border: Border(
-                        bottom: BorderSide(
-                          color: context.surfaceTokens.navGlassBorder,
-                          width: 0.9,
+          final allSlivers = <Widget>[
+            if (!useDesktopCompact)
+              hdr.buildSliver(
+                context,
+                primary: !config.embedded,
+                effectiveExpandedHeight: effectiveExpandedHeight,
+                backdropKey: _chromeBackdropKey,
+              )
+            else ...[
+              // Desktop compact header preserving maximum workspace
+              SliverAppBar(
+                primary: !config.embedded,
+                pinned: hdr.pinned,
+                elevation: 0,
+                scrolledUnderElevation: 0,
+                backgroundColor: Colors.transparent,
+                surfaceTintColor: Colors.transparent,
+                toolbarHeight: AppSizing.appBarHeight,
+                leading: hdr.leading,
+                automaticallyImplyLeading: hdr.automaticallyImplyLeading,
+                title: Text(
+                  hdr.title,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+                ),
+                actions: hdr.actions,
+                flexibleSpace: ClipRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                    backdropGroupKey: _chromeBackdropKey,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: context.surfaceTokens.navGlassFill,
+                        border: Border(
+                          bottom: BorderSide(
+                            color: context.surfaceTokens.navGlassBorder,
+                            width: 0.9,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
               ),
-            ),
-            if (hdr.summary != null)
-              SliverPadding(
-                padding: EdgeInsets.fromLTRB(
-                  horizontalInset + AppSpacing.lg,
-                  AppSpacing.md,
-                  horizontalInset + AppSpacing.lg,
-                  AppSpacing.xs,
+              if (hdr.summary != null)
+                SliverPadding(
+                  padding: EdgeInsets.fromLTRB(
+                    horizontalInset + AppSpacing.lg,
+                    AppSpacing.md,
+                    horizontalInset + AppSpacing.lg,
+                    AppSpacing.xs,
+                  ),
+                  sliver: SliverToBoxAdapter(child: hdr.summary),
                 ),
-                sliver: SliverToBoxAdapter(child: hdr.summary),
+            ],
+            if (config.pinnedHeader != null)
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: AppPinnedSliverHeader(
+                  height: config.pinnedHeaderHeight,
+                  backdropKey: _chromeBackdropKey,
+                  child: config.pinnedHeader!,
+                ),
               ),
-          ],
-          if (config.pinnedHeader != null)
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: AppPinnedSliverHeader(
-                height: config.pinnedHeaderHeight,
-                child: config.pinnedHeader!,
+            if (config.slivers != null)
+              for (final s in config.slivers!)
+                horizontalInset > 0
+                    ? SliverPadding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: horizontalInset,
+                        ),
+                        sliver: s,
+                      )
+                    : s
+            else if (config.body != null)
+              SliverPadding(
+                padding: EdgeInsets.symmetric(horizontal: horizontalInset),
+                sliver: SliverToBoxAdapter(child: config.body!),
               ),
-            ),
-          if (config.slivers != null)
-            for (final s in config.slivers!)
-              horizontalInset > 0
-                  ? SliverPadding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: horizontalInset,
-                      ),
-                      sliver: s,
-                    )
-                  : s
-          else if (config.body != null)
-            SliverPadding(
-              padding: EdgeInsets.symmetric(horizontal: horizontalInset),
-              sliver: SliverToBoxAdapter(child: config.body!),
-            ),
-        ];
+          ];
 
-        Widget scrollView = CustomScrollView(
-          controller: config.scrollController,
-          slivers: allSlivers,
-        );
-
-        if (config.onRefresh != null) {
-          scrollView = RefreshIndicator(
-            onRefresh: config.onRefresh!,
-            child: scrollView,
+          Widget scrollView = CustomScrollView(
+            controller: config.scrollController,
+            slivers: allSlivers,
           );
-        }
 
-        return scrollView;
-      },
+          if (config.onRefresh != null) {
+            scrollView = RefreshIndicator(
+              onRefresh: config.onRefresh!,
+              child: scrollView,
+            );
+          }
+
+          return scrollView;
+        },
+      ),
     );
 
     if (config.embedded) {
