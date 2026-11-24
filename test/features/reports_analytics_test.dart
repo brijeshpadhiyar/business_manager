@@ -412,7 +412,7 @@ void main() {
         localeCode: 'gu',
         fullWorkbook: true,
       );
-      expect(sheets.length, 7);
+      expect(sheets.length, 10);
 
       final xlsxBytes = ExcelCsvExportService.buildXlsxBytes(sheets);
       expect(xlsxBytes, isNotEmpty);

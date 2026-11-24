@@ -249,24 +249,6 @@ final class _DashboardViewState extends State<_DashboardView> {
                               ),
                             ),
                             AppButton(
-                              label: l10n.navProductionHistory,
-                              icon: Icons.history_rounded,
-                              variant: AppButtonVariant.outlined,
-                              onPressed: () => _pushAndRefresh(
-                                context,
-                                RoutePaths.productionHistory,
-                              ),
-                            ),
-                            AppButton(
-                              label: l10n.navInspectionQueue,
-                              icon: Icons.fact_check_outlined,
-                              variant: AppButtonVariant.outlined,
-                              onPressed: () => _pushAndRefresh(
-                                context,
-                                RoutePaths.inspectionQueue,
-                              ),
-                            ),
-                            AppButton(
                               label: l10n.dashboardDailySummaryAction,
                               icon: Icons.today_rounded,
                               variant: AppButtonVariant.outlined,
@@ -318,6 +300,24 @@ final class _DashboardViewState extends State<_DashboardView> {
                               onPressed: () => _pushAndRefresh(
                                 context,
                                 RoutePaths.reports,
+                              ),
+                            ),
+                            AppButton(
+                              label: l10n.navProductionHistory,
+                              icon: Icons.history_rounded,
+                              variant: AppButtonVariant.outlined,
+                              onPressed: () => _pushAndRefresh(
+                                context,
+                                RoutePaths.productionHistory,
+                              ),
+                            ),
+                            AppButton(
+                              label: l10n.navInspectionQueue,
+                              icon: Icons.fact_check_outlined,
+                              variant: AppButtonVariant.outlined,
+                              onPressed: () => _pushAndRefresh(
+                                context,
+                                RoutePaths.inspectionQueue,
                               ),
                             ),
                             if (widget.config.isDev)

@@ -68,18 +68,20 @@ void main() {
         lockedIncludeDamaged: true,
       );
 
-      expect(onGood!.amountPaise + onDamaged!.amountPaise, 196000);
-      expect(onDamaged.isPayable, isTrue);
+      // Finalized Rule 1 & Rule 3: legacy includeDamagedInLabour flag is retired
+      // and NEVER generates payable earnings for rejected/damaged pieces.
+      expect(onGood!.amountPaise, 190000);
+      expect(onDamaged, isNull);
     });
 
-    test('GIVEN_QTY pays on ISSUE and marks RETURN_GOOD informational (zero double-counting)', () {
+    test('retired legacy GIVEN_QTY cannot generate earnings on ISSUE; pays strictly on ACCEPTED return', () {
       final onIssue = labourCalc.planForIssue(
         quantity: 100,
         appliedRatePaise: 2000,
         lockedBillingMode: BillingMode.givenQty,
       );
-      expect(onIssue.isPayable, isTrue);
-      expect(onIssue.amountPaise, 200000);
+      expect(onIssue.isPayable, isFalse);
+      expect(onIssue.amountPaise, 0);
 
       final onGood = labourCalc.planForSettlement(
         movementType: StockMovementType.returnGood,
@@ -88,7 +90,8 @@ void main() {
         lockedBillingMode: BillingMode.givenQty,
         lockedIncludeDamaged: true,
       );
-      expect(onGood?.isPayable, isFalse);
+      expect(onGood?.isPayable, isTrue);
+      expect(onGood?.amountPaise, 160000);
 
       final onDamaged = labourCalc.planForSettlement(
         movementType: StockMovementType.returnDamaged,

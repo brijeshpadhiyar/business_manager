@@ -28,7 +28,10 @@ void main() {
 
   Future<void> verifyIntegrityAndSchemaV7(AppDatabase db) async {
     final userVer = await db.customSelect('PRAGMA user_version;').getSingle();
-    expect(userVer.read<int>('user_version'), 7);
+    expect(
+      userVer.read<int>('user_version'),
+      DatabaseMigrationManager.currentSchemaVersion,
+    );
 
     final integrity = await db
         .customSelect('PRAGMA integrity_check;')
@@ -46,7 +49,7 @@ void main() {
           "AND name NOT LIKE 'sqlite_%';",
         )
         .get();
-    expect(tables.length, 19);
+    expect(tables.length, 23);
 
     final indexes = await db
         .customSelect("SELECT name FROM sqlite_master WHERE type = 'index';")
@@ -367,7 +370,7 @@ void main() {
         'getNextSequenceOrderForLot(100_rows)=${swNextSeq.elapsedMicroseconds}us',
       );
 
-      expect(DatabaseMigrationManager.currentSchemaVersion, 7);
+      expect(DatabaseMigrationManager.currentSchemaVersion, 8);
       await db.close();
     });
   });
