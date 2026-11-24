@@ -14,6 +14,9 @@ class LabourEntryDao extends DatabaseAccessor<AppDatabase>
   Future<void> insertEntry(LabourEntriesCompanion entry) =>
       into(labourEntries).insert(entry);
 
+  Future<LabourEntryRow?> findById(String id) =>
+      (select(labourEntries)..where((t) => t.id.equals(id))).getSingleOrNull();
+
   Future<LabourEntryRow?> findReversalForEntry(String entryId) => (select(
     labourEntries,
   )..where((t) => t.reversesLabourEntryId.equals(entryId))).getSingleOrNull();

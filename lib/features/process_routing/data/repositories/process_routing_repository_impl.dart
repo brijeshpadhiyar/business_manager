@@ -165,6 +165,7 @@ final class ProcessRoutingRepositoryImpl implements ProcessRoutingRepository {
     required int effectivePerPieceRatePaise,
     required String? overrideReason,
     required String? notes,
+    String? jobProcessId,
     required String? clientRequestId,
   }) async {
     final now = IstDateTimeHelper.nowUtcMillis();
@@ -199,6 +200,7 @@ final class ProcessRoutingRepositoryImpl implements ProcessRoutingRepository {
       overrideReason: matchesResolved
           ? null
           : (overrideReason ?? 'Dynamic assignment rate'),
+      jobProcessId: jobProcessId,
       clientRequestId: clientRequestId,
     );
   }
@@ -685,6 +687,7 @@ final class ProcessRoutingRepositoryImpl implements ProcessRoutingRepository {
           effectivePerPieceRatePaise: pricing.perPieceRatePaise,
           overrideReason: pricing.overrideReason,
           notes: notes,
+          jobProcessId: jpId,
           clientRequestId: trimmedReqId != null && trimmedReqId.isNotEmpty
               ? 'jp_iss_$trimmedReqId'
               : null,
@@ -937,6 +940,7 @@ final class ProcessRoutingRepositoryImpl implements ProcessRoutingRepository {
         effectivePerPieceRatePaise: perPiece,
         overrideReason: row.rateOverrideReason,
         notes: notes ?? row.notes,
+        jobProcessId: row.id,
         clientRequestId: trimmedReqId != null && trimmedReqId.isNotEmpty
             ? 'jp_dsp_$trimmedReqId'
             : null,
@@ -1179,6 +1183,7 @@ final class ProcessRoutingRepositoryImpl implements ProcessRoutingRepository {
         overrideReason: destPricing.overrideReason,
         notes:
             'Received via direct transfer $ref${notes != null && notes.trim().isNotEmpty ? ' • ${notes.trim()}' : ''}',
+        jobProcessId: destJpId,
         clientRequestId: trimmedReqId != null && trimmedReqId.isNotEmpty
             ? 'dt_iss_$trimmedReqId'
             : null,
@@ -1536,6 +1541,7 @@ final class ProcessRoutingRepositoryImpl implements ProcessRoutingRepository {
         overrideReason: pricing.overrideReason,
         notes:
             'Factory reassignment $ref${notes != null && notes.trim().isNotEmpty ? ' • ${notes.trim()}' : ''}',
+        jobProcessId: newJpId,
         clientRequestId: trimmedReqId != null && trimmedReqId.isNotEmpty
             ? 'ras_iss_$trimmedReqId'
             : null,

@@ -21,6 +21,13 @@ import 'package:business_manager/features/notifications/presentation/pages/notif
 import 'package:business_manager/features/processes/presentation/pages/process_detail_page.dart';
 import 'package:business_manager/features/processes/presentation/pages/process_form_page.dart';
 import 'package:business_manager/features/processes/presentation/pages/process_list_page.dart';
+import 'package:business_manager/features/production_history/presentation/pages/inspection_queue_page.dart';
+import 'package:business_manager/features/production_history/presentation/pages/lot_history_page.dart';
+import 'package:business_manager/features/production_history/presentation/pages/lot_timeline_page.dart';
+import 'package:business_manager/features/production_history/presentation/pages/process_history_page.dart';
+import 'package:business_manager/features/production_history/presentation/pages/production_history_dashboard_page.dart';
+import 'package:business_manager/features/production_history/presentation/pages/production_transaction_detail_page.dart';
+import 'package:business_manager/features/production_history/presentation/pages/worker_production_history_page.dart';
 import 'package:business_manager/features/rates/presentation/pages/rate_form_page.dart';
 import 'package:business_manager/features/rates/presentation/pages/rate_history_page.dart';
 import 'package:business_manager/features/reports/presentation/pages/daily_summary_page.dart';
@@ -275,6 +282,59 @@ GoRouter createAppRouter(AppConfig config) {
           ),
         ),
       ),
+      // V1.4 — Complete Production History, Lot Tracking, QC Inspection & Ledger
+      GoRoute(
+        path: RoutePaths.productionHistory,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: const ProductionHistoryDashboardPage(),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.lotHistoryPattern,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: LotHistoryPage(lotId: state.pathParameters['id']!),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.lotTimelinePattern,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: LotTimelinePage(lotId: state.pathParameters['id']!),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.workerProductionHistory,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: const WorkerProductionHistoryPage(),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.processProductionHistory,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: const ProcessHistoryPage(),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.inspectionQueue,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: const InspectionQueuePage(),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.productionTransactionDetailPattern,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: ProductionTransactionDetailPage(
+            kindSegment: state.pathParameters['kind']!,
+            transactionId: state.pathParameters['id']!,
+          ),
+        ),
+      ),
       // Centralized Settings & Help Hub
       GoRoute(
         path: RoutePaths.settings,
@@ -426,6 +486,11 @@ final class _StitchFlowShellPageState extends State<StitchFlowShellPage> {
           },
         ),
         AppIconButton(
+          icon: Icons.history_rounded,
+          tooltip: l10n.navProductionHistory,
+          onPressed: () => context.push(RoutePaths.productionHistory),
+        ),
+        AppIconButton(
           icon: Icons.account_balance_wallet_outlined,
           tooltip: l10n.navAccounting,
           onPressed: () => context.push(RoutePaths.accounting),
@@ -442,6 +507,21 @@ final class _StitchFlowShellPageState extends State<StitchFlowShellPage> {
         ),
       ],
       sidebarExtraActions: [
+        ResponsiveNavActionItem(
+          label: l10n.navProductionHistory,
+          icon: Icons.history_rounded,
+          onTap: () => context.push(RoutePaths.productionHistory),
+        ),
+        ResponsiveNavActionItem(
+          label: l10n.navInspectionQueue,
+          icon: Icons.fact_check_outlined,
+          onTap: () => context.push(RoutePaths.inspectionQueue),
+        ),
+        ResponsiveNavActionItem(
+          label: l10n.navProcessHistory,
+          icon: Icons.timeline_rounded,
+          onTap: () => context.push(RoutePaths.processProductionHistory),
+        ),
         ResponsiveNavActionItem(
           label: l10n.navProcesses,
           icon: Icons.precision_manufacturing_outlined,

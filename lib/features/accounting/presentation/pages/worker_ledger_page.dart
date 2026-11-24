@@ -10,12 +10,14 @@ import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:business_manager/features/accounting/domain/repositories/accounting_repository.dart';
 import 'package:business_manager/features/accounting/presentation/bloc/worker_ledger_cubit.dart';
+import 'package:business_manager/features/production_history/domain/entities/production_history_entities.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Complete worker financial & stock ledger with date filtering,
-/// running balance (supporting negative advance credit), and audited reversals.
+/// transaction-type filtering, running balance (supporting negative advance
+/// credit), transaction drill-down, and audited reversals.
 final class WorkerLedgerPage extends StatelessWidget {
   const WorkerLedgerPage({super.key, required this.workerId});
 
@@ -30,10 +32,56 @@ final class WorkerLedgerPage extends StatelessWidget {
   }
 }
 
-final class _WorkerLedgerView extends StatelessWidget {
+enum _LedgerTypeFilter { all, earnings, payments, advances, adjustments }
+
+final class _WorkerLedgerView extends StatefulWidget {
   const _WorkerLedgerView({required this.workerId});
 
   final String workerId;
+
+  @override
+  State<_WorkerLedgerView> createState() => _WorkerLedgerViewState();
+}
+
+final class _WorkerLedgerViewState extends State<_WorkerLedgerView> {
+  _LedgerTypeFilter _typeFilter = _LedgerTypeFilter.all;
+
+  String get workerId => widget.workerId;
+
+  bool _matchesFilter(WorkerLedgerLine line) => switch (_typeFilter) {
+    _LedgerTypeFilter.all => true,
+    _LedgerTypeFilter.earnings =>
+      line.kind == WorkerLedgerEntryKind.labourPayable ||
+          line.kind == WorkerLedgerEntryKind.labourInformational ||
+          line.kind == WorkerLedgerEntryKind.labourReversal,
+    _LedgerTypeFilter.payments =>
+      line.kind == WorkerLedgerEntryKind.regularPayment ||
+          line.kind == WorkerLedgerEntryKind.paymentReversal,
+    _LedgerTypeFilter.advances =>
+      line.kind == WorkerLedgerEntryKind.advancePayment ||
+          line.kind == WorkerLedgerEntryKind.advanceRefund,
+    _LedgerTypeFilter.adjustments =>
+      line.kind == WorkerLedgerEntryKind.adjustmentCredit ||
+          line.kind == WorkerLedgerEntryKind.adjustmentDebit ||
+          line.kind == WorkerLedgerEntryKind.adjustmentReversal,
+  };
+
+  ProductionTransactionKind _txKindForLine(WorkerLedgerLine line) =>
+      switch (line.kind) {
+        WorkerLedgerEntryKind.labourPayable ||
+        WorkerLedgerEntryKind.labourInformational ||
+        WorkerLedgerEntryKind.labourReversal =>
+          ProductionTransactionKind.labourEntry,
+        WorkerLedgerEntryKind.regularPayment ||
+        WorkerLedgerEntryKind.advancePayment ||
+        WorkerLedgerEntryKind.advanceRefund ||
+        WorkerLedgerEntryKind.paymentReversal =>
+          ProductionTransactionKind.payment,
+        WorkerLedgerEntryKind.adjustmentCredit ||
+        WorkerLedgerEntryKind.adjustmentDebit ||
+        WorkerLedgerEntryKind.adjustmentReversal =>
+          ProductionTransactionKind.adjustment,
+      };
 
   Future<void> _reverseLine(BuildContext context, WorkerLedgerLine line) async {
     final l10n = context.l10n;
@@ -399,11 +447,53 @@ final class _WorkerLedgerView extends StatelessWidget {
                   ],
                 ),
               ),
+              const SizedBox(height: AppSpacing.sm),
+              // Transaction-type filter chips (Phase 3 Worker Financial Ledger)
+              Wrap(
+                spacing: AppSpacing.xs,
+                runSpacing: AppSpacing.xs,
+                children: [
+                  ChoiceChip(
+                    label: Text(l10n.prodHistoryAllEntries),
+                    selected: _typeFilter == _LedgerTypeFilter.all,
+                    onSelected: (_) =>
+                        setState(() => _typeFilter = _LedgerTypeFilter.all),
+                  ),
+                  ChoiceChip(
+                    label: Text(l10n.accountingEarnedLabourLabel),
+                    selected: _typeFilter == _LedgerTypeFilter.earnings,
+                    onSelected: (_) => setState(
+                      () => _typeFilter = _LedgerTypeFilter.earnings,
+                    ),
+                  ),
+                  ChoiceChip(
+                    label: Text(l10n.accountingPaymentTypeRegular),
+                    selected: _typeFilter == _LedgerTypeFilter.payments,
+                    onSelected: (_) => setState(
+                      () => _typeFilter = _LedgerTypeFilter.payments,
+                    ),
+                  ),
+                  ChoiceChip(
+                    label: Text(l10n.accountingPaymentTypeAdvance),
+                    selected: _typeFilter == _LedgerTypeFilter.advances,
+                    onSelected: (_) => setState(
+                      () => _typeFilter = _LedgerTypeFilter.advances,
+                    ),
+                  ),
+                  ChoiceChip(
+                    label: Text(l10n.accountingAdjustmentsLabel),
+                    selected: _typeFilter == _LedgerTypeFilter.adjustments,
+                    onSelected: (_) => setState(
+                      () => _typeFilter = _LedgerTypeFilter.adjustments,
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: AppSpacing.md),
                   ],
                 ),
               ),
-              if (detail.lines.isEmpty)
+              if (detail.lines.where(_matchesFilter).isEmpty)
                 SliverToBoxAdapter(
                   child: AppEmptyState(
                     icon: Icons.receipt_long_outlined,
@@ -412,15 +502,22 @@ final class _WorkerLedgerView extends StatelessWidget {
                   ),
                 )
               else
-                SliverList.separated(
-                  itemCount: detail.lines.length,
-                  separatorBuilder: (_, _) =>
-                      const SizedBox(height: AppSpacing.sm),
-                  itemBuilder: (ctx, i) => _buildLedgerLineCard(
-                    ctx,
-                    detail.lines[i],
-                    localeCode,
-                  ),
+                Builder(
+                  builder: (context) {
+                    final visibleLines = detail.lines
+                        .where(_matchesFilter)
+                        .toList(growable: false);
+                    return SliverList.separated(
+                      itemCount: visibleLines.length,
+                      separatorBuilder: (_, _) =>
+                          const SizedBox(height: AppSpacing.sm),
+                      itemBuilder: (ctx, i) => _buildLedgerLineCard(
+                        ctx,
+                        visibleLines[i],
+                        localeCode,
+                      ),
+                    );
+                  },
                 ),
             ],
           ),
@@ -485,6 +582,12 @@ final class _WorkerLedgerView extends StatelessWidget {
 
     return AppCard.listItem(
       key: ValueKey<String>('${line.kind.name}_${line.sourceEntityId}'),
+      onTap: () => context.push(
+        RoutePaths.productionTransactionDetail(
+          _txKindForLine(line).routeSegment,
+          line.sourceEntityId,
+        ),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

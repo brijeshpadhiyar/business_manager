@@ -30,11 +30,9 @@ final class _StockLabourSettingsPageState
   final _profileRepo = getIt<BusinessProfileRepository>();
   final _processRepo = getIt<ProcessRepository>();
 
-  BusinessProfileEntity? _profile;
   List<ProcessEntity> _processes = const [];
   BillingMode _selectedBillingMode = BillingMode.receivedQty;
   bool _loading = true;
-  bool _saving = false;
   String? _busyProcessId;
   String? _error;
 
@@ -60,7 +58,6 @@ final class _StockLabourSettingsPageState
       final profile = results[0] as BusinessProfileEntity;
       final processes = results[1] as List<ProcessEntity>;
       setState(() {
-        _profile = profile;
         _selectedBillingMode = profile.defaultBillingMode;
         _processes = processes;
         _loading = false;
@@ -154,35 +151,6 @@ final class _StockLabourSettingsPageState
     }
   }
 
-  Future<void> _saveGlobalBillingMode(BillingMode mode) async {
-    final profile = _profile;
-    if (profile == null || _saving) return;
-    setState(() {
-      _selectedBillingMode = mode;
-      _saving = true;
-    });
-    try {
-      final updated = await _profileRepo.updateProfile(
-        nameEn: profile.nameEn,
-        nameGu: profile.nameGu,
-        ownerName: profile.ownerName,
-        phone: profile.phone,
-        address: profile.address,
-        defaultBillingMode: mode,
-      );
-      if (!mounted) return;
-      setState(() {
-        _profile = updated;
-        _saving = false;
-      });
-      AppFeedback.showSuccess(context, context.l10n.businessProfileSaved);
-    } catch (_) {
-      if (!mounted) return;
-      setState(() => _saving = false);
-      AppFeedback.showError(context, context.l10n.errorUnexpected);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -223,22 +191,45 @@ final class _StockLabourSettingsPageState
       body: ListView(
         children: [
           AppCard(
+            isGlass: true,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    const Icon(Icons.verified_outlined, size: 20),
+                    const SizedBox(width: AppSpacing.xs),
+                    Expanded(
+                      child: AppHeading(
+                        l10n.settingsFinalPaymentRuleTitle,
+                        level: AppHeadingLevel.h3,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                AppText(
+                  l10n.settingsFinalPaymentRuleBody,
+                  variant: AppTextVariant.bodySmall,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.md),
+          AppCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AppHeading(
-                  l10n.settingsGlobalBillingSectionTitle,
+                  '${l10n.settingsGlobalBillingSectionTitle} (Legacy — Read Only)',
                   level: AppHeadingLevel.h3,
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 AppRadio<BillingMode>(
                   groupValue: _selectedBillingMode,
-                  enabled: !_saving,
-                  onChanged: (mode) {
-                    if (mode != null && mode != _selectedBillingMode) {
-                      _saveGlobalBillingMode(mode);
-                    }
-                  },
+                  enabled: false,
+                  onChanged: (_) {},
                   options: [
                     AppRadioOption(
                       value: BillingMode.receivedQty,
@@ -247,7 +238,7 @@ final class _StockLabourSettingsPageState
                     ),
                     AppRadioOption(
                       value: BillingMode.givenQty,
-                      label: l10n.billingModeGivenQty,
+                      label: '${l10n.billingModeGivenQty} (Retired for earnings)',
                       subtitle: l10n.settingsGlobalBillingExplanationGiven,
                     ),
                   ],
@@ -402,15 +393,10 @@ final class _StockLabourSettingsPageState
                       ),
                       const SizedBox(height: AppSpacing.xs),
                       AppSwitch(
-                        label: l10n.processIncludeDamagedLabel,
-                        value: proc.includeDamagedInLabour,
-                        onChanged: _busyProcessId == proc.id
-                            ? null
-                            : (val) => _updateProcessQuickRule(
-                                proc,
-                                billingModeOverride: proc.billingModeOverride,
-                                includeDamagedInLabour: val,
-                              ),
+                        label:
+                            '${l10n.processIncludeDamagedLabel} (Retired — Always Excluded)',
+                        value: false,
+                        onChanged: null,
                       ),
                       const SizedBox(height: AppSpacing.xs),
                       Align(

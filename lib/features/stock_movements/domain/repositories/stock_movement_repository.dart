@@ -61,12 +61,14 @@ abstract interface class StockMovementRepository {
     bool allowRateOverride = false,
     int? overrideRatePaise,
     String? overrideReason,
+    String? jobProcessId,
     String? clientRequestId,
   });
 
   /// Atomically records partial or complete returns/settlements
   /// (`RETURN_GOOD`, `RETURN_DAMAGED`, `SETTLEMENT_LOST`, `SETTLEMENT_SHORTAGE`)
-  /// inheriting the parent issue's locked rate and billing configuration.
+  /// inheriting the parent issue's locked rate and enforcing Accepted-Only
+  /// worker earnings.
   Future<SettlementBatchResult> recordSettlement({
     required String parentIssueId,
     required int goodQuantity,
@@ -76,6 +78,8 @@ abstract interface class StockMovementRepository {
     required int transactionAtUtcMillis,
     String? reason,
     String? notes,
+    String? approvedBy,
+    bool authorizedViaPin = false,
     String? clientRequestId,
   });
 

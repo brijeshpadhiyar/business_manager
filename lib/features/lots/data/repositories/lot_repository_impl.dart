@@ -11,6 +11,8 @@ import 'package:business_manager/features/business_profile/domain/entities/busin
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
 import 'package:business_manager/features/lots/domain/repositories/lot_repository.dart';
 import 'package:business_manager/features/process_routing/domain/entities/process_routing_entities.dart';
+import 'package:business_manager/features/production_history/domain/calculators/production_history_calculator.dart';
+import 'package:business_manager/features/production_history/domain/entities/production_history_entities.dart';
 import 'package:business_manager/features/stock_movements/domain/calculators/stock_calculator.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 import 'package:drift/drift.dart';
@@ -233,6 +235,7 @@ final class LotRepositoryImpl implements LotRepository {
     String? notes,
     required int transactionAtUtcMillis,
     required List<LotDesignDraftInput> designs,
+    List<InitialLotProcessAssignmentInput> initialAssignments = const [],
   }) async {
     final cleanNumber = lotNumber.trim();
     if (cleanNumber.isEmpty) {
@@ -332,6 +335,11 @@ final class LotRepositoryImpl implements LotRepository {
         ),
       );
 
+      // Track created design & colour IDs and remaining in-house quantities for
+      // optional Phase 5 Initial Process Assignments in the same transaction.
+      final createdSkuByKey =
+          <String, ({String designId, String colourId, int available})>{};
+
       for (final design in designs) {
         final designId = _idGenerator.nextEntityId();
         final cleanDesign = design.designName.trim();
@@ -399,7 +407,179 @@ final class LotRepositoryImpl implements LotRepository {
               recordedAt: Value(now),
             ),
           );
+
+          final skuKey =
+              '${cleanDesign.toLowerCase()}::${cleanColour.toLowerCase()}';
+          createdSkuByKey[skuKey] = (
+            designId: designId,
+            colourId: colourId,
+            available: colour.initialQuantity,
+          );
         }
+      }
+
+      // Optional Phase 5 Initial Process Assignments (multi-process / multi-worker)
+      var seqOrder = 1;
+      for (final assign in initialAssignments) {
+        if (assign.quantity <= 0) {
+          throw const DomainValidationException(
+            'invalid_quantity',
+            'Assigned quantity must be greater than zero.',
+          );
+        }
+        if (assign.agreedRatePaise < 0) {
+          throw const DomainValidationException(
+            'invalid_rate',
+            'Rate cannot be negative.',
+          );
+        }
+        final skuKey =
+            '${assign.designName.trim().toLowerCase()}::${assign.colourName.trim().toLowerCase()}';
+        final sku = createdSkuByKey[skuKey];
+        if (sku == null) {
+          throw const DomainValidationException(
+            'sku_not_found',
+            'Assigned design & colour variant was not found in this lot.',
+          );
+        }
+        if (assign.quantity > sku.available) {
+          throw const DomainValidationException(
+            'insufficient_good_stock',
+            'Initial assignment quantity exceeds available colour quantity.',
+          );
+        }
+
+        final worker = await _db.processMemberDao.findMemberById(
+          assign.workerId,
+        );
+        if (worker == null || worker.deletedAt != null || worker.isActive != 1) {
+          throw const DomainValidationException(
+            'worker_inactive',
+            'Selected worker is inactive or unavailable.',
+          );
+        }
+        final proc = await _db.processMemberDao.findProcessById(
+          assign.processId,
+        );
+        if (proc == null || proc.deletedAt != null || proc.isActive != 1) {
+          throw const DomainValidationException(
+            'process_inactive',
+            'Selected process is inactive or unavailable.',
+          );
+        }
+
+        // Ensure active worker-process assignment link exists
+        final link = await _db.processMemberDao.findMemberProcessLink(
+          worker.id,
+          proc.id,
+        );
+        if (link == null) {
+          await _db.processMemberDao.insertMemberProcess(
+            MemberProcessesCompanion.insert(
+              id: _idGenerator.nextEntityId(),
+              memberId: worker.id,
+              processId: proc.id,
+              isActive: const Value(1),
+              createdAt: now,
+              updatedAt: now,
+            ),
+          );
+        } else if (link.isActive == 0) {
+          await _db.processMemberDao.updateMemberProcessById(
+            link.id,
+            MemberProcessesCompanion(
+              isActive: const Value(1),
+              updatedAt: Value(now),
+            ),
+          );
+        }
+
+        final jpId = _idGenerator.nextEntityId();
+        final movId = _idGenerator.nextEntityId();
+        final cleanedNotes = _nullIfBlank(assign.notes);
+        final cleanedOverride = _nullIfBlank(assign.rateOverrideReason);
+
+        await _db.stockMovementDao.insertMovement(
+          StockMovementsCompanion(
+            id: Value(movId),
+            lotId: Value(lotId),
+            lotDesignId: Value(sku.designId),
+            designColourId: Value(sku.colourId),
+            processId: Value(proc.id),
+            memberId: Value(worker.id),
+            jobProcessId: Value(jpId),
+            movementType: Value(StockMovementType.issue.dbValue),
+            quantity: Value(assign.quantity),
+            appliedRatePaise: Value(assign.agreedRatePaise),
+            isRateOverridden: Value(cleanedOverride != null ? 1 : 0),
+            overrideReason: Value(cleanedOverride),
+            lockedBillingMode: Value(BillingMode.receivedQty.dbValue),
+            lockedIncludeDamaged: const Value(0),
+            notes: Value(cleanedNotes),
+            transactionAt: Value(transactionAtUtcMillis),
+            recordedAt: Value(now),
+            createdBy: Value(actor),
+            updatedBy: Value(actor),
+            createdAt: Value(now),
+            updatedAt: Value(now),
+          ),
+        );
+
+        // Informational-only labour entry (Rule 1: ISSUE is never payable)
+        await _db.labourEntryDao.insertEntry(
+          LabourEntriesCompanion(
+            id: Value(_idGenerator.nextEntityId()),
+            stockMovementId: Value(movId),
+            memberId: Value(worker.id),
+            processId: Value(proc.id),
+            lotId: Value(lotId),
+            basisType: const Value('ISSUED'),
+            quantity: Value(assign.quantity),
+            ratePaise: Value(assign.agreedRatePaise),
+            amountPaise: Value(assign.quantity * assign.agreedRatePaise),
+            isPayable: const Value(0),
+            transactionAt: Value(transactionAtUtcMillis),
+            recordedAt: Value(now),
+            createdAt: Value(now),
+            updatedAt: Value(now),
+          ),
+        );
+
+        await _db.jobProcessDao.insertJobProcess(
+          JobProcessesCompanion.insert(
+            id: jpId,
+            lotId: lotId,
+            lotDesignId: sku.designId,
+            designColourId: sku.colourId,
+            processId: proc.id,
+            memberId: Value(worker.id),
+            sequenceOrder: Value(seqOrder++),
+            plannedQuantity: assign.quantity,
+            dispatchedQuantity: Value(assign.quantity),
+            receivedQuantity: const Value(0),
+            status: Value(JobProcessStatus.dispatched.dbValue),
+            linkedIssueMovementId: Value(movId),
+            defaultRatePaise: Value(proc.defaultRatePaise),
+            agreedRatePaise: Value(assign.agreedRatePaise),
+            pricingUnit: Value(assign.pricingUnit),
+            rateOverrideReason: Value(cleanedOverride),
+            payableAmountPaise: Value(0),
+            paidAmountPaise: const Value(0),
+            paymentStatus: Value(ProcessPaymentStatus.pending.dbValue),
+            notes: Value(cleanedNotes),
+            transactionAt: transactionAtUtcMillis,
+            createdBy: Value(actor),
+            updatedBy: Value(actor),
+            createdAt: now,
+            updatedAt: now,
+          ),
+        );
+
+        createdSkuByKey[skuKey] = (
+          designId: sku.designId,
+          colourId: sku.colourId,
+          available: sku.available - assign.quantity,
+        );
       }
 
       final created = await _db.lotDao.findLotById(lotId);
@@ -679,6 +859,122 @@ final class LotRepositoryImpl implements LotRepository {
       if (existing == null || existing.deletedAt != null) {
         throw const LocalStorageException('Lot not found.');
       }
+
+      // Phase 6 Completion Reconciliation Guard: do not mark lot COMPLETED
+      // while any assignment has outstanding or pending-inspection pieces.
+      if (status == LotStatus.completed) {
+        final lotMovRows = await _db.stockMovementDao.getMovementsForLot(lotId);
+        final lotMovs = lotMovRows
+            .map(
+              (r) => StockMovementEntity(
+                id: r.id,
+                lotId: r.lotId,
+                lotDesignId: r.lotDesignId,
+                designColourId: r.designColourId,
+                processId: r.processId,
+                memberId: r.memberId,
+                parentIssueId: r.parentIssueId,
+                jobProcessId: r.jobProcessId,
+                reversesMovementId: r.reversesMovementId,
+                clientRequestId: r.clientRequestId,
+                movementType: StockMovementType.fromDbValue(r.movementType),
+                quantity: r.quantity,
+                sourceRateId: r.sourceRateId,
+                appliedRatePaise: r.appliedRatePaise,
+                isRateOverridden: r.isRateOverridden == 1,
+                overrideReason: r.overrideReason,
+                lockedBillingMode: r.lockedBillingMode != null
+                    ? BillingMode.fromDbValue(r.lockedBillingMode!)
+                    : null,
+                lockedIncludeDamaged: r.lockedIncludeDamaged == 1,
+                reason: r.reason,
+                notes: r.notes,
+                transactionAt: r.transactionAt,
+                recordedAt: r.recordedAt,
+                createdBy: r.createdBy,
+                createdAt: r.createdAt,
+                updatedAt: r.updatedAt,
+              ),
+            )
+            .toList();
+        const stockCalc = StockCalculator();
+        const prodCalc = ProductionHistoryCalculator();
+        final reversedIds = stockCalc.reversedMovementIds(lotMovs);
+        final retRows = await _db.productionTrackingDao.getReturnsForLot(lotId);
+        final inspRows = await _db.productionTrackingDao.getInspectionsForLot(
+          lotId,
+        );
+        final returns = retRows
+            .map(
+              (r) => ProductionReturnEntity(
+                id: r.id,
+                parentIssueId: r.parentIssueId,
+                lotId: r.lotId,
+                lotDesignId: r.lotDesignId,
+                designColourId: r.designColourId,
+                processId: r.processId,
+                memberId: r.memberId,
+                returnedQuantity: r.returnedQuantity,
+                returnMode: ProductionReturnMode.fromDbValue(r.returnMode),
+                transactionAt: r.transactionAt,
+                recordedAt: r.recordedAt,
+                createdAt: r.createdAt,
+                updatedAt: r.updatedAt,
+              ),
+            )
+            .toList();
+        final insps = inspRows
+            .map(
+              (r) => ProductionInspectionEntity(
+                id: r.id,
+                inspectionType: ProductionInspectionType.fromDbValue(
+                  r.inspectionType,
+                ),
+                productionReturnId: r.productionReturnId,
+                parentIssueId: r.parentIssueId,
+                lotId: r.lotId,
+                lotDesignId: r.lotDesignId,
+                designColourId: r.designColourId,
+                processId: r.processId,
+                memberId: r.memberId,
+                acceptedQuantity: r.acceptedQuantity,
+                rejectedQuantity: r.rejectedQuantity,
+                lockedRatePaise: r.lockedRatePaise,
+                earnedAmountPaise: r.earnedAmountPaise,
+                creditWorkerEarnings: r.creditWorkerEarnings == 1,
+                authorizedViaPin: r.authorizedViaPin == 1,
+                transactionAt: r.transactionAt,
+                recordedAt: r.recordedAt,
+                createdAt: r.createdAt,
+              ),
+            )
+            .toList();
+        final pendingInspMap = prodCalc.pendingInspectionByIssue(
+          returns: returns,
+          inspections: insps,
+          reversedMovementIds: reversedIds,
+        );
+        for (final m in lotMovs) {
+          if (m.movementType != StockMovementType.issue ||
+              reversedIds.contains(m.id)) {
+            continue;
+          }
+          final settledPending = stockCalc.calculateIssueRemainingPending(
+            issue: m,
+            allMovementsForColour: lotMovs
+                .where((x) => x.designColourId == m.designColourId)
+                .toList(),
+          );
+          final pendingInsp = pendingInspMap[m.id] ?? 0;
+          if (settledPending > 0 || pendingInsp > 0) {
+            throw const DomainValidationException(
+              'lot_has_unreconciled_quantities',
+              'Cannot mark lot completed while pieces are still with workers or pending QC inspection.',
+            );
+          }
+        }
+      }
+
       final now = IstDateTimeHelper.nowUtcMillis();
       final actor = await _currentActor();
 

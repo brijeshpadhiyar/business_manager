@@ -14,6 +14,28 @@ import 'package:material_ui/material_ui.dart';
 ///
 /// Immediately returns `true` if App Lock is disabled.
 abstract final class SecurityReauthDialog {
+  /// Verifies authorization for production quantity approvals / re-approvals
+  /// (Rule 6). Prompts PIN/Biometric when PIN is enabled AND
+  /// `requireAuthForApprovals` is true.
+  static Future<({bool approved, bool authorizedViaPin})> verifyForApproval(
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+  }) async {
+    final cubit = context.read<AppLockCubit>();
+    if (!cubit.state.isPinEnabled ||
+        !cubit.state.settings.requireAuthForApprovals) {
+      return (approved: true, authorizedViaPin: false);
+    }
+    final ok = await verify(
+      context,
+      title: title,
+      subtitle: subtitle,
+      allowBiometric: true,
+    );
+    return (approved: ok, authorizedViaPin: ok);
+  }
+
   static Future<bool> verify(
     BuildContext context, {
     required String title,

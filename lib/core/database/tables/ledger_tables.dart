@@ -30,6 +30,7 @@ class StockMovements extends Table {
     #id,
     onDelete: KeyAction.restrict,
   )();
+  TextColumn get jobProcessId => text().nullable()();
   TextColumn get reversesMovementId => text().nullable().references(
     StockMovements,
     #id,

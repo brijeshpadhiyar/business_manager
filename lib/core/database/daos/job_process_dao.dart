@@ -27,6 +27,25 @@ class JobProcessDao extends DatabaseAccessor<AppDatabase>
   Future<JobProcessRow?> findJobProcessById(String id) =>
       (select(jobProcesses)..where((t) => t.id.equals(id))).getSingleOrNull();
 
+  Future<List<JobProcessRow>> getAllJobProcesses() {
+    return (select(jobProcesses)
+          ..where((t) => t.deletedAt.isNull())
+          ..orderBy([
+            (t) => OrderingTerm.asc(t.transactionAt),
+            (t) => OrderingTerm.asc(t.sequenceOrder),
+          ]))
+        .get();
+  }
+
+  Future<List<ProcessHandoverRow>> getAllHandovers() {
+    return (select(processHandovers)
+          ..orderBy([
+            (t) => OrderingTerm.asc(t.transactionAt),
+            (t) => OrderingTerm.asc(t.recordedAt),
+          ]))
+        .get();
+  }
+
   Future<List<JobProcessRow>> getJobProcessesForLot(String lotId) {
     return (select(jobProcesses)
           ..where((t) => t.lotId.equals(lotId) & t.deletedAt.isNull())

@@ -148,6 +148,14 @@ abstract final class ValidationLocalizer {
       'insufficient_good_stock' => l10n.stockInsufficientGoodError,
       'invalid_quantity' => l10n.stockInvalidQtyError,
       'exceeds_pending_quantity' => l10n.stockSettlementTotalExceedsError,
+      'exceeds_pending_inspection' => l10n.validationExceedsPendingInspection,
+      'exceeds_returned_quantity' => l10n.validationExceedsReturnedQty,
+      'exceeds_rejected_quantity' => l10n.validationExceedsRejectedQty,
+      'exceeds_repaired_quantity' => l10n.validationExceedsRepairedQty,
+      'lot_has_unreconciled_quantities' => l10n.validationLotUnreconciled,
+      'return_not_found' ||
+      'rejection_not_found' ||
+      'repair_not_found' => l10n.validationRecordNotFound,
       'settlement_empty' => l10n.stockSettlementEmptyError,
       'reason_required' => l10n.stockSettlementReasonRequiredError,
       'exceeds_damaged_stock' => l10n.stockRepairExceedsDamagedError,

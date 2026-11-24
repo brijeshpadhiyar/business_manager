@@ -10,6 +10,8 @@ import 'package:business_manager/features/accounting/domain/calculators/labour_c
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
 import 'package:business_manager/features/notifications/data/services/notification_refresh_coordinator.dart';
+import 'package:business_manager/features/production_history/domain/calculators/production_history_calculator.dart';
+import 'package:business_manager/features/production_history/domain/entities/production_history_entities.dart';
 import 'package:business_manager/features/rates/domain/entities/rate_entities.dart';
 import 'package:business_manager/features/rates/domain/services/member_process_rate_resolver.dart';
 import 'package:business_manager/features/reports/domain/calculators/workshop_daily_calculator.dart';
@@ -29,6 +31,8 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
 
   static const StockCalculator _stockCalc = StockCalculator();
   static const LabourCalculator _labourCalc = LabourCalculator();
+  static const ProductionHistoryCalculator _prodCalc =
+      ProductionHistoryCalculator();
   static const MemberProcessRateResolver _rateResolver =
       MemberProcessRateResolver();
 
@@ -41,6 +45,7 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
       processId: row.processId,
       memberId: row.memberId,
       parentIssueId: row.parentIssueId,
+      jobProcessId: row.jobProcessId,
       reversesMovementId: row.reversesMovementId,
       clientRequestId: row.clientRequestId,
       movementType: StockMovementType.fromDbValue(row.movementType),
@@ -94,6 +99,88 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
       recordedAt: r.recordedAt,
       createdAt: r.createdAt,
       updatedAt: r.updatedAt,
+    );
+  }
+
+  ProductionReturnEntity _mapReturnRow(ProductionReturnRow r) =>
+      ProductionReturnEntity(
+        id: r.id,
+        clientRequestId: r.clientRequestId,
+        parentIssueId: r.parentIssueId,
+        jobProcessId: r.jobProcessId,
+        lotId: r.lotId,
+        lotDesignId: r.lotDesignId,
+        designColourId: r.designColourId,
+        processId: r.processId,
+        memberId: r.memberId,
+        returnedQuantity: r.returnedQuantity,
+        returnMode: ProductionReturnMode.fromDbValue(r.returnMode),
+        notes: r.notes,
+        transactionAt: r.transactionAt,
+        recordedAt: r.recordedAt,
+        createdBy: r.createdBy,
+        createdAt: r.createdAt,
+        updatedAt: r.updatedAt,
+      );
+
+  ProductionInspectionEntity _mapInspectionRow(ProductionInspectionRow r) =>
+      ProductionInspectionEntity(
+        id: r.id,
+        clientRequestId: r.clientRequestId,
+        inspectionType: ProductionInspectionType.fromDbValue(r.inspectionType),
+        productionReturnId: r.productionReturnId,
+        rejectionRecordId: r.rejectionRecordId,
+        rejectionRepairId: r.rejectionRepairId,
+        parentIssueId: r.parentIssueId,
+        jobProcessId: r.jobProcessId,
+        lotId: r.lotId,
+        lotDesignId: r.lotDesignId,
+        designColourId: r.designColourId,
+        processId: r.processId,
+        memberId: r.memberId,
+        acceptedQuantity: r.acceptedQuantity,
+        rejectedQuantity: r.rejectedQuantity,
+        lockedRatePaise: r.lockedRatePaise,
+        earnedAmountPaise: r.earnedAmountPaise,
+        creditWorkerEarnings: r.creditWorkerEarnings == 1,
+        linkedGoodMovementId: r.linkedGoodMovementId,
+        linkedDamagedMovementId: r.linkedDamagedMovementId,
+        linkedLabourEntryId: r.linkedLabourEntryId,
+        rejectionReason: r.rejectionReason,
+        notes: r.notes,
+        inspectedBy: r.inspectedBy,
+        approvedBy: r.approvedBy,
+        authorizedViaPin: r.authorizedViaPin == 1,
+        transactionAt: r.transactionAt,
+        recordedAt: r.recordedAt,
+        createdAt: r.createdAt,
+      );
+
+  Future<
+    ({
+      Map<String, int> pendingByColour,
+      Map<String, int> pendingByIssue,
+    })
+  >
+  _loadPendingInspectionMaps(List<StockMovementEntity> movements) async {
+    final reversedIds = _stockCalc.reversedMovementIds(movements);
+    final returns = (await _db.productionTrackingDao.getAllReturns())
+        .map(_mapReturnRow)
+        .toList();
+    final inspections = (await _db.productionTrackingDao.getAllInspections())
+        .map(_mapInspectionRow)
+        .toList();
+    return (
+      pendingByColour: _prodCalc.pendingInspectionByDesignColour(
+        returns: returns,
+        inspections: inspections,
+        reversedMovementIds: reversedIds,
+      ),
+      pendingByIssue: _prodCalc.pendingInspectionByIssue(
+        returns: returns,
+        inspections: inspections,
+        reversedMovementIds: reversedIds,
+      ),
     );
   }
 
@@ -182,6 +269,7 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
     final movements = (await _db.stockMovementDao.getMovementsForDesignColour(
       designColourId,
     )).map(_mapRow).toList();
+    final pendingMaps = await _loadPendingInspectionMaps(movements);
     final procs = await _db.processMemberDao.getNonDeletedProcesses();
     final procNames = {for (final p in procs) p.id: p.name};
 
@@ -197,6 +285,8 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
       initialQuantity: colour.initialQuantity,
       allMovementsForColour: movements,
       processNamesById: procNames,
+      pendingInspectionQuantity:
+          pendingMaps.pendingByColour[colour.id] ?? 0,
     );
   }
 
@@ -211,6 +301,7 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
     final allMovements = (await _db.stockMovementDao.getAllMovements())
         .map(_mapRow)
         .toList();
+    final pendingMaps = await _loadPendingInspectionMaps(allMovements);
     final procs = await _db.processMemberDao.getNonDeletedProcesses();
 
     final lotById = {for (final l in activeLots) l.id: l};
@@ -245,6 +336,7 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
         initialQuantity: c.initialQuantity,
         allMovementsForColour: movementsByColour[c.id] ?? const [],
         processNamesById: procNames,
+        pendingInspectionQuantity: pendingMaps.pendingByColour[c.id] ?? 0,
       );
       if (onlyWithDamaged && balance.damagedBucket <= 0) continue;
       result.add(balance);
@@ -294,12 +386,14 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
     required Map<String, MemberRow> workers,
     required Map<String, String> reversedByMap,
     required List<StockMovementEntity> colourMovements,
+    Map<String, int> pendingInspectionByIssue = const {},
   }) {
     final isReversed = reversedByMap.containsKey(movement.id);
     int good = 0;
     int damaged = 0;
     int lost = 0;
     int shortage = 0;
+    int pendingInsp = 0;
     int pending = 0;
     if (movement.movementType == StockMovementType.issue && !isReversed) {
       final totals = _stockCalc.calculateIssueSettlementTotals(
@@ -310,7 +404,8 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
       damaged = totals.damaged;
       lost = totals.lost;
       shortage = totals.shortage;
-      pending = totals.pending;
+      pendingInsp = pendingInspectionByIssue[movement.id] ?? 0;
+      pending = (totals.pending - pendingInsp).clamp(0, movement.quantity);
     }
 
     final lot = lots[movement.lotId];
@@ -337,6 +432,7 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
       returnedDamagedQty: damaged,
       lostQty: lost,
       shortageQty: shortage,
+      pendingInspectionQty: pendingInsp,
       remainingPendingQty: pending,
     );
   }
@@ -351,6 +447,7 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
     final allMovements = (await _db.stockMovementDao.getAllMovements())
         .map(_mapRow)
         .toList();
+    final pendingMaps = await _loadPendingInspectionMaps(allMovements);
     final lookups = await _loadLookupMaps();
 
     final reversedByMap = <String, String>{};
@@ -389,6 +486,7 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
         workers: lookups.workers,
         reversedByMap: reversedByMap,
         colourMovements: colourList,
+        pendingInspectionByIssue: pendingMaps.pendingByIssue,
       );
       if (issueView.remainingPendingQty <= 0) continue;
 
@@ -403,6 +501,7 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
               workers: lookups.workers,
               reversedByMap: reversedByMap,
               colourMovements: colourList,
+              pendingInspectionByIssue: pendingMaps.pendingByIssue,
             ),
           )
           .toList();
@@ -431,6 +530,7 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
         (await _db.stockMovementDao.getMovementsForDesignColour(
           issue.designColourId,
         )).map(_mapRow).toList();
+    final pendingMaps = await _loadPendingInspectionMaps(colourMovements);
     final lookups = await _loadLookupMaps();
 
     final reversedByMap = <String, String>{};
@@ -450,6 +550,7 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
       workers: lookups.workers,
       reversedByMap: reversedByMap,
       colourMovements: colourMovements,
+      pendingInspectionByIssue: pendingMaps.pendingByIssue,
     );
 
     final children = colourMovements
@@ -464,6 +565,7 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
             workers: lookups.workers,
             reversedByMap: reversedByMap,
             colourMovements: colourMovements,
+            pendingInspectionByIssue: pendingMaps.pendingByIssue,
           ),
         )
         .toList();
@@ -633,6 +735,7 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
     bool allowRateOverride = false,
     int? overrideRatePaise,
     String? overrideReason,
+    String? jobProcessId,
     String? clientRequestId,
   }) async {
     final reqId = clientRequestId?.trim().isEmpty ?? true
@@ -810,19 +913,11 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
             );
           }
 
-          // Lock effective billing configuration onto ISSUE row (anti-double-counting)
-          final profile = await _db.businessProfileDao.getProfile();
-          final globalMode = profile != null
-              ? BillingMode.fromDbValue(profile.defaultBillingMode)
-              : BillingMode.receivedQty;
-          final processOverride = process.billingModeOverride != null
-              ? BillingMode.fromDbValue(process.billingModeOverride!)
-              : null;
-          final lockedBillingMode = _labourCalc.resolveEffectiveBillingMode(
-            globalDefault: globalMode,
-            processOverride: processOverride,
-          );
-          final lockedIncludeDamaged = process.includeDamagedInLabour == 1;
+          // Finalized Worker Payment Business Rules (Rules 1 & 3):
+          // All new transactions lock billing strictly to Accepted Quantity
+          // (`RECEIVED_QTY`) with `includeDamaged = false`.
+          const lockedBillingMode = BillingMode.receivedQty;
+          const lockedIncludeDamaged = false;
 
           final now = IstDateTimeHelper.nowUtcMillis();
           final actor = await _resolveActor();
@@ -839,6 +934,7 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
               designColourId: Value(colour.id),
               processId: Value(process.id),
               memberId: Value(worker.id),
+              jobProcessId: Value(jobProcessId),
               clientRequestId: Value(reqId),
               movementType: Value(StockMovementType.issue.dbValue),
               quantity: Value(quantity),
@@ -847,7 +943,7 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
               isRateOverridden: Value(isOverridden ? 1 : 0),
               overrideReason: Value(cleanedOverrideReason),
               lockedBillingMode: Value(lockedBillingMode.dbValue),
-              lockedIncludeDamaged: Value(lockedIncludeDamaged ? 1 : 0),
+              lockedIncludeDamaged: const Value(0),
               notes: Value(cleanedNotes),
               transactionAt: Value(transactionAtUtcMillis),
               recordedAt: Value(now),
@@ -931,6 +1027,8 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
     required int transactionAtUtcMillis,
     String? reason,
     String? notes,
+    String? approvedBy,
+    bool authorizedViaPin = false,
     String? clientRequestId,
   }) async {
     final baseReqId = clientRequestId?.trim().isEmpty ?? true
@@ -1022,7 +1120,8 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
             );
           }
 
-          // Validate batch against remaining pending & reason requirement
+          // Validate batch against remaining outstanding (excluding any pieces
+          // already sitting in Pending Inspection) & reason requirement.
           final validationErr = _stockCalc.validateSettlementBatch(
             parentIssue: parentIssue,
             existingMovementsForColour: existingMovements,
@@ -1039,21 +1138,51 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
             );
           }
 
+          final pendingMaps = await _loadPendingInspectionMaps(
+            existingMovements,
+          );
+          final pendingInsp = pendingMaps.pendingByIssue[parentIssue.id] ?? 0;
+          final rawRemaining = _stockCalc.calculateIssueRemainingPending(
+            issue: parentIssue,
+            allMovementsForColour: existingMovements,
+          );
+          final trueOutstanding = (rawRemaining - pendingInsp).clamp(
+            0,
+            parentIssue.quantity,
+          );
+          if (goodQuantity + damagedQuantity + lostQuantity + shortageQuantity >
+              trueOutstanding) {
+            throw const DomainValidationException(
+              'exceeds_pending_quantity',
+              'Settlement quantity exceeds outstanding pieces with worker (excluding pending inspection).',
+            );
+          }
+
           final now = IstDateTimeHelper.nowUtcMillis();
-          final actor = await _resolveActor();
+          final actor = (approvedBy?.trim().isNotEmpty == true)
+              ? approvedBy!.trim()
+              : await _resolveActor();
           final cleanedReason = reason?.trim().isEmpty ?? true
               ? null
               : reason!.trim();
           final cleanedNotes = notes?.trim().isEmpty ?? true
               ? null
               : notes!.trim();
-          final lockedMode =
-              parentIssue.lockedBillingMode ?? BillingMode.receivedQty;
-          final lockedIncludeDamaged = parentIssue.lockedIncludeDamaged;
+          // Final Rules 1 & 3: Accepted-only earnings; rejected never earns.
+          const lockedMode = BillingMode.receivedQty;
+          const lockedIncludeDamaged = false;
 
           final created = <StockMovementEntity>[];
+          String? goodMovId;
+          String? dmgMovId;
+          String? createdLabourId;
+          var earnedPaise = 0;
+
           for (final (type, qty, reqId) in componentSpecs) {
             final movId = _idGenerator.nextEntityId();
+            if (type == StockMovementType.returnGood) goodMovId = movId;
+            if (type == StockMovementType.returnDamaged) dmgMovId = movId;
+
             await _db.stockMovementDao.insertMovement(
               StockMovementsCompanion(
                 id: Value(movId),
@@ -1063,6 +1192,7 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
                 processId: Value(parentIssue.processId),
                 memberId: Value(parentIssue.memberId),
                 parentIssueId: Value(parentIssue.id),
+                jobProcessId: Value(parentIssue.jobProcessId),
                 clientRequestId: Value(reqId),
                 movementType: Value(type.dbValue),
                 quantity: Value(qty),
@@ -1071,10 +1201,8 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
                 isRateOverridden: Value(parentIssue.isRateOverridden ? 1 : 0),
                 overrideReason: Value(parentIssue.overrideReason),
                 lockedBillingMode: Value(lockedMode.dbValue),
-                lockedIncludeDamaged: Value(lockedIncludeDamaged ? 1 : 0),
-                reason: Value(
-                  type.requiresReason ? cleanedReason : cleanedReason,
-                ),
+                lockedIncludeDamaged: const Value(0),
+                reason: Value(cleanedReason),
                 notes: Value(cleanedNotes),
                 transactionAt: Value(transactionAtUtcMillis),
                 recordedAt: Value(now),
@@ -1085,7 +1213,7 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
               ),
             );
 
-            // Plan & insert labour entry inheriting parent locked rate & billing config
+            // Plan & insert labour entry strictly for accepted good qty
             final plannedLabour = _labourCalc.planForSettlement(
               movementType: type,
               quantity: qty,
@@ -1096,9 +1224,12 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
             if (plannedLabour != null &&
                 parentIssue.memberId != null &&
                 parentIssue.processId != null) {
+              final labId = _idGenerator.nextEntityId();
+              createdLabourId = labId;
+              earnedPaise += plannedLabour.amountPaise;
               await _db.labourEntryDao.insertEntry(
                 LabourEntriesCompanion(
-                  id: Value(_idGenerator.nextEntityId()),
+                  id: Value(labId),
                   stockMovementId: Value(movId),
                   memberId: Value(parentIssue.memberId!),
                   processId: Value(parentIssue.processId!),
@@ -1130,6 +1261,7 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
                     'quantity': qty,
                     'inherited_rate_paise': parentIssue.appliedRatePaise,
                     'locked_billing_mode': lockedMode.dbValue,
+                    'authorized_via_pin': authorizedViaPin,
                   }),
                 ),
                 reason: Value(cleanedReason),
@@ -1142,14 +1274,111 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
             created.add(_mapRow(insertedRow!));
           }
 
+          // Unify with Schema v8 tables: write matching production_returns,
+          // production_inspections, and rejection_records atomically.
+          final returnedQty = goodQuantity + damagedQuantity;
+          if (returnedQty > 0 &&
+              parentIssue.processId != null &&
+              parentIssue.memberId != null) {
+            final retId = _idGenerator.nextEntityId();
+            await _db.productionTrackingDao.insertReturn(
+              ProductionReturnsCompanion(
+                id: Value(retId),
+                clientRequestId: Value('$baseReqId:RET'),
+                parentIssueId: Value(parentIssue.id),
+                jobProcessId: Value(parentIssue.jobProcessId),
+                lotId: Value(parentIssue.lotId),
+                lotDesignId: Value(parentIssue.lotDesignId),
+                designColourId: Value(parentIssue.designColourId),
+                processId: Value(parentIssue.processId!),
+                memberId: Value(parentIssue.memberId!),
+                returnedQuantity: Value(returnedQty),
+                returnMode: Value(
+                  ProductionReturnMode.immediateInspection.dbValue,
+                ),
+                notes: Value(cleanedNotes),
+                transactionAt: Value(transactionAtUtcMillis),
+                recordedAt: Value(now),
+                createdBy: Value(actor),
+                createdAt: Value(now),
+                updatedAt: Value(now),
+              ),
+            );
+
+            final inspId = _idGenerator.nextEntityId();
+            await _db.productionTrackingDao.insertInspection(
+              ProductionInspectionsCompanion(
+                id: Value(inspId),
+                clientRequestId: Value('$baseReqId:INSP'),
+                inspectionType: Value(ProductionInspectionType.initial.dbValue),
+                productionReturnId: Value(retId),
+                parentIssueId: Value(parentIssue.id),
+                jobProcessId: Value(parentIssue.jobProcessId),
+                lotId: Value(parentIssue.lotId),
+                lotDesignId: Value(parentIssue.lotDesignId),
+                designColourId: Value(parentIssue.designColourId),
+                processId: Value(parentIssue.processId!),
+                memberId: Value(parentIssue.memberId!),
+                acceptedQuantity: Value(goodQuantity),
+                rejectedQuantity: Value(damagedQuantity),
+                lockedRatePaise: Value(parentIssue.appliedRatePaise),
+                earnedAmountPaise: Value(earnedPaise),
+                creditWorkerEarnings: const Value(1),
+                linkedGoodMovementId: Value(goodMovId),
+                linkedDamagedMovementId: Value(dmgMovId),
+                linkedLabourEntryId: Value(createdLabourId),
+                rejectionReason: Value(cleanedReason),
+                notes: Value(cleanedNotes),
+                inspectedBy: Value(actor),
+                approvedBy: Value(actor),
+                authorizedViaPin: Value(authorizedViaPin ? 1 : 0),
+                transactionAt: Value(transactionAtUtcMillis),
+                recordedAt: Value(now),
+                createdAt: Value(now),
+              ),
+            );
+
+            if (damagedQuantity > 0 && dmgMovId != null) {
+              await _db.productionTrackingDao.insertRejectionRecord(
+                RejectionRecordsCompanion(
+                  id: Value(_idGenerator.nextEntityId()),
+                  lotId: Value(parentIssue.lotId),
+                  lotDesignId: Value(parentIssue.lotDesignId),
+                  designColourId: Value(parentIssue.designColourId),
+                  processId: Value(parentIssue.processId!),
+                  memberId: Value(parentIssue.memberId!),
+                  parentIssueId: Value(parentIssue.id),
+                  jobProcessId: Value(parentIssue.jobProcessId),
+                  productionReturnId: Value(retId),
+                  inspectionId: Value(inspId),
+                  stockMovementId: Value(dmgMovId),
+                  rejectedQuantity: Value(damagedQuantity),
+                  rejectionReason: Value(cleanedReason ?? 'Damaged return'),
+                  status: Value(RejectionStatus.open.dbValue),
+                  inspectedAt: Value(transactionAtUtcMillis),
+                  recordedBy: Value(actor),
+                  notes: Value(cleanedNotes),
+                  createdAt: Value(now),
+                  updatedAt: Value(now),
+                ),
+              );
+            }
+          }
+
           final updatedMovements =
               (await _db.stockMovementDao.getMovementsForDesignColour(
                 parentIssue.designColourId,
               )).map(_mapRow).toList();
-          final remaining = _stockCalc.calculateIssueRemainingPending(
-            issue: parentIssue,
-            allMovementsForColour: updatedMovements,
+          final updatedPending = await _loadPendingInspectionMaps(
+            updatedMovements,
           );
+          final remaining =
+              (_stockCalc.calculateIssueRemainingPending(
+                    issue: parentIssue,
+                    allMovementsForColour: updatedMovements,
+                  ) -
+                  (updatedPending.pendingByIssue[parentIssue.id] ?? 0))
+              .clamp(0, parentIssue.quantity);
 
           return SettlementBatchResult(
             createdMovements: created,

@@ -45,6 +45,7 @@ final class StockMovementEntity {
     this.processId,
     this.memberId,
     this.parentIssueId,
+    this.jobProcessId,
     this.reversesMovementId,
     this.clientRequestId,
     required this.movementType,
@@ -71,6 +72,7 @@ final class StockMovementEntity {
   final String? processId;
   final String? memberId;
   final String? parentIssueId;
+  final String? jobProcessId;
   final String? reversesMovementId;
   final String? clientRequestId;
   final StockMovementType movementType;
@@ -106,6 +108,7 @@ final class StockMovementView {
     this.returnedDamagedQty = 0,
     this.lostQty = 0,
     this.shortageQty = 0,
+    this.pendingInspectionQty = 0,
     this.remainingPendingQty = 0,
   });
 
@@ -122,10 +125,14 @@ final class StockMovementView {
   final int returnedDamagedQty;
   final int lostQty;
   final int shortageQty;
+  final int pendingInspectionQty;
   final int remainingPendingQty;
 
   int get totalSettledQty =>
       returnedGoodQty + returnedDamagedQty + lostQty + shortageQty;
+
+  int get totalReturnedQty =>
+      returnedGoodQty + returnedDamagedQty + pendingInspectionQty;
 }
 
 /// Per-process breakdown for a single `design_colour_id` or across all lots.
@@ -193,6 +200,7 @@ final class DesignColourStockBalance {
     required this.totalShortage,
     required this.totalGoodPhysicalStock,
     required this.totalPendingWithWorkers,
+    this.totalPendingInspection = 0,
     required this.physicalAvailableInHouse,
     required this.totalIssued,
     required this.totalGoodReturned,
@@ -214,6 +222,7 @@ final class DesignColourStockBalance {
   final int totalShortage;
   final int totalGoodPhysicalStock;
   final int totalPendingWithWorkers;
+  final int totalPendingInspection;
   final int physicalAvailableInHouse;
   final int totalIssued;
   final int totalGoodReturned;

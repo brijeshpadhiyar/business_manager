@@ -2477,4 +2477,211 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get msgTitleLoading => 'Working...';
+
+  @override
+  String get navProductionHistory => 'Production History';
+
+  @override
+  String get navInspectionQueue => 'QC Inspection Queue';
+
+  @override
+  String get navWorkerHistory => 'Worker Production';
+
+  @override
+  String get navProcessHistory => 'Process History';
+
+  @override
+  String get prodHistoryDashboardTitle => 'Production History';
+
+  @override
+  String get prodHistoryDashboardSubtitle =>
+      'Permanent lot, worker, process & financial ledger tracking';
+
+  @override
+  String get prodHistorySearchHint =>
+      'Search lot, worker, process, design, colour...';
+
+  @override
+  String get prodHistoryOnlyPending => 'Pending Only';
+
+  @override
+  String get prodHistoryAllEntries => 'All Entries';
+
+  @override
+  String get prodHistoryTotalAssigned => 'Assigned';
+
+  @override
+  String get prodHistoryTotalReturned => 'Returned';
+
+  @override
+  String get prodHistoryTotalAccepted => 'Accepted';
+
+  @override
+  String get prodHistoryTotalRejected => 'Rejected';
+
+  @override
+  String get prodHistoryPendingInspection => 'Pending Inspection';
+
+  @override
+  String get prodHistoryOutstandingWork => 'Outstanding';
+
+  @override
+  String get prodHistoryTotalEarned => 'Total Earned';
+
+  @override
+  String get prodHistoryTotalPaid => 'Total Paid';
+
+  @override
+  String get prodHistoryOutstandingPayable => 'Outstanding Payable';
+
+  @override
+  String get prodHistoryLotHistoryTitle => 'Complete Lot History';
+
+  @override
+  String get prodHistoryLotTimelineTitle => 'Lot Timeline';
+
+  @override
+  String get prodHistoryViewLotHistory => 'Lot History';
+
+  @override
+  String get prodHistoryViewTimeline => 'Lot Timeline';
+
+  @override
+  String get prodHistoryWorkerHistoryTitle => 'Worker Production History';
+
+  @override
+  String get prodHistoryWorkerLotHistory => 'Worker Lot History';
+
+  @override
+  String get prodHistoryWorkerProcessHistory => 'Process-Wise History';
+
+  @override
+  String get prodHistoryIncludeInactive => 'Show Inactive';
+
+  @override
+  String get prodHistoryProcessHistoryTitle => 'Process-Wise History';
+
+  @override
+  String get prodHistoryProcessDetailsTitle => 'Process Production Details';
+
+  @override
+  String get prodHistoryTabLotWise => 'Lot-Wise';
+
+  @override
+  String get prodHistoryTabWorkerWise => 'Worker-Wise';
+
+  @override
+  String get prodHistoryTabDateWise => 'Date-Wise';
+
+  @override
+  String get prodHistoryTabPending => 'Pending Work';
+
+  @override
+  String get prodHistoryInspectionQueueTitle => 'Returns & QC Inspection';
+
+  @override
+  String get prodHistoryTabPendingInspection => 'Pending QC';
+
+  @override
+  String get prodHistoryTabRejections => 'Rejections & Repairs';
+
+  @override
+  String get prodHistoryApproveAction => 'Inspect & Approve';
+
+  @override
+  String get prodHistoryRecordRepairAction => 'Log Repair';
+
+  @override
+  String get prodHistoryReinspectAction => 'Re-Inspect & Approve';
+
+  @override
+  String get prodHistoryRepairSourceOriginal =>
+      'Repaired by Original Worker (Credits Historical Rate)';
+
+  @override
+  String get prodHistoryRepairSourceInHouse =>
+      'Factory / In-House Repair (No Worker Earning)';
+
+  @override
+  String get prodHistoryReturnModePending =>
+      'Log as Pending Inspection (₹0 until QC approves)';
+
+  @override
+  String get prodHistoryReturnModeImmediate =>
+      'Return & Inspect Immediately (Generates Accepted Earnings)';
+
+  @override
+  String get prodHistoryTxDetailTitle => 'Transaction Details';
+
+  @override
+  String get prodHistoryOpenLot => 'Open Lot';
+
+  @override
+  String get prodHistoryOpenWorker => 'Open Worker';
+
+  @override
+  String get prodHistoryOpenProcess => 'Open Process';
+
+  @override
+  String get prodHistoryLockedRateSnapshot => 'Locked Rate Snapshot';
+
+  @override
+  String get prodHistoryAuditTrail => 'Audit Trail';
+
+  @override
+  String get prodHistoryRelatedRecords => 'Linked Transactions';
+
+  @override
+  String get prodHistoryInitialAssignmentsTitle =>
+      '3. Initial Process Assignments (Optional)';
+
+  @override
+  String get prodHistoryInitialAssignmentsSubtitle =>
+      'Optionally assign processes, workers, quantities & locked rates while creating the lot.';
+
+  @override
+  String get prodHistoryAddAssignmentAction => 'Add Assignment';
+
+  @override
+  String get prodHistoryApprovalAuthTitle => 'Authorize Approval';
+
+  @override
+  String get prodHistoryApprovalAuthSubtitle =>
+      'Verify PIN or biometrics to approve accepted quantities and credit worker earnings.';
+
+  @override
+  String get securityRequireApprovalAuthLabel =>
+      'Require PIN for Return Approvals';
+
+  @override
+  String get securityRequireApprovalAuthSubtitle =>
+      'Prompt for PIN/biometrics when approving returned or repaired quantities.';
+
+  @override
+  String get settingsFinalPaymentRuleTitle =>
+      'Finalized Earnings Rule (Active)';
+
+  @override
+  String get settingsFinalPaymentRuleBody =>
+      'Worker earnings are calculated strictly as Accepted Quantity × Historical Assigned Rate. Legacy GIVEN_QTY and Damaged-in-Labour settings are retired for all new transactions while historical records remain preserved.';
+
+  @override
+  String get validationExceedsPendingInspection =>
+      'Inspected quantity exceeds remaining pending inspection quantity.';
+
+  @override
+  String get validationExceedsReturnedQty =>
+      'Accepted + Rejected cannot exceed returned quantity.';
+
+  @override
+  String get validationExceedsRejectedQty =>
+      'Quantity cannot exceed open rejected quantity.';
+
+  @override
+  String get validationExceedsRepairedQty =>
+      'Re-inspected quantity cannot exceed pending repaired quantity.';
+
+  @override
+  String get validationLotUnreconciled =>
+      'Cannot mark lot completed while pieces are still with workers or pending QC inspection.';
 }

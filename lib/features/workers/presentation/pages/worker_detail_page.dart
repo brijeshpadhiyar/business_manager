@@ -7,6 +7,8 @@ import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
+import 'package:business_manager/features/production_history/domain/entities/production_history_entities.dart';
+import 'package:business_manager/features/production_history/presentation/bloc/worker_production_history_cubit.dart';
 import 'package:business_manager/features/reports/domain/calculators/workshop_daily_calculator.dart';
 import 'package:business_manager/features/workers/domain/entities/worker_entities.dart';
 import 'package:business_manager/features/workers/presentation/bloc/worker_detail_cubit.dart';
@@ -14,11 +16,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Worker Profile Summary page.
-///
-/// Displays worker name, contact details, assigned processes, current per-piece
-/// rates per process, historical rate links, and active/inactive status.
-/// Intentionally omits labour earnings and payment balances (later milestones).
+/// Worker Profile Summary & Complete Worker Production Account page (Phase 3).
 final class WorkerDetailPage extends StatelessWidget {
   const WorkerDetailPage({super.key, required this.workerId});
 
@@ -26,8 +24,16 @@ final class WorkerDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<WorkerDetailCubit>(
-      create: (_) => getIt<WorkerDetailCubit>()..loadWorker(workerId),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<WorkerDetailCubit>(
+          create: (_) => getIt<WorkerDetailCubit>()..loadWorker(workerId),
+        ),
+        BlocProvider<WorkerProductionHistoryCubit>(
+          create: (_) =>
+              getIt<WorkerProductionHistoryCubit>()..loadWorker(workerId),
+        ),
+      ],
       child: _WorkerDetailView(workerId: workerId),
     );
   }
@@ -655,6 +661,167 @@ final class _WorkerDetailView extends StatelessWidget {
                     ),
                   );
                 }),
+              // Phase 3: Worker Process-Wise History & Worker Lot History
+              BlocBuilder<
+                WorkerProductionHistoryCubit,
+                WorkerProductionHistoryState
+              >(
+                builder: (context, prodState) {
+                  final profile = prodState.selectedProfile;
+                  if (profile == null) return const SizedBox.shrink();
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: AppSpacing.lg),
+                      AppCard(
+                        child: Wrap(
+                          spacing: AppSpacing.xs,
+                          runSpacing: 4,
+                          children: [
+                            AppStatusBadge(
+                              label: 'Lots: ${profile.totalLotsAssigned}',
+                              tone: AppStatusTone.info,
+                            ),
+                            AppStatusBadge(
+                              label:
+                                  'Completed: ${profile.totalProcessesCompleted}',
+                              tone: AppStatusTone.good,
+                            ),
+                            AppStatusBadge(
+                              label:
+                                  '${l10n.prodHistoryTotalAssigned}: ${profile.assignedQty}',
+                              tone: AppStatusTone.neutral,
+                            ),
+                            AppStatusBadge(
+                              label:
+                                  '${l10n.prodHistoryTotalAccepted}: ${profile.acceptedQty}',
+                              tone: AppStatusTone.good,
+                            ),
+                            if (profile.pendingInspectionQty > 0)
+                              AppStatusBadge(
+                                label:
+                                    'Pending QC: ${profile.pendingInspectionQty}',
+                                tone: AppStatusTone.pending,
+                              ),
+                            if (profile.rejectedQty > 0)
+                              AppStatusBadge(
+                                label: 'Rejected: ${profile.rejectedQty}',
+                                tone: AppStatusTone.damaged,
+                              ),
+                          ],
+                        ),
+                      ),
+                      if (profile.processHistory.isNotEmpty) ...[
+                        const SizedBox(height: AppSpacing.lg),
+                        AppHeading(
+                          l10n.prodHistoryWorkerProcessHistory,
+                          level: AppHeadingLevel.h3,
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        for (final ph in profile.processHistory)
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: AppSpacing.xs,
+                            ),
+                            child: AppCard.listItem(
+                              onTap: () => context.push(
+                                RoutePaths.processDetail(ph.processId),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: AppText(
+                                          ph.processName,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      AppText(
+                                        '${MoneyFormatter.formatQuantity(ph.acceptedQty)} / ${MoneyFormatter.formatQuantity(ph.assignedQty)} ${l10n.piecesUnit}',
+                                        variant: AppTextVariant.numeric,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                  AppText(
+                                    'Lots: ${ph.totalLots} • Earned: ${MoneyFormatter.formatPaise(ph.earnedAmountPaise)} • Pending Est: ${MoneyFormatter.formatPaise(ph.estimatedPendingPayablePaise)}',
+                                    variant: AppTextVariant.bodySmall,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                      ],
+                      if (profile.lotHistory.isNotEmpty) ...[
+                        const SizedBox(height: AppSpacing.lg),
+                        AppHeading(
+                          '${l10n.prodHistoryWorkerLotHistory} (${profile.lotHistory.length})',
+                          level: AppHeadingLevel.h3,
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        for (final item in profile.lotHistory.take(25))
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: AppSpacing.xs,
+                            ),
+                            child: AppCard.listItem(
+                              onTap: () => context.push(
+                                RoutePaths.productionTransactionDetail(
+                                  ProductionTransactionKind
+                                      .stockMovement
+                                      .routeSegment,
+                                  item.issueMovementId,
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: AppText(
+                                          '${item.lotNumber} • ${item.processName}',
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      AppStatusBadge(
+                                        label: item.isCompleted
+                                            ? 'COMPLETED'
+                                            : 'PENDING',
+                                        tone: item.isCompleted
+                                            ? AppStatusTone.good
+                                            : AppStatusTone.pending,
+                                      ),
+                                    ],
+                                  ),
+                                  AppText(
+                                    '${item.designName} • ${item.colourName} • ${AppDateTimeFormatter.formatDateTime(item.assignedAt, locale: localeCode)}',
+                                    variant: AppTextVariant.bodySmall,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  AppText(
+                                    'Given: ${item.assignedQty} • Returned: ${item.returnedQty} • Acc: ${item.totalAcceptedQty} • Pending: ${item.outstandingQty} • Rej: ${item.netRejectedQty}',
+                                    variant: AppTextVariant.bodySmall,
+                                  ),
+                                  AppText(
+                                    'Rate: ${MoneyFormatter.formatPaise(item.lockedRatePaise)}/pc • Earned: ${MoneyFormatter.formatPaise(item.earnedAmountPaise)}'
+                                    '${item.completedAt != null ? ' • Done: ${AppDateTimeFormatter.formatDate(item.completedAt!, locale: localeCode)}' : ''}',
+                                    variant: AppTextVariant.numeric,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                      ],
+                    ],
+                  );
+                },
+              ),
+              const SizedBox(height: AppSpacing.xl),
             ],
           ),
         );

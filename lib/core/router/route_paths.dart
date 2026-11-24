@@ -61,7 +61,21 @@ abstract final class RoutePaths {
   // V1.2 — Daily Production Summary
   static const String dailySummary = '/daily-summary';
 
+  // V1.4 — Complete Production History, Lot Tracking, QC Inspection & Ledger
+  static const String productionHistory = '/history';
+  static const String lotHistoryPattern = '/lots/:id/history';
+  static const String lotTimelinePattern = '/lots/:id/timeline';
+  static const String workerProductionHistory = '/history/workers';
+  static const String processProductionHistory = '/history/processes';
+  static const String inspectionQueue = '/stock/inspections';
+  static const String productionTransactionDetailPattern =
+      '/history/tx/:kind/:id';
+
   static String lotDetail(String lotId) => '/lots/$lotId';
+  static String lotHistory(String lotId) => '/lots/$lotId/history';
+  static String lotTimeline(String lotId) => '/lots/$lotId/timeline';
+  static String productionTransactionDetail(String kindSegment, String id) =>
+      '/history/tx/${Uri.encodeComponent(kindSegment)}/${Uri.encodeComponent(id)}';
   static String lotColourDetail(String lotId, String colourId) =>
       '/lots/$lotId/colours/$colourId';
   static String lotRouting(String lotId, {String? designColourId}) {

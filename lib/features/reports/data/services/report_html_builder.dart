@@ -248,6 +248,13 @@ final class ReportHtmlBuilder {
           warn: b.currentTotalPendingQty > 0,
         ),
       )
+      ..write(
+        _kpi(
+          isGu ? 'તપાસ બાકી (QC)' : 'Pending Inspection',
+          '${b.currentTotalPendingInspectionQty}',
+          warn: b.currentTotalPendingInspectionQty > 0,
+        ),
+      )
       ..write('</div>');
 
     if (b.dailyRows.isEmpty) {
@@ -294,8 +301,9 @@ final class ReportHtmlBuilder {
         '<table><thead><tr>'
         '<th>${_e(isGu ? 'કારીગર' : 'Worker')}</th>'
         '<th class="num">${_e(isGu ? 'ઇશ્યુ' : 'Issued')}</th>'
-        '<th class="num">${_e(isGu ? 'સારા પરત' : 'Good')}</th>'
-        '<th class="num">${_e(isGu ? 'નુકસાન/ઘટ' : 'Defects')}</th>'
+        '<th class="num">${_e(isGu ? 'મંજૂર' : 'Accepted')}</th>'
+        '<th class="num">${_e(isGu ? 'નુકસાન/ઘટ' : 'Rejected/Defects')}</th>'
+        '<th class="num">${_e(isGu ? 'તપાસ બાકી' : 'Pending QC')}</th>'
         '<th class="num">${_e(isGu ? 'હાલનું બાકી' : 'Curr. Pending')}</th>'
         '<th class="num">${_e(isGu ? 'સમય મજૂરી' : 'Period Labour')}</th>'
         '<th class="num">${_e(isGu ? 'ચુકવણી' : 'Paid')}</th>'
@@ -309,6 +317,7 @@ final class ReportHtmlBuilder {
         '<td class="num">${w.periodIssuedQty}</td>'
         '<td class="num">${w.periodGoodReturnedQty}</td>'
         '<td class="num">${w.periodDamagedQty + w.periodLostShortageQty}</td>'
+        '<td class="num">${w.currentPendingInspectionQty}</td>'
         '<td class="num">${w.currentPendingQty}</td>'
         '<td class="num">${_e(MoneyFormatter.formatPaise(w.periodLabourEarnedPaise))}</td>'
         '<td class="num">${_e(MoneyFormatter.formatPaise(w.periodNetPaymentsPaise))}</td>'
@@ -329,7 +338,8 @@ final class ReportHtmlBuilder {
         '<table><thead><tr>'
         '<th>${_e(isGu ? 'પ્રક્રિયા' : 'Process')}</th>'
         '<th class="num">${_e(isGu ? 'ઇશ્યુ' : 'Issued')}</th>'
-        '<th class="num">${_e(isGu ? 'પૂર્ણ (સારા)' : 'Completed')}</th>'
+        '<th class="num">${_e(isGu ? 'મંજૂર (પૂર્ણ)' : 'Accepted')}</th>'
+        '<th class="num">${_e(isGu ? 'તપાસ બાકી' : 'Pending QC')}</th>'
         '<th class="num">${_e(isGu ? 'હાલનું બાકી' : 'Curr. Pending')}</th>'
         '<th class="num">${_e(isGu ? 'સરેરાશ સમય' : 'Avg. Turnaround')}</th>'
         '<th class="num">${_e(isGu ? 'મજૂરી ખર્ચ' : 'Labour Cost')}</th>'
@@ -344,6 +354,7 @@ final class ReportHtmlBuilder {
         '<td>${_e(p.processName)}</td>'
         '<td class="num">${p.periodIssuedQty}</td>'
         '<td class="num">${p.periodGoodReturnedQty}</td>'
+        '<td class="num">${p.currentPendingInspectionQty}</td>'
         '<td class="num">${p.currentPendingQty}</td>'
         '<td class="num">${_e(turnStr)}</td>'
         '<td class="num">${_e(MoneyFormatter.formatPaise(p.periodLabourCostPaise))}</td>'
@@ -376,6 +387,13 @@ final class ReportHtmlBuilder {
           isGu ? 'કારીગર પાસે બાકી' : 'Pending w/ Workers',
           '${inv.pendingWithWorkers}',
           warn: inv.pendingWithWorkers > 0,
+        ),
+      )
+      ..write(
+        _kpi(
+          isGu ? 'તપાસ બાકી (QC)' : 'Pending Inspection',
+          '${b.currentTotalPendingInspectionQty}',
+          warn: b.currentTotalPendingInspectionQty > 0,
         ),
       )
       ..write(
@@ -439,6 +457,60 @@ final class ReportHtmlBuilder {
           '<td class="num">${c.physicalAvailableInHouse}</td>'
           '<td class="num">${c.totalPendingWithWorkers}</td>'
           '<td class="num">${c.damagedBucket}</td>'
+          '</tr>',
+        );
+      }
+      buf.write('</tbody></table>');
+    }
+
+    if (b.pendingInspectionReturns.isNotEmpty) {
+      buf.write(
+        '<h3>${_e(isGu ? 'તપાસ બાકી પરત (QC કતાર)' : 'Pending Inspection Returns (QC Queue)')}</h3>'
+        '<table><thead><tr>'
+        '<th>${_e(isGu ? 'લોટ / ડિઝાઇન / રંગ' : 'Lot / Design / Colour')}</th>'
+        '<th>${_e(isGu ? 'કારીગર' : 'Worker')}</th>'
+        '<th>${_e(isGu ? 'પ્રક્રિયા' : 'Process')}</th>'
+        '<th class="num">${_e(isGu ? 'પરત' : 'Returned')}</th>'
+        '<th class="num">${_e(isGu ? 'તપાસ બાકી' : 'Pending QC')}</th>'
+        '<th class="num">${_e(isGu ? 'દર (લોક)' : 'Locked Rate')}</th>'
+        '</tr></thead><tbody>',
+      );
+      for (final r in b.pendingInspectionReturns.take(150)) {
+        buf.write(
+          '<tr>'
+          '<td>${_e('${r.lotNumber} • ${r.designName} • ${r.colourName}')}</td>'
+          '<td>${_e(r.workerName)}</td>'
+          '<td>${_e(r.processName)}</td>'
+          '<td class="num">${r.productionReturn.returnedQuantity}</td>'
+          '<td class="num">${r.remainingPendingInspectionQty}</td>'
+          '<td class="num">${_e(MoneyFormatter.formatPaise(r.lockedRatePaise))}</td>'
+          '</tr>',
+        );
+      }
+      buf.write('</tbody></table>');
+    }
+
+    if (b.rejectionRecords.isNotEmpty) {
+      buf.write(
+        '<h3>${_e(isGu ? 'રિજેક્શન અને રિપેર ટ્રેકિંગ' : 'Rejections & Repair Tracking')}</h3>'
+        '<table><thead><tr>'
+        '<th>${_e(isGu ? 'લોટ / ડિઝાઇન / રંગ' : 'Lot / Design / Colour')}</th>'
+        '<th>${_e(isGu ? 'કારીગર / પ્રક્રિયા' : 'Worker / Process')}</th>'
+        '<th class="num">${_e(isGu ? 'રિજેક્ટ' : 'Rejected')}</th>'
+        '<th class="num">${_e(isGu ? 'ફરી મંજૂર' : 'Re-Approved')}</th>'
+        '<th class="num">${_e(isGu ? 'બાકી' : 'Remaining')}</th>'
+        '<th>${_e(isGu ? 'સ્થિતિ' : 'Status')}</th>'
+        '</tr></thead><tbody>',
+      );
+      for (final r in b.rejectionRecords.take(150)) {
+        buf.write(
+          '<tr>'
+          '<td>${_e('${r.lotNumber} • ${r.designName} • ${r.colourName}')}</td>'
+          '<td>${_e('${r.workerName} • ${r.processName}')}</td>'
+          '<td class="num">${r.record.rejectedQuantity}</td>'
+          '<td class="num">${r.totalReapprovedQty}</td>'
+          '<td class="num">${r.netRejectedQty}</td>'
+          '<td>${_e(r.record.status.dbValue)}</td>'
           '</tr>',
         );
       }

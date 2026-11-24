@@ -150,6 +150,52 @@ abstract final class SchemaIndexes {
         'ON lots(transaction_at DESC) WHERE deleted_at IS NULL;',
   ];
 
+  /// Additive indexes introduced in schema v8 (Production Returns, Quality
+  /// Inspections, Rejection Registry, and Rejection Repairs).
+  static const List<String> v8IndexStatements = [
+    'CREATE INDEX IF NOT EXISTS idx_sm_job_process '
+        'ON stock_movements(job_process_id) '
+        'WHERE job_process_id IS NOT NULL;',
+    'CREATE INDEX IF NOT EXISTS idx_pr_issue '
+        'ON production_returns(parent_issue_id, transaction_at ASC);',
+    'CREATE INDEX IF NOT EXISTS idx_pr_lot_tx '
+        'ON production_returns(lot_id, transaction_at ASC);',
+    'CREATE INDEX IF NOT EXISTS idx_pr_member_tx '
+        'ON production_returns(member_id, transaction_at DESC);',
+    'CREATE INDEX IF NOT EXISTS idx_pr_process_tx '
+        'ON production_returns(process_id, transaction_at DESC);',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_pr_client_req '
+        'ON production_returns(client_request_id) '
+        'WHERE client_request_id IS NOT NULL;',
+    'CREATE INDEX IF NOT EXISTS idx_pi_return '
+        'ON production_inspections(production_return_id, transaction_at ASC);',
+    'CREATE INDEX IF NOT EXISTS idx_pi_issue '
+        'ON production_inspections(parent_issue_id, transaction_at ASC);',
+    'CREATE INDEX IF NOT EXISTS idx_pi_repair '
+        'ON production_inspections(rejection_repair_id) '
+        'WHERE rejection_repair_id IS NOT NULL;',
+    'CREATE INDEX IF NOT EXISTS idx_pi_lot_tx '
+        'ON production_inspections(lot_id, transaction_at ASC);',
+    'CREATE INDEX IF NOT EXISTS idx_pi_member_tx '
+        'ON production_inspections(member_id, transaction_at DESC);',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_pi_client_req '
+        'ON production_inspections(client_request_id) '
+        'WHERE client_request_id IS NOT NULL;',
+    'CREATE INDEX IF NOT EXISTS idx_rr_lot_status '
+        'ON rejection_records(lot_id, status);',
+    'CREATE INDEX IF NOT EXISTS idx_rr_member_status '
+        'ON rejection_records(member_id, status);',
+    'CREATE INDEX IF NOT EXISTS idx_rr_process_status '
+        'ON rejection_records(process_id, status);',
+    'CREATE INDEX IF NOT EXISTS idx_rr_issue '
+        'ON rejection_records(parent_issue_id);',
+    'CREATE INDEX IF NOT EXISTS idx_rep_rejection '
+        'ON rejection_repairs(rejection_record_id, transaction_at ASC);',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_rep_client_req '
+        'ON rejection_repairs(client_request_id) '
+        'WHERE client_request_id IS NOT NULL;',
+  ];
+
   static const List<String> allIndexStatements = [
     ...v1IndexStatements,
     ...v2IndexStatements,
@@ -158,5 +204,6 @@ abstract final class SchemaIndexes {
     ...v5IndexStatements,
     ...v6IndexStatements,
     ...v7IndexStatements,
+    ...v8IndexStatements,
   ];
 }

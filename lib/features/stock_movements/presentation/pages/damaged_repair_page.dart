@@ -2,6 +2,7 @@ import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
+import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/validation/validation.dart';
@@ -150,6 +151,13 @@ final class _DamagedRepairPageState extends State<DamagedRepairPage> {
 
     return AppScaffold(
       title: l10n.stockRepairHeading,
+      actions: [
+        AppIconButton(
+          icon: Icons.fact_check_outlined,
+          tooltip: l10n.navInspectionQueue,
+          onPressed: () => context.push(RoutePaths.inspectionQueue),
+        ),
+      ],
       body: Form(
         key: _formKey,
         autovalidateMode: _submittedOnce

@@ -636,6 +636,13 @@ final class AppLockCubit extends Cubit<AppLockState> {
     await _syncWindowFlagSecure();
   }
 
+  Future<void> setRequireAuthForApprovals(bool enabled) async {
+    final updated = await _repository.updatePreferences(
+      requireAuthForApprovals: enabled,
+    );
+    emit(state.copyWith(settings: updated));
+  }
+
   /// Queues a validated deep-link route (e.g., from a tapped local notification).
   /// If locked, the route is held until unlock; if unlocked, consumers navigate immediately.
   void queueDeepLinkRoute(String routePath) {

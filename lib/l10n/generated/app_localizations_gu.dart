@@ -2478,4 +2478,209 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get msgTitleLoading => 'પ્રક્રિયા ચાલુ છે...';
+
+  @override
+  String get navProductionHistory => 'પ્રોડક્શન હિસ્ટ્રી';
+
+  @override
+  String get navInspectionQueue => 'QC તપાસ કતાર';
+
+  @override
+  String get navWorkerHistory => 'કારીગર પ્રોડક્શન';
+
+  @override
+  String get navProcessHistory => 'પ્રક્રિયા હિસ્ટ્રી';
+
+  @override
+  String get prodHistoryDashboardTitle => 'પ્રોડક્શન હિસ્ટ્રી';
+
+  @override
+  String get prodHistoryDashboardSubtitle =>
+      'લોટ, કારીગર, પ્રક્રિયા અને નાણાકીય ખાતાનો કાયમી રેકોર્ડ';
+
+  @override
+  String get prodHistorySearchHint =>
+      'લોટ, કારીગર, પ્રક્રિયા, ડિઝાઇન, કલર શોધો...';
+
+  @override
+  String get prodHistoryOnlyPending => 'માત્ર બાકી';
+
+  @override
+  String get prodHistoryAllEntries => 'બધી એન્ટ્રી';
+
+  @override
+  String get prodHistoryTotalAssigned => 'સોંપેલ';
+
+  @override
+  String get prodHistoryTotalReturned => 'પરત આવેલ';
+
+  @override
+  String get prodHistoryTotalAccepted => 'મંજૂર (Accepted)';
+
+  @override
+  String get prodHistoryTotalRejected => 'રિજેક્ટ / ડેમેજ';
+
+  @override
+  String get prodHistoryPendingInspection => 'તપાસ બાકી';
+
+  @override
+  String get prodHistoryOutstandingWork => 'કારીગર પાસે બાકી';
+
+  @override
+  String get prodHistoryTotalEarned => 'કુલ કમાણી';
+
+  @override
+  String get prodHistoryTotalPaid => 'કુલ ચૂકવેલ';
+
+  @override
+  String get prodHistoryOutstandingPayable => 'બાકી ચૂકવવાપાત્ર';
+
+  @override
+  String get prodHistoryLotHistoryTitle => 'સંપૂર્ણ લોટ હિસ્ટ્રી';
+
+  @override
+  String get prodHistoryLotTimelineTitle => 'લોટ ટાઇમલાઇન';
+
+  @override
+  String get prodHistoryViewLotHistory => 'લોટ હિસ્ટ્રી';
+
+  @override
+  String get prodHistoryViewTimeline => 'ટાઇમલાઇન';
+
+  @override
+  String get prodHistoryWorkerHistoryTitle => 'કારીગર પ્રોડક્શન હિસ્ટ્રી';
+
+  @override
+  String get prodHistoryWorkerLotHistory => 'કારીગર લોટ હિસ્ટ્રી';
+
+  @override
+  String get prodHistoryWorkerProcessHistory => 'પ્રક્રિયા મુજબ હિસ્ટ્રી';
+
+  @override
+  String get prodHistoryIncludeInactive => 'નિષ્ક્રિય બતાવો';
+
+  @override
+  String get prodHistoryProcessHistoryTitle => 'પ્રક્રિયા મુજબ હિસ્ટ્રી';
+
+  @override
+  String get prodHistoryProcessDetailsTitle => 'પ્રક્રિયા પ્રોડક્શન વિગત';
+
+  @override
+  String get prodHistoryTabLotWise => 'લોટ મુજબ';
+
+  @override
+  String get prodHistoryTabWorkerWise => 'કારીગર મુજબ';
+
+  @override
+  String get prodHistoryTabDateWise => 'તારીખ મુજબ';
+
+  @override
+  String get prodHistoryTabPending => 'બાકી કામ';
+
+  @override
+  String get prodHistoryInspectionQueueTitle => 'પરત અને QC તપાસ';
+
+  @override
+  String get prodHistoryTabPendingInspection => 'તપાસ બાકી';
+
+  @override
+  String get prodHistoryTabRejections => 'રિજેક્ટ અને રિપેર';
+
+  @override
+  String get prodHistoryApproveAction => 'તપાસો અને મંજૂર કરો';
+
+  @override
+  String get prodHistoryRecordRepairAction => 'રિપેર નોંધો';
+
+  @override
+  String get prodHistoryReinspectAction => 'ફરી તપાસો અને મંજૂર કરો';
+
+  @override
+  String get prodHistoryRepairSourceOriginal =>
+      'મૂળ કારીગર દ્વારા રિપેર (જૂના ભાવે કમાણી જમા)';
+
+  @override
+  String get prodHistoryRepairSourceInHouse =>
+      'ફેક્ટરી / ઇન-હાઉસ રિપેર (કારીગર કમાણી નહીં)';
+
+  @override
+  String get prodHistoryReturnModePending =>
+      'તપાસ બાકી તરીકે નોંધો (QC મંજૂરી સુધી ₹0)';
+
+  @override
+  String get prodHistoryReturnModeImmediate =>
+      'પરત અને તરત તપાસ (મંજૂર જથ્થા પર કમાણી)';
+
+  @override
+  String get prodHistoryTxDetailTitle => 'ટ્રાન્ઝેક્શન વિગત';
+
+  @override
+  String get prodHistoryOpenLot => 'લોટ ખોલો';
+
+  @override
+  String get prodHistoryOpenWorker => 'કારીગર ખોલો';
+
+  @override
+  String get prodHistoryOpenProcess => 'પ્રક્રિયા ખોલો';
+
+  @override
+  String get prodHistoryLockedRateSnapshot => 'લોક થયેલ ભાવ';
+
+  @override
+  String get prodHistoryAuditTrail => 'ઓડિટ ટ્રેઇલ';
+
+  @override
+  String get prodHistoryRelatedRecords => 'સંકળાયેલા ટ્રાન્ઝેક્શન';
+
+  @override
+  String get prodHistoryInitialAssignmentsTitle =>
+      '3. પ્રારંભિક પ્રક્રિયા સોંપણી (વૈકલ્પિક)';
+
+  @override
+  String get prodHistoryInitialAssignmentsSubtitle =>
+      'લોટ બનાવતી વખતે પ્રક્રિયા, કારીગર, જથ્થો અને ભાવ સીધા સોંપો.';
+
+  @override
+  String get prodHistoryAddAssignmentAction => 'સોંપણી ઉમેરો';
+
+  @override
+  String get prodHistoryApprovalAuthTitle => 'મંજૂરી પ્રમાણિત કરો';
+
+  @override
+  String get prodHistoryApprovalAuthSubtitle =>
+      'મંજૂર જથ્થો અને કારીગર કમાણી નોંધવા PIN અથવા બાયોમેટ્રિક ચકાસો.';
+
+  @override
+  String get securityRequireApprovalAuthLabel => 'મંજૂરી માટે PIN ફરજિયાત';
+
+  @override
+  String get securityRequireApprovalAuthSubtitle =>
+      'પરત અથવા રિપેર જથ્થો મંજૂર કરતી વખતે PIN/બાયોમેટ્રિક પૂછો.';
+
+  @override
+  String get settingsFinalPaymentRuleTitle => 'અંતિમ મજૂરી નિયમ (સક્રિય)';
+
+  @override
+  String get settingsFinalPaymentRuleBody =>
+      'કારીગરની કમાણી માત્ર મંજૂર જથ્થો × સોંપેલ સમયે લોક કરેલ ભાવ મુજબ ગણાય છે. જૂના GIVEN_QTY અને ડેમેજ મજૂરી નિયમો નવી એન્ટ્રી માટે બંધ છે; જૂનો રેકોર્ડ સુરક્ષિત રહેશે.';
+
+  @override
+  String get validationExceedsPendingInspection =>
+      'તપાસેલ જથ્થો બાકી તપાસ જથ્થા કરતાં વધુ છે.';
+
+  @override
+  String get validationExceedsReturnedQty =>
+      'મંજૂર + રિજેક્ટ જથ્થો પરત જથ્થા કરતાં વધુ ન હોઈ શકે.';
+
+  @override
+  String get validationExceedsRejectedQty =>
+      'જથ્થો બાકી રિજેક્ટ જથ્થા કરતાં વધુ ન હોઈ શકે.';
+
+  @override
+  String get validationExceedsRepairedQty =>
+      'ફરી તપાસેલ જથ્થો બાકી રિપેર જથ્થા કરતાં વધુ ન હોઈ શકે.';
+
+  @override
+  String get validationLotUnreconciled =>
+      'કારીગર પાસે બાકી અથવા QC તપાસ બાકી હોય ત્યારે લોટ પૂર્ણ કરી શકાય નહીં.';
 }

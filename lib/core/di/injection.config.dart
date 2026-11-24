@@ -83,6 +83,22 @@ import 'package:business_manager/features/processes/presentation/bloc/process_de
     as _i515;
 import 'package:business_manager/features/processes/presentation/bloc/process_list_cubit.dart'
     as _i531;
+import 'package:business_manager/features/production_history/data/repositories/production_history_repository_impl.dart'
+    as _i25;
+import 'package:business_manager/features/production_history/domain/repositories/production_history_repository.dart'
+    as _i995;
+import 'package:business_manager/features/production_history/presentation/bloc/inspection_queue_cubit.dart'
+    as _i510;
+import 'package:business_manager/features/production_history/presentation/bloc/lot_history_cubit.dart'
+    as _i789;
+import 'package:business_manager/features/production_history/presentation/bloc/process_history_cubit.dart'
+    as _i937;
+import 'package:business_manager/features/production_history/presentation/bloc/production_history_dashboard_cubit.dart'
+    as _i232;
+import 'package:business_manager/features/production_history/presentation/bloc/transaction_detail_cubit.dart'
+    as _i152;
+import 'package:business_manager/features/production_history/presentation/bloc/worker_production_history_cubit.dart'
+    as _i1049;
 import 'package:business_manager/features/rates/data/repositories/rate_repository_impl.dart'
     as _i610;
 import 'package:business_manager/features/rates/domain/repositories/rate_repository.dart'
@@ -256,6 +272,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i656.IdGenerator>(),
       ),
     );
+    gh.lazySingleton<_i995.ProductionHistoryRepository>(
+      () => _i25.ProductionHistoryRepositoryImpl(
+        gh<_i177.AppDatabase>(),
+        gh<_i665.DatabaseTransactionRunner>(),
+        gh<_i656.IdGenerator>(),
+      ),
+    );
     gh.lazySingleton<_i315.ColourMasterRepository>(
       () => _i1065.ColourMasterRepositoryImpl(
         gh<_i177.AppDatabase>(),
@@ -341,6 +364,29 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i177.AppDatabase>(),
         gh<_i306.StockMovementRepository>(),
         gh<_i762.AccountingRepository>(),
+      ),
+    );
+    gh.factory<_i510.InspectionQueueCubit>(
+      () => _i510.InspectionQueueCubit(gh<_i995.ProductionHistoryRepository>()),
+    );
+    gh.factory<_i789.LotHistoryCubit>(
+      () => _i789.LotHistoryCubit(gh<_i995.ProductionHistoryRepository>()),
+    );
+    gh.factory<_i937.ProcessHistoryCubit>(
+      () => _i937.ProcessHistoryCubit(gh<_i995.ProductionHistoryRepository>()),
+    );
+    gh.factory<_i232.ProductionHistoryDashboardCubit>(
+      () => _i232.ProductionHistoryDashboardCubit(
+        gh<_i995.ProductionHistoryRepository>(),
+      ),
+    );
+    gh.factory<_i152.TransactionDetailCubit>(
+      () =>
+          _i152.TransactionDetailCubit(gh<_i995.ProductionHistoryRepository>()),
+    );
+    gh.factory<_i1049.WorkerProductionHistoryCubit>(
+      () => _i1049.WorkerProductionHistoryCubit(
+        gh<_i995.ProductionHistoryRepository>(),
       ),
     );
     gh.factory<_i685.JobRoutingCubit>(

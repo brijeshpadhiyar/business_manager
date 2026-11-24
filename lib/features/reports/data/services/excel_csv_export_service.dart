@@ -253,6 +253,9 @@ final class ExcelCsvExportService implements ReportExportService {
         _inventoryColoursSheet(bundle, isGu: isGu),
         _labourSheet(bundle, isGu: isGu),
         _paymentsSheet(bundle, isGu: isGu),
+        _productionHistorySheet(bundle, isGu: isGu),
+        _pendingInspectionSheet(bundle, isGu: isGu),
+        _rejectionsSheet(bundle, isGu: isGu),
       ];
     }
 
@@ -324,8 +327,9 @@ final class ExcelCsvExportService implements ReportExportService {
           ? const [
               'કારીગર',
               'ઇશ્યુ',
-              'સારા પરત',
-              'નુકસાન',
+              'મંજૂર (Accepted)',
+              'રિજેક્ટ / નુકસાન',
+              'તપાસ બાકી',
               'ગુમ/ઘટ',
               'હાલનું બાકી',
               'સમય મજૂરી (₹)',
@@ -336,14 +340,15 @@ final class ExcelCsvExportService implements ReportExportService {
           : const [
               'Worker',
               'Period Issued',
-              'Period Good Returned',
-              'Period Damaged',
+              'Accepted Qty',
+              'Rejected / Damaged Qty',
+              'Pending Inspection Qty',
               'Period Lost & Shortage',
-              'Current Pending Qty',
-              'Period Labour Cost (INR)',
-              'Period Net Payments (INR)',
-              'Current Outstanding Payable (INR)',
-              'Current Advance Credit (INR)',
+              'Current Outstanding Qty',
+              'Earned Amount (INR)',
+              'Paid Amount (INR)',
+              'Outstanding Payable (INR)',
+              'Advance Credit (INR)',
             ],
       rows: [
         for (final w in b.workerPerformance)
@@ -352,6 +357,7 @@ final class ExcelCsvExportService implements ReportExportService {
             w.periodIssuedQty,
             w.periodGoodReturnedQty,
             w.periodDamagedQty,
+            w.currentPendingInspectionQty,
             w.periodLostShortageQty,
             w.currentPendingQty,
             w.periodLabourEarnedPaise / 100.0,
@@ -373,8 +379,9 @@ final class ExcelCsvExportService implements ReportExportService {
           ? const [
               'પ્રક્રિયા',
               'ઇશ્યુ',
-              'પૂર્ણ (સારા)',
-              'નુકસાન',
+              'મંજૂર (Accepted)',
+              'રિજેક્ટ / નુકસાન',
+              'તપાસ બાકી',
               'ગુમ/ઘટ',
               'હાલનું બાકી',
               'સરેરાશ સમય (કલાક)',
@@ -384,13 +391,14 @@ final class ExcelCsvExportService implements ReportExportService {
           : const [
               'Process',
               'Period Issued',
-              'Period Completed (Good)',
-              'Period Damaged',
+              'Accepted Qty',
+              'Rejected / Damaged Qty',
+              'Pending Inspection Qty',
               'Period Lost & Shortage',
-              'Current Pending Qty',
+              'Current Outstanding Qty',
               'Avg Completion Hours',
               'Settled Issues Count',
-              'Period Labour Cost (INR)',
+              'Production Cost (INR)',
             ],
       rows: [
         for (final p in b.processPerformance)
@@ -399,6 +407,7 @@ final class ExcelCsvExportService implements ReportExportService {
             p.periodIssuedQty,
             p.periodGoodReturnedQty,
             p.periodDamagedQty,
+            p.currentPendingInspectionQty,
             p.periodLostShortageQty,
             p.currentPendingQty,
             p.averageTurnaroundHours != null
@@ -575,6 +584,158 @@ final class ExcelCsvExportService implements ReportExportService {
             p.payment.paymentMode.dbValue,
             p.payment.amountPaise / 100.0,
             p.payment.referenceNo ?? p.payment.notes ?? '',
+          ],
+      ],
+    );
+  }
+
+  static ExportSheetData _productionHistorySheet(
+    AdvancedReportsBundle b, {
+    required bool isGu,
+  }) {
+    return ExportSheetData(
+      name: isGu ? 'પ્રોડક્શન_હિસ્ટ્રી' : 'Production_History',
+      headers: isGu
+          ? const [
+              'તારીખ (IST)',
+              'લોટ',
+              'ડિઝાઇન',
+              'રંગ',
+              'પ્રક્રિયા',
+              'કારીગર',
+              'સોંપેલ',
+              'પરત',
+              'મંજૂર',
+              'તપાસ બાકી',
+              'રિજેક્ટ',
+              'બાકી',
+              'લોક દર (₹)',
+              'કમાણી (₹)',
+              'સ્થિતિ',
+            ]
+          : const [
+              'Assigned Date (IST)',
+              'Lot',
+              'Design',
+              'Colour',
+              'Process',
+              'Worker',
+              'Assigned Qty',
+              'Returned Qty',
+              'Accepted Qty',
+              'Pending Inspection',
+              'Rejected Qty',
+              'Outstanding Qty',
+              'Locked Rate (INR)',
+              'Earned Amount (INR)',
+              'Status',
+            ],
+      rows: [
+        for (final a in b.productionHistoryRows)
+          [
+            IstDateTimeHelper.toIstBusinessDate(a.assignedAt),
+            a.lotNumber,
+            a.designName,
+            a.colourName,
+            a.processName,
+            a.workerName,
+            a.assignedQty,
+            a.returnedQty,
+            a.totalAcceptedQty,
+            a.pendingInspectionQty,
+            a.netRejectedQty,
+            a.outstandingQty,
+            a.lockedRatePaise / 100.0,
+            a.earnedAmountPaise / 100.0,
+            a.isCompleted ? 'COMPLETED' : 'IN_PROGRESS',
+          ],
+      ],
+    );
+  }
+
+  static ExportSheetData _pendingInspectionSheet(
+    AdvancedReportsBundle b, {
+    required bool isGu,
+  }) {
+    return ExportSheetData(
+      name: isGu ? 'તપાસ_બાકી_પરત' : 'Pending_QC_Returns',
+      headers: isGu
+          ? const [
+              'પરત તારીખ',
+              'લોટ',
+              'પ્રક્રિયા',
+              'કારીગર',
+              'પરત જથ્થો',
+              'તપાસ બાકી',
+              'લોક દર (₹)',
+            ]
+          : const [
+              'Return Date (IST)',
+              'Lot',
+              'Process',
+              'Worker',
+              'Returned Qty',
+              'Pending Inspection Qty',
+              'Locked Rate (INR)',
+            ],
+      rows: [
+        for (final r in b.pendingInspectionReturns)
+          [
+            IstDateTimeHelper.toIstBusinessDate(
+              r.productionReturn.transactionAt,
+            ),
+            r.lotNumber,
+            r.processName,
+            r.workerName,
+            r.productionReturn.returnedQuantity,
+            r.remainingPendingInspectionQty,
+            r.lockedRatePaise / 100.0,
+          ],
+      ],
+    );
+  }
+
+  static ExportSheetData _rejectionsSheet(
+    AdvancedReportsBundle b, {
+    required bool isGu,
+  }) {
+    return ExportSheetData(
+      name: isGu ? 'રિજેક્ટ_અને_રિપેર' : 'Rejections_Repairs',
+      headers: isGu
+          ? const [
+              'તપાસ તારીખ',
+              'લોટ',
+              'પ્રક્રિયા',
+              'કારીગર',
+              'રિજેક્ટ',
+              'ફરી મંજૂર',
+              'બાકી ખુલ્લા',
+              'કારણ',
+              'સ્થિતિ',
+            ]
+          : const [
+              'Inspection Date (IST)',
+              'Lot',
+              'Process',
+              'Worker',
+              'Rejected Qty',
+              'Re-Approved Qty',
+              'Open Unrepaired Qty',
+              'Rejection Reason',
+              'Status',
+            ],
+      rows: [
+        for (final r in b.rejectionRecords)
+          [
+            IstDateTimeHelper.toIstBusinessDate(r.record.inspectedAt),
+            r.lotNumber,
+            r.processName,
+            r.workerName,
+            r.record.rejectedQuantity,
+            r.totalReapprovedQty,
+            r.openUnrepairedQty,
+            r.record.rejectionReason,
+            r.record.status.dbValue,
           ],
       ],
     );

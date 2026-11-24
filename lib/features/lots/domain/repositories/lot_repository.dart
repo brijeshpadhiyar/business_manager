@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
+import 'package:business_manager/features/production_history/domain/entities/production_history_entities.dart';
 
 /// Immutable draft colour variant input for atomic Lot or Design creation.
 final class LotColourDraftInput {
@@ -49,15 +50,16 @@ abstract interface class LotRepository {
     required int transactionAtUtcMillis,
   });
 
-  /// Creates a Lot together with zero, one, or multiple Designs and their
-  /// Colour variants + prices inside a single atomic database transaction
-  /// (zero partial saves on validation or constraint error).
+  /// Creates a Lot together with zero, one, or multiple Designs, their Colour
+  /// variants + SKU prices, and optional initial Process Assignments (Phase 5)
+  /// inside a single atomic database transaction.
   Future<LotEntity> createLotComplete({
     required String lotNumber,
     String? title,
     String? notes,
     required int transactionAtUtcMillis,
     required List<LotDesignDraftInput> designs,
+    List<InitialLotProcessAssignmentInput> initialAssignments = const [],
   });
 
   Future<LotEntity> updateLot({

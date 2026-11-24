@@ -321,6 +321,15 @@ final class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
                             .read<AppLockCubit>()
                             .setScreenshotProtectionEnabled(v),
                       ),
+                      const Divider(),
+                      AppSwitch(
+                        label: l10n.securityRequireApprovalAuthLabel,
+                        subtitle: l10n.securityRequireApprovalAuthSubtitle,
+                        value: settings.requireAuthForApprovals,
+                        onChanged: (v) => context
+                            .read<AppLockCubit>()
+                            .setRequireAuthForApprovals(v),
+                      ),
                     ],
                   ),
                 ),

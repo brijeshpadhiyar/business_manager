@@ -82,6 +82,7 @@ final class SecuritySettings {
     this.biometricEnabled = false,
     this.timeout = LockTimeoutOption.minute1,
     this.screenshotProtectionEnabled = true,
+    this.requireAuthForApprovals = true,
     this.failedAttempts = 0,
     this.lockoutUntilUtcMillis,
     this.lastBackgroundedUtcMillis,
@@ -94,6 +95,7 @@ final class SecuritySettings {
   final bool biometricEnabled;
   final LockTimeoutOption timeout;
   final bool screenshotProtectionEnabled;
+  final bool requireAuthForApprovals;
   final int failedAttempts;
   final int? lockoutUntilUtcMillis;
   final int? lastBackgroundedUtcMillis;
@@ -106,6 +108,7 @@ final class SecuritySettings {
     bool? biometricEnabled,
     LockTimeoutOption? timeout,
     bool? screenshotProtectionEnabled,
+    bool? requireAuthForApprovals,
     int? failedAttempts,
     int? lockoutUntilUtcMillis,
     bool clearLockout = false,
@@ -121,6 +124,8 @@ final class SecuritySettings {
       timeout: timeout ?? this.timeout,
       screenshotProtectionEnabled:
           screenshotProtectionEnabled ?? this.screenshotProtectionEnabled,
+      requireAuthForApprovals:
+          requireAuthForApprovals ?? this.requireAuthForApprovals,
       failedAttempts: failedAttempts ?? this.failedAttempts,
       lockoutUntilUtcMillis: clearLockout
           ? null

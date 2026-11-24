@@ -816,6 +816,30 @@ final class _LotDetailView extends StatelessWidget {
                         onPressed: () =>
                             context.push(RoutePaths.lotRouting(lotId)),
                       ),
+                      const SizedBox(height: AppSpacing.sm),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: AppButton(
+                              label: l10n.prodHistoryViewLotHistory,
+                              icon: Icons.history_rounded,
+                              variant: AppButtonVariant.secondary,
+                              onPressed: () =>
+                                  context.push(RoutePaths.lotHistory(lotId)),
+                            ),
+                          ),
+                          const SizedBox(width: AppSpacing.sm),
+                          Expanded(
+                            child: AppButton(
+                              label: l10n.prodHistoryViewTimeline,
+                              icon: Icons.timeline_rounded,
+                              variant: AppButtonVariant.outlined,
+                              onPressed: () =>
+                                  context.push(RoutePaths.lotTimeline(lotId)),
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),

@@ -16,6 +16,9 @@ import 'package:business_manager/features/accounting/domain/calculators/labour_c
 import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
 import 'package:business_manager/features/processes/domain/entities/process_entities.dart';
 import 'package:business_manager/features/processes/domain/repositories/process_repository.dart';
+import 'package:business_manager/features/production_history/domain/entities/production_history_entities.dart';
+import 'package:business_manager/features/production_history/domain/repositories/production_history_repository.dart';
+import 'package:business_manager/features/security/presentation/widgets/security_reauth_dialog.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 import 'package:business_manager/features/stock_movements/domain/repositories/stock_movement_repository.dart';
 import 'package:flutter/services.dart';
@@ -52,6 +55,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
   final _reasonFocus = FocusNode();
 
   final _repo = getIt<StockMovementRepository>();
+  final _prodHistoryRepo = getIt<ProductionHistoryRepository>();
   final _processRepo = getIt<ProcessRepository>();
   final _idGen = getIt<IdGenerator>();
   static const LabourCalculator _labourCalc = LabourCalculator();
@@ -60,6 +64,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
 
   OpenIssueSummary? _detail;
   List<ProcessEntity> _otherActiveProcesses = const [];
+  ProductionReturnMode _returnMode = ProductionReturnMode.immediateInspection;
   bool _loading = true;
   bool _saving = false;
   bool _submittedOnce = false;
@@ -216,6 +221,69 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
     final damaged = _qtyOf(_damagedCtrl);
     final lost = _qtyOf(_lostCtrl);
     final shortage = _qtyOf(_shortageCtrl);
+
+    if (_returnMode == ProductionReturnMode.pendingInspection) {
+      if (good <= 0) {
+        setState(() => _submitError = l10n.stockSettlementEmptyError);
+        return;
+      }
+      if (good > _detail!.remainingPending) {
+        setState(() => _submitError = l10n.stockSettlementTotalExceedsError);
+        return;
+      }
+      setState(() {
+        _saving = true;
+        _submitError = null;
+      });
+      try {
+        final res = await _prodHistoryRepo.recordProductionReturn(
+          parentIssueId: widget.issueId,
+          returnedQuantity: good,
+          transactionAtUtcMillis: _transactionAtUtc,
+          inspectImmediately: false,
+          notes: _notesCtrl.text,
+          clientRequestId: _clientRequestId,
+        );
+        final refreshed = await _repo.getIssueDetail(widget.issueId);
+        if (!mounted) return;
+        setState(() {
+          _saving = false;
+          _detail = refreshed ?? _detail;
+          _successInfo = _ReturnSuccessInfo(
+            designColourId: _detail!.issueView.movement.designColourId,
+            lotNumber: _detail!.issueView.lotNumber,
+            designName: _detail!.issueView.designName,
+            colourName: _detail!.issueView.colourName,
+            workerName: _detail!.issueView.workerName ?? '-',
+            processName: _detail!.issueView.processName ?? '-',
+            goodQty: 0,
+            damagedQty: 0,
+            lostQty: 0,
+            shortageQty: 0,
+            updatedPending: res.remainingOutstandingQty,
+            labourEarnedPaise: 0,
+          );
+        });
+        AppFeedback.showSuccess(
+          context,
+          'Logged $good pcs as Pending QC Inspection (₹0 until QC approves).',
+        );
+      } on DomainValidationException catch (e) {
+        if (!mounted) return;
+        setState(() {
+          _saving = false;
+          _submitError = ValidationLocalizer.localizeDomainException(l10n, e);
+        });
+      } catch (e) {
+        if (!mounted) return;
+        setState(() {
+          _saving = false;
+          _submitError = e.toString();
+        });
+      }
+      return;
+    }
+
     final total = good + damaged + lost + shortage;
 
     if (total <= 0) {
@@ -230,6 +298,18 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
         _reasonCtrl.text.trim().isEmpty) {
       setState(() => _submitError = l10n.stockSettlementReasonRequiredError);
       return;
+    }
+
+    // Rule 6: Require PIN/Biometric authorization before approving accepted qty
+    bool authorizedViaPin = false;
+    if (good > 0 || damaged > 0) {
+      final auth = await SecurityReauthDialog.verifyForApproval(
+        context,
+        title: l10n.prodHistoryApprovalAuthTitle,
+        subtitle: l10n.prodHistoryApprovalAuthSubtitle,
+      );
+      if (!auth.approved || !mounted) return;
+      authorizedViaPin = auth.authorizedViaPin;
     }
 
     setState(() {
@@ -247,6 +327,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
         transactionAtUtcMillis: _transactionAtUtc,
         reason: _reasonCtrl.text,
         notes: _notesCtrl.text,
+        authorizedViaPin: authorizedViaPin,
         clientRequestId: _clientRequestId,
       );
 
@@ -495,6 +576,29 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.md),
+                    // Flexible 2-Stage Return Mode selector (Rule 2 & Rule 6)
+                    AppRadio<ProductionReturnMode>(
+                      groupValue: _returnMode,
+                      onChanged: (mode) {
+                        if (mode != null) {
+                          setState(() {
+                            _returnMode = mode;
+                            _submitError = null;
+                          });
+                        }
+                      },
+                      options: [
+                        AppRadioOption(
+                          value: ProductionReturnMode.immediateInspection,
+                          label: l10n.prodHistoryReturnModeImmediate,
+                        ),
+                        AppRadioOption(
+                          value: ProductionReturnMode.pendingInspection,
+                          label: l10n.prodHistoryReturnModePending,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
                     Wrap(
                       spacing: AppSpacing.xs,
                       runSpacing: AppSpacing.xs,

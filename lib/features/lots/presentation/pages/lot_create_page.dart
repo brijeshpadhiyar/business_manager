@@ -10,6 +10,11 @@ import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/lots/domain/repositories/lot_repository.dart';
 import 'package:business_manager/features/lots/presentation/widgets/visual_colour_picker_sheet.dart';
 import 'package:business_manager/features/process_routing/domain/entities/process_routing_entities.dart';
+import 'package:business_manager/features/processes/domain/entities/process_entities.dart';
+import 'package:business_manager/features/processes/domain/repositories/process_repository.dart';
+import 'package:business_manager/features/production_history/domain/entities/production_history_entities.dart';
+import 'package:business_manager/features/workers/domain/entities/worker_entities.dart';
+import 'package:business_manager/features/workers/domain/repositories/worker_repository.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -95,6 +100,8 @@ final class _DesignBlockState {
 
 final class _LotCreatePageState extends State<LotCreatePage> {
   final _lotRepo = getIt<LotRepository>();
+  final _processRepo = getIt<ProcessRepository>();
+  final _workerRepo = getIt<WorkerRepository>();
   final _formKey = GlobalKey<FormState>();
   final _numberFieldKey = GlobalKey<FormFieldState<String>>();
   final _titleFieldKey = GlobalKey<FormFieldState<String>>();
@@ -125,6 +132,11 @@ final class _LotCreatePageState extends State<LotCreatePage> {
   final List<_DesignBlockState> _designs = [];
   final List<_ColourVariantRowState> _colourOnlyVariants = [];
 
+  // Optional Phase 5 Initial Process Assignments
+  List<ProcessEntity> _activeProcesses = const [];
+  List<WorkerEntity> _activeWorkers = const [];
+  final List<InitialLotProcessAssignmentInput> _initialAssignments = [];
+
   int _seq = 0;
   bool _submittedOnce = false;
   bool _isSaving = false;
@@ -138,13 +150,197 @@ final class _LotCreatePageState extends State<LotCreatePage> {
 
   Future<void> _loadDesignSuggestions() async {
     try {
-      final names = await _lotRepo.getDistinctDesignNames();
+      final results = await Future.wait([
+        _lotRepo.getDistinctDesignNames(),
+        _processRepo.getProcesses(isActiveFilter: true),
+        _workerRepo.getWorkers(isActiveFilter: true),
+      ]);
       if (!mounted) return;
       setState(() {
-        _knownDesignNames = names;
+        _knownDesignNames = results[0] as List<String>;
+        _activeProcesses = results[1] as List<ProcessEntity>;
+        _activeWorkers = results[2] as List<WorkerEntity>;
       });
     } catch (_) {
       // Non-blocking suggestion load
+    }
+  }
+
+  Future<void> _showAddInitialAssignmentSheet() async {
+    final skuOptions = <({String designName, String colourName, int qty})>[
+      if (_useDesigns)
+        for (final d in _designs)
+          for (final c in d.colours)
+            (designName: d.designName, colourName: c.colourName, qty: c.quantity)
+      else
+        for (final c in _colourOnlyVariants)
+          (
+            designName: kColourOnlyDesignSentinel,
+            colourName: c.colourName,
+            qty: c.quantity,
+          ),
+    ];
+    if (skuOptions.isEmpty ||
+        _activeProcesses.isEmpty ||
+        _activeWorkers.isEmpty) {
+      AppFeedback.showError(
+        context,
+        'Add at least one colour variant, active process, and active worker first.',
+      );
+      return;
+    }
+
+    var selectedSkuIdx = 0;
+    var selectedProcId = _activeProcesses.first.id;
+    var selectedWorkerId = _activeWorkers.first.id;
+    final qtyCtrl = TextEditingController(text: '${skuOptions.first.qty}');
+    final rateCtrl = TextEditingController(
+      text: MoneyFormatter.formatPaiseForInput(
+        _activeProcesses.first.defaultRatePaise,
+      ),
+    );
+    final notesCtrl = TextEditingController();
+    String? err;
+
+    try {
+      await AppBottomSheet.show<void>(
+        context,
+        title: context.l10n.prodHistoryAddAssignmentAction,
+        builder: (sheetCtx) => StatefulBuilder(
+          builder: (ctx, setSheetState) => SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                AppDropdown<int>(
+                  label: 'Design / Colour Variant',
+                  value: selectedSkuIdx,
+                  items: List<int>.generate(skuOptions.length, (i) => i),
+                  itemLabelBuilder: (i) {
+                    final s = skuOptions[i];
+                    return '${formatVariantLabel(s.designName, s.colourName)} (${s.qty} pcs)';
+                  },
+                  onChanged: (v) {
+                    if (v != null) {
+                      setSheetState(() {
+                        selectedSkuIdx = v;
+                        qtyCtrl.text = '${skuOptions[v].qty}';
+                      });
+                    }
+                  },
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                AppDropdown<String>(
+                  label: context.l10n.navProcesses,
+                  value: selectedProcId,
+                  items: _activeProcesses.map((p) => p.id).toList(),
+                  itemLabelBuilder: (id) =>
+                      _activeProcesses.firstWhere((p) => p.id == id).name,
+                  onChanged: (v) {
+                    if (v != null) {
+                      final proc = _activeProcesses.firstWhere((p) => p.id == v);
+                      setSheetState(() {
+                        selectedProcId = v;
+                        rateCtrl.text = MoneyFormatter.formatPaiseForInput(
+                          proc.defaultRatePaise,
+                        );
+                      });
+                    }
+                  },
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                AppDropdown<String>(
+                  label: context.l10n.navWorkers,
+                  value: selectedWorkerId,
+                  items: _activeWorkers.map((w) => w.id).toList(),
+                  itemLabelBuilder: (id) =>
+                      _activeWorkers.firstWhere((w) => w.id == id).name,
+                  onChanged: (v) {
+                    if (v != null) setSheetState(() => selectedWorkerId = v);
+                  },
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                Row(
+                  children: [
+                    Expanded(
+                      child: AppTextField(
+                        controller: qtyCtrl,
+                        label: 'Qty (pcs)',
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: AppTextField(
+                        controller: rateCtrl,
+                        label: 'Locked Rate (₹/pc)',
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        inputFormatters: [AppInputFormatters.currencyDecimal],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                AppTextField(
+                  controller: notesCtrl,
+                  label: context.l10n.stockNotesLabel,
+                ),
+                if (err != null) ...[
+                  const SizedBox(height: AppSpacing.xs),
+                  AppText(err!, color: Theme.of(ctx).colorScheme.error),
+                ],
+                const SizedBox(height: AppSpacing.md),
+                AppButton(
+                  label: context.l10n.prodHistoryAddAssignmentAction,
+                  icon: Icons.add_task_rounded,
+                  isExpanded: true,
+                  onPressed: () {
+                    final qty = int.tryParse(qtyCtrl.text.trim()) ?? 0;
+                    final parsedRate = AppValidators.parseRupeesToPaiseExact(
+                      rateCtrl.text,
+                      isRequired: false,
+                      allowZero: true,
+                    );
+                    if (qty <= 0) {
+                      setSheetState(() => err = 'Enter a positive quantity.');
+                      return;
+                    }
+                    if (!parsedRate.validation.isValid ||
+                        parsedRate.paise == null) {
+                      setSheetState(() => err = 'Enter a valid rate.');
+                      return;
+                    }
+                    final sku = skuOptions[selectedSkuIdx];
+                    setState(() {
+                      _initialAssignments.add(
+                        InitialLotProcessAssignmentInput(
+                          designName: sku.designName,
+                          colourName: sku.colourName,
+                          processId: selectedProcId,
+                          workerId: selectedWorkerId,
+                          quantity: qty,
+                          agreedRatePaise: parsedRate.paise!,
+                          notes: notesCtrl.text,
+                        ),
+                      );
+                    });
+                    Navigator.of(sheetCtx).pop();
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    } finally {
+      qtyCtrl.dispose();
+      rateCtrl.dispose();
+      notesCtrl.dispose();
     }
   }
 
@@ -454,6 +650,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
         notes: _notesCtrl.text,
         transactionAtUtcMillis: _txDateUtc,
         designs: designDrafts,
+        initialAssignments: _initialAssignments,
       );
       if (!mounted) return;
       AppFeedback.showSuccess(
@@ -849,6 +1046,81 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                             c.dispose();
                           }),
                         ),
+                  ],
+                ],
+              ),
+            ),
+
+            // Section 3: Optional Initial Process Assignments (Phase 5)
+            const SizedBox(height: AppSpacing.md),
+            AppCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppHeading(
+                              l10n.prodHistoryInitialAssignmentsTitle,
+                              level: AppHeadingLevel.h3,
+                            ),
+                            AppText(
+                              l10n.prodHistoryInitialAssignmentsSubtitle,
+                              variant: AppTextVariant.bodySmall,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ],
+                        ),
+                      ),
+                      AppButton(
+                        label: l10n.prodHistoryAddAssignmentAction,
+                        icon: Icons.add_task_rounded,
+                        variant: AppButtonVariant.secondary,
+                        onPressed: _totalColoursCount > 0
+                            ? _showAddInitialAssignmentSheet
+                            : null,
+                      ),
+                    ],
+                  ),
+                  if (_initialAssignments.isNotEmpty) ...[
+                    const SizedBox(height: AppSpacing.sm),
+                    for (var i = 0; i < _initialAssignments.length; i++)
+                      Builder(
+                        builder: (context) {
+                          final a = _initialAssignments[i];
+                          final pName = _activeProcesses
+                              .where((p) => p.id == a.processId)
+                              .firstOrNull
+                              ?.name ??
+                              a.processId;
+                          final wName = _activeWorkers
+                              .where((w) => w.id == a.workerId)
+                              .firstOrNull
+                              ?.name ??
+                              a.workerId;
+                          return ListTile(
+                            dense: true,
+                            contentPadding: EdgeInsets.zero,
+                            leading: const Icon(
+                              Icons.precision_manufacturing_outlined,
+                            ),
+                            title: Text('$pName • $wName'),
+                            subtitle: Text(
+                              '${formatVariantLabel(a.designName, a.colourName)} • ${a.quantity} pcs @ ${MoneyFormatter.formatPaise(a.agreedRatePaise)}/pc',
+                            ),
+                            trailing: AppIconButton(
+                              icon: Icons.close_rounded,
+                              tooltip: 'Remove',
+                              onPressed: () => setState(
+                                () => _initialAssignments.removeAt(i),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                   ],
                 ],
               ),
