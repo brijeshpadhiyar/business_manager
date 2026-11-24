@@ -4,6 +4,7 @@ import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/domain_label_localizer.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
+import 'package:business_manager/core/utils/app_date_time_formatter.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
@@ -615,8 +616,7 @@ final class _ReportsViewState extends State<_ReportsView> {
 
   String _formatTurnaround(double? hours, String naLabel) {
     if (hours == null) return naLabel;
-    if (hours >= 24) return '${(hours / 24).toStringAsFixed(1)}d';
-    return '${hours.toStringAsFixed(1)}h';
+    return AppDateTimeFormatter.formatDurationHours(hours);
   }
 
   // ---------------------------------------------------------------------------

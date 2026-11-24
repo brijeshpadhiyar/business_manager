@@ -1,3 +1,4 @@
+import 'package:business_manager/core/utils/app_date_time_formatter.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/features/rates/domain/entities/rate_entities.dart';
 
@@ -36,10 +37,7 @@ final class MemberProcessRateResolver {
       int.parse(parts[1]),
       int.parse(parts[2]),
     ).subtract(const Duration(days: 1));
-    final y = dt.year.toString().padLeft(4, '0');
-    final m = dt.month.toString().padLeft(2, '0');
-    final d = dt.day.toString().padLeft(2, '0');
-    return '$y-$m-$d';
+    return AppDateTimeFormatter.toIsoDate(dt);
   }
 
   /// Returns `true` iff two closed/half-open inclusive ISO date intervals

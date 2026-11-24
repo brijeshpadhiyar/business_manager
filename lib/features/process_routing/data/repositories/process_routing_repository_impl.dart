@@ -79,9 +79,10 @@ final class ProcessRoutingRepositoryImpl implements ProcessRoutingRepository {
     }
   }
 
-  /// Resolves default rate (Process default -> Worker historical rate -> 0),
-  /// validates override reason whenever agreed rate != default rate, and
-  /// computes exact base payable amount in integer paise.
+  /// Resolves default rate using strict precedence:
+  /// Worker-specific historical rate -> Process default rate -> 0.
+  /// Validates override reason whenever agreed rate != resolved default rate,
+  /// and computes exact base payable amount in integer paise.
   Future<
     ({
       int defaultRatePaise,
@@ -105,19 +106,18 @@ final class ProcessRoutingRepositoryImpl implements ProcessRoutingRepository {
     final procRow = await _db.processMemberDao.findProcessById(processId);
     if (procRow == null) _throwValidation('process_not_found');
 
+    // Strict precedence: Worker-specific historical rate -> Process default rate -> 0
     var defaultRate = procRow.defaultRatePaise;
-    final defaultUnit = procRow.defaultPricingUnit;
+    var defaultUnit = procRow.defaultPricingUnit;
 
-    // Fallback to worker-specific historical rate if process default is 0
-    if (defaultRate == 0) {
-      final histRate = await _stockRepo.previewRate(
-        workerId: workerId,
-        processId: processId,
-        transactionAtUtcMillis: transactionAtUtcMillis,
-      );
-      if (histRate is RateResolutionFound) {
-        defaultRate = histRate.rate.ratePaise;
-      }
+    final histRate = await _stockRepo.previewRate(
+      workerId: workerId,
+      processId: processId,
+      transactionAtUtcMillis: transactionAtUtcMillis,
+    );
+    if (histRate is RateResolutionFound) {
+      defaultRate = histRate.rate.ratePaise;
+      defaultUnit = 'PER_PIECE';
     }
 
     final agreedRate = requestedAgreedRatePaise ?? defaultRate;
@@ -179,9 +179,13 @@ final class ProcessRoutingRepositoryImpl implements ProcessRoutingRepository {
       processId: processId,
       transactionAtUtcMillis: transactionAtUtcMillis,
     );
-    final matchesHistorical =
-        rateResult is RateResolutionFound &&
-        rateResult.rate.ratePaise == effectivePerPieceRatePaise;
+    final matchesResolved = switch (rateResult) {
+      RateResolutionFound(:final rate) =>
+        rate.ratePaise == effectivePerPieceRatePaise,
+      RateResolutionProcessDefault(:final ratePaise) =>
+        ratePaise == effectivePerPieceRatePaise,
+      _ => false,
+    };
 
     return _stockRepo.issueStock(
       designColourId: designColourId,
@@ -190,9 +194,9 @@ final class ProcessRoutingRepositoryImpl implements ProcessRoutingRepository {
       quantity: quantity,
       transactionAtUtcMillis: transactionAtUtcMillis,
       notes: notes,
-      allowRateOverride: !matchesHistorical,
-      overrideRatePaise: matchesHistorical ? null : effectivePerPieceRatePaise,
-      overrideReason: matchesHistorical
+      allowRateOverride: !matchesResolved,
+      overrideRatePaise: matchesResolved ? null : effectivePerPieceRatePaise,
+      overrideReason: matchesResolved
           ? null
           : (overrideReason ?? 'Dynamic assignment rate'),
       clientRequestId: clientRequestId,

@@ -159,6 +159,493 @@ final class LotRepositoryImpl implements LotRepository {
     });
   }
 
+  void _validateColourDraft(LotColourDraftInput draft) {
+    final cleanName = draft.colourName.trim();
+    if (cleanName.isEmpty) {
+      throw const DomainValidationException(
+        'colour_name_required',
+        'Colour name cannot be empty.',
+      );
+    }
+    if (draft.initialQuantity <= 0) {
+      throw const DomainValidationException(
+        'invalid_quantity',
+        'Initial quantity must be greater than zero.',
+      );
+    }
+    if (draft.unitPricePaise < 0) {
+      throw const DomainValidationException(
+        'invalid_amount',
+        'Unit price cannot be negative.',
+      );
+    }
+    if (cleanName.length > ValidationLimits.maxShortNameLength ||
+        (draft.notes?.trim().length ?? 0) > ValidationLimits.maxNotesLength) {
+      throw const DomainValidationException(
+        'text_too_long',
+        'Colour name or notes exceed maximum allowed length.',
+      );
+    }
+    if (draft.initialQuantity > ValidationLimits.maxQuantity) {
+      throw const DomainValidationException(
+        'quantity_too_large',
+        'Initial quantity exceeds maximum allowed limit.',
+      );
+    }
+    if (draft.unitPricePaise > ValidationLimits.maxAmountPaise) {
+      throw const DomainValidationException(
+        'amount_too_large',
+        'Unit price exceeds maximum allowed limit.',
+      );
+    }
+    if (!AppValidators.hexColorValidator(draft.colourHex).isValid) {
+      throw const DomainValidationException(
+        'invalid_hex_color',
+        'Invalid hex colour code.',
+      );
+    }
+  }
+
+  @override
+  Future<List<String>> getDistinctDesignNames() async {
+    final activeLots = await _db.lotDao.getActiveLots();
+    final activeLotIds = {for (final l in activeLots) l.id};
+    final designs = await _db.lotDao.getAllActiveDesigns();
+    final seenLower = <String>{};
+    final result = <String>[];
+    for (final d in designs) {
+      if (!activeLotIds.contains(d.lotId)) continue;
+      final trimmed = d.designName.trim();
+      if (trimmed.isEmpty || trimmed == kColourOnlyDesignSentinel) continue;
+      final lower = trimmed.toLowerCase();
+      if (seenLower.add(lower)) {
+        result.add(trimmed);
+      }
+    }
+    result.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+    return result;
+  }
+
+  @override
+  Future<LotEntity> createLotComplete({
+    required String lotNumber,
+    String? title,
+    String? notes,
+    required int transactionAtUtcMillis,
+    required List<LotDesignDraftInput> designs,
+  }) async {
+    final cleanNumber = lotNumber.trim();
+    if (cleanNumber.isEmpty) {
+      throw const DomainValidationException(
+        'lot_number_required',
+        'Lot number cannot be empty.',
+      );
+    }
+    if (cleanNumber.length > ValidationLimits.maxShortNameLength ||
+        (title?.trim().length ?? 0) > ValidationLimits.maxPersonNameLength ||
+        (notes?.trim().length ?? 0) > ValidationLimits.maxNotesLength) {
+      throw const DomainValidationException(
+        'text_too_long',
+        'Entered lot details exceed maximum allowed length.',
+      );
+    }
+    if (!AppValidators.dateValidator(transactionAtUtcMillis).isValid) {
+      throw const DomainValidationException(
+        'invalid_date',
+        'Lot transaction date is invalid.',
+      );
+    }
+
+    // Validate all nested designs & colours up front before opening DB writes.
+    final seenDesignNames = <String>{};
+    for (final design in designs) {
+      final cleanDesign = design.designName.trim();
+      if (cleanDesign.isEmpty) {
+        throw const DomainValidationException(
+          'design_name_required',
+          'Design name cannot be empty.',
+        );
+      }
+      if (cleanDesign.length > ValidationLimits.maxShortNameLength ||
+          (design.notes?.trim().length ?? 0) >
+              ValidationLimits.maxNotesLength) {
+        throw const DomainValidationException(
+          'text_too_long',
+          'Design name or notes exceed maximum allowed length.',
+        );
+      }
+      if (!seenDesignNames.add(cleanDesign.toLowerCase())) {
+        throw const DomainValidationException(
+          'duplicate_design_name',
+          'Duplicate design name in the same lot.',
+        );
+      }
+      final seenColours = <String>{};
+      for (final colour in design.colours) {
+        _validateColourDraft(colour);
+        if (!seenColours.add(colour.colourName.trim().toLowerCase())) {
+          throw const DomainValidationException(
+            'duplicate_colour_name',
+            'Duplicate colour name under the same design.',
+          );
+        }
+      }
+    }
+
+    return _txRunner.runInTransaction(() async {
+      final now = IstDateTimeHelper.nowUtcMillis();
+      final lotId = _idGenerator.nextEntityId();
+      final actor = await _currentActor();
+
+      await _db.lotDao.insertLot(
+        LotsCompanion(
+          id: Value(lotId),
+          lotNumber: Value(cleanNumber),
+          title: Value(_nullIfBlank(title)),
+          notes: Value(_nullIfBlank(notes)),
+          status: const Value('ACTIVE'),
+          transactionAt: Value(transactionAtUtcMillis),
+          recordedAt: Value(now),
+          createdBy: Value(actor),
+          updatedBy: Value(actor),
+          createdAt: Value(now),
+          updatedAt: Value(now),
+        ),
+      );
+
+      await _db.attachmentAuditDao.insertAuditLog(
+        AuditLogsCompanion(
+          id: Value(_idGenerator.nextEntityId()),
+          entityType: const Value('lots'),
+          entityId: Value(lotId),
+          actionType: const Value('CREATE'),
+          actor: Value(actor),
+          newValueJson: Value(
+            jsonEncode({
+              'lot_number': cleanNumber,
+              'title': _nullIfBlank(title),
+              'designs_count': designs.length,
+            }),
+          ),
+          transactionAt: Value(transactionAtUtcMillis),
+          recordedAt: Value(now),
+        ),
+      );
+
+      for (final design in designs) {
+        final designId = _idGenerator.nextEntityId();
+        final cleanDesign = design.designName.trim();
+        await _db.lotDao.insertDesign(
+          LotDesignsCompanion(
+            id: Value(designId),
+            lotId: Value(lotId),
+            designName: Value(cleanDesign),
+            notes: Value(_nullIfBlank(design.notes)),
+            createdBy: Value(actor),
+            updatedBy: Value(actor),
+            createdAt: Value(now),
+            updatedAt: Value(now),
+          ),
+        );
+        await _db.attachmentAuditDao.insertAuditLog(
+          AuditLogsCompanion(
+            id: Value(_idGenerator.nextEntityId()),
+            entityType: const Value('lot_designs'),
+            entityId: Value(designId),
+            actionType: const Value('CREATE'),
+            actor: Value(actor),
+            newValueJson: Value(
+              jsonEncode({'lot_id': lotId, 'design_name': cleanDesign}),
+            ),
+            transactionAt: Value(transactionAtUtcMillis),
+            recordedAt: Value(now),
+          ),
+        );
+
+        for (final colour in design.colours) {
+          final colourId = _idGenerator.nextEntityId();
+          final cleanColour = colour.colourName.trim();
+          await _db.lotDao.insertDesignColour(
+            DesignColoursCompanion(
+              id: Value(colourId),
+              lotDesignId: Value(designId),
+              colourName: Value(cleanColour),
+              colourHex: Value(_nullIfBlank(colour.colourHex)),
+              initialQuantity: Value(colour.initialQuantity),
+              unitPricePaise: Value(colour.unitPricePaise),
+              notes: Value(_nullIfBlank(colour.notes)),
+              createdBy: Value(actor),
+              updatedBy: Value(actor),
+              createdAt: Value(now),
+              updatedAt: Value(now),
+            ),
+          );
+          await _db.attachmentAuditDao.insertAuditLog(
+            AuditLogsCompanion(
+              id: Value(_idGenerator.nextEntityId()),
+              entityType: const Value('design_colours'),
+              entityId: Value(colourId),
+              actionType: const Value('CREATE'),
+              actor: Value(actor),
+              newValueJson: Value(
+                jsonEncode({
+                  'lot_design_id': designId,
+                  'colour_name': cleanColour,
+                  'initial_quantity': colour.initialQuantity,
+                  'unit_price_paise': colour.unitPricePaise,
+                }),
+              ),
+              transactionAt: Value(transactionAtUtcMillis),
+              recordedAt: Value(now),
+            ),
+          );
+        }
+      }
+
+      final created = await _db.lotDao.findLotById(lotId);
+      return _lotToEntity(created!);
+    });
+  }
+
+  @override
+  Future<LotDesignEntity> createDesignWithColours({
+    required String lotId,
+    required String designName,
+    String? notes,
+    required List<LotColourDraftInput> colours,
+  }) async {
+    final cleanName = designName.trim();
+    if (cleanName.isEmpty) {
+      throw const DomainValidationException(
+        'design_name_required',
+        'Design name cannot be empty.',
+      );
+    }
+    if (cleanName.length > ValidationLimits.maxShortNameLength ||
+        (notes?.trim().length ?? 0) > ValidationLimits.maxNotesLength) {
+      throw const DomainValidationException(
+        'text_too_long',
+        'Design name or notes exceed maximum allowed length.',
+      );
+    }
+    final seenColours = <String>{};
+    for (final c in colours) {
+      _validateColourDraft(c);
+      if (!seenColours.add(c.colourName.trim().toLowerCase())) {
+        throw const DomainValidationException(
+          'duplicate_colour_name',
+          'Duplicate colour name under the same design.',
+        );
+      }
+    }
+
+    return _txRunner.runInTransaction(() async {
+      final parentLot = await _db.lotDao.findLotById(lotId);
+      if (parentLot == null || parentLot.deletedAt != null) {
+        throw const LocalStorageException('Parent lot not found or archived.');
+      }
+      final now = IstDateTimeHelper.nowUtcMillis();
+      final designId = _idGenerator.nextEntityId();
+      final actor = await _currentActor();
+
+      await _db.lotDao.insertDesign(
+        LotDesignsCompanion(
+          id: Value(designId),
+          lotId: Value(lotId),
+          designName: Value(cleanName),
+          notes: Value(_nullIfBlank(notes)),
+          createdBy: Value(actor),
+          updatedBy: Value(actor),
+          createdAt: Value(now),
+          updatedAt: Value(now),
+        ),
+      );
+      await _db.attachmentAuditDao.insertAuditLog(
+        AuditLogsCompanion(
+          id: Value(_idGenerator.nextEntityId()),
+          entityType: const Value('lot_designs'),
+          entityId: Value(designId),
+          actionType: const Value('CREATE'),
+          actor: Value(actor),
+          newValueJson: Value(
+            jsonEncode({
+              'lot_id': lotId,
+              'design_name': cleanName,
+              'colours_count': colours.length,
+            }),
+          ),
+          transactionAt: Value(now),
+          recordedAt: Value(now),
+        ),
+      );
+
+      for (final c in colours) {
+        final colourId = _idGenerator.nextEntityId();
+        final cleanColour = c.colourName.trim();
+        await _db.lotDao.insertDesignColour(
+          DesignColoursCompanion(
+            id: Value(colourId),
+            lotDesignId: Value(designId),
+            colourName: Value(cleanColour),
+            colourHex: Value(_nullIfBlank(c.colourHex)),
+            initialQuantity: Value(c.initialQuantity),
+            unitPricePaise: Value(c.unitPricePaise),
+            notes: Value(_nullIfBlank(c.notes)),
+            createdBy: Value(actor),
+            updatedBy: Value(actor),
+            createdAt: Value(now),
+            updatedAt: Value(now),
+          ),
+        );
+        await _db.attachmentAuditDao.insertAuditLog(
+          AuditLogsCompanion(
+            id: Value(_idGenerator.nextEntityId()),
+            entityType: const Value('design_colours'),
+            entityId: Value(colourId),
+            actionType: const Value('CREATE'),
+            actor: Value(actor),
+            newValueJson: Value(
+              jsonEncode({
+                'lot_design_id': designId,
+                'colour_name': cleanColour,
+                'initial_quantity': c.initialQuantity,
+                'unit_price_paise': c.unitPricePaise,
+              }),
+            ),
+            transactionAt: Value(now),
+            recordedAt: Value(now),
+          ),
+        );
+      }
+
+      final created = await _db.lotDao.findDesignById(designId);
+      return _designToEntity(created!);
+    });
+  }
+
+  @override
+  Future<List<DesignColourEntity>> createDesignColoursBatch({
+    required String lotId,
+    String? lotDesignId,
+    required List<LotColourDraftInput> colours,
+  }) async {
+    if (colours.isEmpty) return const [];
+    final seenColours = <String>{};
+    for (final c in colours) {
+      _validateColourDraft(c);
+      if (!seenColours.add(c.colourName.trim().toLowerCase())) {
+        throw const DomainValidationException(
+          'duplicate_colour_name',
+          'Duplicate colour name in selection.',
+        );
+      }
+    }
+
+    return _txRunner.runInTransaction(() async {
+      final parentLot = await _db.lotDao.findLotById(lotId);
+      if (parentLot == null || parentLot.deletedAt != null) {
+        throw const LocalStorageException('Parent lot not found or archived.');
+      }
+
+      final now = IstDateTimeHelper.nowUtcMillis();
+      final actor = await _currentActor();
+
+      String targetDesignId;
+      if (lotDesignId != null) {
+        final parentDesign = await _db.lotDao.findDesignById(lotDesignId);
+        if (parentDesign == null || parentDesign.deletedAt != null) {
+          throw const LocalStorageException('Parent design not found.');
+        }
+        targetDesignId = lotDesignId;
+      } else {
+        final existingDesigns = await _db.lotDao.getDesignsForLot(lotId);
+        String? sentinelId;
+        for (final d in existingDesigns) {
+          if (d.designName == kColourOnlyDesignSentinel) {
+            sentinelId = d.id;
+            break;
+          }
+        }
+        if (sentinelId == null) {
+          sentinelId = _idGenerator.nextEntityId();
+          await _db.lotDao.insertDesign(
+            LotDesignsCompanion(
+              id: Value(sentinelId),
+              lotId: Value(lotId),
+              designName: const Value(kColourOnlyDesignSentinel),
+              notes: const Value('Colour-only lot variants'),
+              createdBy: Value(actor),
+              updatedBy: Value(actor),
+              createdAt: Value(now),
+              updatedAt: Value(now),
+            ),
+          );
+          await _db.attachmentAuditDao.insertAuditLog(
+            AuditLogsCompanion(
+              id: Value(_idGenerator.nextEntityId()),
+              entityType: const Value('lot_designs'),
+              entityId: Value(sentinelId),
+              actionType: const Value('CREATE'),
+              actor: Value(actor),
+              newValueJson: Value(
+                jsonEncode({
+                  'lot_id': lotId,
+                  'design_name': kColourOnlyDesignSentinel,
+                }),
+              ),
+              transactionAt: Value(now),
+              recordedAt: Value(now),
+            ),
+          );
+        }
+        targetDesignId = sentinelId;
+      }
+
+      final createdEntities = <DesignColourEntity>[];
+      for (final c in colours) {
+        final colourId = _idGenerator.nextEntityId();
+        final cleanColour = c.colourName.trim();
+        await _db.lotDao.insertDesignColour(
+          DesignColoursCompanion(
+            id: Value(colourId),
+            lotDesignId: Value(targetDesignId),
+            colourName: Value(cleanColour),
+            colourHex: Value(_nullIfBlank(c.colourHex)),
+            initialQuantity: Value(c.initialQuantity),
+            unitPricePaise: Value(c.unitPricePaise),
+            notes: Value(_nullIfBlank(c.notes)),
+            createdBy: Value(actor),
+            updatedBy: Value(actor),
+            createdAt: Value(now),
+            updatedAt: Value(now),
+          ),
+        );
+        await _db.attachmentAuditDao.insertAuditLog(
+          AuditLogsCompanion(
+            id: Value(_idGenerator.nextEntityId()),
+            entityType: const Value('design_colours'),
+            entityId: Value(colourId),
+            actionType: const Value('CREATE'),
+            actor: Value(actor),
+            newValueJson: Value(
+              jsonEncode({
+                'lot_design_id': targetDesignId,
+                'colour_name': cleanColour,
+                'initial_quantity': c.initialQuantity,
+                'unit_price_paise': c.unitPricePaise,
+              }),
+            ),
+            transactionAt: Value(now),
+            recordedAt: Value(now),
+          ),
+        );
+        final row = await _db.lotDao.findDesignColourById(colourId);
+        createdEntities.add(_colourToEntity(row!));
+      }
+      return createdEntities;
+    });
+  }
+
   @override
   Future<LotEntity> updateLot({
     required String lotId,

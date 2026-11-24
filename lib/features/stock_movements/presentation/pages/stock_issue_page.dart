@@ -7,6 +7,7 @@ import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/localization/domain_label_localizer.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
+import 'package:business_manager/core/utils/app_date_time_formatter.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
@@ -146,10 +147,11 @@ final class _StockIssuePageState extends State<StockIssuePage> {
       return _parseRupeesToPaise(_overrideRateCtrl.text);
     }
     final preview = _ratePreview;
-    if (preview is RateResolutionFound) {
-      return preview.rate.ratePaise;
-    }
-    return null;
+    return switch (preview) {
+      RateResolutionFound(:final rate) => rate.ratePaise,
+      RateResolutionProcessDefault(:final ratePaise) => ratePaise,
+      _ => null,
+    };
   }
 
   int get _parsedQty => int.tryParse(_qtyCtrl.text.trim()) ?? 0;
@@ -950,6 +952,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
       _effectiveBillingMode,
     );
 
+    final localeCode = Localizations.localeOf(context).languageCode;
     Widget rateRow;
     if (_overrideRate) {
       final overridePaise = _parseRupeesToPaise(_overrideRateCtrl.text);
@@ -965,18 +968,61 @@ final class _StockIssuePageState extends State<StockIssuePage> {
         RateResolutionFound(:final rate, :final businessDateIst) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AppText(
-              '${l10n.stockResolvedRateLabel}: ${MoneyFormatter.formatPaise(rate.ratePaise)} ${l10n.ratesPerPieceSuffix}',
-              variant: AppTextVariant.numeric,
-              fontWeight: FontWeight.w700,
+            Wrap(
+              spacing: AppSpacing.xs,
+              runSpacing: AppSpacing.xs,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                AppText(
+                  '${l10n.stockResolvedRateLabel}: ${MoneyFormatter.formatPaise(rate.ratePaise)} ${l10n.ratesPerPieceSuffix}',
+                  variant: AppTextVariant.numeric,
+                  fontWeight: FontWeight.w700,
+                ),
+                const AppStatusBadge(
+                  label: 'Worker Rate',
+                  tone: AppStatusTone.good,
+                ),
+              ],
             ),
             AppText(
-              '$businessDateIst (${rate.effectiveFrom} - ${rate.effectiveTo ?? l10n.ratesOngoingLabel})',
+              '${AppDateTimeFormatter.formatIsoBusinessDateForDisplay(businessDateIst, locale: localeCode)} (${AppDateTimeFormatter.formatIsoDateRange(fromIso: rate.effectiveFrom, toIso: rate.effectiveTo, ongoingLabel: l10n.ratesOngoingLabel, locale: localeCode)})',
               variant: AppTextVariant.bodySmall,
               color: colorScheme.onSurfaceVariant,
             ),
           ],
         ),
+        RateResolutionProcessDefault(
+          :final ratePaise,
+          :final rawDefaultRatePaise,
+          :final pricingUnit,
+          :final processName,
+        ) =>
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Wrap(
+                spacing: AppSpacing.xs,
+                runSpacing: AppSpacing.xs,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  AppText(
+                    '${l10n.stockResolvedRateLabel}: ${MoneyFormatter.formatPaise(ratePaise)} ${l10n.ratesPerPieceSuffix}',
+                    variant: AppTextVariant.numeric,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  const AppStatusBadge(
+                    label: 'Process Default',
+                    tone: AppStatusTone.info,
+                  ),
+                ],
+              ),
+              AppText(
+                'Inherited from $processName (${MoneyFormatter.formatRatePaise(rawDefaultRatePaise, pricingUnit: pricingUnit)})',
+                variant: AppTextVariant.bodySmall,
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ],
+          ),
         RateResolutionMissing() => AppStatusBadge(
           label: l10n.stockRateMissingWarning,
           tone: AppStatusTone.damaged,

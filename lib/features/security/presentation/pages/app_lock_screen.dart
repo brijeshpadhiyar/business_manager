@@ -3,6 +3,7 @@ import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
+import 'package:business_manager/core/utils/app_date_time_formatter.dart';
 import 'package:business_manager/features/security/presentation/bloc/app_lock_cubit.dart';
 import 'package:business_manager/features/security/presentation/pages/pin_recovery_page.dart';
 import 'package:business_manager/features/security/presentation/widgets/pin_keypad.dart';
@@ -74,12 +75,7 @@ final class _AppLockScreenState extends State<AppLockScreen> {
   }
 
   String _formatCountdown(int seconds) {
-    final mins = seconds ~/ 60;
-    final secs = seconds % 60;
-    if (mins > 0) {
-      return '${mins}m ${secs.toString().padLeft(2, '0')}s';
-    }
-    return '${secs}s';
+    return AppDateTimeFormatter.formatCountdownSeconds(seconds);
   }
 
   String? _resolveErrorText(BuildContext context, AppLockState state) {

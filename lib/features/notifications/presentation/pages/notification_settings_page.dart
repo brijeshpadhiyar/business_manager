@@ -1,6 +1,7 @@
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
+import 'package:business_manager/core/utils/app_date_time_formatter.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/notifications/domain/entities/notification_entities.dart';
@@ -25,9 +26,11 @@ final class _NotificationSettingsView extends StatelessWidget {
   const _NotificationSettingsView();
 
   String _formatTime(int hour, int minute) {
-    final period = hour >= 12 ? 'PM' : 'AM';
-    final h12 = hour % 12 == 0 ? 12 : hour % 12;
-    return '${h12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period IST';
+    return AppDateTimeFormatter.formatTimeFromHourMinute(
+      hour,
+      minute,
+      includeIstSuffix: true,
+    );
   }
 
   Future<void> _pickTime(

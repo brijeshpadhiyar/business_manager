@@ -103,21 +103,68 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
     return (owner != null && owner.isNotEmpty) ? owner : 'local_owner';
   }
 
-  @override
-  Future<RateResolutionResult> previewRate({
+  int? _effectiveProcessDefaultPerPiecePaise({
+    required int defaultRatePaise,
+    required String pricingUnit,
+  }) {
+    if (defaultRatePaise <= 0) return null;
+    return switch (pricingUnit.trim().toUpperCase()) {
+      'PER_PIECE' => defaultRatePaise,
+      'PER_DOZEN' => (defaultRatePaise / 12).round(),
+      _ => null,
+    };
+  }
+
+  Future<RateResolutionResult> _resolveWithProcessFallback({
     required String workerId,
     required String processId,
     required int transactionAtUtcMillis,
+    ProcessRow? processRow,
   }) async {
     final rateRows = await _db.processMemberDao.getActiveRates(
       workerId,
       processId,
     );
-    return _rateResolver.resolve(
+    final resolved = _rateResolver.resolve(
       workerId: workerId,
       processId: processId,
       transactionAtUtcMillis: transactionAtUtcMillis,
       rates: rateRows.map(_mapRateRow).toList(),
+    );
+    if (resolved is RateResolutionMissing) {
+      final proc =
+          processRow ?? await _db.processMemberDao.findProcessById(processId);
+      if (proc != null && proc.deletedAt == null && proc.defaultRatePaise > 0) {
+        final effectivePerPiece = _effectiveProcessDefaultPerPiecePaise(
+          defaultRatePaise: proc.defaultRatePaise,
+          pricingUnit: proc.defaultPricingUnit,
+        );
+        if (effectivePerPiece != null) {
+          return RateResolutionProcessDefault(
+            workerId: workerId,
+            processId: processId,
+            businessDateIst: resolved.businessDateIst,
+            ratePaise: effectivePerPiece,
+            rawDefaultRatePaise: proc.defaultRatePaise,
+            pricingUnit: proc.defaultPricingUnit,
+            processName: proc.name,
+          );
+        }
+      }
+    }
+    return resolved;
+  }
+
+  @override
+  Future<RateResolutionResult> previewRate({
+    required String workerId,
+    required String processId,
+    required int transactionAtUtcMillis,
+  }) {
+    return _resolveWithProcessFallback(
+      workerId: workerId,
+      processId: processId,
+      transactionAtUtcMillis: transactionAtUtcMillis,
     );
   }
 
@@ -686,16 +733,13 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
             );
           }
 
-          // 4. Resolve historical rate by transactionAt (IST date) or validate override
-          final rateRows = await _db.processMemberDao.getActiveRates(
-            workerId,
-            processId,
-          );
-          final resolution = _rateResolver.resolve(
+          // 4. Resolve historical rate by transactionAt (IST date) using strict
+          // precedence: Worker-specific rate -> Process default rate -> Missing.
+          final resolution = await _resolveWithProcessFallback(
             workerId: workerId,
             processId: processId,
             transactionAtUtcMillis: transactionAtUtcMillis,
-            rates: rateRows.map(_mapRateRow).toList(),
+            processRow: process,
           );
 
           String? sourceRateId;
@@ -733,10 +777,13 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
               case RateResolutionFound(:final rate):
                 sourceRateId = rate.id;
                 appliedRatePaise = rate.ratePaise;
+              case RateResolutionProcessDefault(:final ratePaise):
+                sourceRateId = null;
+                appliedRatePaise = ratePaise;
               case RateResolutionMissing():
                 throw const DomainValidationException(
                   'rate_missing',
-                  'No effective historical rate configured for this worker and process on the transaction date.',
+                  'No effective historical rate or process default rate configured for this worker and process on the transaction date.',
                 );
               case RateResolutionConflict():
                 throw const DomainValidationException(

@@ -4,9 +4,12 @@ import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
+import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
+import 'package:business_manager/features/lots/domain/entities/colour_master_entity.dart';
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
+import 'package:business_manager/features/lots/domain/repositories/lot_repository.dart';
 import 'package:business_manager/features/lots/presentation/bloc/lot_detail_cubit.dart';
 import 'package:business_manager/features/lots/presentation/widgets/visual_colour_picker_sheet.dart';
 import 'package:business_manager/features/process_routing/domain/entities/process_routing_entities.dart';
@@ -231,6 +234,8 @@ final class _LotDetailView extends StatelessWidget {
     final formKey = GlobalKey<FormState>();
     final nameCtrl = TextEditingController(text: existing?.designName ?? '');
     final notesCtrl = TextEditingController(text: existing?.notes ?? '');
+    final defaultPriceCtrl = TextEditingController();
+    final initialColours = <SelectedColourVariantInput>[];
     String? submitError;
     bool isSaving = false;
     bool submittedOnce = false;
@@ -276,6 +281,104 @@ final class _LotDetailView extends StatelessWidget {
                       ),
                     ),
                   ),
+                  if (existing == null) ...[
+                    const SizedBox(height: AppSpacing.md),
+                    AppTextField(
+                      controller: defaultPriceCtrl,
+                      label: 'Default Unit Price (₹ / pc, optional)',
+                      hint: '0.00',
+                      prefixIcon: Icons.currency_rupee_rounded,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      inputFormatters: [AppInputFormatters.currencyDecimal],
+                      validator: ValidationLocalizer.wrap(
+                        l10n,
+                        (v) => AppValidators.nonNegativeAmountValidator(
+                          v,
+                          isRequired: false,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: AppText(
+                            'Initial Colours (${initialColours.length})',
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        AppButton(
+                          label: 'Add Colours',
+                          icon: Icons.palette_outlined,
+                          variant: AppButtonVariant.secondary,
+                          onPressed: () async {
+                            final parsedDefault =
+                                AppValidators.parseRupeesToPaiseExact(
+                                  defaultPriceCtrl.text,
+                                  isRequired: false,
+                                  allowZero: true,
+                                );
+                            final picked = await VisualColourPickerSheet.show(
+                              ctx,
+                              title: nameCtrl.text.trim().isNotEmpty
+                                  ? 'Select Colours — ${nameCtrl.text.trim()}'
+                                  : 'Select Initial Colours',
+                              existingColourNamesLower: initialColours
+                                  .map((c) => c.colourName.trim().toLowerCase())
+                                  .toSet(),
+                              defaultUnitPricePaise: parsedDefault.paise ?? 0,
+                            );
+                            if (picked != null &&
+                                picked.isNotEmpty &&
+                                sheetCtx.mounted) {
+                              setSheetState(() {
+                                for (final p in picked) {
+                                  if (!initialColours.any(
+                                    (c) =>
+                                        c.colourName.trim().toLowerCase() ==
+                                        p.colourName.trim().toLowerCase(),
+                                  )) {
+                                    initialColours.add(p);
+                                  }
+                                }
+                              });
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                    if (initialColours.isNotEmpty) ...[
+                      const SizedBox(height: AppSpacing.xs),
+                      for (final c in initialColours)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                          child: Row(
+                            children: [
+                              AppColourSwatch(
+                                color: AppColourUtils.resolveColor(c.hexCode),
+                                size: 22,
+                              ),
+                              const SizedBox(width: AppSpacing.xs),
+                              Expanded(
+                                child: AppText(
+                                  '${c.colourName} • ${MoneyFormatter.formatQuantity(c.quantity)} pcs @ ${MoneyFormatter.formatPaise(c.unitPricePaise)}',
+                                  variant: AppTextVariant.bodySmall,
+                                ),
+                              ),
+                              AppIconButton(
+                                icon: Icons.close_rounded,
+                                tooltip: 'Remove',
+                                onPressed: () => setSheetState(
+                                  () => initialColours.remove(c),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ],
                   if (submitError != null) ...[
                     const SizedBox(height: AppSpacing.sm),
                     AppText(
@@ -302,11 +405,28 @@ final class _LotDetailView extends StatelessWidget {
                               submitError = null;
                             });
                             final err = existing == null
-                                ? await cubit.addDesign(
-                                    lotId: lotId,
-                                    designName: nameCtrl.text,
-                                    notes: notesCtrl.text,
-                                  )
+                                ? (initialColours.isEmpty
+                                      ? await cubit.addDesign(
+                                          lotId: lotId,
+                                          designName: nameCtrl.text,
+                                          notes: notesCtrl.text,
+                                        )
+                                      : await cubit.addDesignWithColours(
+                                          lotId: lotId,
+                                          designName: nameCtrl.text,
+                                          notes: notesCtrl.text,
+                                          colours: initialColours
+                                              .map(
+                                                (c) => LotColourDraftInput(
+                                                  colourName: c.colourName,
+                                                  colourHex: c.hexCode,
+                                                  initialQuantity: c.quantity,
+                                                  unitPricePaise:
+                                                      c.unitPricePaise,
+                                                ),
+                                              )
+                                              .toList(),
+                                        ))
                                 : await cubit.editDesign(
                                     lotId: lotId,
                                     designId: existing.id,
@@ -340,6 +460,7 @@ final class _LotDetailView extends StatelessWidget {
     } finally {
       nameCtrl.dispose();
       notesCtrl.dispose();
+      defaultPriceCtrl.dispose();
     }
   }
 
@@ -357,8 +478,8 @@ final class _LotDetailView extends StatelessWidget {
     );
     final priceCtrl = TextEditingController(
       text: existing != null
-          ? (existing.unitPricePaise / 100).toStringAsFixed(2)
-          : '0',
+          ? MoneyFormatter.formatPaiseForInput(existing.unitPricePaise)
+          : '0.00',
     );
     final notesCtrl = TextEditingController(text: existing?.notes ?? '');
     String? submitError;
@@ -595,39 +716,37 @@ final class _LotDetailView extends StatelessWidget {
     );
     if (selected == null || selected.isEmpty || !context.mounted) return;
 
-    var addedCount = 0;
-    String? lastErr;
-    for (final item in selected) {
-      final err = lotDesignId == null
-          ? await cubit.addColourDirectly(
-              lotId: lotId,
+    final err = await cubit.addColoursBatch(
+      lotId: lotId,
+      lotDesignId: lotDesignId,
+      colours: selected
+          .map(
+            (item) => LotColourDraftInput(
               colourName: item.colourName,
               colourHex: item.hexCode,
               initialQuantity: item.quantity,
               unitPricePaise: item.unitPricePaise,
-            )
-          : await cubit.addColour(
-              lotId: lotId,
-              lotDesignId: lotDesignId,
-              colourName: item.colourName,
-              colourHex: item.hexCode,
-              initialQuantity: item.quantity,
-              unitPricePaise: item.unitPricePaise,
-            );
-      if (err == null) {
-        addedCount++;
-      } else {
-        lastErr = err;
-      }
-    }
+            ),
+          )
+          .toList(),
+    );
     if (!context.mounted) return;
-    if (addedCount > 0 && lastErr == null) {
+    if (err == null) {
       AppFeedback.showSuccess(
         context,
-        'Added $addedCount colour${addedCount == 1 ? '' : 's'} to Lot.',
+        'Added ${selected.length} colour${selected.length == 1 ? '' : 's'} to Lot.',
       );
-    } else if (lastErr != null) {
-      AppFeedback.showError(context, lastErr);
+    } else {
+      AppFeedback.showError(
+        context,
+        err.contains('UNIQUE')
+            ? context.l10n.colourDuplicateError
+            : ValidationLocalizer.localizeDomainCode(
+                context.l10n,
+                err,
+                fallback: err,
+              ),
+      );
     }
   }
 

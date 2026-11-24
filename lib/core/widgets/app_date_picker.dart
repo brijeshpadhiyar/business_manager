@@ -1,4 +1,5 @@
 import 'package:business_manager/core/design_system/app_sizing.dart';
+import 'package:business_manager/core/utils/app_date_time_formatter.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -74,11 +75,14 @@ final class AppDatePicker extends StatelessWidget {
     final localeCode = Localizations.localeOf(context).languageCode;
     final displayText = selectedUtcMillis != null
         ? (includeTime
-              ? IstDateTimeHelper.formatIstDateTime(
+              ? AppDateTimeFormatter.formatDateTime(
                   selectedUtcMillis!,
                   locale: localeCode,
                 )
-              : IstDateTimeHelper.toIstBusinessDate(selectedUtcMillis!))
+              : AppDateTimeFormatter.formatDate(
+                  selectedUtcMillis!,
+                  locale: localeCode,
+                ))
         : '';
 
     return InkWell(

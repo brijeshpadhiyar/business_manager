@@ -2,6 +2,7 @@ import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
+import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/processes/presentation/bloc/process_list_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -133,6 +134,16 @@ final class _ProcessListViewState extends State<_ProcessListView> {
                                   variant: AppTextVariant.bodySmall,
                                 ),
                               ],
+                              const SizedBox(height: AppSpacing.xs),
+                              AppText(
+                                process.defaultRatePaise > 0
+                                    ? 'Default Rate: ${MoneyFormatter.formatRatePaise(process.defaultRatePaise, pricingUnit: process.defaultPricingUnit)}'
+                                    : 'No default labour rate',
+                                variant: AppTextVariant.bodySmall,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
                             ],
                           ),
                         ),

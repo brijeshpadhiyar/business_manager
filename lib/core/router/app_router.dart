@@ -13,6 +13,7 @@ import 'package:business_manager/features/business_profile/presentation/pages/bu
 import 'package:business_manager/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:business_manager/features/inventory/presentation/pages/inventory_overview_page.dart';
 import 'package:business_manager/features/lots/presentation/pages/lot_colour_detail_page.dart';
+import 'package:business_manager/features/lots/presentation/pages/lot_create_page.dart';
 import 'package:business_manager/features/lots/presentation/pages/lot_detail_page.dart';
 import 'package:business_manager/features/lots/presentation/pages/lot_list_page.dart';
 import 'package:business_manager/features/process_routing/presentation/pages/job_process_routing_page.dart';
@@ -52,6 +53,11 @@ GoRouter createAppRouter(AppConfig config) {
       GoRoute(
         path: RoutePaths.home,
         builder: (context, state) => StitchFlowShellPage(config: config),
+      ),
+      GoRoute(
+        path: RoutePaths.lotCreate,
+        pageBuilder: (context, state) =>
+            AppMotion.buildPage(state: state, child: const LotCreatePage()),
       ),
       GoRoute(
         path: RoutePaths.lotDetailPattern,

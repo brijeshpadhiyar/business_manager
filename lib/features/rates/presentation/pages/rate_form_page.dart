@@ -3,6 +3,7 @@ import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
+import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/processes/domain/entities/process_entities.dart';
@@ -70,10 +71,7 @@ final class _RateFormPageState extends State<RateFormPage> {
   }
 
   static String _paiseToEditableRupees(int paise) {
-    final rupees = paise ~/ 100;
-    final rem = paise % 100;
-    if (rem == 0) return rupees.toString();
-    return '$rupees.${rem.toString().padLeft(2, '0')}';
+    return MoneyFormatter.formatPaiseForInput(paise);
   }
 
   @override

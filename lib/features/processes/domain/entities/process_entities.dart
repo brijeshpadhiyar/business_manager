@@ -29,6 +29,8 @@ sealed class ProcessEntity with _$ProcessEntity {
     required bool isActive,
     ProcessBillingModeOverride? billingModeOverride,
     required bool includeDamagedInLabour,
+    @Default(0) int defaultRatePaise,
+    @Default('PER_PIECE') String defaultPricingUnit,
     required int createdAt,
     required int updatedAt,
   }) = _ProcessEntity;

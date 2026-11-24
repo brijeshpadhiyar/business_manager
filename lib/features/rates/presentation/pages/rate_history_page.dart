@@ -2,6 +2,7 @@ import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
+import 'package:business_manager/core/utils/app_date_time_formatter.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/processes/domain/entities/process_entities.dart';
@@ -200,7 +201,14 @@ final class _RateHistoryView extends StatelessWidget {
                                 ),
                                 const SizedBox(height: AppSpacing.xs),
                                 AppText(
-                                  '${rate.effectiveFrom} - ${rate.effectiveTo ?? l10n.ratesOngoingLabel}',
+                                  AppDateTimeFormatter.formatIsoDateRange(
+                                    fromIso: rate.effectiveFrom,
+                                    toIso: rate.effectiveTo,
+                                    ongoingLabel: l10n.ratesOngoingLabel,
+                                    locale: Localizations.localeOf(
+                                      ctx,
+                                    ).languageCode,
+                                  ),
                                   variant: AppTextVariant.bodySmall,
                                 ),
                                 if (rate.notes != null) ...[

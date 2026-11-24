@@ -17,6 +17,7 @@ sealed class WorkerAssignmentsState with _$WorkerAssignmentsState {
     @Default(WorkerAssignmentsStatus.initial) WorkerAssignmentsStatus status,
     WorkerEntity? worker,
     @Default([]) List<WorkerProcessAssignmentEntity> assignments,
+    @Default([]) List<WorkerProcessAssignmentEntity> inactiveAssignments,
     @Default([]) List<ProcessEntity> activeProcesses,
     String? errorMessage,
   }) = _WorkerAssignmentsState;
@@ -48,10 +49,12 @@ final class WorkerAssignmentsCubit extends Cubit<WorkerAssignmentsState> {
         );
         return;
       }
-      final assignments = await _workerRepository.getAssignmentsForWorker(
+      final allLinks = await _workerRepository.getAssignmentsForWorker(
         workerId,
-        activeOnly: true,
+        activeOnly: false,
       );
+      final activeLinks = allLinks.where((a) => a.isActive).toList();
+      final inactiveLinks = allLinks.where((a) => !a.isActive).toList();
       final activeProcesses = await _processRepository.getProcesses(
         isActiveFilter: true,
       );
@@ -59,7 +62,8 @@ final class WorkerAssignmentsCubit extends Cubit<WorkerAssignmentsState> {
         state.copyWith(
           status: WorkerAssignmentsStatus.loaded,
           worker: detail.worker,
-          assignments: assignments,
+          assignments: activeLinks,
+          inactiveAssignments: inactiveLinks,
           activeProcesses: activeProcesses,
         ),
       );
@@ -73,14 +77,27 @@ final class WorkerAssignmentsCubit extends Cubit<WorkerAssignmentsState> {
     }
   }
 
-  Future<String?> assignProcess(String processId) async {
+  Future<String?> assignProcess(
+    String processId, {
+    int? customRatePaise,
+    String? notes,
+  }) async {
     final worker = state.worker;
     if (worker == null) return 'Worker not found.';
     try {
-      await _workerRepository.assignProcessToWorker(
-        workerId: worker.id,
-        processId: processId,
-      );
+      if (customRatePaise != null) {
+        await _workerRepository.assignProcessWithOptionalRate(
+          workerId: worker.id,
+          processId: processId,
+          customRatePaise: customRatePaise,
+          notes: notes,
+        );
+      } else {
+        await _workerRepository.assignProcessToWorker(
+          workerId: worker.id,
+          processId: processId,
+        );
+      }
       await load(worker.id);
       return null;
     } on DomainValidationException catch (e) {

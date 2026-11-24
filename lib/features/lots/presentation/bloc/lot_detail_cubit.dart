@@ -169,6 +169,48 @@ final class LotDetailCubit extends Cubit<LotDetailState> {
     }
   }
 
+  Future<String?> addDesignWithColours({
+    required String lotId,
+    required String designName,
+    String? notes,
+    required List<LotColourDraftInput> colours,
+  }) async {
+    try {
+      await _repository.createDesignWithColours(
+        lotId: lotId,
+        designName: designName,
+        notes: notes,
+        colours: colours,
+      );
+      await loadLot(lotId);
+      return null;
+    } on DomainValidationException catch (e) {
+      return e.code;
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<String?> addColoursBatch({
+    required String lotId,
+    String? lotDesignId,
+    required List<LotColourDraftInput> colours,
+  }) async {
+    try {
+      await _repository.createDesignColoursBatch(
+        lotId: lotId,
+        lotDesignId: lotDesignId,
+        colours: colours,
+      );
+      await loadLot(lotId);
+      return null;
+    } on DomainValidationException catch (e) {
+      return e.code;
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
   Future<String?> editDesign({
     required String lotId,
     required String designId,

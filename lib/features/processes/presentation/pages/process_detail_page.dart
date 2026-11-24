@@ -3,7 +3,8 @@ import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/domain_label_localizer.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
-import 'package:business_manager/core/utils/ist_datetime_helper.dart';
+import 'package:business_manager/core/utils/app_date_time_formatter.dart';
+import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/processes/domain/entities/process_entities.dart';
 import 'package:business_manager/features/processes/presentation/bloc/process_detail_cubit.dart';
@@ -133,6 +134,12 @@ final class _ProcessDetailView extends StatelessWidget {
                     ],
                     const SizedBox(height: AppSpacing.md),
                     AppText(
+                      'Default Labour Rate: ${proc.defaultRatePaise > 0 ? MoneyFormatter.formatRatePaise(proc.defaultRatePaise, pricingUnit: proc.defaultPricingUnit) : 'Not set'}',
+                      variant: AppTextVariant.bodySmall,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                    AppText(
                       '${l10n.processBillingOverrideLabel}: $billingLabel',
                       variant: AppTextVariant.bodySmall,
                     ),
@@ -143,12 +150,12 @@ final class _ProcessDetailView extends StatelessWidget {
                     ),
                     const SizedBox(height: AppSpacing.xs),
                     AppText(
-                      '${l10n.createdAtLabel}: ${IstDateTimeHelper.formatIstDateTime(proc.createdAt, locale: localeCode)}',
+                      '${l10n.createdAtLabel}: ${AppDateTimeFormatter.formatDateTime(proc.createdAt, locale: localeCode)}',
                       variant: AppTextVariant.bodySmall,
                     ),
                     const SizedBox(height: AppSpacing.xs),
                     AppText(
-                      '${l10n.updatedAtLabel}: ${IstDateTimeHelper.formatIstDateTime(proc.updatedAt, locale: localeCode)}',
+                      '${l10n.updatedAtLabel}: ${AppDateTimeFormatter.formatDateTime(proc.updatedAt, locale: localeCode)}',
                       variant: AppTextVariant.bodySmall,
                     ),
                     const SizedBox(height: AppSpacing.md),
@@ -269,7 +276,7 @@ final class _ProcessDetailView extends StatelessWidget {
                               ),
                             ),
                             subtitle: Text(
-                              IstDateTimeHelper.formatIstDateTime(
+                              AppDateTimeFormatter.formatDateTime(
                                 entry.recordedAt,
                                 locale: localeCode,
                               ),

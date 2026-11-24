@@ -1,6 +1,7 @@
 abstract final class RoutePaths {
   static const String home = '/';
   static const String showcase = '/showcase';
+  static const String lotCreate = '/lots/new';
   static const String lotDetailPattern = '/lots/:id';
   static const String lotColourDetailPattern = '/lots/:id/colours/:colourId';
   static const String lotRoutingPattern = '/lots/:id/routing';

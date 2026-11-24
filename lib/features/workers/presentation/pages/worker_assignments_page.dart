@@ -2,6 +2,8 @@ import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
+import 'package:business_manager/core/utils/money_formatter.dart';
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/processes/domain/entities/process_entities.dart';
 import 'package:business_manager/features/workers/domain/entities/worker_entities.dart';
@@ -10,7 +12,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Manage many-to-many process assignments for a specific worker.
+/// Manage many-to-many process assignments and optional custom per-process
+/// labour rates for a specific worker while preserving historical records on
+/// deactivation.
 final class WorkerAssignmentsPage extends StatelessWidget {
   const WorkerAssignmentsPage({super.key, required this.workerId});
 
@@ -35,9 +39,16 @@ final class _WorkerAssignmentsView extends StatefulWidget {
 }
 
 final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
+  final _customRateCtrl = TextEditingController();
   String? _selectedProcessId;
   String? _actionError;
   bool _isAssigning = false;
+
+  @override
+  void dispose() {
+    _customRateCtrl.dispose();
+    super.dispose();
+  }
 
   String _mapError(BuildContext context, String code) {
     final l10n = context.l10n;
@@ -45,19 +56,38 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
       'duplicate_assignment' => l10n.assignmentsDuplicateError,
       'inactive_worker' => l10n.assignmentsInactiveWorkerError,
       'inactive_process' => l10n.assignmentsInactiveProcessError,
-      _ => code,
+      _ => ValidationLocalizer.localizeDomainCode(l10n, code, fallback: code),
     };
   }
 
   Future<void> _assign(BuildContext context) async {
     final procId = _selectedProcessId;
     if (procId == null || _isAssigning) return;
+
+    int? customRatePaise;
+    final rawRate = _customRateCtrl.text.trim();
+    if (rawRate.isNotEmpty) {
+      final parsed = AppValidators.parseRupeesToPaiseExact(
+        rawRate,
+        isRequired: false,
+        allowZero: true,
+      );
+      if (!parsed.validation.isValid || parsed.paise == null) {
+        setState(
+          () => _actionError = 'Enter a valid non-negative custom rate.',
+        );
+        return;
+      }
+      customRatePaise = parsed.paise;
+    }
+
     setState(() {
       _isAssigning = true;
       _actionError = null;
     });
     final err = await context.read<WorkerAssignmentsCubit>().assignProcess(
       procId,
+      customRatePaise: customRatePaise,
     );
     if (!mounted) return;
     if (err != null) {
@@ -69,8 +99,25 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
       setState(() {
         _isAssigning = false;
         _selectedProcessId = null;
+        _customRateCtrl.clear();
       });
     }
+  }
+
+  Future<void> _reactivate(BuildContext context, String processId) async {
+    if (_isAssigning) return;
+    setState(() {
+      _isAssigning = true;
+      _actionError = null;
+    });
+    final err = await context.read<WorkerAssignmentsCubit>().assignProcess(
+      processId,
+    );
+    if (!mounted) return;
+    setState(() {
+      _isAssigning = false;
+      if (err != null) _actionError = _mapError(this.context, err);
+    });
   }
 
   Future<void> _confirmRemove(
@@ -99,6 +146,7 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final colorScheme = Theme.of(context).colorScheme;
     return BlocBuilder<WorkerAssignmentsCubit, WorkerAssignmentsState>(
       builder: (context, state) {
         if (state.status == WorkerAssignmentsStatus.loading ||
@@ -140,6 +188,9 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
             }
           });
         }
+        final selectedProc = availableProcesses
+            .where((p) => p.id == effectiveSelection)
+            .firstOrNull;
 
         return AppScaffold(
           title: '${worker.name} — ${l10n.assignmentsHeading}',
@@ -157,7 +208,7 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
                     if (!worker.isActive)
                       AppText(
                         l10n.assignmentsInactiveWorkerError,
-                        color: Theme.of(context).colorScheme.error,
+                        color: colorScheme.error,
                       )
                     else if (availableProcesses.isEmpty)
                       AppText(
@@ -170,14 +221,30 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
                           'assign_${availableProcesses.map((e) => e.id).join(',')}',
                         ),
                         label: l10n.assignmentsAddLabel,
-                        value: availableProcesses.firstWhere(
-                          (p) => p.id == effectiveSelection,
-                          orElse: () => availableProcesses.first,
-                        ),
+                        value: selectedProc ?? availableProcesses.first,
                         items: availableProcesses,
-                        itemLabelBuilder: (p) => p.name,
+                        itemLabelBuilder: (p) => p.defaultRatePaise > 0
+                            ? '${p.name} (Default: ${MoneyFormatter.formatRatePaise(p.defaultRatePaise, pricingUnit: p.defaultPricingUnit)})'
+                            : p.name,
                         onChanged: (p) =>
                             setState(() => _selectedProcessId = p?.id),
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      AppTextField(
+                        controller: _customRateCtrl,
+                        label: 'Custom Worker Rate (₹ / pc, optional)',
+                        hint:
+                            (selectedProc != null &&
+                                selectedProc.defaultRatePaise > 0)
+                            ? 'Leave blank to inherit ${MoneyFormatter.formatRatePaise(selectedProc.defaultRatePaise, pricingUnit: selectedProc.defaultPricingUnit)}'
+                            : 'Leave blank to use process default',
+                        prefixIcon: Icons.currency_rupee_rounded,
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        inputFormatters: [
+                          AppInputFormatters.currencyDecimal,
+                        ],
                       ),
                       const SizedBox(height: AppSpacing.md),
                       AppButton(
@@ -192,10 +259,7 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
                     ],
                     if (_actionError != null) ...[
                       const SizedBox(height: AppSpacing.sm),
-                      AppText(
-                        _actionError!,
-                        color: Theme.of(context).colorScheme.error,
-                      ),
+                      AppText(_actionError!, color: colorScheme.error),
                     ],
                   ],
                 ),
@@ -211,7 +275,8 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
                 ...state.assignments.map(
                   (a) => Padding(
                     padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                    child: AppCard(
+                    child: AppCard.listItem(
+                      key: ValueKey<String>('active_assign_${a.id}'),
                       child: Row(
                         children: [
                           Expanded(
@@ -255,6 +320,54 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
                     ),
                   ),
                 ),
+              if (state.inactiveAssignments.isNotEmpty) ...[
+                const SizedBox(height: AppSpacing.lg),
+                AppHeading(
+                  'Deactivated Assignments (${state.inactiveAssignments.length})',
+                  level: AppHeadingLevel.h3,
+                  subtitle:
+                      'Historical labour transactions & rates remain preserved.',
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                ...state.inactiveAssignments.map(
+                  (a) => Padding(
+                    padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                    child: AppCard.listItem(
+                      key: ValueKey<String>('inactive_assign_${a.id}'),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                AppText(
+                                  a.processName,
+                                  variant: AppTextVariant.bodyLarge,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                const SizedBox(height: AppSpacing.xs),
+                                AppStatusBadge(
+                                  label: l10n.statusInactive,
+                                  tone: AppStatusTone.neutral,
+                                ),
+                              ],
+                            ),
+                          ),
+                          if (worker.isActive && a.processIsActive)
+                            AppButton(
+                              label: 'Reactivate',
+                              icon: Icons.play_circle_outline_rounded,
+                              variant: AppButtonVariant.outlined,
+                              onPressed: _isAssigning
+                                  ? null
+                                  : () => _reactivate(context, a.processId),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ],
           ),
         );

@@ -2,8 +2,7 @@ import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
-import 'package:business_manager/core/utils/ist_datetime_helper.dart';
-import 'package:business_manager/core/validation/validation.dart';
+import 'package:business_manager/core/utils/app_date_time_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
 import 'package:business_manager/features/lots/presentation/bloc/lot_list_cubit.dart';
@@ -66,187 +65,17 @@ final class _LotListViewState extends State<_LotListView> {
     super.dispose();
   }
 
-  Future<void> _showCreateLotSheet(BuildContext context) async {
-    final l10n = context.l10n;
-    final cubit = context.read<LotListCubit>();
-    final formKey = GlobalKey<FormState>();
-    final numberFieldKey = GlobalKey<FormFieldState<String>>();
-    final titleFieldKey = GlobalKey<FormFieldState<String>>();
-    final notesFieldKey = GlobalKey<FormFieldState<String>>();
-    final numberCtrl = TextEditingController();
-    final titleCtrl = TextEditingController();
-    final notesCtrl = TextEditingController();
-    final numberFocus = FocusNode();
-    final titleFocus = FocusNode();
-    final notesFocus = FocusNode();
-    int txDateUtc = IstDateTimeHelper.nowUtcMillis();
-    String? submitError;
-    bool isSaving = false;
-    bool submittedOnce = false;
-
-    try {
-      await AppBottomSheet.show<void>(
-        context,
-        title: l10n.lotCreateAction,
-        builder: (sheetCtx) => StatefulBuilder(
-          builder: (ctx, setSheetState) {
-            return Form(
-              key: formKey,
-              autovalidateMode: submittedOnce
-                  ? AutovalidateMode.onUserInteraction
-                  : AutovalidateMode.disabled,
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    AppTextField(
-                      fieldKey: numberFieldKey,
-                      controller: numberCtrl,
-                      focusNode: numberFocus,
-                      label: l10n.lotNumberLabel,
-                      prefixIcon: Icons.tag,
-                      textInputAction: TextInputAction.next,
-                      maxLength: ValidationLimits.maxShortNameLength,
-                      onChanged: (_) {
-                        if (submitError != null) {
-                          setSheetState(() => submitError = null);
-                        }
-                      },
-                      validator: ValidationLocalizer.wrap(
-                        l10n,
-                        (v) => AppValidators.nameValidator(
-                          v,
-                          maxLength: ValidationLimits.maxShortNameLength,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    AppTextField(
-                      fieldKey: titleFieldKey,
-                      controller: titleCtrl,
-                      focusNode: titleFocus,
-                      label: l10n.lotTitleLabel,
-                      prefixIcon: Icons.title,
-                      textInputAction: TextInputAction.next,
-                      maxLength: ValidationLimits.maxPersonNameLength,
-                      validator: ValidationLocalizer.wrap(
-                        l10n,
-                        (v) => AppValidators.maxLengthValidator(
-                          v,
-                          maxLength: ValidationLimits.maxPersonNameLength,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    AppDatePicker(
-                      label: l10n.lotDateLabel,
-                      selectedUtcMillis: txDateUtc,
-                      onDateSelectedUtcMillis: (utc) =>
-                          setSheetState(() => txDateUtc = utc),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    AppTextField(
-                      fieldKey: notesFieldKey,
-                      controller: notesCtrl,
-                      focusNode: notesFocus,
-                      label: l10n.lotNotesLabel,
-                      maxLines: 2,
-                      maxLength: ValidationLimits.maxNotesLength,
-                      validator: ValidationLocalizer.wrap(
-                        l10n,
-                        (v) => AppValidators.maxLengthValidator(
-                          v,
-                          maxLength: ValidationLimits.maxNotesLength,
-                        ),
-                      ),
-                    ),
-                    if (submitError != null) ...[
-                      const SizedBox(height: AppSpacing.sm),
-                      AppText(
-                        submitError!,
-                        color: Theme.of(ctx).colorScheme.error,
-                      ),
-                    ],
-                    const SizedBox(height: AppSpacing.lg),
-                    AppButton(
-                      label: l10n.actionSave,
-                      icon: Icons.check,
-                      isExpanded: true,
-                      isLoading: isSaving,
-                      onPressed: isSaving
-                          ? null
-                          : () async {
-                              if (!submittedOnce) {
-                                setSheetState(() => submittedOnce = true);
-                              }
-                              final valid =
-                                  FormValidationHelper.validateAndFocusFirstInvalid(
-                                    formKey: formKey,
-                                    orderedAnchors: [
-                                      ValidatedFieldAnchor(
-                                        fieldKey: numberFieldKey,
-                                        focusNode: numberFocus,
-                                      ),
-                                      ValidatedFieldAnchor(
-                                        fieldKey: titleFieldKey,
-                                        focusNode: titleFocus,
-                                      ),
-                                      ValidatedFieldAnchor(
-                                        fieldKey: notesFieldKey,
-                                        focusNode: notesFocus,
-                                      ),
-                                    ],
-                                  );
-                              if (!valid) return;
-                              setSheetState(() {
-                                isSaving = true;
-                                submitError = null;
-                              });
-                              final err = await cubit.createLot(
-                                lotNumber: numberCtrl.text,
-                                title: titleCtrl.text,
-                                notes: notesCtrl.text,
-                                transactionAtUtcMillis: txDateUtc,
-                              );
-                              if (err != null) {
-                                if (sheetCtx.mounted) {
-                                  setSheetState(() {
-                                    isSaving = false;
-                                    submitError = err.contains('UNIQUE')
-                                        ? l10n.lotDuplicateError
-                                        : ValidationLocalizer.localizeDomainCode(
-                                            l10n,
-                                            err,
-                                            fallback: err,
-                                          );
-                                  });
-                                }
-                              } else if (sheetCtx.mounted) {
-                                Navigator.of(sheetCtx).pop();
-                              }
-                            },
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        ),
-      );
-    } finally {
-      numberCtrl.dispose();
-      titleCtrl.dispose();
-      notesCtrl.dispose();
-      numberFocus.dispose();
-      titleFocus.dispose();
-      notesFocus.dispose();
+  Future<void> _openCreateLotPage(BuildContext context) async {
+    final created = await context.push<bool>(RoutePaths.lotCreate);
+    if (created == true && context.mounted) {
+      await context.read<LotListCubit>().loadLots();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final localeCode = Localizations.localeOf(context).languageCode;
     return BlocBuilder<LotListCubit, LotListState>(
       builder: (context, state) {
         final activeCount = state.lots
@@ -286,7 +115,7 @@ final class _LotListViewState extends State<_LotListView> {
                 title: l10n.lotsEmptyTitle,
                 subtitle: l10n.lotsEmptySubtitle,
                 actionLabel: l10n.lotCreateAction,
-                onAction: () => _showCreateLotSheet(context),
+                onAction: () => _openCreateLotPage(context),
               ),
             ),
           ];
@@ -330,8 +159,9 @@ final class _LotListViewState extends State<_LotListView> {
                               ],
                               const SizedBox(height: AppSpacing.xs),
                               AppText(
-                                IstDateTimeHelper.toIstBusinessDate(
+                                AppDateTimeFormatter.formatDate(
                                   lot.transactionAt,
+                                  locale: localeCode,
                                 ),
                                 variant: AppTextVariant.bodySmall,
                               ),
@@ -375,7 +205,7 @@ final class _LotListViewState extends State<_LotListView> {
                 child: AppButton(
                   label: l10n.lotCreateAction,
                   icon: Icons.add,
-                  onPressed: () => _showCreateLotSheet(context),
+                  onPressed: () => _openCreateLotPage(context),
                 ),
               ),
             ],

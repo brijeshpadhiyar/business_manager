@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:business_manager/core/utils/app_date_time_formatter.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/features/accounting/domain/calculators/ledger_calculator.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
@@ -1324,10 +1325,8 @@ final class ReportsAnalyticsCalculator {
         ist.month,
         ist.day - daysFromMon,
       );
-      final key =
-          '${mon.year.toString().padLeft(4, '0')}-${mon.month.toString().padLeft(2, '0')}-${mon.day.toString().padLeft(2, '0')}';
-      final label =
-          '${mon.day.toString().padLeft(2, '0')}/${mon.month.toString().padLeft(2, '0')}';
+      final key = AppDateTimeFormatter.toIsoDate(mon);
+      final label = AppDateTimeFormatter.formatShortDayMonth(mon);
       final acc = weeklyMap.putIfAbsent(key, () => _TrendBucketAcc(label));
       acc.issued += r.issuedQty;
       acc.good += r.goodReturnedQty;

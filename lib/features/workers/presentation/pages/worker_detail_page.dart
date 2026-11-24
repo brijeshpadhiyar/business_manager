@@ -2,6 +2,7 @@ import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
+import 'package:business_manager/core/utils/app_date_time_formatter.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
@@ -464,7 +465,7 @@ final class _WorkerDetailView extends StatelessWidget {
                                       children: [
                                         Expanded(
                                           child: AppText(
-                                            IstDateTimeHelper.formatIstDate(
+                                            AppDateTimeFormatter.formatDate(
                                               p.payment.transactionAt,
                                               locale: localeCode,
                                             ),
@@ -542,16 +543,46 @@ final class _WorkerDetailView extends StatelessWidget {
                 ...detail.assignedProcesses.map((summary) {
                   final assignment = summary.assignment;
                   final currentRate = summary.currentRate;
-                  final rateDisplay = currentRate != null
-                      ? '${MoneyFormatter.formatPaise(currentRate.ratePaise)} ${l10n.ratesPerPieceSuffix}'
-                      : l10n.ratesNoCurrentRate;
+                  final hasProcessDefault = summary.processDefaultRatePaise > 0;
+                  final String rateDisplay;
+                  final String sourceBadgeLabel;
+                  final AppStatusTone sourceBadgeTone;
+
+                  if (currentRate != null) {
+                    rateDisplay =
+                        '${MoneyFormatter.formatPaise(currentRate.ratePaise)} ${l10n.ratesPerPieceSuffix}';
+                    sourceBadgeLabel = 'Worker Rate';
+                    sourceBadgeTone = AppStatusTone.good;
+                  } else if (hasProcessDefault) {
+                    rateDisplay = MoneyFormatter.formatRatePaise(
+                      summary.processDefaultRatePaise,
+                      pricingUnit: summary.processDefaultPricingUnit,
+                    );
+                    sourceBadgeLabel = 'Process Default';
+                    sourceBadgeTone = AppStatusTone.info;
+                  } else {
+                    rateDisplay = l10n.ratesNoCurrentRate;
+                    sourceBadgeLabel = 'No Rate';
+                    sourceBadgeTone = AppStatusTone.pending;
+                  }
+
                   final periodText = currentRate != null
-                      ? '${currentRate.effectiveFrom} - ${currentRate.effectiveTo ?? l10n.ratesOngoingLabel}'
-                      : null;
+                      ? AppDateTimeFormatter.formatIsoDateRange(
+                          fromIso: currentRate.effectiveFrom,
+                          toIso: currentRate.effectiveTo,
+                          ongoingLabel: l10n.ratesOngoingLabel,
+                          locale: localeCode,
+                        )
+                      : (hasProcessDefault
+                            ? 'Inherited from ${assignment.processName}'
+                            : null);
 
                   return Padding(
                     padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                    child: AppCard(
+                    child: AppCard.listItem(
+                      key: ValueKey<String>(
+                        'worker_detail_proc_${assignment.processId}',
+                      ),
                       onTap: () async {
                         await context.push(
                           RoutePaths.workerRates(
@@ -571,14 +602,26 @@ final class _WorkerDetailView extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                AppText(
-                                  assignment.processName,
-                                  variant: AppTextVariant.bodyLarge,
-                                  fontWeight: FontWeight.w700,
+                                Wrap(
+                                  spacing: AppSpacing.xs,
+                                  runSpacing: AppSpacing.xs,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  children: [
+                                    AppText(
+                                      assignment.processName,
+                                      variant: AppTextVariant.bodyLarge,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    AppStatusBadge(
+                                      label: sourceBadgeLabel,
+                                      tone: sourceBadgeTone,
+                                    ),
+                                  ],
                                 ),
                                 const SizedBox(height: AppSpacing.xs),
                                 AppText(
                                   '${l10n.ratesCurrentRateLabel}: $rateDisplay',
+                                  variant: AppTextVariant.numeric,
                                   fontWeight: FontWeight.w600,
                                 ),
                                 if (periodText != null) ...[
@@ -598,7 +641,9 @@ final class _WorkerDetailView extends StatelessWidget {
                                 label: '${summary.totalRateHistoryCount}',
                                 tone: currentRate != null
                                     ? AppStatusTone.good
-                                    : AppStatusTone.pending,
+                                    : (hasProcessDefault
+                                          ? AppStatusTone.info
+                                          : AppStatusTone.pending),
                                 icon: Icons.history,
                               ),
                               const SizedBox(height: AppSpacing.xs),

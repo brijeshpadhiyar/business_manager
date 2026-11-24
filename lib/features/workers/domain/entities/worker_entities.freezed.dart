@@ -573,7 +573,7 @@ as int,
 /// @nodoc
 mixin _$WorkerProcessRateSummary {
 
- WorkerProcessAssignmentEntity get assignment; MemberProcessRateEntity? get currentRate; int get totalRateHistoryCount;
+ WorkerProcessAssignmentEntity get assignment; MemberProcessRateEntity? get currentRate; int get processDefaultRatePaise; String get processDefaultPricingUnit; int get totalRateHistoryCount;
 /// Create a copy of WorkerProcessRateSummary
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -585,20 +585,20 @@ $WorkerProcessRateSummaryCopyWith<WorkerProcessRateSummary> get copyWith => _$Wo
 @override
 bool operator ==(Object other) {
   final _this = this as WorkerProcessRateSummary;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is WorkerProcessRateSummary&&(identical(other.assignment, _this.assignment) || other.assignment == _this.assignment)&&(identical(other.currentRate, _this.currentRate) || other.currentRate == _this.currentRate)&&(identical(other.totalRateHistoryCount, _this.totalRateHistoryCount) || other.totalRateHistoryCount == _this.totalRateHistoryCount));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is WorkerProcessRateSummary&&(identical(other.assignment, _this.assignment) || other.assignment == _this.assignment)&&(identical(other.currentRate, _this.currentRate) || other.currentRate == _this.currentRate)&&(identical(other.processDefaultRatePaise, _this.processDefaultRatePaise) || other.processDefaultRatePaise == _this.processDefaultRatePaise)&&(identical(other.processDefaultPricingUnit, _this.processDefaultPricingUnit) || other.processDefaultPricingUnit == _this.processDefaultPricingUnit)&&(identical(other.totalRateHistoryCount, _this.totalRateHistoryCount) || other.totalRateHistoryCount == _this.totalRateHistoryCount));
 }
 
 
 @override
 int get hashCode {
   final _this = this as WorkerProcessRateSummary;
-  return Object.hash(runtimeType,_this.assignment,_this.currentRate,_this.totalRateHistoryCount);
+  return Object.hash(runtimeType,_this.assignment,_this.currentRate,_this.processDefaultRatePaise,_this.processDefaultPricingUnit,_this.totalRateHistoryCount);
 }
 
 @override
 String toString() {
   final _this = this as WorkerProcessRateSummary;
-  return 'WorkerProcessRateSummary(assignment: ${_this.assignment}, currentRate: ${_this.currentRate}, totalRateHistoryCount: ${_this.totalRateHistoryCount})';
+  return 'WorkerProcessRateSummary(assignment: ${_this.assignment}, currentRate: ${_this.currentRate}, processDefaultRatePaise: ${_this.processDefaultRatePaise}, processDefaultPricingUnit: ${_this.processDefaultPricingUnit}, totalRateHistoryCount: ${_this.totalRateHistoryCount})';
 }
 
 
@@ -609,7 +609,7 @@ abstract mixin class $WorkerProcessRateSummaryCopyWith<$Res>  {
   factory $WorkerProcessRateSummaryCopyWith(WorkerProcessRateSummary value, $Res Function(WorkerProcessRateSummary) _then) = _$WorkerProcessRateSummaryCopyWithImpl;
 @useResult
 $Res call({
- WorkerProcessAssignmentEntity assignment, MemberProcessRateEntity? currentRate, int totalRateHistoryCount
+ WorkerProcessAssignmentEntity assignment, MemberProcessRateEntity? currentRate, int processDefaultRatePaise, String processDefaultPricingUnit, int totalRateHistoryCount
 });
 
 
@@ -626,11 +626,13 @@ class _$WorkerProcessRateSummaryCopyWithImpl<$Res>
 
 /// Create a copy of WorkerProcessRateSummary
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? assignment = null,Object? currentRate = freezed,Object? totalRateHistoryCount = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? assignment = null,Object? currentRate = freezed,Object? processDefaultRatePaise = null,Object? processDefaultPricingUnit = null,Object? totalRateHistoryCount = null,}) {
   return _then(WorkerProcessRateSummary(
 assignment: null == assignment ? _self.assignment : assignment // ignore: cast_nullable_to_non_nullable
 as WorkerProcessAssignmentEntity,currentRate: freezed == currentRate ? _self.currentRate : currentRate // ignore: cast_nullable_to_non_nullable
-as MemberProcessRateEntity?,totalRateHistoryCount: null == totalRateHistoryCount ? _self.totalRateHistoryCount : totalRateHistoryCount // ignore: cast_nullable_to_non_nullable
+as MemberProcessRateEntity?,processDefaultRatePaise: null == processDefaultRatePaise ? _self.processDefaultRatePaise : processDefaultRatePaise // ignore: cast_nullable_to_non_nullable
+as int,processDefaultPricingUnit: null == processDefaultPricingUnit ? _self.processDefaultPricingUnit : processDefaultPricingUnit // ignore: cast_nullable_to_non_nullable
+as String,totalRateHistoryCount: null == totalRateHistoryCount ? _self.totalRateHistoryCount : totalRateHistoryCount // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }
@@ -734,10 +736,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( WorkerProcessAssignmentEntity assignment,  MemberProcessRateEntity? currentRate,  int totalRateHistoryCount)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( WorkerProcessAssignmentEntity assignment,  MemberProcessRateEntity? currentRate,  int processDefaultRatePaise,  String processDefaultPricingUnit,  int totalRateHistoryCount)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _WorkerProcessRateSummary() when $default != null:
-return $default(_that.assignment,_that.currentRate,_that.totalRateHistoryCount);case _:
+return $default(_that.assignment,_that.currentRate,_that.processDefaultRatePaise,_that.processDefaultPricingUnit,_that.totalRateHistoryCount);case _:
   return orElse();
 
 }
@@ -755,10 +757,10 @@ return $default(_that.assignment,_that.currentRate,_that.totalRateHistoryCount);
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( WorkerProcessAssignmentEntity assignment,  MemberProcessRateEntity? currentRate,  int totalRateHistoryCount)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( WorkerProcessAssignmentEntity assignment,  MemberProcessRateEntity? currentRate,  int processDefaultRatePaise,  String processDefaultPricingUnit,  int totalRateHistoryCount)  $default,) {final _that = this;
 switch (_that) {
 case _WorkerProcessRateSummary():
-return $default(_that.assignment,_that.currentRate,_that.totalRateHistoryCount);}
+return $default(_that.assignment,_that.currentRate,_that.processDefaultRatePaise,_that.processDefaultPricingUnit,_that.totalRateHistoryCount);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -772,10 +774,10 @@ return $default(_that.assignment,_that.currentRate,_that.totalRateHistoryCount);
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( WorkerProcessAssignmentEntity assignment,  MemberProcessRateEntity? currentRate,  int totalRateHistoryCount)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( WorkerProcessAssignmentEntity assignment,  MemberProcessRateEntity? currentRate,  int processDefaultRatePaise,  String processDefaultPricingUnit,  int totalRateHistoryCount)?  $default,) {final _that = this;
 switch (_that) {
 case _WorkerProcessRateSummary() when $default != null:
-return $default(_that.assignment,_that.currentRate,_that.totalRateHistoryCount);case _:
+return $default(_that.assignment,_that.currentRate,_that.processDefaultRatePaise,_that.processDefaultPricingUnit,_that.totalRateHistoryCount);case _:
   return null;
 
 }
@@ -787,11 +789,13 @@ return $default(_that.assignment,_that.currentRate,_that.totalRateHistoryCount);
 
 
 class _WorkerProcessRateSummary implements WorkerProcessRateSummary {
-  const _WorkerProcessRateSummary({required this.assignment, this.currentRate, required this.totalRateHistoryCount});
+  const _WorkerProcessRateSummary({required this.assignment, this.currentRate, this.processDefaultRatePaise = 0, this.processDefaultPricingUnit = 'PER_PIECE', required this.totalRateHistoryCount});
   
 
 @override final  WorkerProcessAssignmentEntity assignment;
 @override final  MemberProcessRateEntity? currentRate;
+@override@JsonKey() final  int processDefaultRatePaise;
+@override@JsonKey() final  String processDefaultPricingUnit;
 @override final  int totalRateHistoryCount;
 
 /// Create a copy of WorkerProcessRateSummary
@@ -804,18 +808,18 @@ _$WorkerProcessRateSummaryCopyWith<_WorkerProcessRateSummary> get copyWith => __
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _WorkerProcessRateSummary&&(identical(other.assignment, assignment) || other.assignment == assignment)&&(identical(other.currentRate, currentRate) || other.currentRate == currentRate)&&(identical(other.totalRateHistoryCount, totalRateHistoryCount) || other.totalRateHistoryCount == totalRateHistoryCount));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _WorkerProcessRateSummary&&(identical(other.assignment, assignment) || other.assignment == assignment)&&(identical(other.currentRate, currentRate) || other.currentRate == currentRate)&&(identical(other.processDefaultRatePaise, processDefaultRatePaise) || other.processDefaultRatePaise == processDefaultRatePaise)&&(identical(other.processDefaultPricingUnit, processDefaultPricingUnit) || other.processDefaultPricingUnit == processDefaultPricingUnit)&&(identical(other.totalRateHistoryCount, totalRateHistoryCount) || other.totalRateHistoryCount == totalRateHistoryCount));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,assignment,currentRate,totalRateHistoryCount);
+    return Object.hash(runtimeType,assignment,currentRate,processDefaultRatePaise,processDefaultPricingUnit,totalRateHistoryCount);
 }
 
 @override
 String toString() {
-    return 'WorkerProcessRateSummary(assignment: $assignment, currentRate: $currentRate, totalRateHistoryCount: $totalRateHistoryCount)';
+    return 'WorkerProcessRateSummary(assignment: $assignment, currentRate: $currentRate, processDefaultRatePaise: $processDefaultRatePaise, processDefaultPricingUnit: $processDefaultPricingUnit, totalRateHistoryCount: $totalRateHistoryCount)';
 }
 
 
@@ -826,7 +830,7 @@ abstract mixin class _$WorkerProcessRateSummaryCopyWith<$Res> implements $Worker
   factory _$WorkerProcessRateSummaryCopyWith(_WorkerProcessRateSummary value, $Res Function(_WorkerProcessRateSummary) _then) = __$WorkerProcessRateSummaryCopyWithImpl;
 @override @useResult
 $Res call({
- WorkerProcessAssignmentEntity assignment, MemberProcessRateEntity? currentRate, int totalRateHistoryCount
+ WorkerProcessAssignmentEntity assignment, MemberProcessRateEntity? currentRate, int processDefaultRatePaise, String processDefaultPricingUnit, int totalRateHistoryCount
 });
 
 
@@ -843,11 +847,13 @@ class __$WorkerProcessRateSummaryCopyWithImpl<$Res>
 
 /// Create a copy of WorkerProcessRateSummary
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? assignment = null,Object? currentRate = freezed,Object? totalRateHistoryCount = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? assignment = null,Object? currentRate = freezed,Object? processDefaultRatePaise = null,Object? processDefaultPricingUnit = null,Object? totalRateHistoryCount = null,}) {
   return _then(_WorkerProcessRateSummary(
 assignment: null == assignment ? _self.assignment : assignment // ignore: cast_nullable_to_non_nullable
 as WorkerProcessAssignmentEntity,currentRate: freezed == currentRate ? _self.currentRate : currentRate // ignore: cast_nullable_to_non_nullable
-as MemberProcessRateEntity?,totalRateHistoryCount: null == totalRateHistoryCount ? _self.totalRateHistoryCount : totalRateHistoryCount // ignore: cast_nullable_to_non_nullable
+as MemberProcessRateEntity?,processDefaultRatePaise: null == processDefaultRatePaise ? _self.processDefaultRatePaise : processDefaultRatePaise // ignore: cast_nullable_to_non_nullable
+as int,processDefaultPricingUnit: null == processDefaultPricingUnit ? _self.processDefaultPricingUnit : processDefaultPricingUnit // ignore: cast_nullable_to_non_nullable
+as String,totalRateHistoryCount: null == totalRateHistoryCount ? _self.totalRateHistoryCount : totalRateHistoryCount // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }

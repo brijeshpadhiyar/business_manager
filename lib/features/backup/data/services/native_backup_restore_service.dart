@@ -9,6 +9,7 @@ import 'package:business_manager/core/database/connection/database_connection_na
 import 'package:business_manager/core/database/migrations/database_migration_manager.dart';
 import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
+import 'package:business_manager/core/utils/app_date_time_formatter.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/features/backup/domain/entities/backup_entities.dart';
 import 'package:business_manager/features/backup/domain/services/backup_restore_service.dart';
@@ -297,11 +298,8 @@ final class NativeBackupRestoreService implements BackupRestoreService {
         appVersion: appVersionString,
         flavor: _config.flavor.name,
         schemaVersion: DatabaseMigrationManager.currentSchemaVersion,
-        createdAtUtc: DateTime.fromMillisecondsSinceEpoch(
-          nowUtc,
-          isUtc: true,
-        ).toIso8601String(),
-        createdAtIst: IstDateTimeHelper.formatIstIsoDateTime(nowUtc),
+        createdAtUtc: AppDateTimeFormatter.formatUtcIso8601(nowUtc),
+        createdAtIst: AppDateTimeFormatter.formatIsoDateTimeIst(nowUtc),
         databaseSha256: dbSha256,
         databaseSizeBytes: dbSize,
         attachmentsCount: attachmentItems.length,

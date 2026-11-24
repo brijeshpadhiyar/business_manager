@@ -2,26 +2,30 @@ import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/error/exceptions.dart';
+import 'package:business_manager/core/utils/money_formatter.dart';
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/lots/domain/entities/colour_master_entity.dart';
 import 'package:business_manager/features/lots/domain/repositories/colour_master_repository.dart';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Visual Multi-Select Colour Picker & Quantity Entry Sheet.
+/// Visual Multi-Select Colour Picker, Quantity & Direct SKU Unit Price Sheet.
 ///
 /// Features:
 /// - Visual textile swatch grid with actual colour previews & HEX codes
 /// - Search by name or HEX
 /// - Recently Used swatch strip
 /// - Multi-select & deselect with animated check rings
-/// - Per-selected-colour quantity entry with automatic total calculation
+/// - Per-selected-colour Quantity (pcs) AND Unit Price (₹/pc) entry with
+///   automatic total quantity & Indian Rupee valuation
 /// - Custom colour creation & editing with HEX input + R/G/B sliders
 final class VisualColourPickerSheet {
   static Future<List<SelectedColourVariantInput>?> show(
     BuildContext context, {
     required String title,
     Set<String> existingColourNamesLower = const {},
+    int defaultUnitPricePaise = 0,
   }) async {
     final repo = getIt<ColourMasterRepository>();
     final allColours = await repo.getAllColours();
@@ -36,6 +40,7 @@ final class VisualColourPickerSheet {
         initialAllColours: allColours,
         initialRecentColours: recentColours,
         existingColourNamesLower: existingColourNamesLower,
+        defaultUnitPricePaise: defaultUnitPricePaise,
       ),
     );
   }
@@ -47,12 +52,14 @@ final class _VisualColourPickerContent extends StatefulWidget {
     required this.initialAllColours,
     required this.initialRecentColours,
     required this.existingColourNamesLower,
+    required this.defaultUnitPricePaise,
   });
 
   final ColourMasterRepository repo;
   final List<ColourMasterEntity> initialAllColours;
   final List<ColourMasterEntity> initialRecentColours;
   final Set<String> existingColourNamesLower;
+  final int defaultUnitPricePaise;
 
   @override
   State<_VisualColourPickerContent> createState() =>
@@ -66,11 +73,17 @@ final class _VisualColourPickerContentState
   final Set<String> selectedIds = <String>{};
   final Map<String, TextEditingController> qtyControllers =
       <String, TextEditingController>{};
+  final Map<String, TextEditingController> priceControllers =
+      <String, TextEditingController>{};
   final TextEditingController searchCtrl = TextEditingController();
   String? error;
 
   ColourMasterRepository get repo => widget.repo;
   Set<String> get existingColourNamesLower => widget.existingColourNamesLower;
+
+  String get _defaultPriceText => widget.defaultUnitPricePaise > 0
+      ? MoneyFormatter.formatPaiseForInput(widget.defaultUnitPricePaise)
+      : '';
 
   @override
   void initState() {
@@ -83,6 +96,9 @@ final class _VisualColourPickerContentState
   void dispose() {
     searchCtrl.dispose();
     for (final c in qtyControllers.values) {
+      c.dispose();
+    }
+    for (final c in priceControllers.values) {
       c.dispose();
     }
     super.dispose();
@@ -110,8 +126,17 @@ final class _VisualColourPickerContentState
         .where((c) => selectedIds.contains(c.id))
         .toList();
     var totalQty = 0;
+    var totalValuePaise = 0;
     for (final c in selectedList) {
-      totalQty += int.tryParse(qtyControllers[c.id]?.text.trim() ?? '') ?? 0;
+      final qty = int.tryParse(qtyControllers[c.id]?.text.trim() ?? '') ?? 0;
+      final parsedPrice = AppValidators.parseRupeesToPaiseExact(
+        priceControllers[c.id]?.text ?? '',
+        isRequired: false,
+        allowZero: true,
+      );
+      final pricePaise = parsedPrice.paise ?? 0;
+      totalQty += qty;
+      totalValuePaise += qty * pricePaise;
     }
 
     void toggleColour(ColourMasterEntity c) {
@@ -125,394 +150,447 @@ final class _VisualColourPickerContentState
             c.id,
             () => TextEditingController(text: '100'),
           );
+          priceControllers.putIfAbsent(
+            c.id,
+            () => TextEditingController(text: _defaultPriceText),
+          );
         }
       });
     }
 
-            Future<void> openCustomColourDialog({
-              ColourMasterEntity? editTarget,
-            }) async {
-              final initColor = editTarget != null
-                  ? AppColourUtils.resolveColor(editTarget.hexCode)
-                  : const Color(0xFF0D9488);
-              final nameCtrl = TextEditingController(
-                text: editTarget?.name ?? '',
-              );
-              final hexCtrl = TextEditingController(
-                text: editTarget?.hexCode ?? AppColourUtils.toHex(initColor),
-              );
-              var r = (initColor.r * 255).round();
-              var g = (initColor.g * 255).round();
-              var b = (initColor.b * 255).round();
-              String? dlgError;
+    Future<void> openCustomColourDialog({
+      ColourMasterEntity? editTarget,
+    }) async {
+      final initColor = editTarget != null
+          ? AppColourUtils.resolveColor(editTarget.hexCode)
+          : const Color(0xFF0D9488);
+      final nameCtrl = TextEditingController(text: editTarget?.name ?? '');
+      final hexCtrl = TextEditingController(
+        text: editTarget?.hexCode ?? AppColourUtils.toHex(initColor),
+      );
+      var r = (initColor.r * 255).round();
+      var g = (initColor.g * 255).round();
+      var b = (initColor.b * 255).round();
+      String? dlgError;
 
-              try {
-                final saved = await AppDialog.showCustom<ColourMasterEntity>(
-                  ctx,
-                  builder: (dCtx) => StatefulBuilder(
-                    builder: (innerCtx, setDlgState) {
-                      final previewColor = Color.fromARGB(255, r, g, b);
-                      return AppDialog(
-                        title: editTarget == null
-                            ? 'Add Custom Colour'
-                            : 'Edit Colour',
-                        content: SingleChildScrollView(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.stretch,
-                            children: [
-                              Row(
-                                children: [
-                                  AppColourSwatch(
-                                    color: previewColor,
-                                    size: 52,
-                                    borderRadius: AppRadius.lgBorder,
-                                  ),
-                                  const SizedBox(width: AppSpacing.md),
-                                  Expanded(
-                                    child: AppTextField(
-                                      controller: nameCtrl,
-                                      label: 'Colour Name',
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: AppSpacing.md),
-                              AppTextField(
-                                controller: hexCtrl,
-                                label: 'HEX Code (e.g. #DC2626)',
-                                onChanged: (val) {
-                                  final norm = AppColourUtils.normalizeHex(val);
-                                  if (norm != null) {
-                                    final parsed = AppColourUtils.resolveColor(
-                                      norm,
-                                    );
-                                    setDlgState(() {
-                                      r = (parsed.r * 255).round();
-                                      g = (parsed.g * 255).round();
-                                      b = (parsed.b * 255).round();
-                                    });
-                                  }
-                                },
-                              ),
-                              const SizedBox(height: AppSpacing.sm),
-                              _RgbSlider(
-                                label: 'R',
-                                value: r,
-                                activeColor: Colors.red,
-                                onChanged: (v) => setDlgState(() {
-                                  r = v;
-                                  hexCtrl.text = AppColourUtils.rgbToHex(
-                                    r,
-                                    g,
-                                    b,
-                                  );
-                                }),
-                              ),
-                              _RgbSlider(
-                                label: 'G',
-                                value: g,
-                                activeColor: Colors.green,
-                                onChanged: (v) => setDlgState(() {
-                                  g = v;
-                                  hexCtrl.text = AppColourUtils.rgbToHex(
-                                    r,
-                                    g,
-                                    b,
-                                  );
-                                }),
-                              ),
-                              _RgbSlider(
-                                label: 'B',
-                                value: b,
-                                activeColor: Colors.blue,
-                                onChanged: (v) => setDlgState(() {
-                                  b = v;
-                                  hexCtrl.text = AppColourUtils.rgbToHex(
-                                    r,
-                                    g,
-                                    b,
-                                  );
-                                }),
-                              ),
-                              if (dlgError != null) ...[
-                                const SizedBox(height: AppSpacing.xs),
-                                AppText(
-                                  dlgError!,
-                                  color: Theme.of(innerCtx).colorScheme.error,
-                                ),
-                              ],
-                            ],
-                          ),
-                        ),
-                        cancelLabel: 'Cancel',
-                        confirmLabel: 'Save Colour',
-                        onConfirm: () async {
-                          try {
-                            final result = editTarget == null
-                                ? await repo.createCustomColour(
-                                    name: nameCtrl.text,
-                                    hexCode: hexCtrl.text,
-                                  )
-                                : await repo.updateColour(
-                                    id: editTarget.id,
-                                    name: nameCtrl.text,
-                                    hexCode: hexCtrl.text,
-                                  );
-                            if (dCtx.mounted) Navigator.of(dCtx).pop(result);
-                          } on DomainValidationException catch (e) {
-                            if (dCtx.mounted) {
-                              setDlgState(() => dlgError = e.message);
-                            }
-                          }
-                        },
-                      );
-                    },
-                  ),
-                );
-                if (saved != null) {
-                  allColours = await repo.getAllColours();
-                  recentColours = await repo.getRecentColours();
-                  setSheetState(() {
-                    selectedIds.add(saved.id);
-                    qtyControllers.putIfAbsent(
-                      saved.id,
-                      () => TextEditingController(text: '100'),
-                    );
-                  });
-                }
-              } finally {
-                nameCtrl.dispose();
-                hexCtrl.dispose();
-              }
-            }
-
-            return ConstrainedBox(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.sizeOf(ctx).height * 0.78,
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: AppTextField(
-                            controller: searchCtrl,
-                            label: 'Search colour name or HEX',
-                            prefixIcon: Icons.search_rounded,
-                            onChanged: (_) => setSheetState(() {}),
-                          ),
-                        ),
-                        const SizedBox(width: AppSpacing.xs),
-                        AppButton(
-                          label: 'Custom',
-                          icon: Icons.add_rounded,
-                          variant: AppButtonVariant.secondary,
-                          onPressed: () => openCustomColourDialog(),
-                        ),
-                      ],
-                    ),
-                    if (recentColours.isNotEmpty && q.isEmpty) ...[
-                      const SizedBox(height: AppSpacing.md),
-                      const AppText(
-                        'Recently Used',
-                        variant: AppTextVariant.bodySmall,
-                        fontWeight: FontWeight.w700,
-                      ),
-                      const SizedBox(height: AppSpacing.xs),
-                      SizedBox(
-                        height: 44,
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: recentColours.length,
-                          separatorBuilder: (_, _) =>
-                              const SizedBox(width: AppSpacing.xs),
-                          itemBuilder: (_, idx) {
-                            final c = recentColours[idx];
-                            final isSel = selectedIds.contains(c.id);
-                            return InkWell(
-                              borderRadius: AppRadius.fullBorder,
-                              onTap: () => toggleColour(c),
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius: AppRadius.fullBorder,
-                                  border: Border.all(
-                                    color: isSel
-                                        ? Theme.of(ctx).colorScheme.secondary
-                                        : Theme.of(
-                                            ctx,
-                                          ).colorScheme.outlineVariant,
-                                    width: isSel ? 1.6 : 1,
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    AppColourSwatch(
-                                      color: AppColourUtils.resolveColor(
-                                        c.hexCode,
-                                      ),
-                                      size: 20,
-                                      borderRadius: AppRadius.fullBorder,
-                                      isSelected: isSel,
-                                    ),
-                                    const SizedBox(width: 6),
-                                    AppText(
-                                      c.name,
-                                      variant: AppTextVariant.bodySmall,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                    const SizedBox(height: AppSpacing.md),
-                    const AppText(
-                      'Colour Palette (Tap to select, long-press to edit)',
-                      variant: AppTextVariant.bodySmall,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    const SizedBox(height: AppSpacing.xs),
-                    Wrap(
-                      spacing: AppSpacing.sm,
-                      runSpacing: AppSpacing.sm,
-                      children: [
-                        for (final c in filtered)
-                          _PaletteSwatchChip(
-                            colour: c,
-                            isSelected: selectedIds.contains(c.id),
-                            alreadyInDesign: existingColourNamesLower.contains(
-                              c.name.toLowerCase(),
-                            ),
-                            onTap: () => toggleColour(c),
-                            onLongPress: () =>
-                                openCustomColourDialog(editTarget: c),
-                          ),
-                      ],
-                    ),
-                    if (selectedList.isNotEmpty) ...[
-                      const SizedBox(height: AppSpacing.lg),
+      try {
+        final saved = await AppDialog.showCustom<ColourMasterEntity>(
+          ctx,
+          builder: (dCtx) => StatefulBuilder(
+            builder: (innerCtx, setDlgState) {
+              final previewColor = Color.fromARGB(255, r, g, b);
+              return AppDialog(
+                title: editTarget == null ? 'Add Custom Colour' : 'Edit Colour',
+                content: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
                       Row(
                         children: [
-                          Expanded(
-                            child: AppText(
-                              'Selected Colours (${selectedList.length})',
-                              fontWeight: FontWeight.w700,
-                            ),
+                          AppColourSwatch(
+                            color: previewColor,
+                            size: 52,
+                            borderRadius: AppRadius.lgBorder,
                           ),
-                          const SizedBox(width: AppSpacing.xs),
-                          AppStatusBadge(
-                            label: 'Total: $totalQty pcs',
-                            tone: AppStatusTone.good,
+                          const SizedBox(width: AppSpacing.md),
+                          Expanded(
+                            child: AppTextField(
+                              controller: nameCtrl,
+                              label: 'Colour Name',
+                            ),
                           ),
                         ],
                       ),
+                      const SizedBox(height: AppSpacing.md),
+                      AppTextField(
+                        controller: hexCtrl,
+                        label: 'HEX Code (e.g. #DC2626)',
+                        onChanged: (val) {
+                          final norm = AppColourUtils.normalizeHex(val);
+                          if (norm != null) {
+                            final parsed = AppColourUtils.resolveColor(norm);
+                            setDlgState(() {
+                              r = (parsed.r * 255).round();
+                              g = (parsed.g * 255).round();
+                              b = (parsed.b * 255).round();
+                            });
+                          }
+                        },
+                      ),
                       const SizedBox(height: AppSpacing.sm),
-                      for (final c in selectedList) ...[
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                          child: Row(
-                            children: [
-                              AppColourSwatch(
-                                color: AppColourUtils.resolveColor(c.hexCode),
-                                size: 36,
-                              ),
-                              const SizedBox(width: AppSpacing.sm),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    AppText(
-                                      c.name,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                    AppText(
-                                      c.hexCode,
-                                      variant: AppTextVariant.bodySmall,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              SizedBox(
-                                width: 112,
-                                child: AppTextField(
-                                  controller: qtyControllers[c.id],
-                                  label: 'Qty (pcs)',
-                                  keyboardType: TextInputType.number,
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.digitsOnly,
-                                  ],
-                                  onChanged: (_) => setSheetState(() {}),
-                                ),
-                              ),
-                              AppIconButton(
-                                icon: Icons.close_rounded,
-                                tooltip: 'Remove',
-                                onPressed: () => toggleColour(c),
-                              ),
-                            ],
-                          ),
+                      _RgbSlider(
+                        label: 'R',
+                        value: r,
+                        activeColor: Colors.red,
+                        onChanged: (v) => setDlgState(() {
+                          r = v;
+                          hexCtrl.text = AppColourUtils.rgbToHex(r, g, b);
+                        }),
+                      ),
+                      _RgbSlider(
+                        label: 'G',
+                        value: g,
+                        activeColor: Colors.green,
+                        onChanged: (v) => setDlgState(() {
+                          g = v;
+                          hexCtrl.text = AppColourUtils.rgbToHex(r, g, b);
+                        }),
+                      ),
+                      _RgbSlider(
+                        label: 'B',
+                        value: b,
+                        activeColor: Colors.blue,
+                        onChanged: (v) => setDlgState(() {
+                          b = v;
+                          hexCtrl.text = AppColourUtils.rgbToHex(r, g, b);
+                        }),
+                      ),
+                      if (dlgError != null) ...[
+                        const SizedBox(height: AppSpacing.xs),
+                        AppText(
+                          dlgError!,
+                          color: Theme.of(innerCtx).colorScheme.error,
                         ),
                       ],
                     ],
-                    if (error != null) ...[
-                      const SizedBox(height: AppSpacing.xs),
-                      AppText(error!, color: Theme.of(ctx).colorScheme.error),
-                    ],
-                    const SizedBox(height: AppSpacing.md),
-                    AppButton(
-                      label: selectedList.isEmpty
-                          ? 'Select Colours Above'
-                          : 'Add ${selectedList.length} Colour(s) • $totalQty pcs',
-                      icon: Icons.check_rounded,
-                      isExpanded: true,
-                      onPressed: selectedList.isEmpty
-                          ? null
-                          : () async {
-                              final results = <SelectedColourVariantInput>[];
-                              for (final c in selectedList) {
-                                final qty =
-                                    int.tryParse(
-                                      qtyControllers[c.id]?.text.trim() ?? '',
-                                    ) ??
-                                    0;
-                                if (qty <= 0) {
-                                  setSheetState(
-                                    () => error =
-                                        'Enter a positive quantity for ${c.name}.',
-                                  );
-                                  return;
-                                }
-                                results.add(
-                                  SelectedColourVariantInput(
-                                    colourName: c.name,
-                                    hexCode: c.hexCode,
-                                    quantity: qty,
-                                  ),
-                                );
-                              }
-                              await repo.markColoursUsed(
-                                results.map((e) => e.colourName).toList(),
-                              );
-                              if (sheetCtx.mounted) {
-                                Navigator.of(sheetCtx).pop(results);
-                              }
-                            },
-                    ),
-                  ],
+                  ),
+                ),
+                cancelLabel: 'Cancel',
+                confirmLabel: 'Save Colour',
+                onConfirm: () async {
+                  try {
+                    final result = editTarget == null
+                        ? await repo.createCustomColour(
+                            name: nameCtrl.text,
+                            hexCode: hexCtrl.text,
+                          )
+                        : await repo.updateColour(
+                            id: editTarget.id,
+                            name: nameCtrl.text,
+                            hexCode: hexCtrl.text,
+                          );
+                    if (dCtx.mounted) Navigator.of(dCtx).pop(result);
+                  } on DomainValidationException catch (e) {
+                    if (dCtx.mounted) {
+                      setDlgState(() => dlgError = e.message);
+                    }
+                  }
+                },
+              );
+            },
+          ),
+        );
+        if (saved != null) {
+          allColours = await repo.getAllColours();
+          recentColours = await repo.getRecentColours();
+          setSheetState(() {
+            selectedIds.add(saved.id);
+            qtyControllers.putIfAbsent(
+              saved.id,
+              () => TextEditingController(text: '100'),
+            );
+            priceControllers.putIfAbsent(
+              saved.id,
+              () => TextEditingController(text: _defaultPriceText),
+            );
+          });
+        }
+      } finally {
+        nameCtrl.dispose();
+        hexCtrl.dispose();
+      }
+    }
+
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.sizeOf(ctx).height * 0.82,
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: AppTextField(
+                    controller: searchCtrl,
+                    label: 'Search colour name or HEX',
+                    prefixIcon: Icons.search_rounded,
+                    onChanged: (_) => setSheetState(() {}),
+                  ),
+                ),
+                const SizedBox(width: AppSpacing.xs),
+                AppButton(
+                  label: 'Custom',
+                  icon: Icons.add_rounded,
+                  variant: AppButtonVariant.secondary,
+                  onPressed: () => openCustomColourDialog(),
+                ),
+              ],
+            ),
+            if (recentColours.isNotEmpty && q.isEmpty) ...[
+              const SizedBox(height: AppSpacing.md),
+              const AppText(
+                'Recently Used',
+                variant: AppTextVariant.bodySmall,
+                fontWeight: FontWeight.w700,
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              SizedBox(
+                height: 44,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: recentColours.length,
+                  separatorBuilder: (_, _) =>
+                      const SizedBox(width: AppSpacing.xs),
+                  itemBuilder: (_, idx) {
+                    final c = recentColours[idx];
+                    final isSel = selectedIds.contains(c.id);
+                    return InkWell(
+                      borderRadius: AppRadius.fullBorder,
+                      onTap: () => toggleColour(c),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: AppRadius.fullBorder,
+                          border: Border.all(
+                            color: isSel
+                                ? Theme.of(ctx).colorScheme.secondary
+                                : Theme.of(ctx).colorScheme.outlineVariant,
+                            width: isSel ? 1.6 : 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            AppColourSwatch(
+                              color: AppColourUtils.resolveColor(c.hexCode),
+                              size: 20,
+                              borderRadius: AppRadius.fullBorder,
+                              isSelected: isSel,
+                            ),
+                            const SizedBox(width: 6),
+                            AppText(c.name, variant: AppTextVariant.bodySmall),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
-            );
+            ],
+            const SizedBox(height: AppSpacing.md),
+            const AppText(
+              'Colour Palette (Tap to select, long-press to edit)',
+              variant: AppTextVariant.bodySmall,
+              fontWeight: FontWeight.w700,
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.sm,
+              children: [
+                for (final c in filtered)
+                  _PaletteSwatchChip(
+                    colour: c,
+                    isSelected: selectedIds.contains(c.id),
+                    alreadyInDesign: existingColourNamesLower.contains(
+                      c.name.toLowerCase(),
+                    ),
+                    onTap: () => toggleColour(c),
+                    onLongPress: () => openCustomColourDialog(editTarget: c),
+                  ),
+              ],
+            ),
+            if (selectedList.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.lg),
+              Wrap(
+                spacing: AppSpacing.xs,
+                runSpacing: AppSpacing.xs,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                alignment: WrapAlignment.spaceBetween,
+                children: [
+                  AppText(
+                    'Selected Colours (${selectedList.length})',
+                    fontWeight: FontWeight.w700,
+                  ),
+                  Wrap(
+                    spacing: AppSpacing.xs,
+                    children: [
+                      AppStatusBadge(
+                        label: '${MoneyFormatter.formatQuantity(totalQty)} pcs',
+                        tone: AppStatusTone.good,
+                      ),
+                      if (totalValuePaise > 0)
+                        AppStatusBadge(
+                          label: MoneyFormatter.formatPaise(totalValuePaise),
+                          tone: AppStatusTone.info,
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              for (final c in selectedList) ...[
+                Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                  child: Container(
+                    padding: const EdgeInsets.all(AppSpacing.sm),
+                    decoration: BoxDecoration(
+                      borderRadius: AppRadius.mdBorder,
+                      border: Border.all(
+                        color: Theme.of(ctx).colorScheme.outlineVariant,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            AppColourSwatch(
+                              color: AppColourUtils.resolveColor(c.hexCode),
+                              size: 30,
+                            ),
+                            const SizedBox(width: AppSpacing.sm),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  AppText(c.name, fontWeight: FontWeight.w600),
+                                  AppText(
+                                    c.hexCode,
+                                    variant: AppTextVariant.bodySmall,
+                                    color: Theme.of(
+                                      ctx,
+                                    ).colorScheme.onSurfaceVariant,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            AppIconButton(
+                              icon: Icons.close_rounded,
+                              tooltip: 'Remove',
+                              onPressed: () => toggleColour(c),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppSpacing.xs),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: AppTextField(
+                                controller: qtyControllers[c.id],
+                                label: 'Qty (pcs)',
+                                keyboardType: TextInputType.number,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly,
+                                ],
+                                onChanged: (_) => setSheetState(() {
+                                  error = null;
+                                }),
+                              ),
+                            ),
+                            const SizedBox(width: AppSpacing.sm),
+                            Expanded(
+                              child: AppTextField(
+                                controller: priceControllers[c.id],
+                                label: 'Unit Price (₹)',
+                                hint: '0.00',
+                                keyboardType:
+                                    const TextInputType.numberWithOptions(
+                                      decimal: true,
+                                    ),
+                                inputFormatters: [
+                                  AppInputFormatters.currencyDecimal,
+                                ],
+                                onChanged: (_) => setSheetState(() {
+                                  error = null;
+                                }),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ],
+            if (error != null) ...[
+              const SizedBox(height: AppSpacing.xs),
+              AppText(error!, color: Theme.of(ctx).colorScheme.error),
+            ],
+            const SizedBox(height: AppSpacing.md),
+            AppButton(
+              label: selectedList.isEmpty
+                  ? 'Select Colours Above'
+                  : 'Add ${selectedList.length} Colour(s) • ${MoneyFormatter.formatQuantity(totalQty)} pcs${totalValuePaise > 0 ? ' • ${MoneyFormatter.formatPaise(totalValuePaise)}' : ''}',
+              icon: Icons.check_rounded,
+              isExpanded: true,
+              onPressed: selectedList.isEmpty
+                  ? null
+                  : () async {
+                      final results = <SelectedColourVariantInput>[];
+                      for (final c in selectedList) {
+                        final qty =
+                            int.tryParse(
+                              qtyControllers[c.id]?.text.trim() ?? '',
+                            ) ??
+                            0;
+                        if (qty <= 0) {
+                          setSheetState(
+                            () => error =
+                                'Enter a positive quantity for ${c.name}.',
+                          );
+                          return;
+                        }
+                        if (qty > ValidationLimits.maxQuantity) {
+                          setSheetState(
+                            () => error =
+                                'Quantity for ${c.name} exceeds maximum limit.',
+                          );
+                          return;
+                        }
+                        final parsedPrice =
+                            AppValidators.parseRupeesToPaiseExact(
+                              priceControllers[c.id]?.text ?? '',
+                              isRequired: false,
+                              allowZero: true,
+                            );
+                        if (!parsedPrice.validation.isValid ||
+                            parsedPrice.paise == null) {
+                          setSheetState(
+                            () => error =
+                                'Enter a valid non-negative price for ${c.name}.',
+                          );
+                          return;
+                        }
+                        results.add(
+                          SelectedColourVariantInput(
+                            colourName: c.name,
+                            hexCode: c.hexCode,
+                            quantity: qty,
+                            unitPricePaise: parsedPrice.paise!,
+                          ),
+                        );
+                      }
+                      await repo.markColoursUsed(
+                        results.map((e) => e.colourName).toList(),
+                      );
+                      if (sheetCtx.mounted) {
+                        Navigator.of(sheetCtx).pop(results);
+                      }
+                    },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

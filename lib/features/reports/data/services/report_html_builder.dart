@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:business_manager/core/utils/app_date_time_formatter.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/features/reports/domain/entities/advanced_report_entities.dart';
@@ -337,9 +338,7 @@ final class ReportHtmlBuilder {
     for (final p in b.processPerformance) {
       final turnStr = p.averageTurnaroundHours == null
           ? '—'
-          : (p.averageTurnaroundHours! >= 24
-                ? '${(p.averageTurnaroundHours! / 24).toStringAsFixed(1)}d (n=${p.settledIssuesCount})'
-                : '${p.averageTurnaroundHours!.toStringAsFixed(1)}h (n=${p.settledIssuesCount})');
+          : '${AppDateTimeFormatter.formatDurationHours(p.averageTurnaroundHours!)} (n=${p.settledIssuesCount})';
       buf.write(
         '<tr>'
         '<td>${_e(p.processName)}</td>'

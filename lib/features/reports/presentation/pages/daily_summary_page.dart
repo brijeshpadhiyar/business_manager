@@ -2,6 +2,7 @@ import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
+import 'package:business_manager/core/utils/app_date_time_formatter.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
@@ -53,10 +54,7 @@ final class _DailySummaryView extends StatelessWidget {
       nowIst.month,
       nowIst.day,
     ).subtract(const Duration(days: 1));
-    final yesterdayIso =
-        '${yesterdayDate.year.toString().padLeft(4, '0')}-'
-        '${yesterdayDate.month.toString().padLeft(2, '0')}-'
-        '${yesterdayDate.day.toString().padLeft(2, '0')}';
+    final yesterdayIso = AppDateTimeFormatter.toIsoDate(yesterdayDate);
 
     return AppScaffold(
       title: l10n.dailySummaryHeading,

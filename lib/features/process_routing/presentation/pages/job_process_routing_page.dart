@@ -162,7 +162,9 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
       text: '${initialSku.physicalAvailableInHouse}',
     );
     final rateCtrl = TextEditingController(
-      text: (initialPricing.defaultRatePaise / 100).toStringAsFixed(2),
+      text: MoneyFormatter.formatPaiseForInput(
+        initialPricing.defaultRatePaise,
+      ),
     );
     final overrideReasonCtrl = TextEditingController();
     final notesCtrl = TextEditingController();
@@ -236,8 +238,9 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                       setSheetState(() {
                         selectedProcessId = v;
                         selectedUnit = dp.defaultPricingUnit;
-                        rateCtrl.text = (dp.defaultRatePaise / 100)
-                            .toStringAsFixed(2);
+                        rateCtrl.text = MoneyFormatter.formatPaiseForInput(
+                          dp.defaultRatePaise,
+                        );
                       });
                     },
                   ),
@@ -448,7 +451,9 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
     final defaultPricing = overview.defaultPricingByProcessId[destProcessId];
     final qtyCtrl = TextEditingController(text: '${source.pendingQuantity}');
     final rateCtrl = TextEditingController(
-      text: ((defaultPricing?.defaultRatePaise ?? 0) / 100).toStringAsFixed(2),
+      text: MoneyFormatter.formatPaiseForInput(
+        defaultPricing?.defaultRatePaise ?? 0,
+      ),
     );
     final reasonCtrl = TextEditingController();
     final notesCtrl = TextEditingController();
@@ -504,8 +509,9 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                       final nextDp = overview.defaultPricingByProcessId[v];
                       setSheetState(() {
                         destProcessId = v;
-                        rateCtrl.text = ((nextDp?.defaultRatePaise ?? 0) / 100)
-                            .toStringAsFixed(2);
+                        rateCtrl.text = MoneyFormatter.formatPaiseForInput(
+                          nextDp?.defaultRatePaise ?? 0,
+                        );
                       });
                     },
                   ),

@@ -503,7 +503,7 @@ final class _WorkerLedgerView extends StatelessWidget {
               AppText(
                 line.isInformational
                     ? MoneyFormatter.formatPaise(line.amountPaise)
-                    : '${line.balanceDeltaPaise >= 0 ? '+' : ''}${MoneyFormatter.formatPaise(line.balanceDeltaPaise)}',
+                    : MoneyFormatter.formatSignedPaise(line.balanceDeltaPaise),
                 variant: AppTextVariant.numeric,
                 fontWeight: FontWeight.w700,
               ),

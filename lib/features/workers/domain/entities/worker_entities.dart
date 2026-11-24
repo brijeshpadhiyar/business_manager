@@ -3,6 +3,23 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'worker_entities.freezed.dart';
 
+/// Immutable configuration input for assigning a process to a worker along with
+/// an optional worker-specific custom labour rate (leave `customRatePaise` null
+/// to inherit the process default labour rate).
+final class WorkerProcessConfigInput {
+  const WorkerProcessConfigInput({
+    required this.processId,
+    this.customRatePaise,
+    this.effectiveFrom,
+    this.notes,
+  });
+
+  final String processId;
+  final int? customRatePaise;
+  final String? effectiveFrom;
+  final String? notes;
+}
+
 @freezed
 sealed class WorkerEntity with _$WorkerEntity {
   const factory WorkerEntity({
@@ -37,6 +54,8 @@ sealed class WorkerProcessRateSummary with _$WorkerProcessRateSummary {
   const factory WorkerProcessRateSummary({
     required WorkerProcessAssignmentEntity assignment,
     MemberProcessRateEntity? currentRate,
+    @Default(0) int processDefaultRatePaise,
+    @Default('PER_PIECE') String processDefaultPricingUnit,
     required int totalRateHistoryCount,
   }) = _WorkerProcessRateSummary;
 }
