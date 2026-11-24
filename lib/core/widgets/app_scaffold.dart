@@ -4,8 +4,10 @@ import 'package:business_manager/core/design_system/app_breakpoints.dart';
 import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
+import 'package:business_manager/core/widgets/app_breadcrumb_bar.dart';
 import 'package:business_manager/core/widgets/app_collapsible_header.dart';
 import 'package:business_manager/core/widgets/app_glass_backdrop.dart';
+import 'package:business_manager/core/widgets/responsive_navigation.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Centralized scroll & header presentation modes for [AppScaffold].
@@ -25,14 +27,15 @@ enum AppScrollMode {
   compact,
 }
 
-/// Centralized StitchFlow V1.3 adaptive page scaffold supporting:
+/// Centralized StitchFlow adaptive page scaffold supporting:
 /// - [AppScrollMode.standard] (default, 100% backward-compatible)
 /// - [AppScrollMode.collapsible] (native `CustomScrollView` + `SliverAppBar` +
 ///   collapsible summary strip + pinned search/filter header)
 /// - [AppScrollMode.compact] (minimal toolbar, maximum workspace)
-///
-/// Set [embedded] to `true` when rendering inside `ResponsiveNavigation`'s
-/// shell `Scaffold` so `AppGlassBackdrop` and `Scaffold` are not duplicated.
+/// - [AppContentWidth] tiers (`narrow: 840dp`, `standard: 1160dp`,
+///   `wide: 1480dp`, `fluid`)
+/// - Automatic [ResponsiveShellScope] detection so nested routes inside the
+///   persistent Desktop/Tablet shell never paint duplicate [AppGlassBackdrop]s.
 final class AppScaffold extends StatelessWidget {
   const AppScaffold({
     super.key,
@@ -54,6 +57,8 @@ final class AppScaffold extends StatelessWidget {
     this.bottomNavigationBar,
     this.padding = AppSpacing.screenAll,
     this.constrainMaxWidth = true,
+    this.contentWidth = AppContentWidth.standard,
+    this.breadcrumbs,
   }) : assert(
          scrollMode == AppScrollMode.collapsible
              ? (slivers != null || body != null)
@@ -79,6 +84,11 @@ final class AppScaffold extends StatelessWidget {
   final Widget? bottomNavigationBar;
   final EdgeInsetsGeometry? padding;
   final bool constrainMaxWidth;
+  final AppContentWidth contentWidth;
+  final List<AppBreadcrumbItem>? breadcrumbs;
+
+  double get effectiveMaxWidth =>
+      constrainMaxWidth ? contentWidth.maxWidth : double.infinity;
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +98,14 @@ final class AppScaffold extends StatelessWidget {
       AppScrollMode.compact => _CompactScaffoldLayout(config: this),
     };
   }
+}
+
+Widget _wrapWithBackdropIfNeeded(BuildContext context, Widget child) {
+  final shell = ResponsiveShellScope.maybeOf(context);
+  if (shell != null && shell.hasPersistentChrome) {
+    return child;
+  }
+  return AppGlassBackdrop(child: child);
 }
 
 PreferredSizeWidget _buildGlassAppBar(
@@ -132,16 +150,25 @@ final class _StandardScaffoldLayout extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget content = config.body ?? const SizedBox.shrink();
+    if (config.breadcrumbs != null && config.breadcrumbs!.isNotEmpty) {
+      content = Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AppBreadcrumbBar(items: config.breadcrumbs!),
+          const SizedBox(height: AppSpacing.xs),
+          Expanded(child: content),
+        ],
+      );
+    }
     if (config.padding != null) {
       content = Padding(padding: config.padding!, child: content);
     }
-    if (config.constrainMaxWidth) {
+    final maxW = config.effectiveMaxWidth;
+    if (maxW.isFinite) {
       content = Align(
         alignment: Alignment.topCenter,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxWidth: AppSizing.maxContentWidth,
-          ),
+          constraints: BoxConstraints(maxWidth: maxW),
           child: content,
         ),
       );
@@ -156,8 +183,9 @@ final class _StandardScaffoldLayout extends StatelessWidget {
         config.titleWidget != null ||
         config.actions != null;
 
-    return AppGlassBackdrop(
-      child: Scaffold(
+    return _wrapWithBackdropIfNeeded(
+      context,
+      Scaffold(
         backgroundColor: Colors.transparent,
         appBar: showAppBar
             ? _buildGlassAppBar(
@@ -188,13 +216,12 @@ final class _CompactScaffoldLayout extends StatelessWidget {
     if (config.padding != null && config.padding != EdgeInsets.zero) {
       content = Padding(padding: config.padding!, child: content);
     }
-    if (config.constrainMaxWidth) {
+    final maxW = config.effectiveMaxWidth;
+    if (maxW.isFinite) {
       content = Align(
         alignment: Alignment.topCenter,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxWidth: AppSizing.maxContentWidth,
-          ),
+          constraints: BoxConstraints(maxWidth: maxW),
           child: content,
         ),
       );
@@ -209,8 +236,9 @@ final class _CompactScaffoldLayout extends StatelessWidget {
         config.titleWidget != null ||
         config.actions != null;
 
-    return AppGlassBackdrop(
-      child: Scaffold(
+    return _wrapWithBackdropIfNeeded(
+      context,
+      Scaffold(
         backgroundColor: Colors.transparent,
         appBar: showAppBar
             ? _buildGlassAppBar(
@@ -247,6 +275,8 @@ final class _CollapsibleScaffoldLayoutState
   @override
   Widget build(BuildContext context) {
     final config = widget.config;
+    final shell = ResponsiveShellScope.maybeOf(context);
+    final inPersistentShell = shell != null && shell.hasPersistentChrome;
     final hdr =
         config.header ??
         AppCollapsibleHeader(
@@ -278,23 +308,23 @@ final class _CollapsibleScaffoldLayoutState
                   : AppSizing.appBarHeight,
           };
 
-          final horizontalInset =
-              config.constrainMaxWidth && width > AppSizing.maxContentWidth
-              ? (width - AppSizing.maxContentWidth) / 2
+          final maxW = config.effectiveMaxWidth;
+          final horizontalInset = maxW.isFinite && width > maxW
+              ? (width - maxW) / 2
               : 0.0;
 
           final allSlivers = <Widget>[
             if (!useDesktopCompact)
               hdr.buildSliver(
                 context,
-                primary: !config.embedded,
+                primary: !config.embedded && !inPersistentShell,
                 effectiveExpandedHeight: effectiveExpandedHeight,
                 backdropKey: _chromeBackdropKey,
               )
             else ...[
               // Desktop compact header preserving maximum workspace
               SliverAppBar(
-                primary: !config.embedded,
+                primary: !config.embedded && !inPersistentShell,
                 pinned: hdr.pinned,
                 elevation: 0,
                 scrolledUnderElevation: 0,
@@ -386,8 +416,9 @@ final class _CollapsibleScaffoldLayoutState
       return scrollBody;
     }
 
-    return AppGlassBackdrop(
-      child: Scaffold(
+    return _wrapWithBackdropIfNeeded(
+      context,
+      Scaffold(
         backgroundColor: Colors.transparent,
         body: scrollBody,
         floatingActionButton: config.floatingActionButton,

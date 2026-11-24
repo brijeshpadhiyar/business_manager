@@ -17,21 +17,19 @@ import 'package:business_manager/features/notifications/data/services/notificati
 import 'package:crypto/crypto.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
-import 'package:injectable/injectable.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 
 /// Native (Android, Windows, macOS, Linux, iOS) implementation of StitchFlow's
 /// WAL-safe backup, raw `.sqlite` export, and atomic fail-safe `.zip` restore.
-@LazySingleton(as: BackupRestoreService)
 final class NativeBackupRestoreService implements BackupRestoreService {
   NativeBackupRestoreService(
     this._db,
     this._config,
     this._idGenerator, {
-    @ignoreParam this.baseDirectoryOverride,
-    @ignoreParam this.tempDirectoryOverride,
+    this.baseDirectoryOverride,
+    this.tempDirectoryOverride,
   });
 
   static String get appVersionString =>

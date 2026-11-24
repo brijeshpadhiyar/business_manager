@@ -43,6 +43,7 @@ final class _WorkerProductionHistoryView extends StatelessWidget {
         final cubit = context.read<WorkerProductionHistoryCubit>();
         return AppScaffold(
           title: l10n.prodHistoryWorkerHistoryTitle,
+          contentWidth: AppContentWidth.wide,
           actions: [
             AppIconButton(
               icon: Icons.refresh_rounded,
@@ -132,10 +133,52 @@ final class _WorkerProductionHistoryView extends StatelessWidget {
             title: l10n.prodHistoryWorkerHistoryTitle,
           )
         else
-          for (final p in state.profiles) ...[
-            _WorkerSummaryCard(profile: p),
-            const SizedBox(height: AppSpacing.sm),
-          ],
+          AppDataTable<WorkerCompleteProfile>(
+            enablePagination: true,
+            columns: [
+              AppDataColumn(label: l10n.workerNameLabel),
+              const AppDataColumn(label: 'Lots', numeric: true),
+              AppDataColumn(label: l10n.prodHistoryTotalAssigned, numeric: true),
+              AppDataColumn(label: l10n.prodHistoryTotalAccepted, numeric: true),
+              const AppDataColumn(
+                label: 'Pending QC',
+                numeric: true,
+                minWidthClass: AppWindowSizeClass.expanded,
+              ),
+              const AppDataColumn(
+                label: 'Rejected',
+                numeric: true,
+                minWidthClass: AppWindowSizeClass.expanded,
+              ),
+              AppDataColumn(label: l10n.prodHistoryTotalEarned, numeric: true),
+              AppDataColumn(
+                label: l10n.prodHistoryOutstandingPayable,
+                numeric: true,
+              ),
+            ],
+            items: state.profiles,
+            itemKeyBuilder: (p) => ValueKey<String>(p.workerId),
+            onRowTap: (p) =>
+                context.push(RoutePaths.workerDetail(p.workerId)),
+            cellsBuilder: (p) => [
+              AppText(p.workerName, fontWeight: FontWeight.w700),
+              AppText('${p.totalLotsAssigned}'),
+              AppText('${p.assignedQty}'),
+              AppText('${p.acceptedQty}'),
+              AppText('${p.pendingInspectionQty}'),
+              AppText('${p.rejectedQty}'),
+              AppText(
+                MoneyFormatter.formatPaise(p.financialSummary.earnedLabourPaise),
+              ),
+              AppText(
+                MoneyFormatter.formatPaise(
+                  p.financialSummary.outstandingPayablePaise,
+                ),
+                fontWeight: FontWeight.w700,
+              ),
+            ],
+            mobileCardBuilder: (_, p) => _WorkerSummaryCard(profile: p),
+          ),
         const SizedBox(height: AppSpacing.xl),
       ],
     );

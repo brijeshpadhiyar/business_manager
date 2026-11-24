@@ -128,6 +128,7 @@ final class _WorkerAdjustmentFormPageState
     final l10n = context.l10n;
     return AppScaffold(
       title: l10n.accountingAddAdjustmentAction,
+      contentWidth: AppContentWidth.narrow,
       body: Form(
         key: _formKey,
         autovalidateMode: _submittedOnce

@@ -1,20 +1,18 @@
 import 'dart:convert';
-import 'dart:io';
-import 'dart:isolate';
 
+import 'package:business_manager/core/platform/platform_env.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/features/reports/data/services/android_report_print_channel.dart';
+import 'package:business_manager/features/reports/data/services/report_export_platform.dart';
 import 'package:business_manager/features/reports/data/services/report_html_builder.dart';
 import 'package:business_manager/features/reports/domain/entities/advanced_report_entities.dart';
 import 'package:business_manager/features/reports/domain/entities/report_filter.dart';
 import 'package:business_manager/features/reports/domain/services/report_export_service.dart';
 import 'package:business_manager/features/security/presentation/bloc/app_lock_cubit.dart';
 import 'package:excel_plus/excel_plus.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:injectable/injectable.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 /// Sendable sheet payload for background Isolate `.xlsx` / `.csv` generation.
 final class ExportSheetData {
@@ -42,9 +40,6 @@ final class ExcelCsvExportService implements ReportExportService {
 
   static const ReportHtmlBuilder _htmlBuilder = ReportHtmlBuilder();
 
-  static bool get _isFlutterTest =>
-      Platform.environment.containsKey('FLUTTER_TEST');
-
   @override
   Future<ReportExportResult> printOrSavePdf({
     required AdvancedReportsBundle bundle,
@@ -63,14 +58,19 @@ final class ExcelCsvExportService implements ReportExportService {
     );
     final jobName = 'StitchFlow_${category.name}_$stamp';
 
-    final ok = await _appLockCubit.runWithSystemPicker(
-      () => _printChannel.printHtml(jobName: jobName, html: html),
+    final ok = await printReportHtmlPlatform(
+      jobName: jobName,
+      html: html,
+      androidPrintChannel: _printChannel,
+      runWithPicker: (action) => _appLockCubit.runWithSystemPicker(action),
     );
     return ReportExportResult(
       success: ok,
       message: ok
           ? jobName
-          : 'Print dialog is only available on Android devices.',
+          : (kIsWeb
+                ? 'Please allow pop-ups in your browser to print or Save as PDF.'
+                : 'Print dialog is only available on Android and Web browsers.'),
     );
   }
 
@@ -88,22 +88,20 @@ final class ExcelCsvExportService implements ReportExportService {
       fullWorkbook: fullWorkbook,
     );
     final totalRows = sheets.fold<int>(0, (s, sh) => s + sh.rows.length);
-    final bytes = await Isolate.run(() => buildXlsxBytes(sheets));
+    final bytes = await runComputeIsolate(() => buildXlsxBytes(sheets));
 
     final stamp = IstDateTimeHelper.formatIstFileTimestamp(
       bundle.generatedAtUtcMillis,
     );
     final slug = fullWorkbook ? 'full_workbook' : category.name;
     final fileName = 'stitchflow_report_${slug}_$stamp.xlsx';
-    final filePath = await _writeTempExportFile(fileName, bytes);
-
-    if (!_isFlutterTest) {
-      await _appLockCubit.runWithSystemPicker(
-        () => SharePlus.instance.share(
-          ShareParams(files: [XFile(filePath)], text: fileName),
-        ),
-      );
-    }
+    final filePath = await deliverExportedBytes(
+      fileName: fileName,
+      bytes: bytes,
+      mimeType:
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      runWithPicker: (action) => _appLockCubit.runWithSystemPicker(action),
+    );
 
     return ReportExportResult(
       success: true,
@@ -126,21 +124,20 @@ final class ExcelCsvExportService implements ReportExportService {
       fullWorkbook: false,
     );
     final primarySheet = sheets.first;
-    final bytes = await Isolate.run(() => buildCsvBytesWithBom(primarySheet));
+    final bytes = await runComputeIsolate(
+      () => buildCsvBytesWithBom(primarySheet),
+    );
 
     final stamp = IstDateTimeHelper.formatIstFileTimestamp(
       bundle.generatedAtUtcMillis,
     );
     final fileName = 'stitchflow_report_${category.name}_$stamp.csv';
-    final filePath = await _writeTempExportFile(fileName, bytes);
-
-    if (!_isFlutterTest) {
-      await _appLockCubit.runWithSystemPicker(
-        () => SharePlus.instance.share(
-          ShareParams(files: [XFile(filePath)], text: fileName),
-        ),
-      );
-    }
+    final filePath = await deliverExportedBytes(
+      fileName: fileName,
+      bytes: bytes,
+      mimeType: 'text/csv;charset=utf-8',
+      runWithPicker: (action) => _appLockCubit.runWithSystemPicker(action),
+    );
 
     return ReportExportResult(
       success: true,
@@ -148,19 +145,6 @@ final class ExcelCsvExportService implements ReportExportService {
       message: fileName,
       rowCount: primarySheet.rows.length,
     );
-  }
-
-  Future<String> _writeTempExportFile(String fileName, List<int> bytes) async {
-    final baseDir = _isFlutterTest
-        ? Directory.systemTemp
-        : await getTemporaryDirectory();
-    final exportDir = Directory(p.join(baseDir.path, 'stitchflow_exports'));
-    if (!exportDir.existsSync()) {
-      await exportDir.create(recursive: true);
-    }
-    final outFile = File(p.join(exportDir.path, fileName));
-    await outFile.writeAsBytes(bytes, flush: true);
-    return outFile.path;
   }
 
   /// Pure-Dart Excel `.xlsx` encoder (safe for `Isolate.run` and unit tests).

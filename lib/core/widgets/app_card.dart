@@ -82,8 +82,9 @@ final class AppCard extends StatelessWidget {
         backdropKey: backdropKey,
         child: child,
       );
-      if (semanticLabel != null) {
+      if (semanticLabel != null || onTap != null) {
         return Semantics(
+          container: true,
           label: semanticLabel,
           button: onTap != null,
           child: glass,

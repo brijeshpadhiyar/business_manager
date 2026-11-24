@@ -150,6 +150,7 @@ final class _ReceiveReturnPickerPageState
 
     return AppScaffold(
       title: l10n.stockReceiveReturnHeading,
+      contentWidth: AppContentWidth.wide,
       actions: [
         AppIconButton(
           icon: Icons.refresh_rounded,

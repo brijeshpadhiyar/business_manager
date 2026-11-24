@@ -3,11 +3,13 @@ import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
+import 'package:business_manager/features/backup/data/services/web_backup_restore_service.dart';
 import 'package:business_manager/features/backup/domain/entities/backup_entities.dart';
 import 'package:business_manager/features/backup/presentation/bloc/backup_restore_cubit.dart';
 import 'package:business_manager/features/security/presentation/bloc/app_lock_cubit.dart';
 import 'package:business_manager/features/security/presentation/widgets/security_reauth_dialog.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:share_plus/share_plus.dart';
@@ -48,10 +50,22 @@ final class _BackupRestoreView extends StatelessWidget {
     final picked = await context.read<AppLockCubit>().runWithSystemPicker(
       () => FilePicker.pickFiles(
         type: FileType.custom,
-        allowedExtensions: const ['zip'],
+        allowedExtensions: kIsWeb ? const ['json'] : const ['zip'],
       ),
     );
-    final path = picked.isNotEmpty ? picked.first.path : null;
+    if (picked.isEmpty || !context.mounted) return;
+    final file = picked.first;
+    final String? path;
+    if (kIsWeb) {
+      final bytes = await file.readAsBytes();
+      if (bytes.isEmpty) return;
+      path = WebBackupRestoreService.stagePickedBytes(
+        bytes,
+        fileName: file.name,
+      );
+    } else {
+      path = file.path;
+    }
     if (path == null || !context.mounted) return;
     await context.read<BackupRestoreCubit>().inspectBackupZip(path);
   }
@@ -112,6 +126,7 @@ final class _BackupRestoreView extends StatelessWidget {
 
     return AppScaffold(
       title: l10n.backupHeading,
+      contentWidth: AppContentWidth.narrow,
       body: BlocConsumer<BackupRestoreCubit, BackupRestoreState>(
         listener: (context, state) {
           if (state.status == BackupRestoreStatus.exportSuccess) {

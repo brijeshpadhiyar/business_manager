@@ -21,6 +21,7 @@ final class AppearanceSettingsPage extends StatelessWidget {
 
     return AppScaffold(
       title: l10n.settingsAppearanceTitle,
+      contentWidth: AppContentWidth.narrow,
       body: ListView(
         children: [
           AppMotionEntrance(

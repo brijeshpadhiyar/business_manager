@@ -353,14 +353,14 @@ class AppLocalizationsGu extends AppLocalizations {
   String get designsHeading => 'ડિઝાઇન અને કલર';
 
   @override
-  String get designsSearchHint => 'ડિઝાઇન અથવા કલર શોધો';
+  String get designsSearchHint => 'ડિઝાઇન, રંગ અથવા લોટ નંબર શોધો...';
 
   @override
-  String get designsEmptyTitle => 'કોઈ ડિઝાઇન ઉમેરેલ નથી';
+  String get designsEmptyTitle => 'હજુ સુધી કોઈ ડિઝાઇન નથી';
 
   @override
   String get designsEmptySubtitle =>
-      'આ લોટમાં ડિઝાઇન ઉમેરો અને દરેક કલરનો અલગ જથ્થો અને ભાવ દાખલ કરો.';
+      'લોટમાં ડિઝાઇન અને રંગ ઉમેરો એટલે અહીં બધા લોટનો ઇતિહાસ દેખાશે.';
 
   @override
   String get designAddAction => 'ડિઝાઇન ઉમેરો';
@@ -382,10 +382,10 @@ class AppLocalizationsGu extends AppLocalizations {
   String get designDuplicateError => 'આ નામની ડિઝાઇન આ લોટમાં પહેલેથી છે.';
 
   @override
-  String get colourAddAction => 'કલર ઉમેરો';
+  String get colourAddAction => 'નવો રંગ ઉમેરો';
 
   @override
-  String get colourEditAction => 'કલર સુધારો';
+  String get colourEditAction => 'રંગ સુધારો';
 
   @override
   String get colourDeleteConfirmTitle => 'કલર દૂર કરવો છે?';
@@ -395,7 +395,7 @@ class AppLocalizationsGu extends AppLocalizations {
       'આ કલરની નોંધ સક્રિય યાદીમાંથી આર્કાઇવ થઈ જશે.';
 
   @override
-  String get colourNameLabel => 'કલરનું નામ';
+  String get colourNameLabel => 'રંગનું નામ';
 
   @override
   String get colourInitialQtyLabel => 'પ્રારંભિક જથ્થો';
@@ -2683,4 +2683,52 @@ class AppLocalizationsGu extends AppLocalizations {
   @override
   String get validationLotUnreconciled =>
       'કારીગર પાસે બાકી અથવા QC તપાસ બાકી હોય ત્યારે લોટ પૂર્ણ કરી શકાય નહીં.';
+
+  @override
+  String get navDesignsColours => 'ડિઝાઇન અને રંગ';
+
+  @override
+  String get designsColoursSubtitle =>
+      'ડિઝાઇન શોધો, રંગ સૂચિ સંચાલિત કરો અને જૂના ભાવ જુઓ';
+
+  @override
+  String get designsTabLabel => 'ડિઝાઇન';
+
+  @override
+  String get coloursTabLabel => 'રંગ સૂચિ';
+
+  @override
+  String get colourHexLabel => 'હેક્સ કોડ (દા.ત. #DC2626)';
+
+  @override
+  String get colourSavedSuccess => 'રંગ સૂચિમાં સચવાયો.';
+
+  @override
+  String get coloursEmptyTitle => 'હજુ સુધી કોઈ રંગ સૂચિ નથી';
+
+  @override
+  String get coloursEmptySubtitle =>
+      'ઝડપી લોટ એન્ટ્રી માટે વર્કશોપના રંગો ઉમેરો.';
+
+  @override
+  String get historicalPricePreservedNote =>
+      'જૂના લોટના ભાવ કાયમી લોક રહે છે અને ક્યારેય બદલાતા નથી.';
+
+  @override
+  String get webBackupExportAction => 'વેબ બેકઅપ ડાઉનલોડ (.json)';
+
+  @override
+  String get webBackupExportDesc =>
+      'આ બ્રાઉઝરના તમામ ઓફલાઇન રેકોર્ડ્સનો ચકાસેલ બેકઅપ ડાઉનલોડ કરે છે.';
+
+  @override
+  String get webBackupRestoreAction => 'વેબ બેકઅપ રિસ્ટોર (.json)';
+
+  @override
+  String get webBackupRestoreDesc =>
+      'ચેકસમ અને સ્કીમા ચકાસીને બ્રાઉઝરના ઓફલાઇન ડેટાબેઝમાં ડેટા રિસ્ટોર કરે છે.';
+
+  @override
+  String get webPrintFallbackNote =>
+      'બ્રાઉઝર પ્રિન્ટ ડાયલોગ ખૂલ્યો છે (PDF માટે Save as PDF પસંદ કરો).';
 }

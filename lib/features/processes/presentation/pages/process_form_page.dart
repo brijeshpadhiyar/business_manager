@@ -213,6 +213,7 @@ final class _ProcessFormPageState extends State<ProcessFormPage> {
 
     return AppScaffold(
       title: title,
+      contentWidth: AppContentWidth.narrow,
       body: Form(
         key: _formKey,
         autovalidateMode: _submittedOnce

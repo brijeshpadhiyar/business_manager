@@ -71,13 +71,15 @@ final class ReportHtmlBuilder {
 <style>
   @font-face {
     font-family: 'NotoSansGujarati';
-    src: url('file:///android_asset/flutter_assets/assets/fonts/NotoSansGujarati-Regular.ttf') format('truetype');
+    src: url('assets/assets/fonts/NotoSansGujarati-Regular.ttf') format('truetype'),
+         url('file:///android_asset/flutter_assets/assets/fonts/NotoSansGujarati-Regular.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
   }
   @font-face {
     font-family: 'NotoSansGujarati';
-    src: url('file:///android_asset/flutter_assets/assets/fonts/NotoSansGujarati-Bold.ttf') format('truetype');
+    src: url('assets/assets/fonts/NotoSansGujarati-Bold.ttf') format('truetype'),
+         url('file:///android_asset/flutter_assets/assets/fonts/NotoSansGujarati-Bold.ttf') format('truetype');
     font-weight: 700;
     font-style: normal;
   }

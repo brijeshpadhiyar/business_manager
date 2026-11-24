@@ -508,6 +508,7 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
         final cubit = context.read<InspectionQueueCubit>();
         return AppScaffold(
           title: l10n.prodHistoryInspectionQueueTitle,
+          contentWidth: AppContentWidth.wide,
           actions: [
             AppIconButton(
               icon: Icons.assignment_return_outlined,

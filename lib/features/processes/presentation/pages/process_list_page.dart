@@ -4,6 +4,7 @@ import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
+import 'package:business_manager/features/processes/domain/entities/process_entities.dart';
 import 'package:business_manager/features/processes/presentation/bloc/process_list_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -34,6 +35,8 @@ final class _ProcessListView extends StatefulWidget {
 
 final class _ProcessListViewState extends State<_ProcessListView> {
   final _searchController = TextEditingController();
+  int _sortColumnIndex = 0;
+  bool _sortAscending = true;
 
   @override
   void dispose() {
@@ -48,6 +51,30 @@ final class _ProcessListViewState extends State<_ProcessListView> {
     }
   }
 
+  Future<void> _openProcessDetail(
+    BuildContext context,
+    ProcessEntity process,
+  ) async {
+    await context.push(RoutePaths.processDetail(process.id));
+    if (context.mounted) {
+      await context.read<ProcessListCubit>().loadProcesses();
+    }
+  }
+
+  List<ProcessEntity> _sortedProcesses(List<ProcessEntity> input) {
+    final list = List<ProcessEntity>.of(input);
+    list.sort((a, b) {
+      final cmp = switch (_sortColumnIndex) {
+        0 => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+        2 => a.defaultRatePaise.compareTo(b.defaultRatePaise),
+        3 => (a.isActive ? 0 : 1).compareTo(b.isActive ? 0 : 1),
+        _ => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+      };
+      return _sortAscending ? cmp : -cmp;
+    });
+    return list;
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -55,6 +82,7 @@ final class _ProcessListViewState extends State<_ProcessListView> {
       builder: (context, state) {
         final activeCount = state.processes.where((p) => p.isActive).length;
         final inactiveCount = state.processes.length - activeCount;
+        final sortedProcesses = _sortedProcesses(state.processes);
 
         final List<Widget> slivers;
         if (state.status == ProcessListStatus.loading ||
@@ -62,8 +90,8 @@ final class _ProcessListViewState extends State<_ProcessListView> {
           slivers = const [
             SliverToBoxAdapter(
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: AppSpacing.xl),
-                child: AppLoader(),
+                padding: EdgeInsets.all(AppSpacing.lg),
+                child: AppSkeletonList(itemCount: 4),
               ),
             ),
           ];
@@ -79,7 +107,7 @@ final class _ProcessListViewState extends State<_ProcessListView> {
               ),
             ),
           ];
-        } else if (state.processes.isEmpty) {
+        } else if (sortedProcesses.isEmpty) {
           slivers = [
             SliverToBoxAdapter(
               child: AppEmptyState(
@@ -100,68 +128,93 @@ final class _ProcessListViewState extends State<_ProcessListView> {
                 AppSpacing.lg,
                 AppSpacing.xl,
               ),
-              sliver: SliverList.separated(
-                itemCount: state.processes.length,
-                separatorBuilder: (_, _) =>
-                    const SizedBox(height: AppSpacing.sm),
-                itemBuilder: (context, index) {
-                  final process = state.processes[index];
-                  return AppCard.listItem(
-                    key: ValueKey<String>(process.id),
-                    onTap: () async {
-                      await context.push(RoutePaths.processDetail(process.id));
-                      if (context.mounted) {
-                        await context
-                            .read<ProcessListCubit>()
-                            .loadProcesses();
-                      }
-                    },
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              AppText(
-                                process.name,
-                                variant: AppTextVariant.bodyLarge,
-                                fontWeight: FontWeight.w700,
-                              ),
-                              if (process.description != null) ...[
-                                const SizedBox(height: AppSpacing.xs),
-                                AppText(
-                                  process.description!,
-                                  variant: AppTextVariant.bodySmall,
-                                ),
-                              ],
-                              const SizedBox(height: AppSpacing.xs),
-                              AppText(
-                                process.defaultRatePaise > 0
-                                    ? 'Default Rate: ${MoneyFormatter.formatRatePaise(process.defaultRatePaise, pricingUnit: process.defaultPricingUnit)}'
-                                    : 'No default labour rate',
-                                variant: AppTextVariant.bodySmall,
-                                color: Theme.of(
-                                  context,
-                                ).colorScheme.onSurfaceVariant,
-                              ),
-                            ],
+              sliver: AppDataTable.buildSliver<ProcessEntity>(
+                context,
+                enablePagination: true,
+                sortColumnIndex: _sortColumnIndex,
+                sortAscending: _sortAscending,
+                onSort: (col, asc) => setState(() {
+                  _sortColumnIndex = col;
+                  _sortAscending = asc;
+                }),
+                columns: [
+                  AppDataColumn(label: l10n.processNameLabel, sortable: true),
+                  AppDataColumn(
+                    label: l10n.processDescriptionLabel,
+                    minWidthClass: AppWindowSizeClass.expanded,
+                  ),
+                  const AppDataColumn(
+                    label: 'Default Rate',
+                    numeric: true,
+                    sortable: true,
+                  ),
+                  AppDataColumn(label: l10n.lotStatusLabel, sortable: true),
+                ],
+                items: sortedProcesses,
+                itemKeyBuilder: (p) => ValueKey<String>(p.id),
+                onRowTap: (p) => _openProcessDetail(context, p),
+                cellsBuilder: (p) => [
+                  AppText(p.name, fontWeight: FontWeight.w700),
+                  AppText(p.description ?? '—'),
+                  AppText(
+                    p.defaultRatePaise > 0
+                        ? MoneyFormatter.formatRatePaise(
+                            p.defaultRatePaise,
+                            pricingUnit: p.defaultPricingUnit,
+                          )
+                        : '—',
+                  ),
+                  AppStatusBadge(
+                    label: p.isActive ? l10n.statusActive : l10n.statusInactive,
+                    tone: p.isActive
+                        ? AppStatusTone.good
+                        : AppStatusTone.neutral,
+                  ),
+                ],
+                mobileCardBuilder: (ctx, process) => Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AppText(
+                            process.name,
+                            variant: AppTextVariant.bodyLarge,
+                            fontWeight: FontWeight.w700,
                           ),
-                        ),
-                        const SizedBox(width: AppSpacing.sm),
-                        AppStatusBadge(
-                          label: process.isActive
-                              ? l10n.statusActive
-                              : l10n.statusInactive,
-                          tone: process.isActive
-                              ? AppStatusTone.good
-                              : AppStatusTone.neutral,
-                        ),
-                        const SizedBox(width: AppSpacing.xs),
-                        const Icon(Icons.chevron_right),
-                      ],
+                          if (process.description != null) ...[
+                            const SizedBox(height: AppSpacing.xs),
+                            AppText(
+                              process.description!,
+                              variant: AppTextVariant.bodySmall,
+                            ),
+                          ],
+                          const SizedBox(height: AppSpacing.xs),
+                          AppText(
+                            process.defaultRatePaise > 0
+                                ? 'Default Rate: ${MoneyFormatter.formatRatePaise(process.defaultRatePaise, pricingUnit: process.defaultPricingUnit)}'
+                                : 'No default labour rate',
+                            variant: AppTextVariant.bodySmall,
+                            color: Theme.of(
+                              ctx,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
+                        ],
+                      ),
                     ),
-                  );
-                },
+                    const SizedBox(width: AppSpacing.sm),
+                    AppStatusBadge(
+                      label: process.isActive
+                          ? l10n.statusActive
+                          : l10n.statusInactive,
+                      tone: process.isActive
+                          ? AppStatusTone.good
+                          : AppStatusTone.neutral,
+                    ),
+                    const SizedBox(width: AppSpacing.xs),
+                    const Icon(Icons.chevron_right),
+                  ],
+                ),
               ),
             ),
           ];
@@ -169,6 +222,7 @@ final class _ProcessListViewState extends State<_ProcessListView> {
 
         return AppScaffold(
           scrollMode: AppScrollMode.collapsible,
+          contentWidth: AppContentWidth.wide,
           embedded: !widget.showAppBar,
           onRefresh: () => context.read<ProcessListCubit>().loadProcesses(),
           header: AppCollapsibleHeader(
@@ -176,6 +230,12 @@ final class _ProcessListViewState extends State<_ProcessListView> {
             automaticallyImplyLeading: widget.showAppBar,
             expandedHeight: 164,
             actions: [
+              AppIconButton(
+                icon: Icons.timeline_rounded,
+                tooltip: l10n.navProcessHistory,
+                onPressed: () =>
+                    context.push(RoutePaths.processProductionHistory),
+              ),
               Padding(
                 padding: const EdgeInsets.only(right: AppSpacing.sm),
                 child: AppButton(

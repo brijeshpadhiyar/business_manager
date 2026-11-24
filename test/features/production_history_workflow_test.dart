@@ -277,6 +277,7 @@ void main() {
         processId: stitching.id,
         ratePaise: 1500,
         effectiveFrom: '2026-01-01',
+        autoClosePreviousOpenRate: true,
       );
 
       // Scenario 5 & 6: Partial return #1 (Pending Inspection, 35 pcs -> ₹0 earned yet!)
@@ -497,7 +498,9 @@ void main() {
           .firstWhere((p) => p.processId == stitching.id);
       expect(rameshCutting.acceptedQty, 180);
       expect(rameshCutting.earnedAmountPaise, 90000);
-      expect(rameshStitching.acceptedQty, 58); // 55 initial + 3 original-worker repaired
+      // 55 initial + 3 original-worker repaired + 2 in-house repaired = 60 physically accepted,
+      // while earnings strictly credit 55 + 3 = 58 pcs @ locked ₹10 = ₹580 (₹0 for 2 in-house repairs).
+      expect(rameshStitching.acceptedQty, 60);
       expect(rameshStitching.earnedAmountPaise, 58000);
 
       // Scenario 11 & 12: Deactivate Ramesh AND Stitching -> history MUST remain 100% accessible & intact!

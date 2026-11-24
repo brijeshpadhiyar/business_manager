@@ -700,6 +700,7 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
         ),
         sliver: AppDataTable.buildSliver<DesignColourStockBalance>(
           context,
+          enablePagination: true,
           itemKeyBuilder: (b) => ValueKey<String>(b.designColourId),
           columns: [
             AppDataColumn(label: l10n.lotNumberLabel),
@@ -1005,6 +1006,7 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
           AppHeading(l10n.stockTabWorkers, level: AppHeadingLevel.h3),
           const SizedBox(height: AppSpacing.sm),
           AppDataTable<WorkerStockSummary>(
+            enablePagination: true,
             columns: [
               AppDataColumn(label: l10n.workerNameLabel),
               AppDataColumn(label: l10n.stockIssuedLabel, numeric: true),
@@ -1058,6 +1060,7 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
           AppHeading(l10n.stockTabProcesses, level: AppHeadingLevel.h3),
           const SizedBox(height: AppSpacing.sm),
           AppDataTable<ProcessStockSummary>(
+            enablePagination: true,
             columns: [
               AppDataColumn(label: l10n.processNameLabel),
               AppDataColumn(label: l10n.stockIssuedLabel, numeric: true),

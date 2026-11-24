@@ -41,6 +41,7 @@ final class _LotHistoryView extends StatelessWidget {
       builder: (context, state) {
         final history = state.history;
         return AppScaffold(
+          contentWidth: AppContentWidth.wide,
           title: history != null
               ? '${history.lot.lotNumber} — ${l10n.prodHistoryLotHistoryTitle}'
               : l10n.prodHistoryLotHistoryTitle,

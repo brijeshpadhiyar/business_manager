@@ -352,14 +352,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get designsHeading => 'Designs & Colours';
 
   @override
-  String get designsSearchHint => 'Filter designs or colours';
+  String get designsSearchHint => 'Search design, colour, or lot number...';
 
   @override
-  String get designsEmptyTitle => 'No Designs Added';
+  String get designsEmptyTitle => 'No Designs Recorded Yet';
 
   @override
   String get designsEmptySubtitle =>
-      'Add a design to this lot, then add independent colour quantities and prices.';
+      'Create a lot with designs and colours to see them tracked here across lots.';
 
   @override
   String get designAddAction => 'Add Design';
@@ -2684,4 +2684,52 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get validationLotUnreconciled =>
       'Cannot mark lot completed while pieces are still with workers or pending QC inspection.';
+
+  @override
+  String get navDesignsColours => 'Designs & Colours';
+
+  @override
+  String get designsColoursSubtitle =>
+      'Search designs, manage saved colours & view historical lot prices';
+
+  @override
+  String get designsTabLabel => 'Designs';
+
+  @override
+  String get coloursTabLabel => 'Colour Catalog';
+
+  @override
+  String get colourHexLabel => 'Hex Code (e.g. #DC2626)';
+
+  @override
+  String get colourSavedSuccess => 'Colour saved to catalog.';
+
+  @override
+  String get coloursEmptyTitle => 'No Saved Colours Yet';
+
+  @override
+  String get coloursEmptySubtitle =>
+      'Add reusable workshop colours with swatches for faster lot creation.';
+
+  @override
+  String get historicalPricePreservedNote =>
+      'Historical lot prices stay locked to each lot and are never overwritten.';
+
+  @override
+  String get webBackupExportAction => 'Download Web Backup (.json)';
+
+  @override
+  String get webBackupExportDesc =>
+      'Downloads a verified offline snapshot of all local workshop records from this browser.';
+
+  @override
+  String get webBackupRestoreAction => 'Restore Web Backup (.json)';
+
+  @override
+  String get webBackupRestoreDesc =>
+      'Validates checksum and schema before restoring all records into this browser\'s offline database.';
+
+  @override
+  String get webPrintFallbackNote =>
+      'Opened browser print dialog (use Save as PDF to download).';
 }

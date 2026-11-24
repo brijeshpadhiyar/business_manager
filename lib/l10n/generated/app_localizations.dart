@@ -767,19 +767,19 @@ abstract class AppLocalizations {
   /// No description provided for @designsSearchHint.
   ///
   /// In en, this message translates to:
-  /// **'Filter designs or colours'**
+  /// **'Search design, colour, or lot number...'**
   String get designsSearchHint;
 
   /// No description provided for @designsEmptyTitle.
   ///
   /// In en, this message translates to:
-  /// **'No Designs Added'**
+  /// **'No Designs Recorded Yet'**
   String get designsEmptyTitle;
 
   /// No description provided for @designsEmptySubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Add a design to this lot, then add independent colour quantities and prices.'**
+  /// **'Create a lot with designs and colours to see them tracked here across lots.'**
   String get designsEmptySubtitle;
 
   /// No description provided for @designAddAction.
@@ -5029,6 +5029,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cannot mark lot completed while pieces are still with workers or pending QC inspection.'**
   String get validationLotUnreconciled;
+
+  /// No description provided for @navDesignsColours.
+  ///
+  /// In en, this message translates to:
+  /// **'Designs & Colours'**
+  String get navDesignsColours;
+
+  /// No description provided for @designsColoursSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search designs, manage saved colours & view historical lot prices'**
+  String get designsColoursSubtitle;
+
+  /// No description provided for @designsTabLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Designs'**
+  String get designsTabLabel;
+
+  /// No description provided for @coloursTabLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Colour Catalog'**
+  String get coloursTabLabel;
+
+  /// No description provided for @colourHexLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hex Code (e.g. #DC2626)'**
+  String get colourHexLabel;
+
+  /// No description provided for @colourSavedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Colour saved to catalog.'**
+  String get colourSavedSuccess;
+
+  /// No description provided for @coloursEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Saved Colours Yet'**
+  String get coloursEmptyTitle;
+
+  /// No description provided for @coloursEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add reusable workshop colours with swatches for faster lot creation.'**
+  String get coloursEmptySubtitle;
+
+  /// No description provided for @historicalPricePreservedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Historical lot prices stay locked to each lot and are never overwritten.'**
+  String get historicalPricePreservedNote;
+
+  /// No description provided for @webBackupExportAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Download Web Backup (.json)'**
+  String get webBackupExportAction;
+
+  /// No description provided for @webBackupExportDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloads a verified offline snapshot of all local workshop records from this browser.'**
+  String get webBackupExportDesc;
+
+  /// No description provided for @webBackupRestoreAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Web Backup (.json)'**
+  String get webBackupRestoreAction;
+
+  /// No description provided for @webBackupRestoreDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Validates checksum and schema before restoring all records into this browser\'s offline database.'**
+  String get webBackupRestoreDesc;
+
+  /// No description provided for @webPrintFallbackNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Opened browser print dialog (use Save as PDF to download).'**
+  String get webPrintFallbackNote;
 }
 
 class _AppLocalizationsDelegate

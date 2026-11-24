@@ -48,10 +48,15 @@ final class AppIconButton extends StatelessWidget {
             icon: iconWidget,
           );
 
-    return AppPressable(
+    return Semantics(
+      button: true,
       enabled: onPressed != null,
-      pressedScale: 0.92,
-      child: button,
+      label: tooltip,
+      child: AppPressable(
+        enabled: onPressed != null,
+        pressedScale: 0.92,
+        child: button,
+      ),
     );
   }
 }

@@ -56,7 +56,9 @@ final class SettingsHomePage extends StatelessWidget {
     final content = Align(
       alignment: Alignment.topCenter,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: AppSizing.maxContentWidth),
+        constraints: const BoxConstraints(
+          maxWidth: AppSizing.narrowContentWidth,
+        ),
         child: ListView(
           padding: AppSpacing.screenAll,
           children: [
@@ -108,6 +110,15 @@ final class SettingsHomePage extends StatelessWidget {
                   title: l10n.settingsStockLabourTitle,
                   subtitle: l10n.settingsStockLabourSubtitle,
                   onTap: () => context.push(RoutePaths.settingsStockLabour),
+                ),
+                const Divider(indent: 64),
+                _SettingsTile(
+                  icon: Icons.style_outlined,
+                  iconBg: colorScheme.secondaryContainer,
+                  iconColor: colorScheme.onSecondaryContainer,
+                  title: l10n.navDesignsColours,
+                  subtitle: l10n.designsColoursSubtitle,
+                  onTap: () => context.push(RoutePaths.designsColours),
                 ),
               ],
             ),

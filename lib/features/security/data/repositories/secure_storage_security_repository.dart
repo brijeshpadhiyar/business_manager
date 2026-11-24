@@ -1,15 +1,14 @@
 import 'dart:convert';
-import 'dart:io' show Platform;
 
 import 'package:business_manager/core/config/app_config.dart';
 import 'package:business_manager/core/database/app_database.dart';
+import 'package:business_manager/core/platform/platform_env.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/features/security/domain/entities/security_entities.dart';
 import 'package:business_manager/features/security/domain/repositories/security_repository.dart';
 import 'package:business_manager/features/security/domain/services/pin_hasher.dart';
 import 'package:drift/drift.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 
@@ -50,8 +49,7 @@ final class SecureStorageSecurityRepository implements SecurityRepository {
   final FlutterSecureStorage _storage;
   final PinHasher _hasher;
   final bool _useIsolateForHashing;
-  final Map<String, String>? _testMemoryStore =
-      (!kIsWeb && Platform.environment.containsKey('FLUTTER_TEST'))
+  final Map<String, String>? _testMemoryStore = isFlutterTestEnv
       ? <String, String>{}
       : null;
 

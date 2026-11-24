@@ -54,7 +54,17 @@ final class AppMetricTile extends StatelessWidget {
       ),
     };
 
-    return AppCard(
+    final semanticValue = isCurrencyPaise
+        ? '₹${(value / 100).toStringAsFixed(2)}'
+        : '$value${suffix ?? ''}';
+
+    return Semantics(
+      container: true,
+      button: onTap != null,
+      label: subtitle != null && subtitle!.isNotEmpty
+          ? '$label: $semanticValue. $subtitle'
+          : '$label: $semanticValue',
+      child: AppCard(
       isGlass: isGlass,
       backdropKey: backdropKey,
       onTap: onTap,
@@ -134,6 +144,7 @@ final class AppMetricTile extends StatelessWidget {
             ),
           ],
         ],
+      ),
       ),
     );
   }

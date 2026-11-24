@@ -185,6 +185,7 @@ void main() {
 
       // 2. Reopen with Schema v8 AppDatabase -> executes real v7 -> v8 migration
       final upgraded = AppDatabase.forTesting(NativeDatabase(file));
+      addTearDown(upgraded.close);
       final pragmas = await upgraded.verifyPragmas();
       expect(pragmas.foreignKeysEnabled, isTrue);
       expect(pragmas.isWalMode, isTrue);
@@ -235,11 +236,11 @@ void main() {
         indexes,
         containsAll(const [
           'idx_sm_job_process',
-          'idx_pr_parent_issue',
+          'idx_pr_issue',
           'idx_pr_lot_tx',
           'idx_pi_return',
           'idx_pi_repair',
-          'idx_rej_lot_status',
+          'idx_rr_lot_status',
           'idx_rep_rejection',
         ]),
       );

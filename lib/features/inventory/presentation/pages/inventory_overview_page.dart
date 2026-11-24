@@ -136,6 +136,7 @@ final class _InventoryOverviewViewState extends State<_InventoryOverviewView> {
 
         return AppScaffold(
           scrollMode: AppScrollMode.collapsible,
+          contentWidth: AppContentWidth.wide,
           embedded: !widget.showAppBar,
           onRefresh: () =>
               context.read<InventoryOverviewCubit>().loadOverview(),
@@ -214,6 +215,7 @@ final class _InventoryOverviewViewState extends State<_InventoryOverviewView> {
     final l10n = context.l10n;
     return AppDataTable.buildSliver<LotQuantitySummary>(
       context,
+      enablePagination: true,
       itemKeyBuilder: (item) => ValueKey<String>(item.lotId),
       columns: [
         AppDataColumn(label: l10n.lotNumberLabel),
@@ -261,6 +263,7 @@ final class _InventoryOverviewViewState extends State<_InventoryOverviewView> {
     final l10n = context.l10n;
     return AppDataTable.buildSliver<DesignQuantitySummary>(
       context,
+      enablePagination: true,
       itemKeyBuilder: (item) => ValueKey<String>(item.designId),
       columns: [
         AppDataColumn(label: l10n.lotNumberLabel),
@@ -305,6 +308,7 @@ final class _InventoryOverviewViewState extends State<_InventoryOverviewView> {
     final l10n = context.l10n;
     return AppDataTable.buildSliver<ColourQuantitySummary>(
       context,
+      enablePagination: true,
       itemKeyBuilder: (item) => ValueKey<String>(item.designColourId),
       columns: [
         AppDataColumn(label: l10n.lotNumberLabel),

@@ -54,6 +54,7 @@ final class _NotificationSettingsView extends StatelessWidget {
 
     return AppScaffold(
       title: l10n.notificationsHeading,
+      contentWidth: AppContentWidth.narrow,
       body: BlocBuilder<NotificationSettingsCubit, NotificationSettingsState>(
         builder: (context, state) {
           if (state.isLoading) {

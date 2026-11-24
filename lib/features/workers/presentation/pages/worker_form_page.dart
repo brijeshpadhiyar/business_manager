@@ -293,6 +293,7 @@ final class _WorkerFormPageState extends State<WorkerFormPage> {
 
     return AppScaffold(
       title: title,
+      contentWidth: AppContentWidth.narrow,
       body: Form(
         key: _formKey,
         autovalidateMode: _submittedOnce

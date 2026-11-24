@@ -276,6 +276,7 @@ final class _RateFormPageState extends State<RateFormPage> {
 
     return AppScaffold(
       title: title,
+      contentWidth: AppContentWidth.narrow,
       body: Form(
         key: _formKey,
         autovalidateMode: _submittedOnce

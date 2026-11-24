@@ -31,8 +31,6 @@ import 'package:business_manager/features/accounting/presentation/bloc/accountin
     as _i1023;
 import 'package:business_manager/features/accounting/presentation/bloc/worker_ledger_cubit.dart'
     as _i711;
-import 'package:business_manager/features/backup/data/services/native_backup_restore_service.dart'
-    as _i397;
 import 'package:business_manager/features/backup/domain/services/backup_restore_service.dart'
     as _i744;
 import 'package:business_manager/features/backup/presentation/bloc/backup_restore_cubit.dart'
@@ -194,15 +192,15 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i772.ThemeCubit>(
       () => _i772.ThemeCubit(gh<_i460.SharedPreferences>()),
     );
-    gh.lazySingleton<_i744.BackupRestoreService>(
-      () => _i397.NativeBackupRestoreService(
-        gh<_i177.AppDatabase>(),
+    gh.lazySingleton<_i586.MediaStorageService>(
+      () => registerModule.mediaStorageService(
         gh<_i516.AppConfig>(),
         gh<_i656.IdGenerator>(),
       ),
     );
-    gh.lazySingleton<_i586.MediaStorageService>(
-      () => registerModule.mediaStorageService(
+    gh.lazySingleton<_i744.BackupRestoreService>(
+      () => registerModule.backupRestoreService(
+        gh<_i177.AppDatabase>(),
         gh<_i516.AppConfig>(),
         gh<_i656.IdGenerator>(),
       ),

@@ -41,6 +41,7 @@ final class _ProcessHistoryView extends StatelessWidget {
         final cubit = context.read<ProcessHistoryCubit>();
         return AppScaffold(
           title: l10n.prodHistoryProcessHistoryTitle,
+          contentWidth: AppContentWidth.wide,
           actions: [
             AppIconButton(
               icon: Icons.refresh_rounded,
@@ -217,10 +218,51 @@ final class _ProcessHistoryView extends StatelessWidget {
             title: l10n.prodHistoryProcessHistoryTitle,
           )
         else
-          for (final proc in state.processes) ...[
-            _ProcessHistoryCard(proc: proc),
-            const SizedBox(height: AppSpacing.sm),
-          ],
+          AppDataTable<ProcessCompleteHistory>(
+            enablePagination: true,
+            columns: [
+              AppDataColumn(label: l10n.processNameLabel),
+              const AppDataColumn(label: 'Lots', numeric: true),
+              const AppDataColumn(
+                label: 'Workers',
+                numeric: true,
+                minWidthClass: AppWindowSizeClass.expanded,
+              ),
+              AppDataColumn(label: l10n.prodHistoryTotalAssigned, numeric: true),
+              AppDataColumn(label: l10n.prodHistoryTotalAccepted, numeric: true),
+              const AppDataColumn(
+                label: 'Pending QC',
+                numeric: true,
+                minWidthClass: AppWindowSizeClass.expanded,
+              ),
+              const AppDataColumn(label: 'Cost', numeric: true),
+              AppDataColumn(
+                label: l10n.lotStatusLabel,
+                minWidthClass: AppWindowSizeClass.expanded,
+              ),
+            ],
+            items: state.processes,
+            itemKeyBuilder: (p) => ValueKey<String>(p.processId),
+            onRowTap: (p) =>
+                context.push(RoutePaths.processDetail(p.processId)),
+            cellsBuilder: (p) => [
+              AppText(p.processName, fontWeight: FontWeight.w700),
+              AppText('${p.totalLots}'),
+              AppText('${p.totalWorkersInvolved}'),
+              AppText('${p.assignedQty}'),
+              AppText('${p.acceptedQty}'),
+              AppText('${p.pendingInspectionQty}'),
+              AppText(
+                MoneyFormatter.formatPaise(p.totalProductionCostPaise),
+                fontWeight: FontWeight.w700,
+              ),
+              AppStatusBadge(
+                label: p.isActive ? l10n.statusActive : l10n.statusInactive,
+                tone: p.isActive ? AppStatusTone.good : AppStatusTone.neutral,
+              ),
+            ],
+            mobileCardBuilder: (_, proc) => _ProcessHistoryCard(proc: proc),
+          ),
         const SizedBox(height: AppSpacing.xl),
       ],
     );

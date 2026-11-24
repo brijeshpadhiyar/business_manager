@@ -157,6 +157,7 @@ final class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
 
     return AppScaffold(
       title: l10n.settingsSecurityTitle,
+      contentWidth: AppContentWidth.narrow,
       body: BlocBuilder<AppLockCubit, AppLockState>(
         builder: (context, state) {
           final settings = state.settings;

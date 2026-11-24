@@ -22,6 +22,7 @@ final class AboutStitchFlowPage extends StatelessWidget {
 
     return AppScaffold(
       title: l10n.settingsAboutTitle,
+      contentWidth: AppContentWidth.narrow,
       body: ListView(
         children: [
           AppCard(

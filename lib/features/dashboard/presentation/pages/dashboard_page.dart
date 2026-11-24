@@ -104,7 +104,9 @@ final class _DashboardViewState extends State<_DashboardView> {
     return Align(
       alignment: Alignment.topCenter,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: AppSizing.maxContentWidth),
+        constraints: const BoxConstraints(
+          maxWidth: AppSizing.wideContentWidth,
+        ),
         child: BlocBuilder<DashboardCubit, DashboardState>(
           builder: (context, state) {
             final snap = state.snapshot;

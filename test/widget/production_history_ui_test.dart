@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:business_manager/app.dart';
 import 'package:business_manager/core/config/app_config.dart';
 import 'package:business_manager/core/database/app_database.dart';
+import 'package:business_manager/core/design_system/app_theme.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/platform/media_storage_service.dart';
 import 'package:business_manager/core/platform/media_storage_service_native.dart';
@@ -91,7 +92,11 @@ void main() {
     return MaterialApp.router(
       routerConfig: router,
       locale: locale,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      theme: AppTheme.light(),
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        ...GlobalMaterialLocalizations.delegates,
+      ],
       supportedLocales: AppLocalizations.supportedLocales,
     );
   }
@@ -176,7 +181,13 @@ void main() {
         );
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
+        await tester.drag(
+          find.byType(Scrollable).first,
+          const Offset(0, -700),
+        );
+        await tester.pumpAndSettle();
         expect(find.textContaining('LOT-UI-01'), findsWidgets);
+        expect(tester.takeException(), isNull);
       }
 
       // 2. Lot Complete History

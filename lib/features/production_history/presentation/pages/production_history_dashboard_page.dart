@@ -45,6 +45,7 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
         final cubit = context.read<ProductionHistoryDashboardCubit>();
         return AppScaffold(
           title: l10n.prodHistoryDashboardTitle,
+          contentWidth: AppContentWidth.wide,
           actions: [
             AppIconButton(
               icon: Icons.fact_check_outlined,
@@ -373,7 +374,11 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: AppSpacing.xs),
-                Row(
+                Wrap(
+                  spacing: AppSpacing.xs,
+                  runSpacing: AppSpacing.xs,
+                  alignment: WrapAlignment.spaceBetween,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     FilterChip(
                       label: Text(l10n.prodHistoryOnlyPending),
@@ -381,7 +386,6 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
                       onSelected: (v) =>
                           cubit.updateFilter(filter.copyWith(onlyPending: v)),
                     ),
-                    const Spacer(),
                     AppButton(
                       label: l10n.accountingClearFilters,
                       variant: AppButtonVariant.text,
@@ -412,8 +416,11 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
               const SizedBox(height: AppSpacing.sm),
             ],
             // Pagination Controls
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.xs,
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 AppButton(
                   label: 'Previous',

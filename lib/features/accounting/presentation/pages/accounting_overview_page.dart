@@ -249,6 +249,7 @@ final class _AccountingOverviewViewState
 
         return AppScaffold(
           scrollMode: AppScrollMode.collapsible,
+          contentWidth: AppContentWidth.wide,
           onRefresh: () => context.read<AccountingOverviewCubit>().load(),
           floatingActionButton: FloatingActionButton.extended(
             onPressed: _openRecordPayment,

@@ -211,6 +211,7 @@ final class _WorkerLedgerViewState extends State<_WorkerLedgerView> {
         final summary = detail.summary;
 
         return AppScaffold(
+          contentWidth: AppContentWidth.wide,
           title: '${summary.workerName} — ${l10n.accountingLedgerHeading}',
           actions: [
             AppIconButton(

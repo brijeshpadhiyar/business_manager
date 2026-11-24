@@ -84,6 +84,8 @@ abstract final class AppTheme {
       textTheme: textTheme,
       extensions: [semanticColors, surfaceTokens],
       visualDensity: VisualDensity.standard,
+      focusColor: colorScheme.secondary.withValues(alpha: isDark ? 0.24 : 0.16),
+      hoverColor: colorScheme.primary.withValues(alpha: isDark ? 0.10 : 0.05),
       appBarTheme: AppBarTheme(
         toolbarHeight: AppSizing.appBarHeight,
         elevation: AppElevation.none,

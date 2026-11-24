@@ -36,6 +36,8 @@ final class _LotListView extends StatefulWidget {
 
 final class _LotListViewState extends State<_LotListView> {
   final _searchController = TextEditingController();
+  int _sortColumnIndex = 2;
+  bool _sortAscending = false;
 
   @override
   void initState() {
@@ -72,6 +74,46 @@ final class _LotListViewState extends State<_LotListView> {
     }
   }
 
+  Future<void> _openLotDetail(BuildContext context, LotEntity lot) async {
+    await context.push(RoutePaths.lotDetail(lot.id));
+    if (context.mounted) {
+      await context.read<LotListCubit>().loadLots();
+    }
+  }
+
+  List<LotEntity> _sortedLots(List<LotEntity> input) {
+    final list = List<LotEntity>.of(input);
+    list.sort((a, b) {
+      final cmp = switch (_sortColumnIndex) {
+        0 => a.lotNumber.toLowerCase().compareTo(b.lotNumber.toLowerCase()),
+        1 => (a.title ?? '').toLowerCase().compareTo(
+          (b.title ?? '').toLowerCase(),
+        ),
+        2 => a.transactionAt.compareTo(b.transactionAt),
+        3 => a.status.name.compareTo(b.status.name),
+        _ => a.transactionAt.compareTo(b.transactionAt),
+      };
+      return _sortAscending ? cmp : -cmp;
+    });
+    return list;
+  }
+
+  AppStatusBadge _statusBadge(BuildContext context, LotStatus status) {
+    final l10n = context.l10n;
+    return AppStatusBadge(
+      label: switch (status) {
+        LotStatus.active => l10n.lotsStatusActive,
+        LotStatus.completed => l10n.lotsStatusCompleted,
+        LotStatus.archived => l10n.lotsStatusArchived,
+      },
+      tone: switch (status) {
+        LotStatus.active => AppStatusTone.good,
+        LotStatus.completed => AppStatusTone.info,
+        LotStatus.archived => AppStatusTone.neutral,
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -84,6 +126,7 @@ final class _LotListViewState extends State<_LotListView> {
         final completedCount = state.lots
             .where((l) => l.status == LotStatus.completed)
             .length;
+        final sortedLots = _sortedLots(state.lots);
 
         final List<Widget> slivers;
         if (state.status == LotListStatus.loading ||
@@ -91,8 +134,8 @@ final class _LotListViewState extends State<_LotListView> {
           slivers = const [
             SliverToBoxAdapter(
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: AppSpacing.xl),
-                child: AppLoader(),
+                padding: EdgeInsets.all(AppSpacing.lg),
+                child: AppSkeletonList(itemCount: 4),
               ),
             ),
           ];
@@ -107,7 +150,7 @@ final class _LotListViewState extends State<_LotListView> {
               ),
             ),
           ];
-        } else if (state.lots.isEmpty) {
+        } else if (sortedLots.isEmpty) {
           slivers = [
             SliverToBoxAdapter(
               child: AppEmptyState(
@@ -128,64 +171,70 @@ final class _LotListViewState extends State<_LotListView> {
                 AppSpacing.lg,
                 AppSpacing.xl,
               ),
-              sliver: SliverList.separated(
-                itemCount: state.lots.length,
-                separatorBuilder: (_, _) =>
-                    const SizedBox(height: AppSpacing.sm),
-                itemBuilder: (context, index) {
-                  final lot = state.lots[index];
-                  return AppCard.listItem(
-                    key: ValueKey<String>(lot.id),
-                    onTap: () async {
-                      await context.push(RoutePaths.lotDetail(lot.id));
-                      if (context.mounted) {
-                        await context.read<LotListCubit>().loadLots();
-                      }
-                    },
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              AppText(
-                                lot.lotNumber,
-                                variant: AppTextVariant.bodyLarge,
-                                fontWeight: FontWeight.w700,
-                              ),
-                              if (lot.title != null) ...[
-                                const SizedBox(height: AppSpacing.xs),
-                                AppText(lot.title!),
-                              ],
-                              const SizedBox(height: AppSpacing.xs),
-                              AppText(
-                                AppDateTimeFormatter.formatDate(
-                                  lot.transactionAt,
-                                  locale: localeCode,
-                                ),
-                                variant: AppTextVariant.bodySmall,
-                              ),
-                            ],
-                          ),
-                        ),
-                        AppStatusBadge(
-                          label: switch (lot.status) {
-                            LotStatus.active => l10n.lotsStatusActive,
-                            LotStatus.completed => l10n.lotsStatusCompleted,
-                            LotStatus.archived => l10n.lotsStatusArchived,
-                          },
-                          tone: switch (lot.status) {
-                            LotStatus.active => AppStatusTone.good,
-                            LotStatus.completed => AppStatusTone.info,
-                            LotStatus.archived => AppStatusTone.neutral,
-                          },
-                        ),
-                        const SizedBox(width: AppSpacing.xs),
-                        const Icon(Icons.chevron_right),
-                      ],
+              sliver: AppDataTable.buildSliver<LotEntity>(
+                context,
+                enablePagination: true,
+                sortColumnIndex: _sortColumnIndex,
+                sortAscending: _sortAscending,
+                onSort: (col, asc) => setState(() {
+                  _sortColumnIndex = col;
+                  _sortAscending = asc;
+                }),
+                columns: [
+                  AppDataColumn(label: l10n.lotNumberLabel, sortable: true),
+                  AppDataColumn(
+                    label: l10n.lotTitleLabel,
+                    sortable: true,
+                    minWidthClass: AppWindowSizeClass.medium,
+                  ),
+                  AppDataColumn(label: l10n.lotDateLabel, sortable: true),
+                  AppDataColumn(label: l10n.lotStatusLabel, sortable: true),
+                ],
+                items: sortedLots,
+                itemKeyBuilder: (lot) => ValueKey<String>(lot.id),
+                onRowTap: (lot) => _openLotDetail(context, lot),
+                cellsBuilder: (lot) => [
+                  AppText(lot.lotNumber, fontWeight: FontWeight.w700),
+                  AppText(lot.title ?? '—'),
+                  AppText(
+                    AppDateTimeFormatter.formatDate(
+                      lot.transactionAt,
+                      locale: localeCode,
                     ),
-                  );
-                },
+                  ),
+                  _statusBadge(context, lot.status),
+                ],
+                mobileCardBuilder: (ctx, lot) => Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AppText(
+                            lot.lotNumber,
+                            variant: AppTextVariant.bodyLarge,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          if (lot.title != null) ...[
+                            const SizedBox(height: AppSpacing.xs),
+                            AppText(lot.title!),
+                          ],
+                          const SizedBox(height: AppSpacing.xs),
+                          AppText(
+                            AppDateTimeFormatter.formatDate(
+                              lot.transactionAt,
+                              locale: localeCode,
+                            ),
+                            variant: AppTextVariant.bodySmall,
+                          ),
+                        ],
+                      ),
+                    ),
+                    _statusBadge(ctx, lot.status),
+                    const SizedBox(width: AppSpacing.xs),
+                    const Icon(Icons.chevron_right),
+                  ],
+                ),
               ),
             ),
           ];
@@ -193,6 +242,7 @@ final class _LotListViewState extends State<_LotListView> {
 
         return AppScaffold(
           scrollMode: AppScrollMode.collapsible,
+          contentWidth: AppContentWidth.wide,
           embedded: true,
           onRefresh: () => context.read<LotListCubit>().loadLots(),
           header: AppCollapsibleHeader(
@@ -200,6 +250,11 @@ final class _LotListViewState extends State<_LotListView> {
             automaticallyImplyLeading: false,
             expandedHeight: 164,
             actions: [
+              AppIconButton(
+                icon: Icons.palette_outlined,
+                tooltip: l10n.navDesignsColours,
+                onPressed: () => context.push(RoutePaths.designsColours),
+              ),
               Padding(
                 padding: const EdgeInsets.only(right: AppSpacing.sm),
                 child: AppButton(

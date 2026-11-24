@@ -264,7 +264,7 @@ final class _WorkerDetailView extends StatelessWidget {
                         const SizedBox(height: AppSpacing.sm),
                         LayoutBuilder(
                           builder: (context, constraints) {
-                            final isWide = constraints.maxWidth >= 680;
+                            final isWide = constraints.maxWidth >= 580;
                             final tileW = isWide
                                 ? (constraints.maxWidth - AppSpacing.sm * 3) / 4
                                 : (constraints.maxWidth - AppSpacing.sm) / 2;

@@ -163,6 +163,7 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
 
     return AppScaffold(
       title: l10n.accountingRecordPaymentAction,
+      contentWidth: AppContentWidth.narrow,
       body: Form(
         key: _formKey,
         autovalidateMode: _submittedOnce

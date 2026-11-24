@@ -1191,6 +1191,22 @@ final class ProductionHistoryCalculator {
     }
 
     events.sort((a, b) {
+      if (a.kind == LotTimelineEventKind.lotCreated &&
+          b.kind != LotTimelineEventKind.lotCreated) {
+        return -1;
+      }
+      if (b.kind == LotTimelineEventKind.lotCreated &&
+          a.kind != LotTimelineEventKind.lotCreated) {
+        return 1;
+      }
+      if (a.kind == LotTimelineEventKind.lotCompleted &&
+          b.kind != LotTimelineEventKind.lotCompleted) {
+        return 1;
+      }
+      if (b.kind == LotTimelineEventKind.lotCompleted &&
+          a.kind != LotTimelineEventKind.lotCompleted) {
+        return -1;
+      }
       final tsCmp = a.timestampUtcMillis.compareTo(b.timestampUtcMillis);
       if (tsCmp != 0) return tsCmp;
       final recCmp = a.recordedAtUtcMillis.compareTo(b.recordedAtUtcMillis);

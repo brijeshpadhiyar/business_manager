@@ -161,6 +161,7 @@ final class _PinSetupPageState extends State<PinSetupPage> {
 
     return AppScaffold(
       title: title,
+      contentWidth: AppContentWidth.narrow,
       body: ListView(
         children: [
           if (_step != _PinSetupStep.recoveryKey) ...[

@@ -76,6 +76,7 @@ final class _ReportsViewState extends State<_ReportsView> {
 
         return AppScaffold(
           title: l10n.reportsHeading,
+          contentWidth: AppContentWidth.wide,
           actions: [
             AppIconButton(
               icon: Icons.ios_share_rounded,
@@ -257,6 +258,7 @@ final class _ReportsViewState extends State<_ReportsView> {
           _empty(context)
         else
           AppDataTable<DailyReportRow>(
+            enablePagination: true,
             columns: [
               AppDataColumn(label: l10n.dailySummaryPickDateLabel),
               AppDataColumn(label: l10n.stockIssuedLabel, numeric: true),
@@ -755,6 +757,7 @@ final class _ReportsViewState extends State<_ReportsView> {
     final l10n = context.l10n;
     if (rows.isEmpty) return _empty(context);
     return AppDataTable<LotStockReportRow>(
+      enablePagination: true,
       columns: [
         AppDataColumn(label: l10n.lotNumberLabel),
         AppDataColumn(label: l10n.stockAvailableGoodLabel, numeric: true),
@@ -818,6 +821,7 @@ final class _ReportsViewState extends State<_ReportsView> {
     final l10n = context.l10n;
     if (rows.isEmpty) return _empty(context);
     return AppDataTable<DesignColourStockBalance>(
+      enablePagination: true,
       columns: [
         AppDataColumn(label: l10n.lotNumberLabel),
         AppDataColumn(label: l10n.designNameLabel),
@@ -884,6 +888,7 @@ final class _ReportsViewState extends State<_ReportsView> {
     if (rows.isEmpty) return _empty(context);
     final visible = rows.take(200).toList();
     return AppDataTable<StockMovementView>(
+      enablePagination: true,
       columns: [
         AppDataColumn(label: l10n.lotNumberLabel),
         AppDataColumn(label: l10n.stockFilterAllTypes),
@@ -1055,6 +1060,7 @@ final class _ReportsViewState extends State<_ReportsView> {
     final l10n = context.l10n;
     if (rows.isEmpty) return _empty(context);
     return AppDataTable<LabourEntryView>(
+      enablePagination: true,
       columns: [
         AppDataColumn(label: l10n.workerNameLabel),
         AppDataColumn(label: l10n.processNameLabel),
@@ -1107,6 +1113,7 @@ final class _ReportsViewState extends State<_ReportsView> {
     final l10n = context.l10n;
     if (rows.isEmpty) return _empty(context);
     return AppDataTable<WorkerFinancialSummary>(
+      enablePagination: true,
       columns: [
         AppDataColumn(label: l10n.workerNameLabel),
         AppDataColumn(label: l10n.accountingEarnedLabourLabel, numeric: true),
@@ -1174,6 +1181,7 @@ final class _ReportsViewState extends State<_ReportsView> {
     final l10n = context.l10n;
     if (rows.isEmpty) return _empty(context);
     return AppDataTable<PaymentView>(
+      enablePagination: true,
       columns: [
         AppDataColumn(label: l10n.workerNameLabel),
         AppDataColumn(label: l10n.accountingPaymentTypeLabel),

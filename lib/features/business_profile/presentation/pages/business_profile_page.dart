@@ -318,6 +318,7 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
     if (widget.showAppBar) {
       return AppScaffold(
         title: l10n.businessProfileHeading,
+        contentWidth: AppContentWidth.narrow,
         padding: EdgeInsets.zero,
         constrainMaxWidth: false,
         body: body,

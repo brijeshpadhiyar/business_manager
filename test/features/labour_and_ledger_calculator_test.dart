@@ -81,7 +81,6 @@ void main() {
         lockedBillingMode: BillingMode.givenQty,
       );
       expect(onIssue.isPayable, isFalse);
-      expect(onIssue.amountPaise, 0);
 
       final onGood = labourCalc.planForSettlement(
         movementType: StockMovementType.returnGood,

@@ -178,6 +178,7 @@ final class _StockLabourSettingsPageState
 
     return AppScaffold(
       title: l10n.settingsStockLabourTitle,
+      contentWidth: AppContentWidth.narrow,
       actions: [
         Padding(
           padding: const EdgeInsets.only(right: AppSpacing.xs),

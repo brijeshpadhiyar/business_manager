@@ -3,6 +3,7 @@ import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
+import 'package:business_manager/features/workers/domain/entities/worker_entities.dart';
 import 'package:business_manager/features/workers/presentation/bloc/worker_list_cubit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,6 +35,8 @@ final class _WorkerListView extends StatefulWidget {
 
 final class _WorkerListViewState extends State<_WorkerListView> {
   final _searchController = TextEditingController();
+  int _sortColumnIndex = 0;
+  bool _sortAscending = true;
 
   @override
   void initState() {
@@ -70,6 +73,30 @@ final class _WorkerListViewState extends State<_WorkerListView> {
     }
   }
 
+  Future<void> _openWorkerDetail(
+    BuildContext context,
+    WorkerEntity worker,
+  ) async {
+    await context.push(RoutePaths.workerDetail(worker.id));
+    if (context.mounted) {
+      await context.read<WorkerListCubit>().loadWorkers();
+    }
+  }
+
+  List<WorkerEntity> _sortedWorkers(List<WorkerEntity> input) {
+    final list = List<WorkerEntity>.of(input);
+    list.sort((a, b) {
+      final cmp = switch (_sortColumnIndex) {
+        0 => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+        1 => (a.phone ?? '').compareTo(b.phone ?? ''),
+        3 => (a.isActive ? 0 : 1).compareTo(b.isActive ? 0 : 1),
+        _ => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+      };
+      return _sortAscending ? cmp : -cmp;
+    });
+    return list;
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
@@ -77,6 +104,7 @@ final class _WorkerListViewState extends State<_WorkerListView> {
       builder: (context, state) {
         final activeCount = state.workers.where((w) => w.isActive).length;
         final inactiveCount = state.workers.length - activeCount;
+        final sortedWorkers = _sortedWorkers(state.workers);
 
         final List<Widget> slivers;
         if (state.status == WorkerListStatus.loading ||
@@ -84,8 +112,8 @@ final class _WorkerListViewState extends State<_WorkerListView> {
           slivers = const [
             SliverToBoxAdapter(
               child: Padding(
-                padding: EdgeInsets.symmetric(vertical: AppSpacing.xl),
-                child: AppLoader(),
+                padding: EdgeInsets.all(AppSpacing.lg),
+                child: AppSkeletonList(itemCount: 4),
               ),
             ),
           ];
@@ -100,7 +128,7 @@ final class _WorkerListViewState extends State<_WorkerListView> {
               ),
             ),
           ];
-        } else if (state.workers.isEmpty) {
+        } else if (sortedWorkers.isEmpty) {
           slivers = [
             SliverToBoxAdapter(
               child: AppEmptyState(
@@ -121,63 +149,79 @@ final class _WorkerListViewState extends State<_WorkerListView> {
                 AppSpacing.lg,
                 AppSpacing.xl,
               ),
-              sliver: SliverList.separated(
-                itemCount: state.workers.length,
-                separatorBuilder: (_, _) =>
-                    const SizedBox(height: AppSpacing.sm),
-                itemBuilder: (context, index) {
-                  final worker = state.workers[index];
-                  return AppCard.listItem(
-                    key: ValueKey<String>(worker.id),
-                    onTap: () async {
-                      await context.push(RoutePaths.workerDetail(worker.id));
-                      if (context.mounted) {
-                        await context.read<WorkerListCubit>().loadWorkers();
-                      }
-                    },
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              AppText(
-                                worker.name,
-                                variant: AppTextVariant.bodyLarge,
-                                fontWeight: FontWeight.w700,
-                              ),
-                              if (worker.phone != null) ...[
-                                const SizedBox(height: AppSpacing.xs),
-                                AppText(
-                                  worker.phone!,
-                                  variant: AppTextVariant.bodySmall,
-                                ),
-                              ],
-                              if (worker.address != null) ...[
-                                const SizedBox(height: AppSpacing.xs),
-                                AppText(
-                                  worker.address!,
-                                  variant: AppTextVariant.bodySmall,
-                                ),
-                              ],
-                            ],
+              sliver: AppDataTable.buildSliver<WorkerEntity>(
+                context,
+                enablePagination: true,
+                sortColumnIndex: _sortColumnIndex,
+                sortAscending: _sortAscending,
+                onSort: (col, asc) => setState(() {
+                  _sortColumnIndex = col;
+                  _sortAscending = asc;
+                }),
+                columns: [
+                  AppDataColumn(label: l10n.workerNameLabel, sortable: true),
+                  AppDataColumn(label: l10n.workerPhoneLabel, sortable: true),
+                  AppDataColumn(
+                    label: l10n.workerAddressLabel,
+                    minWidthClass: AppWindowSizeClass.expanded,
+                  ),
+                  AppDataColumn(label: l10n.lotStatusLabel, sortable: true),
+                ],
+                items: sortedWorkers,
+                itemKeyBuilder: (w) => ValueKey<String>(w.id),
+                onRowTap: (w) => _openWorkerDetail(context, w),
+                cellsBuilder: (w) => [
+                  AppText(w.name, fontWeight: FontWeight.w700),
+                  AppText(w.phone ?? '—'),
+                  AppText(w.address ?? '—'),
+                  AppStatusBadge(
+                    label: w.isActive ? l10n.statusActive : l10n.statusInactive,
+                    tone: w.isActive
+                        ? AppStatusTone.good
+                        : AppStatusTone.neutral,
+                  ),
+                ],
+                mobileCardBuilder: (ctx, worker) => Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AppText(
+                            worker.name,
+                            variant: AppTextVariant.bodyLarge,
+                            fontWeight: FontWeight.w700,
                           ),
-                        ),
-                        const SizedBox(width: AppSpacing.sm),
-                        AppStatusBadge(
-                          label: worker.isActive
-                              ? l10n.statusActive
-                              : l10n.statusInactive,
-                          tone: worker.isActive
-                              ? AppStatusTone.good
-                              : AppStatusTone.neutral,
-                        ),
-                        const SizedBox(width: AppSpacing.xs),
-                        const Icon(Icons.chevron_right),
-                      ],
+                          if (worker.phone != null) ...[
+                            const SizedBox(height: AppSpacing.xs),
+                            AppText(
+                              worker.phone!,
+                              variant: AppTextVariant.bodySmall,
+                            ),
+                          ],
+                          if (worker.address != null) ...[
+                            const SizedBox(height: AppSpacing.xs),
+                            AppText(
+                              worker.address!,
+                              variant: AppTextVariant.bodySmall,
+                            ),
+                          ],
+                        ],
+                      ),
                     ),
-                  );
-                },
+                    const SizedBox(width: AppSpacing.sm),
+                    AppStatusBadge(
+                      label: worker.isActive
+                          ? l10n.statusActive
+                          : l10n.statusInactive,
+                      tone: worker.isActive
+                          ? AppStatusTone.good
+                          : AppStatusTone.neutral,
+                    ),
+                    const SizedBox(width: AppSpacing.xs),
+                    const Icon(Icons.chevron_right),
+                  ],
+                ),
               ),
             ),
           ];
@@ -185,6 +229,7 @@ final class _WorkerListViewState extends State<_WorkerListView> {
 
         return AppScaffold(
           scrollMode: AppScrollMode.collapsible,
+          contentWidth: AppContentWidth.wide,
           embedded: true,
           onRefresh: () => context.read<WorkerListCubit>().loadWorkers(),
           header: AppCollapsibleHeader(

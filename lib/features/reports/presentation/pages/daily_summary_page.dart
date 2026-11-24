@@ -58,6 +58,7 @@ final class _DailySummaryView extends StatelessWidget {
 
     return AppScaffold(
       title: l10n.dailySummaryHeading,
+      contentWidth: AppContentWidth.wide,
       actions: [
         AppIconButton(
           icon: Icons.refresh_rounded,

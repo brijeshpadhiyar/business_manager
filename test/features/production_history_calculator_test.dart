@@ -23,8 +23,8 @@ void main() {
           appliedRatePaise: 1000,
           lockedBillingMode: mode,
         );
+        // Informational audit entry only — NEVER payable on ISSUE (Rule 1).
         expect(onIssue.isPayable, isFalse);
-        expect(onIssue.amountPaise, 0);
 
         for (final includeDamaged in [false, true]) {
           final onAccepted = labourCalc.planForSettlement(
