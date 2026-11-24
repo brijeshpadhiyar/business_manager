@@ -153,49 +153,45 @@ final class _ProcessHistoryView extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: AppSpacing.sm),
-              Row(
+              AppFormRow(
+                spacing: AppSpacing.sm,
                 children: [
-                  Expanded(
-                    child: AppDatePicker(
-                      label: l10n.accountingFromDateLabel,
-                      selectedUtcMillis: filter.fromUtcMillis,
-                      onDateSelectedUtcMillis: (utc) {
-                        final ist = IstDateTimeHelper.fromUtcMillisToIst(utc);
-                        cubit.loadAll(
-                          filter: filter.copyWith(
-                            fromUtcMillis:
-                                IstDateTimeHelper.istDateTimeToUtcMillis(
-                                  year: ist.year,
-                                  month: ist.month,
-                                  day: ist.day,
-                                ),
-                          ),
-                        );
-                      },
-                    ),
+                  AppDatePicker(
+                    label: l10n.accountingFromDateLabel,
+                    selectedUtcMillis: filter.fromUtcMillis,
+                    onDateSelectedUtcMillis: (utc) {
+                      final ist = IstDateTimeHelper.fromUtcMillisToIst(utc);
+                      cubit.loadAll(
+                        filter: filter.copyWith(
+                          fromUtcMillis:
+                              IstDateTimeHelper.istDateTimeToUtcMillis(
+                                year: ist.year,
+                                month: ist.month,
+                                day: ist.day,
+                              ),
+                        ),
+                      );
+                    },
                   ),
-                  const SizedBox(width: AppSpacing.sm),
-                  Expanded(
-                    child: AppDatePicker(
-                      label: l10n.accountingToDateLabel,
-                      selectedUtcMillis: filter.toUtcMillis,
-                      onDateSelectedUtcMillis: (utc) {
-                        final ist = IstDateTimeHelper.fromUtcMillisToIst(utc);
-                        cubit.loadAll(
-                          filter: filter.copyWith(
-                            toUtcMillis:
-                                IstDateTimeHelper.istDateTimeToUtcMillis(
-                                  year: ist.year,
-                                  month: ist.month,
-                                  day: ist.day,
-                                  hour: 23,
-                                  minute: 59,
-                                  second: 59,
-                                ),
-                          ),
-                        );
-                      },
-                    ),
+                  AppDatePicker(
+                    label: l10n.accountingToDateLabel,
+                    selectedUtcMillis: filter.toUtcMillis,
+                    onDateSelectedUtcMillis: (utc) {
+                      final ist = IstDateTimeHelper.fromUtcMillisToIst(utc);
+                      cubit.loadAll(
+                        filter: filter.copyWith(
+                          toUtcMillis:
+                              IstDateTimeHelper.istDateTimeToUtcMillis(
+                                year: ist.year,
+                                month: ist.month,
+                                day: ist.day,
+                                hour: 23,
+                                minute: 59,
+                                second: 59,
+                              ),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

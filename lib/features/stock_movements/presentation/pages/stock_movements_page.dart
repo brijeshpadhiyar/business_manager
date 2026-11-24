@@ -218,6 +218,8 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final localeCode = Localizations.localeOf(context).languageCode;
+    final routeCanPop = ModalRoute.of(context)?.canPop ?? false;
+    final isEmbeddedView = widget.embedded && !routeCanPop;
 
     final bodyContent = BlocBuilder<StockMovementsCubit, StockMovementsState>(
       builder: (context, state) {
@@ -251,7 +253,7 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
           alignment: Alignment.topCenter,
           child: ConstrainedBox(
             constraints: const BoxConstraints(
-              maxWidth: AppSizing.maxContentWidth,
+              maxWidth: AppSizing.wideContentWidth,
             ),
             child: RefreshIndicator(
               onRefresh: _reload,
@@ -270,7 +272,7 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            if (widget.embedded) ...[
+                            if (isEmbeddedView) ...[
                               AppHeading(
                                 l10n.stockHeading,
                                 level: AppHeadingLevel.h2,
@@ -312,7 +314,7 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
                             // KPI Summary Row (full glass preserved, batched via BackdropGroup)
                             LayoutBuilder(
                               builder: (context, constraints) {
-                                final isWide = constraints.maxWidth >= 680;
+                                final isWide = constraints.maxWidth >= 580;
                                 final tileWidth = isWide
                                     ? (constraints.maxWidth -
                                               AppSpacing.sm * 3) /
@@ -453,7 +455,7 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
       },
     );
 
-    if (widget.embedded) {
+    if (isEmbeddedView) {
       return bodyContent;
     }
 

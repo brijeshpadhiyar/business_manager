@@ -53,6 +53,8 @@ final class SettingsHomePage extends StatelessWidget {
     final l10n = context.l10n;
     final colorScheme = Theme.of(context).colorScheme;
 
+    final effectiveShowAppBar =
+        showAppBar || (ModalRoute.of(context)?.canPop ?? false);
     final content = Align(
       alignment: Alignment.topCenter,
       child: ConstrainedBox(
@@ -62,7 +64,7 @@ final class SettingsHomePage extends StatelessWidget {
         child: ListView(
           padding: AppSpacing.screenAll,
           children: [
-            if (!showAppBar) ...[
+            if (!effectiveShowAppBar) ...[
               AppHeading(
                 l10n.settingsHeading,
                 level: AppHeadingLevel.h2,
@@ -216,7 +218,7 @@ final class SettingsHomePage extends StatelessWidget {
       ),
     );
 
-    if (showAppBar) {
+    if (effectiveShowAppBar) {
       return AppScaffold(
         title: l10n.settingsHeading,
         padding: EdgeInsets.zero,

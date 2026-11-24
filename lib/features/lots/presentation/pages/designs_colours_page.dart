@@ -514,7 +514,7 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
           header: AppCollapsibleHeader(
             title: l10n.navDesignsColours,
             subtitle: l10n.designsColoursSubtitle,
-            expandedHeight: 168,
+            expandedHeight: 184,
             actions: [
               Padding(
                 padding: const EdgeInsets.only(right: AppSpacing.sm),
@@ -553,20 +553,23 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
                     context.read<DesignsColoursCubit>().load(searchQuery: q),
               ),
               const SizedBox(height: AppSpacing.xs),
-              Row(
-                children: [
-                  FilterChip(
-                    label: Text(l10n.designsTabLabel),
-                    selected: _tabIndex == 0,
-                    onSelected: (_) => setState(() => _tabIndex = 0),
-                  ),
-                  const SizedBox(width: AppSpacing.sm),
-                  FilterChip(
-                    label: Text(l10n.coloursTabLabel),
-                    selected: _tabIndex == 1,
-                    onSelected: (_) => setState(() => _tabIndex = 1),
-                  ),
-                ],
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    FilterChip(
+                      label: Text(l10n.designsTabLabel),
+                      selected: _tabIndex == 0,
+                      onSelected: (_) => setState(() => _tabIndex = 0),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    FilterChip(
+                      label: Text(l10n.coloursTabLabel),
+                      selected: _tabIndex == 1,
+                      onSelected: (_) => setState(() => _tabIndex = 1),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
