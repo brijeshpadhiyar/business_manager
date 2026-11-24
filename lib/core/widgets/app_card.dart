@@ -1,12 +1,13 @@
 import 'package:business_manager/core/design_system/app_colors.dart';
+import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/widgets/app_glass_surface.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Refined Material 3 StitchFlow card supporting solid high-contrast surfaces
-/// (default for forms and tables), optional subtle elevation shadow, optional
-/// brand gradient, and selective glassmorphism (`isGlass: true`).
+/// Refined Material 3 StitchFlow V1.3 card defaulting to genuine frosted
+/// glassmorphism (`isGlass: true`) with BackdropFilter blur, specular highlight,
+/// subtle glass border, soft depth, and tactile press animation when tappable.
 final class AppCard extends StatelessWidget {
   const AppCard({
     super.key,
@@ -17,7 +18,8 @@ final class AppCard extends StatelessWidget {
     this.borderColor,
     this.gradient,
     this.borderRadius = AppRadius.lgBorder,
-    this.isGlass = false,
+    this.isGlass = true,
+    this.blurSigma = 14,
     this.elevated = true,
     this.semanticLabel,
   });
@@ -30,6 +32,7 @@ final class AppCard extends StatelessWidget {
   final Gradient? gradient;
   final BorderRadius borderRadius;
   final bool isGlass;
+  final double blurSigma;
   final bool elevated;
   final String? semanticLabel;
 
@@ -39,9 +42,11 @@ final class AppCard extends StatelessWidget {
       final glass = AppGlassSurface(
         padding: padding,
         borderRadius: borderRadius,
+        blurSigma: blurSigma,
         tintColor: color,
         borderColor: borderColor,
         gradient: gradient,
+        elevated: elevated,
         onTap: onTap,
         child: child,
       );
@@ -58,7 +63,7 @@ final class AppCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final tokens = context.surfaceTokens;
 
-    final Widget surface = Container(
+    Widget surface = Container(
       decoration: BoxDecoration(
         color: gradient == null
             ? (color ?? colorScheme.surfaceContainerLow)
@@ -92,6 +97,10 @@ final class AppCard extends StatelessWidget {
             : Padding(padding: padding, child: child),
       ),
     );
+
+    if (onTap != null) {
+      surface = AppPressable(pressedScale: 0.982, child: surface);
+    }
 
     if (semanticLabel != null) {
       return Semantics(

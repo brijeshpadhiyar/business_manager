@@ -1,10 +1,12 @@
+import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
+import 'package:business_manager/core/widgets/app_glass_surface.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Lightweight, reduced-motion-friendly skeleton placeholder block.
-/// Uses clean tonal surface contrast without unbounded looping timers that
-/// drain battery or interfere with deterministic UI tests.
+/// Smooth, reduced-motion-safe glass skeleton placeholder block with subtle
+/// shimmer sweep that settles cleanly without unbounded infinite timers.
 final class AppSkeletonBox extends StatelessWidget {
   const AppSkeletonBox({
     super.key,
@@ -20,18 +22,34 @@ final class AppSkeletonBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return Container(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final box = Container(
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.65),
+        color: colorScheme.surfaceContainerHighest.withValues(
+          alpha: isDark ? 0.55 : 0.72,
+        ),
         borderRadius: borderRadius,
       ),
     );
+
+    if (AppMotion.reduceMotion(context)) {
+      return box;
+    }
+
+    return box
+        .animate(onPlay: (controller) => controller.repeat(count: 3))
+        .shimmer(
+          duration: const Duration(milliseconds: 1100),
+          color: (isDark ? Colors.white : Colors.white).withValues(
+            alpha: isDark ? 0.16 : 0.55,
+          ),
+        );
   }
 }
 
-/// Reusable skeleton list placeholder for loading screens.
+/// Reusable frosted-glass skeleton list placeholder for loading screens.
 final class AppSkeletonList extends StatelessWidget {
   const AppSkeletonList({super.key, this.itemCount = 4});
 
@@ -39,7 +57,6 @@ final class AppSkeletonList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
     return ListView.separated(
       padding: AppSpacing.screenAll,
       physics: const NeverScrollableScrollPhysics(),
@@ -47,20 +64,18 @@ final class AppSkeletonList extends StatelessWidget {
       itemCount: itemCount,
       separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
       itemBuilder: (context, index) {
-        return Container(
-          padding: AppSpacing.cardPadding,
-          decoration: BoxDecoration(
-            color: colorScheme.surfaceContainerLow,
-            borderRadius: AppRadius.lgBorder,
-            border: Border.all(color: colorScheme.outlineVariant),
-          ),
-          child: const Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AppSkeletonBox(width: 160, height: 14),
-              SizedBox(height: AppSpacing.sm),
-              AppSkeletonBox(width: 240, height: 11),
-            ],
+        return AppMotionEntrance(
+          index: index,
+          child: const AppGlassSurface(
+            padding: AppSpacing.cardPadding,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppSkeletonBox(width: 160, height: 14),
+                SizedBox(height: AppSpacing.sm),
+                AppSkeletonBox(width: 240, height: 11),
+              ],
+            ),
           ),
         );
       },

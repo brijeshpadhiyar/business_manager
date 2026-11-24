@@ -1,3 +1,4 @@
+import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/domain_label_localizer.dart';
@@ -97,7 +98,13 @@ final class _ReportsViewState extends State<_ReportsView> {
             padding: AppSpacing.screenAll,
             children: [
               // 1. Unified IST Presets + Collapsible Dimension Filter Bar
-              ReportFilterBar(state: state, searchController: _searchCtrl),
+              AppMotionEntrance(
+                index: 0,
+                child: ReportFilterBar(
+                  state: state,
+                  searchController: _searchCtrl,
+                ),
+              ),
               const SizedBox(height: AppSpacing.md),
 
               // 2. 6 Unified Report Category Selectors
@@ -124,49 +131,48 @@ final class _ReportsViewState extends State<_ReportsView> {
               ],
 
               // 3. Active Category Body
-              if (state.status == ReportsStatus.initial ||
-                  state.status == ReportsStatus.loading)
-                const AppSkeletonList(itemCount: 4)
-              else if (state.status == ReportsStatus.error ||
-                  state.bundle == null)
-                AppErrorView(
-                  title: l10n.errorUnexpected,
-                  message: state.errorMessage,
-                  retryLabel: l10n.actionRetry,
-                  onRetry: () => cubit.loadReports(),
-                )
-              else
-                switch (state.category) {
-                  ReportCategory.dailyWorkshop => _buildDailyCategory(
-                    context,
-                    state.bundle!,
-                    localeCode,
-                  ),
-                  ReportCategory.workerPerformance => _buildWorkersCategory(
-                    context,
-                    state.bundle!,
-                  ),
-                  ReportCategory.processPerformance => _buildProcessesCategory(
-                    context,
-                    state.bundle!,
-                  ),
-                  ReportCategory.inventory => _buildInventoryCategory(
-                    context,
-                    state,
-                    state.bundle!.inventory,
-                    localeCode,
-                  ),
-                  ReportCategory.labourFinancial => _buildFinancialCategory(
-                    context,
-                    state,
-                    state.bundle!.financial,
-                    localeCode,
-                  ),
-                  ReportCategory.businessInsights => _buildInsightsCategory(
-                    context,
-                    state.bundle!,
-                  ),
-                },
+              AppStateTransition(
+                stateKey: ValueKey<(ReportsStatus, ReportCategory)>(
+                  (state.status, state.category),
+                ),
+                child: state.status == ReportsStatus.initial ||
+                        state.status == ReportsStatus.loading
+                    ? const AppSkeletonList(itemCount: 4)
+                    : state.status == ReportsStatus.error ||
+                          state.bundle == null
+                    ? AppErrorView(
+                        title: l10n.errorUnexpected,
+                        message: state.errorMessage,
+                        retryLabel: l10n.actionRetry,
+                        onRetry: () => cubit.loadReports(),
+                      )
+                    : switch (state.category) {
+                        ReportCategory.dailyWorkshop => _buildDailyCategory(
+                          context,
+                          state.bundle!,
+                          localeCode,
+                        ),
+                        ReportCategory.workerPerformance =>
+                          _buildWorkersCategory(context, state.bundle!),
+                        ReportCategory.processPerformance =>
+                          _buildProcessesCategory(context, state.bundle!),
+                        ReportCategory.inventory => _buildInventoryCategory(
+                          context,
+                          state,
+                          state.bundle!.inventory,
+                          localeCode,
+                        ),
+                        ReportCategory.labourFinancial =>
+                          _buildFinancialCategory(
+                            context,
+                            state,
+                            state.bundle!.financial,
+                            localeCode,
+                          ),
+                        ReportCategory.businessInsights =>
+                          _buildInsightsCategory(context, state.bundle!),
+                      },
+              ),
             ],
           ),
         );

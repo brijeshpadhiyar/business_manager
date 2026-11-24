@@ -156,6 +156,7 @@ final class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return AppScaffold(
       title: l10n.settingsSecurityTitle,
@@ -170,7 +171,11 @@ final class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
             children: [
               // Status Hero Card
               AppCard(
-                gradient: enabled ? AppColors.heroGradientLight : null,
+                gradient: enabled
+                    ? (isDark
+                          ? AppColors.heroGradientDark
+                          : AppColors.heroGradientLight)
+                    : null,
                 child: Row(
                   children: [
                     Container(

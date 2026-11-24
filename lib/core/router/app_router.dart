@@ -12,8 +12,10 @@ import 'package:business_manager/features/backup/presentation/pages/backup_resto
 import 'package:business_manager/features/business_profile/presentation/pages/business_profile_page.dart';
 import 'package:business_manager/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:business_manager/features/inventory/presentation/pages/inventory_overview_page.dart';
+import 'package:business_manager/features/lots/presentation/pages/lot_colour_detail_page.dart';
 import 'package:business_manager/features/lots/presentation/pages/lot_detail_page.dart';
 import 'package:business_manager/features/lots/presentation/pages/lot_list_page.dart';
+import 'package:business_manager/features/process_routing/presentation/pages/job_process_routing_page.dart';
 import 'package:business_manager/features/notifications/presentation/pages/notification_settings_page.dart';
 import 'package:business_manager/features/processes/presentation/pages/process_detail_page.dart';
 import 'package:business_manager/features/processes/presentation/pages/process_form_page.dart';
@@ -56,6 +58,26 @@ GoRouter createAppRouter(AppConfig config) {
         pageBuilder: (context, state) => AppMotion.buildPage(
           state: state,
           child: LotDetailPage(lotId: state.pathParameters['id']!),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.lotColourDetailPattern,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: LotColourDetailPage(
+            lotId: state.pathParameters['id']!,
+            colourId: state.pathParameters['colourId']!,
+          ),
+        ),
+      ),
+      GoRoute(
+        path: RoutePaths.lotRoutingPattern,
+        pageBuilder: (context, state) => AppMotion.buildPage(
+          state: state,
+          child: JobProcessRoutingPage(
+            lotId: state.pathParameters['id']!,
+            initialDesignColourId: state.uri.queryParameters['colourId'],
+          ),
         ),
       ),
       // Processes & Inventory standalone screens

@@ -91,9 +91,58 @@ abstract final class SchemaIndexes {
         'ON audit_logs(action_type, recorded_at DESC);',
   ];
 
+  /// Additive indexes introduced in schema v4 (V1.3 Multi-Process Routing &
+  /// Material Handover Management).
+  static const List<String> v4IndexStatements = [
+    'CREATE INDEX IF NOT EXISTS idx_jp_lot_seq '
+        'ON job_processes(lot_id, sequence_order) WHERE deleted_at IS NULL;',
+    'CREATE INDEX IF NOT EXISTS idx_jp_design_colour '
+        'ON job_processes(design_colour_id, status) WHERE deleted_at IS NULL;',
+    'CREATE INDEX IF NOT EXISTS idx_jp_member_status '
+        'ON job_processes(member_id, status) WHERE deleted_at IS NULL;',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_ph_transfer_ref '
+        'ON process_handovers(transfer_reference);',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_ph_client_request_id '
+        'ON process_handovers(client_request_id) '
+        'WHERE client_request_id IS NOT NULL;',
+    'CREATE INDEX IF NOT EXISTS idx_ph_lot_tx '
+        'ON process_handovers(lot_id, transaction_at ASC, recorded_at ASC);',
+    'CREATE INDEX IF NOT EXISTS idx_ph_from_member '
+        'ON process_handovers(from_member_id, transaction_at DESC);',
+    'CREATE INDEX IF NOT EXISTS idx_ph_to_member '
+        'ON process_handovers(to_member_id, transaction_at DESC);',
+  ];
+
+  /// Additive indexes introduced in schema v5 (V1.3 Dynamic Pricing,
+  /// Additional Charges, and Immutable Rate Change History).
+  static const List<String> v5IndexStatements = [
+    'CREATE INDEX IF NOT EXISTS idx_pac_lot '
+        'ON process_additional_charges(lot_id, transaction_at ASC);',
+    'CREATE INDEX IF NOT EXISTS idx_pac_job_process '
+        'ON process_additional_charges(job_process_id);',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_pac_client_request_id '
+        'ON process_additional_charges(client_request_id) '
+        'WHERE client_request_id IS NOT NULL;',
+    'CREATE INDEX IF NOT EXISTS idx_prh_process '
+        'ON process_rate_history(process_id, changed_at DESC);',
+    'CREATE INDEX IF NOT EXISTS idx_prh_job_process '
+        'ON process_rate_history(job_process_id, changed_at DESC);',
+  ];
+
+  /// Additive indexes introduced in schema v6 (`colour_master`).
+  static const List<String> v6IndexStatements = [
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_colour_master_name '
+        'ON colour_master(lower(name)) WHERE deleted_at IS NULL;',
+    'CREATE INDEX IF NOT EXISTS idx_colour_master_recent '
+        'ON colour_master(last_used_at DESC) WHERE deleted_at IS NULL;',
+  ];
+
   static const List<String> allIndexStatements = [
     ...v1IndexStatements,
     ...v2IndexStatements,
     ...v3IndexStatements,
+    ...v4IndexStatements,
+    ...v5IndexStatements,
+    ...v6IndexStatements,
   ];
 }

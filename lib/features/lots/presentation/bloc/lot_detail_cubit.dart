@@ -158,6 +158,32 @@ final class LotDetailCubit extends Cubit<LotDetailState> {
     }
   }
 
+  Future<String?> addColourDirectly({
+    required String lotId,
+    required String colourName,
+    String? colourHex,
+    required int initialQuantity,
+    required int unitPricePaise,
+    String? notes,
+  }) async {
+    try {
+      await _repository.addColourDirectlyToLot(
+        lotId: lotId,
+        colourName: colourName,
+        colourHex: colourHex,
+        initialQuantity: initialQuantity,
+        unitPricePaise: unitPricePaise,
+        notes: notes,
+      );
+      await loadLot(lotId);
+      return null;
+    } on DomainValidationException catch (e) {
+      return e.code;
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
   Future<String?> editColour({
     required String lotId,
     required String designColourId,

@@ -13,6 +13,9 @@ class Processes extends Table {
   TextColumn get billingModeOverride => text().nullable()();
   IntColumn get includeDamagedInLabour =>
       integer().withDefault(const Constant(0))();
+  IntColumn get defaultRatePaise => integer().withDefault(const Constant(0))();
+  TextColumn get defaultPricingUnit =>
+      text().withDefault(const Constant('PER_PIECE'))();
   TextColumn get createdBy => text().nullable()();
   TextColumn get updatedBy => text().nullable()();
   IntColumn get createdAt => integer()();

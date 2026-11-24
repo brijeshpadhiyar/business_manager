@@ -1,6 +1,7 @@
 import 'package:business_manager/core/config/app_config.dart';
 import 'package:business_manager/core/config/app_identity.dart';
 import 'package:business_manager/core/design_system/app_colors.dart';
+import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
@@ -69,7 +70,10 @@ final class SettingsHomePage extends StatelessWidget {
             ],
 
             // Section 1: App & Workshop Setup
-            _SettingsSectionCard(
+            AppMotionEntrance(
+              index: 0,
+              slideOffsetY: 0,
+              child: _SettingsSectionCard(
               children: [
                 BlocBuilder<ThemeCubit, ThemeState>(
                   builder: (context, themeState) =>
@@ -107,10 +111,13 @@ final class SettingsHomePage extends StatelessWidget {
                 ),
               ],
             ),
+            ),
             const SizedBox(height: AppSpacing.md),
 
             // Section 2: Security, Data Safety & Guidance
-            _SettingsSectionCard(
+            AppMotionEntrance(
+              index: 1,
+              child: _SettingsSectionCard(
               children: [
                 BlocBuilder<AppLockCubit, AppLockState>(
                   builder: (context, lockState) => _SettingsTile(
@@ -160,10 +167,13 @@ final class SettingsHomePage extends StatelessWidget {
                 ),
               ],
             ),
+            ),
             const SizedBox(height: AppSpacing.md),
 
             // Section 3: About & Diagnostics
-            _SettingsSectionCard(
+            AppMotionEntrance(
+              index: 2,
+              child: _SettingsSectionCard(
               children: [
                 _SettingsTile(
                   icon: Icons.info_outline_rounded,
@@ -187,6 +197,7 @@ final class SettingsHomePage extends StatelessWidget {
                   ),
                 ],
               ],
+            ),
             ),
             const SizedBox(height: AppSpacing.xl),
           ],

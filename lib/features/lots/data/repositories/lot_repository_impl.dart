@@ -10,6 +10,7 @@ import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
 import 'package:business_manager/features/lots/domain/repositories/lot_repository.dart';
+import 'package:business_manager/features/process_routing/domain/entities/process_routing_entities.dart';
 import 'package:business_manager/features/stock_movements/domain/calculators/stock_calculator.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 import 'package:drift/drift.dart';
@@ -405,6 +406,41 @@ final class LotRepositoryImpl implements LotRepository {
         ),
       );
     });
+  }
+
+  @override
+  Future<DesignColourEntity> addColourDirectlyToLot({
+    required String lotId,
+    required String colourName,
+    String? colourHex,
+    required int initialQuantity,
+    required int unitPricePaise,
+    String? notes,
+  }) async {
+    final designs = await _db.lotDao.getDesignsForLot(lotId);
+    String? sentinelDesignId;
+    for (final d in designs) {
+      if (d.designName == kColourOnlyDesignSentinel) {
+        sentinelDesignId = d.id;
+        break;
+      }
+    }
+    if (sentinelDesignId == null) {
+      final created = await createDesign(
+        lotId: lotId,
+        designName: kColourOnlyDesignSentinel,
+        notes: 'Colour-only lot variants',
+      );
+      sentinelDesignId = created.id;
+    }
+    return createDesignColour(
+      lotDesignId: sentinelDesignId,
+      colourName: colourName,
+      colourHex: colourHex,
+      initialQuantity: initialQuantity,
+      unitPricePaise: unitPricePaise,
+      notes: notes,
+    );
   }
 
   @override

@@ -1,3 +1,4 @@
+import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
@@ -118,94 +119,106 @@ final class _WorkerListViewState extends State<_WorkerListView> {
             Expanded(
               child: BlocBuilder<WorkerListCubit, WorkerListState>(
                 builder: (context, state) {
+                  final Widget body;
+                  final Key stateKey;
                   if (state.status == WorkerListStatus.loading ||
                       state.status == WorkerListStatus.initial) {
-                    return const AppLoader();
-                  }
-                  if (state.status == WorkerListStatus.error) {
-                    return AppErrorView(
+                    stateKey = const ValueKey<String>('loading');
+                    body = const AppLoader();
+                  } else if (state.status == WorkerListStatus.error) {
+                    stateKey = const ValueKey<String>('error');
+                    body = AppErrorView(
                       title: l10n.errorUnexpected,
                       message: state.errorMessage,
                       retryLabel: l10n.actionRetry,
                       onRetry: () =>
                           context.read<WorkerListCubit>().loadWorkers(),
                     );
-                  }
-                  if (state.workers.isEmpty) {
-                    return AppEmptyState(
+                  } else if (state.workers.isEmpty) {
+                    stateKey = const ValueKey<String>('empty');
+                    body = AppEmptyState(
                       icon: Icons.people_outline,
                       title: l10n.workersEmptyTitle,
                       subtitle: l10n.workersEmptySubtitle,
                       actionLabel: l10n.workerCreateAction,
                       onAction: () => _openCreateWorker(context),
                     );
+                  } else {
+                    stateKey = ValueKey<String>('list_${state.workers.length}');
+                    body = ListView.separated(
+                      padding: const EdgeInsets.fromLTRB(
+                        AppSpacing.lg,
+                        AppSpacing.sm,
+                        AppSpacing.lg,
+                        AppSpacing.xl,
+                      ),
+                      itemCount: state.workers.length,
+                      separatorBuilder: (_, _) =>
+                          const SizedBox(height: AppSpacing.sm),
+                      itemBuilder: (context, index) {
+                        final worker = state.workers[index];
+                        return AppMotionEntrance(
+                          index: index,
+                          child: AppCard(
+                            onTap: () async {
+                              await context.push(
+                                RoutePaths.workerDetail(worker.id),
+                              );
+                              if (context.mounted) {
+                                await context
+                                    .read<WorkerListCubit>()
+                                    .loadWorkers();
+                              }
+                            },
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      AppText(
+                                        worker.name,
+                                        variant: AppTextVariant.bodyLarge,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                      if (worker.phone != null) ...[
+                                        const SizedBox(height: AppSpacing.xs),
+                                        AppText(
+                                          worker.phone!,
+                                          variant: AppTextVariant.bodySmall,
+                                        ),
+                                      ],
+                                      if (worker.address != null) ...[
+                                        const SizedBox(height: AppSpacing.xs),
+                                        AppText(
+                                          worker.address!,
+                                          variant: AppTextVariant.bodySmall,
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: AppSpacing.sm),
+                                AppStatusBadge(
+                                  label: worker.isActive
+                                      ? l10n.statusActive
+                                      : l10n.statusInactive,
+                                  tone: worker.isActive
+                                      ? AppStatusTone.good
+                                      : AppStatusTone.neutral,
+                                ),
+                                const SizedBox(width: AppSpacing.xs),
+                                const Icon(Icons.chevron_right),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
                   }
 
-                  return ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.lg,
-                      AppSpacing.sm,
-                      AppSpacing.lg,
-                      AppSpacing.xl,
-                    ),
-                    itemCount: state.workers.length,
-                    separatorBuilder: (_, _) =>
-                        const SizedBox(height: AppSpacing.sm),
-                    itemBuilder: (context, index) {
-                      final worker = state.workers[index];
-                      return AppCard(
-                        onTap: () async {
-                          await context.push(
-                            RoutePaths.workerDetail(worker.id),
-                          );
-                          if (context.mounted) {
-                            await context.read<WorkerListCubit>().loadWorkers();
-                          }
-                        },
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  AppText(
-                                    worker.name,
-                                    variant: AppTextVariant.bodyLarge,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                  if (worker.phone != null) ...[
-                                    const SizedBox(height: AppSpacing.xs),
-                                    AppText(
-                                      worker.phone!,
-                                      variant: AppTextVariant.bodySmall,
-                                    ),
-                                  ],
-                                  if (worker.address != null) ...[
-                                    const SizedBox(height: AppSpacing.xs),
-                                    AppText(
-                                      worker.address!,
-                                      variant: AppTextVariant.bodySmall,
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: AppSpacing.sm),
-                            AppStatusBadge(
-                              label: worker.isActive
-                                  ? l10n.statusActive
-                                  : l10n.statusInactive,
-                              tone: worker.isActive
-                                  ? AppStatusTone.good
-                                  : AppStatusTone.neutral,
-                            ),
-                            const SizedBox(width: AppSpacing.xs),
-                            const Icon(Icons.chevron_right),
-                          ],
-                        ),
-                      );
-                    },
-                  );
+                  return AppStateTransition(stateKey: stateKey, child: body);
                 },
               ),
             ),

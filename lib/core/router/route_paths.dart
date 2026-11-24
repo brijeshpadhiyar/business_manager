@@ -2,6 +2,8 @@ abstract final class RoutePaths {
   static const String home = '/';
   static const String showcase = '/showcase';
   static const String lotDetailPattern = '/lots/:id';
+  static const String lotColourDetailPattern = '/lots/:id/colours/:colourId';
+  static const String lotRoutingPattern = '/lots/:id/routing';
 
   // Processes & Inventory standalone routes (clean back navigation from Dashboard/Settings)
   static const String processes = '/processes';
@@ -59,6 +61,14 @@ abstract final class RoutePaths {
   static const String dailySummary = '/daily-summary';
 
   static String lotDetail(String lotId) => '/lots/$lotId';
+  static String lotColourDetail(String lotId, String colourId) =>
+      '/lots/$lotId/colours/$colourId';
+  static String lotRouting(String lotId, {String? designColourId}) {
+    final base = '/lots/$lotId/routing';
+    return designColourId != null
+        ? '$base?colourId=${Uri.encodeQueryComponent(designColourId)}'
+        : base;
+  }
   static String processDetail(String processId) => '/processes/$processId';
   static String processEdit(String processId) => '/processes/$processId/edit';
 

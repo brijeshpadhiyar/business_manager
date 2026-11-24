@@ -48,6 +48,17 @@ abstract interface class LotRepository {
     String? notes,
   });
 
+  /// Adds a colour variant directly to a Colour-Only Lot without requiring the
+  /// user to create a Design first (automatically manages the implicit group).
+  Future<DesignColourEntity> addColourDirectlyToLot({
+    required String lotId,
+    required String colourName,
+    String? colourHex,
+    required int initialQuantity,
+    required int unitPricePaise,
+    String? notes,
+  });
+
   Future<DesignColourEntity> updateDesignColour({
     required String designColourId,
     required String colourName,

@@ -1,3 +1,4 @@
+import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/validation/validation.dart';
@@ -114,112 +115,122 @@ final class _ReportFilterBarState extends State<ReportFilterBar> {
           ),
 
           // 3. Expanded Dimension & Custom Date Controls
-          if (_expanded) ...[
-            const SizedBox(height: AppSpacing.sm),
-            Row(
+          AppExpandableSection(
+            expanded: _expanded,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Expanded(
-                  child: AppDatePicker(
-                    label: l10n.accountingFromDateLabel,
-                    selectedUtcMillis: filter.fromUtcMillis,
-                    onDateSelectedUtcMillis: (utc) => cubit.setCustomDateRange(
-                      fromUtcMillis: IstDateRangePresets.startOfIstDay(utc),
+                const SizedBox(height: AppSpacing.sm),
+                Row(
+                  children: [
+                    Expanded(
+                      child: AppDatePicker(
+                        label: l10n.accountingFromDateLabel,
+                        selectedUtcMillis: filter.fromUtcMillis,
+                        onDateSelectedUtcMillis: (utc) =>
+                            cubit.setCustomDateRange(
+                              fromUtcMillis: IstDateRangePresets.startOfIstDay(
+                                utc,
+                              ),
+                            ),
+                      ),
                     ),
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: AppDatePicker(
-                    label: l10n.accountingToDateLabel,
-                    selectedUtcMillis: filter.toUtcMillis,
-                    errorText: widget.state.dateRangeErrorCode != null
-                        ? ValidationLocalizer.localizeDomainCode(
-                            l10n,
-                            widget.state.dateRangeErrorCode!,
-                          )
-                        : null,
-                    onDateSelectedUtcMillis: (utc) => cubit.setCustomDateRange(
-                      toUtcMillis: IstDateRangePresets.endOfIstDay(utc),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            Row(
-              children: [
-                Expanded(
-                  child: _NullableOptionDropdown(
-                    label: l10n.workerNameLabel,
-                    allLabel: l10n.reportAllOption,
-                    options: opts.workers,
-                    selectedId: filter.workerId,
-                    onChanged: cubit.setWorkerFilter,
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: _NullableOptionDropdown(
-                    label: l10n.processNameLabel,
-                    allLabel: l10n.reportAllOption,
-                    options: opts.processes,
-                    selectedId: filter.processId,
-                    onChanged: cubit.setProcessFilter,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            _NullableOptionDropdown(
-              label: l10n.lotNumberLabel,
-              allLabel: l10n.reportAllOption,
-              options: opts.lots,
-              selectedId: filter.lotId,
-              onChanged: cubit.setLotFilter,
-            ),
-            if (filteredDesigns.isNotEmpty) ...[
-              const SizedBox(height: AppSpacing.sm),
-              Row(
-                children: [
-                  Expanded(
-                    child: _NullableOptionDropdown(
-                      label: l10n.designNameLabel,
-                      allLabel: l10n.reportAllOption,
-                      options: filteredDesigns,
-                      selectedId: filter.lotDesignId,
-                      onChanged: cubit.setDesignFilter,
-                    ),
-                  ),
-                  if (filteredColours.isNotEmpty) ...[
                     const SizedBox(width: AppSpacing.sm),
                     Expanded(
-                      child: _NullableOptionDropdown(
-                        label: l10n.colourNameLabel,
-                        allLabel: l10n.reportAllOption,
-                        options: filteredColours,
-                        selectedId: filter.designColourId,
-                        onChanged: cubit.setColourFilter,
+                      child: AppDatePicker(
+                        label: l10n.accountingToDateLabel,
+                        selectedUtcMillis: filter.toUtcMillis,
+                        errorText: widget.state.dateRangeErrorCode != null
+                            ? ValidationLocalizer.localizeDomainCode(
+                                l10n,
+                                widget.state.dateRangeErrorCode!,
+                              )
+                            : null,
+                        onDateSelectedUtcMillis: (utc) =>
+                            cubit.setCustomDateRange(
+                              toUtcMillis: IstDateRangePresets.endOfIstDay(utc),
+                            ),
                       ),
                     ),
                   ],
-                ],
-              ),
-            ],
-            if (filter.hasAnyActiveFilter) ...[
-              const SizedBox(height: AppSpacing.xs),
-              Align(
-                alignment: Alignment.centerRight,
-                child: AppButton(
-                  label: l10n.accountingClearFilters,
-                  variant: AppButtonVariant.text,
-                  onPressed: () {
-                    widget.searchController.clear();
-                    cubit.clearAllFilters();
-                  },
                 ),
-              ),
-            ],
-          ],
+                const SizedBox(height: AppSpacing.sm),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _NullableOptionDropdown(
+                        label: l10n.workerNameLabel,
+                        allLabel: l10n.reportAllOption,
+                        options: opts.workers,
+                        selectedId: filter.workerId,
+                        onChanged: cubit.setWorkerFilter,
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(
+                      child: _NullableOptionDropdown(
+                        label: l10n.processNameLabel,
+                        allLabel: l10n.reportAllOption,
+                        options: opts.processes,
+                        selectedId: filter.processId,
+                        onChanged: cubit.setProcessFilter,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                _NullableOptionDropdown(
+                  label: l10n.lotNumberLabel,
+                  allLabel: l10n.reportAllOption,
+                  options: opts.lots,
+                  selectedId: filter.lotId,
+                  onChanged: cubit.setLotFilter,
+                ),
+                if (filteredDesigns.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _NullableOptionDropdown(
+                          label: l10n.designNameLabel,
+                          allLabel: l10n.reportAllOption,
+                          options: filteredDesigns,
+                          selectedId: filter.lotDesignId,
+                          onChanged: cubit.setDesignFilter,
+                        ),
+                      ),
+                      if (filteredColours.isNotEmpty) ...[
+                        const SizedBox(width: AppSpacing.sm),
+                        Expanded(
+                          child: _NullableOptionDropdown(
+                            label: l10n.colourNameLabel,
+                            allLabel: l10n.reportAllOption,
+                            options: filteredColours,
+                            selectedId: filter.designColourId,
+                            onChanged: cubit.setColourFilter,
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ],
+                if (filter.hasAnyActiveFilter) ...[
+                  const SizedBox(height: AppSpacing.xs),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: AppButton(
+                      label: l10n.accountingClearFilters,
+                      variant: AppButtonVariant.text,
+                      onPressed: () {
+                        widget.searchController.clear();
+                        cubit.clearAllFilters();
+                      },
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
         ],
       ),
     );

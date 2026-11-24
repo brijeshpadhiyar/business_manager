@@ -2,6 +2,8 @@ import 'package:business_manager/core/config/app_config.dart';
 import 'package:business_manager/core/database/connection/database_connection.dart';
 import 'package:business_manager/core/database/daos/attachment_audit_dao.dart';
 import 'package:business_manager/core/database/daos/business_profile_dao.dart';
+import 'package:business_manager/core/database/daos/colour_master_dao.dart';
+import 'package:business_manager/core/database/daos/job_process_dao.dart';
 import 'package:business_manager/core/database/daos/labour_entry_dao.dart';
 import 'package:business_manager/core/database/daos/lot_dao.dart';
 import 'package:business_manager/core/database/daos/payment_dao.dart';
@@ -12,6 +14,8 @@ import 'package:business_manager/core/database/database_pragma_status.dart';
 import 'package:business_manager/core/database/migrations/database_migration_manager.dart';
 import 'package:business_manager/core/database/tables/attachment_audit_tables.dart';
 import 'package:business_manager/core/database/tables/business_profile_table.dart';
+import 'package:business_manager/core/database/tables/colour_master_table.dart';
+import 'package:business_manager/core/database/tables/job_process_tables.dart';
 import 'package:business_manager/core/database/tables/ledger_tables.dart';
 import 'package:business_manager/core/database/tables/lot_tables.dart';
 import 'package:business_manager/core/database/tables/process_member_tables.dart';
@@ -35,6 +39,11 @@ part 'app_database.g.dart';
     LabourEntries,
     Payments,
     WorkerLedgerAdjustments,
+    JobProcesses,
+    ProcessHandovers,
+    ProcessAdditionalCharges,
+    ProcessRateHistories,
+    ColourMasters,
     Attachments,
     AuditLogs,
   ],
@@ -46,6 +55,8 @@ part 'app_database.g.dart';
     LabourEntryDao,
     PaymentDao,
     WorkerAdjustmentDao,
+    JobProcessDao,
+    ColourMasterDao,
     AttachmentAuditDao,
   ],
 )

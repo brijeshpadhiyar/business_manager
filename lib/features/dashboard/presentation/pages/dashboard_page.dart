@@ -167,280 +167,333 @@ final class _DashboardView extends StatelessWidget {
                   const SizedBox(height: AppSpacing.lg),
 
                   // 2. Daily Workshop Quick Operations Dock
-                  AppHeading(
-                    l10n.dashboardQuickActions,
-                    level: AppHeadingLevel.h3,
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Wrap(
-                    spacing: AppSpacing.sm,
-                    runSpacing: AppSpacing.sm,
-                    children: [
-                      AppButton(
-                        label: l10n.stockIssueAction,
-                        icon: Icons.outbox_rounded,
-                        onPressed: () =>
-                            _pushAndRefresh(context, RoutePaths.stockIssue()),
-                      ),
-                      AppButton(
-                        label: l10n.stockReturnAction,
-                        icon: Icons.assignment_returned_outlined,
-                        variant: AppButtonVariant.secondary,
-                        onPressed: () => _pushAndRefresh(
-                          context,
-                          RoutePaths.stockReturnPicker,
+                  AppMotionEntrance(
+                    index: 1,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        AppHeading(
+                          l10n.dashboardQuickActions,
+                          level: AppHeadingLevel.h3,
                         ),
-                      ),
-                      AppButton(
-                        label: l10n.dashboardDailySummaryAction,
-                        icon: Icons.today_rounded,
-                        variant: AppButtonVariant.outlined,
-                        onPressed: () =>
-                            _pushAndRefresh(context, RoutePaths.dailySummary),
-                      ),
-                      AppButton(
-                        label: l10n.navAccounting,
-                        icon: Icons.account_balance_wallet_outlined,
-                        variant: AppButtonVariant.outlined,
-                        onPressed: () =>
-                            _pushAndRefresh(context, RoutePaths.accounting),
-                      ),
-                      AppButton(
-                        label: l10n.navStockMovements,
-                        icon: Icons.swap_horiz_rounded,
-                        variant: AppButtonVariant.outlined,
-                        onPressed: () =>
-                            _pushAndRefresh(context, RoutePaths.stockMovements),
-                      ),
-                      AppButton(
-                        label: l10n.navProcesses,
-                        icon: Icons.precision_manufacturing_outlined,
-                        variant: AppButtonVariant.outlined,
-                        onPressed: () =>
-                            _pushAndRefresh(context, RoutePaths.processes),
-                      ),
-                      AppButton(
-                        label: l10n.navInventory,
-                        icon: Icons.bar_chart_outlined,
-                        variant: AppButtonVariant.outlined,
-                        onPressed: () =>
-                            _pushAndRefresh(context, RoutePaths.inventory),
-                      ),
-                      AppButton(
-                        label: l10n.navReports,
-                        icon: Icons.analytics_outlined,
-                        variant: AppButtonVariant.outlined,
-                        onPressed: () =>
-                            _pushAndRefresh(context, RoutePaths.reports),
-                      ),
-                      if (config.isDev)
-                        AppButton(
-                          label: l10n.navDesignShowcase,
-                          icon: Icons.palette_outlined,
-                          variant: AppButtonVariant.text,
-                          onPressed: () => context.push(RoutePaths.showcase),
+                        const SizedBox(height: AppSpacing.sm),
+                        Wrap(
+                          spacing: AppSpacing.sm,
+                          runSpacing: AppSpacing.sm,
+                          children: [
+                            AppButton(
+                              label: l10n.stockIssueAction,
+                              icon: Icons.outbox_rounded,
+                              onPressed: () => _pushAndRefresh(
+                                context,
+                                RoutePaths.stockIssue(),
+                              ),
+                            ),
+                            AppButton(
+                              label: l10n.stockReturnAction,
+                              icon: Icons.assignment_returned_outlined,
+                              variant: AppButtonVariant.secondary,
+                              onPressed: () => _pushAndRefresh(
+                                context,
+                                RoutePaths.stockReturnPicker,
+                              ),
+                            ),
+                            AppButton(
+                              label: l10n.dashboardDailySummaryAction,
+                              icon: Icons.today_rounded,
+                              variant: AppButtonVariant.outlined,
+                              onPressed: () => _pushAndRefresh(
+                                context,
+                                RoutePaths.dailySummary,
+                              ),
+                            ),
+                            AppButton(
+                              label: l10n.navAccounting,
+                              icon: Icons.account_balance_wallet_outlined,
+                              variant: AppButtonVariant.outlined,
+                              onPressed: () => _pushAndRefresh(
+                                context,
+                                RoutePaths.accounting,
+                              ),
+                            ),
+                            AppButton(
+                              label: l10n.navStockMovements,
+                              icon: Icons.swap_horiz_rounded,
+                              variant: AppButtonVariant.outlined,
+                              onPressed: () => _pushAndRefresh(
+                                context,
+                                RoutePaths.stockMovements,
+                              ),
+                            ),
+                            AppButton(
+                              label: l10n.navProcesses,
+                              icon: Icons.precision_manufacturing_outlined,
+                              variant: AppButtonVariant.outlined,
+                              onPressed: () => _pushAndRefresh(
+                                context,
+                                RoutePaths.processes,
+                              ),
+                            ),
+                            AppButton(
+                              label: l10n.navInventory,
+                              icon: Icons.bar_chart_outlined,
+                              variant: AppButtonVariant.outlined,
+                              onPressed: () => _pushAndRefresh(
+                                context,
+                                RoutePaths.inventory,
+                              ),
+                            ),
+                            AppButton(
+                              label: l10n.navReports,
+                              icon: Icons.analytics_outlined,
+                              variant: AppButtonVariant.outlined,
+                              onPressed: () => _pushAndRefresh(
+                                context,
+                                RoutePaths.reports,
+                              ),
+                            ),
+                            if (config.isDev)
+                              AppButton(
+                                label: l10n.navDesignShowcase,
+                                icon: Icons.palette_outlined,
+                                variant: AppButtonVariant.text,
+                                onPressed: () =>
+                                    context.push(RoutePaths.showcase),
+                              ),
+                          ],
                         ),
-                    ],
+                      ],
+                    ),
                   ),
                   const SizedBox(height: AppSpacing.lg),
 
                   if (snap != null) ...[
                     // 2B. Today's Workshop Activity (IST Business Day)
-                    AppHeading(
-                      l10n.dashboardTodayHeading,
-                      level: AppHeadingLevel.h3,
-                      trailing: AppButton(
-                        label: l10n.dashboardDailySummaryAction,
-                        variant: AppButtonVariant.text,
-                        onPressed: () =>
-                            _pushAndRefresh(context, RoutePaths.dailySummary),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.xs),
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        final isWide = constraints.maxWidth >= 700;
-                        final tileW = isWide
-                            ? (constraints.maxWidth - AppSpacing.sm * 3) / 4
-                            : (constraints.maxWidth - AppSpacing.sm) / 2;
-                        return Wrap(
-                          spacing: AppSpacing.sm,
-                          runSpacing: AppSpacing.sm,
-                          children: [
-                            SizedBox(
-                              width: tileW,
-                              child: AppMetricTile(
-                                label: l10n.dashboardTodayIssuedLabel,
-                                value: snap.todayIssuedQty,
-                                suffix: l10n.piecesUnit,
-                                icon: Icons.outbox_rounded,
-                                tone: AppStatusTone.info,
-                                onTap: () => _pushAndRefresh(
-                                  context,
-                                  RoutePaths.dailySummary,
-                                ),
+                    AppMotionEntrance(
+                      index: 2,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          AppHeading(
+                            l10n.dashboardTodayHeading,
+                            level: AppHeadingLevel.h3,
+                            trailing: AppButton(
+                              label: l10n.dashboardDailySummaryAction,
+                              variant: AppButtonVariant.text,
+                              onPressed: () => _pushAndRefresh(
+                                context,
+                                RoutePaths.dailySummary,
                               ),
                             ),
-                            SizedBox(
-                              width: tileW,
-                              child: AppMetricTile(
-                                label: l10n.dashboardTodayReturnedLabel,
-                                value: snap.todayReceivedGoodQty,
-                                suffix: l10n.piecesUnit,
-                                icon: Icons.check_circle_outline_rounded,
-                                tone: AppStatusTone.good,
-                                onTap: () => _pushAndRefresh(
-                                  context,
-                                  RoutePaths.dailySummary,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: tileW,
-                              child: AppMetricTile(
-                                label: l10n.dashboardTodayLabourLabel,
-                                value: snap.todayLabourEarnedPaise,
-                                isCurrencyPaise: true,
-                                icon: Icons.work_outline_rounded,
-                                tone: AppStatusTone.good,
-                                onTap: () => _pushAndRefresh(
-                                  context,
-                                  RoutePaths.dailySummary,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: tileW,
-                              child: AppMetricTile(
-                                label: l10n.dashboardTodayPaymentsLabel,
-                                value: snap.todayPaymentsPaise,
-                                isCurrencyPaise: true,
-                                icon: Icons.payments_outlined,
-                                tone: AppStatusTone.neutral,
-                                onTap: () => _pushAndRefresh(
-                                  context,
-                                  RoutePaths.accounting,
-                                ),
-                              ),
+                          ),
+                          const SizedBox(height: AppSpacing.xs),
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              final isWide = constraints.maxWidth >= 700;
+                              final tileW = isWide
+                                  ? (constraints.maxWidth - AppSpacing.sm * 3) /
+                                        4
+                                  : (constraints.maxWidth - AppSpacing.sm) / 2;
+                              return Wrap(
+                                spacing: AppSpacing.sm,
+                                runSpacing: AppSpacing.sm,
+                                children: [
+                                  SizedBox(
+                                    width: tileW,
+                                    child: AppMetricTile(
+                                      label: l10n.dashboardTodayIssuedLabel,
+                                      value: snap.todayIssuedQty,
+                                      suffix: l10n.piecesUnit,
+                                      icon: Icons.outbox_rounded,
+                                      tone: AppStatusTone.info,
+                                      onTap: () => _pushAndRefresh(
+                                        context,
+                                        RoutePaths.dailySummary,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: tileW,
+                                    child: AppMetricTile(
+                                      label: l10n.dashboardTodayReturnedLabel,
+                                      value: snap.todayReceivedGoodQty,
+                                      suffix: l10n.piecesUnit,
+                                      icon: Icons.check_circle_outline_rounded,
+                                      tone: AppStatusTone.good,
+                                      onTap: () => _pushAndRefresh(
+                                        context,
+                                        RoutePaths.dailySummary,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: tileW,
+                                    child: AppMetricTile(
+                                      label: l10n.dashboardTodayLabourLabel,
+                                      value: snap.todayLabourEarnedPaise,
+                                      isCurrencyPaise: true,
+                                      icon: Icons.work_outline_rounded,
+                                      tone: AppStatusTone.good,
+                                      onTap: () => _pushAndRefresh(
+                                        context,
+                                        RoutePaths.dailySummary,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: tileW,
+                                    child: AppMetricTile(
+                                      label: l10n.dashboardTodayPaymentsLabel,
+                                      value: snap.todayPaymentsPaise,
+                                      isCurrencyPaise: true,
+                                      icon: Icons.payments_outlined,
+                                      tone: AppStatusTone.neutral,
+                                      onTap: () => _pushAndRefresh(
+                                        context,
+                                        RoutePaths.accounting,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                          if (snap.todayDamagedQty + snap.todayLostShortageQty >
+                              0) ...[
+                            const SizedBox(height: AppSpacing.xs),
+                            AppStatusBadge(
+                              label:
+                                  '${l10n.dashboardTodayDamagedLostAlert}: ${snap.todayDamagedQty + snap.todayLostShortageQty} ${l10n.piecesUnit}',
+                              tone: AppStatusTone.damaged,
+                              icon: Icons.warning_amber_rounded,
                             ),
                           ],
-                        );
-                      },
-                    ),
-                    if (snap.todayDamagedQty + snap.todayLostShortageQty >
-                        0) ...[
-                      const SizedBox(height: AppSpacing.xs),
-                      AppStatusBadge(
-                        label:
-                            '${l10n.dashboardTodayDamagedLostAlert}: ${snap.todayDamagedQty + snap.todayLostShortageQty} ${l10n.piecesUnit}',
-                        tone: AppStatusTone.damaged,
-                        icon: Icons.warning_amber_rounded,
+                        ],
                       ),
-                    ],
+                    ),
                     const SizedBox(height: AppSpacing.lg),
 
                     // 2C. Important & Oldest Pending Work
                     if (snap.importantPendingIssues.isNotEmpty) ...[
-                      AppHeading(
-                        l10n.dashboardImportantPendingHeading,
-                        level: AppHeadingLevel.h3,
-                        trailing: AppButton(
-                          label: l10n.dashboardViewAllPendingAction,
-                          variant: AppButtonVariant.text,
-                          onPressed: () => _pushAndRefresh(
-                            context,
-                            RoutePaths.stockReturnPicker,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.xs),
-                      AppCard(
+                      AppMotionEntrance(
+                        index: 3,
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            for (
-                              var i = 0;
-                              i < snap.importantPendingIssues.length;
-                              i++
-                            ) ...[
-                              Builder(
-                                builder: (context) {
-                                  final item = snap.importantPendingIssues[i];
-                                  final v = item.issueView;
-                                  final ageDays =
-                                      WorkshopDailyCalculator.pendingAgeDays(
-                                        v.movement.transactionAt,
-                                        IstDateTimeHelper.nowUtcMillis(),
-                                      );
-                                  final ageLabel = ageDays == 0
-                                      ? l10n.reportPresetToday
-                                      : l10n.pendingAgeDaysBadge(ageDays);
-                                  return InkWell(
-                                    onTap: () => _pushAndRefresh(
-                                      context,
-                                      RoutePaths.stockReturn(v.movement.id),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        vertical: AppSpacing.xs,
-                                      ),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Expanded(
-                                            child: Column(
+                            AppHeading(
+                              l10n.dashboardImportantPendingHeading,
+                              level: AppHeadingLevel.h3,
+                              trailing: AppButton(
+                                label: l10n.dashboardViewAllPendingAction,
+                                variant: AppButtonVariant.text,
+                                onPressed: () => _pushAndRefresh(
+                                  context,
+                                  RoutePaths.stockReturnPicker,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: AppSpacing.xs),
+                            AppCard(
+                              child: Column(
+                                children: [
+                                  for (
+                                    var i = 0;
+                                    i < snap.importantPendingIssues.length;
+                                    i++
+                                  ) ...[
+                                    Builder(
+                                      builder: (context) {
+                                        final item =
+                                            snap.importantPendingIssues[i];
+                                        final v = item.issueView;
+                                        final ageDays =
+                                            WorkshopDailyCalculator
+                                                .pendingAgeDays(
+                                                  v.movement.transactionAt,
+                                                  IstDateTimeHelper
+                                                      .nowUtcMillis(),
+                                                );
+                                        final ageLabel = ageDays == 0
+                                            ? l10n.reportPresetToday
+                                            : l10n.pendingAgeDaysBadge(ageDays);
+                                        return InkWell(
+                                          onTap: () => _pushAndRefresh(
+                                            context,
+                                            RoutePaths.stockReturn(
+                                              v.movement.id,
+                                            ),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                              vertical: AppSpacing.xs,
+                                            ),
+                                            child: Row(
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                                  CrossAxisAlignment.center,
                                               children: [
-                                                AppText(
-                                                  '${v.workerName ?? '-'} • ${v.processName ?? '-'}',
-                                                  fontWeight: FontWeight.w700,
+                                                Expanded(
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      AppText(
+                                                        '${v.workerName ?? '-'} • ${v.processName ?? '-'}',
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                      ),
+                                                      AppText(
+                                                        '${v.lotNumber} • ${v.designName} • ${v.colourName}',
+                                                        variant: AppTextVariant
+                                                            .bodySmall,
+                                                        color: Theme.of(context)
+                                                            .colorScheme
+                                                            .onSurfaceVariant,
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
-                                                AppText(
-                                                  '${v.lotNumber} • ${v.designName} • ${v.colourName}',
-                                                  variant:
-                                                      AppTextVariant.bodySmall,
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .onSurfaceVariant,
+                                                const SizedBox(
+                                                  width: AppSpacing.xs,
+                                                ),
+                                                Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.end,
+                                                  children: [
+                                                    AppStatusBadge(
+                                                      label:
+                                                          '${item.remainingPending} ${l10n.piecesUnit}',
+                                                      tone:
+                                                          AppStatusTone.pending,
+                                                    ),
+                                                    const SizedBox(height: 2),
+                                                    AppText(
+                                                      ageLabel,
+                                                      variant: AppTextVariant
+                                                          .bodySmall,
+                                                      color: ageDays >= 7
+                                                          ? Theme.of(
+                                                              context,
+                                                            ).colorScheme.error
+                                                          : Theme.of(context)
+                                                                .colorScheme
+                                                                .onSurfaceVariant,
+                                                    ),
+                                                  ],
                                                 ),
                                               ],
                                             ),
                                           ),
-                                          const SizedBox(width: AppSpacing.xs),
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: [
-                                              AppStatusBadge(
-                                                label:
-                                                    '${item.remainingPending} ${l10n.piecesUnit}',
-                                                tone: AppStatusTone.pending,
-                                              ),
-                                              const SizedBox(height: 2),
-                                              AppText(
-                                                ageLabel,
-                                                variant:
-                                                    AppTextVariant.bodySmall,
-                                                color: ageDays >= 7
-                                                    ? Theme.of(context)
-                                                          .colorScheme
-                                                          .error
-                                                    : Theme.of(context)
-                                                          .colorScheme
-                                                          .onSurfaceVariant,
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
+                                        );
+                                      },
                                     ),
-                                  );
-                                },
+                                    if (i <
+                                        snap.importantPendingIssues.length - 1)
+                                      const Divider(),
+                                  ],
+                                ],
                               ),
-                              if (i < snap.importantPendingIssues.length - 1)
-                                const Divider(),
-                            ],
+                            ),
                           ],
                         ),
                       ),
@@ -449,330 +502,398 @@ final class _DashboardView extends StatelessWidget {
                   ],
 
                   // 3. Live Stock & Production Health KPIs
-                  AppHeading(
-                    l10n.dashboardStockHealth,
-                    level: AppHeadingLevel.h3,
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  if (state.status == DashboardStatus.loading && snap == null)
-                    const AppSkeletonList(itemCount: 2)
-                  else if (snap != null) ...[
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        final isWide = constraints.maxWidth >= 700;
-                        final tileW = isWide
-                            ? (constraints.maxWidth - AppSpacing.sm * 3) / 4
-                            : (constraints.maxWidth - AppSpacing.sm) / 2;
-                        return Wrap(
-                          spacing: AppSpacing.sm,
-                          runSpacing: AppSpacing.sm,
-                          children: [
-                            SizedBox(
-                              width: tileW,
-                              child: AppMetricTile(
-                                label: l10n.dashboardTotalLotsLabel,
-                                value: snap.totalLots,
-                                subtitle:
-                                    '${snap.totalDesigns} / ${snap.totalColours} ${l10n.dashboardTotalDesignsColoursLabel}',
-                                icon: Icons.inventory_2_outlined,
-                                tone: AppStatusTone.neutral,
-                                onTap: () => onNavigateTab(1),
-                              ),
-                            ),
-                            SizedBox(
-                              width: tileW,
-                              child: AppMetricTile(
-                                label: l10n.stockAvailableGoodLabel,
-                                value: snap.availableGoodStock,
-                                suffix: l10n.piecesUnit,
-                                icon: Icons.check_circle_outline_rounded,
-                                tone: AppStatusTone.good,
-                                onTap: () => _pushAndRefresh(
-                                  context,
-                                  RoutePaths.stockMovements,
+                  AppMotionEntrance(
+                    index: 4,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        AppHeading(
+                          l10n.dashboardStockHealth,
+                          level: AppHeadingLevel.h3,
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        AppStateTransition(
+                          stateKey: ValueKey<bool>(
+                            state.status == DashboardStatus.loading &&
+                                snap == null,
+                          ),
+                          child:
+                              state.status == DashboardStatus.loading &&
+                                  snap == null
+                              ? const AppSkeletonList(itemCount: 2)
+                              : snap == null
+                              ? const SizedBox.shrink()
+                              : LayoutBuilder(
+                                  builder: (context, constraints) {
+                                    final isWide = constraints.maxWidth >= 700;
+                                    final tileW = isWide
+                                        ? (constraints.maxWidth -
+                                                  AppSpacing.sm * 3) /
+                                              4
+                                        : (constraints.maxWidth -
+                                                  AppSpacing.sm) /
+                                              2;
+                                    return Wrap(
+                                      spacing: AppSpacing.sm,
+                                      runSpacing: AppSpacing.sm,
+                                      children: [
+                                        SizedBox(
+                                          width: tileW,
+                                          child: AppMetricTile(
+                                            label: l10n.dashboardTotalLotsLabel,
+                                            value: snap.totalLots,
+                                            subtitle:
+                                                '${snap.totalDesigns} / ${snap.totalColours} ${l10n.dashboardTotalDesignsColoursLabel}',
+                                            icon: Icons.inventory_2_outlined,
+                                            tone: AppStatusTone.neutral,
+                                            onTap: () => onNavigateTab(1),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: tileW,
+                                          child: AppMetricTile(
+                                            label: l10n.stockAvailableGoodLabel,
+                                            value: snap.availableGoodStock,
+                                            suffix: l10n.piecesUnit,
+                                            icon: Icons
+                                                .check_circle_outline_rounded,
+                                            tone: AppStatusTone.good,
+                                            onTap: () => _pushAndRefresh(
+                                              context,
+                                              RoutePaths.stockMovements,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: tileW,
+                                          child: AppMetricTile(
+                                            label:
+                                                l10n.stockPendingWorkerLabel,
+                                            value: snap.pendingWorkerStock,
+                                            suffix: l10n.piecesUnit,
+                                            icon: Icons.pending_actions_rounded,
+                                            tone: snap.pendingWorkerStock > 0
+                                                ? AppStatusTone.pending
+                                                : AppStatusTone.good,
+                                            onTap: () => _pushAndRefresh(
+                                              context,
+                                              RoutePaths.stockReturnPicker,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: tileW,
+                                          child: AppMetricTile(
+                                            label:
+                                                l10n.stockDamagedBucketLabel,
+                                            value: snap.damagedStock,
+                                            suffix: l10n.piecesUnit,
+                                            icon: Icons.report_problem_outlined,
+                                            tone: snap.damagedStock > 0
+                                                ? AppStatusTone.damaged
+                                                : AppStatusTone.neutral,
+                                            onTap: () => _pushAndRefresh(
+                                              context,
+                                              RoutePaths.stockRepair,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
                                 ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: tileW,
-                              child: AppMetricTile(
-                                label: l10n.stockPendingWorkerLabel,
-                                value: snap.pendingWorkerStock,
-                                suffix: l10n.piecesUnit,
-                                icon: Icons.pending_actions_rounded,
-                                tone: snap.pendingWorkerStock > 0
-                                    ? AppStatusTone.pending
-                                    : AppStatusTone.good,
-                                onTap: () => _pushAndRefresh(
-                                  context,
-                                  RoutePaths.stockReturnPicker,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: tileW,
-                              child: AppMetricTile(
-                                label: l10n.stockDamagedBucketLabel,
-                                value: snap.damagedStock,
-                                suffix: l10n.piecesUnit,
-                                icon: Icons.report_problem_outlined,
-                                tone: snap.damagedStock > 0
-                                    ? AppStatusTone.damaged
-                                    : AppStatusTone.neutral,
-                                onTap: () => _pushAndRefresh(
-                                  context,
-                                  RoutePaths.stockRepair,
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
+                        ),
+                      ],
                     ),
+                  ),
+                  if (snap != null) ...[
                     const SizedBox(height: AppSpacing.lg),
 
                     // 4. Live Financial & Worker Accounting Summary
-                    AppHeading(
-                      l10n.dashboardFinanceHealth,
-                      level: AppHeadingLevel.h3,
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        final isWide = constraints.maxWidth >= 700;
-                        final tileW = isWide
-                            ? (constraints.maxWidth - AppSpacing.sm * 3) / 4
-                            : (constraints.maxWidth - AppSpacing.sm) / 2;
-                        return Wrap(
-                          spacing: AppSpacing.sm,
-                          runSpacing: AppSpacing.sm,
-                          children: [
-                            SizedBox(
-                              width: tileW,
-                              child: AppMetricTile(
-                                label: l10n.accountingEarnedLabourLabel,
-                                value: snap.totalEarnedLabourPaise,
-                                isCurrencyPaise: true,
-                                icon: Icons.work_outline_rounded,
-                                tone: AppStatusTone.good,
-                                onTap: () => _pushAndRefresh(
-                                  context,
-                                  RoutePaths.accounting,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: tileW,
-                              child: AppMetricTile(
-                                label: l10n.accountingOutstandingPayableLabel,
-                                value: snap.totalOutstandingPayablePaise,
-                                isCurrencyPaise: true,
-                                icon: Icons.account_balance_wallet_outlined,
-                                tone: snap.totalOutstandingPayablePaise > 0
-                                    ? AppStatusTone.pending
-                                    : AppStatusTone.good,
-                                onTap: () => _pushAndRefresh(
-                                  context,
-                                  RoutePaths.accounting,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: tileW,
-                              child: AppMetricTile(
-                                label: l10n.accountingAdvanceCreditLabel,
-                                value: snap.totalAdvanceCreditPaise,
-                                isCurrencyPaise: true,
-                                subtitle:
-                                    '${l10n.accountingAdvancePaidLabel}: ${MoneyFormatter.formatPaise(snap.totalAdvancePaymentsPaise)}',
-                                icon: Icons.trending_up_rounded,
-                                tone: AppStatusTone.info,
-                                onTap: () => _pushAndRefresh(
-                                  context,
-                                  RoutePaths.accounting,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: tileW,
-                              child: AppMetricTile(
-                                label: l10n.accountingRegularPaidLabel,
-                                value: snap.totalRegularPaymentsPaise,
-                                isCurrencyPaise: true,
-                                icon: Icons.payments_outlined,
-                                tone: AppStatusTone.neutral,
-                                onTap: () => _pushAndRefresh(
-                                  context,
-                                  RoutePaths.accounting,
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
+                    AppMotionEntrance(
+                      index: 5,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          AppHeading(
+                            l10n.dashboardFinanceHealth,
+                            level: AppHeadingLevel.h3,
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              final isWide = constraints.maxWidth >= 700;
+                              final tileW = isWide
+                                  ? (constraints.maxWidth - AppSpacing.sm * 3) /
+                                        4
+                                  : (constraints.maxWidth - AppSpacing.sm) / 2;
+                              return Wrap(
+                                spacing: AppSpacing.sm,
+                                runSpacing: AppSpacing.sm,
+                                children: [
+                                  SizedBox(
+                                    width: tileW,
+                                    child: AppMetricTile(
+                                      label: l10n.accountingEarnedLabourLabel,
+                                      value: snap.totalEarnedLabourPaise,
+                                      isCurrencyPaise: true,
+                                      icon: Icons.work_outline_rounded,
+                                      tone: AppStatusTone.good,
+                                      onTap: () => _pushAndRefresh(
+                                        context,
+                                        RoutePaths.accounting,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: tileW,
+                                    child: AppMetricTile(
+                                      label: l10n
+                                          .accountingOutstandingPayableLabel,
+                                      value: snap.totalOutstandingPayablePaise,
+                                      isCurrencyPaise: true,
+                                      icon: Icons
+                                          .account_balance_wallet_outlined,
+                                      tone:
+                                          snap.totalOutstandingPayablePaise > 0
+                                          ? AppStatusTone.pending
+                                          : AppStatusTone.good,
+                                      onTap: () => _pushAndRefresh(
+                                        context,
+                                        RoutePaths.accounting,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: tileW,
+                                    child: AppMetricTile(
+                                      label: l10n.accountingAdvanceCreditLabel,
+                                      value: snap.totalAdvanceCreditPaise,
+                                      isCurrencyPaise: true,
+                                      subtitle:
+                                          '${l10n.accountingAdvancePaidLabel}: ${MoneyFormatter.formatPaise(snap.totalAdvancePaymentsPaise)}',
+                                      icon: Icons.trending_up_rounded,
+                                      tone: AppStatusTone.info,
+                                      onTap: () => _pushAndRefresh(
+                                        context,
+                                        RoutePaths.accounting,
+                                      ),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: tileW,
+                                    child: AppMetricTile(
+                                      label: l10n.accountingRegularPaidLabel,
+                                      value: snap.totalRegularPaymentsPaise,
+                                      isCurrencyPaise: true,
+                                      icon: Icons.payments_outlined,
+                                      tone: AppStatusTone.neutral,
+                                      onTap: () => _pushAndRefresh(
+                                        context,
+                                        RoutePaths.accounting,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                     const SizedBox(height: AppSpacing.lg),
 
                     // 5. Process-wise Pending Breakdown
-                    AppHeading(
-                      l10n.dashboardProcessPending,
-                      level: AppHeadingLevel.h3,
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    if (snap.processPendingList.isEmpty)
-                      AppCard(
-                        child: AppText(
-                          l10n.dashboardNoProcessPending,
-                          variant: AppTextVariant.bodySmall,
-                        ),
-                      )
-                    else
-                      AppCard(
-                        child: Column(
-                          children: [
-                            for (
-                              int i = 0;
-                              i < snap.processPendingList.length;
-                              i++
-                            ) ...[
-                              InkWell(
-                                onTap: () => _pushAndRefresh(
-                                  context,
-                                  RoutePaths.stockReturnPickerFiltered(
-                                    processId:
-                                        snap.processPendingList[i].processId,
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: AppSpacing.xs,
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Expanded(
-                                        child: Column(
+                    AppMotionEntrance(
+                      index: 6,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          AppHeading(
+                            l10n.dashboardProcessPending,
+                            level: AppHeadingLevel.h3,
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+                          if (snap.processPendingList.isEmpty)
+                            AppCard(
+                              child: AppText(
+                                l10n.dashboardNoProcessPending,
+                                variant: AppTextVariant.bodySmall,
+                              ),
+                            )
+                          else
+                            AppCard(
+                              child: Column(
+                                children: [
+                                  for (
+                                    int i = 0;
+                                    i < snap.processPendingList.length;
+                                    i++
+                                  ) ...[
+                                    InkWell(
+                                      onTap: () => _pushAndRefresh(
+                                        context,
+                                        RoutePaths.stockReturnPickerFiltered(
+                                          processId: snap
+                                              .processPendingList[i]
+                                              .processId,
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          vertical: AppSpacing.xs,
+                                        ),
+                                        child: Row(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                              CrossAxisAlignment.center,
                                           children: [
-                                            AppText(
-                                              snap
-                                                  .processPendingList[i]
-                                                  .processName,
-                                              fontWeight: FontWeight.w600,
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  AppText(
+                                                    snap
+                                                        .processPendingList[i]
+                                                        .processName,
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                  AppText(
+                                                    '${l10n.stockIssuedLabel}: ${snap.processPendingList[i].issued} ${l10n.piecesUnit}',
+                                                    variant: AppTextVariant
+                                                        .bodySmall,
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .onSurfaceVariant,
+                                                  ),
+                                                ],
+                                              ),
                                             ),
-                                            AppText(
-                                              '${l10n.stockIssuedLabel}: ${snap.processPendingList[i].issued} ${l10n.piecesUnit}',
-                                              variant: AppTextVariant.bodySmall,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .onSurfaceVariant,
+                                            const SizedBox(
+                                              width: AppSpacing.sm,
+                                            ),
+                                            AppStatusBadge(
+                                              label:
+                                                  '${snap.processPendingList[i].pending} ${l10n.piecesUnit}',
+                                              tone:
+                                                  snap
+                                                          .processPendingList[i]
+                                                          .pending >
+                                                      0
+                                                  ? AppStatusTone.pending
+                                                  : AppStatusTone.good,
+                                            ),
+                                            const SizedBox(
+                                              width: AppSpacing.xs,
+                                            ),
+                                            const Icon(
+                                              Icons.chevron_right_rounded,
+                                              size: 18,
                                             ),
                                           ],
                                         ),
                                       ),
-                                      const SizedBox(width: AppSpacing.sm),
-                                      AppStatusBadge(
-                                        label:
-                                            '${snap.processPendingList[i].pending} ${l10n.piecesUnit}',
-                                        tone:
-                                            snap.processPendingList[i].pending >
-                                                0
-                                            ? AppStatusTone.pending
-                                            : AppStatusTone.good,
+                                    ),
+                                    if (i < snap.processPendingList.length - 1)
+                                      const Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: AppSpacing.sm,
+                                        ),
+                                        child: Divider(),
                                       ),
-                                      const SizedBox(width: AppSpacing.xs),
-                                      const Icon(
-                                        Icons.chevron_right_rounded,
-                                        size: 18,
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                  ],
+                                ],
                               ),
-                              if (i < snap.processPendingList.length - 1)
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: AppSpacing.sm,
-                                  ),
-                                  child: Divider(),
-                                ),
-                            ],
-                          ],
-                        ),
+                            ),
+                        ],
                       ),
+                    ),
                     const SizedBox(height: AppSpacing.lg),
 
                     // 6. Recent Audit Activity (localized labels, clean mobile wrap)
-                    AppHeading(
-                      l10n.dashboardRecentActivity,
-                      level: AppHeadingLevel.h3,
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    if (snap.recentActivity.isEmpty)
-                      AppCard(
-                        child: AppText(
-                          l10n.dashboardNoRecentActivity,
-                          variant: AppTextVariant.bodySmall,
-                        ),
-                      )
-                    else
-                      AppCard(
-                        child: Column(
-                          children: [
-                            for (
-                              int i = 0;
-                              i < snap.recentActivity.length.clamp(0, 6);
-                              i++
-                            ) ...[
-                              Wrap(
-                                spacing: AppSpacing.sm,
-                                runSpacing: AppSpacing.xs,
-                                crossAxisAlignment: WrapCrossAlignment.center,
+                    AppMotionEntrance(
+                      index: 7,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          AppHeading(
+                            l10n.dashboardRecentActivity,
+                            level: AppHeadingLevel.h3,
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+                          if (snap.recentActivity.isEmpty)
+                            AppCard(
+                              child: AppText(
+                                l10n.dashboardNoRecentActivity,
+                                variant: AppTextVariant.bodySmall,
+                              ),
+                            )
+                          else
+                            AppCard(
+                              child: Column(
                                 children: [
-                                  AppStatusBadge(
-                                    label: DomainLabelLocalizer.auditAction(
-                                      l10n,
-                                      snap.recentActivity[i].actionType,
+                                  for (
+                                    int i = 0;
+                                    i < snap.recentActivity.length.clamp(0, 6);
+                                    i++
+                                  ) ...[
+                                    Wrap(
+                                      spacing: AppSpacing.sm,
+                                      runSpacing: AppSpacing.xs,
+                                      crossAxisAlignment:
+                                          WrapCrossAlignment.center,
+                                      children: [
+                                        AppStatusBadge(
+                                          label:
+                                              DomainLabelLocalizer.auditAction(
+                                                l10n,
+                                                snap
+                                                    .recentActivity[i]
+                                                    .actionType,
+                                              ),
+                                          tone:
+                                              snap
+                                                      .recentActivity[i]
+                                                      .actionType ==
+                                                  'REVERSAL'
+                                              ? AppStatusTone.damaged
+                                              : AppStatusTone.info,
+                                        ),
+                                        AppText(
+                                          DomainLabelLocalizer.auditEntity(
+                                            l10n,
+                                            snap.recentActivity[i].entityType,
+                                          ),
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        AppText(
+                                          IstDateTimeHelper.formatIstDateTime(
+                                            snap.recentActivity[i].recordedAt,
+                                            locale: localeCode,
+                                          ),
+                                          variant: AppTextVariant.bodySmall,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onSurfaceVariant,
+                                        ),
+                                      ],
                                     ),
-                                    tone:
-                                        snap.recentActivity[i].actionType ==
-                                            'REVERSAL'
-                                        ? AppStatusTone.damaged
-                                        : AppStatusTone.info,
-                                  ),
-                                  AppText(
-                                    DomainLabelLocalizer.auditEntity(
-                                      l10n,
-                                      snap.recentActivity[i].entityType,
-                                    ),
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                  AppText(
-                                    IstDateTimeHelper.formatIstDateTime(
-                                      snap.recentActivity[i].recordedAt,
-                                      locale: localeCode,
-                                    ),
-                                    variant: AppTextVariant.bodySmall,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant,
-                                  ),
+                                    if (i <
+                                        snap.recentActivity.length.clamp(0, 6) -
+                                            1)
+                                      const Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: AppSpacing.xs + 2,
+                                        ),
+                                        child: Divider(),
+                                      ),
+                                  ],
                                 ],
                               ),
-                              if (i <
-                                  snap.recentActivity.length.clamp(0, 6) - 1)
-                                const Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: AppSpacing.xs + 2,
-                                  ),
-                                  child: Divider(),
-                                ),
-                            ],
-                          ],
-                        ),
+                            ),
+                        ],
                       ),
+                    ),
                   ],
                   const SizedBox(height: AppSpacing.lg),
                 ],

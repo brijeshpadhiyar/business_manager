@@ -47,8 +47,12 @@ import 'package:business_manager/features/dashboard/presentation/bloc/dashboard_
     as _i736;
 import 'package:business_manager/features/inventory/presentation/bloc/inventory_overview_cubit.dart'
     as _i931;
+import 'package:business_manager/features/lots/data/repositories/colour_master_repository_impl.dart'
+    as _i1065;
 import 'package:business_manager/features/lots/data/repositories/lot_repository_impl.dart'
     as _i1010;
+import 'package:business_manager/features/lots/domain/repositories/colour_master_repository.dart'
+    as _i315;
 import 'package:business_manager/features/lots/domain/repositories/lot_repository.dart'
     as _i932;
 import 'package:business_manager/features/lots/presentation/bloc/lot_detail_cubit.dart'
@@ -65,6 +69,12 @@ import 'package:business_manager/features/notifications/domain/services/local_no
     as _i105;
 import 'package:business_manager/features/notifications/presentation/bloc/notification_settings_cubit.dart'
     as _i245;
+import 'package:business_manager/features/process_routing/data/repositories/process_routing_repository_impl.dart'
+    as _i877;
+import 'package:business_manager/features/process_routing/domain/repositories/process_routing_repository.dart'
+    as _i1058;
+import 'package:business_manager/features/process_routing/presentation/bloc/job_routing_cubit.dart'
+    as _i685;
 import 'package:business_manager/features/processes/data/repositories/process_repository_impl.dart'
     as _i658;
 import 'package:business_manager/features/processes/domain/repositories/process_repository.dart'
@@ -249,6 +259,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i656.IdGenerator>(),
       ),
     );
+    gh.lazySingleton<_i315.ColourMasterRepository>(
+      () => _i1065.ColourMasterRepositoryImpl(
+        gh<_i177.AppDatabase>(),
+        gh<_i665.DatabaseTransactionRunner>(),
+        gh<_i656.IdGenerator>(),
+      ),
+    );
     gh.factory<_i1023.AccountingOverviewCubit>(
       () => _i1023.AccountingOverviewCubit(gh<_i762.AccountingRepository>()),
     );
@@ -314,11 +331,25 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i1018.BusinessProfileCubit>(
       () => _i1018.BusinessProfileCubit(gh<_i521.BusinessProfileRepository>()),
     );
+    gh.lazySingleton<_i1058.ProcessRoutingRepository>(
+      () => _i877.ProcessRoutingRepositoryImpl(
+        gh<_i177.AppDatabase>(),
+        gh<_i665.DatabaseTransactionRunner>(),
+        gh<_i306.StockMovementRepository>(),
+        gh<_i656.IdGenerator>(),
+      ),
+    );
     gh.lazySingleton<_i617.ReportsRepository>(
       () => _i546.ReportsRepositoryImpl(
         gh<_i177.AppDatabase>(),
         gh<_i306.StockMovementRepository>(),
         gh<_i762.AccountingRepository>(),
+      ),
+    );
+    gh.factory<_i685.JobRoutingCubit>(
+      () => _i685.JobRoutingCubit(
+        gh<_i1058.ProcessRoutingRepository>(),
+        gh<_i656.IdGenerator>(),
       ),
     );
     gh.factory<_i507.ReportsCubit>(
