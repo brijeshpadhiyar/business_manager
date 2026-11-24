@@ -2441,4 +2441,40 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get validationCannotReverseReversal =>
       'A reversal entry cannot itself be reversed.';
+
+  @override
+  String validationMinLength(int min) {
+    return 'Must be at least $min characters.';
+  }
+
+  @override
+  String get validationExceedsDispatched =>
+      'Received quantity cannot exceed dispatched quantity.';
+
+  @override
+  String get validationExceedsHeld =>
+      'Transfer quantity cannot exceed quantity currently held by the worker.';
+
+  @override
+  String get validationUnaccountedRemaining =>
+      'Process cannot be completed while pending quantity remains unaccounted.';
+
+  @override
+  String get validationOverpaymentNotAllowed =>
+      'Payment amount cannot exceed the remaining payable balance.';
+
+  @override
+  String get msgTitleSuccess => 'Success';
+
+  @override
+  String get msgTitleError => 'Error';
+
+  @override
+  String get msgTitleWarning => 'Warning';
+
+  @override
+  String get msgTitleInfo => 'Information';
+
+  @override
+  String get msgTitleLoading => 'Working...';
 }

@@ -68,10 +68,20 @@ final class _AccountingOverviewViewState
 
     final confirmed = await AppDialog.showCustom<bool>(
       context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.accountingReversePaymentTitle),
+      builder: (ctx) => AppDialog(
+        title: l10n.accountingReversePaymentTitle,
+        icon: Icons.warning_amber_rounded,
+        isDestructive: true,
+        cancelLabel: l10n.actionCancel,
+        confirmLabel: l10n.stockReverseAction,
+        onConfirm: () {
+          if (formKey.currentState?.validate() ?? false) {
+            Navigator.of(ctx).pop(true);
+          }
+        },
         content: Form(
           key: formKey,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,22 +102,6 @@ final class _AccountingOverviewViewState
             ],
           ),
         ),
-        actions: [
-          AppButton(
-            label: l10n.actionCancel,
-            variant: AppButtonVariant.text,
-            onPressed: () => Navigator.of(ctx).pop(false),
-          ),
-          AppButton(
-            label: l10n.stockReverseAction,
-            variant: AppButtonVariant.destructive,
-            onPressed: () {
-              if (formKey.currentState?.validate() ?? false) {
-                Navigator.of(ctx).pop(true);
-              }
-            },
-          ),
-        ],
       ),
     );
 
@@ -126,8 +120,8 @@ final class _AccountingOverviewViewState
         AppFeedback.showSuccess(context, l10n.accountingReversePaymentSuccess);
         await context.read<AccountingOverviewCubit>().load();
       }
-    } catch (e) {
-      if (mounted) AppFeedback.showError(context, e.toString());
+    } catch (_) {
+      if (mounted) AppFeedback.showError(context, l10n.errorUnexpected);
     } finally {
       reasonCtrl.dispose();
     }

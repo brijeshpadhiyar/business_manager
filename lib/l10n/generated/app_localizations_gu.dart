@@ -2442,4 +2442,40 @@ class AppLocalizationsGu extends AppLocalizations {
   @override
   String get validationCannotReverseReversal =>
       'રિવર્સલ એન્ટ્રીને ફરી રિવર્સ કરી શકાતી નથી.';
+
+  @override
+  String validationMinLength(int min) {
+    return 'ઓછામાં ઓછા $min અક્ષરો દાખલ કરો.';
+  }
+
+  @override
+  String get validationExceedsDispatched =>
+      'મળેલ જથ્થો મોકલેલ જથ્થા કરતાં વધુ હોઈ શકે નહીં.';
+
+  @override
+  String get validationExceedsHeld =>
+      'ટ્રાન્સફર જથ્થો કારીગર પાસે હાલ રહેલા જથ્થા કરતાં વધુ હોઈ શકે નહીં.';
+
+  @override
+  String get validationUnaccountedRemaining =>
+      'બાકી જથ્થાનો હિસાબ બાકી હોય ત્યારે પ્રક્રિયા પૂર્ણ કરી શકાય નહીં.';
+
+  @override
+  String get validationOverpaymentNotAllowed =>
+      'ચુકવણીની રકમ બાકી દેવા કરતાં વધુ હોઈ શકે નહીં.';
+
+  @override
+  String get msgTitleSuccess => 'સફળ';
+
+  @override
+  String get msgTitleError => 'ભૂલ';
+
+  @override
+  String get msgTitleWarning => 'ચેતવણી';
+
+  @override
+  String get msgTitleInfo => 'માહિતી';
+
+  @override
+  String get msgTitleLoading => 'પ્રક્રિયા ચાલુ છે...';
 }

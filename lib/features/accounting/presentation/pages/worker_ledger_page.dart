@@ -51,12 +51,19 @@ final class _WorkerLedgerView extends StatelessWidget {
 
     final confirmed = await AppDialog.showCustom<bool>(
       context,
-      builder: (ctx) => AlertDialog(
-        title: Text(
-          isPayment
-              ? l10n.accountingReversePaymentTitle
-              : l10n.accountingReverseAdjustmentTitle,
-        ),
+      builder: (ctx) => AppDialog(
+        title: isPayment
+            ? l10n.accountingReversePaymentTitle
+            : l10n.accountingReverseAdjustmentTitle,
+        icon: Icons.warning_amber_rounded,
+        isDestructive: true,
+        cancelLabel: l10n.actionCancel,
+        confirmLabel: l10n.stockReverseAction,
+        onConfirm: () {
+          if (formKey.currentState?.validate() ?? false) {
+            Navigator.of(ctx).pop(true);
+          }
+        },
         content: Form(
           key: formKey,
           autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -74,22 +81,6 @@ final class _WorkerLedgerView extends StatelessWidget {
             ),
           ),
         ),
-        actions: [
-          AppButton(
-            label: l10n.actionCancel,
-            variant: AppButtonVariant.text,
-            onPressed: () => Navigator.of(ctx).pop(false),
-          ),
-          AppButton(
-            label: l10n.stockReverseAction,
-            variant: AppButtonVariant.destructive,
-            onPressed: () {
-              if (formKey.currentState?.validate() ?? false) {
-                Navigator.of(ctx).pop(true);
-              }
-            },
-          ),
-        ],
       ),
     );
 
@@ -135,8 +126,8 @@ final class _WorkerLedgerView extends StatelessWidget {
           ValidationLocalizer.localizeDomainException(l10n, e),
         );
       }
-    } catch (e) {
-      if (context.mounted) AppFeedback.showError(context, e.toString());
+    } catch (_) {
+      if (context.mounted) AppFeedback.showError(context, l10n.errorUnexpected);
     } finally {
       reasonCtrl.dispose();
     }

@@ -5,6 +5,7 @@ import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/process_routing/domain/calculators/process_pricing_calculator.dart';
 import 'package:business_manager/features/process_routing/domain/entities/process_routing_entities.dart';
@@ -89,12 +90,27 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
     ProcessHandoverType.cancellation => AppStatusTone.damaged,
   };
 
-  int _parseRupeesToPaise(String raw) {
-    final cleaned = raw.trim();
-    if (cleaned.isEmpty) return 0;
-    final val = double.tryParse(cleaned);
-    if (val == null || val < 0) return -1;
-    return (val * 100).round();
+  /// Exact zero-floating-point string-to-paise parser backed by [AppValidators].
+  /// Returns `-1` when the entered rate/amount fails strict decimal validation.
+  int _parseRupeesToPaise(String raw, {bool allowZero = true}) {
+    final parsed = AppValidators.parseRupeesToPaiseExact(
+      raw,
+      isRequired: !allowZero,
+      allowZero: allowZero,
+    );
+    if (!parsed.validation.isValid) return -1;
+    return parsed.paise ?? 0;
+  }
+
+  /// Exact integer quantity parser backed by [AppValidators.parseQuantityExact].
+  int _parseQuantity(String raw, {bool allowZero = false}) {
+    final parsed = AppValidators.parseQuantityExact(
+      raw,
+      isRequired: !allowZero,
+      allowZero: allowZero,
+    );
+    if (!parsed.validation.isValid) return -1;
+    return parsed.value ?? 0;
   }
 
   Future<void> _showAddOrReassignSheet(
@@ -335,10 +351,20 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                     onPressed: saving
                         ? null
                         : () async {
-                            final qty = int.tryParse(qtyCtrl.text.trim()) ?? 0;
+                            final qty = _parseQuantity(qtyCtrl.text);
                             final paise = _parseRupeesToPaise(rateCtrl.text);
+                            if (qty <= 0) {
+                              setSheetState(
+                                () => error =
+                                    'Enter a valid positive whole quantity.',
+                              );
+                              return;
+                            }
                             if (paise < 0) {
-                              setSheetState(() => error = 'Enter valid rate.');
+                              setSheetState(
+                                () => error =
+                                    'Enter a valid non-negative rate (max 2 decimals).',
+                              );
                               return;
                             }
                             setSheetState(() {
@@ -548,8 +574,22 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                     onPressed: saving
                         ? null
                         : () async {
-                            final qty = int.tryParse(qtyCtrl.text.trim()) ?? 0;
+                            final qty = _parseQuantity(qtyCtrl.text);
                             final paise = _parseRupeesToPaise(rateCtrl.text);
+                            if (qty <= 0) {
+                              setSheetState(
+                                () => error =
+                                    'Enter a valid positive transfer quantity.',
+                              );
+                              return;
+                            }
+                            if (paise < 0) {
+                              setSheetState(
+                                () => error =
+                                    'Enter a valid destination rate (max 2 decimals).',
+                              );
+                              return;
+                            }
                             setSheetState(() {
                               saving = true;
                               error = null;
@@ -765,7 +805,17 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                 onPressed: saving
                     ? null
                     : () async {
-                        final paise = _parseRupeesToPaise(amountCtrl.text);
+                        final paise = _parseRupeesToPaise(
+                          amountCtrl.text,
+                          allowZero: false,
+                        );
+                        if (paise <= 0) {
+                          setSheetState(
+                            () => error =
+                                'Enter a valid positive amount (max 2 decimals).',
+                          );
+                          return;
+                        }
                         setSheetState(() {
                           saving = true;
                           error = null;
@@ -864,7 +914,17 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                 onPressed: saving
                     ? null
                     : () async {
-                        final paise = _parseRupeesToPaise(amountCtrl.text);
+                        final paise = _parseRupeesToPaise(
+                          amountCtrl.text,
+                          allowZero: false,
+                        );
+                        if (paise <= 0) {
+                          setSheetState(
+                            () => error =
+                                'Enter a valid positive amount (max 2 decimals).',
+                          );
+                          return;
+                        }
                         setSheetState(() {
                           saving = true;
                           error = null;
@@ -953,7 +1013,14 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                 onPressed: saving
                     ? null
                     : () async {
-                        final qty = int.tryParse(qtyCtrl.text.trim()) ?? 0;
+                        final qty = _parseQuantity(qtyCtrl.text);
+                        if (qty <= 0) {
+                          setSheetState(
+                            () => error =
+                                'Enter a valid positive received quantity.',
+                          );
+                          return;
+                        }
                         setSheetState(() {
                           saving = true;
                           error = null;

@@ -5,16 +5,34 @@ import 'package:business_manager/core/widgets/app_glass_surface.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Consistent frosted-glass loading indicator with smooth fade-scale entrance
-/// and optional localized label.
+/// and optional localized label. Use [AppLoader.inline] for compact spinners
+/// inside cards, tiles, or buttons.
 final class AppLoader extends StatelessWidget {
-  const AppLoader({super.key, this.message, this.size = 26});
+  const AppLoader({super.key, this.message, this.size = 26}) : _inline = false;
+
+  const AppLoader.inline({super.key, this.size = 20})
+    : message = null,
+      _inline = true;
 
   final String? message;
   final double size;
+  final bool _inline;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    if (_inline) {
+      return Center(
+        child: SizedBox(
+          width: size,
+          height: size,
+          child: CircularProgressIndicator(
+            strokeWidth: 2.2,
+            color: colorScheme.secondary,
+          ),
+        ),
+      );
+    }
     return Center(
       child: Padding(
         padding: AppSpacing.screenAll,

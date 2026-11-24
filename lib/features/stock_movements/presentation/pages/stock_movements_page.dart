@@ -111,8 +111,17 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
 
     final confirmed = await AppDialog.showCustom<bool>(
       context,
-      builder: (dialogCtx) => AlertDialog(
-        title: Text(l10n.stockReverseConfirmTitle),
+      builder: (dialogCtx) => AppDialog(
+        title: l10n.stockReverseConfirmTitle,
+        icon: Icons.warning_amber_rounded,
+        isDestructive: true,
+        cancelLabel: l10n.actionCancel,
+        confirmLabel: l10n.stockReverseAction,
+        onConfirm: () {
+          if (formKey.currentState?.validate() ?? false) {
+            Navigator.of(dialogCtx).pop(true);
+          }
+        },
         content: Form(
           key: formKey,
           autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -141,22 +150,6 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
             ],
           ),
         ),
-        actions: [
-          AppButton(
-            label: l10n.actionCancel,
-            variant: AppButtonVariant.text,
-            onPressed: () => Navigator.of(dialogCtx).pop(false),
-          ),
-          AppButton(
-            label: l10n.stockReverseAction,
-            variant: AppButtonVariant.destructive,
-            onPressed: () {
-              if (formKey.currentState?.validate() ?? false) {
-                Navigator.of(dialogCtx).pop(true);
-              }
-            },
-          ),
-        ],
       ),
     );
 
@@ -181,8 +174,8 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
         context,
         ValidationLocalizer.localizeDomainException(l10n, e),
       );
-    } catch (e) {
-      if (mounted) AppFeedback.showError(context, e.toString());
+    } catch (_) {
+      if (mounted) AppFeedback.showError(context, l10n.errorUnexpected);
     } finally {
       reasonCtrl.dispose();
     }

@@ -46,6 +46,54 @@ abstract final class AppValidators {
     return const ValidationResult.valid();
   }
 
+  /// Enforces a minimum character bound on trimmed text (when non-empty).
+  static ValidationResult minLengthValidator(
+    String? value, {
+    required int minLength,
+    bool isRequired = false,
+  }) {
+    final trimmed = value?.trim() ?? '';
+    if (trimmed.isEmpty) {
+      return isRequired
+          ? const ValidationResult.invalid(ValidationErrorCode.required)
+          : const ValidationResult.valid();
+    }
+    if (trimmed.length < minLength) {
+      return ValidationResult.invalid(
+        ValidationErrorCode.minLength,
+        intParam: minLength,
+      );
+    }
+    return const ValidationResult.valid();
+  }
+
+  /// Enforces an exact character count on trimmed text.
+  static ValidationResult exactLengthValidator(
+    String? value, {
+    required int length,
+    bool isRequired = true,
+  }) {
+    final trimmed = value?.trim() ?? '';
+    if (trimmed.isEmpty) {
+      return isRequired
+          ? const ValidationResult.invalid(ValidationErrorCode.required)
+          : const ValidationResult.valid();
+    }
+    if (trimmed.length < length) {
+      return ValidationResult.invalid(
+        ValidationErrorCode.minLength,
+        intParam: length,
+      );
+    }
+    if (trimmed.length > length) {
+      return ValidationResult.invalid(
+        ValidationErrorCode.maxLength,
+        intParam: length,
+      );
+    }
+    return const ValidationResult.valid();
+  }
+
   /// Enforces an upper character bound on trimmed text.
   static ValidationResult maxLengthValidator(
     String? value, {

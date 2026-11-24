@@ -18,7 +18,9 @@ abstract final class ValidationLocalizer {
       ValidationErrorCode.maxLength => l10n.validationMaxLength(
         result.intParam ?? ValidationLimits.maxNotesLength,
       ),
-      ValidationErrorCode.minLength => l10n.validationRequired,
+      ValidationErrorCode.minLength => l10n.validationMinLength(
+        result.intParam ?? 1,
+      ),
       ValidationErrorCode.invalidName => l10n.validationRequired,
       ValidationErrorCode.mobileRequired => l10n.validationMobileRequired,
       ValidationErrorCode.mobileInvalidIndian =>
@@ -131,7 +133,16 @@ abstract final class ValidationLocalizer {
       'quantity_too_large' => l10n.validationValueTooLarge,
       'rate_missing' => l10n.stockRateMissingWarning,
       'rate_conflict' => l10n.stockRateConflictWarning,
-      'override_reason_required' => l10n.validationOverrideReasonRequired,
+      'override_reason_required' ||
+      'rate_override_reason_required' => l10n.validationOverrideReasonRequired,
+
+      // Process Routing & Handovers (V1.3)
+      'exceeds_dispatched_quantity' => l10n.validationExceedsDispatched,
+      'exceeds_held_quantity' => l10n.validationExceedsHeld,
+      'unaccounted_quantity_remaining' => l10n.validationUnaccountedRemaining,
+      'overpayment_not_allowed' => l10n.validationOverpaymentNotAllowed,
+      'duplicate_colour_master' => l10n.colourDuplicateError,
+      'invalid_charge_amount' => l10n.validationPositiveAmount,
 
       // Stock Movements & Reversals
       'insufficient_good_stock' => l10n.stockInsufficientGoodError,

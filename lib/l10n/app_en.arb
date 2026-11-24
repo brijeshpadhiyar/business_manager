@@ -1030,5 +1030,20 @@
   "validationOverrideReasonRequired": "Reason is required when overriding the rate.",
   "validationParentIssueInactive": "Original stock issue is no longer active.",
   "validationAlreadyReversed": "This entry has already been reversed.",
-  "validationCannotReverseReversal": "A reversal entry cannot itself be reversed."
+  "validationCannotReverseReversal": "A reversal entry cannot itself be reversed.",
+  "validationMinLength": "Must be at least {min} characters.",
+  "@validationMinLength": {
+    "placeholders": {
+      "min": { "type": "int" }
+    }
+  },
+  "validationExceedsDispatched": "Received quantity cannot exceed dispatched quantity.",
+  "validationExceedsHeld": "Transfer quantity cannot exceed quantity currently held by the worker.",
+  "validationUnaccountedRemaining": "Process cannot be completed while pending quantity remains unaccounted.",
+  "validationOverpaymentNotAllowed": "Payment amount cannot exceed the remaining payable balance.",
+  "msgTitleSuccess": "Success",
+  "msgTitleError": "Error",
+  "msgTitleWarning": "Warning",
+  "msgTitleInfo": "Information",
+  "msgTitleLoading": "Working..."
 }

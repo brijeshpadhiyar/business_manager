@@ -88,10 +88,10 @@ final class _StockLabourSettingsPageState
         _saving = false;
       });
       AppFeedback.showSuccess(context, context.l10n.businessProfileSaved);
-    } catch (e) {
+    } catch (_) {
       if (!mounted) return;
       setState(() => _saving = false);
-      AppFeedback.showError(context, e.toString());
+      AppFeedback.showError(context, context.l10n.errorUnexpected);
     }
   }
 

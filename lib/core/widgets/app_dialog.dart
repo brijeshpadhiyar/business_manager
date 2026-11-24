@@ -17,6 +17,8 @@ final class AppDialog extends StatelessWidget {
     super.key,
     required this.title,
     required this.content,
+    this.icon,
+    this.iconColor,
     this.confirmLabel,
     this.cancelLabel,
     this.onConfirm,
@@ -25,6 +27,8 @@ final class AppDialog extends StatelessWidget {
 
   final String title;
   final Widget content;
+  final IconData? icon;
+  final Color? iconColor;
   final String? confirmLabel;
   final String? cancelLabel;
   final VoidCallback? onConfirm;
@@ -125,18 +129,41 @@ final class AppDialog extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Text(
-                          title,
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            if (icon != null) ...[
+                              Icon(
+                                icon,
+                                size: 22,
+                                color:
+                                    iconColor ??
+                                    (isDestructive
+                                        ? theme.colorScheme.error
+                                        : theme.colorScheme.secondary),
+                              ),
+                              const SizedBox(width: AppSpacing.sm),
+                            ],
+                            Expanded(
+                              child: Text(
+                                title,
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         const SizedBox(height: AppSpacing.md),
-                        DefaultTextStyle(
-                          style:
-                              theme.textTheme.bodyMedium ??
-                              const TextStyle(fontSize: 14),
-                          child: content,
+                        Flexible(
+                          child: SingleChildScrollView(
+                            child: DefaultTextStyle(
+                              style:
+                                  theme.textTheme.bodyMedium ??
+                                  const TextStyle(fontSize: 14),
+                              child: content,
+                            ),
+                          ),
                         ),
                         const SizedBox(height: AppSpacing.xl),
                         Wrap(

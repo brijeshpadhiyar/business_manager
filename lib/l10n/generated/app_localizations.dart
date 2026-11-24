@@ -4591,6 +4591,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'A reversal entry cannot itself be reversed.'**
   String get validationCannotReverseReversal;
+
+  /// No description provided for @validationMinLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Must be at least {min} characters.'**
+  String validationMinLength(int min);
+
+  /// No description provided for @validationExceedsDispatched.
+  ///
+  /// In en, this message translates to:
+  /// **'Received quantity cannot exceed dispatched quantity.'**
+  String get validationExceedsDispatched;
+
+  /// No description provided for @validationExceedsHeld.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer quantity cannot exceed quantity currently held by the worker.'**
+  String get validationExceedsHeld;
+
+  /// No description provided for @validationUnaccountedRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Process cannot be completed while pending quantity remains unaccounted.'**
+  String get validationUnaccountedRemaining;
+
+  /// No description provided for @validationOverpaymentNotAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment amount cannot exceed the remaining payable balance.'**
+  String get validationOverpaymentNotAllowed;
+
+  /// No description provided for @msgTitleSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Success'**
+  String get msgTitleSuccess;
+
+  /// No description provided for @msgTitleError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get msgTitleError;
+
+  /// No description provided for @msgTitleWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Warning'**
+  String get msgTitleWarning;
+
+  /// No description provided for @msgTitleInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Information'**
+  String get msgTitleInfo;
+
+  /// No description provided for @msgTitleLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Working...'**
+  String get msgTitleLoading;
 }
 
 class _AppLocalizationsDelegate

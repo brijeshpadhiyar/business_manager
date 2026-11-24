@@ -108,8 +108,11 @@ final class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
       await AppDialog.showCustom<void>(
         context,
         barrierDismissible: false,
-        builder: (dialogCtx) => AlertDialog(
-          title: Text(l10n.securityNewRecoveryKeyTitle),
+        builder: (dialogCtx) => AppDialog(
+          title: l10n.securityNewRecoveryKeyTitle,
+          icon: Icons.key_rounded,
+          confirmLabel: l10n.actionDone,
+          onConfirm: () => Navigator.of(dialogCtx).pop(),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -139,12 +142,6 @@ final class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
               ),
             ],
           ),
-          actions: [
-            AppButton(
-              label: l10n.actionDone,
-              onPressed: () => Navigator.of(dialogCtx).pop(),
-            ),
-          ],
         ),
       );
     } finally {

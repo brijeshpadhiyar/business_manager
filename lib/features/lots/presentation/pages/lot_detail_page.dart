@@ -62,7 +62,14 @@ final class _LotDetailView extends StatelessWidget {
       mimeType: picked.mimeType ?? 'image/jpeg',
     );
     if (err != null && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err)));
+      AppFeedback.showError(
+        context,
+        ValidationLocalizer.localizeDomainCode(
+          context.l10n,
+          err,
+          fallback: context.l10n.errorUnexpected,
+        ),
+      );
     }
   }
 
@@ -1257,9 +1264,7 @@ final class _LotPhotoTile extends StatelessWidget {
       builder: (context, snapshot) {
         Widget preview;
         if (snapshot.connectionState == ConnectionState.waiting) {
-          preview = const Center(
-            child: CircularProgressIndicator(strokeWidth: 2),
-          );
+          preview = const AppLoader.inline(size: 20);
         } else if (snapshot.data == null) {
           preview = Center(
             child: Padding(
@@ -1281,24 +1286,16 @@ final class _LotPhotoTile extends StatelessWidget {
         } else {
           final bytes = snapshot.data!;
           preview = InkWell(
-            onTap: () => showDialog<void>(
-              context: context,
-              builder: (dlgCtx) => Dialog(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    InteractiveViewer(
-                      child: Image.memory(bytes, fit: BoxFit.contain),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(AppSpacing.sm),
-                      child: AppButton(
-                        label: l10n.actionClose,
-                        variant: AppButtonVariant.text,
-                        onPressed: () => Navigator.of(dlgCtx).pop(),
-                      ),
-                    ),
-                  ],
+            onTap: () => AppDialog.showCustom<void>(
+              context,
+              builder: (dlgCtx) => AppDialog(
+                title: l10n.lotPhotosHeading,
+                cancelLabel: l10n.actionClose,
+                content: InteractiveViewer(
+                  child: ClipRRect(
+                    borderRadius: AppRadius.mdBorder,
+                    child: Image.memory(bytes, fit: BoxFit.contain),
+                  ),
                 ),
               ),
             ),
