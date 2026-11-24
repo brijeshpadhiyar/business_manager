@@ -1,0 +1,7 @@
+# Copy this file to android/key.properties (which is gitignored) and fill in
+# your local upload keystore details. NEVER commit android/key.properties or any
+# .jks / .keystore file to source control.
+storePassword=YOUR_KEYSTORE_PASSWORD
+keyPassword=YOUR_KEY_PASSWORD
+keyAlias=upload
+storeFile=../stitchflow-upload-keystore.jks

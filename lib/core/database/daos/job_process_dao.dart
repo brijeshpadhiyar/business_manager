@@ -55,13 +55,14 @@ class JobProcessDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<int> getNextSequenceOrderForLot(String lotId) async {
-    final existing = await getJobProcessesForLot(lotId);
-    if (existing.isEmpty) return 1;
-    var maxSeq = 0;
-    for (final row in existing) {
-      if (row.sequenceOrder > maxSeq) maxSeq = row.sequenceOrder;
-    }
-    return maxSeq + 1;
+    final row = await customSelect(
+      'SELECT COALESCE(MAX(sequence_order), 0) + 1 AS next_seq '
+      'FROM job_processes '
+      'WHERE lot_id = ? AND deleted_at IS NULL;',
+      variables: [Variable<String>(lotId)],
+      readsFrom: {jobProcesses},
+    ).getSingle();
+    return row.read<int>('next_seq');
   }
 
   Future<int> updateJobProcess(String id, JobProcessesCompanion patch) {
@@ -73,21 +74,20 @@ class JobProcessDao extends DatabaseAccessor<AppDatabase>
   Future<void> insertHandover(ProcessHandoversCompanion entry) =>
       into(processHandovers).insert(entry);
 
-  Future<ProcessHandoverRow?> findHandoverById(String id) =>
-      (select(processHandovers)..where((t) => t.id.equals(id)))
-          .getSingleOrNull();
+  Future<ProcessHandoverRow?> findHandoverById(String id) => (select(
+    processHandovers,
+  )..where((t) => t.id.equals(id))).getSingleOrNull();
 
   Future<ProcessHandoverRow?> findHandoverByClientRequestId(
     String clientRequestId,
-  ) =>
-      (select(processHandovers)
-            ..where((t) => t.clientRequestId.equals(clientRequestId)))
-          .getSingleOrNull();
+  ) => (select(
+    processHandovers,
+  )..where((t) => t.clientRequestId.equals(clientRequestId))).getSingleOrNull();
 
   Future<ProcessHandoverRow?> findHandoverByReference(String reference) =>
-      (select(processHandovers)
-            ..where((t) => t.transferReference.equals(reference)))
-          .getSingleOrNull();
+      (select(
+        processHandovers,
+      )..where((t) => t.transferReference.equals(reference))).getSingleOrNull();
 
   Future<List<ProcessHandoverRow>> getHandoversForLot(String lotId) {
     return (select(processHandovers)
@@ -136,10 +136,9 @@ class JobProcessDao extends DatabaseAccessor<AppDatabase>
 
   Future<ProcessAdditionalChargeRow?> findChargeByClientRequestId(
     String clientRequestId,
-  ) =>
-      (select(processAdditionalCharges)
-            ..where((t) => t.clientRequestId.equals(clientRequestId)))
-          .getSingleOrNull();
+  ) => (select(
+    processAdditionalCharges,
+  )..where((t) => t.clientRequestId.equals(clientRequestId))).getSingleOrNull();
 
   Future<List<ProcessAdditionalChargeRow>> getChargesForLot(String lotId) {
     return (select(processAdditionalCharges)

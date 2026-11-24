@@ -1,5 +1,4 @@
 import 'package:business_manager/core/design_system/app_motion.dart';
-import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
@@ -222,179 +221,208 @@ final class _LotListViewState extends State<_LotListView> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return Align(
-      alignment: Alignment.topCenter,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: AppSizing.maxContentWidth),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.lg,
-                AppSpacing.lg,
-                AppSpacing.lg,
-                AppSpacing.sm,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  AppHeading(
-                    l10n.lotsHeading,
-                    level: AppHeadingLevel.h2,
-                    trailing: AppButton(
-                      label: l10n.lotCreateAction,
-                      icon: Icons.add,
-                      onPressed: () => _showCreateLotSheet(context),
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppTextField(
-                    controller: _searchController,
-                    label: l10n.lotsSearchHint,
-                    prefixIcon: Icons.search,
-                    onChanged: (q) =>
-                        context.read<LotListCubit>().loadLots(searchQuery: q),
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  BlocBuilder<LotListCubit, LotListState>(
-                    builder: (context, state) {
-                      return Wrap(
-                        spacing: AppSpacing.sm,
-                        children: [
-                          FilterChip(
-                            label: Text(l10n.lotsFilterAll),
-                            selected: state.statusFilter == null,
-                            onSelected: (_) => context
-                                .read<LotListCubit>()
-                                .loadLots(clearStatusFilter: true),
-                          ),
-                          FilterChip(
-                            label: Text(l10n.lotsStatusActive),
-                            selected: state.statusFilter == LotStatus.active,
-                            onSelected: (_) => context
-                                .read<LotListCubit>()
-                                .loadLots(statusFilter: LotStatus.active),
-                          ),
-                          FilterChip(
-                            label: Text(l10n.lotsStatusCompleted),
-                            selected: state.statusFilter == LotStatus.completed,
-                            onSelected: (_) => context
-                                .read<LotListCubit>()
-                                .loadLots(statusFilter: LotStatus.completed),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ],
+    return BlocBuilder<LotListCubit, LotListState>(
+      builder: (context, state) {
+        final activeCount = state.lots
+            .where((l) => l.status == LotStatus.active)
+            .length;
+        final completedCount = state.lots
+            .where((l) => l.status == LotStatus.completed)
+            .length;
+
+        final List<Widget> slivers;
+        if (state.status == LotListStatus.loading ||
+            state.status == LotListStatus.initial) {
+          slivers = const [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: AppSpacing.xl),
+                child: AppLoader(),
               ),
             ),
-            Expanded(
-              child: BlocBuilder<LotListCubit, LotListState>(
-                builder: (context, state) {
-                  final Widget body;
-                  final Key stateKey;
-                  if (state.status == LotListStatus.loading ||
-                      state.status == LotListStatus.initial) {
-                    stateKey = const ValueKey<String>('loading');
-                    body = const AppLoader();
-                  } else if (state.status == LotListStatus.error) {
-                    stateKey = const ValueKey<String>('error');
-                    body = AppErrorView(
-                      title: l10n.errorUnexpected,
-                      message: state.errorMessage,
-                      retryLabel: l10n.actionRetry,
-                      onRetry: () => context.read<LotListCubit>().loadLots(),
-                    );
-                  } else if (state.lots.isEmpty) {
-                    stateKey = const ValueKey<String>('empty');
-                    body = AppEmptyState(
-                      icon: Icons.inventory_2_outlined,
-                      title: l10n.lotsEmptyTitle,
-                      subtitle: l10n.lotsEmptySubtitle,
-                      actionLabel: l10n.lotCreateAction,
-                      onAction: () => _showCreateLotSheet(context),
-                    );
-                  } else {
-                    stateKey = ValueKey<String>('list_${state.lots.length}');
-                    body = ListView.separated(
-                      padding: const EdgeInsets.fromLTRB(
-                        AppSpacing.lg,
-                        AppSpacing.sm,
-                        AppSpacing.lg,
-                        AppSpacing.xl,
-                      ),
-                      itemCount: state.lots.length,
-                      separatorBuilder: (_, _) =>
-                          const SizedBox(height: AppSpacing.sm),
-                      itemBuilder: (context, index) {
-                        final lot = state.lots[index];
-                        return AppMotionEntrance(
-                          index: index,
-                          child: AppCard(
-                            onTap: () async {
-                              await context.push(RoutePaths.lotDetail(lot.id));
-                              if (context.mounted) {
-                                await context.read<LotListCubit>().loadLots();
-                              }
-                            },
-                            child: Row(
+          ];
+        } else if (state.status == LotListStatus.error) {
+          slivers = [
+            SliverToBoxAdapter(
+              child: AppErrorView(
+                title: l10n.errorUnexpected,
+                message: state.errorMessage,
+                retryLabel: l10n.actionRetry,
+                onRetry: () => context.read<LotListCubit>().loadLots(),
+              ),
+            ),
+          ];
+        } else if (state.lots.isEmpty) {
+          slivers = [
+            SliverToBoxAdapter(
+              child: AppEmptyState(
+                icon: Icons.inventory_2_outlined,
+                title: l10n.lotsEmptyTitle,
+                subtitle: l10n.lotsEmptySubtitle,
+                actionLabel: l10n.lotCreateAction,
+                onAction: () => _showCreateLotSheet(context),
+              ),
+            ),
+          ];
+        } else {
+          slivers = [
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                AppSpacing.sm,
+                AppSpacing.lg,
+                AppSpacing.xl,
+              ),
+              sliver: SliverList.separated(
+                itemCount: state.lots.length,
+                separatorBuilder: (_, _) =>
+                    const SizedBox(height: AppSpacing.sm),
+                itemBuilder: (context, index) {
+                  final lot = state.lots[index];
+                  return AppMotionEntrance(
+                    key: ValueKey<String>(lot.id),
+                    index: index,
+                    child: AppCard(
+                      onTap: () async {
+                        await context.push(RoutePaths.lotDetail(lot.id));
+                        if (context.mounted) {
+                          await context.read<LotListCubit>().loadLots();
+                        }
+                      },
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      AppText(
-                                        lot.lotNumber,
-                                        variant: AppTextVariant.bodyLarge,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                      if (lot.title != null) ...[
-                                        const SizedBox(height: AppSpacing.xs),
-                                        AppText(lot.title!),
-                                      ],
-                                      const SizedBox(height: AppSpacing.xs),
-                                      AppText(
-                                        IstDateTimeHelper.toIstBusinessDate(
-                                          lot.transactionAt,
-                                        ),
-                                        variant: AppTextVariant.bodySmall,
-                                      ),
-                                    ],
+                                AppText(
+                                  lot.lotNumber,
+                                  variant: AppTextVariant.bodyLarge,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                if (lot.title != null) ...[
+                                  const SizedBox(height: AppSpacing.xs),
+                                  AppText(lot.title!),
+                                ],
+                                const SizedBox(height: AppSpacing.xs),
+                                AppText(
+                                  IstDateTimeHelper.toIstBusinessDate(
+                                    lot.transactionAt,
                                   ),
+                                  variant: AppTextVariant.bodySmall,
                                 ),
-                                AppStatusBadge(
-                                  label: switch (lot.status) {
-                                    LotStatus.active => l10n.lotsStatusActive,
-                                    LotStatus.completed =>
-                                      l10n.lotsStatusCompleted,
-                                    LotStatus.archived =>
-                                      l10n.lotsStatusArchived,
-                                  },
-                                  tone: switch (lot.status) {
-                                    LotStatus.active => AppStatusTone.good,
-                                    LotStatus.completed => AppStatusTone.info,
-                                    LotStatus.archived => AppStatusTone.neutral,
-                                  },
-                                ),
-                                const SizedBox(width: AppSpacing.xs),
-                                const Icon(Icons.chevron_right),
                               ],
                             ),
                           ),
-                        );
-                      },
-                    );
-                  }
-
-                  return AppStateTransition(stateKey: stateKey, child: body);
+                          AppStatusBadge(
+                            label: switch (lot.status) {
+                              LotStatus.active => l10n.lotsStatusActive,
+                              LotStatus.completed => l10n.lotsStatusCompleted,
+                              LotStatus.archived => l10n.lotsStatusArchived,
+                            },
+                            tone: switch (lot.status) {
+                              LotStatus.active => AppStatusTone.good,
+                              LotStatus.completed => AppStatusTone.info,
+                              LotStatus.archived => AppStatusTone.neutral,
+                            },
+                          ),
+                          const SizedBox(width: AppSpacing.xs),
+                          const Icon(Icons.chevron_right),
+                        ],
+                      ),
+                    ),
+                  );
                 },
               ),
             ),
-          ],
-        ),
-      ),
+          ];
+        }
+
+        return AppScaffold(
+          scrollMode: AppScrollMode.collapsible,
+          embedded: true,
+          onRefresh: () => context.read<LotListCubit>().loadLots(),
+          header: AppCollapsibleHeader(
+            title: l10n.lotsHeading,
+            automaticallyImplyLeading: false,
+            expandedHeight: 164,
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: AppSpacing.sm),
+                child: AppButton(
+                  label: l10n.lotCreateAction,
+                  icon: Icons.add,
+                  onPressed: () => _showCreateLotSheet(context),
+                ),
+              ),
+            ],
+            summary: AppSummaryStrip(
+              metrics: [
+                AppSummaryMetric(
+                  label: l10n.lotsFilterAll,
+                  value: '${state.lots.length}',
+                  tone: AppStatusTone.info,
+                ),
+                AppSummaryMetric(
+                  label: l10n.lotsStatusActive,
+                  value: '$activeCount',
+                  tone: AppStatusTone.good,
+                ),
+                AppSummaryMetric(
+                  label: l10n.lotsStatusCompleted,
+                  value: '$completedCount',
+                  tone: AppStatusTone.neutral,
+                ),
+              ],
+            ),
+          ),
+          pinnedHeaderHeight: 122,
+          pinnedHeader: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              AppSearchField(
+                controller: _searchController,
+                label: l10n.lotsSearchHint,
+                onChanged: (q) =>
+                    context.read<LotListCubit>().loadLots(searchQuery: q),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    FilterChip(
+                      label: Text(l10n.lotsFilterAll),
+                      selected: state.statusFilter == null,
+                      onSelected: (_) => context
+                          .read<LotListCubit>()
+                          .loadLots(clearStatusFilter: true),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    FilterChip(
+                      label: Text(l10n.lotsStatusActive),
+                      selected: state.statusFilter == LotStatus.active,
+                      onSelected: (_) => context
+                          .read<LotListCubit>()
+                          .loadLots(statusFilter: LotStatus.active),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    FilterChip(
+                      label: Text(l10n.lotsStatusCompleted),
+                      selected: state.statusFilter == LotStatus.completed,
+                      onSelected: (_) => context
+                          .read<LotListCubit>()
+                          .loadLots(statusFilter: LotStatus.completed),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          slivers: slivers,
+        );
+      },
     );
   }
 }

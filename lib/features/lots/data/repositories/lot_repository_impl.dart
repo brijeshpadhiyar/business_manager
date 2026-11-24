@@ -60,16 +60,22 @@ final class LotRepositoryImpl implements LotRepository {
     if (lotRow == null || lotRow.deletedAt != null) return null;
 
     final designRows = await _db.lotDao.getDesignsForLot(lotId);
-    final designsWithColours = <DesignWithColours>[];
-    for (final d in designRows) {
-      final colourRows = await _db.lotDao.getColoursForDesign(d.id);
-      designsWithColours.add(
-        DesignWithColours(
-          design: _designToEntity(d),
-          colours: colourRows.map(_colourToEntity).toList(),
-        ),
-      );
+    final designIds = designRows.map((d) => d.id).toList(growable: false);
+    final allColourRows = await _db.lotDao.getColoursForDesigns(designIds);
+    final coloursByDesign = <String, List<DesignColourEntity>>{};
+    for (final c in allColourRows) {
+      coloursByDesign
+          .putIfAbsent(c.lotDesignId, () => <DesignColourEntity>[])
+          .add(_colourToEntity(c));
     }
+    final designsWithColours = designRows
+        .map(
+          (d) => DesignWithColours(
+            design: _designToEntity(d),
+            colours: coloursByDesign[d.id] ?? const <DesignColourEntity>[],
+          ),
+        )
+        .toList(growable: false);
 
     final photoRows = await _db.attachmentAuditDao.getActiveAttachments(
       'LOT',

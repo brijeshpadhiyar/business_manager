@@ -96,6 +96,24 @@ try {
         exit 1
     }
 
+    $KeyPropsFile = Join-Path $ProjectRoot "android\key.properties"
+    $HasKeyProps = Test-Path $KeyPropsFile
+    if ($FlavorNorm -eq "prod" -and $ModeNorm -eq "release" -and -not $HasKeyProps) {
+        Write-Host ""
+        Write-Host "[ERROR] Missing android/key.properties for production release signing." -ForegroundColor Red
+        Write-Host "Copy android/key.properties.example to android/key.properties and configure your local upload keystore." -ForegroundColor Yellow
+        Write-Host "See docs/v1.3/RELEASE_CONFIGURATION_IMPLEMENTATION_REPORT.md for keytool setup steps." -ForegroundColor Yellow
+        exit 1
+    }
+
+    $SigningLabel = if ($ModeNorm -eq "debug") {
+        "debug"
+    } elseif ($HasKeyProps) {
+        "release (android/key.properties)"
+    } else {
+        "debug (dev fallback - local QA only)"
+    }
+
     $ExpectedSourceApk = Join-Path $ProjectRoot "build\app\outputs\flutter-apk\app-$FlavorNorm-$ModeNorm.apk"
 
     # Never risk copying a stale APK from a previous build if this build fails
@@ -110,6 +128,7 @@ try {
     Write-Host " Flavor         : $FlavorNorm ($FlavorLabel)"
     Write-Host " Application ID : $AppId"
     Write-Host " Build Mode     : $ModeNorm"
+    Write-Host " Signing        : $SigningLabel"
     Write-Host " Entrypoint     : $TargetFile"
     Write-Host " Config         : $ConfigFile"
     Write-Host "==================================================" -ForegroundColor Cyan

@@ -1,8 +1,30 @@
+import java.io.FileInputStream
+import java.util.Properties
+import org.gradle.api.GradleException
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
+
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    FileInputStream(keystorePropertiesFile).use { keystoreProperties.load(it) }
+}
+
+val releaseStoreFilePath = keystoreProperties.getProperty("storeFile")?.trim().orEmpty()
+val releaseStorePassword = keystoreProperties.getProperty("storePassword")?.trim().orEmpty()
+val releaseKeyAlias = keystoreProperties.getProperty("keyAlias")?.trim().orEmpty()
+val releaseKeyPassword = keystoreProperties.getProperty("keyPassword")?.trim().orEmpty()
+val hasReleaseSigning =
+    keystorePropertiesFile.exists() &&
+    releaseStoreFilePath.isNotEmpty() &&
+    releaseStorePassword.isNotEmpty() &&
+    releaseKeyAlias.isNotEmpty() &&
+    releaseKeyPassword.isNotEmpty() &&
+    rootProject.file(releaseStoreFilePath).exists()
 
 android {
     namespace = "com.brijesh.stitchflow"
@@ -41,11 +63,47 @@ android {
         }
     }
 
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = rootProject.file(releaseStoreFilePath)
+                storePassword = releaseStorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+            }
+        }
+    }
+
     buildTypes {
-        release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
+        debug {
             signingConfig = signingConfigs.getByName("debug")
+        }
+        release {
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            } else {
+                // Fail safely on production or generic release tasks instead of silently
+                // shipping a debug-signed production artifact. Allow dev release builds
+                // (com.brijesh.stitchflow.dev) to fall back to debug signing for local QA
+                // with an explicit console warning.
+                val taskNames = gradle.startParameter.taskNames.map { it.lowercase() }
+                val releaseTasks = taskNames.filter { it.contains("release") }
+                val hasProdOrGenericReleaseTask = releaseTasks.any { !it.contains("devrelease") }
+                if (hasProdOrGenericReleaseTask) {
+                    throw GradleException(
+                        "Missing or incomplete Android release signing config for production release. " +
+                            "Create android/key.properties (see android/key.properties.example) " +
+                            "pointing to your local upload keystore before building a prod release artifact."
+                    )
+                }
+                if (releaseTasks.isNotEmpty()) {
+                    logger.warn(
+                        "WARNING: android/key.properties not found. Signing dev release APK " +
+                            "(com.brijesh.stitchflow.dev) with debug keystore for local QA only."
+                    )
+                    signingConfig = signingConfigs.getByName("debug")
+                }
+            }
         }
     }
 }

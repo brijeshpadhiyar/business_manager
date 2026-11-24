@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:business_manager/app.dart';
 import 'package:business_manager/core/config/app_config.dart';
+import 'package:business_manager/core/config/app_identity.dart';
 import 'package:business_manager/core/database/app_database.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/locale_cubit.dart';
@@ -319,7 +320,7 @@ void main() {
         scrollable: find.byType(Scrollable).last,
       );
       expect(find.text('100% Offline & Private Local Data'), findsOneWidget);
-      expect(find.textContaining('1.2.0'), findsWidgets);
+      expect(find.textContaining(AppIdentity.appVersion), findsWidgets);
 
       // Ensure zero overflow or layout exceptions occurred
       expect(tester.takeException(), isNull);

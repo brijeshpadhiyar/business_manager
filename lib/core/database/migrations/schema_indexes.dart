@@ -137,6 +137,19 @@ abstract final class SchemaIndexes {
         'ON colour_master(last_used_at DESC) WHERE deleted_at IS NULL;',
   ];
 
+  /// Additive read-performance indexes introduced in schema v7 (V1.3 DB optimization).
+  /// Zero tables or columns altered; eliminates full-table scans on lot-scoped
+  /// stock movement lookups, rate-lock checks, and active lot listing.
+  static const List<String> v7IndexStatements = [
+    'CREATE INDEX IF NOT EXISTS idx_sm_lot_tx '
+        'ON stock_movements(lot_id, transaction_at ASC, recorded_at ASC);',
+    'CREATE INDEX IF NOT EXISTS idx_sm_source_rate '
+        'ON stock_movements(source_rate_id) '
+        'WHERE source_rate_id IS NOT NULL;',
+    'CREATE INDEX IF NOT EXISTS idx_lots_active_tx '
+        'ON lots(transaction_at DESC) WHERE deleted_at IS NULL;',
+  ];
+
   static const List<String> allIndexStatements = [
     ...v1IndexStatements,
     ...v2IndexStatements,
@@ -144,5 +157,6 @@ abstract final class SchemaIndexes {
     ...v4IndexStatements,
     ...v5IndexStatements,
     ...v6IndexStatements,
+    ...v7IndexStatements,
   ];
 }

@@ -1,4 +1,3 @@
-import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
@@ -40,168 +39,166 @@ final class _InventoryOverviewViewState extends State<_InventoryOverviewView> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final content = BlocBuilder<InventoryOverviewCubit, InventoryOverviewState>(
+    return BlocBuilder<InventoryOverviewCubit, InventoryOverviewState>(
       builder: (context, state) {
+        final overview = state.overview;
+
+        final List<Widget> slivers;
         if (state.status == InventoryOverviewStatus.initial ||
             state.status == InventoryOverviewStatus.loading) {
-          return const AppSkeletonList(itemCount: 4);
-        }
-        if (state.status == InventoryOverviewStatus.error) {
-          return AppErrorView(
-            title: l10n.errorUnexpected,
-            message: state.errorMessage,
-            retryLabel: l10n.actionRetry,
-            onRetry: () =>
-                context.read<InventoryOverviewCubit>().loadOverview(),
-          );
-        }
-
-        final overview = state.overview!;
-        return Align(
-          alignment: Alignment.topCenter,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: AppSizing.maxContentWidth,
+          slivers = const [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: AppSpacing.xl),
+                child: AppLoader(),
+              ),
             ),
-            child: ListView(
+          ];
+        } else if (state.status == InventoryOverviewStatus.error) {
+          slivers = [
+            SliverToBoxAdapter(
+              child: AppErrorView(
+                title: l10n.errorUnexpected,
+                message: state.errorMessage,
+                retryLabel: l10n.actionRetry,
+                onRetry: () =>
+                    context.read<InventoryOverviewCubit>().loadOverview(),
+              ),
+            ),
+          ];
+        } else {
+          slivers = [
+            SliverPadding(
               padding: AppSpacing.screenAll,
-              children: [
-                AppHeading(
-                  l10n.inventoryHeading,
-                  level: AppHeadingLevel.h2,
-                  subtitle: l10n.inventoryUpdatedNote,
-                  trailing: AppIconButton(
-                    icon: Icons.refresh,
-                    tooltip: l10n.actionRetry,
-                    onPressed: () =>
-                        context.read<InventoryOverviewCubit>().loadOverview(),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                Wrap(
-                  spacing: AppSpacing.sm,
-                  runSpacing: AppSpacing.sm,
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    AppButton(
-                      label: l10n.navStockMovements,
-                      icon: Icons.swap_horiz_rounded,
-                      onPressed: () => context.push(RoutePaths.stockMovements),
-                    ),
-                    AppButton(
-                      label: l10n.stockIssueAction,
-                      icon: Icons.outbox_rounded,
-                      variant: AppButtonVariant.secondary,
-                      onPressed: () => context.push(RoutePaths.stockIssue()),
-                    ),
-                    AppButton(
-                      label: l10n.navReports,
-                      icon: Icons.analytics_outlined,
-                      variant: AppButtonVariant.outlined,
-                      onPressed: () => context.push(RoutePaths.reports),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.md),
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    final isWide = constraints.maxWidth >= 680;
-                    final tileW = isWide
-                        ? (constraints.maxWidth - AppSpacing.sm * 3) / 4
-                        : (constraints.maxWidth - AppSpacing.sm) / 2;
-                    return Wrap(
+                    Wrap(
                       spacing: AppSpacing.sm,
                       runSpacing: AppSpacing.sm,
                       children: [
-                        SizedBox(
-                          width: tileW,
-                          child: AppMetricTile(
-                            label: l10n.inventoryTotalLots,
-                            value: overview.totalActiveLots,
-                            icon: Icons.inventory_2_outlined,
-                          ),
+                        AppButton(
+                          label: l10n.navStockMovements,
+                          icon: Icons.swap_horiz_rounded,
+                          onPressed: () =>
+                              context.push(RoutePaths.stockMovements),
                         ),
-                        SizedBox(
-                          width: tileW,
-                          child: AppMetricTile(
-                            label: l10n.inventoryTotalDesigns,
-                            value: overview.totalDesigns,
-                            icon: Icons.style_outlined,
-                            tone: AppStatusTone.info,
-                          ),
+                        AppButton(
+                          label: l10n.stockIssueAction,
+                          icon: Icons.outbox_rounded,
+                          variant: AppButtonVariant.secondary,
+                          onPressed: () =>
+                              context.push(RoutePaths.stockIssue()),
                         ),
-                        SizedBox(
-                          width: tileW,
-                          child: AppMetricTile(
-                            label: l10n.inventoryTotalCombinations,
-                            value: overview.totalDesignColourCombinations,
-                            icon: Icons.palette_outlined,
-                          ),
-                        ),
-                        SizedBox(
-                          width: tileW,
-                          child: AppMetricTile(
-                            label: l10n.inventoryTotalInitialQty,
-                            value: overview.totalInitialQuantity,
-                            suffix: l10n.piecesUnit,
-                            icon: Icons.check_circle_outline_rounded,
-                            tone: AppStatusTone.good,
-                          ),
+                        AppButton(
+                          label: l10n.navReports,
+                          icon: Icons.analytics_outlined,
+                          variant: AppButtonVariant.outlined,
+                          onPressed: () => context.push(RoutePaths.reports),
                         ),
                       ],
-                    );
-                  },
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                Wrap(
-                  spacing: AppSpacing.sm,
-                  runSpacing: AppSpacing.sm,
-                  children: [
-                    ChoiceChip(
-                      label: Text(l10n.inventoryTabLots),
-                      selected: _tab == 0,
-                      onSelected: (_) => setState(() => _tab = 0),
                     ),
-                    ChoiceChip(
-                      label: Text(l10n.inventoryTabDesigns),
-                      selected: _tab == 1,
-                      onSelected: (_) => setState(() => _tab = 1),
-                    ),
-                    ChoiceChip(
-                      label: Text(l10n.inventoryTabColours),
-                      selected: _tab == 2,
-                      onSelected: (_) => setState(() => _tab = 2),
-                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    if (overview!.totalActiveLots == 0)
+                      AppEmptyState(
+                        icon: Icons.inventory_outlined,
+                        title: l10n.inventoryEmptyTitle,
+                        subtitle: l10n.inventoryEmptySubtitle,
+                      )
+                    else
+                      switch (_tab) {
+                        0 => _buildLotTable(context, overview.lotSummaries),
+                        1 => _buildDesignTable(
+                          context,
+                          overview.designSummaries,
+                        ),
+                        _ => _buildColourTable(
+                          context,
+                          overview.colourSummaries,
+                        ),
+                      },
                   ],
                 ),
-                const SizedBox(height: AppSpacing.md),
-                if (overview.totalActiveLots == 0)
-                  AppEmptyState(
-                    icon: Icons.inventory_outlined,
-                    title: l10n.inventoryEmptyTitle,
-                    subtitle: l10n.inventoryEmptySubtitle,
-                  )
-                else
-                  switch (_tab) {
-                    0 => _buildLotTable(context, overview.lotSummaries),
-                    1 => _buildDesignTable(context, overview.designSummaries),
-                    _ => _buildColourTable(context, overview.colourSummaries),
-                  },
+              ),
+            ),
+          ];
+        }
+
+        return AppScaffold(
+          scrollMode: AppScrollMode.collapsible,
+          embedded: !widget.showAppBar,
+          onRefresh: () =>
+              context.read<InventoryOverviewCubit>().loadOverview(),
+          header: AppCollapsibleHeader(
+            title: l10n.inventoryHeading,
+            subtitle: l10n.inventoryUpdatedNote,
+            automaticallyImplyLeading: widget.showAppBar,
+            expandedHeight: 184,
+            actions: [
+              AppIconButton(
+                icon: Icons.refresh,
+                tooltip: l10n.actionRetry,
+                onPressed: () =>
+                    context.read<InventoryOverviewCubit>().loadOverview(),
+              ),
+            ],
+            summary: overview == null
+                ? null
+                : AppSummaryStrip(
+                    metrics: [
+                      AppSummaryMetric(
+                        label: l10n.inventoryTotalLots,
+                        value: '${overview.totalActiveLots}',
+                        tone: AppStatusTone.info,
+                      ),
+                      AppSummaryMetric(
+                        label: l10n.inventoryTotalDesigns,
+                        value: '${overview.totalDesigns}',
+                        tone: AppStatusTone.neutral,
+                      ),
+                      AppSummaryMetric(
+                        label: l10n.inventoryTotalCombinations,
+                        value: '${overview.totalDesignColourCombinations}',
+                        tone: AppStatusTone.neutral,
+                      ),
+                      AppSummaryMetric(
+                        label: l10n.inventoryTotalInitialQty,
+                        value: '${overview.totalInitialQuantity}',
+                        tone: AppStatusTone.good,
+                      ),
+                    ],
+                  ),
+          ),
+          pinnedHeaderHeight: 58,
+          pinnedHeader: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                ChoiceChip(
+                  label: Text(l10n.inventoryTabLots),
+                  selected: _tab == 0,
+                  onSelected: (_) => setState(() => _tab = 0),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                ChoiceChip(
+                  label: Text(l10n.inventoryTabDesigns),
+                  selected: _tab == 1,
+                  onSelected: (_) => setState(() => _tab = 1),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                ChoiceChip(
+                  label: Text(l10n.inventoryTabColours),
+                  selected: _tab == 2,
+                  onSelected: (_) => setState(() => _tab = 2),
+                ),
               ],
             ),
           ),
+          slivers: slivers,
         );
       },
     );
-
-    if (widget.showAppBar) {
-      return AppScaffold(
-        title: l10n.navInventory,
-        padding: EdgeInsets.zero,
-        constrainMaxWidth: false,
-        body: content,
-      );
-    }
-    return content;
   }
 
   Widget _buildLotTable(BuildContext context, List<LotQuantitySummary> items) {

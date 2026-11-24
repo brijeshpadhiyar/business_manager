@@ -1,5 +1,4 @@
 import 'package:business_manager/core/design_system/app_motion.dart';
-import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
@@ -48,183 +47,204 @@ final class _WorkerListViewState extends State<_WorkerListView> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return Align(
-      alignment: Alignment.topCenter,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: AppSizing.maxContentWidth),
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.lg,
-                AppSpacing.lg,
-                AppSpacing.lg,
-                AppSpacing.sm,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  AppHeading(
-                    l10n.workersHeading,
-                    level: AppHeadingLevel.h2,
-                    trailing: AppButton(
-                      label: l10n.workerCreateAction,
-                      icon: Icons.person_add_outlined,
-                      onPressed: () => _openCreateWorker(context),
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppTextField(
-                    controller: _searchController,
-                    label: l10n.workersSearchHint,
-                    prefixIcon: Icons.search,
-                    onChanged: (q) => context
-                        .read<WorkerListCubit>()
-                        .loadWorkers(searchQuery: q),
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  BlocBuilder<WorkerListCubit, WorkerListState>(
-                    builder: (context, state) {
-                      return Wrap(
-                        spacing: AppSpacing.sm,
-                        children: [
-                          FilterChip(
-                            label: Text(l10n.filterAll),
-                            selected: state.activeFilter == null,
-                            onSelected: (_) => context
-                                .read<WorkerListCubit>()
-                                .loadWorkers(clearActiveFilter: true),
-                          ),
-                          FilterChip(
-                            label: Text(l10n.filterActive),
-                            selected: state.activeFilter == true,
-                            onSelected: (_) => context
-                                .read<WorkerListCubit>()
-                                .loadWorkers(activeFilter: true),
-                          ),
-                          FilterChip(
-                            label: Text(l10n.filterInactive),
-                            selected: state.activeFilter == false,
-                            onSelected: (_) => context
-                                .read<WorkerListCubit>()
-                                .loadWorkers(activeFilter: false),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ],
+    return BlocBuilder<WorkerListCubit, WorkerListState>(
+      builder: (context, state) {
+        final activeCount = state.workers.where((w) => w.isActive).length;
+        final inactiveCount = state.workers.length - activeCount;
+
+        final List<Widget> slivers;
+        if (state.status == WorkerListStatus.loading ||
+            state.status == WorkerListStatus.initial) {
+          slivers = const [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: AppSpacing.xl),
+                child: AppLoader(),
               ),
             ),
-            Expanded(
-              child: BlocBuilder<WorkerListCubit, WorkerListState>(
-                builder: (context, state) {
-                  final Widget body;
-                  final Key stateKey;
-                  if (state.status == WorkerListStatus.loading ||
-                      state.status == WorkerListStatus.initial) {
-                    stateKey = const ValueKey<String>('loading');
-                    body = const AppLoader();
-                  } else if (state.status == WorkerListStatus.error) {
-                    stateKey = const ValueKey<String>('error');
-                    body = AppErrorView(
-                      title: l10n.errorUnexpected,
-                      message: state.errorMessage,
-                      retryLabel: l10n.actionRetry,
-                      onRetry: () =>
-                          context.read<WorkerListCubit>().loadWorkers(),
-                    );
-                  } else if (state.workers.isEmpty) {
-                    stateKey = const ValueKey<String>('empty');
-                    body = AppEmptyState(
-                      icon: Icons.people_outline,
-                      title: l10n.workersEmptyTitle,
-                      subtitle: l10n.workersEmptySubtitle,
-                      actionLabel: l10n.workerCreateAction,
-                      onAction: () => _openCreateWorker(context),
-                    );
-                  } else {
-                    stateKey = ValueKey<String>('list_${state.workers.length}');
-                    body = ListView.separated(
-                      padding: const EdgeInsets.fromLTRB(
-                        AppSpacing.lg,
-                        AppSpacing.sm,
-                        AppSpacing.lg,
-                        AppSpacing.xl,
-                      ),
-                      itemCount: state.workers.length,
-                      separatorBuilder: (_, _) =>
-                          const SizedBox(height: AppSpacing.sm),
-                      itemBuilder: (context, index) {
-                        final worker = state.workers[index];
-                        return AppMotionEntrance(
-                          index: index,
-                          child: AppCard(
-                            onTap: () async {
-                              await context.push(
-                                RoutePaths.workerDetail(worker.id),
-                              );
-                              if (context.mounted) {
-                                await context
-                                    .read<WorkerListCubit>()
-                                    .loadWorkers();
-                              }
-                            },
-                            child: Row(
+          ];
+        } else if (state.status == WorkerListStatus.error) {
+          slivers = [
+            SliverToBoxAdapter(
+              child: AppErrorView(
+                title: l10n.errorUnexpected,
+                message: state.errorMessage,
+                retryLabel: l10n.actionRetry,
+                onRetry: () => context.read<WorkerListCubit>().loadWorkers(),
+              ),
+            ),
+          ];
+        } else if (state.workers.isEmpty) {
+          slivers = [
+            SliverToBoxAdapter(
+              child: AppEmptyState(
+                icon: Icons.people_outline,
+                title: l10n.workersEmptyTitle,
+                subtitle: l10n.workersEmptySubtitle,
+                actionLabel: l10n.workerCreateAction,
+                onAction: () => _openCreateWorker(context),
+              ),
+            ),
+          ];
+        } else {
+          slivers = [
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                AppSpacing.sm,
+                AppSpacing.lg,
+                AppSpacing.xl,
+              ),
+              sliver: SliverList.separated(
+                itemCount: state.workers.length,
+                separatorBuilder: (_, _) =>
+                    const SizedBox(height: AppSpacing.sm),
+                itemBuilder: (context, index) {
+                  final worker = state.workers[index];
+                  return AppMotionEntrance(
+                    key: ValueKey<String>(worker.id),
+                    index: index,
+                    child: AppCard(
+                      onTap: () async {
+                        await context.push(RoutePaths.workerDetail(worker.id));
+                        if (context.mounted) {
+                          await context.read<WorkerListCubit>().loadWorkers();
+                        }
+                      },
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      AppText(
-                                        worker.name,
-                                        variant: AppTextVariant.bodyLarge,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                      if (worker.phone != null) ...[
-                                        const SizedBox(height: AppSpacing.xs),
-                                        AppText(
-                                          worker.phone!,
-                                          variant: AppTextVariant.bodySmall,
-                                        ),
-                                      ],
-                                      if (worker.address != null) ...[
-                                        const SizedBox(height: AppSpacing.xs),
-                                        AppText(
-                                          worker.address!,
-                                          variant: AppTextVariant.bodySmall,
-                                        ),
-                                      ],
-                                    ],
+                                AppText(
+                                  worker.name,
+                                  variant: AppTextVariant.bodyLarge,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                if (worker.phone != null) ...[
+                                  const SizedBox(height: AppSpacing.xs),
+                                  AppText(
+                                    worker.phone!,
+                                    variant: AppTextVariant.bodySmall,
                                   ),
-                                ),
-                                const SizedBox(width: AppSpacing.sm),
-                                AppStatusBadge(
-                                  label: worker.isActive
-                                      ? l10n.statusActive
-                                      : l10n.statusInactive,
-                                  tone: worker.isActive
-                                      ? AppStatusTone.good
-                                      : AppStatusTone.neutral,
-                                ),
-                                const SizedBox(width: AppSpacing.xs),
-                                const Icon(Icons.chevron_right),
+                                ],
+                                if (worker.address != null) ...[
+                                  const SizedBox(height: AppSpacing.xs),
+                                  AppText(
+                                    worker.address!,
+                                    variant: AppTextVariant.bodySmall,
+                                  ),
+                                ],
                               ],
                             ),
                           ),
-                        );
-                      },
-                    );
-                  }
-
-                  return AppStateTransition(stateKey: stateKey, child: body);
+                          const SizedBox(width: AppSpacing.sm),
+                          AppStatusBadge(
+                            label: worker.isActive
+                                ? l10n.statusActive
+                                : l10n.statusInactive,
+                            tone: worker.isActive
+                                ? AppStatusTone.good
+                                : AppStatusTone.neutral,
+                          ),
+                          const SizedBox(width: AppSpacing.xs),
+                          const Icon(Icons.chevron_right),
+                        ],
+                      ),
+                    ),
+                  );
                 },
               ),
             ),
-          ],
-        ),
-      ),
+          ];
+        }
+
+        return AppScaffold(
+          scrollMode: AppScrollMode.collapsible,
+          embedded: true,
+          onRefresh: () => context.read<WorkerListCubit>().loadWorkers(),
+          header: AppCollapsibleHeader(
+            title: l10n.workersHeading,
+            automaticallyImplyLeading: false,
+            expandedHeight: 164,
+            actions: [
+              Padding(
+                padding: const EdgeInsets.only(right: AppSpacing.sm),
+                child: AppButton(
+                  label: l10n.workerCreateAction,
+                  icon: Icons.person_add_outlined,
+                  onPressed: () => _openCreateWorker(context),
+                ),
+              ),
+            ],
+            summary: AppSummaryStrip(
+              metrics: [
+                AppSummaryMetric(
+                  label: l10n.filterAll,
+                  value: '${state.workers.length}',
+                  tone: AppStatusTone.info,
+                ),
+                AppSummaryMetric(
+                  label: l10n.filterActive,
+                  value: '$activeCount',
+                  tone: AppStatusTone.good,
+                ),
+                AppSummaryMetric(
+                  label: l10n.filterInactive,
+                  value: '$inactiveCount',
+                  tone: AppStatusTone.neutral,
+                ),
+              ],
+            ),
+          ),
+          pinnedHeaderHeight: 122,
+          pinnedHeader: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              AppSearchField(
+                controller: _searchController,
+                label: l10n.workersSearchHint,
+                onChanged: (q) =>
+                    context.read<WorkerListCubit>().loadWorkers(searchQuery: q),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    FilterChip(
+                      label: Text(l10n.filterAll),
+                      selected: state.activeFilter == null,
+                      onSelected: (_) => context
+                          .read<WorkerListCubit>()
+                          .loadWorkers(clearActiveFilter: true),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    FilterChip(
+                      label: Text(l10n.filterActive),
+                      selected: state.activeFilter == true,
+                      onSelected: (_) => context
+                          .read<WorkerListCubit>()
+                          .loadWorkers(activeFilter: true),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    FilterChip(
+                      label: Text(l10n.filterInactive),
+                      selected: state.activeFilter == false,
+                      onSelected: (_) => context
+                          .read<WorkerListCubit>()
+                          .loadWorkers(activeFilter: false),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          slivers: slivers,
+        );
+      },
     );
   }
 }

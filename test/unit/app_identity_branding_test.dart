@@ -12,6 +12,8 @@ void main() {
     test('exposes official StitchFlow brand identity and URL scheme', () {
       expect(AppIdentity.appName, 'StitchFlow');
       expect(AppIdentity.shortName, 'StitchFlow');
+      expect(AppIdentity.appVersion, '1.3.0');
+      expect(AppIdentity.appBuildNumber, '4');
       expect(AppIdentity.tagline, 'From Fabric to Finished.');
       expect(AppIdentity.urlScheme, 'stitchflow');
     });

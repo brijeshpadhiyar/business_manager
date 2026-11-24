@@ -153,158 +153,165 @@ final class _AccountingOverviewViewState
     final l10n = context.l10n;
     final localeCode = Localizations.localeOf(context).languageCode;
 
-    return AppScaffold(
-      title: l10n.accountingHeading,
-      actions: [
-        AppIconButton(
-          icon: Icons.refresh_rounded,
-          tooltip: l10n.actionRetry,
-          onPressed: () => context.read<AccountingOverviewCubit>().load(),
-        ),
-      ],
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _openRecordPayment,
-        icon: const Icon(Icons.payments_outlined),
-        label: Text(l10n.accountingRecordPaymentAction),
-      ),
-      padding: EdgeInsets.zero,
-      body: BlocBuilder<AccountingOverviewCubit, AccountingOverviewState>(
-        builder: (context, state) {
-          if (state.status == AccountingOverviewStatus.initial ||
-              state.status == AccountingOverviewStatus.loading) {
-            return const AppSkeletonList(itemCount: 5);
-          }
-          if (state.status == AccountingOverviewStatus.error) {
-            return AppErrorView(
-              title: l10n.errorUnexpected,
-              message: state.errorMessage,
-              retryLabel: l10n.actionRetry,
-              onRetry: () => context.read<AccountingOverviewCubit>().load(),
-            );
-          }
+    return BlocBuilder<AccountingOverviewCubit, AccountingOverviewState>(
+      builder: (context, state) {
+        final totalEarned = state.workerSummaries.fold<int>(
+          0,
+          (s, w) => s + w.earnedLabourPaise,
+        );
+        final totalOutstanding = state.workerSummaries.fold<int>(
+          0,
+          (s, w) => s + w.outstandingPayablePaise,
+        );
+        final totalAdvanceCredit = state.workerSummaries.fold<int>(
+          0,
+          (s, w) => s + w.advanceCreditBalancePaise,
+        );
+        final totalPaid = state.workerSummaries.fold<int>(
+          0,
+          (s, w) => s + w.netPaidToWorkerPaise,
+        );
 
-          final totalEarned = state.workerSummaries.fold<int>(
-            0,
-            (s, w) => s + w.earnedLabourPaise,
-          );
-          final totalOutstanding = state.workerSummaries.fold<int>(
-            0,
-            (s, w) => s + w.outstandingPayablePaise,
-          );
-          final totalAdvanceCredit = state.workerSummaries.fold<int>(
-            0,
-            (s, w) => s + w.advanceCreditBalancePaise,
-          );
-          final totalPaid = state.workerSummaries.fold<int>(
-            0,
-            (s, w) => s + w.netPaidToWorkerPaise,
-          );
-
-          return ListView(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.lg,
-              AppSpacing.lg,
-              AppSpacing.lg,
-              96,
+        final List<Widget> slivers;
+        if (state.status == AccountingOverviewStatus.initial ||
+            state.status == AccountingOverviewStatus.loading) {
+          slivers = const [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: AppSpacing.xl),
+                child: AppLoader(),
+              ),
             ),
-            children: [
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  final isWide = constraints.maxWidth >= 680;
-                  final w = isWide
-                      ? (constraints.maxWidth - AppSpacing.sm * 3) / 4
-                      : (constraints.maxWidth - AppSpacing.sm) / 2;
-                  return Wrap(
-                    spacing: AppSpacing.sm,
-                    runSpacing: AppSpacing.sm,
-                    children: [
-                      SizedBox(
-                        width: w,
-                        child: AppMetricTile(
-                          label: l10n.accountingEarnedLabourLabel,
-                          value: totalEarned,
-                          isCurrencyPaise: true,
-                          icon: Icons.work_outline_rounded,
-                          tone: AppStatusTone.good,
-                        ),
+          ];
+        } else if (state.status == AccountingOverviewStatus.error) {
+          slivers = [
+            SliverToBoxAdapter(
+              child: AppErrorView(
+                title: l10n.errorUnexpected,
+                message: state.errorMessage,
+                retryLabel: l10n.actionRetry,
+                onRetry: () => context.read<AccountingOverviewCubit>().load(),
+              ),
+            ),
+          ];
+        } else {
+          slivers = [
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                AppSpacing.md,
+                AppSpacing.lg,
+                96,
+              ),
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (totalAdvanceCredit > 0) ...[
+                      AppMetricTile(
+                        label: l10n.accountingAdvanceCreditLabel,
+                        value: totalAdvanceCredit,
+                        isCurrencyPaise: true,
+                        icon: Icons.trending_up_rounded,
+                        tone: AppStatusTone.info,
                       ),
-                      SizedBox(
-                        width: w,
-                        child: AppMetricTile(
-                          label: l10n.accountingOutstandingPayableLabel,
-                          value: totalOutstanding,
-                          isCurrencyPaise: true,
-                          icon: Icons.account_balance_wallet_outlined,
-                          tone: totalOutstanding > 0
-                              ? AppStatusTone.pending
-                              : AppStatusTone.good,
-                        ),
+                      const SizedBox(height: AppSpacing.sm),
+                    ],
+                    AppText(
+                      l10n.accountingAdvanceNote,
+                      variant: AppTextVariant.bodySmall,
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    switch (_tab) {
+                      0 => _buildWorkerBalances(context, state),
+                      1 => _buildPaymentsList(
+                        context,
+                        state.recentPayments,
+                        localeCode,
                       ),
-                      SizedBox(
-                        width: w,
-                        child: AppMetricTile(
-                          label: l10n.accountingAdvanceCreditLabel,
-                          value: totalAdvanceCredit,
-                          isCurrencyPaise: true,
-                          icon: Icons.trending_up_rounded,
-                          tone: AppStatusTone.info,
-                        ),
+                      _ => _buildLabourList(
+                        context,
+                        state.labourEntries,
+                        localeCode,
                       ),
-                      SizedBox(
-                        width: w,
-                        child: AppMetricTile(
-                          label: l10n.accountingRegularPaidLabel,
-                          value: totalPaid,
-                          isCurrencyPaise: true,
-                          icon: Icons.payments_outlined,
-                          tone: AppStatusTone.neutral,
-                        ),
+                    },
+                  ],
+                ),
+              ),
+            ),
+          ];
+        }
+
+        return AppScaffold(
+          scrollMode: AppScrollMode.collapsible,
+          onRefresh: () => context.read<AccountingOverviewCubit>().load(),
+          floatingActionButton: FloatingActionButton.extended(
+            onPressed: _openRecordPayment,
+            icon: const Icon(Icons.payments_outlined),
+            label: Text(l10n.accountingRecordPaymentAction),
+          ),
+          header: AppCollapsibleHeader(
+            title: l10n.accountingHeading,
+            expandedHeight: 176,
+            actions: [
+              AppIconButton(
+                icon: Icons.refresh_rounded,
+                tooltip: l10n.actionRetry,
+                onPressed: () => context.read<AccountingOverviewCubit>().load(),
+              ),
+            ],
+            summary: state.status == AccountingOverviewStatus.loaded
+                ? AppSummaryStrip(
+                    metrics: [
+                      AppSummaryMetric(
+                        label: l10n.accountingEarnedLabourLabel,
+                        value: MoneyFormatter.formatPaise(totalEarned),
+                        tone: AppStatusTone.good,
+                      ),
+                      AppSummaryMetric(
+                        label: l10n.accountingOutstandingPayableLabel,
+                        value: MoneyFormatter.formatPaise(totalOutstanding),
+                        tone: totalOutstanding > 0
+                            ? AppStatusTone.pending
+                            : AppStatusTone.good,
+                      ),
+                      AppSummaryMetric(
+                        label: l10n.accountingRegularPaidLabel,
+                        value: MoneyFormatter.formatPaise(totalPaid),
+                        tone: AppStatusTone.info,
                       ),
                     ],
-                  );
-                },
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              AppText(
-                l10n.accountingAdvanceNote,
-                variant: AppTextVariant.bodySmall,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              Wrap(
-                spacing: AppSpacing.sm,
-                runSpacing: AppSpacing.sm,
-                children: [
-                  ChoiceChip(
-                    label: Text(l10n.accountingTabWorkers),
-                    selected: _tab == 0,
-                    onSelected: (_) => setState(() => _tab = 0),
-                  ),
-                  ChoiceChip(
-                    label: Text(l10n.accountingTabPayments),
-                    selected: _tab == 1,
-                    onSelected: (_) => setState(() => _tab = 1),
-                  ),
-                  ChoiceChip(
-                    label: Text(l10n.accountingTabLabour),
-                    selected: _tab == 2,
-                    onSelected: (_) => setState(() => _tab = 2),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-              switch (_tab) {
-                0 => _buildWorkerBalances(context, state),
-                1 => _buildPaymentsList(
-                  context,
-                  state.recentPayments,
-                  localeCode,
+                  )
+                : null,
+          ),
+          pinnedHeaderHeight: 58,
+          pinnedHeader: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: [
+                ChoiceChip(
+                  label: Text(l10n.accountingTabWorkers),
+                  selected: _tab == 0,
+                  onSelected: (_) => setState(() => _tab = 0),
                 ),
-                _ => _buildLabourList(context, state.labourEntries, localeCode),
-              },
-            ],
-          );
-        },
-      ),
+                const SizedBox(width: AppSpacing.sm),
+                ChoiceChip(
+                  label: Text(l10n.accountingTabPayments),
+                  selected: _tab == 1,
+                  onSelected: (_) => setState(() => _tab = 1),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                ChoiceChip(
+                  label: Text(l10n.accountingTabLabour),
+                  selected: _tab == 2,
+                  onSelected: (_) => setState(() => _tab = 2),
+                ),
+              ],
+            ),
+          ),
+          slivers: slivers,
+        );
+      },
     );
   }
 

@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:business_manager/core/validation/validation_error.dart';
 import 'package:business_manager/core/widgets/app_text_field.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Consistent glass-styled search input with built-in clear action and
-/// standardized max-length enforcement (`ValidationLimits.maxSearchLength`).
+/// Consistent glass-styled search input with built-in clear action, optional
+/// debounce timer, and standardized max-length enforcement
+/// (`ValidationLimits.maxSearchLength`).
 final class AppSearchField extends StatefulWidget {
   const AppSearchField({
     super.key,
@@ -12,6 +15,7 @@ final class AppSearchField extends StatefulWidget {
     this.controller,
     this.onChanged,
     this.onClear,
+    this.debounceDuration,
   });
 
   final String label;
@@ -19,6 +23,7 @@ final class AppSearchField extends StatefulWidget {
   final TextEditingController? controller;
   final ValueChanged<String>? onChanged;
   final VoidCallback? onClear;
+  final Duration? debounceDuration;
 
   @override
   State<AppSearchField> createState() => _AppSearchFieldState();
@@ -27,6 +32,7 @@ final class AppSearchField extends StatefulWidget {
 final class _AppSearchFieldState extends State<AppSearchField> {
   TextEditingController? _internalCtrl;
   String _currentText = '';
+  Timer? _debounce;
 
   TextEditingController get _ctrl =>
       widget.controller ?? (_internalCtrl ??= TextEditingController());
@@ -55,8 +61,21 @@ final class _AppSearchFieldState extends State<AppSearchField> {
     }
   }
 
+  void _emitChanged(String value) {
+    _debounce?.cancel();
+    final delay = widget.debounceDuration;
+    if (delay == null || delay == Duration.zero) {
+      widget.onChanged?.call(value);
+      return;
+    }
+    _debounce = Timer(delay, () {
+      if (mounted) widget.onChanged?.call(value);
+    });
+  }
+
   @override
   void dispose() {
+    _debounce?.cancel();
     _ctrl.removeListener(_handleTextChanged);
     _internalCtrl?.dispose();
     super.dispose();
@@ -76,13 +95,14 @@ final class _AppSearchFieldState extends State<AppSearchField> {
               icon: const Icon(Icons.close_rounded, size: 18),
               tooltip: 'Clear',
               onPressed: () {
+                _debounce?.cancel();
                 _ctrl.clear();
                 widget.onChanged?.call('');
                 widget.onClear?.call();
               },
             )
           : null,
-      onChanged: widget.onChanged,
+      onChanged: _emitChanged,
     );
   }
 }

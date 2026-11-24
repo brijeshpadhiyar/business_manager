@@ -82,6 +82,37 @@ class LotDao extends DatabaseAccessor<AppDatabase> with _$LotDaoMixin {
             ..orderBy([(t) => OrderingTerm.asc(t.colourName)]))
           .get();
 
+  /// Batch-fetches all active colours for [designIds] using chunked `IN (...)`
+  /// queries (eliminating N+1 reads while staying well below SQLite's 999
+  /// parameter limit).
+  Future<List<DesignColourRow>> getColoursForDesigns(
+    List<String> designIds,
+  ) async {
+    if (designIds.isEmpty) return const [];
+    const chunkSize = 500;
+    if (designIds.length <= chunkSize) {
+      return (select(designColours)
+            ..where((t) => t.lotDesignId.isIn(designIds) & t.deletedAt.isNull())
+            ..orderBy([(t) => OrderingTerm.asc(t.colourName)]))
+          .get();
+    }
+    final all = <DesignColourRow>[];
+    for (var i = 0; i < designIds.length; i += chunkSize) {
+      final end = (i + chunkSize > designIds.length)
+          ? designIds.length
+          : i + chunkSize;
+      final chunk = designIds.sublist(i, end);
+      final rows =
+          await (select(designColours)
+                ..where((t) => t.lotDesignId.isIn(chunk) & t.deletedAt.isNull())
+                ..orderBy([(t) => OrderingTerm.asc(t.colourName)]))
+              .get();
+      all.addAll(rows);
+    }
+    all.sort((a, b) => a.colourName.compareTo(b.colourName));
+    return all;
+  }
+
   Future<List<DesignColourRow>> getAllActiveDesignColours() =>
       (select(designColours)
             ..where((t) => t.deletedAt.isNull())
