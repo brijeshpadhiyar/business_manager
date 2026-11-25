@@ -2,22 +2,22 @@ import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
+import 'package:business_manager/core/utils/app_date_time_formatter.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
+import 'package:business_manager/features/production_history/domain/entities/production_history_entities.dart';
+import 'package:business_manager/features/production_history/presentation/bloc/worker_production_history_cubit.dart';
 import 'package:business_manager/features/reports/domain/calculators/workshop_daily_calculator.dart';
 import 'package:business_manager/features/workers/domain/entities/worker_entities.dart';
 import 'package:business_manager/features/workers/presentation/bloc/worker_detail_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
-/// Worker Profile Summary page.
-///
-/// Displays worker name, contact details, assigned processes, current per-piece
-/// rates per process, historical rate links, and active/inactive status.
-/// Intentionally omits labour earnings and payment balances (later milestones).
+/// Worker Profile Summary & Complete Worker Production Account page (Phase 3).
 final class WorkerDetailPage extends StatelessWidget {
   const WorkerDetailPage({super.key, required this.workerId});
 
@@ -25,8 +25,16 @@ final class WorkerDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<WorkerDetailCubit>(
-      create: (_) => getIt<WorkerDetailCubit>()..loadWorker(workerId),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<WorkerDetailCubit>(
+          create: (_) => getIt<WorkerDetailCubit>()..loadWorker(workerId),
+        ),
+        BlocProvider<WorkerProductionHistoryCubit>(
+          create: (_) =>
+              getIt<WorkerProductionHistoryCubit>()..loadWorker(workerId),
+        ),
+      ],
       child: _WorkerDetailView(workerId: workerId),
     );
   }
@@ -94,7 +102,7 @@ final class _WorkerDetailView extends StatelessWidget {
           title: worker.name,
           actions: [
             AppIconButton(
-              icon: Icons.edit_outlined,
+              icon: AppIcons.edit,
               tooltip: l10n.workerEditAction,
               onPressed: () async {
                 await context.push(RoutePaths.workerEdit(worker.id));
@@ -111,14 +119,9 @@ final class _WorkerDetailView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: AppHeading(
-                            worker.name,
-                            level: AppHeadingLevel.h2,
-                          ),
-                        ),
+                    AppActionRow(
+                      content: AppHeading(worker.name, level: AppHeadingLevel.h2),
+                      actions: [
                         AppStatusBadge(
                           label: worker.isActive
                               ? l10n.statusActive
@@ -144,7 +147,7 @@ final class _WorkerDetailView extends StatelessWidget {
                       if (worker.phone != null)
                         Row(
                           children: [
-                            const Icon(Icons.phone_outlined, size: 16),
+                            const Icon(AppIcons.phone, size: 16),
                             const SizedBox(width: AppSpacing.xs),
                             Expanded(child: AppText(worker.phone!)),
                           ],
@@ -154,7 +157,7 @@ final class _WorkerDetailView extends StatelessWidget {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Icon(Icons.location_on_outlined, size: 16),
+                            const Icon(AppIcons.location, size: 16),
                             const SizedBox(width: AppSpacing.xs),
                             Expanded(child: AppText(worker.address!)),
                           ],
@@ -177,7 +180,7 @@ final class _WorkerDetailView extends StatelessWidget {
                       children: [
                         AppButton(
                           label: l10n.workerManageAssignmentsAction,
-                          icon: Icons.link,
+                          icon: AppIcons.link,
                           onPressed: () async {
                             await context.push(
                               RoutePaths.workerAssignments(worker.id),
@@ -191,7 +194,7 @@ final class _WorkerDetailView extends StatelessWidget {
                         ),
                         AppButton(
                           label: l10n.workerViewRateHistoryAction,
-                          icon: Icons.currency_rupee,
+                          icon: AppIcons.pieceRate,
                           variant: AppButtonVariant.secondary,
                           onPressed: () async {
                             await context.push(
@@ -206,14 +209,14 @@ final class _WorkerDetailView extends StatelessWidget {
                         ),
                         AppButton(
                           label: l10n.accountingOpenLedgerAction,
-                          icon: Icons.account_balance_wallet_outlined,
+                          icon: AppIcons.accounting,
                           variant: AppButtonVariant.secondary,
                           onPressed: () =>
                               context.push(RoutePaths.workerLedger(worker.id)),
                         ),
                         AppButton(
                           label: l10n.accountingRecordPaymentAction,
-                          icon: Icons.payments_outlined,
+                          icon: AppIcons.payment,
                           variant: AppButtonVariant.outlined,
                           onPressed: () => context.push(
                             RoutePaths.paymentCreate(workerId: worker.id),
@@ -224,8 +227,8 @@ final class _WorkerDetailView extends StatelessWidget {
                               ? l10n.workerDeactivateAction
                               : l10n.workerActivateAction,
                           icon: worker.isActive
-                              ? Icons.person_off_outlined
-                              : Icons.person_outline,
+                              ? AppIcons.workerInactive
+                              : AppIcons.worker,
                           variant: worker.isActive
                               ? AppButtonVariant.destructive
                               : AppButtonVariant.outlined,
@@ -257,7 +260,7 @@ final class _WorkerDetailView extends StatelessWidget {
                         const SizedBox(height: AppSpacing.sm),
                         LayoutBuilder(
                           builder: (context, constraints) {
-                            final isWide = constraints.maxWidth >= 680;
+                            final isWide = constraints.maxWidth >= 580;
                             final tileW = isWide
                                 ? (constraints.maxWidth - AppSpacing.sm * 3) / 4
                                 : (constraints.maxWidth - AppSpacing.sm) / 2;
@@ -273,7 +276,7 @@ final class _WorkerDetailView extends StatelessWidget {
                                     suffix: l10n.piecesUnit,
                                     subtitle:
                                         '${openIssues.length} ${l10n.workerOpenIssuesCountLabel}',
-                                    icon: Icons.pending_actions_rounded,
+                                    icon: AppIcons.pending,
                                     tone: stock.pending > 0
                                         ? AppStatusTone.pending
                                         : AppStatusTone.good,
@@ -290,7 +293,7 @@ final class _WorkerDetailView extends StatelessWidget {
                                     label: l10n.accountingEarnedLabourLabel,
                                     value: fin.earnedLabourPaise,
                                     isCurrencyPaise: true,
-                                    icon: Icons.work_outline_rounded,
+                                    icon: AppIcons.work,
                                     tone: AppStatusTone.good,
                                     onTap: () => context.push(
                                       RoutePaths.workerLedger(worker.id),
@@ -307,7 +310,7 @@ final class _WorkerDetailView extends StatelessWidget {
                                         ? fin.advanceCreditBalancePaise
                                         : fin.outstandingPayablePaise,
                                     isCurrencyPaise: true,
-                                    icon: Icons.account_balance_wallet_outlined,
+                                    icon: AppIcons.accounting,
                                     tone: fin.advanceCreditBalancePaise > 0
                                         ? AppStatusTone.info
                                         : (fin.outstandingPayablePaise > 0
@@ -324,7 +327,7 @@ final class _WorkerDetailView extends StatelessWidget {
                                     label: l10n.stockGoodReturnedLabel,
                                     value: stock.goodReturned,
                                     suffix: l10n.piecesUnit,
-                                    icon: Icons.check_circle_outline_rounded,
+                                    icon: AppIcons.successOutline,
                                     tone: AppStatusTone.neutral,
                                   ),
                                 ),
@@ -338,14 +341,12 @@ final class _WorkerDetailView extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: AppText(
-                                        l10n.workerOpenIssuesHeading,
-                                        variant: AppTextVariant.label,
-                                      ),
-                                    ),
+                                AppActionRow(
+                                  content: AppText(
+                                    l10n.workerOpenIssuesHeading,
+                                    variant: AppTextVariant.label,
+                                  ),
+                                  actions: [
                                     AppButton(
                                       label: l10n.dashboardViewAllPendingAction,
                                       variant: AppButtonVariant.text,
@@ -382,25 +383,23 @@ final class _WorkerDetailView extends StatelessWidget {
                                         padding: const EdgeInsets.symmetric(
                                           vertical: AppSpacing.xs,
                                         ),
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  AppText(
-                                                    '${v.processName ?? '-'} • ${v.lotNumber} • ${v.colourName}',
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                  AppText(
-                                                    '${issue.remainingPending} ${l10n.piecesUnit} • ${ageDays == 0 ? l10n.reportPresetToday : l10n.pendingAgeDaysBadge(ageDays)}',
-                                                    variant: AppTextVariant
-                                                        .bodySmall,
-                                                  ),
-                                                ],
+                                        child: AppActionRow(
+                                          content: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              AppText(
+                                                '${v.processName ?? '-'} • ${v.lotNumber} • ${v.colourName}',
+                                                fontWeight: FontWeight.w600,
                                               ),
-                                            ),
+                                              AppText(
+                                                '${issue.remainingPending} ${l10n.piecesUnit} • ${ageDays == 0 ? l10n.reportPresetToday : l10n.pendingAgeDaysBadge(ageDays)}',
+                                                variant:
+                                                    AppTextVariant.bodySmall,
+                                              ),
+                                            ],
+                                          ),
+                                          actions: [
                                             AppButton(
                                               label: l10n.stockReturnAction,
                                               variant:
@@ -464,7 +463,7 @@ final class _WorkerDetailView extends StatelessWidget {
                                       children: [
                                         Expanded(
                                           child: AppText(
-                                            IstDateTimeHelper.formatIstDate(
+                                            AppDateTimeFormatter.formatDate(
                                               p.payment.transactionAt,
                                               locale: localeCode,
                                             ),
@@ -497,7 +496,7 @@ final class _WorkerDetailView extends StatelessWidget {
                 level: AppHeadingLevel.h3,
                 trailing: AppButton(
                   label: l10n.workerAddRateAction,
-                  icon: Icons.add,
+                  icon: AppIcons.add,
                   variant: AppButtonVariant.outlined,
                   onPressed: () async {
                     await context.push(RoutePaths.workerRateCreate(worker.id));
@@ -522,7 +521,7 @@ final class _WorkerDetailView extends StatelessWidget {
                       const SizedBox(height: AppSpacing.sm),
                       AppButton(
                         label: l10n.workerManageAssignmentsAction,
-                        icon: Icons.link,
+                        icon: AppIcons.link,
                         variant: AppButtonVariant.outlined,
                         onPressed: () async {
                           await context.push(
@@ -542,16 +541,46 @@ final class _WorkerDetailView extends StatelessWidget {
                 ...detail.assignedProcesses.map((summary) {
                   final assignment = summary.assignment;
                   final currentRate = summary.currentRate;
-                  final rateDisplay = currentRate != null
-                      ? '${MoneyFormatter.formatPaise(currentRate.ratePaise)} ${l10n.ratesPerPieceSuffix}'
-                      : l10n.ratesNoCurrentRate;
+                  final hasProcessDefault = summary.processDefaultRatePaise > 0;
+                  final String rateDisplay;
+                  final String sourceBadgeLabel;
+                  final AppStatusTone sourceBadgeTone;
+
+                  if (currentRate != null) {
+                    rateDisplay =
+                        '${MoneyFormatter.formatPaise(currentRate.ratePaise)} ${l10n.ratesPerPieceSuffix}';
+                    sourceBadgeLabel = 'Worker Rate';
+                    sourceBadgeTone = AppStatusTone.good;
+                  } else if (hasProcessDefault) {
+                    rateDisplay = MoneyFormatter.formatRatePaise(
+                      summary.processDefaultRatePaise,
+                      pricingUnit: summary.processDefaultPricingUnit,
+                    );
+                    sourceBadgeLabel = 'Process Default';
+                    sourceBadgeTone = AppStatusTone.info;
+                  } else {
+                    rateDisplay = l10n.ratesNoCurrentRate;
+                    sourceBadgeLabel = 'No Rate';
+                    sourceBadgeTone = AppStatusTone.pending;
+                  }
+
                   final periodText = currentRate != null
-                      ? '${currentRate.effectiveFrom} - ${currentRate.effectiveTo ?? l10n.ratesOngoingLabel}'
-                      : null;
+                      ? AppDateTimeFormatter.formatIsoDateRange(
+                          fromIso: currentRate.effectiveFrom,
+                          toIso: currentRate.effectiveTo,
+                          ongoingLabel: l10n.ratesOngoingLabel,
+                          locale: localeCode,
+                        )
+                      : (hasProcessDefault
+                            ? 'Inherited from ${assignment.processName}'
+                            : null);
 
                   return Padding(
                     padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                    child: AppCard(
+                    child: AppCard.listItem(
+                      key: ValueKey<String>(
+                        'worker_detail_proc_${assignment.processId}',
+                      ),
                       onTap: () async {
                         await context.push(
                           RoutePaths.workerRates(
@@ -571,14 +600,26 @@ final class _WorkerDetailView extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                AppText(
-                                  assignment.processName,
-                                  variant: AppTextVariant.bodyLarge,
-                                  fontWeight: FontWeight.w700,
+                                Wrap(
+                                  spacing: AppSpacing.xs,
+                                  runSpacing: AppSpacing.xs,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  children: [
+                                    AppText(
+                                      assignment.processName,
+                                      variant: AppTextVariant.bodyLarge,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    AppStatusBadge(
+                                      label: sourceBadgeLabel,
+                                      tone: sourceBadgeTone,
+                                    ),
+                                  ],
                                 ),
                                 const SizedBox(height: AppSpacing.xs),
                                 AppText(
                                   '${l10n.ratesCurrentRateLabel}: $rateDisplay',
+                                  variant: AppTextVariant.numeric,
                                   fontWeight: FontWeight.w600,
                                 ),
                                 if (periodText != null) ...[
@@ -598,11 +639,13 @@ final class _WorkerDetailView extends StatelessWidget {
                                 label: '${summary.totalRateHistoryCount}',
                                 tone: currentRate != null
                                     ? AppStatusTone.good
-                                    : AppStatusTone.pending,
-                                icon: Icons.history,
+                                    : (hasProcessDefault
+                                          ? AppStatusTone.info
+                                          : AppStatusTone.pending),
+                                icon: AppIcons.rateHistory,
                               ),
                               const SizedBox(height: AppSpacing.xs),
-                              const Icon(Icons.chevron_right),
+                              const Icon(AppIcons.chevronRight),
                             ],
                           ),
                         ],
@@ -610,6 +653,165 @@ final class _WorkerDetailView extends StatelessWidget {
                     ),
                   );
                 }),
+              // Phase 3: Worker Process-Wise History & Worker Lot History
+              BlocBuilder<
+                WorkerProductionHistoryCubit,
+                WorkerProductionHistoryState
+              >(
+                builder: (context, prodState) {
+                  final profile = prodState.selectedProfile;
+                  if (profile == null) return const SizedBox.shrink();
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const SizedBox(height: AppSpacing.lg),
+                      AppCard(
+                        child: Wrap(
+                          spacing: AppSpacing.xs,
+                          runSpacing: 4,
+                          children: [
+                            AppStatusBadge(
+                              label: 'Lots: ${profile.totalLotsAssigned}',
+                              tone: AppStatusTone.info,
+                            ),
+                            AppStatusBadge(
+                              label:
+                                  'Completed: ${profile.totalProcessesCompleted}',
+                              tone: AppStatusTone.good,
+                            ),
+                            AppStatusBadge(
+                              label:
+                                  '${l10n.prodHistoryTotalAssigned}: ${profile.assignedQty}',
+                              tone: AppStatusTone.neutral,
+                            ),
+                            AppStatusBadge(
+                              label:
+                                  '${l10n.prodHistoryTotalAccepted}: ${profile.acceptedQty}',
+                              tone: AppStatusTone.good,
+                            ),
+                            if (profile.pendingInspectionQty > 0)
+                              AppStatusBadge(
+                                label:
+                                    'Pending QC: ${profile.pendingInspectionQty}',
+                                tone: AppStatusTone.pending,
+                              ),
+                            if (profile.rejectedQty > 0)
+                              AppStatusBadge(
+                                label: 'Rejected: ${profile.rejectedQty}',
+                                tone: AppStatusTone.damaged,
+                              ),
+                          ],
+                        ),
+                      ),
+                      if (profile.processHistory.isNotEmpty) ...[
+                        const SizedBox(height: AppSpacing.lg),
+                        AppHeading(
+                          l10n.prodHistoryWorkerProcessHistory,
+                          level: AppHeadingLevel.h3,
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        for (final ph in profile.processHistory)
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: AppSpacing.xs,
+                            ),
+                            child: AppCard.listItem(
+                              onTap: () => context.push(
+                                RoutePaths.processDetail(ph.processId),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: AppText(
+                                          ph.processName,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                      ),
+                                      AppText(
+                                        '${MoneyFormatter.formatQuantity(ph.acceptedQty)} / ${MoneyFormatter.formatQuantity(ph.assignedQty)} ${l10n.piecesUnit}',
+                                        variant: AppTextVariant.numeric,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4),
+                                  AppText(
+                                    'Lots: ${ph.totalLots} • Earned: ${MoneyFormatter.formatPaise(ph.earnedAmountPaise)} • Pending Est: ${MoneyFormatter.formatPaise(ph.estimatedPendingPayablePaise)}',
+                                    variant: AppTextVariant.bodySmall,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                      ],
+                      if (profile.lotHistory.isNotEmpty) ...[
+                        const SizedBox(height: AppSpacing.lg),
+                        AppHeading(
+                          '${l10n.prodHistoryWorkerLotHistory} (${profile.lotHistory.length})',
+                          level: AppHeadingLevel.h3,
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        for (final item in profile.lotHistory.take(25))
+                          Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: AppSpacing.xs,
+                            ),
+                            child: AppCard.listItem(
+                              onTap: () => context.push(
+                                RoutePaths.productionTransactionDetail(
+                                  ProductionTransactionKind
+                                      .stockMovement
+                                      .routeSegment,
+                                  item.issueMovementId,
+                                ),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  AppActionRow(
+                                    content: AppText(
+                                      '${item.lotNumber} • ${item.processName}',
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    actions: [
+                                      AppStatusBadge(
+                                        label: item.isCompleted
+                                            ? 'COMPLETED'
+                                            : 'PENDING',
+                                        tone: item.isCompleted
+                                            ? AppStatusTone.good
+                                            : AppStatusTone.pending,
+                                      ),
+                                    ],
+                                  ),
+                                  AppText(
+                                    '${item.designName} • ${item.colourName} • ${AppDateTimeFormatter.formatDateTime(item.assignedAt, locale: localeCode)}',
+                                    variant: AppTextVariant.bodySmall,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  AppText(
+                                    'Given: ${item.assignedQty} • Returned: ${item.returnedQty} • Acc: ${item.totalAcceptedQty} • Pending: ${item.outstandingQty} • Rej: ${item.netRejectedQty}',
+                                    variant: AppTextVariant.bodySmall,
+                                  ),
+                                  AppText(
+                                    'Rate: ${MoneyFormatter.formatPaise(item.lockedRatePaise)}/pc • Earned: ${MoneyFormatter.formatPaise(item.earnedAmountPaise)}'
+                                    '${item.completedAt != null ? ' • Done: ${AppDateTimeFormatter.formatDate(item.completedAt!, locale: localeCode)}' : ''}',
+                                    variant: AppTextVariant.numeric,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                      ],
+                    ],
+                  );
+                },
+              ),
+              const SizedBox(height: AppSpacing.xl),
             ],
           ),
         );

@@ -2,25 +2,30 @@ import 'package:business_manager/core/config/app_config.dart';
 import 'package:business_manager/core/database/connection/database_connection.dart';
 import 'package:business_manager/core/database/daos/attachment_audit_dao.dart';
 import 'package:business_manager/core/database/daos/business_profile_dao.dart';
+import 'package:business_manager/core/database/daos/colour_master_dao.dart';
+import 'package:business_manager/core/database/daos/job_process_dao.dart';
 import 'package:business_manager/core/database/daos/labour_entry_dao.dart';
 import 'package:business_manager/core/database/daos/lot_dao.dart';
 import 'package:business_manager/core/database/daos/payment_dao.dart';
 import 'package:business_manager/core/database/daos/process_member_dao.dart';
+import 'package:business_manager/core/database/daos/production_tracking_dao.dart';
 import 'package:business_manager/core/database/daos/stock_movement_dao.dart';
 import 'package:business_manager/core/database/daos/worker_adjustment_dao.dart';
 import 'package:business_manager/core/database/database_pragma_status.dart';
 import 'package:business_manager/core/database/migrations/database_migration_manager.dart';
 import 'package:business_manager/core/database/tables/attachment_audit_tables.dart';
 import 'package:business_manager/core/database/tables/business_profile_table.dart';
+import 'package:business_manager/core/database/tables/colour_master_table.dart';
+import 'package:business_manager/core/database/tables/job_process_tables.dart';
 import 'package:business_manager/core/database/tables/ledger_tables.dart';
 import 'package:business_manager/core/database/tables/lot_tables.dart';
 import 'package:business_manager/core/database/tables/process_member_tables.dart';
+import 'package:business_manager/core/database/tables/production_tracking_tables.dart';
 import 'package:drift/drift.dart';
 
 part 'app_database.g.dart';
 
-/// Root offline-first Drift SQLite database containing all 14 tables
-/// (13 v1 tables + additive v2 `worker_ledger_adjustments`) and 8 DAOs.
+/// Root offline-first Drift SQLite database (Schema v8: 23 tables, 11 DAOs).
 @DriftDatabase(
   tables: [
     BusinessProfiles,
@@ -35,8 +40,17 @@ part 'app_database.g.dart';
     LabourEntries,
     Payments,
     WorkerLedgerAdjustments,
+    JobProcesses,
+    ProcessHandovers,
+    ProcessAdditionalCharges,
+    ProcessRateHistories,
+    ColourMasters,
     Attachments,
     AuditLogs,
+    ProductionReturns,
+    ProductionInspections,
+    RejectionRecords,
+    RejectionRepairs,
   ],
   daos: [
     BusinessProfileDao,
@@ -46,7 +60,10 @@ part 'app_database.g.dart';
     LabourEntryDao,
     PaymentDao,
     WorkerAdjustmentDao,
+    JobProcessDao,
+    ColourMasterDao,
     AttachmentAuditDao,
+    ProductionTrackingDao,
   ],
 )
 class AppDatabase extends _$AppDatabase {

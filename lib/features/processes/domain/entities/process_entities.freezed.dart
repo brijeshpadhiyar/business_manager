@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ProcessEntity {
 
- String get id; String get name; String? get description; bool get isActive; ProcessBillingModeOverride? get billingModeOverride; bool get includeDamagedInLabour; int get createdAt; int get updatedAt;
+ String get id; String get name; String? get description; bool get isActive; ProcessBillingModeOverride? get billingModeOverride; bool get includeDamagedInLabour; int get defaultRatePaise; String get defaultPricingUnit; int get createdAt; int get updatedAt;
 /// Create a copy of ProcessEntity
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $ProcessEntityCopyWith<ProcessEntity> get copyWith => _$ProcessEntityCopyWithImp
 @override
 bool operator ==(Object other) {
   final _this = this as ProcessEntity;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProcessEntity&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.isActive, _this.isActive) || other.isActive == _this.isActive)&&(identical(other.billingModeOverride, _this.billingModeOverride) || other.billingModeOverride == _this.billingModeOverride)&&(identical(other.includeDamagedInLabour, _this.includeDamagedInLabour) || other.includeDamagedInLabour == _this.includeDamagedInLabour)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProcessEntity&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.description, _this.description) || other.description == _this.description)&&(identical(other.isActive, _this.isActive) || other.isActive == _this.isActive)&&(identical(other.billingModeOverride, _this.billingModeOverride) || other.billingModeOverride == _this.billingModeOverride)&&(identical(other.includeDamagedInLabour, _this.includeDamagedInLabour) || other.includeDamagedInLabour == _this.includeDamagedInLabour)&&(identical(other.defaultRatePaise, _this.defaultRatePaise) || other.defaultRatePaise == _this.defaultRatePaise)&&(identical(other.defaultPricingUnit, _this.defaultPricingUnit) || other.defaultPricingUnit == _this.defaultPricingUnit)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt));
 }
 
 
 @override
 int get hashCode {
   final _this = this as ProcessEntity;
-  return Object.hash(runtimeType,_this.id,_this.name,_this.description,_this.isActive,_this.billingModeOverride,_this.includeDamagedInLabour,_this.createdAt,_this.updatedAt);
+  return Object.hash(runtimeType,_this.id,_this.name,_this.description,_this.isActive,_this.billingModeOverride,_this.includeDamagedInLabour,_this.defaultRatePaise,_this.defaultPricingUnit,_this.createdAt,_this.updatedAt);
 }
 
 @override
 String toString() {
   final _this = this as ProcessEntity;
-  return 'ProcessEntity(id: ${_this.id}, name: ${_this.name}, description: ${_this.description}, isActive: ${_this.isActive}, billingModeOverride: ${_this.billingModeOverride}, includeDamagedInLabour: ${_this.includeDamagedInLabour}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt})';
+  return 'ProcessEntity(id: ${_this.id}, name: ${_this.name}, description: ${_this.description}, isActive: ${_this.isActive}, billingModeOverride: ${_this.billingModeOverride}, includeDamagedInLabour: ${_this.includeDamagedInLabour}, defaultRatePaise: ${_this.defaultRatePaise}, defaultPricingUnit: ${_this.defaultPricingUnit}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $ProcessEntityCopyWith<$Res>  {
   factory $ProcessEntityCopyWith(ProcessEntity value, $Res Function(ProcessEntity) _then) = _$ProcessEntityCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, String? description, bool isActive, ProcessBillingModeOverride? billingModeOverride, bool includeDamagedInLabour, int createdAt, int updatedAt
+ String id, String name, String? description, bool isActive, ProcessBillingModeOverride? billingModeOverride, bool includeDamagedInLabour, int defaultRatePaise, String defaultPricingUnit, int createdAt, int updatedAt
 });
 
 
@@ -68,7 +68,7 @@ class _$ProcessEntityCopyWithImpl<$Res>
 
 /// Create a copy of ProcessEntity
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? description = freezed,Object? isActive = null,Object? billingModeOverride = freezed,Object? includeDamagedInLabour = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? description = freezed,Object? isActive = null,Object? billingModeOverride = freezed,Object? includeDamagedInLabour = null,Object? defaultRatePaise = null,Object? defaultPricingUnit = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(ProcessEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -76,7 +76,9 @@ as String,description: freezed == description ? _self.description : description 
 as String?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
 as bool,billingModeOverride: freezed == billingModeOverride ? _self.billingModeOverride : billingModeOverride // ignore: cast_nullable_to_non_nullable
 as ProcessBillingModeOverride?,includeDamagedInLabour: null == includeDamagedInLabour ? _self.includeDamagedInLabour : includeDamagedInLabour // ignore: cast_nullable_to_non_nullable
-as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as bool,defaultRatePaise: null == defaultRatePaise ? _self.defaultRatePaise : defaultRatePaise // ignore: cast_nullable_to_non_nullable
+as int,defaultPricingUnit: null == defaultPricingUnit ? _self.defaultPricingUnit : defaultPricingUnit // ignore: cast_nullable_to_non_nullable
+as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as int,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as int,
   ));
@@ -160,10 +162,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String? description,  bool isActive,  ProcessBillingModeOverride? billingModeOverride,  bool includeDamagedInLabour,  int createdAt,  int updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  String? description,  bool isActive,  ProcessBillingModeOverride? billingModeOverride,  bool includeDamagedInLabour,  int defaultRatePaise,  String defaultPricingUnit,  int createdAt,  int updatedAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProcessEntity() when $default != null:
-return $default(_that.id,_that.name,_that.description,_that.isActive,_that.billingModeOverride,_that.includeDamagedInLabour,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.description,_that.isActive,_that.billingModeOverride,_that.includeDamagedInLabour,_that.defaultRatePaise,_that.defaultPricingUnit,_that.createdAt,_that.updatedAt);case _:
   return orElse();
 
 }
@@ -181,10 +183,10 @@ return $default(_that.id,_that.name,_that.description,_that.isActive,_that.billi
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String? description,  bool isActive,  ProcessBillingModeOverride? billingModeOverride,  bool includeDamagedInLabour,  int createdAt,  int updatedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  String? description,  bool isActive,  ProcessBillingModeOverride? billingModeOverride,  bool includeDamagedInLabour,  int defaultRatePaise,  String defaultPricingUnit,  int createdAt,  int updatedAt)  $default,) {final _that = this;
 switch (_that) {
 case _ProcessEntity():
-return $default(_that.id,_that.name,_that.description,_that.isActive,_that.billingModeOverride,_that.includeDamagedInLabour,_that.createdAt,_that.updatedAt);}
+return $default(_that.id,_that.name,_that.description,_that.isActive,_that.billingModeOverride,_that.includeDamagedInLabour,_that.defaultRatePaise,_that.defaultPricingUnit,_that.createdAt,_that.updatedAt);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -198,10 +200,10 @@ return $default(_that.id,_that.name,_that.description,_that.isActive,_that.billi
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String? description,  bool isActive,  ProcessBillingModeOverride? billingModeOverride,  bool includeDamagedInLabour,  int createdAt,  int updatedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  String? description,  bool isActive,  ProcessBillingModeOverride? billingModeOverride,  bool includeDamagedInLabour,  int defaultRatePaise,  String defaultPricingUnit,  int createdAt,  int updatedAt)?  $default,) {final _that = this;
 switch (_that) {
 case _ProcessEntity() when $default != null:
-return $default(_that.id,_that.name,_that.description,_that.isActive,_that.billingModeOverride,_that.includeDamagedInLabour,_that.createdAt,_that.updatedAt);case _:
+return $default(_that.id,_that.name,_that.description,_that.isActive,_that.billingModeOverride,_that.includeDamagedInLabour,_that.defaultRatePaise,_that.defaultPricingUnit,_that.createdAt,_that.updatedAt);case _:
   return null;
 
 }
@@ -213,7 +215,7 @@ return $default(_that.id,_that.name,_that.description,_that.isActive,_that.billi
 
 
 class _ProcessEntity implements ProcessEntity {
-  const _ProcessEntity({required this.id, required this.name, this.description, required this.isActive, this.billingModeOverride, required this.includeDamagedInLabour, required this.createdAt, required this.updatedAt});
+  const _ProcessEntity({required this.id, required this.name, this.description, required this.isActive, this.billingModeOverride, required this.includeDamagedInLabour, this.defaultRatePaise = 0, this.defaultPricingUnit = 'PER_PIECE', required this.createdAt, required this.updatedAt});
   
 
 @override final  String id;
@@ -222,6 +224,8 @@ class _ProcessEntity implements ProcessEntity {
 @override final  bool isActive;
 @override final  ProcessBillingModeOverride? billingModeOverride;
 @override final  bool includeDamagedInLabour;
+@override@JsonKey() final  int defaultRatePaise;
+@override@JsonKey() final  String defaultPricingUnit;
 @override final  int createdAt;
 @override final  int updatedAt;
 
@@ -235,18 +239,18 @@ _$ProcessEntityCopyWith<_ProcessEntity> get copyWith => __$ProcessEntityCopyWith
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProcessEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.billingModeOverride, billingModeOverride) || other.billingModeOverride == billingModeOverride)&&(identical(other.includeDamagedInLabour, includeDamagedInLabour) || other.includeDamagedInLabour == includeDamagedInLabour)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProcessEntity&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.description, description) || other.description == description)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.billingModeOverride, billingModeOverride) || other.billingModeOverride == billingModeOverride)&&(identical(other.includeDamagedInLabour, includeDamagedInLabour) || other.includeDamagedInLabour == includeDamagedInLabour)&&(identical(other.defaultRatePaise, defaultRatePaise) || other.defaultRatePaise == defaultRatePaise)&&(identical(other.defaultPricingUnit, defaultPricingUnit) || other.defaultPricingUnit == defaultPricingUnit)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,id,name,description,isActive,billingModeOverride,includeDamagedInLabour,createdAt,updatedAt);
+    return Object.hash(runtimeType,id,name,description,isActive,billingModeOverride,includeDamagedInLabour,defaultRatePaise,defaultPricingUnit,createdAt,updatedAt);
 }
 
 @override
 String toString() {
-    return 'ProcessEntity(id: $id, name: $name, description: $description, isActive: $isActive, billingModeOverride: $billingModeOverride, includeDamagedInLabour: $includeDamagedInLabour, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'ProcessEntity(id: $id, name: $name, description: $description, isActive: $isActive, billingModeOverride: $billingModeOverride, includeDamagedInLabour: $includeDamagedInLabour, defaultRatePaise: $defaultRatePaise, defaultPricingUnit: $defaultPricingUnit, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 
@@ -257,7 +261,7 @@ abstract mixin class _$ProcessEntityCopyWith<$Res> implements $ProcessEntityCopy
   factory _$ProcessEntityCopyWith(_ProcessEntity value, $Res Function(_ProcessEntity) _then) = __$ProcessEntityCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, String? description, bool isActive, ProcessBillingModeOverride? billingModeOverride, bool includeDamagedInLabour, int createdAt, int updatedAt
+ String id, String name, String? description, bool isActive, ProcessBillingModeOverride? billingModeOverride, bool includeDamagedInLabour, int defaultRatePaise, String defaultPricingUnit, int createdAt, int updatedAt
 });
 
 
@@ -274,7 +278,7 @@ class __$ProcessEntityCopyWithImpl<$Res>
 
 /// Create a copy of ProcessEntity
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? description = freezed,Object? isActive = null,Object? billingModeOverride = freezed,Object? includeDamagedInLabour = null,Object? createdAt = null,Object? updatedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? description = freezed,Object? isActive = null,Object? billingModeOverride = freezed,Object? includeDamagedInLabour = null,Object? defaultRatePaise = null,Object? defaultPricingUnit = null,Object? createdAt = null,Object? updatedAt = null,}) {
   return _then(_ProcessEntity(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -282,7 +286,9 @@ as String,description: freezed == description ? _self.description : description 
 as String?,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
 as bool,billingModeOverride: freezed == billingModeOverride ? _self.billingModeOverride : billingModeOverride // ignore: cast_nullable_to_non_nullable
 as ProcessBillingModeOverride?,includeDamagedInLabour: null == includeDamagedInLabour ? _self.includeDamagedInLabour : includeDamagedInLabour // ignore: cast_nullable_to_non_nullable
-as bool,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
+as bool,defaultRatePaise: null == defaultRatePaise ? _self.defaultRatePaise : defaultRatePaise // ignore: cast_nullable_to_non_nullable
+as int,defaultPricingUnit: null == defaultPricingUnit ? _self.defaultPricingUnit : defaultPricingUnit // ignore: cast_nullable_to_non_nullable
+as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
 as int,updatedAt: null == updatedAt ? _self.updatedAt : updatedAt // ignore: cast_nullable_to_non_nullable
 as int,
   ));

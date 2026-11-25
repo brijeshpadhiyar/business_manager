@@ -6,6 +6,7 @@ import 'package:business_manager/features/security/presentation/bloc/app_lock_cu
 import 'package:business_manager/features/security/presentation/widgets/pin_keypad.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Reusable authentication gate for sensitive workshop operations:
 /// - Restore from Backup (PIN or Biometric)
@@ -14,6 +15,28 @@ import 'package:material_ui/material_ui.dart';
 ///
 /// Immediately returns `true` if App Lock is disabled.
 abstract final class SecurityReauthDialog {
+  /// Verifies authorization for production quantity approvals / re-approvals
+  /// (Rule 6). Prompts PIN/Biometric when PIN is enabled AND
+  /// `requireAuthForApprovals` is true.
+  static Future<({bool approved, bool authorizedViaPin})> verifyForApproval(
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+  }) async {
+    final cubit = context.read<AppLockCubit>();
+    if (!cubit.state.isPinEnabled ||
+        !cubit.state.settings.requireAuthForApprovals) {
+      return (approved: true, authorizedViaPin: false);
+    }
+    final ok = await verify(
+      context,
+      title: title,
+      subtitle: subtitle,
+      allowBiometric: true,
+    );
+    return (approved: ok, authorizedViaPin: ok);
+  }
+
   static Future<bool> verify(
     BuildContext context, {
     required String title,
@@ -124,56 +147,47 @@ final class _SecurityReauthContentState extends State<_SecurityReauthContent> {
         final isLockedOut = state.isLockedOut;
         final showBio = widget.allowBiometric && state.canUseBiometrics;
 
-        return AlertDialog(
-          title: Text(widget.title),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                AppText(
-                  widget.subtitle,
-                  variant: AppTextVariant.bodySmall,
-                  textAlign: TextAlign.center,
+        return AppDialog(
+          title: widget.title,
+          icon: AppIcons.lock,
+          cancelLabel: _verifying ? null : l10n.actionCancel,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AppText(
+                widget.subtitle,
+                variant: AppTextVariant.bodySmall,
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: AppSpacing.md),
+              if (_errorText != null || isLockedOut) ...[
+                AppStatusBadge(
+                  label: isLockedOut
+                      ? l10n.securityLockoutCountdown(
+                          '${state.remainingLockoutSeconds}s',
+                        )
+                      : _errorText!,
+                  tone: AppStatusTone.damaged,
+                  icon: AppIcons.error,
                 ),
-                const SizedBox(height: AppSpacing.md),
-                if (_errorText != null || isLockedOut) ...[
-                  AppStatusBadge(
-                    label: isLockedOut
-                        ? l10n.securityLockoutCountdown(
-                            '${state.remainingLockoutSeconds}s',
-                          )
-                        : _errorText!,
-                    tone: AppStatusTone.damaged,
-                    icon: Icons.error_outline_rounded,
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                ],
-                PinKeypad(
-                  pinLength: pinLen,
-                  enteredLength: _pin.length,
-                  enabled: !_verifying && !isLockedOut,
-                  showBiometricButton: showBio,
-                  onBiometricPressed: _tryBiometric,
-                  biometricTooltip: l10n.securityUseBiometricAction,
-                  onDigitPressed: (d) => _onDigit(d, pinLen),
-                  onBackspacePressed: () {
-                    if (_pin.isNotEmpty) {
-                      setState(() => _pin = _pin.substring(0, _pin.length - 1));
-                    }
-                  },
-                ),
+                const SizedBox(height: AppSpacing.sm),
               ],
-            ),
+              PinKeypad(
+                pinLength: pinLen,
+                enteredLength: _pin.length,
+                enabled: !_verifying && !isLockedOut,
+                showBiometricButton: showBio,
+                onBiometricPressed: _tryBiometric,
+                biometricTooltip: l10n.securityUseBiometricAction,
+                onDigitPressed: (d) => _onDigit(d, pinLen),
+                onBackspacePressed: () {
+                  if (_pin.isNotEmpty) {
+                    setState(() => _pin = _pin.substring(0, _pin.length - 1));
+                  }
+                },
+              ),
+            ],
           ),
-          actions: [
-            AppButton(
-              label: l10n.actionCancel,
-              variant: AppButtonVariant.text,
-              onPressed: _verifying
-                  ? null
-                  : () => Navigator.of(context).pop(false),
-            ),
-          ],
         );
       },
     );

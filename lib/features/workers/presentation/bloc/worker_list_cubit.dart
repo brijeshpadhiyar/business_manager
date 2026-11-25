@@ -25,19 +25,24 @@ final class WorkerListCubit extends Cubit<WorkerListState> {
   WorkerListCubit(this._repository) : super(const WorkerListState());
 
   final WorkerRepository _repository;
+  int _requestSeq = 0;
 
   Future<void> loadWorkers({
     String? searchQuery,
     bool? activeFilter,
     bool clearActiveFilter = false,
   }) async {
+    final seq = ++_requestSeq;
     final nextQuery = searchQuery ?? state.searchQuery;
     final nextFilter = clearActiveFilter
         ? null
         : (activeFilter ?? state.activeFilter);
+    final showLoader =
+        state.status == WorkerListStatus.initial ||
+        state.status == WorkerListStatus.error;
     emit(
       state.copyWith(
-        status: WorkerListStatus.loading,
+        status: showLoader ? WorkerListStatus.loading : state.status,
         searchQuery: nextQuery,
         activeFilter: nextFilter,
         errorMessage: null,
@@ -48,8 +53,10 @@ final class WorkerListCubit extends Cubit<WorkerListState> {
         searchQuery: nextQuery,
         isActiveFilter: nextFilter,
       );
+      if (seq != _requestSeq || isClosed) return;
       emit(state.copyWith(status: WorkerListStatus.loaded, workers: list));
     } catch (e) {
+      if (seq != _requestSeq || isClosed) return;
       emit(
         state.copyWith(
           status: WorkerListStatus.error,

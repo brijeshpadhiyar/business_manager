@@ -1,77 +1,103 @@
-import 'dart:ui';
-
 import 'package:business_manager/core/design_system/app_colors.dart';
+import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
+import 'package:business_manager/core/design_system/app_shadows.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Selective glassmorphism surface using Flutter's native [BackdropFilter].
-///
-/// Use intentionally on dashboard banners, navigation bars, overlays, and
-/// featured summary tiles—never on dense forms or heavy data grids where solid
-/// high-contrast surfaces provide better readability and frame performance.
+/// Elevation mode for [AppGlassSurface] and [AppCard].
+enum AppGlassStyle {
+  /// Raised surface (`AppShadows.md`). Hero banners, KPI tiles, dialogs.
+  full,
+
+  /// Resting surface (`AppShadows.sm`). Dense list rows and nested cards.
+  lightweight,
+}
+
+/// Opaque card surface with a 1px border, soft layered shadow from
+/// `AppShadows`, and optional tactile press animation when interactive.
+/// (Name kept from the v1.3 glass system for API compatibility.)
 final class AppGlassSurface extends StatelessWidget {
   const AppGlassSurface({
     super.key,
     required this.child,
     this.padding = AppSpacing.cardPadding,
     this.borderRadius = AppRadius.lgBorder,
-    this.blurSigma = 12,
+    this.blurSigma = 14,
+    this.glassStyle = AppGlassStyle.full,
     this.tintColor,
     this.borderColor,
     this.gradient,
+    this.elevated = true,
     this.onTap,
+    this.enablePressScale = true,
+    this.isolateRepaintBoundary,
+    this.backdropKey,
   });
 
   final Widget child;
   final EdgeInsetsGeometry padding;
   final BorderRadius borderRadius;
   final double blurSigma;
+  final AppGlassStyle glassStyle;
   final Color? tintColor;
   final Color? borderColor;
   final Gradient? gradient;
+  final bool elevated;
   final VoidCallback? onTap;
+  final bool enablePressScale;
+  final bool? isolateRepaintBoundary;
+  final BackdropKey? backdropKey;
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.surfaceTokens;
+    final shadows = AppShadows.of(context);
+    // v1.4 soft elevation: surfaces are opaque. `blurSigma` / `backdropKey`
+    // are accepted for API compatibility but no BackdropFilter is used.
+    final isFull = glassStyle == AppGlassStyle.full;
+    final useRepaintBoundary = isolateRepaintBoundary ?? false;
 
-    Widget inner = Container(
+    final Widget body = DecoratedBox(
       decoration: BoxDecoration(
-        color: gradient == null ? (tintColor ?? tokens.glassFill) : null,
+        color: gradient == null
+            ? (tintColor ??
+                  (isFull ? tokens.glassFill : tokens.glassFillStrong))
+            : null,
         gradient: gradient,
         borderRadius: borderRadius,
-        border: Border.all(color: borderColor ?? tokens.glassBorder, width: 1),
-        boxShadow: [
-          BoxShadow(
-            color: tokens.cardShadow,
-            blurRadius: 18,
-            offset: const Offset(0, 6),
-          ),
-        ],
+        border: Border.all(color: borderColor ?? tokens.glassBorder),
+        boxShadow: elevated ? (isFull ? shadows.md : shadows.sm) : null,
       ),
       child: onTap != null
           ? Material(
               type: MaterialType.transparency,
+              borderRadius: borderRadius,
+              clipBehavior: Clip.antiAlias,
               child: InkWell(
                 onTap: onTap,
                 borderRadius: borderRadius,
                 child: Padding(padding: padding, child: child),
               ),
             )
-          : Padding(padding: padding, child: child),
+          // Own transparent Material so ListTile ink/backgrounds paint on top
+          // of the opaque surface instead of being hidden behind it.
+          : Material(
+              type: MaterialType.transparency,
+              borderRadius: borderRadius,
+              child: Padding(padding: padding, child: child),
+            ),
     );
 
-    if (blurSigma > 0) {
-      inner = ClipRRect(
-        borderRadius: borderRadius,
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
-          child: inner,
-        ),
-      );
+    Widget container = body;
+    if (useRepaintBoundary) {
+      container = RepaintBoundary(child: container);
     }
 
-    return inner;
+    if (onTap != null && enablePressScale) {
+      container = AppPressable(pressedScale: 0.982, child: container);
+    }
+
+    return container;
   }
 }

@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:business_manager/core/platform/platform_env.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/features/notifications/data/repositories/notification_settings_repository.dart';
 import 'package:business_manager/features/notifications/domain/calculators/notification_plan_calculator.dart';
@@ -25,7 +24,7 @@ final class FlutterLocalNotificationsAdapter
   String? _pendingLaunchRoute;
 
   static bool get _isSupportedPlatform =>
-      !Platform.environment.containsKey('FLUTTER_TEST') && Platform.isAndroid;
+      !isFlutterTestEnv && isAndroidPlatform;
 
   AndroidFlutterLocalNotificationsPlugin? get _android => _plugin
       .resolvePlatformSpecificImplementation<

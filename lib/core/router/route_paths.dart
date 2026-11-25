@@ -1,7 +1,14 @@
 abstract final class RoutePaths {
   static const String home = '/';
+  static const String dashboard = '/dashboard';
+  static const String lots = '/lots';
+  static const String workers = '/workers';
+  static const String designsColours = '/designs-colours';
   static const String showcase = '/showcase';
+  static const String lotCreate = '/lots/new';
   static const String lotDetailPattern = '/lots/:id';
+  static const String lotColourDetailPattern = '/lots/:id/colours/:colourId';
+  static const String lotRoutingPattern = '/lots/:id/routing';
 
   // Processes & Inventory standalone routes (clean back navigation from Dashboard/Settings)
   static const String processes = '/processes';
@@ -58,7 +65,29 @@ abstract final class RoutePaths {
   // V1.2 — Daily Production Summary
   static const String dailySummary = '/daily-summary';
 
+  // V1.4 — Complete Production History, Lot Tracking, QC Inspection & Ledger
+  static const String productionHistory = '/history';
+  static const String lotHistoryPattern = '/lots/:id/history';
+  static const String lotTimelinePattern = '/lots/:id/timeline';
+  static const String workerProductionHistory = '/history/workers';
+  static const String processProductionHistory = '/history/processes';
+  static const String inspectionQueue = '/stock/inspections';
+  static const String productionTransactionDetailPattern =
+      '/history/tx/:kind/:id';
+
   static String lotDetail(String lotId) => '/lots/$lotId';
+  static String lotHistory(String lotId) => '/lots/$lotId/history';
+  static String lotTimeline(String lotId) => '/lots/$lotId/timeline';
+  static String productionTransactionDetail(String kindSegment, String id) =>
+      '/history/tx/${Uri.encodeComponent(kindSegment)}/${Uri.encodeComponent(id)}';
+  static String lotColourDetail(String lotId, String colourId) =>
+      '/lots/$lotId/colours/$colourId';
+  static String lotRouting(String lotId, {String? designColourId}) {
+    final base = '/lots/$lotId/routing';
+    return designColourId != null
+        ? '$base?colourId=${Uri.encodeQueryComponent(designColourId)}'
+        : base;
+  }
   static String processDetail(String processId) => '/processes/$processId';
   static String processEdit(String processId) => '/processes/$processId/edit';
 

@@ -2,6 +2,7 @@ import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
+import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/validation/validation.dart';
@@ -11,6 +12,7 @@ import 'package:business_manager/features/stock_movements/domain/repositories/st
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Audited Damaged-to-Good repair adjustment screen.
 final class DamagedRepairPage extends StatefulWidget {
@@ -138,7 +140,7 @@ final class _DamagedRepairPageState extends State<DamagedRepairPage> {
       return AppScaffold(
         title: l10n.stockRepairHeading,
         body: AppEmptyState(
-          icon: Icons.verified_outlined,
+          icon: AppIcons.qcPassed,
           title: l10n.stockNoDamagedAvailable,
         ),
       );
@@ -150,6 +152,13 @@ final class _DamagedRepairPageState extends State<DamagedRepairPage> {
 
     return AppScaffold(
       title: l10n.stockRepairHeading,
+      actions: [
+        AppIconButton(
+          icon: AppIcons.qcInspect,
+          tooltip: l10n.navInspectionQueue,
+          onPressed: () => context.push(RoutePaths.inspectionQueue),
+        ),
+      ],
       body: Form(
         key: _formKey,
         autovalidateMode: _submittedOnce
@@ -254,7 +263,7 @@ final class _DamagedRepairPageState extends State<DamagedRepairPage> {
                   const SizedBox(height: AppSpacing.lg),
                   AppButton(
                     label: l10n.actionSave,
-                    icon: Icons.check_rounded,
+                    icon: AppIcons.confirm,
                     isExpanded: true,
                     isLoading: _saving,
                     onPressed: _submit,

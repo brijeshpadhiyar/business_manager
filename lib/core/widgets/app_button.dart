@@ -1,14 +1,18 @@
+import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/widgets/app_icon_pop.dart';
+import 'package:business_manager/core/widgets/app_loader.dart';
 
 enum AppButtonVariant { primary, secondary, outlined, destructive, text }
 
-/// Touch-friendly Material 3 button with variants, icon, disabled, loading,
-/// graceful bilingual wrapping (English & Gujarati), and subtle tactile feedback.
-final class AppButton extends StatefulWidget {
+/// Touch-friendly Material 3 glass-compatible button with variants, icon,
+/// disabled, smooth AnimatedSwitcher loading state, bilingual wrapping, and
+/// tactile press-scale feedback.
+final class AppButton extends StatelessWidget {
   const AppButton({
     super.key,
     required this.label,
@@ -27,44 +31,53 @@ final class AppButton extends StatefulWidget {
   final bool isExpanded;
 
   @override
-  State<AppButton> createState() => _AppButtonState();
-}
-
-final class _AppButtonState extends State<AppButton> {
-  bool _pressed = false;
-
-  @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final effectiveOnPressed = widget.isLoading ? null : widget.onPressed;
+    final tokens = context.surfaceTokens;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final effectiveOnPressed = isLoading ? null : onPressed;
+
+    final Widget leadingWidget;
+    if (isLoading) {
+      leadingWidget = SizedBox(
+        key: const ValueKey<String>('loading'),
+        width: AppSizing.iconSm,
+        height: AppSizing.iconSm,
+        child: AppSpinner(
+          size: AppSizing.iconSm,
+          strokeWidth: 2,
+          color: switch (variant) {
+            AppButtonVariant.primary => colorScheme.onPrimary,
+            AppButtonVariant.secondary => colorScheme.onSecondaryContainer,
+            AppButtonVariant.destructive => colorScheme.onError,
+            AppButtonVariant.outlined ||
+            AppButtonVariant.text => colorScheme.primary,
+          },
+        ),
+      );
+    } else if (icon != null) {
+      leadingWidget = AppIconPop(
+        key: ValueKey<IconData>(icon!),
+        child: Icon(icon, size: AppSizing.iconMd),
+      );
+    } else {
+      leadingWidget = const SizedBox.shrink(key: ValueKey<String>('none'));
+    }
 
     final Widget content = Row(
-      mainAxisSize: widget.isExpanded ? MainAxisSize.max : MainAxisSize.min,
+      mainAxisSize: isExpanded ? MainAxisSize.max : MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        if (widget.isLoading) ...[
-          SizedBox(
-            width: AppSizing.iconSm,
-            height: AppSizing.iconSm,
-            child: CircularProgressIndicator(
-              strokeWidth: 2,
-              color: switch (widget.variant) {
-                AppButtonVariant.primary => colorScheme.onPrimary,
-                AppButtonVariant.secondary => colorScheme.onSecondaryContainer,
-                AppButtonVariant.destructive => colorScheme.onError,
-                AppButtonVariant.outlined ||
-                AppButtonVariant.text => colorScheme.primary,
-              },
-            ),
+        if (isLoading || icon != null) ...[
+          AnimatedSwitcher(
+            duration: AppMotion.duration(context, AppMotion.fast),
+            child: leadingWidget,
           ),
-          const SizedBox(width: AppSpacing.sm),
-        ] else if (widget.icon != null) ...[
-          Icon(widget.icon, size: AppSizing.iconMd),
           const SizedBox(width: AppSpacing.sm),
         ],
         Flexible(
           child: Text(
-            widget.label,
+            label,
             textAlign: TextAlign.center,
             softWrap: true,
             maxLines: 2,
@@ -75,7 +88,7 @@ final class _AppButtonState extends State<AppButton> {
     );
 
     final minSize = Size(
-      widget.isExpanded ? double.infinity : 0,
+      isExpanded ? double.infinity : 0,
       AppSizing.buttonHeight,
     );
     const shape = RoundedRectangleBorder(borderRadius: AppRadius.mdBorder);
@@ -84,13 +97,15 @@ final class _AppButtonState extends State<AppButton> {
       vertical: 10,
     );
 
-    final button = switch (widget.variant) {
+    final button = switch (variant) {
       AppButtonVariant.primary => FilledButton(
         onPressed: effectiveOnPressed,
         style: FilledButton.styleFrom(
           minimumSize: minSize,
           padding: padding,
           shape: shape,
+          elevation: 2,
+          shadowColor: colorScheme.primary.withValues(alpha: 0.28),
           tapTargetSize: MaterialTapTargetSize.padded,
         ),
         child: content,
@@ -100,7 +115,13 @@ final class _AppButtonState extends State<AppButton> {
         style: FilledButton.styleFrom(
           minimumSize: minSize,
           padding: padding,
-          shape: shape,
+          shape: RoundedRectangleBorder(
+            borderRadius: AppRadius.mdBorder,
+            side: BorderSide(color: tokens.glassBorder, width: 0.9),
+          ),
+          backgroundColor: colorScheme.secondaryContainer.withValues(
+            alpha: isDark ? 0.72 : 0.82,
+          ),
           tapTargetSize: MaterialTapTargetSize.padded,
         ),
         child: content,
@@ -110,7 +131,9 @@ final class _AppButtonState extends State<AppButton> {
         style: OutlinedButton.styleFrom(
           minimumSize: minSize,
           padding: padding,
+          backgroundColor: tokens.glassFill,
           shape: shape,
+          side: BorderSide(color: Theme.of(context).colorScheme.outline),
           tapTargetSize: MaterialTapTargetSize.padded,
         ),
         child: content,
@@ -139,18 +162,11 @@ final class _AppButtonState extends State<AppButton> {
       ),
     };
 
-    if (effectiveOnPressed == null || AppMotion.reduceMotion(context)) {
-      return button;
-    }
-
-    return Listener(
-      onPointerDown: (_) => setState(() => _pressed = true),
-      onPointerUp: (_) => setState(() => _pressed = false),
-      onPointerCancel: (_) => setState(() => _pressed = false),
-      child: AnimatedScale(
-        scale: _pressed ? 0.97 : 1.0,
-        duration: const Duration(milliseconds: 90),
-        curve: Curves.easeOut,
+    return AppIconPopHost(
+      enabled: effectiveOnPressed != null,
+      child: AppPressable(
+        enabled: effectiveOnPressed != null,
+        pressedScale: 0.96,
         child: button,
       ),
     );

@@ -50,3 +50,10 @@ app.*.map.json
 # Generated release APKs (keep build scripts and docs tracked)
 /build/releases/
 *.apk
+
+# Android release signing secrets (NEVER commit)
+android/key.properties
+key.properties
+*.jks
+*.keystore
+*.p12

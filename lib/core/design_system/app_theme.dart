@@ -4,52 +4,89 @@ import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/design_system/app_typography.dart';
+import 'package:cupertino_ui/cupertino_ui.dart'
+    show CupertinoPageTransitionsBuilder;
 import 'package:material_ui/material_ui.dart';
 
-/// Centralized Material 3 Light and Dark theme definitions built on
-/// `package:material_ui/material_ui.dart` with StitchFlow's brand identity,
-/// selective glass tokens, and high-contrast bilingual readability.
+/// Centralized Material 3 light and dark themes for the v1.4 "Indigo Thread"
+/// color system: solid surfaces, soft layered shadows (see `AppShadows`) and
+/// WCAG AA text contrast for bilingual (Gujarati/English) readability.
 abstract final class AppTheme {
-  static ThemeData light() => _build(Brightness.light);
+  static final ThemeData _lightTheme = _build(Brightness.light);
+  static final ThemeData _darkTheme = _build(Brightness.dark);
 
-  static ThemeData dark() => _build(Brightness.dark);
+  static ThemeData light() => _lightTheme;
+
+  static ThemeData dark() => _darkTheme;
 
   static ThemeData _build(Brightness brightness) {
     final isDark = brightness == Brightness.dark;
     final baseScheme = ColorScheme.fromSeed(
-      seedColor: AppColors.brandNavy,
-      secondary: AppColors.brandTeal,
-      tertiary: AppColors.brandAmber,
+      seedColor: AppColors.brandPrimary,
+      secondary: AppColors.brandSecondary,
+      tertiary: AppColors.brandAccent,
       brightness: brightness,
     );
     final colorScheme = isDark
         ? baseScheme.copyWith(
-            secondary: AppColors.brandTeal,
-            tertiary: AppColors.brandAmber,
-            error: const Color(0xFFFCA5A5),
+            primary: AppColors.indigo400,
+            onPrimary: AppColors.indigo950,
+            primaryContainer: AppColors.indigo900,
+            onPrimaryContainer: AppColors.indigo100,
+            secondary: AppColors.emerald400,
+            onSecondary: AppColors.emerald950,
+            secondaryContainer: AppColors.emerald900,
+            onSecondaryContainer: AppColors.emerald100,
+            tertiary: AppColors.saffron400,
+            onTertiary: AppColors.saffron900,
+            error: AppColors.darkDamaged,
             onError: const Color(0xFF450A0A),
             errorContainer: AppColors.darkDamagedContainer,
-            onErrorContainer: const Color(0xFFFEE2E2),
+            onErrorContainer: AppColors.lightDamagedContainer,
             surface: AppColors.darkSurface,
-            surfaceContainerLowest: const Color(0xFF0A101C),
+            onSurface: AppColors.slate100,
+            onSurfaceVariant: AppColors.slate400,
+            surfaceContainerLowest: AppColors.darkSurfaceLowest,
             surfaceContainerLow: AppColors.darkSurfaceLow,
-            surfaceContainer: const Color(0xFF162235),
+            surfaceContainer: AppColors.darkSurfaceContainer,
             surfaceContainerHigh: AppColors.darkSurfaceHigh,
+            surfaceContainerHighest: AppColors.darkSurfaceHighest,
+            outline: AppColors.darkBorderStrong,
             outlineVariant: AppColors.darkBorder,
+            inverseSurface: AppColors.slate100,
+            onInverseSurface: AppColors.slate900,
+            inversePrimary: AppColors.indigo600,
           )
         : baseScheme.copyWith(
-            primary: AppColors.brandNavy,
-            secondary: AppColors.brandTeal,
-            tertiary: AppColors.brandAmber,
+            primary: AppColors.indigo600,
+            onPrimary: Colors.white,
+            primaryContainer: AppColors.indigo100,
+            onPrimaryContainer: AppColors.indigo900,
+            secondary: AppColors.emerald600,
+            onSecondary: Colors.white,
+            secondaryContainer: AppColors.emerald100,
+            onSecondaryContainer: AppColors.emerald900,
+            tertiary: AppColors.saffron500,
+            onTertiary: AppColors.slate900,
+            tertiaryContainer: AppColors.saffron100,
+            onTertiaryContainer: AppColors.saffron800,
             error: AppColors.lightDamaged,
             onError: Colors.white,
             errorContainer: AppColors.lightDamagedContainer,
-            onErrorContainer: const Color(0xFF7F1D1D),
-            surface: AppColors.brandSoftWhite,
+            onErrorContainer: AppColors.darkDamagedContainer,
+            surface: AppColors.lightBackground,
+            onSurface: AppColors.slate900,
+            onSurfaceVariant: AppColors.slate600,
             surfaceContainerLowest: AppColors.lightCardSurface,
             surfaceContainerLow: AppColors.lightCardSurface,
-            surfaceContainer: const Color(0xFFF0F4F8),
+            surfaceContainer: AppColors.slate100,
+            surfaceContainerHigh: AppColors.slate100,
+            surfaceContainerHighest: AppColors.slate200,
+            outline: AppColors.lightBorderStrong,
             outlineVariant: AppColors.lightBorder,
+            inverseSurface: AppColors.slate800,
+            onInverseSurface: AppColors.slate50,
+            inversePrimary: AppColors.indigo300,
           );
     final textTheme = AppTypography.buildTextTheme(colorScheme);
     final semanticColors = isDark
@@ -59,9 +96,13 @@ abstract final class AppTheme {
         ? AppSurfaceTokens.dark
         : AppSurfaceTokens.light;
 
+    final glassInputBorderColor = isDark
+        ? AppColors.darkBorderStrong
+        : AppColors.lightBorderStrong;
+
     final outlineBorder = OutlineInputBorder(
       borderRadius: AppRadius.mdBorder,
-      borderSide: BorderSide(color: colorScheme.outlineVariant),
+      borderSide: BorderSide(color: glassInputBorderColor),
     );
 
     return ThemeData(
@@ -74,30 +115,46 @@ abstract final class AppTheme {
       textTheme: textTheme,
       extensions: [semanticColors, surfaceTokens],
       visualDensity: VisualDensity.standard,
+      // Native-feeling navigation (used by every pushed page via
+      // `AppMotion.buildPage`): Android follows the predictive back gesture,
+      // iOS/macOS keep edge-swipe back, desktop/web use a light fade-forward.
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.windows: FadeForwardsPageTransitionsBuilder(),
+          TargetPlatform.linux: FadeForwardsPageTransitionsBuilder(),
+          TargetPlatform.fuchsia: FadeForwardsPageTransitionsBuilder(),
+        },
+      ),
+      focusColor: colorScheme.primary.withValues(alpha: isDark ? 0.24 : 0.14),
+      hoverColor: colorScheme.primary.withValues(alpha: isDark ? 0.10 : 0.05),
       appBarTheme: AppBarTheme(
         toolbarHeight: AppSizing.appBarHeight,
         elevation: AppElevation.none,
-        scrolledUnderElevation: AppElevation.low,
+        scrolledUnderElevation: AppElevation.none,
         surfaceTintColor: Colors.transparent,
         centerTitle: false,
-        backgroundColor: surfaceTokens.navGlassFill,
+        backgroundColor: Colors.transparent,
         foregroundColor: colorScheme.onSurface,
         titleTextStyle: textTheme.titleLarge,
       ),
       cardTheme: CardThemeData(
         elevation: AppElevation.none,
         margin: EdgeInsets.zero,
-        color: colorScheme.surfaceContainerLow,
+        color: surfaceTokens.glassFill,
         shape: RoundedRectangleBorder(
           borderRadius: AppRadius.lgBorder,
-          side: BorderSide(color: colorScheme.outlineVariant),
+          side: BorderSide(color: surfaceTokens.glassBorder),
         ),
       ),
       navigationBarTheme: NavigationBarThemeData(
         height: 70,
-        backgroundColor: surfaceTokens.navGlassFill,
-        indicatorColor: colorScheme.secondary.withValues(
-          alpha: isDark ? 0.24 : 0.16,
+        backgroundColor: Colors.transparent,
+        indicatorColor: colorScheme.primaryContainer,
+        indicatorShape: const RoundedRectangleBorder(
+          borderRadius: AppRadius.fullBorder,
         ),
         surfaceTintColor: Colors.transparent,
         elevation: AppElevation.none,
@@ -112,10 +169,9 @@ abstract final class AppTheme {
         }),
       ),
       navigationRailTheme: NavigationRailThemeData(
-        backgroundColor: colorScheme.surfaceContainerLow,
-        indicatorColor: colorScheme.secondary.withValues(
-          alpha: isDark ? 0.24 : 0.16,
-        ),
+        backgroundColor: Colors.transparent,
+        indicatorColor: colorScheme.primaryContainer,
+        selectedIconTheme: IconThemeData(color: colorScheme.onPrimaryContainer),
         selectedLabelTextStyle: textTheme.labelSmall?.copyWith(
           fontWeight: FontWeight.w700,
           color: colorScheme.primary,
@@ -125,31 +181,35 @@ abstract final class AppTheme {
         ),
       ),
       navigationDrawerTheme: NavigationDrawerThemeData(
-        backgroundColor: colorScheme.surfaceContainerLow,
-        indicatorColor: colorScheme.secondary.withValues(
-          alpha: isDark ? 0.24 : 0.15,
-        ),
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        indicatorColor: colorScheme.primaryContainer,
         indicatorShape: const RoundedRectangleBorder(
           borderRadius: AppRadius.mdBorder,
         ),
       ),
       chipTheme: ChipThemeData(
+        backgroundColor: surfaceTokens.glassFill,
         shape: const RoundedRectangleBorder(borderRadius: AppRadius.fullBorder),
         side: BorderSide(color: colorScheme.outlineVariant),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        selectedColor: colorScheme.secondary.withValues(
-          alpha: isDark ? 0.26 : 0.14,
-        ),
-        checkmarkColor: colorScheme.secondary,
+        selectedColor: colorScheme.primaryContainer,
+        checkmarkColor: colorScheme.onPrimaryContainer,
         labelStyle: textTheme.labelMedium,
       ),
       segmentedButtonTheme: SegmentedButtonThemeData(
         style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return colorScheme.primaryContainer;
+            }
+            return surfaceTokens.glassFill;
+          }),
           shape: const WidgetStatePropertyAll(
             RoundedRectangleBorder(borderRadius: AppRadius.mdBorder),
           ),
           side: WidgetStatePropertyAll(
-            BorderSide(color: colorScheme.outlineVariant),
+            BorderSide(color: surfaceTokens.glassBorder),
           ),
           padding: const WidgetStatePropertyAll(
             EdgeInsets.symmetric(horizontal: 10, vertical: 8),
@@ -159,7 +219,7 @@ abstract final class AppTheme {
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: colorScheme.surfaceContainerLowest,
+        fillColor: surfaceTokens.inputGlassFill,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md + 2,
           vertical: 14,
@@ -169,7 +229,7 @@ abstract final class AppTheme {
           color: colorScheme.onSurfaceVariant,
         ),
         floatingLabelStyle: textTheme.bodySmall?.copyWith(
-          color: colorScheme.secondary,
+          color: colorScheme.primary,
           fontWeight: FontWeight.w600,
         ),
         hintStyle: textTheme.bodyMedium?.copyWith(
@@ -185,7 +245,7 @@ abstract final class AppTheme {
         enabledBorder: outlineBorder,
         focusedBorder: OutlineInputBorder(
           borderRadius: AppRadius.mdBorder,
-          borderSide: BorderSide(color: colorScheme.secondary, width: 1.6),
+          borderSide: BorderSide(color: colorScheme.primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: AppRadius.mdBorder,
@@ -212,12 +272,13 @@ abstract final class AppTheme {
         style: OutlinedButton.styleFrom(
           minimumSize: const Size(0, AppSizing.buttonHeight),
           tapTargetSize: MaterialTapTargetSize.padded,
+          backgroundColor: surfaceTokens.glassFill,
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.lg,
             vertical: 10,
           ),
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdBorder),
-          side: BorderSide(color: colorScheme.outlineVariant),
+          side: BorderSide(color: colorScheme.outline),
           textStyle: textTheme.labelLarge,
         ),
       ),
@@ -238,16 +299,18 @@ abstract final class AppTheme {
         color: colorScheme.onSurfaceVariant,
       ),
       dialogTheme: DialogThemeData(
-        backgroundColor: colorScheme.surfaceContainerLow,
+        backgroundColor: surfaceTokens.dialogGlassFill,
+        surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: AppRadius.lgBorder,
-          side: BorderSide(color: colorScheme.outlineVariant),
+          borderRadius: AppRadius.xlBorder,
+          side: BorderSide(color: surfaceTokens.glassBorder),
         ),
       ),
-      bottomSheetTheme: BottomSheetThemeData(
-        showDragHandle: true,
-        backgroundColor: colorScheme.surfaceContainerLow,
-        shape: const RoundedRectangleBorder(
+      bottomSheetTheme: const BottomSheetThemeData(
+        showDragHandle: false,
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(AppRadius.xl),
           ),
@@ -256,10 +319,19 @@ abstract final class AppTheme {
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
         shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdBorder),
-        backgroundColor: isDark
-            ? AppColors.darkSurfaceHigh
-            : AppColors.brandNavy,
-        contentTextStyle: textTheme.bodyMedium?.copyWith(color: Colors.white),
+        backgroundColor: colorScheme.inverseSurface,
+        actionTextColor: colorScheme.inversePrimary,
+        contentTextStyle: textTheme.bodyMedium?.copyWith(
+          color: colorScheme.onInverseSurface,
+        ),
+      ),
+      // Determinate/linear progress (export, backup) matches the brand spinner.
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: colorScheme.primary,
+        linearTrackColor: colorScheme.primary.withValues(alpha: 0.14),
+        circularTrackColor: colorScheme.primary.withValues(alpha: 0.14),
+        linearMinHeight: 4,
+        borderRadius: AppRadius.fullBorder,
       ),
       dividerTheme: DividerThemeData(
         color: colorScheme.outlineVariant,

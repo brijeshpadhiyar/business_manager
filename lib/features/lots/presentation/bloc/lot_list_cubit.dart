@@ -25,19 +25,24 @@ final class LotListCubit extends Cubit<LotListState> {
   LotListCubit(this._repository) : super(const LotListState());
 
   final LotRepository _repository;
+  int _requestSeq = 0;
 
   Future<void> loadLots({
     String? searchQuery,
     LotStatus? statusFilter,
     bool clearStatusFilter = false,
   }) async {
+    final seq = ++_requestSeq;
     final nextQuery = searchQuery ?? state.searchQuery;
     final nextStatus = clearStatusFilter
         ? null
         : (statusFilter ?? state.statusFilter);
+    final showLoader =
+        state.status == LotListStatus.initial ||
+        state.status == LotListStatus.error;
     emit(
       state.copyWith(
-        status: LotListStatus.loading,
+        status: showLoader ? LotListStatus.loading : state.status,
         searchQuery: nextQuery,
         statusFilter: nextStatus,
         errorMessage: null,
@@ -48,8 +53,10 @@ final class LotListCubit extends Cubit<LotListState> {
         searchQuery: nextQuery,
         status: nextStatus,
       );
+      if (seq != _requestSeq || isClosed) return;
       emit(state.copyWith(status: LotListStatus.loaded, lots: lots));
     } catch (e) {
+      if (seq != _requestSeq || isClosed) return;
       emit(
         state.copyWith(status: LotListStatus.error, errorMessage: e.toString()),
       );

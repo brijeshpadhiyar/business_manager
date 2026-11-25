@@ -6,6 +6,7 @@ import 'package:business_manager/features/reports/domain/entities/report_filter.
 import 'package:business_manager/features/reports/domain/services/report_export_service.dart';
 import 'package:business_manager/features/reports/presentation/bloc/reports_cubit.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Bottom sheet / adaptive modal offering offline Print/Save-PDF, Excel (.xlsx),
 /// Full Multi-Sheet Excel Workbook, and Gujarati-safe UTF-8 BOM CSV export.
@@ -32,7 +33,7 @@ final class ReportExportSheet {
                 padding: const EdgeInsets.all(AppSpacing.sm),
                 child: Row(
                   children: [
-                    const Icon(Icons.info_outline_rounded, size: 20),
+                    const Icon(AppIcons.info, size: 20),
                     const SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: AppText(
@@ -46,7 +47,7 @@ final class ReportExportSheet {
               const SizedBox(height: AppSpacing.sm),
             ],
             _ExportOptionTile(
-              icon: Icons.print_rounded,
+              icon: AppIcons.print,
               title: l10n.reportExportPrintPdfTitle,
               subtitle: l10n.reportExportPrintPdfSubtitle,
               onTap: () async {
@@ -68,7 +69,7 @@ final class ReportExportSheet {
             ),
             const SizedBox(height: AppSpacing.xs),
             _ExportOptionTile(
-              icon: Icons.table_view_rounded,
+              icon: AppIcons.excel,
               title: l10n.reportExportExcelTitle,
               subtitle: l10n.reportExportExcelSubtitle,
               onTap: () async {
@@ -90,7 +91,7 @@ final class ReportExportSheet {
             ),
             const SizedBox(height: AppSpacing.xs),
             _ExportOptionTile(
-              icon: Icons.library_books_outlined,
+              icon: AppIcons.pdf,
               title: l10n.reportExportFullWorkbookTitle,
               subtitle: l10n.reportExportFullWorkbookSubtitle,
               onTap: () async {
@@ -113,7 +114,7 @@ final class ReportExportSheet {
             ),
             const SizedBox(height: AppSpacing.xs),
             _ExportOptionTile(
-              icon: Icons.description_outlined,
+              icon: AppIcons.document,
               title: l10n.reportExportCsvTitle,
               subtitle: l10n.reportExportCsvSubtitle,
               onTap: () async {
@@ -189,7 +190,7 @@ final class _ExportOptionTile extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(Icons.chevron_right_rounded, size: 20),
+          const Icon(AppIcons.chevronRight, size: 20),
         ],
       ),
     );

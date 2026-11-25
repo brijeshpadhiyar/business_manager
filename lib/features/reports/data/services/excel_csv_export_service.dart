@@ -1,20 +1,18 @@
 import 'dart:convert';
-import 'dart:io';
-import 'dart:isolate';
 
+import 'package:business_manager/core/platform/platform_env.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/features/reports/data/services/android_report_print_channel.dart';
+import 'package:business_manager/features/reports/data/services/report_export_platform.dart';
 import 'package:business_manager/features/reports/data/services/report_html_builder.dart';
 import 'package:business_manager/features/reports/domain/entities/advanced_report_entities.dart';
 import 'package:business_manager/features/reports/domain/entities/report_filter.dart';
 import 'package:business_manager/features/reports/domain/services/report_export_service.dart';
 import 'package:business_manager/features/security/presentation/bloc/app_lock_cubit.dart';
 import 'package:excel_plus/excel_plus.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:injectable/injectable.dart';
-import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 /// Sendable sheet payload for background Isolate `.xlsx` / `.csv` generation.
 final class ExportSheetData {
@@ -42,9 +40,6 @@ final class ExcelCsvExportService implements ReportExportService {
 
   static const ReportHtmlBuilder _htmlBuilder = ReportHtmlBuilder();
 
-  static bool get _isFlutterTest =>
-      Platform.environment.containsKey('FLUTTER_TEST');
-
   @override
   Future<ReportExportResult> printOrSavePdf({
     required AdvancedReportsBundle bundle,
@@ -63,14 +58,19 @@ final class ExcelCsvExportService implements ReportExportService {
     );
     final jobName = 'StitchFlow_${category.name}_$stamp';
 
-    final ok = await _appLockCubit.runWithSystemPicker(
-      () => _printChannel.printHtml(jobName: jobName, html: html),
+    final ok = await printReportHtmlPlatform(
+      jobName: jobName,
+      html: html,
+      androidPrintChannel: _printChannel,
+      runWithPicker: (action) => _appLockCubit.runWithSystemPicker(action),
     );
     return ReportExportResult(
       success: ok,
       message: ok
           ? jobName
-          : 'Print dialog is only available on Android devices.',
+          : (kIsWeb
+                ? 'Please allow pop-ups in your browser to print or Save as PDF.'
+                : 'Print dialog is only available on Android and Web browsers.'),
     );
   }
 
@@ -88,22 +88,20 @@ final class ExcelCsvExportService implements ReportExportService {
       fullWorkbook: fullWorkbook,
     );
     final totalRows = sheets.fold<int>(0, (s, sh) => s + sh.rows.length);
-    final bytes = await Isolate.run(() => buildXlsxBytes(sheets));
+    final bytes = await runComputeIsolate(() => buildXlsxBytes(sheets));
 
     final stamp = IstDateTimeHelper.formatIstFileTimestamp(
       bundle.generatedAtUtcMillis,
     );
     final slug = fullWorkbook ? 'full_workbook' : category.name;
     final fileName = 'stitchflow_report_${slug}_$stamp.xlsx';
-    final filePath = await _writeTempExportFile(fileName, bytes);
-
-    if (!_isFlutterTest) {
-      await _appLockCubit.runWithSystemPicker(
-        () => SharePlus.instance.share(
-          ShareParams(files: [XFile(filePath)], text: fileName),
-        ),
-      );
-    }
+    final filePath = await deliverExportedBytes(
+      fileName: fileName,
+      bytes: bytes,
+      mimeType:
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      runWithPicker: (action) => _appLockCubit.runWithSystemPicker(action),
+    );
 
     return ReportExportResult(
       success: true,
@@ -126,21 +124,20 @@ final class ExcelCsvExportService implements ReportExportService {
       fullWorkbook: false,
     );
     final primarySheet = sheets.first;
-    final bytes = await Isolate.run(() => buildCsvBytesWithBom(primarySheet));
+    final bytes = await runComputeIsolate(
+      () => buildCsvBytesWithBom(primarySheet),
+    );
 
     final stamp = IstDateTimeHelper.formatIstFileTimestamp(
       bundle.generatedAtUtcMillis,
     );
     final fileName = 'stitchflow_report_${category.name}_$stamp.csv';
-    final filePath = await _writeTempExportFile(fileName, bytes);
-
-    if (!_isFlutterTest) {
-      await _appLockCubit.runWithSystemPicker(
-        () => SharePlus.instance.share(
-          ShareParams(files: [XFile(filePath)], text: fileName),
-        ),
-      );
-    }
+    final filePath = await deliverExportedBytes(
+      fileName: fileName,
+      bytes: bytes,
+      mimeType: 'text/csv;charset=utf-8',
+      runWithPicker: (action) => _appLockCubit.runWithSystemPicker(action),
+    );
 
     return ReportExportResult(
       success: true,
@@ -148,19 +145,6 @@ final class ExcelCsvExportService implements ReportExportService {
       message: fileName,
       rowCount: primarySheet.rows.length,
     );
-  }
-
-  Future<String> _writeTempExportFile(String fileName, List<int> bytes) async {
-    final baseDir = _isFlutterTest
-        ? Directory.systemTemp
-        : await getTemporaryDirectory();
-    final exportDir = Directory(p.join(baseDir.path, 'stitchflow_exports'));
-    if (!exportDir.existsSync()) {
-      await exportDir.create(recursive: true);
-    }
-    final outFile = File(p.join(exportDir.path, fileName));
-    await outFile.writeAsBytes(bytes, flush: true);
-    return outFile.path;
   }
 
   /// Pure-Dart Excel `.xlsx` encoder (safe for `Isolate.run` and unit tests).
@@ -253,6 +237,9 @@ final class ExcelCsvExportService implements ReportExportService {
         _inventoryColoursSheet(bundle, isGu: isGu),
         _labourSheet(bundle, isGu: isGu),
         _paymentsSheet(bundle, isGu: isGu),
+        _productionHistorySheet(bundle, isGu: isGu),
+        _pendingInspectionSheet(bundle, isGu: isGu),
+        _rejectionsSheet(bundle, isGu: isGu),
       ];
     }
 
@@ -324,8 +311,9 @@ final class ExcelCsvExportService implements ReportExportService {
           ? const [
               'કારીગર',
               'ઇશ્યુ',
-              'સારા પરત',
-              'નુકસાન',
+              'મંજૂર (Accepted)',
+              'રિજેક્ટ / નુકસાન',
+              'તપાસ બાકી',
               'ગુમ/ઘટ',
               'હાલનું બાકી',
               'સમય મજૂરી (₹)',
@@ -336,14 +324,15 @@ final class ExcelCsvExportService implements ReportExportService {
           : const [
               'Worker',
               'Period Issued',
-              'Period Good Returned',
-              'Period Damaged',
+              'Accepted Qty',
+              'Rejected / Damaged Qty',
+              'Pending Inspection Qty',
               'Period Lost & Shortage',
-              'Current Pending Qty',
-              'Period Labour Cost (INR)',
-              'Period Net Payments (INR)',
-              'Current Outstanding Payable (INR)',
-              'Current Advance Credit (INR)',
+              'Current Outstanding Qty',
+              'Earned Amount (INR)',
+              'Paid Amount (INR)',
+              'Outstanding Payable (INR)',
+              'Advance Credit (INR)',
             ],
       rows: [
         for (final w in b.workerPerformance)
@@ -352,6 +341,7 @@ final class ExcelCsvExportService implements ReportExportService {
             w.periodIssuedQty,
             w.periodGoodReturnedQty,
             w.periodDamagedQty,
+            w.currentPendingInspectionQty,
             w.periodLostShortageQty,
             w.currentPendingQty,
             w.periodLabourEarnedPaise / 100.0,
@@ -373,8 +363,9 @@ final class ExcelCsvExportService implements ReportExportService {
           ? const [
               'પ્રક્રિયા',
               'ઇશ્યુ',
-              'પૂર્ણ (સારા)',
-              'નુકસાન',
+              'મંજૂર (Accepted)',
+              'રિજેક્ટ / નુકસાન',
+              'તપાસ બાકી',
               'ગુમ/ઘટ',
               'હાલનું બાકી',
               'સરેરાશ સમય (કલાક)',
@@ -384,13 +375,14 @@ final class ExcelCsvExportService implements ReportExportService {
           : const [
               'Process',
               'Period Issued',
-              'Period Completed (Good)',
-              'Period Damaged',
+              'Accepted Qty',
+              'Rejected / Damaged Qty',
+              'Pending Inspection Qty',
               'Period Lost & Shortage',
-              'Current Pending Qty',
+              'Current Outstanding Qty',
               'Avg Completion Hours',
               'Settled Issues Count',
-              'Period Labour Cost (INR)',
+              'Production Cost (INR)',
             ],
       rows: [
         for (final p in b.processPerformance)
@@ -399,6 +391,7 @@ final class ExcelCsvExportService implements ReportExportService {
             p.periodIssuedQty,
             p.periodGoodReturnedQty,
             p.periodDamagedQty,
+            p.currentPendingInspectionQty,
             p.periodLostShortageQty,
             p.currentPendingQty,
             p.averageTurnaroundHours != null
@@ -575,6 +568,158 @@ final class ExcelCsvExportService implements ReportExportService {
             p.payment.paymentMode.dbValue,
             p.payment.amountPaise / 100.0,
             p.payment.referenceNo ?? p.payment.notes ?? '',
+          ],
+      ],
+    );
+  }
+
+  static ExportSheetData _productionHistorySheet(
+    AdvancedReportsBundle b, {
+    required bool isGu,
+  }) {
+    return ExportSheetData(
+      name: isGu ? 'પ્રોડક્શન_હિસ્ટ્રી' : 'Production_History',
+      headers: isGu
+          ? const [
+              'તારીખ (IST)',
+              'લોટ',
+              'ડિઝાઇન',
+              'રંગ',
+              'પ્રક્રિયા',
+              'કારીગર',
+              'સોંપેલ',
+              'પરત',
+              'મંજૂર',
+              'તપાસ બાકી',
+              'રિજેક્ટ',
+              'બાકી',
+              'લોક દર (₹)',
+              'કમાણી (₹)',
+              'સ્થિતિ',
+            ]
+          : const [
+              'Assigned Date (IST)',
+              'Lot',
+              'Design',
+              'Colour',
+              'Process',
+              'Worker',
+              'Assigned Qty',
+              'Returned Qty',
+              'Accepted Qty',
+              'Pending Inspection',
+              'Rejected Qty',
+              'Outstanding Qty',
+              'Locked Rate (INR)',
+              'Earned Amount (INR)',
+              'Status',
+            ],
+      rows: [
+        for (final a in b.productionHistoryRows)
+          [
+            IstDateTimeHelper.toIstBusinessDate(a.assignedAt),
+            a.lotNumber,
+            a.designName,
+            a.colourName,
+            a.processName,
+            a.workerName,
+            a.assignedQty,
+            a.returnedQty,
+            a.totalAcceptedQty,
+            a.pendingInspectionQty,
+            a.netRejectedQty,
+            a.outstandingQty,
+            a.lockedRatePaise / 100.0,
+            a.earnedAmountPaise / 100.0,
+            a.isCompleted ? 'COMPLETED' : 'IN_PROGRESS',
+          ],
+      ],
+    );
+  }
+
+  static ExportSheetData _pendingInspectionSheet(
+    AdvancedReportsBundle b, {
+    required bool isGu,
+  }) {
+    return ExportSheetData(
+      name: isGu ? 'તપાસ_બાકી_પરત' : 'Pending_QC_Returns',
+      headers: isGu
+          ? const [
+              'પરત તારીખ',
+              'લોટ',
+              'પ્રક્રિયા',
+              'કારીગર',
+              'પરત જથ્થો',
+              'તપાસ બાકી',
+              'લોક દર (₹)',
+            ]
+          : const [
+              'Return Date (IST)',
+              'Lot',
+              'Process',
+              'Worker',
+              'Returned Qty',
+              'Pending Inspection Qty',
+              'Locked Rate (INR)',
+            ],
+      rows: [
+        for (final r in b.pendingInspectionReturns)
+          [
+            IstDateTimeHelper.toIstBusinessDate(
+              r.productionReturn.transactionAt,
+            ),
+            r.lotNumber,
+            r.processName,
+            r.workerName,
+            r.productionReturn.returnedQuantity,
+            r.remainingPendingInspectionQty,
+            r.lockedRatePaise / 100.0,
+          ],
+      ],
+    );
+  }
+
+  static ExportSheetData _rejectionsSheet(
+    AdvancedReportsBundle b, {
+    required bool isGu,
+  }) {
+    return ExportSheetData(
+      name: isGu ? 'રિજેક્ટ_અને_રિપેર' : 'Rejections_Repairs',
+      headers: isGu
+          ? const [
+              'તપાસ તારીખ',
+              'લોટ',
+              'પ્રક્રિયા',
+              'કારીગર',
+              'રિજેક્ટ',
+              'ફરી મંજૂર',
+              'બાકી ખુલ્લા',
+              'કારણ',
+              'સ્થિતિ',
+            ]
+          : const [
+              'Inspection Date (IST)',
+              'Lot',
+              'Process',
+              'Worker',
+              'Rejected Qty',
+              'Re-Approved Qty',
+              'Open Unrepaired Qty',
+              'Rejection Reason',
+              'Status',
+            ],
+      rows: [
+        for (final r in b.rejectionRecords)
+          [
+            IstDateTimeHelper.toIstBusinessDate(r.record.inspectedAt),
+            r.lotNumber,
+            r.processName,
+            r.workerName,
+            r.record.rejectedQuantity,
+            r.totalReapprovedQty,
+            r.openUnrepairedQty,
+            r.record.rejectionReason,
+            r.record.status.dbValue,
           ],
       ],
     );

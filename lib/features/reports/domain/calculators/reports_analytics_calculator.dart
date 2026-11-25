@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:business_manager/core/utils/app_date_time_formatter.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/features/accounting/domain/calculators/ledger_calculator.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
@@ -119,6 +120,7 @@ final class ReportsAnalyticsCalculator {
     required List<LabourEntryEntity> allLabourEntries,
     required List<PaymentEntity> allPayments,
     required List<WorkerAdjustmentEntity> allAdjustments,
+    Map<String, int> pendingInspectionByIssue = const {},
     int? nowUtcMillis,
   }) {
     final nowUtc = nowUtcMillis ?? IstDateTimeHelper.nowUtcMillis();
@@ -319,6 +321,17 @@ final class ReportsAnalyticsCalculator {
       return true;
     }
 
+    // Pieces returned and waiting for QC, per colour. They are neither with
+    // the worker nor in available stock (counted once, in pendingInspection).
+    final pendingInspectionByColour = <String, int>{};
+    for (final m in allMovements) {
+      if (m.movementType != StockMovementType.issue) continue;
+      final q = pendingInspectionByIssue[m.id] ?? 0;
+      if (q <= 0 || revMovementIds.contains(m.id)) continue;
+      pendingInspectionByColour[m.designColourId] =
+          (pendingInspectionByColour[m.designColourId] ?? 0) + q;
+    }
+
     // 4. Current Inventory Balances (reusing StockCalculator verbatim)
     final colourBalances = <DesignColourStockBalance>[];
     for (final c in colours) {
@@ -354,6 +367,7 @@ final class ReportsAnalyticsCalculator {
           initialQuantity: c.initialQuantity,
           allMovementsForColour: movementsByColour[c.id] ?? const [],
           processNamesById: processNamesById,
+          pendingInspectionQuantity: pendingInspectionByColour[c.id] ?? 0,
         ),
       );
     }
@@ -362,6 +376,7 @@ final class ReportsAnalyticsCalculator {
     var totalInitialStock = 0;
     var totalAvailableGood = 0;
     var totalPendingWithWorkers = 0;
+    var totalPendingInspection = 0;
     var totalDamagedBucket = 0;
     var totalLostStock = 0;
     var totalShortageStock = 0;
@@ -372,6 +387,7 @@ final class ReportsAnalyticsCalculator {
       totalInitialStock += b.initialQuantity;
       totalAvailableGood += b.physicalAvailableInHouse;
       totalPendingWithWorkers += b.totalPendingWithWorkers;
+      totalPendingInspection += b.totalPendingInspection;
       totalDamagedBucket += b.damagedBucket;
       totalLostStock += b.totalLost;
       totalShortageStock += b.totalShortage;
@@ -396,6 +412,7 @@ final class ReportsAnalyticsCalculator {
       var initQ = 0;
       var avail = 0;
       var pend = 0;
+      var pendInsp = 0;
       var dmg = 0;
       var lost = 0;
       var shrt = 0;
@@ -404,6 +421,7 @@ final class ReportsAnalyticsCalculator {
         initQ += c.initialQuantity;
         avail += c.physicalAvailableInHouse;
         pend += c.totalPendingWithWorkers;
+        pendInsp += c.totalPendingInspection;
         dmg += c.damagedBucket;
         lost += c.totalLost;
         shrt += c.totalShortage;
@@ -424,6 +442,7 @@ final class ReportsAnalyticsCalculator {
           lostQuantity: lost,
           shortageQuantity: shrt,
           goodStockValuePaise: refVal,
+          pendingInspection: pendInsp,
         ),
       );
     }
@@ -468,27 +487,30 @@ final class ReportsAnalyticsCalculator {
       final lost = acc?.lost ?? 0;
       final shortage = acc?.shortage ?? 0;
       final remaining = m.quantity - (good + damaged + lost + shortage);
+      // Pieces in the QC queue are no longer with the worker.
+      final withWorker = (remaining - (pendingInspectionByIssue[m.id] ?? 0))
+          .clamp(0, remaining);
 
-      if (remaining > 0) {
+      if (withWorker > 0) {
         final ageDays = WorkshopDailyCalculator.pendingAgeDays(
           m.transactionAt,
           nowUtc,
         );
         openIssues.add(
           OpenIssueSummary(
-            issueView: toMovementView(m, remainingPendingQty: remaining),
+            issueView: toMovementView(m, remainingPendingQty: withWorker),
             childSettlements: const [],
           ),
         );
         if (m.memberId != null) {
           currentPendingByWorker[m.memberId!] =
-              (currentPendingByWorker[m.memberId!] ?? 0) + remaining;
+              (currentPendingByWorker[m.memberId!] ?? 0) + withWorker;
           currentOpenCountByWorker[m.memberId!] =
               (currentOpenCountByWorker[m.memberId!] ?? 0) + 1;
         }
         if (m.processId != null) {
           currentPendingByProcess[m.processId!] =
-              (currentPendingByProcess[m.processId!] ?? 0) + remaining;
+              (currentPendingByProcess[m.processId!] ?? 0) + withWorker;
           currentOpenCountByProcess[m.processId!] =
               (currentOpenCountByProcess[m.processId!] ?? 0) + 1;
           final prevOldest = oldestOpenAgeByProcess[m.processId!];
@@ -1016,6 +1038,7 @@ final class ReportsAnalyticsCalculator {
       lotRows: lotRows,
       colourBalances: colourBalances,
       openIssues: openIssues,
+      pendingInspection: totalPendingInspection,
       movementHistory: movementHistory,
       damagedLostShortageMovements: damagedLostMovements,
     );
@@ -1324,10 +1347,8 @@ final class ReportsAnalyticsCalculator {
         ist.month,
         ist.day - daysFromMon,
       );
-      final key =
-          '${mon.year.toString().padLeft(4, '0')}-${mon.month.toString().padLeft(2, '0')}-${mon.day.toString().padLeft(2, '0')}';
-      final label =
-          '${mon.day.toString().padLeft(2, '0')}/${mon.month.toString().padLeft(2, '0')}';
+      final key = AppDateTimeFormatter.toIsoDate(mon);
+      final label = AppDateTimeFormatter.formatShortDayMonth(mon);
       final acc = weeklyMap.putIfAbsent(key, () => _TrendBucketAcc(label));
       acc.issued += r.issuedQty;
       acc.good += r.goodReturnedQty;

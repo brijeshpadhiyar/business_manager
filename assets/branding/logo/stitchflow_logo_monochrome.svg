@@ -1,5 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
 
+  <!-- Continuous thread "S" -->
   <path d="M 358 138
            C 358 84, 294 64, 236 74
            C 172 85, 138 128, 146 178
@@ -7,11 +8,13 @@
            C 322 279, 368 302, 366 356
            C 364 414, 304 446, 234 442
            C 178 439, 144 410, 142 368"
-        fill="none" stroke="#172B4D" stroke-width="58"
+        fill="none" stroke="#4F46E5" stroke-width="58"
         stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Needle crossing the thread -->
   <path d="M 118 304 L 392 184"
-        fill="none" stroke="#172B4D" stroke-width="20"
+        fill="none" stroke="#4F46E5" stroke-width="22"
         stroke-linecap="round"/>
-  <circle cx="384" cy="188" r="15" fill="#172B4D"/>
-
+  <!-- Knot / needle eye -->
+  <circle cx="384" cy="188" r="17" fill="#4F46E5"/>
+  
 </svg>

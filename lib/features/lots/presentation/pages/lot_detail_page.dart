@@ -1,19 +1,27 @@
+import 'package:business_manager/core/platform/platform_env.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
+import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
+import 'package:business_manager/features/lots/domain/entities/colour_master_entity.dart';
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
+import 'package:business_manager/features/lots/domain/repositories/lot_repository.dart';
 import 'package:business_manager/features/lots/presentation/bloc/lot_detail_cubit.dart';
+import 'package:business_manager/features/lots/presentation/widgets/visual_colour_picker_sheet.dart';
+import 'package:business_manager/features/process_routing/domain/entities/process_routing_entities.dart';
 import 'package:business_manager/features/security/presentation/bloc/app_lock_cubit.dart';
+import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 final class LotDetailPage extends StatelessWidget {
   const LotDetailPage({super.key, required this.lotId});
@@ -40,14 +48,20 @@ final class _LotDetailView extends StatelessWidget {
   ) async {
     final cubit = context.read<LotDetailCubit>();
     final picker = ImagePicker();
-    final picked = await getIt<AppLockCubit>().runWithSystemPicker(
-      () => picker.pickImage(
-        source: source,
-        maxWidth: 1600,
-        maxHeight: 1600,
-        imageQuality: 80,
-      ),
-    );
+    final XFile? picked;
+    try {
+      picked = await getIt<AppLockCubit>().runWithSystemPicker(
+        () => picker.pickImage(
+          source: source,
+          maxWidth: 1600,
+          maxHeight: 1600,
+          imageQuality: 80,
+        ),
+      );
+    } catch (_) {
+      // e.g. no camera / picker unavailable on this device: do nothing.
+      return;
+    }
     if (picked == null) return;
     final bytes = await picked.readAsBytes();
     final ext = picked.name.contains('.') ? picked.name.split('.').last : 'jpg';
@@ -58,7 +72,14 @@ final class _LotDetailView extends StatelessWidget {
       mimeType: picked.mimeType ?? 'image/jpeg',
     );
     if (err != null && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(err)));
+      AppFeedback.showError(
+        context,
+        ValidationLocalizer.localizeDomainCode(
+          context.l10n,
+          err,
+          fallback: context.l10n.errorUnexpected,
+        ),
+      );
     }
   }
 
@@ -221,6 +242,8 @@ final class _LotDetailView extends StatelessWidget {
     final formKey = GlobalKey<FormState>();
     final nameCtrl = TextEditingController(text: existing?.designName ?? '');
     final notesCtrl = TextEditingController(text: existing?.notes ?? '');
+    final defaultPriceCtrl = TextEditingController();
+    final initialColours = <SelectedColourVariantInput>[];
     String? submitError;
     bool isSaving = false;
     bool submittedOnce = false;
@@ -266,6 +289,97 @@ final class _LotDetailView extends StatelessWidget {
                       ),
                     ),
                   ),
+                  if (existing == null) ...[
+                    const SizedBox(height: AppSpacing.md),
+                    AppTextField(
+                      controller: defaultPriceCtrl,
+                      label: 'Default Unit Price (₹ / pc, optional)',
+                      hint: '0.00',
+                      prefixIcon: AppIcons.rupee,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      inputFormatters: [AppInputFormatters.currencyDecimal],
+                      validator: ValidationLocalizer.wrap(
+                        l10n,
+                        (v) => AppValidators.nonNegativeAmountValidator(
+                          v,
+                          isRequired: false,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    AppActionRow(content: AppText(
+                            'Initial Colours (${initialColours.length})',
+                            fontWeight: FontWeight.w700,
+                          ), actions: [AppButton(
+                          label: 'Add Colours',
+                          icon: AppIcons.colour,
+                          variant: AppButtonVariant.secondary,
+                          onPressed: () async {
+                            final parsedDefault =
+                                AppValidators.parseRupeesToPaiseExact(
+                                  defaultPriceCtrl.text,
+                                  isRequired: false,
+                                  allowZero: true,
+                                );
+                            final picked = await VisualColourPickerSheet.show(
+                              ctx,
+                              title: nameCtrl.text.trim().isNotEmpty
+                                  ? 'Select Colours — ${nameCtrl.text.trim()}'
+                                  : 'Select Initial Colours',
+                              existingColourNamesLower: initialColours
+                                  .map((c) => c.colourName.trim().toLowerCase())
+                                  .toSet(),
+                              defaultUnitPricePaise: parsedDefault.paise ?? 0,
+                            );
+                            if (picked != null &&
+                                picked.isNotEmpty &&
+                                sheetCtx.mounted) {
+                              setSheetState(() {
+                                for (final p in picked) {
+                                  if (!initialColours.any(
+                                    (c) =>
+                                        c.colourName.trim().toLowerCase() ==
+                                        p.colourName.trim().toLowerCase(),
+                                  )) {
+                                    initialColours.add(p);
+                                  }
+                                }
+                              });
+                            }
+                          },
+                        ),],),
+                    if (initialColours.isNotEmpty) ...[
+                      const SizedBox(height: AppSpacing.xs),
+                      for (final c in initialColours)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                          child: Row(
+                            children: [
+                              AppColourSwatch(
+                                color: AppColourUtils.resolveColor(c.hexCode),
+                                size: 22,
+                              ),
+                              const SizedBox(width: AppSpacing.xs),
+                              Expanded(
+                                child: AppText(
+                                  '${c.colourName} • ${MoneyFormatter.formatQuantity(c.quantity)} pcs @ ${MoneyFormatter.formatPaise(c.unitPricePaise)}',
+                                  variant: AppTextVariant.bodySmall,
+                                ),
+                              ),
+                              AppIconButton(
+                                icon: AppIcons.close,
+                                tooltip: 'Remove',
+                                onPressed: () => setSheetState(
+                                  () => initialColours.remove(c),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                    ],
+                  ],
                   if (submitError != null) ...[
                     const SizedBox(height: AppSpacing.sm),
                     AppText(
@@ -292,11 +406,28 @@ final class _LotDetailView extends StatelessWidget {
                               submitError = null;
                             });
                             final err = existing == null
-                                ? await cubit.addDesign(
-                                    lotId: lotId,
-                                    designName: nameCtrl.text,
-                                    notes: notesCtrl.text,
-                                  )
+                                ? (initialColours.isEmpty
+                                      ? await cubit.addDesign(
+                                          lotId: lotId,
+                                          designName: nameCtrl.text,
+                                          notes: notesCtrl.text,
+                                        )
+                                      : await cubit.addDesignWithColours(
+                                          lotId: lotId,
+                                          designName: nameCtrl.text,
+                                          notes: notesCtrl.text,
+                                          colours: initialColours
+                                              .map(
+                                                (c) => LotColourDraftInput(
+                                                  colourName: c.colourName,
+                                                  colourHex: c.hexCode,
+                                                  initialQuantity: c.quantity,
+                                                  unitPricePaise:
+                                                      c.unitPricePaise,
+                                                ),
+                                              )
+                                              .toList(),
+                                        ))
                                 : await cubit.editDesign(
                                     lotId: lotId,
                                     designId: existing.id,
@@ -330,6 +461,7 @@ final class _LotDetailView extends StatelessWidget {
     } finally {
       nameCtrl.dispose();
       notesCtrl.dispose();
+      defaultPriceCtrl.dispose();
     }
   }
 
@@ -347,8 +479,8 @@ final class _LotDetailView extends StatelessWidget {
     );
     final priceCtrl = TextEditingController(
       text: existing != null
-          ? (existing.unitPricePaise / 100).toStringAsFixed(2)
-          : '0',
+          ? MoneyFormatter.formatPaiseForInput(existing.unitPricePaise)
+          : '0.00',
     );
     final notesCtrl = TextEditingController(text: existing?.notes ?? '');
     String? submitError;
@@ -511,21 +643,26 @@ final class _LotDetailView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return BlocBuilder<LotDetailCubit, LotDetailState>(
-      builder: (context, state) {
-        final detail = state.detail;
+    return BlocSelector<
+      LotDetailCubit,
+      LotDetailState,
+      ({LotDetailStatus status, LotDetailAggregate? detail, String? error})
+    >(
+      selector: (s) => (status: s.status, detail: s.detail, error: s.errorMessage),
+      builder: (context, slice) {
+        final detail = slice.detail;
         return AppScaffold(
           title: detail?.lot.lotNumber ?? l10n.lotsHeading,
           actions: detail == null
               ? null
               : [
                   AppIconButton(
-                    icon: Icons.edit_outlined,
+                    icon: AppIcons.edit,
                     tooltip: l10n.lotEditAction,
                     onPressed: () => _showEditLotSheet(context, detail.lot),
                   ),
                   AppIconButton(
-                    icon: Icons.archive_outlined,
+                    icon: AppIcons.archive,
                     tooltip: l10n.lotArchiveAction,
                     onPressed: () async {
                       final confirmed = await AppDialog.showConfirmation(
@@ -546,299 +683,844 @@ final class _LotDetailView extends StatelessWidget {
                   ),
                 ],
           padding: EdgeInsets.zero,
-          body: switch (state.status) {
+          body: switch (slice.status) {
             LotDetailStatus.initial ||
             LotDetailStatus.loading => const AppLoader(),
             LotDetailStatus.error => AppErrorView(
               title: l10n.errorUnexpected,
-              message: state.errorMessage,
+              message: slice.error,
               retryLabel: l10n.actionRetry,
               onRetry: () => context.read<LotDetailCubit>().loadLot(lotId),
             ),
-            LotDetailStatus.loaded => _buildLoaded(context, state, detail!),
+            LotDetailStatus.loaded => _buildLoaded(context, detail!),
           },
         );
       },
     );
   }
 
-  Widget _buildLoaded(
-    BuildContext context,
-    LotDetailState state,
-    LotDetailAggregate detail,
-  ) {
-    final l10n = context.l10n;
-    final query = state.designSearchQuery.trim().toLowerCase();
-    final filteredDesigns = detail.designs.where((d) {
-      if (query.isEmpty) return true;
-      return d.design.designName.toLowerCase().contains(query) ||
-          d.colours.any((c) => c.colourName.toLowerCase().contains(query));
-    }).toList();
+  Future<void> _showVisualColourPicker(
+    BuildContext context, {
+    String? lotDesignId,
+    String? designDisplayName,
+    Set<String> existingColourNames = const {},
+  }) async {
+    final cubit = context.read<LotDetailCubit>();
+    final selected = await VisualColourPickerSheet.show(
+      context,
+      title: designDisplayName != null
+          ? 'Select Colours — $designDisplayName'
+          : 'Select Colours (No Design)',
+      existingColourNamesLower: existingColourNames
+          .map((n) => n.trim().toLowerCase())
+          .toSet(),
+    );
+    if (selected == null || selected.isEmpty || !context.mounted) return;
 
-    return ListView(
-      padding: AppSpacing.screenAll,
-      children: [
-        AppCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  AppText(
-                    detail.lot.lotNumber,
-                    variant: AppTextVariant.bodyLarge,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  AppStatusBadge(
-                    label: detail.lot.status == LotStatus.active
-                        ? l10n.lotsStatusActive
-                        : l10n.lotsStatusCompleted,
-                    tone: detail.lot.status == LotStatus.active
-                        ? AppStatusTone.good
-                        : AppStatusTone.info,
-                  ),
-                ],
-              ),
-              if (detail.lot.title != null) ...[
-                const SizedBox(height: AppSpacing.xs),
-                AppText(detail.lot.title!),
-              ],
-              const SizedBox(height: AppSpacing.xs),
-              AppText(
-                '${l10n.lotDateLabel}: ${IstDateTimeHelper.toIstBusinessDate(detail.lot.transactionAt)}',
-                variant: AppTextVariant.bodySmall,
-              ),
-              if (detail.lot.notes != null) ...[
-                const SizedBox(height: AppSpacing.xs),
-                AppText(detail.lot.notes!, variant: AppTextVariant.bodySmall),
-              ],
-            ],
-          ),
-        ),
-        const SizedBox(height: AppSpacing.lg),
-        AppHeading(l10n.lotPhotosHeading, level: AppHeadingLevel.h3),
-        const SizedBox(height: AppSpacing.sm),
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: [
-            AppButton(
-              label: l10n.lotAddPhotoCamera,
-              icon: Icons.photo_camera_outlined,
-              variant: AppButtonVariant.outlined,
-              onPressed: () => _pickAndSavePhoto(context, ImageSource.camera),
-            ),
-            AppButton(
-              label: l10n.lotAddPhotoGallery,
-              icon: Icons.photo_library_outlined,
-              variant: AppButtonVariant.secondary,
-              onPressed: () => _pickAndSavePhoto(context, ImageSource.gallery),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        if (detail.photos.isEmpty)
-          AppCard(
-            child: AppText(
-              l10n.lotPhotosEmpty,
-              variant: AppTextVariant.bodySmall,
+    final err = await cubit.addColoursBatch(
+      lotId: lotId,
+      lotDesignId: lotDesignId,
+      colours: selected
+          .map(
+            (item) => LotColourDraftInput(
+              colourName: item.colourName,
+              colourHex: item.hexCode,
+              initialQuantity: item.quantity,
+              unitPricePaise: item.unitPricePaise,
             ),
           )
-        else
-          SizedBox(
-            height: 112,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemCount: detail.photos.length,
-              separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.sm),
-              itemBuilder: (ctx, i) {
-                final photo = detail.photos[i];
-                return _LotPhotoTile(
-                  photo: photo,
-                  onRemove: () async {
-                    final ok = await AppDialog.showConfirmation(
-                      ctx,
-                      title: l10n.actionDelete,
-                      message: l10n.lotPhotoRemoveConfirm,
-                      confirmLabel: l10n.actionDelete,
-                      cancelLabel: l10n.actionCancel,
-                      isDestructive: true,
-                    );
-                    if (ok == true && ctx.mounted) {
-                      await ctx.read<LotDetailCubit>().removePhoto(
-                        lotId,
-                        photo.id,
-                      );
-                    }
-                  },
-                );
-              },
-            ),
+          .toList(),
+    );
+    if (!context.mounted) return;
+    if (err == null) {
+      AppFeedback.showSuccess(
+        context,
+        'Added ${selected.length} colour${selected.length == 1 ? '' : 's'} to Lot.',
+      );
+    } else {
+      AppFeedback.showError(
+        context,
+        err.contains('UNIQUE')
+            ? context.l10n.colourDuplicateError
+            : ValidationLocalizer.localizeDomainCode(
+                context.l10n,
+                err,
+                fallback: err,
+              ),
+      );
+    }
+  }
+
+  Widget _buildLoaded(BuildContext context, LotDetailAggregate detail) {
+    final l10n = context.l10n;
+    final totalInitialPieces = detail.designs.fold<int>(
+      0,
+      (s, d) => s + d.colours.fold<int>(0, (cs, c) => cs + c.initialQuantity),
+    );
+
+    return CustomScrollView(
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.lg,
+            AppSpacing.lg,
+            0,
           ),
-        const SizedBox(height: AppSpacing.lg),
-        AppHeading(
-          l10n.designsHeading,
-          level: AppHeadingLevel.h3,
-          trailing: AppButton(
-            label: l10n.designAddAction,
-            icon: Icons.add,
-            onPressed: () => _showDesignSheet(context),
-          ),
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        if (detail.designs.isNotEmpty) ...[
-          AppTextField(
-            label: l10n.designsSearchHint,
-            prefixIcon: Icons.search,
-            onChanged: context.read<LotDetailCubit>().setDesignSearch,
-          ),
-          const SizedBox(height: AppSpacing.md),
-        ],
-        if (filteredDesigns.isEmpty)
-          AppEmptyState(
-            icon: Icons.style_outlined,
-            title: l10n.designsEmptyTitle,
-            subtitle: l10n.designsEmptySubtitle,
-            actionLabel: l10n.designAddAction,
-            onAction: () => _showDesignSheet(context),
-          )
-        else
-          for (final item in filteredDesigns) ...[
-            AppCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+          sliver: SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                AppCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: AppText(
-                          item.design.designName,
+                      AppActionRow(
+                        content: AppText(
+                          detail.lot.lotNumber,
                           variant: AppTextVariant.bodyLarge,
                           fontWeight: FontWeight.w700,
                         ),
+                        actions: [
+                          AppStatusBadge(
+                            label: detail.lot.status == LotStatus.active
+                                ? l10n.lotsStatusActive
+                                : l10n.lotsStatusCompleted,
+                            tone: detail.lot.status == LotStatus.active
+                                ? AppStatusTone.good
+                                : AppStatusTone.info,
+                          ),
+                        ],
                       ),
-                      AppIconButton(
-                        icon: Icons.edit_outlined,
-                        tooltip: l10n.designEditAction,
+                      if (detail.lot.title != null) ...[
+                        const SizedBox(height: AppSpacing.xs),
+                        AppText(detail.lot.title!),
+                      ],
+                      const SizedBox(height: AppSpacing.xs),
+                      AppText(
+                        '${l10n.lotDateLabel}: ${IstDateTimeHelper.toIstBusinessDate(detail.lot.transactionAt)}',
+                        variant: AppTextVariant.bodySmall,
+                      ),
+                      if (detail.lot.notes != null) ...[
+                        const SizedBox(height: AppSpacing.xs),
+                        AppText(
+                          detail.lot.notes!,
+                          variant: AppTextVariant.bodySmall,
+                        ),
+                      ],
+                      const SizedBox(height: AppSpacing.md),
+                      AppButton(
+                        label: 'Multi-Process Routing & Handovers',
+                        icon: AppIcons.routeTransfer,
+                        isExpanded: true,
                         onPressed: () =>
-                            _showDesignSheet(context, existing: item.design),
+                            context.push(RoutePaths.lotRouting(lotId)),
                       ),
-                      AppIconButton(
-                        icon: Icons.delete_outline,
-                        tooltip: l10n.actionDelete,
-                        onPressed: () async {
-                          final ok = await AppDialog.showConfirmation(
-                            context,
-                            title: l10n.designDeleteConfirmTitle,
-                            message: l10n.designDeleteConfirmMessage,
-                            confirmLabel: l10n.actionDelete,
-                            cancelLabel: l10n.actionCancel,
-                            isDestructive: true,
-                          );
-                          if (ok == true && context.mounted) {
-                            await context.read<LotDetailCubit>().deleteDesign(
-                              lotId,
-                              item.design.id,
-                            );
-                          }
-                        },
+                      const SizedBox(height: AppSpacing.sm),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: AppButton(
+                              label: l10n.prodHistoryViewLotHistory,
+                              icon: AppIcons.productionHistory,
+                              variant: AppButtonVariant.secondary,
+                              onPressed: () =>
+                                  context.push(RoutePaths.lotHistory(lotId)),
+                            ),
+                          ),
+                          const SizedBox(width: AppSpacing.sm),
+                          Expanded(
+                            child: AppButton(
+                              label: l10n.prodHistoryViewTimeline,
+                              icon: AppIcons.timeline,
+                              variant: AppButtonVariant.outlined,
+                              onPressed: () =>
+                                  context.push(RoutePaths.lotTimeline(lotId)),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: AppButton(
-                      label: l10n.colourAddAction,
-                      icon: Icons.palette_outlined,
-                      variant: AppButtonVariant.secondary,
-                      onPressed: () => _showColourSheet(
-                        context,
-                        lotDesignId: item.design.id,
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                AppHeading(l10n.lotPhotosHeading, level: AppHeadingLevel.h3),
+                const SizedBox(height: AppSpacing.sm),
+                Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
+                  children: [
+                    // Desktop builds (Windows / macOS / Linux) have no camera
+                    // capture: only "choose from files" is offered there.
+                    if (supportsCameraCapture)
+                      AppButton(
+                        label: l10n.lotAddPhotoCamera,
+                        icon: AppIcons.camera,
+                        variant: AppButtonVariant.outlined,
+                        onPressed: () =>
+                            _pickAndSavePhoto(context, ImageSource.camera),
                       ),
+                    AppButton(
+                      label: l10n.lotAddPhotoGallery,
+                      icon: AppIcons.gallery,
+                      variant: AppButtonVariant.secondary,
+                      onPressed: () =>
+                          _pickAndSavePhoto(context, ImageSource.gallery),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                if (detail.photos.isEmpty)
+                  AppCard.listItem(
+                    child: AppText(
+                      l10n.lotPhotosEmpty,
+                      variant: AppTextVariant.bodySmall,
+                    ),
+                  )
+                else
+                  SizedBox(
+                    height: 112,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: detail.photos.length,
+                      separatorBuilder: (_, _) =>
+                          const SizedBox(width: AppSpacing.sm),
+                      itemBuilder: (ctx, i) {
+                        final photo = detail.photos[i];
+                        return _LotPhotoTile(
+                          key: ValueKey<String>(photo.id),
+                          photo: photo,
+                          onRemove: () async {
+                            final ok = await AppDialog.showConfirmation(
+                              ctx,
+                              title: l10n.actionDelete,
+                              message: l10n.lotPhotoRemoveConfirm,
+                              confirmLabel: l10n.actionDelete,
+                              cancelLabel: l10n.actionCancel,
+                              isDestructive: true,
+                            );
+                            if (ok == true && ctx.mounted) {
+                              await ctx.read<LotDetailCubit>().removePhoto(
+                                lotId,
+                                photo.id,
+                              );
+                            }
+                          },
+                        );
+                      },
                     ),
                   ),
-                  if (item.colours.isNotEmpty) ...[
-                    const SizedBox(height: AppSpacing.sm),
-                    const Divider(),
+                const SizedBox(height: AppSpacing.lg),
+                AppHeading(
+                  '${l10n.designsHeading} ($totalInitialPieces pcs)',
+                  level: AppHeadingLevel.h3,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
+                  children: [
+                    AppButton(
+                      label: 'Add Colour (No Design)',
+                      icon: AppIcons.colour,
+                      variant: AppButtonVariant.secondary,
+                      onPressed: () {
+                        final colourOnlyGroup = detail.designs
+                            .where(
+                              (d) =>
+                                  d.design.designName ==
+                                  kColourOnlyDesignSentinel,
+                            )
+                            .firstOrNull;
+                        final existingNames = colourOnlyGroup == null
+                            ? const <String>{}
+                            : colourOnlyGroup.colours
+                                  .map((c) => c.colourName)
+                                  .toSet();
+                        _showVisualColourPicker(
+                          context,
+                          existingColourNames: existingNames,
+                        );
+                      },
+                    ),
+                    AppButton(
+                      label: l10n.designAddAction,
+                      icon: AppIcons.add,
+                      onPressed: () => _showDesignSheet(context),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                if (detail.designs.isNotEmpty) ...[
+                  AppSearchField(
+                    label: l10n.designsSearchHint,
+                    debounceDuration: const Duration(milliseconds: 120),
+                    onChanged: context.read<LotDetailCubit>().setDesignSearch,
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                ],
+              ],
+            ),
+          ),
+        ),
+        // Only the filtered designs sliver rebuilds on Design Search typing —
+        // zero database reads, zero disk reads, zero photo/header rebuilds.
+        BlocSelector<
+          LotDetailCubit,
+          LotDetailState,
+          ({
+            String query,
+            Map<String, DesignColourStockBalance> balancesByColourId,
+            Map<String, List<JobProcessEntity>> operationsByColourId,
+          })
+        >(
+          selector: (s) => (
+            query: s.designSearchQuery,
+            balancesByColourId: s.balancesByColourId,
+            operationsByColourId: s.operationsByColourId,
+          ),
+          builder: (context, slice) {
+            final query = slice.query.trim().toLowerCase();
+            final filteredDesigns = query.isEmpty
+                ? detail.designs
+                : detail.designs
+                      .where(
+                        (d) =>
+                            d.design.designName.toLowerCase().contains(query) ||
+                            d.colours.any(
+                              (c) => c.colourName.toLowerCase().contains(query),
+                            ),
+                      )
+                      .toList(growable: false);
+
+            if (filteredDesigns.isEmpty) {
+              return SliverPadding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.lg,
+                  0,
+                  AppSpacing.lg,
+                  AppSpacing.xl,
+                ),
+                sliver: SliverToBoxAdapter(
+                  child: AppEmptyState(
+                    icon: AppIcons.designs,
+                    title: l10n.designsEmptyTitle,
+                    subtitle: l10n.designsEmptySubtitle,
+                    actionLabel: l10n.designAddAction,
+                    onAction: () => _showDesignSheet(context),
+                  ),
+                ),
+              );
+            }
+
+            return SliverPadding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                0,
+                AppSpacing.lg,
+                AppSpacing.xl,
+              ),
+              sliver: SliverList.separated(
+                itemCount: filteredDesigns.length,
+                separatorBuilder: (_, _) =>
+                    const SizedBox(height: AppSpacing.md),
+                itemBuilder: (ctx, i) {
+                  final item = filteredDesigns[i];
+                  return _buildDesignSectionCard(
+                    ctx,
+                    item,
+                    slice.balancesByColourId,
+                    slice.operationsByColourId,
+                  );
+                },
+              ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDesignSectionCard(
+    BuildContext context,
+    DesignWithColours item,
+    Map<String, DesignColourStockBalance> balancesByColourId,
+    Map<String, List<JobProcessEntity>> operationsByColourId,
+  ) {
+    final l10n = context.l10n;
+    final isColourOnly = item.design.designName == kColourOnlyDesignSentinel;
+    final designLabel = isColourOnly
+        ? 'Colours (No Design)'
+        : item.design.designName;
+
+    return AppCard.listItem(
+      key: ValueKey<String>(item.design.id),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppText(
+                      designLabel,
+                      variant: AppTextVariant.bodyLarge,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    AppText(
+                      'Total: ${item.colours.fold<int>(0, (s, c) => s + c.initialQuantity)} pcs • ${item.colours.length} colour${item.colours.length == 1 ? '' : 's'}',
+                      variant: AppTextVariant.bodySmall,
+                    ),
+                  ],
+                ),
+              ),
+              if (!isColourOnly)
+                AppIconButton(
+                  icon: AppIcons.edit,
+                  tooltip: l10n.designEditAction,
+                  onPressed: () =>
+                      _showDesignSheet(context, existing: item.design),
+                ),
+              AppIconButton(
+                icon: AppIcons.delete,
+                tooltip: l10n.actionDelete,
+                onPressed: () async {
+                  final ok = await AppDialog.showConfirmation(
+                    context,
+                    title: l10n.designDeleteConfirmTitle,
+                    message: l10n.designDeleteConfirmMessage,
+                    confirmLabel: l10n.actionDelete,
+                    cancelLabel: l10n.actionCancel,
+                    isDestructive: true,
+                  );
+                  if (ok == true && context.mounted) {
+                    await context.read<LotDetailCubit>().deleteDesign(
+                      lotId,
+                      item.design.id,
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: AppButton(
+              label: l10n.colourAddAction,
+              icon: AppIcons.colour,
+              variant: AppButtonVariant.secondary,
+              onPressed: () => _showVisualColourPicker(
+                context,
+                lotDesignId: isColourOnly ? null : item.design.id,
+                designDisplayName: isColourOnly ? null : item.design.designName,
+                existingColourNames: item.colours
+                    .map((c) => c.colourName)
+                    .toSet(),
+              ),
+            ),
+          ),
+          if (item.colours.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.md),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final cols = constraints.maxWidth >= 680
+                    ? 3
+                    : (constraints.maxWidth >= 340 ? 2 : 1);
+                final cardWidth =
+                    (constraints.maxWidth - (AppSpacing.sm * (cols - 1))) /
+                    cols;
+                return Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
+                  children: [
                     for (final c in item.colours)
-                      ListTile(
-                        dense: true,
-                        contentPadding: EdgeInsets.zero,
-                        title: AppText(
-                          c.colourName,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        subtitle: AppText(
-                          '${l10n.colourInitialQtyLabel}: ${c.initialQuantity} ${l10n.piecesUnit}  •  ${MoneyFormatter.formatPaise(c.unitPricePaise)}',
-                          variant: AppTextVariant.numeric,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            AppIconButton(
-                              icon: Icons.edit_outlined,
-                              tooltip: l10n.colourEditAction,
-                              onPressed: () => _showColourSheet(
-                                context,
-                                lotDesignId: item.design.id,
-                                existing: c,
-                              ),
-                            ),
-                            AppIconButton(
-                              icon: Icons.delete_outline,
-                              tooltip: l10n.actionDelete,
-                              onPressed: () async {
-                                final ok = await AppDialog.showConfirmation(
-                                  context,
-                                  title: l10n.colourDeleteConfirmTitle,
-                                  message: l10n.colourDeleteConfirmMessage,
-                                  confirmLabel: l10n.actionDelete,
-                                  cancelLabel: l10n.actionCancel,
-                                  isDestructive: true,
-                                );
-                                if (ok == true && context.mounted) {
-                                  await context
-                                      .read<LotDetailCubit>()
-                                      .deleteColour(lotId, c.id);
-                                }
-                              },
-                            ),
-                          ],
+                      SizedBox(
+                        width: cardWidth,
+                        child: _PremiumLotColourCard(
+                          key: ValueKey<String>(c.id),
+                          colour: c,
+                          designName: isColourOnly
+                              ? null
+                              : item.design.designName,
+                          balance: balancesByColourId[c.id],
+                          operations:
+                              operationsByColourId[c.id] ??
+                              const <JobProcessEntity>[],
+                          onTap: () async {
+                            await context.push(
+                              RoutePaths.lotColourDetail(lotId, c.id),
+                            );
+                            if (context.mounted) {
+                              await context.read<LotDetailCubit>().loadLot(
+                                lotId,
+                              );
+                            }
+                          },
+                          onEdit: () => _showColourSheet(
+                            context,
+                            lotDesignId: item.design.id,
+                            existing: c,
+                          ),
+                          onDelete: () async {
+                            final ok = await AppDialog.showConfirmation(
+                              context,
+                              title: l10n.colourDeleteConfirmTitle,
+                              message: l10n.colourDeleteConfirmMessage,
+                              confirmLabel: l10n.actionDelete,
+                              cancelLabel: l10n.actionCancel,
+                              isDestructive: true,
+                            );
+                            if (ok == true && context.mounted) {
+                              await context.read<LotDetailCubit>().deleteColour(
+                                lotId,
+                                c.id,
+                              );
+                            }
+                          },
                         ),
                       ),
                   ],
-                ],
-              ),
+                );
+              },
             ),
-            const SizedBox(height: AppSpacing.md),
           ],
+        ],
+      ),
+    );
+  }
+}
+
+/// StitchFlow V1.3 — Premium Clickable Lot Colour Card with large actual
+/// colour preview banner, HEX code, design label, quantities, current stage,
+/// and current stock location.
+final class _PremiumLotColourCard extends StatelessWidget {
+  const _PremiumLotColourCard({
+    super.key,
+    required this.colour,
+    this.designName,
+    this.balance,
+    required this.operations,
+    required this.onTap,
+    required this.onEdit,
+    required this.onDelete,
+  });
+
+  final DesignColourEntity colour;
+  final String? designName;
+  final DesignColourStockBalance? balance;
+  final List<JobProcessEntity> operations;
+  final VoidCallback onTap;
+  final VoidCallback onEdit;
+  final VoidCallback onDelete;
+
+  String _resolveCurrentStage() {
+    if (operations.isEmpty) return 'Not Started';
+    final active = operations.where((op) => !op.status.isTerminal).toList();
+    if (active.isNotEmpty) {
+      return active.last.processName;
+    }
+    return '${operations.last.processName} (Done)';
+  }
+
+  String _resolveStockLocation() {
+    final inHouse =
+        balance?.physicalAvailableInHouse ?? colour.initialQuantity;
+    final withWorkers = balance?.totalPendingWithWorkers ?? 0;
+    if (withWorkers == 0) {
+      return 'Factory ($inHouse pcs)';
+    }
+    final activeHolders = operations
+        .where((op) => op.pendingQuantity > 0 && op.workerName != null)
+        .map((op) => op.workerName!)
+        .toSet()
+        .toList();
+    if (inHouse == 0 && activeHolders.length == 1) {
+      return '${activeHolders.first} ($withWorkers pcs)';
+    }
+    return 'Factory $inHouse • Workers $withWorkers';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final brightness = Theme.of(context).brightness;
+    final swatch = AppColourUtils.resolveColor(
+      colour.colourHex,
+      fallbackName: colour.colourName,
+    );
+    final hexLabel =
+        AppColourUtils.normalizeHex(colour.colourHex) ??
+        AppColourUtils.toHex(swatch);
+    final onSwatch = AppColourUtils.contrastForeground(swatch);
+    final borderColor = AppColourUtils.swatchBorderColor(swatch, brightness);
+
+    final totalQty = colour.initialQuantity;
+    final pendingQty = balance?.totalPendingWithWorkers ?? 0;
+    final completedQty = operations.fold<int>(
+      0,
+      (sum, op) =>
+          sum + op.returnedToFactoryQuantity + op.transferredOutQuantity,
+    );
+    final stageLabel = _resolveCurrentStage();
+    final locationLabel = _resolveStockLocation();
+
+    return AppCard.listItem(
+      padding: EdgeInsets.zero,
+      borderRadius: AppRadius.lgBorder,
+      onTap: onTap,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Large Actual Colour Preview Banner (tall enough for 44dp
+          // edit / delete touch targets plus the colour name).
+          Container(
+            height: 80,
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.sm,
+              vertical: 6,
+            ),
+            decoration: BoxDecoration(
+              color: swatch,
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(AppRadius.lg),
+              ),
+              border: Border(bottom: BorderSide(color: borderColor)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Flexible(
+                      child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: onSwatch.withValues(alpha: 0.14),
+                        borderRadius: AppRadius.smBorder,
+                        border: Border.all(
+                          color: onSwatch.withValues(alpha: 0.30),
+                        ),
+                      ),
+                      child: Text(
+                        hexLabel,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: onSwatch,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ),
+                    ),
+                    const Spacer(),
+                    // 44dp touch targets (were ~24dp) so edit/delete are
+                    // easy to hit on a phone.
+                    IconButton(
+                      onPressed: onEdit,
+                      tooltip: context.l10n.colourEditAction,
+                      constraints: const BoxConstraints.tightFor(
+                        width: 40,
+                        height: 44,
+                      ),
+                      padding: EdgeInsets.zero,
+                      iconSize: 18,
+                      color: onSwatch,
+                      icon: const Icon(AppIcons.edit),
+                    ),
+                    IconButton(
+                      onPressed: onDelete,
+                      tooltip: MaterialLocalizations.of(
+                        context,
+                      ).deleteButtonTooltip,
+                      constraints: const BoxConstraints.tightFor(
+                        width: 40,
+                        height: 44,
+                      ),
+                      padding: EdgeInsets.zero,
+                      iconSize: 18,
+                      color: onSwatch,
+                      icon: const Icon(AppIcons.delete),
+                    ),
+                  ],
+                ),
+                Text(
+                  colour.colourName,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    color: onSwatch,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          // Card Body Metrics
+          Padding(
+            padding: const EdgeInsets.all(AppSpacing.sm),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (designName != null && designName!.isNotEmpty) ...[
+                  AppText(
+                    'Design: $designName',
+                    variant: AppTextVariant.bodySmall,
+                    color: colorScheme.primary,
+                    fontWeight: FontWeight.w600,
+                    maxLines: 1,
+                  ),
+                  const SizedBox(height: 4),
+                ],
+                Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  spacing: AppSpacing.sm,
+                  runSpacing: 4,
+                  children: [
+                    _MiniMetric(label: 'Total', value: '$totalQty'),
+                    _MiniMetric(label: 'Done', value: '$completedQty'),
+                    _MiniMetric(
+                      label: 'Pending',
+                      value: '$pendingQty',
+                      highlight: pendingQty > 0,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Row(
+                  children: [
+                    Icon(
+                      AppIcons.processIcon(stageLabel),
+                      size: 13,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: AppText(
+                        stageLabel,
+                        variant: AppTextVariant.bodySmall,
+                        fontWeight: FontWeight.w600,
+                        maxLines: 1,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    Icon(
+                      AppIcons.location,
+                      size: 13,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: AppText(
+                        locationLabel,
+                        variant: AppTextVariant.bodySmall,
+                        color: colorScheme.onSurfaceVariant,
+                        maxLines: 1,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+final class _MiniMetric extends StatelessWidget {
+  const _MiniMetric({
+    required this.label,
+    required this.value,
+    this.highlight = false,
+  });
+
+  final String label;
+  final String value;
+  final bool highlight;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AppText(
+          label,
+          variant: AppTextVariant.bodySmall,
+          color: colorScheme.onSurfaceVariant,
+        ),
+        AppText(
+          value,
+          variant: AppTextVariant.numeric,
+          fontWeight: FontWeight.w700,
+          color: highlight ? colorScheme.tertiary : colorScheme.onSurface,
+        ),
       ],
     );
   }
 }
 
-final class _LotPhotoTile extends StatelessWidget {
-  const _LotPhotoTile({required this.photo, required this.onRemove});
+final class _LotPhotoTile extends StatefulWidget {
+  const _LotPhotoTile({
+    super.key,
+    required this.photo,
+    required this.onRemove,
+  });
 
   final LotAttachmentEntity photo;
   final VoidCallback onRemove;
 
   @override
+  State<_LotPhotoTile> createState() => _LotPhotoTileState();
+}
+
+final class _LotPhotoTileState extends State<_LotPhotoTile> {
+  late Future<Uint8List?> _photoFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _photoFuture = context.read<LotDetailCubit>().readPhotoBytes(
+      widget.photo.relativePath,
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant _LotPhotoTile oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.photo.relativePath != widget.photo.relativePath) {
+      _photoFuture = context.read<LotDetailCubit>().readPhotoBytes(
+        widget.photo.relativePath,
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final dpr = MediaQuery.devicePixelRatioOf(context);
+    final thumbCachePx = (112 * dpr).round().clamp(112, 448);
+
     return FutureBuilder<Uint8List?>(
-      future: context.read<LotDetailCubit>().readPhotoBytes(photo.relativePath),
+      future: _photoFuture,
       builder: (context, snapshot) {
         Widget preview;
         if (snapshot.connectionState == ConnectionState.waiting) {
-          preview = const Center(
-            child: CircularProgressIndicator(strokeWidth: 2),
-          );
+          preview = const AppLoader.inline(size: 20);
         } else if (snapshot.data == null) {
           preview = Center(
             child: Padding(
@@ -846,7 +1528,7 @@ final class _LotPhotoTile extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.broken_image_outlined),
+                  const Icon(AppIcons.imageError),
                   AppText(
                     l10n.lotPhotoMissing,
                     variant: AppTextVariant.bodySmall,
@@ -860,28 +1542,40 @@ final class _LotPhotoTile extends StatelessWidget {
         } else {
           final bytes = snapshot.data!;
           preview = InkWell(
-            onTap: () => showDialog<void>(
-              context: context,
-              builder: (dlgCtx) => Dialog(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    InteractiveViewer(
-                      child: Image.memory(bytes, fit: BoxFit.contain),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(AppSpacing.sm),
-                      child: AppButton(
-                        label: l10n.actionClose,
-                        variant: AppButtonVariant.text,
-                        onPressed: () => Navigator.of(dlgCtx).pop(),
+            onTap: () => AppDialog.showCustom<void>(
+              context,
+              builder: (dlgCtx) => AppDialog(
+                title: l10n.lotPhotosHeading,
+                cancelLabel: l10n.actionClose,
+                content: InteractiveViewer(
+                  child: ClipRRect(
+                    borderRadius: AppRadius.mdBorder,
+                    child: Image(
+                      // Decode at most 2x screen width (zoom headroom), not
+                      // the camera's full size, so large photos open quickly
+                      // and use far less memory. Small photos are not upscaled.
+                      image: ResizeImage(
+                        MemoryImage(bytes),
+                        width:
+                            (MediaQuery.sizeOf(dlgCtx).width *
+                                    MediaQuery.devicePixelRatioOf(dlgCtx) *
+                                    2)
+                                .round(),
+                        policy: ResizeImagePolicy.fit,
                       ),
+                      fit: BoxFit.contain,
+                      gaplessPlayback: true,
                     ),
-                  ],
+                  ),
                 ),
               ),
             ),
-            child: Image.memory(bytes, fit: BoxFit.cover),
+            child: Image.memory(
+              bytes,
+              fit: BoxFit.cover,
+              cacheWidth: thumbCachePx,
+              gaplessPlayback: true,
+            ),
           );
         }
 
@@ -908,8 +1602,8 @@ final class _LotPhotoTile extends StatelessWidget {
                 child: IconButton.filledTonal(
                   visualDensity: VisualDensity.compact,
                   tooltip: l10n.actionDelete,
-                  icon: const Icon(Icons.close, size: 16),
-                  onPressed: onRemove,
+                  icon: const Icon(AppIcons.close, size: 16),
+                  onPressed: widget.onRemove,
                 ),
               ),
             ],

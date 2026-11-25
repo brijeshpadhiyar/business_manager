@@ -144,11 +144,13 @@ final class InMemorySecurityRepository implements SecurityRepository {
     bool? biometricEnabled,
     LockTimeoutOption? timeout,
     bool? screenshotProtectionEnabled,
+    bool? requireAuthForApprovals,
   }) async {
     _settings = _settings.copyWith(
       biometricEnabled: biometricEnabled,
       timeout: timeout,
       screenshotProtectionEnabled: screenshotProtectionEnabled,
+      requireAuthForApprovals: requireAuthForApprovals,
     );
     return _settings;
   }

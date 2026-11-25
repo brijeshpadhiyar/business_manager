@@ -1030,5 +1030,232 @@
   "validationOverrideReasonRequired": "Reason is required when overriding the rate.",
   "validationParentIssueInactive": "Original stock issue is no longer active.",
   "validationAlreadyReversed": "This entry has already been reversed.",
-  "validationCannotReverseReversal": "A reversal entry cannot itself be reversed."
+  "validationCannotReverseReversal": "A reversal entry cannot itself be reversed.",
+  "validationMinLength": "Must be at least {min} characters.",
+  "@validationMinLength": {
+    "placeholders": {
+      "min": { "type": "int" }
+    }
+  },
+  "validationExceedsDispatched": "Received quantity cannot exceed dispatched quantity.",
+  "validationExceedsHeld": "Transfer quantity cannot exceed quantity currently held by the worker.",
+  "validationUnaccountedRemaining": "Process cannot be completed while pending quantity remains unaccounted.",
+  "validationOverpaymentNotAllowed": "Payment amount cannot exceed the remaining payable balance.",
+  "msgTitleSuccess": "Success",
+  "msgTitleError": "Error",
+  "msgTitleWarning": "Warning",
+  "msgTitleInfo": "Information",
+  "msgTitleLoading": "Working...",
+  "navPressBackAgainToExit": "Press back again to exit",
+  "navProductionHistory": "Production History",
+  "navInspectionQueue": "QC Inspection Queue",
+  "navWorkerHistory": "Worker Production",
+  "navProcessHistory": "Process History",
+  "prodHistoryDashboardTitle": "Production History",
+  "prodHistoryDashboardSubtitle": "Permanent lot, worker, process & financial ledger tracking",
+  "prodHistorySearchHint": "Search lot, worker, process, design, colour...",
+  "prodHistoryOnlyPending": "Pending Only",
+  "prodHistoryAllEntries": "All Entries",
+  "prodHistoryTotalAssigned": "Assigned",
+  "prodHistoryTotalReturned": "Returned",
+  "prodHistoryTotalAccepted": "Accepted",
+  "prodHistoryTotalRejected": "Rejected",
+  "prodHistoryPendingInspection": "Pending Inspection",
+  "prodHistoryOutstandingWork": "Outstanding",
+  "prodHistoryTotalEarned": "Total Earned",
+  "prodHistoryTotalPaid": "Total Paid",
+  "prodHistoryOutstandingPayable": "Outstanding Payable",
+  "prodHistoryLotHistoryTitle": "Complete Lot History",
+  "prodHistoryLotTimelineTitle": "Lot Timeline",
+  "prodHistoryViewLotHistory": "Lot History",
+  "prodHistoryViewTimeline": "Lot Timeline",
+  "prodHistoryWorkerHistoryTitle": "Worker Production History",
+  "prodHistoryWorkerLotHistory": "Worker Lot History",
+  "prodHistoryWorkerProcessHistory": "Process-Wise History",
+  "prodHistoryIncludeInactive": "Show Inactive",
+  "prodHistoryProcessHistoryTitle": "Process-Wise History",
+  "prodHistoryProcessDetailsTitle": "Process Production Details",
+  "prodHistoryTabLotWise": "Lot-Wise",
+  "prodHistoryTabWorkerWise": "Worker-Wise",
+  "prodHistoryTabDateWise": "Date-Wise",
+  "prodHistoryTabPending": "Pending Work",
+  "prodHistoryInspectionQueueTitle": "Returns & QC Inspection",
+  "prodHistoryTabPendingInspection": "Pending QC",
+  "prodHistoryTabRejections": "Rejections & Repairs",
+  "prodHistoryApproveAction": "Inspect & Approve",
+  "prodHistoryRecordRepairAction": "Log Repair",
+  "prodHistoryReinspectAction": "Re-Inspect & Approve",
+  "prodHistoryRepairSourceOriginal": "Repaired by Original Worker (Credits Historical Rate)",
+  "prodHistoryRepairSourceInHouse": "Factory / In-House Repair (No Worker Earning)",
+  "prodHistoryReturnModePending": "Log as Pending Inspection (₹0 until QC approves)",
+  "prodHistoryReturnModeImmediate": "Return & Inspect Immediately (Generates Accepted Earnings)",
+  "prodHistoryTxDetailTitle": "Transaction Details",
+  "prodHistoryOpenLot": "Open Lot",
+  "prodHistoryOpenWorker": "Open Worker",
+  "prodHistoryOpenProcess": "Open Process",
+  "prodHistoryLockedRateSnapshot": "Locked Rate Snapshot",
+  "prodHistoryAuditTrail": "Audit Trail",
+  "prodHistoryRelatedRecords": "Linked Transactions",
+  "prodHistoryInitialAssignmentsTitle": "3. Initial Process Assignments (Optional)",
+  "prodHistoryInitialAssignmentsSubtitle": "Optionally assign processes, workers, quantities & locked rates while creating the lot.",
+  "prodHistoryAddAssignmentAction": "Add Assignment",
+  "prodHistoryApprovalAuthTitle": "Authorize Approval",
+  "prodHistoryApprovalAuthSubtitle": "Verify PIN or biometrics to approve accepted quantities and credit worker earnings.",
+  "securityRequireApprovalAuthLabel": "Require PIN for Return Approvals",
+  "securityRequireApprovalAuthSubtitle": "Prompt for PIN/biometrics when approving returned or repaired quantities.",
+  "settingsFinalPaymentRuleTitle": "Finalized Earnings Rule (Active)",
+  "settingsFinalPaymentRuleBody": "Worker earnings are calculated strictly as Accepted Quantity × Historical Assigned Rate. Legacy GIVEN_QTY and Damaged-in-Labour settings are retired for all new transactions while historical records remain preserved.",
+  "validationExceedsPendingInspection": "Inspected quantity exceeds remaining pending inspection quantity.",
+  "validationExceedsReturnedQty": "Accepted + Rejected cannot exceed returned quantity.",
+  "validationExceedsRejectedQty": "Quantity cannot exceed open rejected quantity.",
+  "validationExceedsRepairedQty": "Re-inspected quantity cannot exceed pending repaired quantity.",
+  "validationLotUnreconciled": "Cannot mark lot completed while pieces are still with workers or pending QC inspection.",
+  "navDesignsColours": "Designs & Colours",
+  "designsColoursSubtitle": "Search designs, manage saved colours & view historical lot prices",
+  "designsTabLabel": "Designs",
+  "coloursTabLabel": "Colour Catalog",
+  "designsSearchHint": "Search design, colour, or lot number...",
+  "colourAddAction": "Add Colour",
+  "colourEditAction": "Edit Colour",
+  "colourNameLabel": "Colour Name",
+  "colourHexLabel": "Hex Code (e.g. #DC2626)",
+  "colourSavedSuccess": "Colour saved to catalog.",
+  "designsEmptyTitle": "No Designs Recorded Yet",
+  "designsEmptySubtitle": "Create a lot with designs and colours to see them tracked here across lots.",
+  "coloursEmptyTitle": "No Saved Colours Yet",
+  "coloursEmptySubtitle": "Add reusable workshop colours with swatches for faster lot creation.",
+  "historicalPricePreservedNote": "Historical lot prices stay locked to each lot and are never overwritten.",
+  "webBackupExportAction": "Download Web Backup (.json)",
+  "webBackupExportDesc": "Downloads a verified offline snapshot of all local workshop records from this browser.",
+  "webBackupRestoreAction": "Restore Web Backup (.json)",
+  "webBackupRestoreDesc": "Validates checksum and schema before restoring all records into this browser's offline database.",
+  "webPrintFallbackNote": "Opened browser print dialog (use Save as PDF to download).",
+  "uxUndo": "Undo",
+  "@uxUndo": {
+    "description": "Action label on a success message that reverses the last change."
+  },
+  "uxShowMore": "Show {count} more",
+  "@uxShowMore": {
+    "description": "Button that reveals more rows in a long list section.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "uxShowLess": "Show less",
+  "@uxShowLess": {
+    "description": "Button that collapses an expanded list section."
+  },
+  "uxUnsavedTitle": "Discard changes?",
+  "@uxUnsavedTitle": {
+    "description": "Title of the dialog shown when leaving a form with unsaved changes."
+  },
+  "uxUnsavedMessage": "You have changes that are not saved. If you leave now they will be lost.",
+  "@uxUnsavedMessage": {
+    "description": "Body of the unsaved-changes dialog."
+  },
+  "uxUnsavedDiscard": "Discard",
+  "@uxUnsavedDiscard": {
+    "description": "Confirm button that leaves the form and drops unsaved changes."
+  },
+  "uxUnsavedKeepEditing": "Keep editing",
+  "@uxUnsavedKeepEditing": {
+    "description": "Cancel button that stays on the form."
+  },
+  "uxSearchTooltip": "Search (Ctrl+K)",
+  "@uxSearchTooltip": {
+    "description": "Tooltip on the global search button."
+  },
+  "uxSearchHint": "Search lots, workers, processes…",
+  "@uxSearchHint": {
+    "description": "Hint in the global search box."
+  },
+  "uxSearchLots": "Lots",
+  "@uxSearchLots": {
+    "description": "Section title for lot results."
+  },
+  "uxSearchWorkers": "Workers",
+  "@uxSearchWorkers": {
+    "description": "Section title for worker results."
+  },
+  "uxSearchProcesses": "Processes",
+  "@uxSearchProcesses": {
+    "description": "Section title for process results."
+  },
+  "uxSearchNoResults": "No matches for \"{query}\"",
+  "@uxSearchNoResults": {
+    "description": "Shown when global search finds nothing.",
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "uxQuickActions": "Quick actions",
+  "@uxQuickActions": {
+    "description": "Title of the quick actions group."
+  },
+  "uxActionNewLot": "New lot",
+  "@uxActionNewLot": {
+    "description": "Quick action: create a lot."
+  },
+  "uxActionIssueStock": "Issue stock to worker",
+  "@uxActionIssueStock": {
+    "description": "Quick action: issue stock."
+  },
+  "uxActionReceiveWork": "Receive work back",
+  "@uxActionReceiveWork": {
+    "description": "Quick action: receive returned work."
+  },
+  "uxActionRecordPayment": "Record payment",
+  "@uxActionRecordPayment": {
+    "description": "Quick action: record a worker payment."
+  },
+  "uxActionAddWorker": "Add worker",
+  "@uxActionAddWorker": {
+    "description": "Quick action: add a worker."
+  },
+  "uxActionInspections": "Inspection queue",
+  "@uxActionInspections": {
+    "description": "Quick action: open the inspection queue."
+  },
+  "uxPerPage": "{count} / page",
+  "@uxPerPage": {
+    "description": "Rows-per-page option in paged tables.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "uxFilters": "Filters",
+  "@uxFilters": {
+    "description": "Button that opens the filter panel on phones."
+  },
+  "uxFiltersActive": "Filters ({count})",
+  "@uxFiltersActive": {
+    "description": "Filter button label when some filters are set.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "uxMoreScreens": "More screens",
+  "@uxMoreScreens": {
+    "description": "Expandable group of secondary screen links on the dashboard."
+  },
+  "uxMoreActions": "More actions",
+  "@uxMoreActions": {
+    "description": "Tooltip of the overflow menu that holds extra card actions."
+  },
+  "uxApply": "Apply",
+  "@uxApply": {
+    "description": "Button that applies filters and closes the filter panel."
+  },
+  "uxClearAll": "Clear all",
+  "@uxClearAll": {
+    "description": "Button that clears all filters."
+  }
 }

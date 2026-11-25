@@ -1,6 +1,7 @@
 import 'package:business_manager/core/config/app_config.dart';
 import 'package:business_manager/core/config/app_identity.dart';
 import 'package:business_manager/core/design_system/app_colors.dart';
+import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
@@ -15,6 +16,7 @@ import 'package:business_manager/features/security/presentation/bloc/app_lock_cu
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Centralized Settings Hub organizing Appearance, Business Profile,
 /// Stock & Labour Preferences, Backup & Data Safety, Help & Guidance,
@@ -52,14 +54,18 @@ final class SettingsHomePage extends StatelessWidget {
     final l10n = context.l10n;
     final colorScheme = Theme.of(context).colorScheme;
 
+    final effectiveShowAppBar =
+        showAppBar || (ModalRoute.of(context)?.canPop ?? false);
     final content = Align(
       alignment: Alignment.topCenter,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: AppSizing.maxContentWidth),
+        constraints: const BoxConstraints(
+          maxWidth: AppSizing.narrowContentWidth,
+        ),
         child: ListView(
           padding: AppSpacing.screenAll,
           children: [
-            if (!showAppBar) ...[
+            if (!effectiveShowAppBar) ...[
               AppHeading(
                 l10n.settingsHeading,
                 level: AppHeadingLevel.h2,
@@ -69,13 +75,16 @@ final class SettingsHomePage extends StatelessWidget {
             ],
 
             // Section 1: App & Workshop Setup
-            _SettingsSectionCard(
+            AppMotionEntrance(
+              index: 0,
+              slideOffsetY: 0,
+              child: _SettingsSectionCard(
               children: [
                 BlocBuilder<ThemeCubit, ThemeState>(
                   builder: (context, themeState) =>
                       BlocBuilder<LocaleCubit, LocaleState>(
                         builder: (context, localeState) => _SettingsTile(
-                          icon: Icons.palette_outlined,
+                          icon: AppIcons.appearance,
                           iconBg: colorScheme.secondaryContainer,
                           iconColor: colorScheme.onSecondaryContainer,
                           title: l10n.settingsAppearanceTitle,
@@ -89,7 +98,7 @@ final class SettingsHomePage extends StatelessWidget {
                 ),
                 const Divider(indent: 64),
                 _SettingsTile(
-                  icon: Icons.storefront_outlined,
+                  icon: AppIcons.business,
                   iconBg: colorScheme.primaryContainer,
                   iconColor: colorScheme.onPrimaryContainer,
                   title: l10n.settingsBusinessTitle,
@@ -98,25 +107,37 @@ final class SettingsHomePage extends StatelessWidget {
                 ),
                 const Divider(indent: 64),
                 _SettingsTile(
-                  icon: Icons.tune_rounded,
+                  icon: AppIcons.stockLabourSettings,
                   iconBg: context.semanticColors.pendingContainer,
                   iconColor: context.semanticColors.pending,
                   title: l10n.settingsStockLabourTitle,
                   subtitle: l10n.settingsStockLabourSubtitle,
                   onTap: () => context.push(RoutePaths.settingsStockLabour),
                 ),
+                const Divider(indent: 64),
+                _SettingsTile(
+                  icon: AppIcons.designs,
+                  iconBg: colorScheme.secondaryContainer,
+                  iconColor: colorScheme.onSecondaryContainer,
+                  title: l10n.navDesignsColours,
+                  subtitle: l10n.designsColoursSubtitle,
+                  onTap: () => context.push(RoutePaths.designsColours),
+                ),
               ],
+            ),
             ),
             const SizedBox(height: AppSpacing.md),
 
             // Section 2: Security, Data Safety & Guidance
-            _SettingsSectionCard(
+            AppMotionEntrance(
+              index: 1,
+              child: _SettingsSectionCard(
               children: [
                 BlocBuilder<AppLockCubit, AppLockState>(
                   builder: (context, lockState) => _SettingsTile(
                     icon: lockState.isPinEnabled
-                        ? Icons.verified_user_outlined
-                        : Icons.lock_outline_rounded,
+                        ? AppIcons.security
+                        : AppIcons.lock,
                     iconBg: lockState.isPinEnabled
                         ? context.semanticColors.goodStockContainer
                         : colorScheme.surfaceContainerHighest,
@@ -133,7 +154,7 @@ final class SettingsHomePage extends StatelessWidget {
                 ),
                 const Divider(indent: 64),
                 _SettingsTile(
-                  icon: Icons.notifications_outlined,
+                  icon: AppIcons.notifications,
                   iconBg: context.semanticColors.pendingContainer,
                   iconColor: context.semanticColors.pending,
                   title: l10n.settingsNotificationsTitle,
@@ -142,7 +163,7 @@ final class SettingsHomePage extends StatelessWidget {
                 ),
                 const Divider(indent: 64),
                 _SettingsTile(
-                  icon: Icons.backup_outlined,
+                  icon: AppIcons.backup,
                   iconBg: context.semanticColors.goodStockContainer,
                   iconColor: context.semanticColors.goodStock,
                   title: l10n.settingsBackupTitle,
@@ -151,7 +172,7 @@ final class SettingsHomePage extends StatelessWidget {
                 ),
                 const Divider(indent: 64),
                 _SettingsTile(
-                  icon: Icons.menu_book_outlined,
+                  icon: AppIcons.guide,
                   iconBg: context.semanticColors.advanceCreditContainer,
                   iconColor: context.semanticColors.advanceCredit,
                   title: l10n.settingsHelpTitle,
@@ -160,13 +181,16 @@ final class SettingsHomePage extends StatelessWidget {
                 ),
               ],
             ),
+            ),
             const SizedBox(height: AppSpacing.md),
 
             // Section 3: About & Diagnostics
-            _SettingsSectionCard(
+            AppMotionEntrance(
+              index: 2,
+              child: _SettingsSectionCard(
               children: [
                 _SettingsTile(
-                  icon: Icons.info_outline_rounded,
+                  icon: AppIcons.info,
                   iconBg: colorScheme.surfaceContainerHighest,
                   iconColor: colorScheme.onSurfaceVariant,
                   title: l10n.settingsAboutTitle,
@@ -178,7 +202,7 @@ final class SettingsHomePage extends StatelessWidget {
                 if (config.isDev) ...[
                   const Divider(indent: 64),
                   _SettingsTile(
-                    icon: Icons.design_services_outlined,
+                    icon: AppIcons.designs,
                     iconBg: colorScheme.tertiaryContainer,
                     iconColor: colorScheme.onTertiaryContainer,
                     title: l10n.navDesignShowcase,
@@ -188,13 +212,14 @@ final class SettingsHomePage extends StatelessWidget {
                 ],
               ],
             ),
+            ),
             const SizedBox(height: AppSpacing.xl),
           ],
         ),
       ),
     );
 
-    if (showAppBar) {
+    if (effectiveShowAppBar) {
       return AppScaffold(
         title: l10n.settingsHeading,
         padding: EdgeInsets.zero,
@@ -293,7 +318,7 @@ final class _SettingsTile extends StatelessWidget {
             ),
             const SizedBox(width: AppSpacing.xs),
             Icon(
-              Icons.chevron_right_rounded,
+              AppIcons.chevronRight,
               color: colorScheme.onSurfaceVariant,
             ),
           ],

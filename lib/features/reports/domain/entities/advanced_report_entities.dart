@@ -1,4 +1,5 @@
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
+import 'package:business_manager/features/production_history/domain/entities/production_history_entities.dart';
 import 'package:business_manager/features/reports/domain/entities/dashboard_report_entities.dart';
 import 'package:business_manager/features/reports/domain/entities/report_filter.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
@@ -111,6 +112,7 @@ final class WorkerPerformanceRow {
     required this.periodAdvanceRefundsPaise,
     required this.periodNetPaymentsPaise,
     required this.currentPendingQty,
+    this.currentPendingInspectionQty = 0,
     required this.currentOpenIssuesCount,
     required this.currentOutstandingPayablePaise,
     required this.currentAdvanceCreditPaise,
@@ -131,6 +133,7 @@ final class WorkerPerformanceRow {
   final int periodAdvanceRefundsPaise;
   final int periodNetPaymentsPaise;
   final int currentPendingQty;
+  final int currentPendingInspectionQty;
   final int currentOpenIssuesCount;
   final int currentOutstandingPayablePaise;
   final int currentAdvanceCreditPaise;
@@ -166,6 +169,7 @@ final class ProcessPerformanceRow {
     required this.periodLostShortageQty,
     required this.periodLabourCostPaise,
     required this.currentPendingQty,
+    this.currentPendingInspectionQty = 0,
     required this.currentOpenIssuesCount,
     required this.oldestOpenIssueAgeDays,
     required this.averageTurnaroundHours,
@@ -182,6 +186,7 @@ final class ProcessPerformanceRow {
   final int periodLostShortageQty;
   final int periodLabourCostPaise;
   final int currentPendingQty;
+  final int currentPendingInspectionQty;
   final int currentOpenIssuesCount;
   final int? oldestOpenIssueAgeDays;
 
@@ -209,6 +214,7 @@ final class InventoryReportSection {
     required this.openIssues,
     required this.movementHistory,
     required this.damagedLostShortageMovements,
+    this.pendingInspection = 0,
   });
 
   final int initialStock;
@@ -217,6 +223,9 @@ final class InventoryReportSection {
   final int damagedBucket;
   final int lostStock;
   final int shortageStock;
+
+  /// Pieces returned and waiting for QC.
+  final int pendingInspection;
 
   /// `SUM(totalGoodPhysicalStock * unitPricePaise)`. Reference value only — NOT profit/revenue.
   final int referenceGoodStockValuePaise;
@@ -429,6 +438,10 @@ final class AdvancedReportsBundle {
     required this.inventory,
     required this.financial,
     required this.insights,
+    this.currentTotalPendingInspectionQty = 0,
+    this.productionHistoryRows = const [],
+    this.pendingInspectionReturns = const [],
+    this.rejectionRecords = const [],
   });
 
   final ReportFilter filter;
@@ -444,9 +457,13 @@ final class AdvancedReportsBundle {
   final int dailyTotalLabourPaise;
   final int dailyTotalNetPaymentsPaise;
   final int currentTotalPendingQty;
+  final int currentTotalPendingInspectionQty;
   final List<WorkerPerformanceRow> workerPerformance;
   final List<ProcessPerformanceRow> processPerformance;
   final InventoryReportSection inventory;
   final FinancialReportSection financial;
   final BusinessInsightsBundle insights;
+  final List<AssignmentReconciliationSummary> productionHistoryRows;
+  final List<PendingReturnView> pendingInspectionReturns;
+  final List<RejectionRecordView> rejectionRecords;
 }

@@ -1,9 +1,12 @@
-import 'package:intl/intl.dart';
+import 'package:business_manager/core/utils/app_date_time_formatter.dart';
 import 'package:timezone/data/latest_10y.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
 
-/// Enforces UTC storage and `Asia/Kolkata` (IST, UTC+05:30) display and
-/// business-date extraction across the entire application.
+/// Enforces UTC storage and `Asia/Kolkata` (IST, UTC+05:30) conversion across
+/// the entire application.
+///
+/// All display and string formatting delegates to the centralized
+/// [AppDateTimeFormatter] helper class.
 abstract final class IstDateTimeHelper {
   static const String istLocationName = 'Asia/Kolkata';
   static bool _initialized = false;
@@ -55,48 +58,22 @@ abstract final class IstDateTimeHelper {
 
   /// Extracts the `Asia/Kolkata` business date in strict ISO `YYYY-MM-DD` format.
   /// Used for effective-dated historical rate lookups (`member_process_rates`).
-  static String toIstBusinessDate(int utcMillis) {
-    final ist = fromUtcMillisToIst(utcMillis);
-    final y = ist.year.toString().padLeft(4, '0');
-    final m = ist.month.toString().padLeft(2, '0');
-    final d = ist.day.toString().padLeft(2, '0');
-    return '$y-$m-$d';
-  }
+  static String toIstBusinessDate(int utcMillis) =>
+      AppDateTimeFormatter.toIstBusinessDate(utcMillis);
 
   /// Formats UTC epoch milliseconds for UI display in `Asia/Kolkata`.
-  static String formatIstDateTime(int utcMillis, {String locale = 'en'}) {
-    final ist = fromUtcMillisToIst(utcMillis);
-    return DateFormat('dd MMM yyyy, hh:mm a', locale).format(ist);
-  }
+  static String formatIstDateTime(int utcMillis, {String locale = 'en'}) =>
+      AppDateTimeFormatter.formatDateTime(utcMillis, locale: locale);
 
   /// Formats UTC epoch milliseconds as a compact `Asia/Kolkata` date string.
-  static String formatIstDate(int utcMillis, {String locale = 'en'}) {
-    final ist = fromUtcMillisToIst(utcMillis);
-    return DateFormat('dd MMM yyyy', locale).format(ist);
-  }
+  static String formatIstDate(int utcMillis, {String locale = 'en'}) =>
+      AppDateTimeFormatter.formatDate(utcMillis, locale: locale);
 
-  /// Formats UTC epoch milliseconds as deterministic ISO IST (`YYYY-MM-DD HH:MM:SS IST`)
-  /// without requiring `intl` locale tables (safe for background jobs & manifests).
-  static String formatIstIsoDateTime(int utcMillis) {
-    final ist = fromUtcMillisToIst(utcMillis);
-    final y = ist.year.toString().padLeft(4, '0');
-    final mo = ist.month.toString().padLeft(2, '0');
-    final d = ist.day.toString().padLeft(2, '0');
-    final h = ist.hour.toString().padLeft(2, '0');
-    final mi = ist.minute.toString().padLeft(2, '0');
-    final s = ist.second.toString().padLeft(2, '0');
-    return '$y-$mo-$d $h:$mi:$s IST';
-  }
+  /// Formats UTC epoch milliseconds as deterministic ISO IST (`YYYY-MM-DD HH:MM:SS IST`).
+  static String formatIstIsoDateTime(int utcMillis) =>
+      AppDateTimeFormatter.formatIsoDateTimeIst(utcMillis);
 
   /// Formats UTC epoch milliseconds for deterministic IST filenames (`YYYYMMDD_HHMMSS`).
-  static String formatIstFileTimestamp(int utcMillis) {
-    final ist = fromUtcMillisToIst(utcMillis);
-    final y = ist.year.toString().padLeft(4, '0');
-    final mo = ist.month.toString().padLeft(2, '0');
-    final d = ist.day.toString().padLeft(2, '0');
-    final h = ist.hour.toString().padLeft(2, '0');
-    final mi = ist.minute.toString().padLeft(2, '0');
-    final s = ist.second.toString().padLeft(2, '0');
-    return '$y$mo${d}_$h$mi$s';
-  }
+  static String formatIstFileTimestamp(int utcMillis) =>
+      AppDateTimeFormatter.formatFileTimestampIst(utcMillis);
 }

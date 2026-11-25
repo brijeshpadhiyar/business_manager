@@ -46,6 +46,7 @@ abstract interface class SecurityRepository {
     bool? biometricEnabled,
     LockTimeoutOption? timeout,
     bool? screenshotProtectionEnabled,
+    bool? requireAuthForApprovals,
   });
 
   /// Records the timestamp when the app entered background (survives process death).

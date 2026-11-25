@@ -6,6 +6,7 @@ import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// About StitchFlow screen showing brand identity, version/build, active flavor,
 /// offline local data privacy guarantee, and open-source licenses.
@@ -22,6 +23,7 @@ final class AboutStitchFlowPage extends StatelessWidget {
 
     return AppScaffold(
       title: l10n.settingsAboutTitle,
+      contentWidth: AppContentWidth.narrow,
       body: ListView(
         children: [
           AppCard(
@@ -45,8 +47,10 @@ final class AboutStitchFlowPage extends StatelessWidget {
                     AppIdentity.symbolPngAsset,
                     width: 64,
                     height: 64,
+                    cacheWidth: 192,
+                    cacheHeight: 192,
                     errorBuilder: (_, _, _) => const Icon(
-                      Icons.auto_awesome,
+                      AppIcons.brand,
                       color: Colors.white,
                       size: 48,
                     ),
@@ -110,7 +114,7 @@ final class AboutStitchFlowPage extends StatelessWidget {
                 Row(
                   children: [
                     Icon(
-                      Icons.verified_user_outlined,
+                      AppIcons.security,
                       size: 20,
                       color: context.semanticColors.goodStock,
                     ),
@@ -135,7 +139,7 @@ final class AboutStitchFlowPage extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
           AppButton(
             label: l10n.aboutLicensesAction,
-            icon: Icons.description_outlined,
+            icon: AppIcons.document,
             variant: AppButtonVariant.outlined,
             isExpanded: true,
             onPressed: () => showLicensePage(
@@ -149,6 +153,8 @@ final class AboutStitchFlowPage extends StatelessWidget {
                   AppIdentity.symbolPngAsset,
                   width: 48,
                   height: 48,
+                  cacheWidth: 144,
+                  cacheHeight: 144,
                   errorBuilder: (_, _, _) => const SizedBox.shrink(),
                 ),
               ),

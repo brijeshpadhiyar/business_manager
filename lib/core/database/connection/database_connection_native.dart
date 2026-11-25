@@ -3,11 +3,12 @@ import 'dart:io';
 import 'package:business_manager/core/config/app_config.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:business_manager/core/platform/app_data_directory.dart';
 import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 
-/// Opens a private, flavor-isolated native SQLite database inside OS application
-/// documents storage (`<appDocsDir>/db/<config.databaseName>`).
+/// Opens a private, flavor-isolated native SQLite database inside the private
+/// app-data folder (`<appData>/db/<config.databaseName>`, see
+/// [resolveAppDataDirectory]).
 /// Runs SQLite on a background isolate to protect UI frame rendering.
 QueryExecutor openPlatformDatabase(AppConfig config) {
   return LazyDatabase(() async {
@@ -22,7 +23,7 @@ Future<File> resolvePrivateDatabaseFile(
   Directory? baseDirectoryOverride,
 }) async {
   final baseDir =
-      baseDirectoryOverride ?? await getApplicationDocumentsDirectory();
+      baseDirectoryOverride ?? await resolveAppDataDirectory();
   final dbDir = Directory(p.join(baseDir.path, 'db'));
   if (!dbDir.existsSync()) {
     await dbDir.create(recursive: true);

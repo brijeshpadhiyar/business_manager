@@ -160,11 +160,11 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('StitchFlow Locked'), findsOneWidget);
-      expect(find.text('Issue Stock'), findsNothing);
+      expect(find.text('Issue stock to worker'), findsNothing);
 
       await tapDigits(tester, '5678');
       expect(find.text('StitchFlow Locked'), findsNothing);
-      expect(find.text('Issue Stock'), findsWidgets);
+      expect(find.text('Issue stock to worker'), findsWidgets);
       expect(tester.takeException(), isNull);
     },
   );

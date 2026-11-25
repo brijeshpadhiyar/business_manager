@@ -352,14 +352,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get designsHeading => 'Designs & Colours';
 
   @override
-  String get designsSearchHint => 'Filter designs or colours';
+  String get designsSearchHint => 'Search design, colour, or lot number...';
 
   @override
-  String get designsEmptyTitle => 'No Designs Added';
+  String get designsEmptyTitle => 'No Designs Recorded Yet';
 
   @override
   String get designsEmptySubtitle =>
-      'Add a design to this lot, then add independent colour quantities and prices.';
+      'Create a lot with designs and colours to see them tracked here across lots.';
 
   @override
   String get designAddAction => 'Add Design';
@@ -2441,4 +2441,388 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get validationCannotReverseReversal =>
       'A reversal entry cannot itself be reversed.';
+
+  @override
+  String validationMinLength(int min) {
+    return 'Must be at least $min characters.';
+  }
+
+  @override
+  String get validationExceedsDispatched =>
+      'Received quantity cannot exceed dispatched quantity.';
+
+  @override
+  String get validationExceedsHeld =>
+      'Transfer quantity cannot exceed quantity currently held by the worker.';
+
+  @override
+  String get validationUnaccountedRemaining =>
+      'Process cannot be completed while pending quantity remains unaccounted.';
+
+  @override
+  String get validationOverpaymentNotAllowed =>
+      'Payment amount cannot exceed the remaining payable balance.';
+
+  @override
+  String get msgTitleSuccess => 'Success';
+
+  @override
+  String get msgTitleError => 'Error';
+
+  @override
+  String get msgTitleWarning => 'Warning';
+
+  @override
+  String get msgTitleInfo => 'Information';
+
+  @override
+  String get msgTitleLoading => 'Working...';
+
+  @override
+  String get navPressBackAgainToExit => 'Press back again to exit';
+
+  @override
+  String get navProductionHistory => 'Production History';
+
+  @override
+  String get navInspectionQueue => 'QC Inspection Queue';
+
+  @override
+  String get navWorkerHistory => 'Worker Production';
+
+  @override
+  String get navProcessHistory => 'Process History';
+
+  @override
+  String get prodHistoryDashboardTitle => 'Production History';
+
+  @override
+  String get prodHistoryDashboardSubtitle =>
+      'Permanent lot, worker, process & financial ledger tracking';
+
+  @override
+  String get prodHistorySearchHint =>
+      'Search lot, worker, process, design, colour...';
+
+  @override
+  String get prodHistoryOnlyPending => 'Pending Only';
+
+  @override
+  String get prodHistoryAllEntries => 'All Entries';
+
+  @override
+  String get prodHistoryTotalAssigned => 'Assigned';
+
+  @override
+  String get prodHistoryTotalReturned => 'Returned';
+
+  @override
+  String get prodHistoryTotalAccepted => 'Accepted';
+
+  @override
+  String get prodHistoryTotalRejected => 'Rejected';
+
+  @override
+  String get prodHistoryPendingInspection => 'Pending Inspection';
+
+  @override
+  String get prodHistoryOutstandingWork => 'Outstanding';
+
+  @override
+  String get prodHistoryTotalEarned => 'Total Earned';
+
+  @override
+  String get prodHistoryTotalPaid => 'Total Paid';
+
+  @override
+  String get prodHistoryOutstandingPayable => 'Outstanding Payable';
+
+  @override
+  String get prodHistoryLotHistoryTitle => 'Complete Lot History';
+
+  @override
+  String get prodHistoryLotTimelineTitle => 'Lot Timeline';
+
+  @override
+  String get prodHistoryViewLotHistory => 'Lot History';
+
+  @override
+  String get prodHistoryViewTimeline => 'Lot Timeline';
+
+  @override
+  String get prodHistoryWorkerHistoryTitle => 'Worker Production History';
+
+  @override
+  String get prodHistoryWorkerLotHistory => 'Worker Lot History';
+
+  @override
+  String get prodHistoryWorkerProcessHistory => 'Process-Wise History';
+
+  @override
+  String get prodHistoryIncludeInactive => 'Show Inactive';
+
+  @override
+  String get prodHistoryProcessHistoryTitle => 'Process-Wise History';
+
+  @override
+  String get prodHistoryProcessDetailsTitle => 'Process Production Details';
+
+  @override
+  String get prodHistoryTabLotWise => 'Lot-Wise';
+
+  @override
+  String get prodHistoryTabWorkerWise => 'Worker-Wise';
+
+  @override
+  String get prodHistoryTabDateWise => 'Date-Wise';
+
+  @override
+  String get prodHistoryTabPending => 'Pending Work';
+
+  @override
+  String get prodHistoryInspectionQueueTitle => 'Returns & QC Inspection';
+
+  @override
+  String get prodHistoryTabPendingInspection => 'Pending QC';
+
+  @override
+  String get prodHistoryTabRejections => 'Rejections & Repairs';
+
+  @override
+  String get prodHistoryApproveAction => 'Inspect & Approve';
+
+  @override
+  String get prodHistoryRecordRepairAction => 'Log Repair';
+
+  @override
+  String get prodHistoryReinspectAction => 'Re-Inspect & Approve';
+
+  @override
+  String get prodHistoryRepairSourceOriginal =>
+      'Repaired by Original Worker (Credits Historical Rate)';
+
+  @override
+  String get prodHistoryRepairSourceInHouse =>
+      'Factory / In-House Repair (No Worker Earning)';
+
+  @override
+  String get prodHistoryReturnModePending =>
+      'Log as Pending Inspection (₹0 until QC approves)';
+
+  @override
+  String get prodHistoryReturnModeImmediate =>
+      'Return & Inspect Immediately (Generates Accepted Earnings)';
+
+  @override
+  String get prodHistoryTxDetailTitle => 'Transaction Details';
+
+  @override
+  String get prodHistoryOpenLot => 'Open Lot';
+
+  @override
+  String get prodHistoryOpenWorker => 'Open Worker';
+
+  @override
+  String get prodHistoryOpenProcess => 'Open Process';
+
+  @override
+  String get prodHistoryLockedRateSnapshot => 'Locked Rate Snapshot';
+
+  @override
+  String get prodHistoryAuditTrail => 'Audit Trail';
+
+  @override
+  String get prodHistoryRelatedRecords => 'Linked Transactions';
+
+  @override
+  String get prodHistoryInitialAssignmentsTitle =>
+      '3. Initial Process Assignments (Optional)';
+
+  @override
+  String get prodHistoryInitialAssignmentsSubtitle =>
+      'Optionally assign processes, workers, quantities & locked rates while creating the lot.';
+
+  @override
+  String get prodHistoryAddAssignmentAction => 'Add Assignment';
+
+  @override
+  String get prodHistoryApprovalAuthTitle => 'Authorize Approval';
+
+  @override
+  String get prodHistoryApprovalAuthSubtitle =>
+      'Verify PIN or biometrics to approve accepted quantities and credit worker earnings.';
+
+  @override
+  String get securityRequireApprovalAuthLabel =>
+      'Require PIN for Return Approvals';
+
+  @override
+  String get securityRequireApprovalAuthSubtitle =>
+      'Prompt for PIN/biometrics when approving returned or repaired quantities.';
+
+  @override
+  String get settingsFinalPaymentRuleTitle =>
+      'Finalized Earnings Rule (Active)';
+
+  @override
+  String get settingsFinalPaymentRuleBody =>
+      'Worker earnings are calculated strictly as Accepted Quantity × Historical Assigned Rate. Legacy GIVEN_QTY and Damaged-in-Labour settings are retired for all new transactions while historical records remain preserved.';
+
+  @override
+  String get validationExceedsPendingInspection =>
+      'Inspected quantity exceeds remaining pending inspection quantity.';
+
+  @override
+  String get validationExceedsReturnedQty =>
+      'Accepted + Rejected cannot exceed returned quantity.';
+
+  @override
+  String get validationExceedsRejectedQty =>
+      'Quantity cannot exceed open rejected quantity.';
+
+  @override
+  String get validationExceedsRepairedQty =>
+      'Re-inspected quantity cannot exceed pending repaired quantity.';
+
+  @override
+  String get validationLotUnreconciled =>
+      'Cannot mark lot completed while pieces are still with workers or pending QC inspection.';
+
+  @override
+  String get navDesignsColours => 'Designs & Colours';
+
+  @override
+  String get designsColoursSubtitle =>
+      'Search designs, manage saved colours & view historical lot prices';
+
+  @override
+  String get designsTabLabel => 'Designs';
+
+  @override
+  String get coloursTabLabel => 'Colour Catalog';
+
+  @override
+  String get colourHexLabel => 'Hex Code (e.g. #DC2626)';
+
+  @override
+  String get colourSavedSuccess => 'Colour saved to catalog.';
+
+  @override
+  String get coloursEmptyTitle => 'No Saved Colours Yet';
+
+  @override
+  String get coloursEmptySubtitle =>
+      'Add reusable workshop colours with swatches for faster lot creation.';
+
+  @override
+  String get historicalPricePreservedNote =>
+      'Historical lot prices stay locked to each lot and are never overwritten.';
+
+  @override
+  String get webBackupExportAction => 'Download Web Backup (.json)';
+
+  @override
+  String get webBackupExportDesc =>
+      'Downloads a verified offline snapshot of all local workshop records from this browser.';
+
+  @override
+  String get webBackupRestoreAction => 'Restore Web Backup (.json)';
+
+  @override
+  String get webBackupRestoreDesc =>
+      'Validates checksum and schema before restoring all records into this browser\'s offline database.';
+
+  @override
+  String get webPrintFallbackNote =>
+      'Opened browser print dialog (use Save as PDF to download).';
+
+  @override
+  String get uxUndo => 'Undo';
+
+  @override
+  String uxShowMore(int count) {
+    return 'Show $count more';
+  }
+
+  @override
+  String get uxShowLess => 'Show less';
+
+  @override
+  String get uxUnsavedTitle => 'Discard changes?';
+
+  @override
+  String get uxUnsavedMessage =>
+      'You have changes that are not saved. If you leave now they will be lost.';
+
+  @override
+  String get uxUnsavedDiscard => 'Discard';
+
+  @override
+  String get uxUnsavedKeepEditing => 'Keep editing';
+
+  @override
+  String get uxSearchTooltip => 'Search (Ctrl+K)';
+
+  @override
+  String get uxSearchHint => 'Search lots, workers, processes…';
+
+  @override
+  String get uxSearchLots => 'Lots';
+
+  @override
+  String get uxSearchWorkers => 'Workers';
+
+  @override
+  String get uxSearchProcesses => 'Processes';
+
+  @override
+  String uxSearchNoResults(String query) {
+    return 'No matches for \"$query\"';
+  }
+
+  @override
+  String get uxQuickActions => 'Quick actions';
+
+  @override
+  String get uxActionNewLot => 'New lot';
+
+  @override
+  String get uxActionIssueStock => 'Issue stock to worker';
+
+  @override
+  String get uxActionReceiveWork => 'Receive work back';
+
+  @override
+  String get uxActionRecordPayment => 'Record payment';
+
+  @override
+  String get uxActionAddWorker => 'Add worker';
+
+  @override
+  String get uxActionInspections => 'Inspection queue';
+
+  @override
+  String uxPerPage(int count) {
+    return '$count / page';
+  }
+
+  @override
+  String get uxFilters => 'Filters';
+
+  @override
+  String uxFiltersActive(int count) {
+    return 'Filters ($count)';
+  }
+
+  @override
+  String get uxMoreScreens => 'More screens';
+
+  @override
+  String get uxMoreActions => 'More actions';
+
+  @override
+  String get uxApply => 'Apply';
+
+  @override
+  String get uxClearAll => 'Clear all';
 }

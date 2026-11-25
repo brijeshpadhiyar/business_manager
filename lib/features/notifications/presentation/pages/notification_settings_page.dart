@@ -1,12 +1,14 @@
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
+import 'package:business_manager/core/utils/app_date_time_formatter.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/notifications/domain/entities/notification_entities.dart';
 import 'package:business_manager/features/notifications/presentation/bloc/notification_settings_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// `/settings/notifications` — Offline Android local reminders & alerts hub.
 final class NotificationSettingsPage extends StatelessWidget {
@@ -25,9 +27,11 @@ final class _NotificationSettingsView extends StatelessWidget {
   const _NotificationSettingsView();
 
   String _formatTime(int hour, int minute) {
-    final period = hour >= 12 ? 'PM' : 'AM';
-    final h12 = hour % 12 == 0 ? 12 : hour % 12;
-    return '${h12.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')} $period IST';
+    return AppDateTimeFormatter.formatTimeFromHourMinute(
+      hour,
+      minute,
+      includeIstSuffix: true,
+    );
   }
 
   Future<void> _pickTime(
@@ -51,6 +55,7 @@ final class _NotificationSettingsView extends StatelessWidget {
 
     return AppScaffold(
       title: l10n.notificationsHeading,
+      contentWidth: AppContentWidth.narrow,
       body: BlocBuilder<NotificationSettingsCubit, NotificationSettingsState>(
         builder: (context, state) {
           if (state.isLoading) {
@@ -87,14 +92,12 @@ final class _NotificationSettingsView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: AppHeading(
-                            l10n.notificationsStatusTitle,
-                            level: AppHeadingLevel.h3,
-                          ),
-                        ),
+                    AppActionRow(
+                      content: AppHeading(
+                        l10n.notificationsStatusTitle,
+                        level: AppHeadingLevel.h3,
+                      ),
+                      actions: [
                         AppStatusBadge(label: permLabel, tone: permTone),
                       ],
                     ),
@@ -117,7 +120,7 @@ final class _NotificationSettingsView extends StatelessWidget {
                                 NotificationPermissionStatus.denied)
                           AppButton(
                             label: l10n.notificationsAllowAction,
-                            icon: Icons.notifications_active_outlined,
+                            icon: AppIcons.notificationsActive,
                             isLoading: state.isSaving,
                             onPressed: cubit.requestPermission,
                           ),
@@ -125,7 +128,7 @@ final class _NotificationSettingsView extends StatelessWidget {
                             NotificationPermissionStatus.granted)
                           AppButton(
                             label: l10n.notificationsSendTestAction,
-                            icon: Icons.send_outlined,
+                            icon: AppIcons.send,
                             variant: AppButtonVariant.outlined,
                             onPressed: () async {
                               final ok = await cubit.sendTestNotification(
@@ -201,7 +204,7 @@ final class _NotificationSettingsView extends StatelessWidget {
                         AppButton(
                           label:
                               '${l10n.notificationsTimeLabel}: ${_formatTime(s.pendingWorkHour, s.pendingWorkMinute)}',
-                          icon: Icons.schedule_rounded,
+                          icon: AppIcons.time,
                           variant: AppButtonVariant.text,
                           onPressed: () => _pickTime(
                             context,
@@ -265,7 +268,7 @@ final class _NotificationSettingsView extends StatelessWidget {
                         AppButton(
                           label:
                               '${l10n.notificationsTimeLabel}: ${_formatTime(s.workerSettlementHour, s.workerSettlementMinute)}',
-                          icon: Icons.schedule_rounded,
+                          icon: AppIcons.time,
                           variant: AppButtonVariant.text,
                           onPressed: () => _pickTime(
                             context,
@@ -311,7 +314,7 @@ final class _NotificationSettingsView extends StatelessWidget {
                         AppButton(
                           label:
                               '${l10n.notificationsTimeLabel}: ${_formatTime(s.dailySummaryHour, s.dailySummaryMinute)}',
-                          icon: Icons.schedule_rounded,
+                          icon: AppIcons.time,
                           variant: AppButtonVariant.text,
                           onPressed: () => _pickTime(
                             context,

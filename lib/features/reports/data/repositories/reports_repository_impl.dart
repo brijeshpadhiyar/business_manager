@@ -4,6 +4,9 @@ import 'package:business_manager/features/accounting/domain/entities/accounting_
 import 'package:business_manager/features/accounting/domain/repositories/accounting_repository.dart';
 import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
+import 'package:business_manager/features/production_history/domain/calculators/production_history_calculator.dart';
+import 'package:business_manager/features/stock_movements/domain/calculators/stock_calculator.dart';
+import 'package:business_manager/features/production_history/domain/entities/production_history_entities.dart';
 import 'package:business_manager/features/reports/domain/calculators/reports_analytics_calculator.dart';
 import 'package:business_manager/features/reports/domain/calculators/workshop_daily_calculator.dart';
 import 'package:business_manager/features/reports/domain/entities/advanced_report_entities.dart';
@@ -188,7 +191,69 @@ final class ReportsRepositoryImpl implements ReportsRepository {
         )
         .toList();
 
-    return _analyticsCalc.compute(
+    // Enrich bundle with Schema v8 Pending Inspection, Rejection Records, and
+    // Complete Production History rows (Rule 7 & Phase 10).
+    final allReturns = (await _db.productionTrackingDao.getAllReturns())
+        .map(
+          (r) => ProductionReturnEntity(
+            id: r.id,
+            clientRequestId: r.clientRequestId,
+            parentIssueId: r.parentIssueId,
+            jobProcessId: r.jobProcessId,
+            lotId: r.lotId,
+            lotDesignId: r.lotDesignId,
+            designColourId: r.designColourId,
+            processId: r.processId,
+            memberId: r.memberId,
+            returnedQuantity: r.returnedQuantity,
+            returnMode: ProductionReturnMode.fromDbValue(r.returnMode),
+            notes: r.notes,
+            transactionAt: r.transactionAt,
+            recordedAt: r.recordedAt,
+            createdBy: r.createdBy,
+            createdAt: r.createdAt,
+            updatedAt: r.updatedAt,
+          ),
+        )
+        .toList();
+    final allInspections = (await _db.productionTrackingDao.getAllInspections())
+        .map(
+          (r) => ProductionInspectionEntity(
+            id: r.id,
+            clientRequestId: r.clientRequestId,
+            inspectionType: ProductionInspectionType.fromDbValue(
+              r.inspectionType,
+            ),
+            productionReturnId: r.productionReturnId,
+            rejectionRecordId: r.rejectionRecordId,
+            rejectionRepairId: r.rejectionRepairId,
+            parentIssueId: r.parentIssueId,
+            jobProcessId: r.jobProcessId,
+            lotId: r.lotId,
+            lotDesignId: r.lotDesignId,
+            designColourId: r.designColourId,
+            processId: r.processId,
+            memberId: r.memberId,
+            acceptedQuantity: r.acceptedQuantity,
+            rejectedQuantity: r.rejectedQuantity,
+            lockedRatePaise: r.lockedRatePaise,
+            earnedAmountPaise: r.earnedAmountPaise,
+            creditWorkerEarnings: r.creditWorkerEarnings == 1,
+            linkedGoodMovementId: r.linkedGoodMovementId,
+            linkedDamagedMovementId: r.linkedDamagedMovementId,
+            linkedLabourEntryId: r.linkedLabourEntryId,
+            rejectionReason: r.rejectionReason,
+            notes: r.notes,
+            inspectedBy: r.inspectedBy,
+            approvedBy: r.approvedBy,
+            authorizedViaPin: r.authorizedViaPin == 1,
+            transactionAt: r.transactionAt,
+            recordedAt: r.recordedAt,
+            createdAt: r.createdAt,
+          ),
+        )
+        .toList();
+    final base = _analyticsCalc.compute(
       filter: filter,
       businessNameEn: profile?.nameEn ?? 'StitchFlow',
       businessNameGu: profile?.nameGu ?? 'સ્ટિચફ્લો',
@@ -201,6 +266,244 @@ final class ReportsRepositoryImpl implements ReportsRepository {
       allLabourEntries: allLabour,
       allPayments: allPayments,
       allAdjustments: allAdjustments,
+      pendingInspectionByIssue: const ProductionHistoryCalculator()
+          .pendingInspectionByIssue(
+            returns: allReturns,
+            inspections: allInspections,
+            reversedMovementIds: const StockCalculator().reversedMovementIds(
+              allMovements,
+            ),
+          ),
+    );
+    final allRejections = (await _db.productionTrackingDao.getAllRejections())
+        .map(
+          (r) => RejectionRecordEntity(
+            id: r.id,
+            lotId: r.lotId,
+            lotDesignId: r.lotDesignId,
+            designColourId: r.designColourId,
+            processId: r.processId,
+            memberId: r.memberId,
+            parentIssueId: r.parentIssueId,
+            jobProcessId: r.jobProcessId,
+            productionReturnId: r.productionReturnId,
+            inspectionId: r.inspectionId,
+            stockMovementId: r.stockMovementId,
+            rejectedQuantity: r.rejectedQuantity,
+            rejectionReason: r.rejectionReason,
+            status: RejectionStatus.fromDbValue(r.status),
+            inspectedAt: r.inspectedAt,
+            recordedBy: r.recordedBy,
+            notes: r.notes,
+            createdAt: r.createdAt,
+            updatedAt: r.updatedAt,
+          ),
+        )
+        .toList();
+    final allRepairs = (await _db.productionTrackingDao.getAllRepairs())
+        .map(
+          (r) => RejectionRepairEntity(
+            id: r.id,
+            clientRequestId: r.clientRequestId,
+            rejectionRecordId: r.rejectionRecordId,
+            lotId: r.lotId,
+            designColourId: r.designColourId,
+            processId: r.processId,
+            memberId: r.memberId,
+            repairedQuantity: r.repairedQuantity,
+            repairSource: RepairSource.fromDbValue(r.repairSource),
+            status: RepairStatus.fromDbValue(r.status),
+            repairedBy: r.repairedBy,
+            notes: r.notes,
+            transactionAt: r.transactionAt,
+            recordedAt: r.recordedAt,
+            createdAt: r.createdAt,
+            updatedAt: r.updatedAt,
+          ),
+        )
+        .toList();
+
+    final dataset = ProductionHistoryDataset(
+      lots: {
+        for (final l in activeLots)
+          l.id: (
+            entity: LotEntity(
+              id: l.id,
+              lotNumber: l.lotNumber,
+              title: l.title,
+              notes: l.notes,
+              status: LotStatus.fromDbValue(l.status),
+              transactionAt: l.transactionAt,
+              recordedAt: l.recordedAt,
+              createdAt: l.createdAt,
+              updatedAt: l.updatedAt,
+            ),
+            createdBy: l.createdBy,
+            updatedBy: l.updatedBy,
+          ),
+      },
+      designs: {
+        for (final d in activeDesigns)
+          d.id: LotDesignEntity(
+            id: d.id,
+            lotId: d.lotId,
+            designName: d.designName,
+            notes: d.notes,
+            createdAt: d.createdAt,
+            updatedAt: d.updatedAt,
+          ),
+      },
+      colours: {
+        for (final c in activeColours)
+          c.id: DesignColourEntity(
+            id: c.id,
+            lotDesignId: c.lotDesignId,
+            colourName: c.colourName,
+            colourHex: c.colourHex,
+            initialQuantity: c.initialQuantity,
+            unitPricePaise: c.unitPricePaise,
+            notes: c.notes,
+            createdAt: c.createdAt,
+            updatedAt: c.updatedAt,
+          ),
+      },
+      processes: {
+        for (final p in processes)
+          p.id: (name: p.name, isActive: p.isActive == 1),
+      },
+      workers: {
+        for (final w in workers)
+          w.id: (
+            name: w.name,
+            phone: w.phone,
+            address: w.address,
+            notes: w.notes,
+            isActive: w.isActive == 1,
+            createdAt: w.createdAt,
+          ),
+      },
+      movements: allMovements,
+      returns: allReturns,
+      inspections: allInspections,
+      rejections: allRejections,
+      repairs: allRepairs,
+      labourEntries: allLabour,
+      payments: allPayments,
+      adjustments: allAdjustments,
+      handovers: const [],
+    );
+
+    const prodCalc = ProductionHistoryCalculator();
+    final prodRows = prodCalc.buildAssignments(
+      dataset,
+      filter: ProductionHistoryFilter(
+        fromUtcMillis: filter.fromUtcMillis,
+        toUtcMillis: filter.toUtcMillis,
+        lotId: filter.lotId,
+        workerId: filter.workerId,
+        processId: filter.processId,
+        searchQuery: filter.searchQuery,
+      ),
+    );
+    final pendingRets = prodCalc.buildPendingReturns(
+      dataset,
+      lotId: filter.lotId,
+      workerId: filter.workerId,
+      processId: filter.processId,
+    );
+    final rejRows = prodCalc.buildRejectionViews(
+      dataset,
+      lotId: filter.lotId,
+      workerId: filter.workerId,
+      processId: filter.processId,
+    );
+    final totalPendingInsp = pendingRets.fold<int>(
+      0,
+      (s, r) => s + r.remainingPendingInspectionQty,
+    );
+
+    final pendingInspByWorker = <String, int>{};
+    final pendingInspByProcess = <String, int>{};
+    for (final r in pendingRets) {
+      pendingInspByWorker[r.productionReturn.memberId] =
+          (pendingInspByWorker[r.productionReturn.memberId] ?? 0) +
+          r.remainingPendingInspectionQty;
+      pendingInspByProcess[r.productionReturn.processId] =
+          (pendingInspByProcess[r.productionReturn.processId] ?? 0) +
+          r.remainingPendingInspectionQty;
+    }
+
+    final enrichedWorkers = base.workerPerformance
+        .map(
+          (w) => WorkerPerformanceRow(
+            workerId: w.workerId,
+            workerName: w.workerName,
+            workerIsActive: w.workerIsActive,
+            periodIssuedQty: w.periodIssuedQty,
+            periodGoodReturnedQty: w.periodGoodReturnedQty,
+            periodDamagedQty: w.periodDamagedQty,
+            periodLostShortageQty: w.periodLostShortageQty,
+            periodLabourEarnedPaise: w.periodLabourEarnedPaise,
+            periodRegularPaymentsPaise: w.periodRegularPaymentsPaise,
+            periodAdvancePaymentsPaise: w.periodAdvancePaymentsPaise,
+            periodAdvanceRefundsPaise: w.periodAdvanceRefundsPaise,
+            periodNetPaymentsPaise: w.periodNetPaymentsPaise,
+            currentPendingQty: w.currentPendingQty,
+            currentPendingInspectionQty: pendingInspByWorker[w.workerId] ?? 0,
+            currentOpenIssuesCount: w.currentOpenIssuesCount,
+            currentOutstandingPayablePaise: w.currentOutstandingPayablePaise,
+            currentAdvanceCreditPaise: w.currentAdvanceCreditPaise,
+            defectRatePercent: w.defectRatePercent,
+            processBreakdown: w.processBreakdown,
+          ),
+        )
+        .toList();
+
+    final enrichedProcs = base.processPerformance
+        .map(
+          (p) => ProcessPerformanceRow(
+            processId: p.processId,
+            processName: p.processName,
+            periodIssuedQty: p.periodIssuedQty,
+            periodGoodReturnedQty: p.periodGoodReturnedQty,
+            periodDamagedQty: p.periodDamagedQty,
+            periodLostShortageQty: p.periodLostShortageQty,
+            periodLabourCostPaise: p.periodLabourCostPaise,
+            currentPendingQty: p.currentPendingQty,
+            currentPendingInspectionQty: pendingInspByProcess[p.processId] ?? 0,
+            currentOpenIssuesCount: p.currentOpenIssuesCount,
+            oldestOpenIssueAgeDays: p.oldestOpenIssueAgeDays,
+            averageTurnaroundHours: p.averageTurnaroundHours,
+            settledIssuesCount: p.settledIssuesCount,
+            defectRatePercent: p.defectRatePercent,
+            workerContributions: p.workerContributions,
+          ),
+        )
+        .toList();
+
+    return AdvancedReportsBundle(
+      filter: base.filter,
+      filterOptions: base.filterOptions,
+      businessNameEn: base.businessNameEn,
+      businessNameGu: base.businessNameGu,
+      generatedAtUtcMillis: base.generatedAtUtcMillis,
+      dailyRows: base.dailyRows,
+      dailyTotalIssued: base.dailyTotalIssued,
+      dailyTotalGoodReturned: base.dailyTotalGoodReturned,
+      dailyTotalDamaged: base.dailyTotalDamaged,
+      dailyTotalLostShortage: base.dailyTotalLostShortage,
+      dailyTotalLabourPaise: base.dailyTotalLabourPaise,
+      dailyTotalNetPaymentsPaise: base.dailyTotalNetPaymentsPaise,
+      currentTotalPendingQty: base.currentTotalPendingQty,
+      currentTotalPendingInspectionQty: totalPendingInsp,
+      workerPerformance: enrichedWorkers,
+      processPerformance: enrichedProcs,
+      inventory: base.inventory,
+      financial: base.financial,
+      insights: base.insights,
+      productionHistoryRows: prodRows,
+      pendingInspectionReturns: pendingRets,
+      rejectionRecords: rejRows,
     );
   }
 
@@ -239,6 +542,7 @@ final class ReportsRepositoryImpl implements ReportsRepository {
     var availableGood = 0;
     var damaged = 0;
     var pending = 0;
+    var pendingInspection = 0;
     var lost = 0;
     var shortage = 0;
     for (final b in colourBalances) {
@@ -246,6 +550,7 @@ final class ReportsRepositoryImpl implements ReportsRepository {
       availableGood += b.physicalAvailableInHouse;
       damaged += b.damagedBucket;
       pending += b.totalPendingWithWorkers;
+      pendingInspection += b.totalPendingInspection;
       lost += b.totalLost;
       shortage += b.totalShortage;
     }
@@ -312,6 +617,7 @@ final class ReportsRepositoryImpl implements ReportsRepository {
       availableGoodStock: availableGood,
       damagedStock: damaged,
       pendingWorkerStock: pending,
+      pendingInspectionStock: pendingInspection,
       lostStock: lost,
       shortageStock: shortage,
       processPendingList: processSummaries,
@@ -465,6 +771,7 @@ final class ReportsRepositoryImpl implements ReportsRepository {
       var initQty = 0;
       var avail = 0;
       var pend = 0;
+      var pendInsp = 0;
       var dmg = 0;
       var lost = 0;
       var shrt = 0;
@@ -473,6 +780,7 @@ final class ReportsRepositoryImpl implements ReportsRepository {
         initQty += c.initialQuantity;
         avail += c.physicalAvailableInHouse;
         pend += c.totalPendingWithWorkers;
+        pendInsp += c.totalPendingInspection;
         dmg += c.damagedBucket;
         lost += c.totalLost;
         shrt += c.totalShortage;
@@ -493,6 +801,7 @@ final class ReportsRepositoryImpl implements ReportsRepository {
           lostQuantity: lost,
           shortageQuantity: shrt,
           goodStockValuePaise: valuePaise,
+          pendingInspection: pendInsp,
         ),
       );
     }

@@ -1,3 +1,4 @@
+import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:business_manager/features/rates/domain/entities/rate_entities.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 
@@ -30,6 +31,18 @@ abstract interface class StockMovementRepository {
     String? designColourId,
   });
 
+  /// All movements (incl. reversals) of one design colour, oldest first.
+  /// Read model for Routing, which derives its progress from Stock.
+  Future<List<StockMovementEntity>> getMovementsForColour(
+    String designColourId,
+  );
+
+  /// Pieces returned and waiting for QC, keyed by parent ISSUE id.
+  Future<Map<String, int>> getPendingInspectionByIssue();
+
+  /// Every labour entry (incl. reversals) of a lot.
+  Future<List<LabourEntryEntity>> getLabourEntriesForLot(String lotId);
+
   /// Returns detailed view of a single issue and all its child settlements.
   Future<OpenIssueSummary?> getIssueDetail(String issueId);
 
@@ -61,12 +74,14 @@ abstract interface class StockMovementRepository {
     bool allowRateOverride = false,
     int? overrideRatePaise,
     String? overrideReason,
+    String? jobProcessId,
     String? clientRequestId,
   });
 
   /// Atomically records partial or complete returns/settlements
   /// (`RETURN_GOOD`, `RETURN_DAMAGED`, `SETTLEMENT_LOST`, `SETTLEMENT_SHORTAGE`)
-  /// inheriting the parent issue's locked rate and billing configuration.
+  /// inheriting the parent issue's locked rate and enforcing Accepted-Only
+  /// worker earnings.
   Future<SettlementBatchResult> recordSettlement({
     required String parentIssueId,
     required int goodQuantity,
@@ -76,6 +91,8 @@ abstract interface class StockMovementRepository {
     required int transactionAtUtcMillis,
     String? reason,
     String? notes,
+    String? approvedBy,
+    bool authorizedViaPin = false,
     String? clientRequestId,
   });
 

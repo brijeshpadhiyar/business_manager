@@ -1,13 +1,17 @@
-import 'package:business_manager/core/design_system/app_sizing.dart';
+import 'package:business_manager/core/utils/app_memo.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
+import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
+import 'package:business_manager/features/processes/domain/entities/process_entities.dart';
 import 'package:business_manager/features/processes/presentation/bloc/process_list_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
+import 'package:business_manager/core/design_system/app_sizing.dart';
 
 final class ProcessListPage extends StatelessWidget {
   const ProcessListPage({super.key, this.showAppBar = false});
@@ -33,7 +37,12 @@ final class _ProcessListView extends StatefulWidget {
 }
 
 final class _ProcessListViewState extends State<_ProcessListView> {
+  // Sorting and counting run only when the data or sort settings change.
+  final _sortMemo = AppMemo<List<ProcessEntity>>();
+  final _countMemo = AppMemo<int>();
   final _searchController = TextEditingController();
+  int _sortColumnIndex = 0;
+  bool _sortAscending = true;
 
   @override
   void dispose() {
@@ -48,180 +57,290 @@ final class _ProcessListViewState extends State<_ProcessListView> {
     }
   }
 
+  Future<void> _openProcessDetail(
+    BuildContext context,
+    ProcessEntity process,
+  ) async {
+    await context.push(RoutePaths.processDetail(process.id));
+    if (context.mounted) {
+      await context.read<ProcessListCubit>().loadProcesses();
+    }
+  }
+
+  List<ProcessEntity> _sortedProcesses(List<ProcessEntity> input) {
+    final list = List<ProcessEntity>.of(input);
+    list.sort((a, b) {
+      final cmp = switch (_sortColumnIndex) {
+        0 => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+        2 => a.defaultRatePaise.compareTo(b.defaultRatePaise),
+        3 => (a.isActive ? 0 : 1).compareTo(b.isActive ? 0 : 1),
+        _ => a.name.toLowerCase().compareTo(b.name.toLowerCase()),
+      };
+      return _sortAscending ? cmp : -cmp;
+    });
+    return list;
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final body = Align(
-      alignment: Alignment.topCenter,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: AppSizing.maxContentWidth),
-        child: Column(
-          children: [
-            Padding(
+    return BlocBuilder<ProcessListCubit, ProcessListState>(
+      builder: (context, state) {
+        final activeCount = _countMemo([
+          state.processes,
+        ], () => state.processes.where((p) => p.isActive).length);
+        final inactiveCount = state.processes.length - activeCount;
+        final sortedProcesses = _sortMemo([
+          state.processes,
+          _sortColumnIndex,
+          _sortAscending,
+        ], () => _sortedProcesses(state.processes));
+
+        final List<Widget> slivers;
+        if (state.status == ProcessListStatus.loading ||
+            state.status == ProcessListStatus.initial) {
+          slivers = const [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: EdgeInsets.all(AppSpacing.lg),
+                child: AppSkeletonList(itemCount: 4),
+              ),
+            ),
+          ];
+        } else if (state.status == ProcessListStatus.error) {
+          slivers = [
+            SliverToBoxAdapter(
+              child: AppErrorView(
+                title: l10n.errorUnexpected,
+                message: state.errorMessage,
+                retryLabel: l10n.actionRetry,
+                onRetry: () => context.read<ProcessListCubit>().loadProcesses(),
+              ),
+            ),
+          ];
+        } else if (sortedProcesses.isEmpty) {
+          slivers = [
+            SliverToBoxAdapter(
+              child: AppEmptyState(
+                icon: AppIcons.process,
+                title: l10n.processesEmptyTitle,
+                subtitle: l10n.processesEmptySubtitle,
+                actionLabel: l10n.processCreateAction,
+                onAction: () => _openCreateProcess(context),
+              ),
+            ),
+          ];
+        } else {
+          slivers = [
+            SliverPadding(
               padding: const EdgeInsets.fromLTRB(
                 AppSpacing.lg,
-                AppSpacing.lg,
-                AppSpacing.lg,
                 AppSpacing.sm,
+                AppSpacing.lg,
+                AppSpacing.xl,
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  AppHeading(
-                    l10n.processesHeading,
-                    level: AppHeadingLevel.h2,
-                    trailing: AppButton(
-                      label: l10n.processCreateAction,
-                      icon: Icons.add,
-                      onPressed: () => _openCreateProcess(context),
-                    ),
+              sliver: AppDataTable.buildSliver<ProcessEntity>(
+                context,
+                enablePagination: true,
+                sortColumnIndex: _sortColumnIndex,
+                sortAscending: _sortAscending,
+                onSort: (col, asc) => setState(() {
+                  _sortColumnIndex = col;
+                  _sortAscending = asc;
+                }),
+                columns: [
+                  AppDataColumn(label: l10n.processNameLabel, sortable: true),
+                  AppDataColumn(
+                    label: l10n.processDescriptionLabel,
+                    minWidthClass: AppWindowSizeClass.expanded,
                   ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppTextField(
-                    controller: _searchController,
-                    label: l10n.processesSearchHint,
-                    prefixIcon: Icons.search,
-                    onChanged: (q) => context
-                        .read<ProcessListCubit>()
-                        .loadProcesses(searchQuery: q),
+                  const AppDataColumn(
+                    label: 'Default Rate',
+                    numeric: true,
+                    sortable: true,
                   ),
-                  const SizedBox(height: AppSpacing.sm),
-                  BlocBuilder<ProcessListCubit, ProcessListState>(
-                    builder: (context, state) {
-                      return Wrap(
-                        spacing: AppSpacing.sm,
-                        runSpacing: AppSpacing.xs,
-                        children: [
-                          FilterChip(
-                            label: Text(l10n.filterAll),
-                            selected: state.activeFilter == null,
-                            onSelected: (_) => context
-                                .read<ProcessListCubit>()
-                                .loadProcesses(clearActiveFilter: true),
-                          ),
-                          FilterChip(
-                            label: Text(l10n.filterActive),
-                            selected: state.activeFilter == true,
-                            onSelected: (_) => context
-                                .read<ProcessListCubit>()
-                                .loadProcesses(activeFilter: true),
-                          ),
-                          FilterChip(
-                            label: Text(l10n.filterInactive),
-                            selected: state.activeFilter == false,
-                            onSelected: (_) => context
-                                .read<ProcessListCubit>()
-                                .loadProcesses(activeFilter: false),
-                          ),
-                        ],
-                      );
-                    },
+                  AppDataColumn(label: l10n.lotStatusLabel, sortable: true),
+                ],
+                items: sortedProcesses,
+                itemKeyBuilder: (p) => ValueKey<String>(p.id),
+                onRowTap: (p) => _openProcessDetail(context, p),
+                cellsBuilder: (p) => [
+                  Row(
+                    children: [
+                      Icon(
+                        AppIcons.processIcon(p.name),
+                        size: AppSizing.iconMd,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Flexible(
+                        child: AppText(p.name, fontWeight: FontWeight.w700),
+                      ),
+                    ],
+                  ),
+                  AppText(p.description ?? '—'),
+                  AppText(
+                    p.defaultRatePaise > 0
+                        ? MoneyFormatter.formatRatePaise(
+                            p.defaultRatePaise,
+                            pricingUnit: p.defaultPricingUnit,
+                          )
+                        : '—',
+                  ),
+                  AppStatusBadge(
+                    label: p.isActive ? l10n.statusActive : l10n.statusInactive,
+                    tone: p.isActive
+                        ? AppStatusTone.good
+                        : AppStatusTone.neutral,
                   ),
                 ],
-              ),
-            ),
-            Expanded(
-              child: BlocBuilder<ProcessListCubit, ProcessListState>(
-                builder: (context, state) {
-                  if (state.status == ProcessListStatus.loading ||
-                      state.status == ProcessListStatus.initial) {
-                    return const AppLoader();
-                  }
-                  if (state.status == ProcessListStatus.error) {
-                    return AppErrorView(
-                      title: l10n.errorUnexpected,
-                      message: state.errorMessage,
-                      retryLabel: l10n.actionRetry,
-                      onRetry: () =>
-                          context.read<ProcessListCubit>().loadProcesses(),
-                    );
-                  }
-                  if (state.processes.isEmpty) {
-                    return AppEmptyState(
-                      icon: Icons.precision_manufacturing_outlined,
-                      title: l10n.processesEmptyTitle,
-                      subtitle: l10n.processesEmptySubtitle,
-                      actionLabel: l10n.processCreateAction,
-                      onAction: () => _openCreateProcess(context),
-                    );
-                  }
-
-                  return ListView.separated(
-                    padding: const EdgeInsets.fromLTRB(
-                      AppSpacing.lg,
-                      AppSpacing.sm,
-                      AppSpacing.lg,
-                      AppSpacing.xl,
-                    ),
-                    itemCount: state.processes.length,
-                    separatorBuilder: (_, _) =>
-                        const SizedBox(height: AppSpacing.sm),
-                    itemBuilder: (context, index) {
-                      final process = state.processes[index];
-                      return AppCard(
-                        onTap: () async {
-                          await context.push(
-                            RoutePaths.processDetail(process.id),
-                          );
-                          if (context.mounted) {
-                            await context
-                                .read<ProcessListCubit>()
-                                .loadProcesses();
-                          }
-                        },
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  AppText(
-                                    process.name,
-                                    variant: AppTextVariant.bodyLarge,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                  if (process.description != null) ...[
-                                    const SizedBox(height: AppSpacing.xs),
-                                    AppText(
-                                      process.description!,
-                                      variant: AppTextVariant.bodySmall,
-                                    ),
-                                  ],
-                                ],
-                              ),
+                mobileCardBuilder: (ctx, process) => AppActionRow(
+                  content: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            AppIcons.processIcon(process.name),
+                            size: AppSizing.iconMd,
+                            color: Theme.of(ctx).colorScheme.primary,
+                          ),
+                          const SizedBox(width: AppSpacing.sm),
+                          Expanded(
+                            child: AppText(
+                              process.name,
+                              variant: AppTextVariant.bodyLarge,
+                              fontWeight: FontWeight.w700,
                             ),
-                            const SizedBox(width: AppSpacing.sm),
-                            AppStatusBadge(
-                              label: process.isActive
-                                  ? l10n.statusActive
-                                  : l10n.statusInactive,
-                              tone: process.isActive
-                                  ? AppStatusTone.good
-                                  : AppStatusTone.neutral,
-                            ),
-                            const SizedBox(width: AppSpacing.xs),
-                            const Icon(Icons.chevron_right),
-                          ],
+                          ),
+                        ],
+                      ),
+                      if (process.description != null) ...[
+                        const SizedBox(height: AppSpacing.xs),
+                        AppText(
+                          process.description!,
+                          variant: AppTextVariant.bodySmall,
                         ),
-                      );
-                    },
-                  );
-                },
+                      ],
+                      const SizedBox(height: AppSpacing.xs),
+                      AppText(
+                        process.defaultRatePaise > 0
+                            ? 'Default Rate: ${MoneyFormatter.formatRatePaise(process.defaultRatePaise, pricingUnit: process.defaultPricingUnit)}'
+                            : 'No default labour rate',
+                        variant: AppTextVariant.bodySmall,
+                        color: Theme.of(ctx).colorScheme.onSurfaceVariant,
+                      ),
+                    ],
+                  ),
+                  actions: [
+                    AppStatusBadge(
+                      label: process.isActive
+                          ? l10n.statusActive
+                          : l10n.statusInactive,
+                      tone: process.isActive
+                          ? AppStatusTone.good
+                          : AppStatusTone.neutral,
+                    ),
+                    const Icon(AppIcons.chevronRight),
+                  ],
+                ),
               ),
             ),
-          ],
-        ),
-      ),
-    );
+          ];
+        }
 
-    if (widget.showAppBar) {
-      return AppScaffold(
-        title: l10n.navProcesses,
-        padding: EdgeInsets.zero,
-        constrainMaxWidth: false,
-        body: body,
-      );
-    }
-    return body;
+        return AppScaffold(
+          // Main action: floating button on phones, toolbar button on wider screens.
+          primaryAction: AppPrimaryAction(
+            icon: AppIcons.add,
+            label: l10n.processCreateAction,
+            onPressed: () => _openCreateProcess(context),
+          ),
+          scrollMode: AppScrollMode.collapsible,
+          contentWidth: AppContentWidth.wide,
+          embedded: !widget.showAppBar,
+          onRefresh: () => context.read<ProcessListCubit>().loadProcesses(),
+          header: AppCollapsibleHeader(
+            title: l10n.processesHeading,
+            automaticallyImplyLeading: widget.showAppBar,
+            expandedHeight: 164,
+            actions: [
+              AppIconButton(
+                icon: AppIcons.processHistory,
+                tooltip: l10n.navProcessHistory,
+                onPressed: () =>
+                    context.push(RoutePaths.processProductionHistory),
+              ),
+            ],
+            summary: AppSummaryStrip(
+              metrics: [
+                AppSummaryMetric(
+                  label: l10n.filterAll,
+                  value: '${state.processes.length}',
+                  tone: AppStatusTone.info,
+                ),
+                AppSummaryMetric(
+                  label: l10n.filterActive,
+                  value: '$activeCount',
+                  tone: AppStatusTone.good,
+                ),
+                AppSummaryMetric(
+                  label: l10n.filterInactive,
+                  value: '$inactiveCount',
+                  tone: AppStatusTone.neutral,
+                ),
+              ],
+            ),
+          ),
+          pinnedHeaderHeight: 122,
+          pinnedHeader: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              AppSearchField(
+                controller: _searchController,
+                label: l10n.processesSearchHint,
+                debounceDuration: const Duration(milliseconds: 220),
+                onChanged: (q) => context
+                    .read<ProcessListCubit>()
+                    .loadProcesses(searchQuery: q),
+              ),
+              const SizedBox(height: AppSpacing.xs),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    FilterChip(
+                      label: Text(l10n.filterAll),
+                      selected: state.activeFilter == null,
+                      onSelected: (_) => context
+                          .read<ProcessListCubit>()
+                          .loadProcesses(clearActiveFilter: true),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    FilterChip(
+                      label: Text(l10n.filterActive),
+                      selected: state.activeFilter == true,
+                      onSelected: (_) => context
+                          .read<ProcessListCubit>()
+                          .loadProcesses(activeFilter: true),
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    FilterChip(
+                      label: Text(l10n.filterInactive),
+                      selected: state.activeFilter == false,
+                      onSelected: (_) => context
+                          .read<ProcessListCubit>()
+                          .loadProcesses(activeFilter: false),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          slivers: slivers,
+        );
+      },
+    );
   }
 }

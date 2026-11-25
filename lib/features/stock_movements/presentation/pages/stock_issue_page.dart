@@ -7,6 +7,7 @@ import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/localization/domain_label_localizer.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
+import 'package:business_manager/core/utils/app_date_time_formatter.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
@@ -23,6 +24,7 @@ import 'package:business_manager/features/stock_movements/domain/repositories/st
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Streamlined 4-step Stock Issue workflow (+ Step 5 Success Summary):
 /// 1. Select Stock (Lot / Design / Colour + Available Good)
@@ -47,6 +49,14 @@ final class StockIssuePage extends StatefulWidget {
 }
 
 final class _StockIssuePageState extends State<StockIssuePage> {
+  final _dirty = AppFormDirtyTracker();
+
+  /// setState for a user edit: also marks the form as unsaved.
+  void _edit(VoidCallback fn) {
+    _dirty.markDirty();
+    setState(fn);
+  }
+
   final _formKey = GlobalKey<FormState>();
   final _stockSearchCtrl = TextEditingController();
   final _qtyCtrl = TextEditingController();
@@ -91,12 +101,19 @@ final class _StockIssuePageState extends State<StockIssuePage> {
   @override
   void initState() {
     super.initState();
+    _dirty.watch([
+      _qtyCtrl,
+      _notesCtrl,
+      _overrideRateCtrl,
+      _overrideReasonCtrl,
+    ]);
     _clientRequestId = _idGen.nextRequestId();
     _loadInitial();
   }
 
   @override
   void dispose() {
+    _dirty.dispose();
     _stockSearchCtrl.dispose();
     _qtyCtrl.dispose();
     _qtyFocus.dispose();
@@ -146,10 +163,11 @@ final class _StockIssuePageState extends State<StockIssuePage> {
       return _parseRupeesToPaise(_overrideRateCtrl.text);
     }
     final preview = _ratePreview;
-    if (preview is RateResolutionFound) {
-      return preview.rate.ratePaise;
-    }
-    return null;
+    return switch (preview) {
+      RateResolutionFound(:final rate) => rate.ratePaise,
+      RateResolutionProcessDefault(:final ratePaise) => ratePaise,
+      _ => null,
+    };
   }
 
   int get _parsedQty => int.tryParse(_qtyCtrl.text.trim()) ?? 0;
@@ -263,6 +281,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
   }
 
   void _selectStock(DesignColourStockBalance b) {
+    _dirty.markDirty();
     setState(() {
       _selectedColourId = b.designColourId;
       _pickingStock = false;
@@ -274,6 +293,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
   }
 
   void _addQuickQty(int delta, int maxAvailable) {
+    _dirty.markDirty();
     final next = (_parsedQty + delta).clamp(0, maxAvailable);
     setState(() {
       _qtyCtrl.text = next > 0 ? '$next' : '';
@@ -282,6 +302,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
   }
 
   void _setExactQty(int qty) {
+    _dirty.markDirty();
     setState(() {
       _qtyCtrl.text = qty > 0 ? '$qty' : '';
       _submitError = null;
@@ -450,7 +471,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
       return AppScaffold(
         title: l10n.stockIssueAction,
         body: AppEmptyState(
-          icon: Icons.inventory_2_outlined,
+          icon: AppIcons.lot,
           title: l10n.stockNoStockItemsTitle,
           subtitle: l10n.stockNoStockItemsSubtitle,
         ),
@@ -469,69 +490,81 @@ final class _StockIssuePageState extends State<StockIssuePage> {
     final step3Done = step1Done && qty > 0 && !qtyExceeds;
     final canSubmit = step1Done && step2Done && step3Done && !_saving;
 
-    return AppScaffold(
-      title: l10n.stockIssueAction,
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          children: [
-            _StepProgressStrip(
-              steps: [
-                _StepItem(
-                  number: 1,
-                  label: l10n.stockStepSelectStock,
-                  completed: step1Done,
-                  active: !step1Done || _pickingStock,
-                ),
-                _StepItem(
-                  number: 2,
-                  label: l10n.stockStepSelectWork,
-                  completed: step2Done,
-                  active: step1Done && !step2Done,
-                ),
-                _StepItem(
-                  number: 3,
-                  label: l10n.stockStepEnterQty,
-                  completed: step3Done,
-                  active: step1Done && step2Done && !step3Done,
-                ),
-                _StepItem(
-                  number: 4,
-                  label: l10n.stockStepConfirm,
-                  completed: false,
-                  active: canSubmit,
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.md),
-
-            // STEP 1: SELECT STOCK
-            _buildStep1SelectStock(context, balance),
-            const SizedBox(height: AppSpacing.md),
-
-            // STEP 2: SELECT WORK (Process, Eligible Worker, Rate & Billing)
-            if (balance != null) ...[
-              _buildStep2SelectWork(context),
-              const SizedBox(height: AppSpacing.md),
-
-              // STEP 3: ENTER QUANTITY
-              _buildStep3EnterQuantity(context, balance, qtyExceeds),
-              const SizedBox(height: AppSpacing.md),
-
-              // STEP 4: COMPACT CONFIRMATION SUMMARY & SUBMIT
-              _buildStep4ConfirmCard(
-                context,
-                balance: balance,
-                proc: proc,
-                worker: worker,
-                ratePaise: ratePaise,
-                qty: qty,
-                canSubmit: canSubmit,
+    return AppUnsavedChangesGuard.tracked(
+      tracker: _dirty,
+      child: AppScaffold(
+        title: l10n.stockIssueAction,
+        // Confirm stays pinned at the bottom: no scrolling past three steps
+        // to find it on a phone.
+        bottomAction: AppButton(
+          label: l10n.stockConfirmIssueAction,
+          icon: AppIcons.stockIssue,
+          isExpanded: true,
+          isLoading: _saving,
+          onPressed: canSubmit ? _submit : null,
+        ),
+        body: Form(
+          key: _formKey,
+          child: ListView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            children: [
+              _StepProgressStrip(
+                steps: [
+                  _StepItem(
+                    number: 1,
+                    label: l10n.stockStepSelectStock,
+                    completed: step1Done,
+                    active: !step1Done || _pickingStock,
+                  ),
+                  _StepItem(
+                    number: 2,
+                    label: l10n.stockStepSelectWork,
+                    completed: step2Done,
+                    active: step1Done && !step2Done,
+                  ),
+                  _StepItem(
+                    number: 3,
+                    label: l10n.stockStepEnterQty,
+                    completed: step3Done,
+                    active: step1Done && step2Done && !step3Done,
+                  ),
+                  _StepItem(
+                    number: 4,
+                    label: l10n.stockStepConfirm,
+                    completed: false,
+                    active: canSubmit,
+                  ),
+                ],
               ),
-              const SizedBox(height: AppSpacing.xl),
+              const SizedBox(height: AppSpacing.md),
+
+              // STEP 1: SELECT STOCK
+              _buildStep1SelectStock(context, balance),
+              const SizedBox(height: AppSpacing.md),
+
+              // STEP 2: SELECT WORK (Process, Eligible Worker, Rate & Billing)
+              if (balance != null) ...[
+                _buildStep2SelectWork(context),
+                const SizedBox(height: AppSpacing.md),
+
+                // STEP 3: ENTER QUANTITY
+                _buildStep3EnterQuantity(context, balance, qtyExceeds),
+                const SizedBox(height: AppSpacing.md),
+
+                // STEP 4: COMPACT CONFIRMATION SUMMARY & SUBMIT
+                _buildStep4ConfirmCard(
+                  context,
+                  balance: balance,
+                  proc: proc,
+                  worker: worker,
+                  ratePaise: ratePaise,
+                  qty: qty,
+                  canSubmit: canSubmit,
+                ),
+                const SizedBox(height: AppSpacing.xl),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
@@ -552,7 +585,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
           children: [
             Row(
               children: [
-                _StepBadge(number: 1, completed: true),
+                const _StepBadge(number: 1, completed: true),
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: AppText(
@@ -585,7 +618,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                   tone: selected.physicalAvailableInHouse > 0
                       ? AppStatusTone.good
                       : AppStatusTone.damaged,
-                  icon: Icons.check_circle_outline_rounded,
+                  icon: AppIcons.successOutline,
                 ),
                 if (selected.totalPendingWithWorkers > 0)
                   AppStatusBadge(
@@ -646,7 +679,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                   for (final b in _allBalances)
                     if (b.designColourId == id)
                       ActionChip(
-                        avatar: const Icon(Icons.history_rounded, size: 16),
+                        avatar: const Icon(AppIcons.productionHistory, size: 16),
                         label: Text(
                           '${b.lotNumber} • ${b.colourName} (${b.physicalAvailableInHouse})',
                         ),
@@ -659,7 +692,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
           AppTextField(
             controller: _stockSearchCtrl,
             label: l10n.stockSearchStockHint,
-            prefixIcon: Icons.search_rounded,
+            prefixIcon: AppIcons.search,
             onChanged: (_) => setState(() {}),
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -705,26 +738,23 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                         ? colorScheme.secondary
                         : colorScheme.outlineVariant,
                     onTap: () => _selectStock(b),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              AppText(
-                                '${b.lotNumber} • ${b.designName}',
-                                fontWeight: FontWeight.w700,
-                              ),
-                              const SizedBox(height: 2),
-                              AppText(
-                                b.colourName,
-                                variant: AppTextVariant.bodySmall,
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                            ],
+                    child: AppActionRow(
+                      content: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AppText(
+                            '${b.lotNumber} • ${b.designName}',
+                            fontWeight: FontWeight.w700,
                           ),
-                        ),
-                        const SizedBox(width: AppSpacing.sm),
+                          const SizedBox(height: 2),
+                          AppText(
+                            b.colourName,
+                            variant: AppTextVariant.bodySmall,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ],
+                      ),
+                      actions: [
                         AppStatusBadge(
                           label: hasStock
                               ? '${b.physicalAvailableInHouse} ${l10n.piecesUnit}'
@@ -782,7 +812,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
               children: [
                 for (final pair in _recentSuggestions.workPairs)
                   ActionChip(
-                    avatar: const Icon(Icons.bolt_rounded, size: 16),
+                    avatar: const Icon(AppIcons.quick, size: 16),
                     label: Text('${pair.processName} • ${pair.workerName}'),
                     onPressed: () async {
                       setState(() => _selectedProcessId = pair.processId);
@@ -806,7 +836,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
             AppStatusBadge(
               label: l10n.stockNoActiveProcessesWarning,
               tone: AppStatusTone.pending,
-              icon: Icons.warning_amber_rounded,
+              icon: AppIcons.warning,
             )
           else
             Wrap(
@@ -818,6 +848,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                     label: Text(proc.name),
                     selected: _selectedProcessId == proc.id,
                     onSelected: (_) {
+                      _dirty.markDirty();
                       setState(() => _selectedProcessId = proc.id);
                       _loadWorkersForProcess(proc.id);
                     },
@@ -835,7 +866,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
             AppStatusBadge(
               label: l10n.stockNoEligibleWorkers,
               tone: AppStatusTone.pending,
-              icon: Icons.warning_amber_rounded,
+              icon: AppIcons.warning,
             )
           else
             Wrap(
@@ -847,6 +878,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                     label: Text(w.workerName),
                     selected: _selectedWorkerId == w.workerId,
                     onSelected: (_) {
+                      _dirty.markDirty();
                       setState(() => _selectedWorkerId = w.workerId);
                       _refreshRatePreview();
                     },
@@ -862,7 +894,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
               tilePadding: EdgeInsets.zero,
               initiallyExpanded: _showAdvanced,
               onExpansionChanged: (v) => setState(() => _showAdvanced = v),
-              leading: const Icon(Icons.tune_rounded, size: 18),
+              leading: const Icon(AppIcons.filter, size: 18),
               title: AppText(
                 l10n.stockAdvancedOptionsTitle,
                 variant: AppTextVariant.label,
@@ -874,6 +906,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                   selectedUtcMillis: _transactionAtUtc,
                   includeTime: true,
                   onDateSelectedUtcMillis: (utc) {
+                    _dirty.markDirty();
                     setState(() => _transactionAtUtc = utc);
                     _refreshRatePreview();
                   },
@@ -882,14 +915,14 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                 AppSwitch(
                   label: l10n.stockRateOverrideToggle,
                   value: _overrideRate,
-                  onChanged: (v) => setState(() => _overrideRate = v),
+                  onChanged: (v) => _edit(() => _overrideRate = v),
                 ),
                 if (_overrideRate) ...[
                   const SizedBox(height: AppSpacing.sm),
                   AppTextField(
                     controller: _overrideRateCtrl,
                     label: l10n.stockOverrideRateLabel,
-                    prefixIcon: Icons.currency_rupee,
+                    prefixIcon: AppIcons.rupee,
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
@@ -950,6 +983,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
       _effectiveBillingMode,
     );
 
+    final localeCode = Localizations.localeOf(context).languageCode;
     Widget rateRow;
     if (_overrideRate) {
       final overridePaise = _parseRupeesToPaise(_overrideRateCtrl.text);
@@ -965,27 +999,70 @@ final class _StockIssuePageState extends State<StockIssuePage> {
         RateResolutionFound(:final rate, :final businessDateIst) => Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AppText(
-              '${l10n.stockResolvedRateLabel}: ${MoneyFormatter.formatPaise(rate.ratePaise)} ${l10n.ratesPerPieceSuffix}',
-              variant: AppTextVariant.numeric,
-              fontWeight: FontWeight.w700,
+            Wrap(
+              spacing: AppSpacing.xs,
+              runSpacing: AppSpacing.xs,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                AppText(
+                  '${l10n.stockResolvedRateLabel}: ${MoneyFormatter.formatPaise(rate.ratePaise)} ${l10n.ratesPerPieceSuffix}',
+                  variant: AppTextVariant.numeric,
+                  fontWeight: FontWeight.w700,
+                ),
+                const AppStatusBadge(
+                  label: 'Worker Rate',
+                  tone: AppStatusTone.good,
+                ),
+              ],
             ),
             AppText(
-              '$businessDateIst (${rate.effectiveFrom} - ${rate.effectiveTo ?? l10n.ratesOngoingLabel})',
+              '${AppDateTimeFormatter.formatIsoBusinessDateForDisplay(businessDateIst, locale: localeCode)} (${AppDateTimeFormatter.formatIsoDateRange(fromIso: rate.effectiveFrom, toIso: rate.effectiveTo, ongoingLabel: l10n.ratesOngoingLabel, locale: localeCode)})',
               variant: AppTextVariant.bodySmall,
               color: colorScheme.onSurfaceVariant,
             ),
           ],
         ),
+        RateResolutionProcessDefault(
+          :final ratePaise,
+          :final rawDefaultRatePaise,
+          :final pricingUnit,
+          :final processName,
+        ) =>
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Wrap(
+                spacing: AppSpacing.xs,
+                runSpacing: AppSpacing.xs,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  AppText(
+                    '${l10n.stockResolvedRateLabel}: ${MoneyFormatter.formatPaise(ratePaise)} ${l10n.ratesPerPieceSuffix}',
+                    variant: AppTextVariant.numeric,
+                    fontWeight: FontWeight.w700,
+                  ),
+                  const AppStatusBadge(
+                    label: 'Process Default',
+                    tone: AppStatusTone.info,
+                  ),
+                ],
+              ),
+              AppText(
+                'Inherited from $processName (${MoneyFormatter.formatRatePaise(rawDefaultRatePaise, pricingUnit: pricingUnit)})',
+                variant: AppTextVariant.bodySmall,
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ],
+          ),
         RateResolutionMissing() => AppStatusBadge(
           label: l10n.stockRateMissingWarning,
           tone: AppStatusTone.damaged,
-          icon: Icons.error_outline_rounded,
+          icon: AppIcons.error,
         ),
         RateResolutionConflict() => AppStatusBadge(
           label: l10n.stockRateConflictWarning,
           tone: AppStatusTone.damaged,
-          icon: Icons.error_outline_rounded,
+          icon: AppIcons.error,
         ),
       };
     }
@@ -1002,7 +1079,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
           Row(
             children: [
               Icon(
-                Icons.lock_outline_rounded,
+                AppIcons.lock,
                 size: 16,
                 color: colorScheme.secondary,
               ),
@@ -1062,7 +1139,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
             controller: _qtyCtrl,
             focusNode: _qtyFocus,
             label: l10n.stockIssueQuantityLabel,
-            prefixIcon: Icons.numbers_rounded,
+            prefixIcon: AppIcons.number,
             suffixText: l10n.piecesUnit,
             keyboardType: TextInputType.number,
             textInputAction: TextInputAction.done,
@@ -1109,7 +1186,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                     onPressed: () => _addQuickQty(50, available),
                   ),
                 ActionChip(
-                  avatar: const Icon(Icons.done_all_rounded, size: 16),
+                  avatar: const Icon(AppIcons.doneAll, size: 16),
                   label: Text('${l10n.stockQuickAllAvailable} ($available)'),
                   onPressed: () => _setExactQty(available),
                 ),
@@ -1147,7 +1224,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
         children: [
           Row(
             children: [
-              _StepBadge(number: 4, completed: false),
+              const _StepBadge(number: 4, completed: false),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: AppHeading(
@@ -1220,17 +1297,9 @@ final class _StockIssuePageState extends State<StockIssuePage> {
             AppStatusBadge(
               label: _submitError!,
               tone: AppStatusTone.damaged,
-              icon: Icons.error_outline_rounded,
+              icon: AppIcons.error,
             ),
           ],
-          const SizedBox(height: AppSpacing.lg),
-          AppButton(
-            label: l10n.stockConfirmIssueAction,
-            icon: Icons.outbox_rounded,
-            isExpanded: true,
-            isLoading: _saving,
-            onPressed: canSubmit ? _submit : null,
-          ),
         ],
       ),
     );
@@ -1258,7 +1327,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                       borderRadius: AppRadius.fullBorder,
                     ),
                     child: Icon(
-                      Icons.check_circle_rounded,
+                      AppIcons.success,
                       color: semantic.goodStock,
                       size: 36,
                     ),
@@ -1314,7 +1383,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                   child: Row(
                     children: [
                       Icon(
-                        Icons.inventory_2_outlined,
+                        AppIcons.lot,
                         color: semantic.goodStock,
                       ),
                       const SizedBox(width: AppSpacing.sm),
@@ -1336,14 +1405,14 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                 const SizedBox(height: AppSpacing.lg),
                 AppButton(
                   label: l10n.stockIssueMoreAction,
-                  icon: Icons.add_circle_outline_rounded,
+                  icon: AppIcons.addCircle,
                   isExpanded: true,
                   onPressed: _issueMore,
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 AppButton(
                   label: l10n.stockViewIssueDetailsAction,
-                  icon: Icons.assignment_returned_outlined,
+                  icon: AppIcons.receiveReturn,
                   variant: AppButtonVariant.secondary,
                   isExpanded: true,
                   onPressed: () => context.pushReplacement(
@@ -1439,8 +1508,8 @@ final class _StepProgressStrip extends StatelessWidget {
                 children: [
                   Icon(
                     steps[i].completed
-                        ? Icons.check_circle_rounded
-                        : Icons.radio_button_checked_rounded,
+                        ? AppIcons.success
+                        : AppIcons.currentStep,
                     size: 14,
                     color: steps[i].completed
                         ? semantic.goodStock
@@ -1492,7 +1561,7 @@ final class _StepBadge extends StatelessWidget {
         borderRadius: AppRadius.fullBorder,
       ),
       child: completed
-          ? const Icon(Icons.check_rounded, size: 16, color: Colors.white)
+          ? const Icon(AppIcons.confirm, size: 16, color: Colors.white)
           : Text(
               '$number',
               style: Theme.of(context).textTheme.labelSmall?.copyWith(

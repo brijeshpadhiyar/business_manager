@@ -6,8 +6,8 @@ import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/platform/media_storage_service.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:crypto/crypto.dart';
+import 'package:business_manager/core/platform/app_data_directory.dart';
 import 'package:path/path.dart' as p;
-import 'package:path_provider/path_provider.dart';
 
 /// Native implementation storing media strictly inside OS private application
 /// storage (`<appDocsDir>/<config.mediaDirName>/<category>/<entityId>/<uuid>.<ext>`).
@@ -24,7 +24,7 @@ final class NativeMediaStorageService implements MediaStorageService {
 
   Future<Directory> _resolveMediaRoot() async {
     final baseDir =
-        baseDirectoryOverride ?? await getApplicationDocumentsDirectory();
+        baseDirectoryOverride ?? await resolveAppDataDirectory();
     final mediaRoot = Directory(p.join(baseDir.path, config.mediaDirName));
     if (!mediaRoot.existsSync()) {
       await mediaRoot.create(recursive: true);

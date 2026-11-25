@@ -1,0 +1,14 @@
+{
+  "name": "stitchflow-icon-font",
+  "private": true,
+  "description": "Builds assets/fonts/StitchIcons.ttf and lib/core/design_system/stitch_icons.g.dart from assets/icons/svg/*.svg",
+  "type": "module",
+  "scripts": {
+    "build": "node build_icon_font.mjs"
+  },
+  "devDependencies": {
+    "oslllo-svg-fixer": "^5.0.0",
+    "svg2ttf": "^6.1.0",
+    "svgicons2svgfont": "^12.0.0"
+  }
+}

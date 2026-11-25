@@ -11,6 +11,10 @@ final class AccountingOverviewState {
     this.workerSummaries = const [],
     this.recentPayments = const [],
     this.labourEntries = const [],
+    this.totalEarnedPaise = 0,
+    this.totalOutstandingPaise = 0,
+    this.totalAdvanceCreditPaise = 0,
+    this.totalPaidPaise = 0,
     this.searchQuery = '',
     this.errorMessage,
   });
@@ -19,6 +23,10 @@ final class AccountingOverviewState {
   final List<WorkerFinancialSummary> workerSummaries;
   final List<PaymentView> recentPayments;
   final List<LabourEntryView> labourEntries;
+  final int totalEarnedPaise;
+  final int totalOutstandingPaise;
+  final int totalAdvanceCreditPaise;
+  final int totalPaidPaise;
   final String searchQuery;
   final String? errorMessage;
 
@@ -39,6 +47,10 @@ final class AccountingOverviewState {
     List<WorkerFinancialSummary>? workerSummaries,
     List<PaymentView>? recentPayments,
     List<LabourEntryView>? labourEntries,
+    int? totalEarnedPaise,
+    int? totalOutstandingPaise,
+    int? totalAdvanceCreditPaise,
+    int? totalPaidPaise,
     String? searchQuery,
     String? errorMessage,
   }) {
@@ -47,6 +59,12 @@ final class AccountingOverviewState {
       workerSummaries: workerSummaries ?? this.workerSummaries,
       recentPayments: recentPayments ?? this.recentPayments,
       labourEntries: labourEntries ?? this.labourEntries,
+      totalEarnedPaise: totalEarnedPaise ?? this.totalEarnedPaise,
+      totalOutstandingPaise:
+          totalOutstandingPaise ?? this.totalOutstandingPaise,
+      totalAdvanceCreditPaise:
+          totalAdvanceCreditPaise ?? this.totalAdvanceCreditPaise,
+      totalPaidPaise: totalPaidPaise ?? this.totalPaidPaise,
       searchQuery: searchQuery ?? this.searchQuery,
       errorMessage: errorMessage,
     );
@@ -61,19 +79,38 @@ final class AccountingOverviewCubit extends Cubit<AccountingOverviewState> {
   final AccountingRepository _repository;
 
   Future<void> load() async {
-    emit(state.copyWith(status: AccountingOverviewStatus.loading));
+    if (state.status == AccountingOverviewStatus.initial ||
+        state.status == AccountingOverviewStatus.error) {
+      emit(state.copyWith(status: AccountingOverviewStatus.loading));
+    }
     try {
       final results = await Future.wait([
         _repository.getAllWorkerSummaries(),
         _repository.getPayments(),
         _repository.getLabourEntries(),
       ]);
+      if (isClosed) return;
+      final summaries = results[0] as List<WorkerFinancialSummary>;
+      var totalEarned = 0;
+      var totalOutstanding = 0;
+      var totalAdvanceCredit = 0;
+      var totalPaid = 0;
+      for (final w in summaries) {
+        totalEarned += w.earnedLabourPaise;
+        totalOutstanding += w.outstandingPayablePaise;
+        totalAdvanceCredit += w.advanceCreditBalancePaise;
+        totalPaid += w.netPaidToWorkerPaise;
+      }
       emit(
         state.copyWith(
           status: AccountingOverviewStatus.loaded,
-          workerSummaries: results[0] as List<WorkerFinancialSummary>,
+          workerSummaries: summaries,
           recentPayments: results[1] as List<PaymentView>,
           labourEntries: results[2] as List<LabourEntryView>,
+          totalEarnedPaise: totalEarned,
+          totalOutstandingPaise: totalOutstanding,
+          totalAdvanceCreditPaise: totalAdvanceCredit,
+          totalPaidPaise: totalPaid,
         ),
       );
     } catch (e) {
@@ -87,6 +124,7 @@ final class AccountingOverviewCubit extends Cubit<AccountingOverviewState> {
   }
 
   void updateSearch(String query) {
+    if (query == state.searchQuery) return;
     emit(state.copyWith(searchQuery: query));
   }
 }

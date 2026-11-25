@@ -3,13 +3,17 @@ import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/domain_label_localizer.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
-import 'package:business_manager/core/utils/ist_datetime_helper.dart';
+import 'package:business_manager/core/utils/app_date_time_formatter.dart';
+import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/processes/domain/entities/process_entities.dart';
 import 'package:business_manager/features/processes/presentation/bloc/process_detail_cubit.dart';
+import 'package:business_manager/features/production_history/domain/entities/production_history_entities.dart';
+import 'package:business_manager/features/production_history/presentation/bloc/process_history_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 final class ProcessDetailPage extends StatelessWidget {
   const ProcessDetailPage({super.key, required this.processId});
@@ -18,17 +22,33 @@ final class ProcessDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<ProcessDetailCubit>(
-      create: (_) => getIt<ProcessDetailCubit>()..loadProcess(processId),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<ProcessDetailCubit>(
+          create: (_) => getIt<ProcessDetailCubit>()..loadProcess(processId),
+        ),
+        BlocProvider<ProcessHistoryCubit>(
+          create: (_) => getIt<ProcessHistoryCubit>()..loadProcess(processId),
+        ),
+      ],
       child: _ProcessDetailView(processId: processId),
     );
   }
 }
 
-final class _ProcessDetailView extends StatelessWidget {
+final class _ProcessDetailView extends StatefulWidget {
   const _ProcessDetailView({required this.processId});
 
   final String processId;
+
+  @override
+  State<_ProcessDetailView> createState() => _ProcessDetailViewState();
+}
+
+final class _ProcessDetailViewState extends State<_ProcessDetailView> {
+  int _historyTab = 0;
+
+  String get processId => widget.processId;
 
   Future<void> _confirmToggleActive(
     BuildContext context,
@@ -93,7 +113,7 @@ final class _ProcessDetailView extends StatelessWidget {
           title: proc.name,
           actions: [
             AppIconButton(
-              icon: Icons.edit_outlined,
+              icon: AppIcons.edit,
               tooltip: l10n.processEditAction,
               onPressed: () async {
                 await context.push(RoutePaths.processEdit(proc.id));
@@ -109,14 +129,9 @@ final class _ProcessDetailView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: AppHeading(
-                            proc.name,
-                            level: AppHeadingLevel.h2,
-                          ),
-                        ),
+                    AppActionRow(
+                      content: AppHeading(proc.name, level: AppHeadingLevel.h2),
+                      actions: [
                         AppStatusBadge(
                           label: proc.isActive
                               ? l10n.statusActive
@@ -133,6 +148,12 @@ final class _ProcessDetailView extends StatelessWidget {
                     ],
                     const SizedBox(height: AppSpacing.md),
                     AppText(
+                      'Default Labour Rate: ${proc.defaultRatePaise > 0 ? MoneyFormatter.formatRatePaise(proc.defaultRatePaise, pricingUnit: proc.defaultPricingUnit) : 'Not set'}',
+                      variant: AppTextVariant.bodySmall,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
+                    AppText(
                       '${l10n.processBillingOverrideLabel}: $billingLabel',
                       variant: AppTextVariant.bodySmall,
                     ),
@@ -143,12 +164,12 @@ final class _ProcessDetailView extends StatelessWidget {
                     ),
                     const SizedBox(height: AppSpacing.xs),
                     AppText(
-                      '${l10n.createdAtLabel}: ${IstDateTimeHelper.formatIstDateTime(proc.createdAt, locale: localeCode)}',
+                      '${l10n.createdAtLabel}: ${AppDateTimeFormatter.formatDateTime(proc.createdAt, locale: localeCode)}',
                       variant: AppTextVariant.bodySmall,
                     ),
                     const SizedBox(height: AppSpacing.xs),
                     AppText(
-                      '${l10n.updatedAtLabel}: ${IstDateTimeHelper.formatIstDateTime(proc.updatedAt, locale: localeCode)}',
+                      '${l10n.updatedAtLabel}: ${AppDateTimeFormatter.formatDateTime(proc.updatedAt, locale: localeCode)}',
                       variant: AppTextVariant.bodySmall,
                     ),
                     const SizedBox(height: AppSpacing.md),
@@ -158,7 +179,7 @@ final class _ProcessDetailView extends StatelessWidget {
                       children: [
                         AppButton(
                           label: l10n.processEditAction,
-                          icon: Icons.edit_outlined,
+                          icon: AppIcons.edit,
                           variant: AppButtonVariant.outlined,
                           onPressed: () async {
                             await context.push(RoutePaths.processEdit(proc.id));
@@ -174,8 +195,8 @@ final class _ProcessDetailView extends StatelessWidget {
                               ? l10n.processDeactivateAction
                               : l10n.processActivateAction,
                           icon: proc.isActive
-                              ? Icons.pause_circle_outline
-                              : Icons.play_circle_outline,
+                              ? AppIcons.pause
+                              : AppIcons.resume,
                           variant: proc.isActive
                               ? AppButtonVariant.destructive
                               : AppButtonVariant.secondary,
@@ -185,6 +206,271 @@ final class _ProcessDetailView extends StatelessWidget {
                     ),
                   ],
                 ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              // Phase 4: Process-Wise Production KPIs & Lot/Worker/Date/Pending History
+              BlocBuilder<ProcessHistoryCubit, ProcessHistoryState>(
+                builder: (context, histState) {
+                  final ph = histState.selectedProcess;
+                  if (ph == null) return const SizedBox.shrink();
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      AppHeading(
+                        l10n.prodHistoryProcessDetailsTitle,
+                        level: AppHeadingLevel.h3,
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      AppCard(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Wrap(
+                              spacing: AppSpacing.xs,
+                              runSpacing: 4,
+                              children: [
+                                AppStatusBadge(
+                                  label: 'Lots: ${ph.totalLots}',
+                                  tone: AppStatusTone.info,
+                                ),
+                                AppStatusBadge(
+                                  label: 'Workers: ${ph.totalWorkersInvolved}',
+                                  tone: AppStatusTone.neutral,
+                                ),
+                                AppStatusBadge(
+                                  label: 'Assigned: ${ph.assignedQty}',
+                                  tone: AppStatusTone.info,
+                                ),
+                                AppStatusBadge(
+                                  label: 'Accepted: ${ph.acceptedQty}',
+                                  tone: AppStatusTone.good,
+                                ),
+                                AppStatusBadge(
+                                  label:
+                                      'Pending QC: ${ph.pendingInspectionQty}',
+                                  tone: ph.pendingInspectionQty > 0
+                                      ? AppStatusTone.pending
+                                      : AppStatusTone.neutral,
+                                ),
+                                AppStatusBadge(
+                                  label: 'Outstanding: ${ph.outstandingQty}',
+                                  tone: ph.outstandingQty > 0
+                                      ? AppStatusTone.pending
+                                      : AppStatusTone.good,
+                                ),
+                                AppStatusBadge(
+                                  label: 'Rejected: ${ph.rejectedQty}',
+                                  tone: ph.rejectedQty > 0
+                                      ? AppStatusTone.damaged
+                                      : AppStatusTone.neutral,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: AppSpacing.xs),
+                            AppText(
+                              'Production Cost: ${MoneyFormatter.formatPaise(ph.totalProductionCostPaise)} • Paid (est): ${MoneyFormatter.formatPaise(ph.estimatedPaidPaise)} • Due (est): ${MoneyFormatter.formatPaise(ph.estimatedOutstandingPaise)}',
+                              variant: AppTextVariant.numeric,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      Wrap(
+                        spacing: AppSpacing.xs,
+                        runSpacing: AppSpacing.xs,
+                        children: [
+                          ChoiceChip(
+                            label: Text(
+                              '${l10n.prodHistoryTabLotWise} (${ph.lotHistory.length})',
+                            ),
+                            selected: _historyTab == 0,
+                            onSelected: (_) => setState(() => _historyTab = 0),
+                          ),
+                          ChoiceChip(
+                            label: Text(
+                              '${l10n.prodHistoryTabWorkerWise} (${ph.workerHistory.length})',
+                            ),
+                            selected: _historyTab == 1,
+                            onSelected: (_) => setState(() => _historyTab = 1),
+                          ),
+                          ChoiceChip(
+                            label: Text(
+                              '${l10n.prodHistoryTabDateWise} (${ph.dateHistory.length})',
+                            ),
+                            selected: _historyTab == 2,
+                            onSelected: (_) => setState(() => _historyTab = 2),
+                          ),
+                          ChoiceChip(
+                            label: Text(
+                              '${l10n.prodHistoryTabPending} (${ph.pendingAssignments.length})',
+                            ),
+                            selected: _historyTab == 3,
+                            onSelected: (_) => setState(() => _historyTab = 3),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      if (_historyTab == 0)
+                        AppLazySection(
+                          key: const ValueKey('ph.lotHistory'),
+                          initialCount: 15,
+                          items: ph.lotHistory,
+                          itemBuilder: (context, r, _) => Padding(
+                            padding: const EdgeInsets.only(bottom: 6),
+                            child: AppCard.listItem(
+                              onTap: () =>
+                                  context.push(RoutePaths.lotHistory(r.lotId)),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        AppText(
+                                          r.lotNumber,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                        AppText(
+                                          'Assigned: ${r.assignedQty} • Acc: ${r.acceptedQty} • Out: ${r.outstandingQty} • Rej: ${r.rejectedQty}',
+                                          variant: AppTextVariant.bodySmall,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  AppText(
+                                    MoneyFormatter.formatPaise(
+                                      r.earnedAmountPaise,
+                                    ),
+                                    variant: AppTextVariant.numeric,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                      else if (_historyTab == 1)
+                        AppLazySection(
+                          key: const ValueKey('ph.workerHistory'),
+                          initialCount: 15,
+                          items: ph.workerHistory,
+                          itemBuilder: (context, w, _) => Padding(
+                            padding: const EdgeInsets.only(bottom: 6),
+                            child: AppCard.listItem(
+                              onTap: () => context.push(
+                                RoutePaths.workerDetail(w.workerId),
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        AppText(
+                                          w.workerName,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                        AppText(
+                                          'Lots: ${w.totalLots} • Assigned: ${w.assignedQty} • Acc: ${w.acceptedQty} • Rej: ${w.rejectedQty}',
+                                          variant: AppTextVariant.bodySmall,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  AppText(
+                                    MoneyFormatter.formatPaise(
+                                      w.earnedAmountPaise,
+                                    ),
+                                    variant: AppTextVariant.numeric,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                      else if (_historyTab == 2)
+                        AppLazySection(
+                          key: const ValueKey('ph.dateHistory'),
+                          initialCount: 15,
+                          items: ph.dateHistory,
+                          itemBuilder: (context, d, _) => Padding(
+                            padding: const EdgeInsets.only(bottom: 6),
+                            child: AppCard.listItem(
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        AppText(
+                                          d.istDateIso,
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                        AppText(
+                                          'Assigned: ${d.assignedQty} • Returned: ${d.returnedQty} • Acc: ${d.acceptedQty} • Rej: ${d.rejectedQty}',
+                                          variant: AppTextVariant.bodySmall,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  AppText(
+                                    MoneyFormatter.formatPaise(d.earnedPaise),
+                                    variant: AppTextVariant.numeric,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        )
+                      else
+                        AppLazySection(
+                          key: const ValueKey('ph.pendingAssignments'),
+                          initialCount: 15,
+                          items: ph.pendingAssignments,
+                          itemBuilder: (context, p, _) => Padding(
+                            padding: const EdgeInsets.only(bottom: 6),
+                            child: AppCard.listItem(
+                              onTap: () => context.push(
+                                RoutePaths.productionTransactionDetail(
+                                  ProductionTransactionKind
+                                      .stockMovement
+                                      .routeSegment,
+                                  p.issueMovementId,
+                                ),
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        AppText(
+                                          '${p.lotNumber} • ${p.workerName}',
+                                          fontWeight: FontWeight.w700,
+                                        ),
+                                        AppText(
+                                          '${p.designName} • ${p.colourName} • Out: ${p.outstandingQty} • Pending QC: ${p.pendingInspectionQty}',
+                                          variant: AppTextVariant.bodySmall,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const Icon(AppIcons.chevronRight),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  );
+                },
               ),
               const SizedBox(height: AppSpacing.lg),
               AppHeading(
@@ -206,25 +492,23 @@ final class _ProcessDetailView extends StatelessWidget {
                     child: AppCard(
                       onTap: () =>
                           context.push(RoutePaths.workerDetail(w.workerId)),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                AppText(
-                                  w.workerName,
-                                  variant: AppTextVariant.bodyLarge,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                if (w.workerPhone != null)
-                                  AppText(
-                                    w.workerPhone!,
-                                    variant: AppTextVariant.bodySmall,
-                                  ),
-                              ],
+                      child: AppActionRow(
+                        content: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppText(
+                              w.workerName,
+                              variant: AppTextVariant.bodyLarge,
+                              fontWeight: FontWeight.w600,
                             ),
-                          ),
+                            if (w.workerPhone != null)
+                              AppText(
+                                w.workerPhone!,
+                                variant: AppTextVariant.bodySmall,
+                              ),
+                          ],
+                        ),
+                        actions: [
                           AppStatusBadge(
                             label: w.workerIsActive
                                 ? l10n.statusActive
@@ -233,8 +517,7 @@ final class _ProcessDetailView extends StatelessWidget {
                                 ? AppStatusTone.good
                                 : AppStatusTone.neutral,
                           ),
-                          const SizedBox(width: AppSpacing.xs),
-                          const Icon(Icons.chevron_right),
+                          const Icon(AppIcons.chevronRight),
                         ],
                       ),
                     ),
@@ -261,7 +544,7 @@ final class _ProcessDetailView extends StatelessWidget {
                           (entry) => ListTile(
                             dense: true,
                             contentPadding: EdgeInsets.zero,
-                            leading: const Icon(Icons.history),
+                            leading: const Icon(AppIcons.rateHistory),
                             title: Text(
                               DomainLabelLocalizer.auditAction(
                                 l10n,
@@ -269,7 +552,7 @@ final class _ProcessDetailView extends StatelessWidget {
                               ),
                             ),
                             subtitle: Text(
-                              IstDateTimeHelper.formatIstDateTime(
+                              AppDateTimeFormatter.formatDateTime(
                                 entry.recordedAt,
                                 locale: localeCode,
                               ),

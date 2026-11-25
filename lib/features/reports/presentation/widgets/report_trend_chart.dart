@@ -28,8 +28,8 @@ final class ReportTrendChart extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final issuedColor = isDark
         ? AppColors.darkAdvanceCredit
-        : AppColors.brandNavyMid;
-    final goodColor = isDark ? AppColors.darkGoodStock : AppColors.brandTeal;
+        : AppColors.indigo600;
+    final goodColor = isDark ? AppColors.darkGoodStock : AppColors.emerald600;
     final gridColor = isDark ? AppColors.darkBorder : AppColors.lightBorder;
     final labelColor = Theme.of(context).colorScheme.onSurfaceVariant;
 

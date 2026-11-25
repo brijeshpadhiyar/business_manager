@@ -1,0 +1,216 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    
+    {
+      "name": "StitchFlow — Android (Dev)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_dev.dart",
+      "flutterMode": "debug",
+      "args": [
+        "--flavor",
+        "dev",
+        "--dart-define-from-file=config/dev.json"
+      ]
+    },
+    {
+      "name": "StitchFlow — Android (Prod)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_prod.dart",
+      "flutterMode": "debug",
+      "args": [
+        "--flavor",
+        "prod",
+        "--dart-define-from-file=config/prod.json"
+      ]
+    },
+    {
+      "name": "StitchFlow — Android (Dev Profile)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_dev.dart",
+      "flutterMode": "profile",
+      "args": [
+        "--flavor",
+        "dev",
+        "--dart-define-from-file=config/dev.json"
+      ]
+    },
+    {
+      "name": "StitchFlow — Android (Dev Release)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_dev.dart",
+      "flutterMode": "release",
+      "args": [
+        "--flavor",
+        "dev",
+        "--dart-define-from-file=config/dev.json"
+      ]
+    },
+    {
+      "name": "StitchFlow — iOS (Dev)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_dev.dart",
+      "flutterMode": "debug",
+      "args": [
+        "--dart-define-from-file=config/dev.json"
+      ]
+    },
+    {
+      "name": "StitchFlow — iOS (Prod)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_prod.dart",
+      "flutterMode": "debug",
+      "args": [
+        "--dart-define-from-file=config/prod.json"
+      ]
+    },
+    {
+      "name": "StitchFlow — iOS (Prod Release)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_prod.dart",
+      "flutterMode": "release",
+      "args": [
+        "--dart-define-from-file=config/prod.json"
+      ]
+    },
+    {
+      "name": "StitchFlow — Web Chrome (Dev)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_dev.dart",
+      "flutterMode": "debug",
+      "deviceId": "chrome",
+      "args": [
+        "--dart-define-from-file=config/dev.json"
+      ]
+    },
+    {
+      "name": "StitchFlow — Web Chrome (Prod)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_prod.dart",
+      "flutterMode": "debug",
+      "deviceId": "chrome",
+      "args": [
+        "--dart-define-from-file=config/prod.json"
+      ]
+    },
+    {
+      "name": "StitchFlow — Web Edge (Dev)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_dev.dart",
+      "flutterMode": "debug",
+      "deviceId": "edge",
+      "args": [
+        "--dart-define-from-file=config/dev.json"
+      ]
+    },
+    {
+      "name": "StitchFlow — Web Server (Dev)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_dev.dart",
+      "flutterMode": "debug",
+      "deviceId": "web-server",
+      "args": [
+        "--web-port=8080",
+        "--dart-define-from-file=config/dev.json"
+      ]
+    },
+    {
+      "name": "StitchFlow — Windows Desktop (Dev)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_dev.dart",
+      "flutterMode": "debug",
+      "deviceId": "windows",
+      "args": [
+        "--dart-define-from-file=config/dev.json"
+      ]
+    },
+    {
+      "name": "StitchFlow — Windows Desktop (Prod)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_prod.dart",
+      "flutterMode": "debug",
+      "deviceId": "windows",
+      "args": [
+        "--dart-define-from-file=config/prod.json"
+      ]
+    },
+    {
+      "name": "StitchFlow — macOS Desktop (Dev)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_dev.dart",
+      "flutterMode": "debug",
+      "deviceId": "macos",
+      "args": [
+        "--dart-define-from-file=config/dev.json"
+      ]
+    },
+    {
+      "name": "StitchFlow — Linux Desktop (Dev)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_dev.dart",
+      "flutterMode": "debug",
+      "deviceId": "linux",
+      "args": [
+        "--dart-define-from-file=config/dev.json"
+      ]
+    },
+    {
+      "name": "StitchFlow — Selected Device (Dev)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_dev.dart",
+      "flutterMode": "debug",
+      "args": [
+        "--dart-define-from-file=config/dev.json"
+      ]
+    },
+    {
+      "name": "StitchFlow — Selected Device (Prod)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main_prod.dart",
+      "flutterMode": "debug",
+      "args": [
+        "--dart-define-from-file=config/prod.json"
+      ]
+    }
+  ],
+  "compounds": [
+    {
+      "name": "All: Web Chrome + Android (Dev)",
+      "configurations": [
+        "StitchFlow — Web Chrome (Dev)",
+        "StitchFlow — Android (Dev)"
+      ]
+    },
+    {
+      "name": "All: Web Chrome + iOS (Dev)",
+      "configurations": [
+        "StitchFlow — Web Chrome (Dev)",
+        "StitchFlow — iOS (Dev)"
+      ]
+    },
+    {
+      "name": "All: Web Chrome + Windows Desktop (Dev)",
+      "configurations": [
+        "StitchFlow — Web Chrome (Dev)",
+        "StitchFlow — Windows Desktop (Dev)"
+      ]
+    }
+  ]
+}

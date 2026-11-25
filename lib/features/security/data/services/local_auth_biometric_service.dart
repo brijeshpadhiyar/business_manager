@@ -1,5 +1,4 @@
-import 'dart:io' show Platform;
-
+import 'package:business_manager/core/platform/platform_env.dart';
 import 'package:business_manager/features/security/domain/entities/security_entities.dart';
 import 'package:business_manager/features/security/domain/repositories/security_repository.dart';
 import 'package:flutter/foundation.dart';
@@ -16,8 +15,7 @@ final class LocalAuthBiometricService implements BiometricAuthService {
 
   final LocalAuthentication _auth;
 
-  bool get _isTestEnv =>
-      !kIsWeb && Platform.environment.containsKey('FLUTTER_TEST');
+  bool get _isTestEnv => isFlutterTestEnv;
 
   @override
   Future<BiometricAvailability> checkAvailability() async {
@@ -55,7 +53,8 @@ final class LocalAuthBiometricService implements BiometricAuthService {
     try {
       final ok = await _auth.authenticate(
         localizedReason: localizedReason,
-        biometricOnly: true,
+        // Windows Hello rejects biometricOnly (it may offer its own PIN).
+        biometricOnly: defaultTargetPlatform != TargetPlatform.windows,
         persistAcrossBackgrounding: true,
       );
       return ok ? BiometricAuthOutcome.success : BiometricAuthOutcome.failed;

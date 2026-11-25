@@ -41,6 +41,32 @@ final class RateResolutionFound extends RateResolutionResult {
   final MemberProcessRateEntity rate;
 }
 
+/// Resolved via process-level default labour rate when no worker-specific rate
+/// is configured for `(workerId, processId)` on `businessDateIst`.
+final class RateResolutionProcessDefault extends RateResolutionResult {
+  const RateResolutionProcessDefault({
+    required super.workerId,
+    required super.processId,
+    required super.businessDateIst,
+    required this.ratePaise,
+    required this.rawDefaultRatePaise,
+    required this.pricingUnit,
+    required this.processName,
+  });
+
+  /// Effective per-piece rate in paise used for piece-based billing.
+  final int ratePaise;
+
+  /// Raw configured default rate on the process (e.g., per dozen or per piece).
+  final int rawDefaultRatePaise;
+
+  /// Process default pricing unit (`PER_PIECE`, `PER_DOZEN`, etc.).
+  final String pricingUnit;
+
+  /// Human-readable process name for UI badges.
+  final String processName;
+}
+
 final class RateResolutionMissing extends RateResolutionResult {
   const RateResolutionMissing({
     required super.workerId,

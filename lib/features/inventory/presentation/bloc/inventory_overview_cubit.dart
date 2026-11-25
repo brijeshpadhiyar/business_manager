@@ -25,12 +25,14 @@ final class InventoryOverviewCubit extends Cubit<InventoryOverviewState> {
   final LotRepository _lotRepository;
 
   Future<void> loadOverview() async {
-    emit(
-      state.copyWith(
-        status: InventoryOverviewStatus.loading,
-        errorMessage: null,
-      ),
-    );
+    if (state.overview == null) {
+      emit(
+        state.copyWith(
+          status: InventoryOverviewStatus.loading,
+          errorMessage: null,
+        ),
+      );
+    }
     try {
       final activeLots = await _lotRepository.getAllActiveLots();
       final activeDesigns = await _lotRepository.getAllActiveDesigns();
@@ -40,6 +42,7 @@ final class InventoryOverviewCubit extends Cubit<InventoryOverviewState> {
         activeDesigns: activeDesigns,
         activeColours: activeColours,
       );
+      if (isClosed) return;
       emit(
         state.copyWith(
           status: InventoryOverviewStatus.loaded,
@@ -47,6 +50,7 @@ final class InventoryOverviewCubit extends Cubit<InventoryOverviewState> {
         ),
       );
     } catch (e) {
+      if (isClosed) return;
       emit(
         state.copyWith(
           status: InventoryOverviewStatus.error,

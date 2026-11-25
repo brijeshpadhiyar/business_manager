@@ -19,9 +19,42 @@ final class ProcessRepositoryImpl implements ProcessRepository {
   final DatabaseTransactionRunner _txRunner;
   final IdGenerator _idGenerator;
 
+  static const Set<String> _validPricingUnits = {
+    'PER_PIECE',
+    'PER_DOZEN',
+    'PER_LOT',
+    'FIXED_AMOUNT',
+  };
+
   Future<String?> _currentActor() async {
     final profile = await _db.businessProfileDao.getProfile();
     return profile?.ownerName;
+  }
+
+  String _validatePricingUnit(String raw) {
+    final normalized = raw.trim().toUpperCase();
+    if (!_validPricingUnits.contains(normalized)) {
+      throw const DomainValidationException(
+        'invalid_pricing_unit',
+        'Unsupported pricing unit.',
+      );
+    }
+    return normalized;
+  }
+
+  void _validateRatePaise(int ratePaise) {
+    if (ratePaise < 0) {
+      throw const DomainValidationException(
+        'rate_negative',
+        'Default labour rate cannot be negative.',
+      );
+    }
+    if (ratePaise > ValidationLimits.maxAmountPaise) {
+      throw const DomainValidationException(
+        'rate_too_large',
+        'Default labour rate exceeds maximum allowed limit.',
+      );
+    }
   }
 
   @override
@@ -95,8 +128,11 @@ final class ProcessRepositoryImpl implements ProcessRepository {
   Future<ProcessEntity> createProcess({
     required String name,
     String? description,
+    bool isActive = true,
     ProcessBillingModeOverride? billingModeOverride,
     bool includeDamagedInLabour = false,
+    int defaultRatePaise = 0,
+    String defaultPricingUnit = 'PER_PIECE',
   }) async {
     final cleanName = name.trim();
     if (cleanName.isEmpty) {
@@ -112,6 +148,8 @@ final class ProcessRepositoryImpl implements ProcessRepository {
         'Process name or description exceeds allowed length.',
       );
     }
+    _validateRatePaise(defaultRatePaise);
+    final cleanUnit = _validatePricingUnit(defaultPricingUnit);
 
     return _txRunner.runInTransaction(() async {
       final duplicate = await _db.processMemberDao
@@ -133,9 +171,11 @@ final class ProcessRepositoryImpl implements ProcessRepository {
           id: Value(id),
           name: Value(cleanName),
           description: Value(cleanDesc),
-          isActive: const Value(1),
+          isActive: Value(isActive ? 1 : 0),
           billingModeOverride: Value(billingModeOverride?.dbValue),
           includeDamagedInLabour: Value(includeDamagedInLabour ? 1 : 0),
+          defaultRatePaise: Value(defaultRatePaise),
+          defaultPricingUnit: Value(cleanUnit),
           createdBy: Value(actor),
           updatedBy: Value(actor),
           createdAt: Value(now),
@@ -154,9 +194,11 @@ final class ProcessRepositoryImpl implements ProcessRepository {
             jsonEncode({
               'name': cleanName,
               'description': cleanDesc,
-              'is_active': true,
+              'is_active': isActive,
               'billing_mode_override': billingModeOverride?.dbValue,
               'include_damaged_in_labour': includeDamagedInLabour,
+              'default_rate_paise': defaultRatePaise,
+              'default_pricing_unit': cleanUnit,
             }),
           ),
           transactionAt: Value(now),
@@ -174,8 +216,11 @@ final class ProcessRepositoryImpl implements ProcessRepository {
     required String processId,
     required String name,
     String? description,
+    bool? isActive,
     ProcessBillingModeOverride? billingModeOverride,
     required bool includeDamagedInLabour,
+    int? defaultRatePaise,
+    String? defaultPricingUnit,
   }) async {
     final cleanName = name.trim();
     if (cleanName.isEmpty) {
@@ -191,6 +236,12 @@ final class ProcessRepositoryImpl implements ProcessRepository {
         'Process name or description exceeds allowed length.',
       );
     }
+    if (defaultRatePaise != null) {
+      _validateRatePaise(defaultRatePaise);
+    }
+    final cleanUnit = defaultPricingUnit != null
+        ? _validatePricingUnit(defaultPricingUnit)
+        : null;
 
     return _txRunner.runInTransaction(() async {
       final existing = await _db.processMemberDao.findProcessById(processId);
@@ -210,14 +261,20 @@ final class ProcessRepositoryImpl implements ProcessRepository {
       final now = IstDateTimeHelper.nowUtcMillis();
       final actor = await _currentActor();
       final cleanDesc = _nullIfBlank(description);
+      final nextIsActive = isActive ?? (existing.isActive == 1);
+      final nextRatePaise = defaultRatePaise ?? existing.defaultRatePaise;
+      final nextUnit = cleanUnit ?? existing.defaultPricingUnit;
 
       await _db.processMemberDao.updateProcessById(
         processId,
         ProcessesCompanion(
           name: Value(cleanName),
           description: Value(cleanDesc),
+          isActive: Value(nextIsActive ? 1 : 0),
           billingModeOverride: Value(billingModeOverride?.dbValue),
           includeDamagedInLabour: Value(includeDamagedInLabour ? 1 : 0),
+          defaultRatePaise: Value(nextRatePaise),
+          defaultPricingUnit: Value(nextUnit),
           updatedBy: Value(actor),
           updatedAt: Value(now),
         ),
@@ -234,16 +291,22 @@ final class ProcessRepositoryImpl implements ProcessRepository {
             jsonEncode({
               'name': existing.name,
               'description': existing.description,
+              'is_active': existing.isActive == 1,
               'billing_mode_override': existing.billingModeOverride,
               'include_damaged_in_labour': existing.includeDamagedInLabour == 1,
+              'default_rate_paise': existing.defaultRatePaise,
+              'default_pricing_unit': existing.defaultPricingUnit,
             }),
           ),
           newValueJson: Value(
             jsonEncode({
               'name': cleanName,
               'description': cleanDesc,
+              'is_active': nextIsActive,
               'billing_mode_override': billingModeOverride?.dbValue,
               'include_damaged_in_labour': includeDamagedInLabour,
+              'default_rate_paise': nextRatePaise,
+              'default_pricing_unit': nextUnit,
             }),
           ),
           transactionAt: Value(now),
@@ -317,6 +380,8 @@ final class ProcessRepositoryImpl implements ProcessRepository {
       row.billingModeOverride,
     ),
     includeDamagedInLabour: row.includeDamagedInLabour == 1,
+    defaultRatePaise: row.defaultRatePaise,
+    defaultPricingUnit: row.defaultPricingUnit,
     createdAt: row.createdAt,
     updatedAt: row.updatedAt,
   );

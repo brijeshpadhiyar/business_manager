@@ -1,4 +1,7 @@
 import 'package:business_manager/core/config/app_config.dart';
+import 'package:business_manager/core/design_system/app_colors.dart';
+import 'package:business_manager/core/design_system/app_radius.dart';
+import 'package:business_manager/core/design_system/app_shadows.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
@@ -11,6 +14,7 @@ import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Development-only Milestone 2 Design System Showcase route for inspecting
 /// Material 3 tokens, Theme switching, EN/GU localization, ResponsiveNavigation,
@@ -54,18 +58,18 @@ final class _DesignSystemShowcasePageState
       destinations: [
         ResponsiveNavDestination(
           label: l10n.navOverview,
-          icon: Icons.dashboard_outlined,
-          selectedIcon: Icons.dashboard,
+          icon: AppIcons.dashboard,
+          selectedIcon: AppIcons.dashboardSelected,
         ),
         ResponsiveNavDestination(
           label: l10n.navInputs,
-          icon: Icons.edit_note_outlined,
-          selectedIcon: Icons.edit_note,
+          icon: AppIcons.notes,
+          selectedIcon: AppIcons.notes,
         ),
         ResponsiveNavDestination(
           label: l10n.navFeedback,
-          icon: Icons.widgets_outlined,
-          selectedIcon: Icons.widgets,
+          icon: AppIcons.showcase,
+          selectedIcon: AppIcons.showcase,
         ),
       ],
       body: Align(
@@ -235,7 +239,7 @@ final class _DesignSystemShowcasePageState
                   controller: _textController,
                   label: l10n.showcaseSampleFieldLabel,
                   hint: l10n.showcaseSampleFieldHint,
-                  prefixIcon: Icons.label_outline,
+                  prefixIcon: AppIcons.label,
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return l10n.validationRequired;
@@ -291,7 +295,7 @@ final class _DesignSystemShowcasePageState
                 AppButton(
                   label: l10n.showcaseValidateButton,
                   isExpanded: true,
-                  icon: Icons.check_circle_outline,
+                  icon: AppIcons.successOutline,
                   onPressed: () => _formKey.currentState?.validate(),
                 ),
               ],
@@ -340,7 +344,7 @@ final class _DesignSystemShowcasePageState
                       onPressed: null,
                     ),
                     AppIconButton(
-                      icon: Icons.info_outline,
+                      icon: AppIcons.info,
                       tooltip: l10n.showcaseOpenDialog,
                       onPressed: () {},
                     ),
@@ -377,22 +381,22 @@ final class _DesignSystemShowcasePageState
                   AppStatusBadge(
                     label: l10n.statusGood,
                     tone: AppStatusTone.good,
-                    icon: Icons.check_circle_outline,
+                    icon: AppIcons.successOutline,
                   ),
                   AppStatusBadge(
                     label: l10n.statusPending,
                     tone: AppStatusTone.pending,
-                    icon: Icons.schedule,
+                    icon: AppIcons.time,
                   ),
                   AppStatusBadge(
                     label: l10n.statusDamaged,
                     tone: AppStatusTone.damaged,
-                    icon: Icons.warning_amber_outlined,
+                    icon: AppIcons.warning,
                   ),
                   AppStatusBadge(
                     label: l10n.statusAdvanceCredit,
                     tone: AppStatusTone.info,
-                    icon: Icons.account_balance_wallet_outlined,
+                    icon: AppIcons.accounting,
                   ),
                 ],
               ),
@@ -468,7 +472,7 @@ final class _DesignSystemShowcasePageState
               AppLoader(message: l10n.showcaseLoadingMessage),
               const Divider(),
               AppEmptyState(
-                icon: Icons.inbox_outlined,
+                icon: AppIcons.empty,
                 title: l10n.showcaseEmptyTitle,
                 subtitle: l10n.showcaseEmptySubtitle,
               ),
@@ -482,7 +486,143 @@ final class _DesignSystemShowcasePageState
             ],
           ),
         ),
+        const SizedBox(height: AppSpacing.md),
+        const _BrandTokensCard(),
+        const SizedBox(height: AppSpacing.md),
+        const _IconCatalogueCard(),
       ],
+    );
+  }
+}
+
+/// v1.4 "Indigo Thread" visual QA: colour scales, shadow levels, spinners.
+/// Token names are code identifiers, so they are intentionally not localized.
+final class _BrandTokensCard extends StatelessWidget {
+  const _BrandTokensCard();
+
+  static const _scales = <String, List<Color>>{
+    'indigo': [
+      AppColors.indigo50,
+      AppColors.indigo100,
+      AppColors.indigo200,
+      AppColors.indigo300,
+      AppColors.indigo400,
+      AppColors.indigo500,
+      AppColors.indigo600,
+      AppColors.indigo700,
+      AppColors.indigo800,
+      AppColors.indigo900,
+      AppColors.indigo950,
+    ],
+    'emerald': [
+      AppColors.emerald50,
+      AppColors.emerald100,
+      AppColors.emerald200,
+      AppColors.emerald300,
+      AppColors.emerald400,
+      AppColors.emerald500,
+      AppColors.emerald600,
+      AppColors.emerald700,
+      AppColors.emerald800,
+      AppColors.emerald900,
+      AppColors.emerald950,
+    ],
+    'saffron': [
+      AppColors.saffron50,
+      AppColors.saffron100,
+      AppColors.saffron200,
+      AppColors.saffron300,
+      AppColors.saffron400,
+      AppColors.saffron500,
+      AppColors.saffron600,
+      AppColors.saffron700,
+      AppColors.saffron800,
+      AppColors.saffron900,
+    ],
+    'slate': [
+      AppColors.slate50,
+      AppColors.slate100,
+      AppColors.slate200,
+      AppColors.slate300,
+      AppColors.slate400,
+      AppColors.slate500,
+      AppColors.slate600,
+      AppColors.slate700,
+      AppColors.slate800,
+      AppColors.slate900,
+      AppColors.slate950,
+    ],
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final shadows = AppShadows.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
+    final levels = <String, List<BoxShadow>>{
+      'xs': shadows.xs,
+      'sm': shadows.sm,
+      'md': shadows.md,
+      'lg': shadows.lg,
+      'xl': shadows.xl,
+      'glow': shadows.brandGlow,
+    };
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const AppText('Indigo Thread', variant: AppTextVariant.label),
+          const SizedBox(height: AppSpacing.sm),
+          for (final entry in _scales.entries) ...[
+            AppText(entry.key, variant: AppTextVariant.bodySmall),
+            const SizedBox(height: AppSpacing.xs),
+            Row(
+              children: [
+                for (final c in entry.value)
+                  Expanded(child: Container(height: 24, color: c)),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.sm),
+          ],
+          const SizedBox(height: AppSpacing.sm),
+          Wrap(
+            spacing: AppSpacing.lg,
+            runSpacing: AppSpacing.lg,
+            children: [
+              for (final entry in levels.entries)
+                Container(
+                  width: 72,
+                  height: 56,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainerLowest,
+                    borderRadius: AppRadius.mdBorder,
+                    boxShadow: entry.value,
+                  ),
+                  child: AppText(entry.key, variant: AppTextVariant.bodySmall),
+                ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          Row(
+            children: [
+              const AppSpinner.small(),
+              const SizedBox(width: AppSpacing.lg),
+              const AppSpinner(),
+              const SizedBox(width: AppSpacing.lg),
+              const AppSpinner(size: 40),
+              const SizedBox(width: AppSpacing.lg),
+              Container(
+                padding: const EdgeInsets.all(AppSpacing.sm),
+                decoration: BoxDecoration(
+                  color: colorScheme.primary,
+                  borderRadius: AppRadius.mdBorder,
+                ),
+                child: AppSpinner(color: colorScheme.onPrimary),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
@@ -507,6 +647,43 @@ final class _InfoRow extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Visual QA for the action icon vocabulary (AppIcons).
+final class _IconCatalogueCard extends StatelessWidget {
+  const _IconCatalogueCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return AppCard(
+      child: Wrap(
+        spacing: AppSpacing.sm,
+        runSpacing: AppSpacing.sm,
+        children: [
+          for (final entry in AppIcons.catalogue.entries)
+            SizedBox(
+              width: 92,
+              child: Column(
+                children: [
+                  Icon(
+                    entry.value,
+                    size: AppSizing.iconXl,
+                    color: colorScheme.primary,
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  AppText(
+                    entry.key,
+                    variant: AppTextVariant.bodySmall,
+                    maxLines: 1,
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

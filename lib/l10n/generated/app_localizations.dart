@@ -767,19 +767,19 @@ abstract class AppLocalizations {
   /// No description provided for @designsSearchHint.
   ///
   /// In en, this message translates to:
-  /// **'Filter designs or colours'**
+  /// **'Search design, colour, or lot number...'**
   String get designsSearchHint;
 
   /// No description provided for @designsEmptyTitle.
   ///
   /// In en, this message translates to:
-  /// **'No Designs Added'**
+  /// **'No Designs Recorded Yet'**
   String get designsEmptyTitle;
 
   /// No description provided for @designsEmptySubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Add a design to this lot, then add independent colour quantities and prices.'**
+  /// **'Create a lot with designs and colours to see them tracked here across lots.'**
   String get designsEmptySubtitle;
 
   /// No description provided for @designAddAction.
@@ -4591,6 +4591,696 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'A reversal entry cannot itself be reversed.'**
   String get validationCannotReverseReversal;
+
+  /// No description provided for @validationMinLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Must be at least {min} characters.'**
+  String validationMinLength(int min);
+
+  /// No description provided for @validationExceedsDispatched.
+  ///
+  /// In en, this message translates to:
+  /// **'Received quantity cannot exceed dispatched quantity.'**
+  String get validationExceedsDispatched;
+
+  /// No description provided for @validationExceedsHeld.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer quantity cannot exceed quantity currently held by the worker.'**
+  String get validationExceedsHeld;
+
+  /// No description provided for @validationUnaccountedRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Process cannot be completed while pending quantity remains unaccounted.'**
+  String get validationUnaccountedRemaining;
+
+  /// No description provided for @validationOverpaymentNotAllowed.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment amount cannot exceed the remaining payable balance.'**
+  String get validationOverpaymentNotAllowed;
+
+  /// No description provided for @msgTitleSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Success'**
+  String get msgTitleSuccess;
+
+  /// No description provided for @msgTitleError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get msgTitleError;
+
+  /// No description provided for @msgTitleWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Warning'**
+  String get msgTitleWarning;
+
+  /// No description provided for @msgTitleInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Information'**
+  String get msgTitleInfo;
+
+  /// No description provided for @msgTitleLoading.
+  ///
+  /// In en, this message translates to:
+  /// **'Working...'**
+  String get msgTitleLoading;
+
+  /// No description provided for @navPressBackAgainToExit.
+  ///
+  /// In en, this message translates to:
+  /// **'Press back again to exit'**
+  String get navPressBackAgainToExit;
+
+  /// No description provided for @navProductionHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Production History'**
+  String get navProductionHistory;
+
+  /// No description provided for @navInspectionQueue.
+  ///
+  /// In en, this message translates to:
+  /// **'QC Inspection Queue'**
+  String get navInspectionQueue;
+
+  /// No description provided for @navWorkerHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker Production'**
+  String get navWorkerHistory;
+
+  /// No description provided for @navProcessHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Process History'**
+  String get navProcessHistory;
+
+  /// No description provided for @prodHistoryDashboardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Production History'**
+  String get prodHistoryDashboardTitle;
+
+  /// No description provided for @prodHistoryDashboardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Permanent lot, worker, process & financial ledger tracking'**
+  String get prodHistoryDashboardSubtitle;
+
+  /// No description provided for @prodHistorySearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search lot, worker, process, design, colour...'**
+  String get prodHistorySearchHint;
+
+  /// No description provided for @prodHistoryOnlyPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Only'**
+  String get prodHistoryOnlyPending;
+
+  /// No description provided for @prodHistoryAllEntries.
+  ///
+  /// In en, this message translates to:
+  /// **'All Entries'**
+  String get prodHistoryAllEntries;
+
+  /// No description provided for @prodHistoryTotalAssigned.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned'**
+  String get prodHistoryTotalAssigned;
+
+  /// No description provided for @prodHistoryTotalReturned.
+  ///
+  /// In en, this message translates to:
+  /// **'Returned'**
+  String get prodHistoryTotalReturned;
+
+  /// No description provided for @prodHistoryTotalAccepted.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted'**
+  String get prodHistoryTotalAccepted;
+
+  /// No description provided for @prodHistoryTotalRejected.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected'**
+  String get prodHistoryTotalRejected;
+
+  /// No description provided for @prodHistoryPendingInspection.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Inspection'**
+  String get prodHistoryPendingInspection;
+
+  /// No description provided for @prodHistoryOutstandingWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Outstanding'**
+  String get prodHistoryOutstandingWork;
+
+  /// No description provided for @prodHistoryTotalEarned.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Earned'**
+  String get prodHistoryTotalEarned;
+
+  /// No description provided for @prodHistoryTotalPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Paid'**
+  String get prodHistoryTotalPaid;
+
+  /// No description provided for @prodHistoryOutstandingPayable.
+  ///
+  /// In en, this message translates to:
+  /// **'Outstanding Payable'**
+  String get prodHistoryOutstandingPayable;
+
+  /// No description provided for @prodHistoryLotHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Lot History'**
+  String get prodHistoryLotHistoryTitle;
+
+  /// No description provided for @prodHistoryLotTimelineTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot Timeline'**
+  String get prodHistoryLotTimelineTitle;
+
+  /// No description provided for @prodHistoryViewLotHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot History'**
+  String get prodHistoryViewLotHistory;
+
+  /// No description provided for @prodHistoryViewTimeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot Timeline'**
+  String get prodHistoryViewTimeline;
+
+  /// No description provided for @prodHistoryWorkerHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker Production History'**
+  String get prodHistoryWorkerHistoryTitle;
+
+  /// No description provided for @prodHistoryWorkerLotHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker Lot History'**
+  String get prodHistoryWorkerLotHistory;
+
+  /// No description provided for @prodHistoryWorkerProcessHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Process-Wise History'**
+  String get prodHistoryWorkerProcessHistory;
+
+  /// No description provided for @prodHistoryIncludeInactive.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Inactive'**
+  String get prodHistoryIncludeInactive;
+
+  /// No description provided for @prodHistoryProcessHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Process-Wise History'**
+  String get prodHistoryProcessHistoryTitle;
+
+  /// No description provided for @prodHistoryProcessDetailsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Process Production Details'**
+  String get prodHistoryProcessDetailsTitle;
+
+  /// No description provided for @prodHistoryTabLotWise.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot-Wise'**
+  String get prodHistoryTabLotWise;
+
+  /// No description provided for @prodHistoryTabWorkerWise.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker-Wise'**
+  String get prodHistoryTabWorkerWise;
+
+  /// No description provided for @prodHistoryTabDateWise.
+  ///
+  /// In en, this message translates to:
+  /// **'Date-Wise'**
+  String get prodHistoryTabDateWise;
+
+  /// No description provided for @prodHistoryTabPending.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Work'**
+  String get prodHistoryTabPending;
+
+  /// No description provided for @prodHistoryInspectionQueueTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Returns & QC Inspection'**
+  String get prodHistoryInspectionQueueTitle;
+
+  /// No description provided for @prodHistoryTabPendingInspection.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending QC'**
+  String get prodHistoryTabPendingInspection;
+
+  /// No description provided for @prodHistoryTabRejections.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejections & Repairs'**
+  String get prodHistoryTabRejections;
+
+  /// No description provided for @prodHistoryApproveAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspect & Approve'**
+  String get prodHistoryApproveAction;
+
+  /// No description provided for @prodHistoryRecordRepairAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Log Repair'**
+  String get prodHistoryRecordRepairAction;
+
+  /// No description provided for @prodHistoryReinspectAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-Inspect & Approve'**
+  String get prodHistoryReinspectAction;
+
+  /// No description provided for @prodHistoryRepairSourceOriginal.
+  ///
+  /// In en, this message translates to:
+  /// **'Repaired by Original Worker (Credits Historical Rate)'**
+  String get prodHistoryRepairSourceOriginal;
+
+  /// No description provided for @prodHistoryRepairSourceInHouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Factory / In-House Repair (No Worker Earning)'**
+  String get prodHistoryRepairSourceInHouse;
+
+  /// No description provided for @prodHistoryReturnModePending.
+  ///
+  /// In en, this message translates to:
+  /// **'Log as Pending Inspection (₹0 until QC approves)'**
+  String get prodHistoryReturnModePending;
+
+  /// No description provided for @prodHistoryReturnModeImmediate.
+  ///
+  /// In en, this message translates to:
+  /// **'Return & Inspect Immediately (Generates Accepted Earnings)'**
+  String get prodHistoryReturnModeImmediate;
+
+  /// No description provided for @prodHistoryTxDetailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction Details'**
+  String get prodHistoryTxDetailTitle;
+
+  /// No description provided for @prodHistoryOpenLot.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Lot'**
+  String get prodHistoryOpenLot;
+
+  /// No description provided for @prodHistoryOpenWorker.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Worker'**
+  String get prodHistoryOpenWorker;
+
+  /// No description provided for @prodHistoryOpenProcess.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Process'**
+  String get prodHistoryOpenProcess;
+
+  /// No description provided for @prodHistoryLockedRateSnapshot.
+  ///
+  /// In en, this message translates to:
+  /// **'Locked Rate Snapshot'**
+  String get prodHistoryLockedRateSnapshot;
+
+  /// No description provided for @prodHistoryAuditTrail.
+  ///
+  /// In en, this message translates to:
+  /// **'Audit Trail'**
+  String get prodHistoryAuditTrail;
+
+  /// No description provided for @prodHistoryRelatedRecords.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked Transactions'**
+  String get prodHistoryRelatedRecords;
+
+  /// No description provided for @prodHistoryInitialAssignmentsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'3. Initial Process Assignments (Optional)'**
+  String get prodHistoryInitialAssignmentsTitle;
+
+  /// No description provided for @prodHistoryInitialAssignmentsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Optionally assign processes, workers, quantities & locked rates while creating the lot.'**
+  String get prodHistoryInitialAssignmentsSubtitle;
+
+  /// No description provided for @prodHistoryAddAssignmentAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Assignment'**
+  String get prodHistoryAddAssignmentAction;
+
+  /// No description provided for @prodHistoryApprovalAuthTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Authorize Approval'**
+  String get prodHistoryApprovalAuthTitle;
+
+  /// No description provided for @prodHistoryApprovalAuthSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify PIN or biometrics to approve accepted quantities and credit worker earnings.'**
+  String get prodHistoryApprovalAuthSubtitle;
+
+  /// No description provided for @securityRequireApprovalAuthLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Require PIN for Return Approvals'**
+  String get securityRequireApprovalAuthLabel;
+
+  /// No description provided for @securityRequireApprovalAuthSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prompt for PIN/biometrics when approving returned or repaired quantities.'**
+  String get securityRequireApprovalAuthSubtitle;
+
+  /// No description provided for @settingsFinalPaymentRuleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Finalized Earnings Rule (Active)'**
+  String get settingsFinalPaymentRuleTitle;
+
+  /// No description provided for @settingsFinalPaymentRuleBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker earnings are calculated strictly as Accepted Quantity × Historical Assigned Rate. Legacy GIVEN_QTY and Damaged-in-Labour settings are retired for all new transactions while historical records remain preserved.'**
+  String get settingsFinalPaymentRuleBody;
+
+  /// No description provided for @validationExceedsPendingInspection.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspected quantity exceeds remaining pending inspection quantity.'**
+  String get validationExceedsPendingInspection;
+
+  /// No description provided for @validationExceedsReturnedQty.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted + Rejected cannot exceed returned quantity.'**
+  String get validationExceedsReturnedQty;
+
+  /// No description provided for @validationExceedsRejectedQty.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity cannot exceed open rejected quantity.'**
+  String get validationExceedsRejectedQty;
+
+  /// No description provided for @validationExceedsRepairedQty.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-inspected quantity cannot exceed pending repaired quantity.'**
+  String get validationExceedsRepairedQty;
+
+  /// No description provided for @validationLotUnreconciled.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot mark lot completed while pieces are still with workers or pending QC inspection.'**
+  String get validationLotUnreconciled;
+
+  /// No description provided for @navDesignsColours.
+  ///
+  /// In en, this message translates to:
+  /// **'Designs & Colours'**
+  String get navDesignsColours;
+
+  /// No description provided for @designsColoursSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Search designs, manage saved colours & view historical lot prices'**
+  String get designsColoursSubtitle;
+
+  /// No description provided for @designsTabLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Designs'**
+  String get designsTabLabel;
+
+  /// No description provided for @coloursTabLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Colour Catalog'**
+  String get coloursTabLabel;
+
+  /// No description provided for @colourHexLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hex Code (e.g. #DC2626)'**
+  String get colourHexLabel;
+
+  /// No description provided for @colourSavedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Colour saved to catalog.'**
+  String get colourSavedSuccess;
+
+  /// No description provided for @coloursEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Saved Colours Yet'**
+  String get coloursEmptyTitle;
+
+  /// No description provided for @coloursEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add reusable workshop colours with swatches for faster lot creation.'**
+  String get coloursEmptySubtitle;
+
+  /// No description provided for @historicalPricePreservedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Historical lot prices stay locked to each lot and are never overwritten.'**
+  String get historicalPricePreservedNote;
+
+  /// No description provided for @webBackupExportAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Download Web Backup (.json)'**
+  String get webBackupExportAction;
+
+  /// No description provided for @webBackupExportDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloads a verified offline snapshot of all local workshop records from this browser.'**
+  String get webBackupExportDesc;
+
+  /// No description provided for @webBackupRestoreAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Web Backup (.json)'**
+  String get webBackupRestoreAction;
+
+  /// No description provided for @webBackupRestoreDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Validates checksum and schema before restoring all records into this browser\'s offline database.'**
+  String get webBackupRestoreDesc;
+
+  /// No description provided for @webPrintFallbackNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Opened browser print dialog (use Save as PDF to download).'**
+  String get webPrintFallbackNote;
+
+  /// Action label on a success message that reverses the last change.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get uxUndo;
+
+  /// Button that reveals more rows in a long list section.
+  ///
+  /// In en, this message translates to:
+  /// **'Show {count} more'**
+  String uxShowMore(int count);
+
+  /// Button that collapses an expanded list section.
+  ///
+  /// In en, this message translates to:
+  /// **'Show less'**
+  String get uxShowLess;
+
+  /// Title of the dialog shown when leaving a form with unsaved changes.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard changes?'**
+  String get uxUnsavedTitle;
+
+  /// Body of the unsaved-changes dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'You have changes that are not saved. If you leave now they will be lost.'**
+  String get uxUnsavedMessage;
+
+  /// Confirm button that leaves the form and drops unsaved changes.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get uxUnsavedDiscard;
+
+  /// Cancel button that stays on the form.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep editing'**
+  String get uxUnsavedKeepEditing;
+
+  /// Tooltip on the global search button.
+  ///
+  /// In en, this message translates to:
+  /// **'Search (Ctrl+K)'**
+  String get uxSearchTooltip;
+
+  /// Hint in the global search box.
+  ///
+  /// In en, this message translates to:
+  /// **'Search lots, workers, processes…'**
+  String get uxSearchHint;
+
+  /// Section title for lot results.
+  ///
+  /// In en, this message translates to:
+  /// **'Lots'**
+  String get uxSearchLots;
+
+  /// Section title for worker results.
+  ///
+  /// In en, this message translates to:
+  /// **'Workers'**
+  String get uxSearchWorkers;
+
+  /// Section title for process results.
+  ///
+  /// In en, this message translates to:
+  /// **'Processes'**
+  String get uxSearchProcesses;
+
+  /// Shown when global search finds nothing.
+  ///
+  /// In en, this message translates to:
+  /// **'No matches for \"{query}\"'**
+  String uxSearchNoResults(String query);
+
+  /// Title of the quick actions group.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick actions'**
+  String get uxQuickActions;
+
+  /// Quick action: create a lot.
+  ///
+  /// In en, this message translates to:
+  /// **'New lot'**
+  String get uxActionNewLot;
+
+  /// Quick action: issue stock.
+  ///
+  /// In en, this message translates to:
+  /// **'Issue stock to worker'**
+  String get uxActionIssueStock;
+
+  /// Quick action: receive returned work.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive work back'**
+  String get uxActionReceiveWork;
+
+  /// Quick action: record a worker payment.
+  ///
+  /// In en, this message translates to:
+  /// **'Record payment'**
+  String get uxActionRecordPayment;
+
+  /// Quick action: add a worker.
+  ///
+  /// In en, this message translates to:
+  /// **'Add worker'**
+  String get uxActionAddWorker;
+
+  /// Quick action: open the inspection queue.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspection queue'**
+  String get uxActionInspections;
+
+  /// Rows-per-page option in paged tables.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} / page'**
+  String uxPerPage(int count);
+
+  /// Button that opens the filter panel on phones.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get uxFilters;
+
+  /// Filter button label when some filters are set.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters ({count})'**
+  String uxFiltersActive(int count);
+
+  /// Expandable group of secondary screen links on the dashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'More screens'**
+  String get uxMoreScreens;
+
+  /// Tooltip of the overflow menu that holds extra card actions.
+  ///
+  /// In en, this message translates to:
+  /// **'More actions'**
+  String get uxMoreActions;
+
+  /// Button that applies filters and closes the filter panel.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get uxApply;
+
+  /// Button that clears all filters.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear all'**
+  String get uxClearAll;
 }
 
 class _AppLocalizationsDelegate

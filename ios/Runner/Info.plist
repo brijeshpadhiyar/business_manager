@@ -39,6 +39,12 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>StitchFlow uses the camera to take photos of lots and designs.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>StitchFlow lets you attach photos of lots and designs from your photo library.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>StitchFlow uses Face ID to unlock the app quickly and keep your business data private.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

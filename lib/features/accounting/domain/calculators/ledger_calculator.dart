@@ -1,5 +1,6 @@
 import 'dart:math' as math;
 
+import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 
 /// Pure Dart worker ledger and financial balance calculator implementing
@@ -199,7 +200,7 @@ final class LedgerCalculator {
           kind: kind,
           title: '$processName • Lot $lotNum',
           subtitle:
-              '${e.quantity.abs()} pcs × ₹${(e.ratePaise / 100).toStringAsFixed(2)}',
+              '${MoneyFormatter.formatQuantity(e.quantity.abs())} pcs × ${MoneyFormatter.formatPaise(e.ratePaise)}',
           transactionAt: e.transactionAt,
           recordedAt: e.recordedAt,
           amountPaise: e.amountPaise.abs(),

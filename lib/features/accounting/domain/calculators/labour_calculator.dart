@@ -2,28 +2,39 @@ import 'package:business_manager/features/accounting/domain/entities/accounting_
 import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 
-/// Pure Dart labour calculation engine implementing `docs/10_labour_calculation_rules.md`.
+/// Pure Dart labour calculation engine enforcing StitchFlow Final Worker
+/// Payment Business Rules:
 ///
-/// Guarantees:
-/// - Default Pay on Received Good Quantity (`RECEIVED_QTY`, `includeDamaged = false`).
-/// - Supports per-process override (`GIVEN_QTY` / `RECEIVED_QTY`) and optional
-///   damaged inclusion (`lockedIncludeDamaged = true`), locked on `ISSUE` creation.
-/// - Lost & shortage pieces are excluded from labour by default.
-/// - Zero double-counting: an `ISSUE` and its `RETURN_GOOD` are never both payable.
-/// - Exact integer paise arithmetic (`quantity * appliedRatePaise`).
+/// - **Rule 1 (Accepted-Only Earnings):** Worker earnings are calculated
+///   exclusively as `acceptedQuantity * historicalAssignedRatePaise`.
+///   Never calculate earnings from assigned (`ISSUE`) quantity or total
+///   uninspected returned quantity.
+/// - **Rule 3 (Rejected Exclusion & Re-Approval):** Rejected/damaged pieces
+///   NEVER generate worker earnings, regardless of legacy
+///   `includeDamagedInLabour` settings. Repaired pieces generate earnings ONLY
+///   for newly accepted quantities via an immutable re-approval transaction
+///   when repaired by the original worker.
+/// - **Rule 5 (Historical Rate Protection):** Always multiplies by the rate
+///   snapshotted when the work was assigned, never current master rates.
+/// - **Exact integer paise arithmetic (`quantity * lockedRatePaise`).**
 final class LabourCalculator {
   const LabourCalculator();
 
-  /// Resolves the effective billing mode for a new `ISSUE` using the process
-  /// override if configured, otherwise falling back to the global business default.
+  /// Effective billing mode for all new transactions is strictly
+  /// [BillingMode.receivedQty] (Accepted Quantity). Legacy overrides are
+  /// retained in storage for historical audit compatibility only and never
+  /// alter new earnings calculations.
   BillingMode resolveEffectiveBillingMode({
     required BillingMode globalDefault,
     required BillingMode? processOverride,
   }) {
-    return processOverride ?? globalDefault;
+    return BillingMode.receivedQty;
   }
 
-  /// Plans the labour entry to insert atomically with a new `ISSUE` movement.
+  /// Plans the informational-only labour entry recorded with a new `ISSUE`.
+  ///
+  /// Per Final Rule 1, `ISSUE` movements NEVER generate payable worker earnings
+  /// (`isPayable` is always `false`, regardless of legacy `lockedBillingMode`).
   PlannedLabourEntry planForIssue({
     required int quantity,
     required int appliedRatePaise,
@@ -44,19 +55,28 @@ final class LabourCalculator {
       quantity: quantity,
       ratePaise: appliedRatePaise,
       amountPaise: quantity * appliedRatePaise,
-      isPayable: lockedBillingMode == BillingMode.givenQty,
+      isPayable: false,
     );
   }
 
-  /// Plans the labour entry (if any) to insert atomically with a child settlement.
-  /// Always uses the parent issue's locked rate, locked billing mode, and
-  /// locked damaged-inclusion flag.
+  /// Plans the labour entry (if any) for an inspection/settlement movement.
+  ///
+  /// Enforces Final Rules 1 & 3:
+  /// - `returnGood` (accepted quantity): ALWAYS payable as
+  ///   `quantity * lockedRatePaise`.
+  /// - `returnDamaged` (rejected/damaged): NEVER payable (`null`), even if
+  ///   legacy `lockedIncludeDamaged` was true.
+  /// - `lost` / `shortage` / other types: NEVER payable (`null`).
+  /// - Legacy (pre-v1.2) `GIVEN_QTY` issues that already carry a payable
+  ///   `ISSUED` labour entry ([issueLabourAlreadyPaid]) earn NOTHING more on
+  ///   settlement, so the worker is never paid twice for the same pieces.
   PlannedLabourEntry? planForSettlement({
     required StockMovementType movementType,
     required int quantity,
     required int lockedRatePaise,
     required BillingMode lockedBillingMode,
     required bool lockedIncludeDamaged,
+    bool issueLabourAlreadyPaid = false,
   }) {
     if (quantity <= 0) {
       throw ArgumentError.value(quantity, 'quantity', 'Must be > 0.');
@@ -69,6 +89,8 @@ final class LabourCalculator {
       );
     }
 
+    if (issueLabourAlreadyPaid) return null;
+
     switch (movementType) {
       case StockMovementType.returnGood:
         return PlannedLabourEntry(
@@ -76,20 +98,9 @@ final class LabourCalculator {
           quantity: quantity,
           ratePaise: lockedRatePaise,
           amountPaise: quantity * lockedRatePaise,
-          isPayable: lockedBillingMode == BillingMode.receivedQty,
+          isPayable: true,
         );
       case StockMovementType.returnDamaged:
-        if (lockedBillingMode == BillingMode.receivedQty &&
-            lockedIncludeDamaged) {
-          return PlannedLabourEntry(
-            basisType: LabourBasisType.receivedDamaged,
-            quantity: quantity,
-            ratePaise: lockedRatePaise,
-            amountPaise: quantity * lockedRatePaise,
-            isPayable: true,
-          );
-        }
-        return null;
       case StockMovementType.settlementLost:
       case StockMovementType.settlementShortage:
       case StockMovementType.adjustmentDamagedToGood:
@@ -99,8 +110,49 @@ final class LabourCalculator {
     }
   }
 
-  /// Plans the offsetting negative labour reversal entry for a reversed movement's
-  /// original labour entry.
+  /// Plans the payable labour entry for newly re-approved repaired pieces
+  /// (Final Rule 3).
+  ///
+  /// Generates earnings strictly for [acceptedQuantity] at the original
+  /// assignment's [lockedRatePaise] when [creditOriginalWorker] is true
+  /// (repaired by the original worker). Returns `null` when repaired in-house
+  /// without crediting the worker or when [acceptedQuantity] is 0.
+  PlannedLabourEntry? planForRepairReapproval({
+    required int acceptedQuantity,
+    required int lockedRatePaise,
+    required bool creditOriginalWorker,
+    bool issueLabourAlreadyPaid = false,
+  }) {
+    if (acceptedQuantity < 0) {
+      throw ArgumentError.value(
+        acceptedQuantity,
+        'acceptedQuantity',
+        'Must be >= 0.',
+      );
+    }
+    if (lockedRatePaise < 0) {
+      throw ArgumentError.value(
+        lockedRatePaise,
+        'lockedRatePaise',
+        'Must be >= 0.',
+      );
+    }
+    if (acceptedQuantity == 0 ||
+        !creditOriginalWorker ||
+        issueLabourAlreadyPaid) {
+      return null;
+    }
+    return PlannedLabourEntry(
+      basisType: LabourBasisType.receivedGood,
+      quantity: acceptedQuantity,
+      ratePaise: lockedRatePaise,
+      amountPaise: acceptedQuantity * lockedRatePaise,
+      isPayable: true,
+    );
+  }
+
+  /// Plans the offsetting negative labour reversal entry for a reversed
+  /// movement's original labour entry.
   PlannedLabourEntry planReversalForEntry(LabourEntryEntity original) {
     return PlannedLabourEntry(
       basisType: LabourBasisType.reversal,

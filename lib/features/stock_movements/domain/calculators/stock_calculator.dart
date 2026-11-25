@@ -61,6 +61,7 @@ final class StockCalculator {
     required int initialQuantity,
     required List<StockMovementEntity> allMovementsForColour,
     Map<String, String> processNamesById = const {},
+    int pendingInspectionQuantity = 0,
   }) {
     final active = activeMovements(allMovementsForColour);
 
@@ -125,10 +126,17 @@ final class StockCalculator {
     final damagedBucket = sumReturnDamaged - sumRepaired;
     final totalGoodPhysicalStock =
         initialQuantity - damagedBucket - sumLost - sumShortage;
-    final totalPendingWithWorkers =
+    final safePendingInspection = pendingInspectionQuantity < 0
+        ? 0
+        : pendingInspectionQuantity;
+    final unreturnedAndUninspected =
         sumIssue - (sumReturnGood + sumReturnDamaged + sumLost + sumShortage);
+    final totalPendingWithWorkers =
+        (unreturnedAndUninspected - safePendingInspection) < 0
+        ? 0
+        : (unreturnedAndUninspected - safePendingInspection);
     final physicalAvailableInHouse =
-        totalGoodPhysicalStock - totalPendingWithWorkers;
+        totalGoodPhysicalStock - unreturnedAndUninspected;
 
     final processBreakdown = procAccum.entries.map((entry) {
       final acc = entry.value;
@@ -161,6 +169,7 @@ final class StockCalculator {
       totalShortage: sumShortage,
       totalGoodPhysicalStock: totalGoodPhysicalStock,
       totalPendingWithWorkers: totalPendingWithWorkers,
+      totalPendingInspection: safePendingInspection,
       physicalAvailableInHouse: physicalAvailableInHouse,
       totalIssued: sumIssue,
       totalGoodReturned: sumReturnGood,
@@ -414,6 +423,7 @@ final class StockCalculator {
     required List<StockMovementEntity> existingMovementsForColour,
     required int quantity,
     required String? reason,
+    int reservedForOpenRepairsQty = 0,
   }) {
     if (quantity <= 0) return 'invalid_quantity';
     if (reason == null || reason.trim().isEmpty) return 'reason_required';
@@ -427,7 +437,12 @@ final class StockCalculator {
         damaged -= m.quantity;
       }
     }
-    if (quantity > damaged) {
+    // Pieces already sent for repair through a rejection record stay in the
+    // Damaged bucket until re-inspected; they cannot be repaired twice.
+    final reserved = reservedForOpenRepairsQty < 0
+        ? 0
+        : reservedForOpenRepairsQty;
+    if (quantity > damaged - reserved) {
       return 'exceeds_damaged_stock';
     }
     return null;

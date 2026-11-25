@@ -81,7 +81,7 @@ void main() {
     );
   }
 
-  test('creates all 14 tables and seeds default business_profile', () async {
+  test('creates all 23 tables and seeds default business_profile', () async {
     final rows = await db
         .customSelect(
           "SELECT name FROM sqlite_master WHERE type = 'table' "
@@ -94,7 +94,9 @@ void main() {
       'attachments',
       'audit_logs',
       'business_profile',
+      'colour_master',
       'design_colours',
+      'job_processes',
       'labour_entries',
       'lot_designs',
       'lots',
@@ -102,7 +104,14 @@ void main() {
       'member_processes',
       'members',
       'payments',
+      'process_additional_charges',
+      'process_handovers',
+      'process_rate_history',
       'processes',
+      'production_inspections',
+      'production_returns',
+      'rejection_records',
+      'rejection_repairs',
       'stock_movements',
       'worker_ledger_adjustments',
     });

@@ -3,11 +3,14 @@ import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
+import 'package:business_manager/core/utils/app_date_time_formatter.dart';
 import 'package:business_manager/features/security/presentation/bloc/app_lock_cubit.dart';
 import 'package:business_manager/features/security/presentation/pages/pin_recovery_page.dart';
 import 'package:business_manager/features/security/presentation/widgets/pin_keypad.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/widgets/widgets.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Root branded Lock Screen rendered above all routes whenever [AppLockCubit]
 /// is in `locked` state. Prevents any flash of Dashboard or sensitive data.
@@ -74,12 +77,7 @@ final class _AppLockScreenState extends State<AppLockScreen> {
   }
 
   String _formatCountdown(int seconds) {
-    final mins = seconds ~/ 60;
-    final secs = seconds % 60;
-    if (mins > 0) {
-      return '${mins}m ${secs.toString().padLeft(2, '0')}s';
-    }
-    return '${secs}s';
+    return AppDateTimeFormatter.formatCountdownSeconds(seconds);
   }
 
   String? _resolveErrorText(BuildContext context, AppLockState state) {
@@ -154,8 +152,10 @@ final class _AppLockScreenState extends State<AppLockScreen> {
                             ),
                             child: Image.asset(
                               AppIdentity.symbolPngAsset,
+                              cacheWidth: 192,
+                              cacheHeight: 192,
                               errorBuilder: (_, _, _) => const Icon(
-                                Icons.lock_outline_rounded,
+                                AppIcons.lock,
                                 color: Colors.white,
                                 size: 32,
                               ),
@@ -187,13 +187,9 @@ final class _AppLockScreenState extends State<AppLockScreen> {
                             constraints: const BoxConstraints(minHeight: 44),
                             child: Center(
                               child: state.isVerifying
-                                  ? const SizedBox(
-                                      width: 24,
-                                      height: 24,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2.5,
-                                        color: Colors.white,
-                                      ),
+                                  ? const AppSpinner(
+                                      size: 24,
+                                      color: Colors.white,
                                     )
                                   : errorText != null
                                   ? Container(
@@ -241,7 +237,7 @@ final class _AppLockScreenState extends State<AppLockScreen> {
                             TextButton.icon(
                               onPressed: canEnterPin ? _triggerBiometric : null,
                               icon: const Icon(
-                                Icons.fingerprint_rounded,
+                                AppIcons.biometric,
                                 color: Colors.white,
                               ),
                               label: Text(
@@ -260,8 +256,8 @@ final class _AppLockScreenState extends State<AppLockScreen> {
                             },
                             child: Text(
                               l10n.securityForgotPinAction,
-                              style: TextStyle(
-                                color: AppColors.brandAmber,
+                              style: const TextStyle(
+                                color: AppColors.saffron400,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),

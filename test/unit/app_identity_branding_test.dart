@@ -12,6 +12,8 @@ void main() {
     test('exposes official StitchFlow brand identity and URL scheme', () {
       expect(AppIdentity.appName, 'StitchFlow');
       expect(AppIdentity.shortName, 'StitchFlow');
+      expect(AppIdentity.appVersion, '1.3.0');
+      expect(AppIdentity.appBuildNumber, '4');
       expect(AppIdentity.tagline, 'From Fabric to Finished.');
       expect(AppIdentity.urlScheme, 'stitchflow');
     });
@@ -31,25 +33,25 @@ void main() {
   });
 
   group('StitchFlow brand color tokens & theme integration', () {
-    test('uses exact official StitchFlow hex color tokens', () {
-      expect(AppColors.brandNavy, const Color(0xFF172B4D));
-      expect(AppColors.brandTeal, const Color(0xFF0D9488));
-      expect(AppColors.brandAmber, const Color(0xFFF4A340));
-      expect(AppColors.brandSoftWhite, const Color(0xFFF5F7FA));
+    test('uses the v1.4 Indigo Thread brand color tokens', () {
+      expect(AppColors.brandPrimary, const Color(0xFF4F46E5));
+      expect(AppColors.brandSecondary, const Color(0xFF059669));
+      expect(AppColors.brandAccent, const Color(0xFFF59E0B));
+      expect(AppColors.brandSurface, const Color(0xFFF8FAFC));
     });
 
     test('integrates brand colors into Light & Dark Material 3 themes while preserving semantics', () {
       final light = AppTheme.light();
       final dark = AppTheme.dark();
 
-      expect(light.colorScheme.primary, AppColors.brandNavy);
-      expect(light.colorScheme.secondary, AppColors.brandTeal);
-      expect(light.colorScheme.tertiary, AppColors.brandAmber);
-      expect(light.colorScheme.surface, AppColors.brandSoftWhite);
+      expect(light.colorScheme.primary, AppColors.brandPrimary);
+      expect(light.colorScheme.secondary, AppColors.brandSecondary);
+      expect(light.colorScheme.tertiary, AppColors.brandAccent);
+      expect(light.colorScheme.surface, AppColors.brandSurface);
 
       expect(dark.brightness, Brightness.dark);
-      expect(dark.colorScheme.secondary, AppColors.brandTeal);
-      expect(dark.colorScheme.tertiary, AppColors.brandAmber);
+      expect(dark.colorScheme.primary, AppColors.indigo400);
+      expect(dark.colorScheme.surface, AppColors.darkSurface);
 
       // Existing semantic status tokens remain intact
       expect(

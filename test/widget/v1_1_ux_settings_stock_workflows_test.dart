@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:business_manager/app.dart';
 import 'package:business_manager/core/config/app_config.dart';
+import 'package:business_manager/core/config/app_identity.dart';
 import 'package:business_manager/core/database/app_database.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/locale_cubit.dart';
@@ -263,10 +264,13 @@ void main() {
       await tester.pageBack();
       await tester.pumpAndSettle();
 
-      // 2. Stock & Labour Preferences shows global billing + seeded 'Stitching' process
+      // 2. Stock & Labour Preferences shows finalized payment rule + legacy read-only billing + seeded 'Stitching' process
       await tester.tap(find.text('Stock & Labour Preferences'));
       await tester.pumpAndSettle();
-      expect(find.text('Global Default Labour Billing Mode'), findsOneWidget);
+      expect(
+        find.textContaining('Global Default Labour Billing Mode'),
+        findsOneWidget,
+      );
       await tester.scrollUntilVisible(
         find.text('Stitching'),
         200,
@@ -319,7 +323,7 @@ void main() {
         scrollable: find.byType(Scrollable).last,
       );
       expect(find.text('100% Offline & Private Local Data'), findsOneWidget);
-      expect(find.textContaining('1.2.0'), findsWidgets);
+      expect(find.textContaining(AppIdentity.appVersion), findsWidgets);
 
       // Ensure zero overflow or layout exceptions occurred
       expect(tester.takeException(), isNull);
@@ -339,8 +343,8 @@ void main() {
       await tester.pumpWidget(BusinessManagerApp(config: config));
       await tester.pumpAndSettle();
 
-      // Open Stock Issue from Dashboard Quick Action
-      await tester.tap(find.text('Issue Stock').first);
+      // Open Stock Issue from Dashboard Quick Action tile
+      await tester.tap(find.text('Issue stock to worker').first);
       await tester.pumpAndSettle();
 
       // Single seeded colour with stock auto-selects; verify locked rate ₹25.00 preview
@@ -408,8 +412,9 @@ void main() {
             matching: find.byType(Scrollable),
           )
           .first;
+      // Save is pinned in the bottom bar; scroll to the labour impact card.
       await tester.scrollUntilVisible(
-        find.text('Confirm & Save Return'),
+        find.textContaining('₹625.00'),
         250,
         scrollable: returnListScroll,
       );

@@ -353,14 +353,14 @@ class AppLocalizationsGu extends AppLocalizations {
   String get designsHeading => 'ડિઝાઇન અને કલર';
 
   @override
-  String get designsSearchHint => 'ડિઝાઇન અથવા કલર શોધો';
+  String get designsSearchHint => 'ડિઝાઇન, રંગ અથવા લોટ નંબર શોધો...';
 
   @override
-  String get designsEmptyTitle => 'કોઈ ડિઝાઇન ઉમેરેલ નથી';
+  String get designsEmptyTitle => 'હજુ સુધી કોઈ ડિઝાઇન નથી';
 
   @override
   String get designsEmptySubtitle =>
-      'આ લોટમાં ડિઝાઇન ઉમેરો અને દરેક કલરનો અલગ જથ્થો અને ભાવ દાખલ કરો.';
+      'લોટમાં ડિઝાઇન અને રંગ ઉમેરો એટલે અહીં બધા લોટનો ઇતિહાસ દેખાશે.';
 
   @override
   String get designAddAction => 'ડિઝાઇન ઉમેરો';
@@ -382,10 +382,10 @@ class AppLocalizationsGu extends AppLocalizations {
   String get designDuplicateError => 'આ નામની ડિઝાઇન આ લોટમાં પહેલેથી છે.';
 
   @override
-  String get colourAddAction => 'કલર ઉમેરો';
+  String get colourAddAction => 'નવો રંગ ઉમેરો';
 
   @override
-  String get colourEditAction => 'કલર સુધારો';
+  String get colourEditAction => 'રંગ સુધારો';
 
   @override
   String get colourDeleteConfirmTitle => 'કલર દૂર કરવો છે?';
@@ -395,7 +395,7 @@ class AppLocalizationsGu extends AppLocalizations {
       'આ કલરની નોંધ સક્રિય યાદીમાંથી આર્કાઇવ થઈ જશે.';
 
   @override
-  String get colourNameLabel => 'કલરનું નામ';
+  String get colourNameLabel => 'રંગનું નામ';
 
   @override
   String get colourInitialQtyLabel => 'પ્રારંભિક જથ્થો';
@@ -2442,4 +2442,386 @@ class AppLocalizationsGu extends AppLocalizations {
   @override
   String get validationCannotReverseReversal =>
       'રિવર્સલ એન્ટ્રીને ફરી રિવર્સ કરી શકાતી નથી.';
+
+  @override
+  String validationMinLength(int min) {
+    return 'ઓછામાં ઓછા $min અક્ષરો દાખલ કરો.';
+  }
+
+  @override
+  String get validationExceedsDispatched =>
+      'મળેલ જથ્થો મોકલેલ જથ્થા કરતાં વધુ હોઈ શકે નહીં.';
+
+  @override
+  String get validationExceedsHeld =>
+      'ટ્રાન્સફર જથ્થો કારીગર પાસે હાલ રહેલા જથ્થા કરતાં વધુ હોઈ શકે નહીં.';
+
+  @override
+  String get validationUnaccountedRemaining =>
+      'બાકી જથ્થાનો હિસાબ બાકી હોય ત્યારે પ્રક્રિયા પૂર્ણ કરી શકાય નહીં.';
+
+  @override
+  String get validationOverpaymentNotAllowed =>
+      'ચુકવણીની રકમ બાકી દેવા કરતાં વધુ હોઈ શકે નહીં.';
+
+  @override
+  String get msgTitleSuccess => 'સફળ';
+
+  @override
+  String get msgTitleError => 'ભૂલ';
+
+  @override
+  String get msgTitleWarning => 'ચેતવણી';
+
+  @override
+  String get msgTitleInfo => 'માહિતી';
+
+  @override
+  String get msgTitleLoading => 'પ્રક્રિયા ચાલુ છે...';
+
+  @override
+  String get navPressBackAgainToExit => 'બહાર નીકળવા માટે ફરી પાછળ દબાવો';
+
+  @override
+  String get navProductionHistory => 'પ્રોડક્શન હિસ્ટ્રી';
+
+  @override
+  String get navInspectionQueue => 'QC તપાસ કતાર';
+
+  @override
+  String get navWorkerHistory => 'કારીગર પ્રોડક્શન';
+
+  @override
+  String get navProcessHistory => 'પ્રક્રિયા હિસ્ટ્રી';
+
+  @override
+  String get prodHistoryDashboardTitle => 'પ્રોડક્શન હિસ્ટ્રી';
+
+  @override
+  String get prodHistoryDashboardSubtitle =>
+      'લોટ, કારીગર, પ્રક્રિયા અને નાણાકીય ખાતાનો કાયમી રેકોર્ડ';
+
+  @override
+  String get prodHistorySearchHint =>
+      'લોટ, કારીગર, પ્રક્રિયા, ડિઝાઇન, કલર શોધો...';
+
+  @override
+  String get prodHistoryOnlyPending => 'માત્ર બાકી';
+
+  @override
+  String get prodHistoryAllEntries => 'બધી એન્ટ્રી';
+
+  @override
+  String get prodHistoryTotalAssigned => 'સોંપેલ';
+
+  @override
+  String get prodHistoryTotalReturned => 'પરત આવેલ';
+
+  @override
+  String get prodHistoryTotalAccepted => 'મંજૂર (Accepted)';
+
+  @override
+  String get prodHistoryTotalRejected => 'રિજેક્ટ / ડેમેજ';
+
+  @override
+  String get prodHistoryPendingInspection => 'તપાસ બાકી';
+
+  @override
+  String get prodHistoryOutstandingWork => 'કારીગર પાસે બાકી';
+
+  @override
+  String get prodHistoryTotalEarned => 'કુલ કમાણી';
+
+  @override
+  String get prodHistoryTotalPaid => 'કુલ ચૂકવેલ';
+
+  @override
+  String get prodHistoryOutstandingPayable => 'બાકી ચૂકવવાપાત્ર';
+
+  @override
+  String get prodHistoryLotHistoryTitle => 'સંપૂર્ણ લોટ હિસ્ટ્રી';
+
+  @override
+  String get prodHistoryLotTimelineTitle => 'લોટ ટાઇમલાઇન';
+
+  @override
+  String get prodHistoryViewLotHistory => 'લોટ હિસ્ટ્રી';
+
+  @override
+  String get prodHistoryViewTimeline => 'ટાઇમલાઇન';
+
+  @override
+  String get prodHistoryWorkerHistoryTitle => 'કારીગર પ્રોડક્શન હિસ્ટ્રી';
+
+  @override
+  String get prodHistoryWorkerLotHistory => 'કારીગર લોટ હિસ્ટ્રી';
+
+  @override
+  String get prodHistoryWorkerProcessHistory => 'પ્રક્રિયા મુજબ હિસ્ટ્રી';
+
+  @override
+  String get prodHistoryIncludeInactive => 'નિષ્ક્રિય બતાવો';
+
+  @override
+  String get prodHistoryProcessHistoryTitle => 'પ્રક્રિયા મુજબ હિસ્ટ્રી';
+
+  @override
+  String get prodHistoryProcessDetailsTitle => 'પ્રક્રિયા પ્રોડક્શન વિગત';
+
+  @override
+  String get prodHistoryTabLotWise => 'લોટ મુજબ';
+
+  @override
+  String get prodHistoryTabWorkerWise => 'કારીગર મુજબ';
+
+  @override
+  String get prodHistoryTabDateWise => 'તારીખ મુજબ';
+
+  @override
+  String get prodHistoryTabPending => 'બાકી કામ';
+
+  @override
+  String get prodHistoryInspectionQueueTitle => 'પરત અને QC તપાસ';
+
+  @override
+  String get prodHistoryTabPendingInspection => 'તપાસ બાકી';
+
+  @override
+  String get prodHistoryTabRejections => 'રિજેક્ટ અને રિપેર';
+
+  @override
+  String get prodHistoryApproveAction => 'તપાસો અને મંજૂર કરો';
+
+  @override
+  String get prodHistoryRecordRepairAction => 'રિપેર નોંધો';
+
+  @override
+  String get prodHistoryReinspectAction => 'ફરી તપાસો અને મંજૂર કરો';
+
+  @override
+  String get prodHistoryRepairSourceOriginal =>
+      'મૂળ કારીગર દ્વારા રિપેર (જૂના ભાવે કમાણી જમા)';
+
+  @override
+  String get prodHistoryRepairSourceInHouse =>
+      'ફેક્ટરી / ઇન-હાઉસ રિપેર (કારીગર કમાણી નહીં)';
+
+  @override
+  String get prodHistoryReturnModePending =>
+      'તપાસ બાકી તરીકે નોંધો (QC મંજૂરી સુધી ₹0)';
+
+  @override
+  String get prodHistoryReturnModeImmediate =>
+      'પરત અને તરત તપાસ (મંજૂર જથ્થા પર કમાણી)';
+
+  @override
+  String get prodHistoryTxDetailTitle => 'ટ્રાન્ઝેક્શન વિગત';
+
+  @override
+  String get prodHistoryOpenLot => 'લોટ ખોલો';
+
+  @override
+  String get prodHistoryOpenWorker => 'કારીગર ખોલો';
+
+  @override
+  String get prodHistoryOpenProcess => 'પ્રક્રિયા ખોલો';
+
+  @override
+  String get prodHistoryLockedRateSnapshot => 'લોક થયેલ ભાવ';
+
+  @override
+  String get prodHistoryAuditTrail => 'ઓડિટ ટ્રેઇલ';
+
+  @override
+  String get prodHistoryRelatedRecords => 'સંકળાયેલા ટ્રાન્ઝેક્શન';
+
+  @override
+  String get prodHistoryInitialAssignmentsTitle =>
+      '3. પ્રારંભિક પ્રક્રિયા સોંપણી (વૈકલ્પિક)';
+
+  @override
+  String get prodHistoryInitialAssignmentsSubtitle =>
+      'લોટ બનાવતી વખતે પ્રક્રિયા, કારીગર, જથ્થો અને ભાવ સીધા સોંપો.';
+
+  @override
+  String get prodHistoryAddAssignmentAction => 'સોંપણી ઉમેરો';
+
+  @override
+  String get prodHistoryApprovalAuthTitle => 'મંજૂરી પ્રમાણિત કરો';
+
+  @override
+  String get prodHistoryApprovalAuthSubtitle =>
+      'મંજૂર જથ્થો અને કારીગર કમાણી નોંધવા PIN અથવા બાયોમેટ્રિક ચકાસો.';
+
+  @override
+  String get securityRequireApprovalAuthLabel => 'મંજૂરી માટે PIN ફરજિયાત';
+
+  @override
+  String get securityRequireApprovalAuthSubtitle =>
+      'પરત અથવા રિપેર જથ્થો મંજૂર કરતી વખતે PIN/બાયોમેટ્રિક પૂછો.';
+
+  @override
+  String get settingsFinalPaymentRuleTitle => 'અંતિમ મજૂરી નિયમ (સક્રિય)';
+
+  @override
+  String get settingsFinalPaymentRuleBody =>
+      'કારીગરની કમાણી માત્ર મંજૂર જથ્થો × સોંપેલ સમયે લોક કરેલ ભાવ મુજબ ગણાય છે. જૂના GIVEN_QTY અને ડેમેજ મજૂરી નિયમો નવી એન્ટ્રી માટે બંધ છે; જૂનો રેકોર્ડ સુરક્ષિત રહેશે.';
+
+  @override
+  String get validationExceedsPendingInspection =>
+      'તપાસેલ જથ્થો બાકી તપાસ જથ્થા કરતાં વધુ છે.';
+
+  @override
+  String get validationExceedsReturnedQty =>
+      'મંજૂર + રિજેક્ટ જથ્થો પરત જથ્થા કરતાં વધુ ન હોઈ શકે.';
+
+  @override
+  String get validationExceedsRejectedQty =>
+      'જથ્થો બાકી રિજેક્ટ જથ્થા કરતાં વધુ ન હોઈ શકે.';
+
+  @override
+  String get validationExceedsRepairedQty =>
+      'ફરી તપાસેલ જથ્થો બાકી રિપેર જથ્થા કરતાં વધુ ન હોઈ શકે.';
+
+  @override
+  String get validationLotUnreconciled =>
+      'કારીગર પાસે બાકી અથવા QC તપાસ બાકી હોય ત્યારે લોટ પૂર્ણ કરી શકાય નહીં.';
+
+  @override
+  String get navDesignsColours => 'ડિઝાઇન અને રંગ';
+
+  @override
+  String get designsColoursSubtitle =>
+      'ડિઝાઇન શોધો, રંગ સૂચિ સંચાલિત કરો અને જૂના ભાવ જુઓ';
+
+  @override
+  String get designsTabLabel => 'ડિઝાઇન';
+
+  @override
+  String get coloursTabLabel => 'રંગ સૂચિ';
+
+  @override
+  String get colourHexLabel => 'હેક્સ કોડ (દા.ત. #DC2626)';
+
+  @override
+  String get colourSavedSuccess => 'રંગ સૂચિમાં સચવાયો.';
+
+  @override
+  String get coloursEmptyTitle => 'હજુ સુધી કોઈ રંગ સૂચિ નથી';
+
+  @override
+  String get coloursEmptySubtitle =>
+      'ઝડપી લોટ એન્ટ્રી માટે વર્કશોપના રંગો ઉમેરો.';
+
+  @override
+  String get historicalPricePreservedNote =>
+      'જૂના લોટના ભાવ કાયમી લોક રહે છે અને ક્યારેય બદલાતા નથી.';
+
+  @override
+  String get webBackupExportAction => 'વેબ બેકઅપ ડાઉનલોડ (.json)';
+
+  @override
+  String get webBackupExportDesc =>
+      'આ બ્રાઉઝરના તમામ ઓફલાઇન રેકોર્ડ્સનો ચકાસેલ બેકઅપ ડાઉનલોડ કરે છે.';
+
+  @override
+  String get webBackupRestoreAction => 'વેબ બેકઅપ રિસ્ટોર (.json)';
+
+  @override
+  String get webBackupRestoreDesc =>
+      'ચેકસમ અને સ્કીમા ચકાસીને બ્રાઉઝરના ઓફલાઇન ડેટાબેઝમાં ડેટા રિસ્ટોર કરે છે.';
+
+  @override
+  String get webPrintFallbackNote =>
+      'બ્રાઉઝર પ્રિન્ટ ડાયલોગ ખૂલ્યો છે (PDF માટે Save as PDF પસંદ કરો).';
+
+  @override
+  String get uxUndo => 'પાછું લાવો';
+
+  @override
+  String uxShowMore(int count) {
+    return 'વધુ $count બતાવો';
+  }
+
+  @override
+  String get uxShowLess => 'ઓછું બતાવો';
+
+  @override
+  String get uxUnsavedTitle => 'ફેરફારો રદ કરવા છે?';
+
+  @override
+  String get uxUnsavedMessage =>
+      'તમારા ફેરફારો સેવ થયા નથી. હમણાં બહાર જશો તો તે ગુમ થઈ જશે.';
+
+  @override
+  String get uxUnsavedDiscard => 'રદ કરો';
+
+  @override
+  String get uxUnsavedKeepEditing => 'ફેરફાર ચાલુ રાખો';
+
+  @override
+  String get uxSearchTooltip => 'શોધો (Ctrl+K)';
+
+  @override
+  String get uxSearchHint => 'લોટ, કારીગર, પ્રોસેસ શોધો…';
+
+  @override
+  String get uxSearchLots => 'લોટ';
+
+  @override
+  String get uxSearchWorkers => 'કારીગરો';
+
+  @override
+  String get uxSearchProcesses => 'પ્રોસેસ';
+
+  @override
+  String uxSearchNoResults(String query) {
+    return '\"$query\" માટે કંઈ મળ્યું નહીં';
+  }
+
+  @override
+  String get uxQuickActions => 'ઝડપી કામ';
+
+  @override
+  String get uxActionNewLot => 'નવો લોટ';
+
+  @override
+  String get uxActionIssueStock => 'કારીગરને માલ આપો';
+
+  @override
+  String get uxActionReceiveWork => 'કામ પરત લો';
+
+  @override
+  String get uxActionRecordPayment => 'ચુકવણી નોંધો';
+
+  @override
+  String get uxActionAddWorker => 'કારીગર ઉમેરો';
+
+  @override
+  String get uxActionInspections => 'ચકાસણી યાદી';
+
+  @override
+  String uxPerPage(int count) {
+    return '$count / પેજ';
+  }
+
+  @override
+  String get uxFilters => 'ફિલ્ટર';
+
+  @override
+  String uxFiltersActive(int count) {
+    return 'ફિલ્ટર ($count)';
+  }
+
+  @override
+  String get uxMoreScreens => 'બીજી સ્ક્રીન';
+
+  @override
+  String get uxMoreActions => 'વધુ ક્રિયાઓ';
+
+  @override
+  String get uxApply => 'લાગુ કરો';
+
+  @override
+  String get uxClearAll => 'બધું સાફ કરો';
 }

@@ -1,8 +1,10 @@
+import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/domain_label_localizer.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
+import 'package:business_manager/core/utils/app_date_time_formatter.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
@@ -18,6 +20,7 @@ import 'package:business_manager/features/stock_movements/domain/entities/stock_
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// StitchFlow V1.2 unified 6-category Advanced Reports & Business Insights hub.
 final class ReportsPage extends StatelessWidget {
@@ -74,9 +77,10 @@ final class _ReportsViewState extends State<_ReportsView> {
 
         return AppScaffold(
           title: l10n.reportsHeading,
+          contentWidth: AppContentWidth.wide,
           actions: [
             AppIconButton(
-              icon: Icons.ios_share_rounded,
+              icon: AppIcons.share,
               tooltip: l10n.reportExportAction,
               onPressed: state.bundle == null || state.isExporting
                   ? null
@@ -87,7 +91,7 @@ final class _ReportsViewState extends State<_ReportsView> {
                     ),
             ),
             AppIconButton(
-              icon: Icons.refresh_rounded,
+              icon: AppIcons.refresh,
               tooltip: l10n.actionRetry,
               onPressed: () => cubit.loadReports(),
             ),
@@ -97,7 +101,13 @@ final class _ReportsViewState extends State<_ReportsView> {
             padding: AppSpacing.screenAll,
             children: [
               // 1. Unified IST Presets + Collapsible Dimension Filter Bar
-              ReportFilterBar(state: state, searchController: _searchCtrl),
+              AppMotionEntrance(
+                index: 0,
+                child: ReportFilterBar(
+                  state: state,
+                  searchController: _searchCtrl,
+                ),
+              ),
               const SizedBox(height: AppSpacing.md),
 
               // 2. 6 Unified Report Category Selectors
@@ -123,50 +133,49 @@ final class _ReportsViewState extends State<_ReportsView> {
                 const SizedBox(height: AppSpacing.sm),
               ],
 
-              // 3. Active Category Body
-              if (state.status == ReportsStatus.initial ||
-                  state.status == ReportsStatus.loading)
-                const AppSkeletonList(itemCount: 4)
-              else if (state.status == ReportsStatus.error ||
-                  state.bundle == null)
-                AppErrorView(
-                  title: l10n.errorUnexpected,
-                  message: state.errorMessage,
-                  retryLabel: l10n.actionRetry,
-                  onRetry: () => cubit.loadReports(),
-                )
-              else
-                switch (state.category) {
-                  ReportCategory.dailyWorkshop => _buildDailyCategory(
-                    context,
-                    state.bundle!,
-                    localeCode,
-                  ),
-                  ReportCategory.workerPerformance => _buildWorkersCategory(
-                    context,
-                    state.bundle!,
-                  ),
-                  ReportCategory.processPerformance => _buildProcessesCategory(
-                    context,
-                    state.bundle!,
-                  ),
-                  ReportCategory.inventory => _buildInventoryCategory(
-                    context,
-                    state,
-                    state.bundle!.inventory,
-                    localeCode,
-                  ),
-                  ReportCategory.labourFinancial => _buildFinancialCategory(
-                    context,
-                    state,
-                    state.bundle!.financial,
-                    localeCode,
-                  ),
-                  ReportCategory.businessInsights => _buildInsightsCategory(
-                    context,
-                    state.bundle!,
-                  ),
-                },
+              // 3. Active Category Body (instant swap without full-list fade/slide)
+              KeyedSubtree(
+                key: ValueKey<(ReportsStatus, ReportCategory)>(
+                  (state.status, state.category),
+                ),
+                child: state.status == ReportsStatus.initial ||
+                        state.status == ReportsStatus.loading
+                    ? const AppSkeletonList(itemCount: 4)
+                    : state.status == ReportsStatus.error ||
+                          state.bundle == null
+                    ? AppErrorView(
+                        title: l10n.errorUnexpected,
+                        message: state.errorMessage,
+                        retryLabel: l10n.actionRetry,
+                        onRetry: () => cubit.loadReports(),
+                      )
+                    : switch (state.category) {
+                        ReportCategory.dailyWorkshop => _buildDailyCategory(
+                          context,
+                          state.bundle!,
+                          localeCode,
+                        ),
+                        ReportCategory.workerPerformance =>
+                          _buildWorkersCategory(context, state.bundle!),
+                        ReportCategory.processPerformance =>
+                          _buildProcessesCategory(context, state.bundle!),
+                        ReportCategory.inventory => _buildInventoryCategory(
+                          context,
+                          state,
+                          state.bundle!.inventory,
+                          localeCode,
+                        ),
+                        ReportCategory.labourFinancial =>
+                          _buildFinancialCategory(
+                            context,
+                            state,
+                            state.bundle!.financial,
+                            localeCode,
+                          ),
+                        ReportCategory.businessInsights =>
+                          _buildInsightsCategory(context, state.bundle!),
+                      },
+              ),
             ],
           ),
         );
@@ -177,7 +186,7 @@ final class _ReportsViewState extends State<_ReportsView> {
   Widget _empty(BuildContext context) {
     final l10n = context.l10n;
     return AppEmptyState(
-      icon: Icons.analytics_outlined,
+      icon: AppIcons.reports,
       title: l10n.reportsEmptyTitle,
       subtitle: l10n.reportsEmptySubtitle,
     );
@@ -201,35 +210,35 @@ final class _ReportsViewState extends State<_ReportsView> {
               label: l10n.stockIssuedLabel,
               value: b.dailyTotalIssued,
               suffix: l10n.piecesUnit,
-              icon: Icons.outbox_rounded,
+              icon: AppIcons.stockIssue,
               tone: AppStatusTone.info,
             ),
             AppMetricTile(
               label: l10n.stockGoodReturnedLabel,
               value: b.dailyTotalGoodReturned,
               suffix: l10n.piecesUnit,
-              icon: Icons.check_circle_outline_rounded,
+              icon: AppIcons.successOutline,
               tone: AppStatusTone.good,
             ),
             AppMetricTile(
               label: l10n.reportLabourCostLabel,
               value: b.dailyTotalLabourPaise,
               isCurrencyPaise: true,
-              icon: Icons.payments_outlined,
+              icon: AppIcons.payment,
               tone: AppStatusTone.good,
             ),
             AppMetricTile(
               label: l10n.reportsTabPayments,
               value: b.dailyTotalNetPaymentsPaise,
               isCurrencyPaise: true,
-              icon: Icons.account_balance_wallet_outlined,
+              icon: AppIcons.accounting,
               tone: AppStatusTone.info,
             ),
             AppMetricTile(
               label: l10n.dailySummaryDamagedLostLabel,
               value: b.dailyTotalDamaged + b.dailyTotalLostShortage,
               suffix: l10n.piecesUnit,
-              icon: Icons.report_problem_outlined,
+              icon: AppIcons.damaged,
               tone: (b.dailyTotalDamaged + b.dailyTotalLostShortage) > 0
                   ? AppStatusTone.damaged
                   : AppStatusTone.neutral,
@@ -238,7 +247,7 @@ final class _ReportsViewState extends State<_ReportsView> {
               label: l10n.stockPendingWorkerLabel,
               value: b.currentTotalPendingQty,
               suffix: l10n.piecesUnit,
-              icon: Icons.pending_actions_rounded,
+              icon: AppIcons.pending,
               tone: b.currentTotalPendingQty > 0
                   ? AppStatusTone.pending
                   : AppStatusTone.good,
@@ -250,6 +259,7 @@ final class _ReportsViewState extends State<_ReportsView> {
           _empty(context)
         else
           AppDataTable<DailyReportRow>(
+            enablePagination: true,
             columns: [
               AppDataColumn(label: l10n.dailySummaryPickDateLabel),
               AppDataColumn(label: l10n.stockIssuedLabel, numeric: true),
@@ -355,7 +365,8 @@ final class _ReportsViewState extends State<_ReportsView> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         for (final w in b.workerPerformance) ...[
-          AppCard(
+          AppCard.listItem(
+            key: ValueKey<String>(w.workerId),
             padding: const EdgeInsets.all(AppSpacing.md),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -382,7 +393,7 @@ final class _ReportsViewState extends State<_ReportsView> {
                       ),
                     ),
                     AppIconButton(
-                      icon: Icons.account_balance_wallet_outlined,
+                      icon: AppIcons.accounting,
                       tooltip: l10n.reportsTabWorkerLedger,
                       onPressed: () =>
                           context.push(RoutePaths.workerLedger(w.workerId)),
@@ -508,7 +519,8 @@ final class _ReportsViewState extends State<_ReportsView> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         for (final p in b.processPerformance) ...[
-          AppCard(
+          AppCard.listItem(
+            key: ValueKey<String>(p.processId),
             padding: const EdgeInsets.all(AppSpacing.md),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -607,8 +619,7 @@ final class _ReportsViewState extends State<_ReportsView> {
 
   String _formatTurnaround(double? hours, String naLabel) {
     if (hours == null) return naLabel;
-    if (hours >= 24) return '${(hours / 24).toStringAsFixed(1)}d';
-    return '${hours.toStringAsFixed(1)}h';
+    return AppDateTimeFormatter.formatDurationHours(hours);
   }
 
   // ---------------------------------------------------------------------------
@@ -658,20 +669,20 @@ final class _ReportsViewState extends State<_ReportsView> {
                     label: l10n.colourInitialQtyLabel,
                     value: inv.initialStock,
                     suffix: l10n.piecesUnit,
-                    icon: Icons.inventory_2_outlined,
+                    icon: AppIcons.lot,
                   ),
                   AppMetricTile(
                     label: l10n.stockAvailableGoodLabel,
                     value: inv.availableGoodStock,
                     suffix: l10n.piecesUnit,
-                    icon: Icons.check_circle_outline_rounded,
+                    icon: AppIcons.successOutline,
                     tone: AppStatusTone.good,
                   ),
                   AppMetricTile(
                     label: l10n.stockPendingWorkerLabel,
                     value: inv.pendingWithWorkers,
                     suffix: l10n.piecesUnit,
-                    icon: Icons.pending_actions_rounded,
+                    icon: AppIcons.pending,
                     tone: inv.pendingWithWorkers > 0
                         ? AppStatusTone.pending
                         : AppStatusTone.good,
@@ -680,7 +691,7 @@ final class _ReportsViewState extends State<_ReportsView> {
                     label: l10n.stockDamagedBucketLabel,
                     value: inv.damagedBucket,
                     suffix: l10n.piecesUnit,
-                    icon: Icons.report_problem_outlined,
+                    icon: AppIcons.damaged,
                     tone: inv.damagedBucket > 0
                         ? AppStatusTone.damaged
                         : AppStatusTone.neutral,
@@ -689,7 +700,7 @@ final class _ReportsViewState extends State<_ReportsView> {
                     label: l10n.stockLostLabel,
                     value: inv.lostStock,
                     suffix: l10n.piecesUnit,
-                    icon: Icons.help_outline_rounded,
+                    icon: AppIcons.help,
                     tone: inv.lostStock > 0
                         ? AppStatusTone.info
                         : AppStatusTone.neutral,
@@ -698,7 +709,7 @@ final class _ReportsViewState extends State<_ReportsView> {
                     label: l10n.stockShortageLabel,
                     value: inv.shortageStock,
                     suffix: l10n.piecesUnit,
-                    icon: Icons.remove_circle_outline_rounded,
+                    icon: AppIcons.remove,
                     tone: inv.shortageStock > 0
                         ? AppStatusTone.info
                         : AppStatusTone.neutral,
@@ -710,7 +721,7 @@ final class _ReportsViewState extends State<_ReportsView> {
                 label: l10n.reportRefStockValueLabel,
                 value: inv.referenceGoodStockValuePaise,
                 isCurrencyPaise: true,
-                icon: Icons.inventory_outlined,
+                icon: AppIcons.inventory,
                 tone: AppStatusTone.info,
               ),
               const SizedBox(height: AppSpacing.xs),
@@ -747,6 +758,7 @@ final class _ReportsViewState extends State<_ReportsView> {
     final l10n = context.l10n;
     if (rows.isEmpty) return _empty(context);
     return AppDataTable<LotStockReportRow>(
+      enablePagination: true,
       columns: [
         AppDataColumn(label: l10n.lotNumberLabel),
         AppDataColumn(label: l10n.stockAvailableGoodLabel, numeric: true),
@@ -810,6 +822,7 @@ final class _ReportsViewState extends State<_ReportsView> {
     final l10n = context.l10n;
     if (rows.isEmpty) return _empty(context);
     return AppDataTable<DesignColourStockBalance>(
+      enablePagination: true,
       columns: [
         AppDataColumn(label: l10n.lotNumberLabel),
         AppDataColumn(label: l10n.designNameLabel),
@@ -876,6 +889,7 @@ final class _ReportsViewState extends State<_ReportsView> {
     if (rows.isEmpty) return _empty(context);
     final visible = rows.take(200).toList();
     return AppDataTable<StockMovementView>(
+      enablePagination: true,
       columns: [
         AppDataColumn(label: l10n.lotNumberLabel),
         AppDataColumn(label: l10n.stockFilterAllTypes),
@@ -956,21 +970,21 @@ final class _ReportsViewState extends State<_ReportsView> {
               label: l10n.accountingEarnedLabourLabel,
               value: fin.periodEarnedLabourPaise,
               isCurrencyPaise: true,
-              icon: Icons.work_outline_rounded,
+              icon: AppIcons.work,
               tone: AppStatusTone.good,
             ),
             AppMetricTile(
               label: l10n.reportsTabPayments,
               value: fin.periodNetPaymentsPaise,
               isCurrencyPaise: true,
-              icon: Icons.payments_outlined,
+              icon: AppIcons.payment,
               tone: AppStatusTone.info,
             ),
             AppMetricTile(
               label: l10n.accountingOutstandingPayableLabel,
               value: fin.totalCurrentOutstandingPayablePaise,
               isCurrencyPaise: true,
-              icon: Icons.pending_actions_rounded,
+              icon: AppIcons.pending,
               tone: fin.totalCurrentOutstandingPayablePaise > 0
                   ? AppStatusTone.pending
                   : AppStatusTone.good,
@@ -979,7 +993,7 @@ final class _ReportsViewState extends State<_ReportsView> {
               label: l10n.accountingAdvanceCreditLabel,
               value: fin.totalCurrentAdvanceCreditPaise,
               isCurrencyPaise: true,
-              icon: Icons.account_balance_wallet_outlined,
+              icon: AppIcons.accounting,
               tone: AppStatusTone.info,
             ),
           ],
@@ -1047,6 +1061,7 @@ final class _ReportsViewState extends State<_ReportsView> {
     final l10n = context.l10n;
     if (rows.isEmpty) return _empty(context);
     return AppDataTable<LabourEntryView>(
+      enablePagination: true,
       columns: [
         AppDataColumn(label: l10n.workerNameLabel),
         AppDataColumn(label: l10n.processNameLabel),
@@ -1099,6 +1114,7 @@ final class _ReportsViewState extends State<_ReportsView> {
     final l10n = context.l10n;
     if (rows.isEmpty) return _empty(context);
     return AppDataTable<WorkerFinancialSummary>(
+      enablePagination: true,
       columns: [
         AppDataColumn(label: l10n.workerNameLabel),
         AppDataColumn(label: l10n.accountingEarnedLabourLabel, numeric: true),
@@ -1131,10 +1147,7 @@ final class _ReportsViewState extends State<_ReportsView> {
                     : AppStatusTone.good),
         ),
       ],
-      mobileCardBuilder: (_, w) => Row(
-        children: [
-          Expanded(
-            child: Column(
+      mobileCardBuilder: (_, w) => AppActionRow(content: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AppText(w.workerName, fontWeight: FontWeight.w700),
@@ -1143,18 +1156,14 @@ final class _ReportsViewState extends State<_ReportsView> {
                   variant: AppTextVariant.bodySmall,
                 ),
               ],
-            ),
-          ),
-          AppStatusBadge(
+            ), actions: [AppStatusBadge(
             label: MoneyFormatter.formatPaise(w.netBalancePaise),
             tone: w.netBalancePaise > 0
                 ? AppStatusTone.pending
                 : (w.netBalancePaise < 0
                       ? AppStatusTone.info
                       : AppStatusTone.good),
-          ),
-        ],
-      ),
+          ),],),
     );
   }
 
@@ -1166,6 +1175,7 @@ final class _ReportsViewState extends State<_ReportsView> {
     final l10n = context.l10n;
     if (rows.isEmpty) return _empty(context);
     return AppDataTable<PaymentView>(
+      enablePagination: true,
       columns: [
         AppDataColumn(label: l10n.workerNameLabel),
         AppDataColumn(label: l10n.accountingPaymentTypeLabel),
@@ -1338,10 +1348,7 @@ final class _ReportsViewState extends State<_ReportsView> {
                       padding: const EdgeInsets.symmetric(
                         vertical: AppSpacing.xs,
                       ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
+                      child: AppActionRow(content: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 AppText(
@@ -1353,18 +1360,14 @@ final class _ReportsViewState extends State<_ReportsView> {
                                   variant: AppTextVariant.bodySmall,
                                 ),
                               ],
-                            ),
-                          ),
-                          AppStatusBadge(
+                            ), actions: [AppStatusBadge(
                             label: l10n.pendingAgeDaysBadge(
                               bn.oldestOpenIssueAgeDays,
                             ),
                             tone: bn.oldestOpenIssueAgeDays >= 3
                                 ? AppStatusTone.damaged
                                 : AppStatusTone.pending,
-                          ),
-                        ],
-                      ),
+                          ),],),
                     ),
                   ),
                 ],
@@ -1475,15 +1478,10 @@ final class _ReportsViewState extends State<_ReportsView> {
                 for (final dr in ins.topDefectReasons)
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Row(
-                      children: [
-                        Expanded(child: AppText(dr.reason)),
-                        AppStatusBadge(
+                    child: AppActionRow(content: AppText(dr.reason), actions: [AppStatusBadge(
                           label: '${dr.quantity} ${l10n.piecesUnit}',
                           tone: AppStatusTone.damaged,
-                        ),
-                      ],
-                    ),
+                        ),],),
                   ),
               ],
             ),

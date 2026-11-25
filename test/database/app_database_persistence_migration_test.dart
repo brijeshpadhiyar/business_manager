@@ -151,7 +151,10 @@ void main() {
     expect(pragmas.foreignKeysEnabled, isTrue);
 
     final userVer = await v3Db.customSelect('PRAGMA user_version;').getSingle();
-    expect(userVer.read<int>('user_version'), 3);
+    expect(
+      userVer.read<int>('user_version'),
+      DatabaseMigrationManager.currentSchemaVersion,
+    );
 
     // Existing v1 data intact
     final preservedLot = await v3Db.lotDao.findLotById('lot-v1-keep');
@@ -247,7 +250,10 @@ void main() {
     await v3Db.verifyPragmas();
 
     final userVer = await v3Db.customSelect('PRAGMA user_version;').getSingle();
-    expect(userVer.read<int>('user_version'), 3);
+    expect(
+      userVer.read<int>('user_version'),
+      DatabaseMigrationManager.currentSchemaVersion,
+    );
 
     // Existing v2 data intact
     final preservedAdj = await v3Db.workerAdjustmentDao.getAdjustmentsForMember(

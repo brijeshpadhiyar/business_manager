@@ -1,15 +1,14 @@
 import 'dart:convert';
-import 'dart:io' show Platform;
 
 import 'package:business_manager/core/config/app_config.dart';
 import 'package:business_manager/core/database/app_database.dart';
+import 'package:business_manager/core/platform/platform_env.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/features/security/domain/entities/security_entities.dart';
 import 'package:business_manager/features/security/domain/repositories/security_repository.dart';
 import 'package:business_manager/features/security/domain/services/pin_hasher.dart';
 import 'package:drift/drift.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:injectable/injectable.dart';
 
@@ -50,8 +49,7 @@ final class SecureStorageSecurityRepository implements SecurityRepository {
   final FlutterSecureStorage _storage;
   final PinHasher _hasher;
   final bool _useIsolateForHashing;
-  final Map<String, String>? _testMemoryStore =
-      (!kIsWeb && Platform.environment.containsKey('FLUTTER_TEST'))
+  final Map<String, String>? _testMemoryStore = isFlutterTestEnv
       ? <String, String>{}
       : null;
 
@@ -87,6 +85,7 @@ final class SecureStorageSecurityRepository implements SecurityRepository {
   String get _kBiometricEnabled => '${_prefix}biometric_enabled';
   String get _kTimeoutSec => '${_prefix}lock_timeout_sec';
   String get _kFlagSecure => '${_prefix}flag_secure_enabled';
+  String get _kRequireAuthApprovals => '${_prefix}require_auth_approvals';
   String get _kFailedAttempts => '${_prefix}failed_attempts';
   String get _kLockoutUntil => '${_prefix}lockout_until_utc_ms';
   String get _kLastBackgrounded => '${_prefix}last_backgrounded_utc_ms';
@@ -131,6 +130,7 @@ final class SecureStorageSecurityRepository implements SecurityRepository {
       final biometricEnabled = (await _readKey(_kBiometricEnabled)) == 'true';
       final timeoutSec = int.tryParse((await _readKey(_kTimeoutSec)) ?? '');
       final flagSecureStr = await _readKey(_kFlagSecure);
+      final requireApprovalsStr = await _readKey(_kRequireAuthApprovals);
       final failedAttempts =
           int.tryParse((await _readKey(_kFailedAttempts)) ?? '') ?? 0;
       final lockoutUntil = int.tryParse((await _readKey(_kLockoutUntil)) ?? '');
@@ -142,6 +142,7 @@ final class SecureStorageSecurityRepository implements SecurityRepository {
         biometricEnabled: biometricEnabled,
         timeout: LockTimeoutOption.fromSeconds(timeoutSec),
         screenshotProtectionEnabled: flagSecureStr != 'false',
+        requireAuthForApprovals: requireApprovalsStr != 'false',
         failedAttempts: failedAttempts,
         lockoutUntilUtcMillis: lockoutUntil,
         lastBackgroundedUtcMillis: lastBg,
@@ -366,6 +367,7 @@ final class SecureStorageSecurityRepository implements SecurityRepository {
     bool? biometricEnabled,
     LockTimeoutOption? timeout,
     bool? screenshotProtectionEnabled,
+    bool? requireAuthForApprovals,
   }) async {
     if (biometricEnabled != null) {
       await _writeKey(_kBiometricEnabled, biometricEnabled ? 'true' : 'false');
@@ -377,6 +379,12 @@ final class SecureStorageSecurityRepository implements SecurityRepository {
       await _writeKey(
         _kFlagSecure,
         screenshotProtectionEnabled ? 'true' : 'false',
+      );
+    }
+    if (requireAuthForApprovals != null) {
+      await _writeKey(
+        _kRequireAuthApprovals,
+        requireAuthForApprovals ? 'true' : 'false',
       );
     }
     return loadSettings();

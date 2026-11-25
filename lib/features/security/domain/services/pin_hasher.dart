@@ -1,8 +1,8 @@
 import 'dart:convert';
-import 'dart:isolate';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:business_manager/core/platform/platform_env.dart';
 import 'package:crypto/crypto.dart';
 
 /// Pure Dart PBKDF2-HMAC-SHA256 PIN & Recovery Key hasher with CSPRNG salts,
@@ -82,7 +82,7 @@ final class PinHasher {
     final dkLen = derivedKeyLengthBytes;
 
     final dk = runInIsolate
-        ? await Isolate.run(
+        ? await runComputeIsolate(
             () => derivePbkdf2HmacSha256(
               passwordBytes: secretBytes,
               salt: salt,
@@ -128,7 +128,7 @@ final class PinHasher {
     final dkLen = expectedDk.length;
 
     final actualDk = runInIsolate
-        ? await Isolate.run(
+        ? await runComputeIsolate(
             () => derivePbkdf2HmacSha256(
               passwordBytes: secretBytes,
               salt: salt,

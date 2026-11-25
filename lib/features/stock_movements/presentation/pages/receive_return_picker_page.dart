@@ -1,3 +1,4 @@
+import 'package:business_manager/core/utils/app_memo.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
@@ -10,6 +11,7 @@ import 'package:business_manager/features/stock_movements/domain/entities/stock_
 import 'package:business_manager/features/stock_movements/domain/repositories/stock_movement_repository.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 enum _PendingSortMode { oldestFirst, highestPending, newestFirst }
 
@@ -34,6 +36,8 @@ final class ReceiveReturnPickerPage extends StatefulWidget {
 
 final class _ReceiveReturnPickerPageState
     extends State<ReceiveReturnPickerPage> {
+  final _viewMemo =
+      AppMemo<(List<String>, List<String>, List<OpenIssueSummary>)>();
   final _repo = getIt<StockMovementRepository>();
   final _searchCtrl = TextEditingController();
 
@@ -57,10 +61,12 @@ final class _ReceiveReturnPickerPageState
   }
 
   Future<void> _load() async {
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
+    if (_issues.isEmpty) {
+      setState(() {
+        _loading = true;
+        _error = null;
+      });
+    }
     try {
       final issues = await _repo.getOpenIssues(
         workerId: widget.initialWorkerId,
@@ -71,6 +77,7 @@ final class _ReceiveReturnPickerPageState
       setState(() {
         _issues = issues;
         _loading = false;
+        _error = null;
       });
     } catch (e) {
       if (!mounted) return;
@@ -105,58 +112,69 @@ final class _ReceiveReturnPickerPageState
       );
     }
 
-    final workerNames = <String>{
-      for (final i in _issues)
-        if (i.issueView.workerName != null) i.issueView.workerName!,
-    }.toList()..sort();
-
-    final processNames = <String>{
-      for (final i in _issues)
-        if (i.issueView.processName != null) i.issueView.processName!,
-    }.toList()..sort();
-
     final query = _searchCtrl.text.trim().toLowerCase();
-    final filtered = _issues.where((item) {
-      final v = item.issueView;
-      if (_workerFilter != null && v.workerName != _workerFilter) return false;
-      if (_processFilter != null && v.processName != _processFilter) {
-        return false;
-      }
-      if (query.isEmpty) return true;
-      final hay =
-          '${v.workerName ?? ''} ${v.processName ?? ''} ${v.lotNumber} ${v.designName} ${v.colourName}'
-              .toLowerCase();
-      return hay.contains(query);
-    }).toList();
+    // Names, filtering and sorting run only when the data or a filter changes.
+    final (
+      workerNames,
+      processNames,
+      filtered,
+    ) = _viewMemo([_issues, _workerFilter, _processFilter, query, _sortMode], () {
+      final workerNames = <String>{
+        for (final i in _issues)
+          if (i.issueView.workerName != null) i.issueView.workerName!,
+      }.toList()..sort();
 
-    filtered.sort((a, b) {
-      return switch (_sortMode) {
-        _PendingSortMode.oldestFirst =>
-          a.issueView.movement.transactionAt.compareTo(
-            b.issueView.movement.transactionAt,
+      final processNames = <String>{
+        for (final i in _issues)
+          if (i.issueView.processName != null) i.issueView.processName!,
+      }.toList()..sort();
+
+      final filtered = _issues.where((item) {
+        final v = item.issueView;
+        if (_workerFilter != null && v.workerName != _workerFilter) {
+          return false;
+        }
+        if (_processFilter != null && v.processName != _processFilter) {
+          return false;
+        }
+        if (query.isEmpty) return true;
+        final hay =
+            '${v.workerName ?? ''} ${v.processName ?? ''} ${v.lotNumber} ${v.designName} ${v.colourName}'
+                .toLowerCase();
+        return hay.contains(query);
+      }).toList();
+
+      filtered.sort((a, b) {
+        return switch (_sortMode) {
+          _PendingSortMode.oldestFirst =>
+            a.issueView.movement.transactionAt.compareTo(
+              b.issueView.movement.transactionAt,
+            ),
+          _PendingSortMode.highestPending => b.remainingPending.compareTo(
+            a.remainingPending,
           ),
-        _PendingSortMode.highestPending => b.remainingPending.compareTo(
-          a.remainingPending,
-        ),
-        _PendingSortMode.newestFirst =>
-          b.issueView.movement.transactionAt.compareTo(
-            a.issueView.movement.transactionAt,
-          ),
-      };
+          _PendingSortMode.newestFirst =>
+            b.issueView.movement.transactionAt.compareTo(
+              a.issueView.movement.transactionAt,
+            ),
+        };
+      });
+      return (workerNames, processNames, filtered);
     });
 
     return AppScaffold(
       title: l10n.stockReceiveReturnHeading,
+      contentWidth: AppContentWidth.wide,
       actions: [
         AppIconButton(
-          icon: Icons.refresh_rounded,
+          icon: AppIcons.refresh,
           tooltip: l10n.actionRetry,
           onPressed: _load,
         ),
       ],
       body: _issues.isEmpty
           ? AppEmptyState(
-              icon: Icons.check_circle_outline_rounded,
+              icon: AppIcons.successOutline,
               title: l10n.stockEmptyIssuesTitle,
               subtitle: l10n.stockEmptyIssuesSubtitle,
               actionLabel: l10n.stockIssueAction,
@@ -165,134 +183,167 @@ final class _ReceiveReturnPickerPageState
                 if (mounted) await _load();
               },
             )
-          : ListView(
+          : CustomScrollView(
               keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-              children: [
-                AppHeading(
-                  l10n.stockSelectPendingIssueTitle,
-                  level: AppHeadingLevel.h3,
-                  subtitle: l10n.stockSelectPendingIssueSubtitle,
-                ),
-                const SizedBox(height: AppSpacing.md),
-                AppTextField(
-                  controller: _searchCtrl,
-                  label: l10n.stockSearchHint,
-                  prefixIcon: Icons.search_rounded,
-                  onChanged: (_) => setState(() {}),
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      ChoiceChip(
-                        label: Text(l10n.stockSortOldestFirst),
-                        selected: _sortMode == _PendingSortMode.oldestFirst,
-                        onSelected: (_) => setState(
-                          () => _sortMode = _PendingSortMode.oldestFirst,
+                      AppHeading(
+                        l10n.stockSelectPendingIssueTitle,
+                        level: AppHeadingLevel.h3,
+                        subtitle: l10n.stockSelectPendingIssueSubtitle,
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                      AppSearchField(
+                        controller: _searchCtrl,
+                        label: l10n.stockSearchHint,
+                        debounceDuration: const Duration(milliseconds: 140),
+                        onChanged: (_) => setState(() {}),
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            ChoiceChip(
+                              label: Text(l10n.stockSortOldestFirst),
+                              selected:
+                                  _sortMode == _PendingSortMode.oldestFirst,
+                              onSelected: (_) => setState(
+                                () => _sortMode = _PendingSortMode.oldestFirst,
+                              ),
+                            ),
+                            const SizedBox(width: AppSpacing.xs),
+                            ChoiceChip(
+                              label: Text(l10n.stockSortHighestPending),
+                              selected:
+                                  _sortMode == _PendingSortMode.highestPending,
+                              onSelected: (_) => setState(
+                                () =>
+                                    _sortMode = _PendingSortMode.highestPending,
+                              ),
+                            ),
+                            const SizedBox(width: AppSpacing.xs),
+                            ChoiceChip(
+                              label: Text(l10n.stockSortNewestFirst),
+                              selected:
+                                  _sortMode == _PendingSortMode.newestFirst,
+                              onSelected: (_) => setState(
+                                () => _sortMode = _PendingSortMode.newestFirst,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(width: AppSpacing.xs),
-                      ChoiceChip(
-                        label: Text(l10n.stockSortHighestPending),
-                        selected: _sortMode == _PendingSortMode.highestPending,
-                        onSelected: (_) => setState(
-                          () => _sortMode = _PendingSortMode.highestPending,
+                      // Phones: worker / process chips fold behind one
+                      // Filters toggle so the pending list starts higher.
+                      if (workerNames.length > 1 || processNames.length > 1)
+                        AppCollapsibleFilters(
+                          activeCount:
+                              (_workerFilter != null ? 1 : 0) +
+                              (_processFilter != null ? 1 : 0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                          if (workerNames.length > 1) ...[
+                            const SizedBox(height: AppSpacing.sm),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  FilterChip(
+                                    label: Text(l10n.stockFilterAllWorkers),
+                                    selected: _workerFilter == null,
+                                    onSelected: (_) =>
+                                        setState(() => _workerFilter = null),
+                                  ),
+                                  const SizedBox(width: AppSpacing.xs),
+                                  for (final w in workerNames) ...[
+                                    FilterChip(
+                                      label: Text(w),
+                                      selected: _workerFilter == w,
+                                      onSelected: (_) => setState(
+                                        () => _workerFilter = _workerFilter == w
+                                            ? null
+                                            : w,
+                                      ),
+                                    ),
+                                    const SizedBox(width: AppSpacing.xs),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          ],
+                          if (processNames.length > 1) ...[
+                            const SizedBox(height: AppSpacing.xs),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  FilterChip(
+                                    label: Text(l10n.stockFilterAllProcesses),
+                                    selected: _processFilter == null,
+                                    onSelected: (_) =>
+                                        setState(() => _processFilter = null),
+                                  ),
+                                  const SizedBox(width: AppSpacing.xs),
+                                  for (final p in processNames) ...[
+                                    FilterChip(
+                                      label: Text(p),
+                                      selected: _processFilter == p,
+                                      onSelected: (_) => setState(
+                                        () => _processFilter = _processFilter == p
+                                            ? null
+                                            : p,
+                                      ),
+                                    ),
+                                    const SizedBox(width: AppSpacing.xs),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: AppSpacing.xs),
-                      ChoiceChip(
-                        label: Text(l10n.stockSortNewestFirst),
-                        selected: _sortMode == _PendingSortMode.newestFirst,
-                        onSelected: (_) => setState(
-                          () => _sortMode = _PendingSortMode.newestFirst,
-                        ),
-                      ),
+                      const SizedBox(height: AppSpacing.md),
                     ],
                   ),
                 ),
-                if (workerNames.length > 1) ...[
-                  const SizedBox(height: AppSpacing.sm),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        FilterChip(
-                          label: Text(l10n.stockFilterAllWorkers),
-                          selected: _workerFilter == null,
-                          onSelected: (_) =>
-                              setState(() => _workerFilter = null),
-                        ),
-                        const SizedBox(width: AppSpacing.xs),
-                        for (final w in workerNames) ...[
-                          FilterChip(
-                            label: Text(w),
-                            selected: _workerFilter == w,
-                            onSelected: (_) => setState(
-                              () =>
-                                  _workerFilter = _workerFilter == w ? null : w,
-                            ),
-                          ),
-                          const SizedBox(width: AppSpacing.xs),
-                        ],
-                      ],
-                    ),
-                  ),
-                ],
-                if (processNames.length > 1) ...[
-                  const SizedBox(height: AppSpacing.xs),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        FilterChip(
-                          label: Text(l10n.stockFilterAllProcesses),
-                          selected: _processFilter == null,
-                          onSelected: (_) =>
-                              setState(() => _processFilter = null),
-                        ),
-                        const SizedBox(width: AppSpacing.xs),
-                        for (final p in processNames) ...[
-                          FilterChip(
-                            label: Text(p),
-                            selected: _processFilter == p,
-                            onSelected: (_) => setState(
-                              () => _processFilter = _processFilter == p
-                                  ? null
-                                  : p,
-                            ),
-                          ),
-                          const SizedBox(width: AppSpacing.xs),
-                        ],
-                      ],
-                    ),
-                  ),
-                ],
-                const SizedBox(height: AppSpacing.md),
                 if (filtered.isEmpty)
-                  AppEmptyState(
-                    icon: Icons.filter_alt_off_outlined,
-                    title: l10n.reportsEmptyTitle,
-                    subtitle: l10n.reportsEmptySubtitle,
+                  SliverToBoxAdapter(
+                    child: AppEmptyState(
+                      icon: AppIcons.clearFilter,
+                      title: l10n.reportsEmptyTitle,
+                      subtitle: l10n.reportsEmptySubtitle,
+                    ),
                   )
                 else
-                  for (final item in filtered)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                      child: _PendingIssueSelectionCard(
+                  SliverList.separated(
+                    itemCount: filtered.length,
+                    separatorBuilder: (_, _) =>
+                        const SizedBox(height: AppSpacing.sm),
+                    itemBuilder: (ctx, i) {
+                      final item = filtered[i];
+                      return _PendingIssueSelectionCard(
+                        key: ValueKey<String>(item.issueView.movement.id),
                         item: item,
                         localeCode: localeCode,
                         colorScheme: colorScheme,
                         onSelect: () async {
-                          final changed = await context.push<bool>(
+                          final changed = await ctx.push<bool>(
                             RoutePaths.stockReturn(item.issueView.movement.id),
                           );
                           if (changed == true && mounted) {
                             await _load();
                           }
                         },
-                      ),
-                    ),
+                      );
+                    },
+                  ),
               ],
             ),
     );
@@ -301,6 +352,7 @@ final class _ReceiveReturnPickerPageState
 
 final class _PendingIssueSelectionCard extends StatelessWidget {
   const _PendingIssueSelectionCard({
+    super.key,
     required this.item,
     required this.localeCode,
     required this.colorScheme,
@@ -366,7 +418,7 @@ final class _PendingIssueSelectionCard extends StatelessWidget {
                     label:
                         '${l10n.stockRemainingPendingLabel}: ${item.remainingPending} ${l10n.piecesUnit}',
                     tone: AppStatusTone.pending,
-                    icon: Icons.hourglass_bottom_rounded,
+                    icon: AppIcons.pending,
                   ),
                   const SizedBox(height: 4),
                   AppStatusBadge(label: ageLabel, tone: ageTone),
@@ -394,21 +446,19 @@ final class _PendingIssueSelectionCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppSpacing.sm),
-          Row(
-            children: [
-              Expanded(
-                child: AppText(
-                  IstDateTimeHelper.formatIstDateTime(
-                    m.transactionAt,
-                    locale: localeCode,
-                  ),
-                  variant: AppTextVariant.bodySmall,
-                  color: colorScheme.onSurfaceVariant,
-                ),
+          AppActionRow(
+            content: AppText(
+              IstDateTimeHelper.formatIstDateTime(
+                m.transactionAt,
+                locale: localeCode,
               ),
+              variant: AppTextVariant.bodySmall,
+              color: colorScheme.onSurfaceVariant,
+            ),
+            actions: [
               AppButton(
                 label: l10n.stockReturnAction,
-                icon: Icons.assignment_returned_outlined,
+                icon: AppIcons.receiveReturn,
                 variant: AppButtonVariant.secondary,
                 onPressed: onSelect,
               ),

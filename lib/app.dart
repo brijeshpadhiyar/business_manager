@@ -1,10 +1,12 @@
 import 'package:business_manager/core/config/app_config.dart';
+import 'package:business_manager/core/design_system/app_scroll_behavior.dart';
 import 'package:business_manager/core/design_system/app_theme.dart';
 import 'package:business_manager/core/di/app_session_controller.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/locale_cubit.dart';
 import 'package:business_manager/core/localization/locale_state.dart';
 import 'package:business_manager/core/router/app_router.dart';
+import 'package:business_manager/core/services/app_message_service.dart';
 import 'package:business_manager/core/theme/theme_cubit.dart';
 import 'package:business_manager/core/theme/theme_state.dart';
 import 'package:business_manager/features/security/domain/entities/security_entities.dart';
@@ -14,6 +16,7 @@ import 'package:business_manager/l10n/generated/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:toastification/toastification.dart';
 
 final class BusinessManagerApp extends StatefulWidget {
   const BusinessManagerApp({super.key, required this.config});
@@ -49,6 +52,7 @@ final class _BusinessManagerAppState extends State<BusinessManagerApp> {
 
   @override
   void dispose() {
+    AppMessageService.cancelPendingTimers();
     AppSessionController.instance.removeListener(_onSessionReloaded);
     _router.dispose();
     super.dispose();
@@ -87,10 +91,21 @@ final class _BusinessManagerAppState extends State<BusinessManagerApp> {
                   theme: AppTheme.light(),
                   darkTheme: AppTheme.dark(),
                   routerConfig: _router,
-                  builder: (context, child) => AppLockGate(
-                    onNavigateDeepLink: (routePath) => _router.push(routePath),
-                    child: child ?? const SizedBox.shrink(),
-                  ),
+                  scrollBehavior: const AppScrollBehavior(),
+                  // Respect the phone's font-size setting, but cap it so very
+                  // large system fonts cannot break tables and forms.
+                  builder: (context, child) =>
+                      MediaQuery.withClampedTextScaling(
+                        minScaleFactor: 1.0,
+                        maxScaleFactor: 1.3,
+                        child: ToastificationWrapper(
+                          child: AppLockGate(
+                            onNavigateDeepLink: (routePath) =>
+                                _router.push(routePath),
+                            child: child ?? const SizedBox.shrink(),
+                          ),
+                        ),
+                      ),
                 );
               },
             );

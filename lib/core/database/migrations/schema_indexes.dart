@@ -91,9 +91,119 @@ abstract final class SchemaIndexes {
         'ON audit_logs(action_type, recorded_at DESC);',
   ];
 
+  /// Additive indexes introduced in schema v4 (V1.3 Multi-Process Routing &
+  /// Material Handover Management).
+  static const List<String> v4IndexStatements = [
+    'CREATE INDEX IF NOT EXISTS idx_jp_lot_seq '
+        'ON job_processes(lot_id, sequence_order) WHERE deleted_at IS NULL;',
+    'CREATE INDEX IF NOT EXISTS idx_jp_design_colour '
+        'ON job_processes(design_colour_id, status) WHERE deleted_at IS NULL;',
+    'CREATE INDEX IF NOT EXISTS idx_jp_member_status '
+        'ON job_processes(member_id, status) WHERE deleted_at IS NULL;',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_ph_transfer_ref '
+        'ON process_handovers(transfer_reference);',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_ph_client_request_id '
+        'ON process_handovers(client_request_id) '
+        'WHERE client_request_id IS NOT NULL;',
+    'CREATE INDEX IF NOT EXISTS idx_ph_lot_tx '
+        'ON process_handovers(lot_id, transaction_at ASC, recorded_at ASC);',
+    'CREATE INDEX IF NOT EXISTS idx_ph_from_member '
+        'ON process_handovers(from_member_id, transaction_at DESC);',
+    'CREATE INDEX IF NOT EXISTS idx_ph_to_member '
+        'ON process_handovers(to_member_id, transaction_at DESC);',
+  ];
+
+  /// Additive indexes introduced in schema v5 (V1.3 Dynamic Pricing,
+  /// Additional Charges, and Immutable Rate Change History).
+  static const List<String> v5IndexStatements = [
+    'CREATE INDEX IF NOT EXISTS idx_pac_lot '
+        'ON process_additional_charges(lot_id, transaction_at ASC);',
+    'CREATE INDEX IF NOT EXISTS idx_pac_job_process '
+        'ON process_additional_charges(job_process_id);',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_pac_client_request_id '
+        'ON process_additional_charges(client_request_id) '
+        'WHERE client_request_id IS NOT NULL;',
+    'CREATE INDEX IF NOT EXISTS idx_prh_process '
+        'ON process_rate_history(process_id, changed_at DESC);',
+    'CREATE INDEX IF NOT EXISTS idx_prh_job_process '
+        'ON process_rate_history(job_process_id, changed_at DESC);',
+  ];
+
+  /// Additive indexes introduced in schema v6 (`colour_master`).
+  static const List<String> v6IndexStatements = [
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_colour_master_name '
+        'ON colour_master(lower(name)) WHERE deleted_at IS NULL;',
+    'CREATE INDEX IF NOT EXISTS idx_colour_master_recent '
+        'ON colour_master(last_used_at DESC) WHERE deleted_at IS NULL;',
+  ];
+
+  /// Additive read-performance indexes introduced in schema v7 (V1.3 DB optimization).
+  /// Zero tables or columns altered; eliminates full-table scans on lot-scoped
+  /// stock movement lookups, rate-lock checks, and active lot listing.
+  static const List<String> v7IndexStatements = [
+    'CREATE INDEX IF NOT EXISTS idx_sm_lot_tx '
+        'ON stock_movements(lot_id, transaction_at ASC, recorded_at ASC);',
+    'CREATE INDEX IF NOT EXISTS idx_sm_source_rate '
+        'ON stock_movements(source_rate_id) '
+        'WHERE source_rate_id IS NOT NULL;',
+    'CREATE INDEX IF NOT EXISTS idx_lots_active_tx '
+        'ON lots(transaction_at DESC) WHERE deleted_at IS NULL;',
+  ];
+
+  /// Additive indexes introduced in schema v8 (Production Returns, Quality
+  /// Inspections, Rejection Registry, and Rejection Repairs).
+  static const List<String> v8IndexStatements = [
+    'CREATE INDEX IF NOT EXISTS idx_sm_job_process '
+        'ON stock_movements(job_process_id) '
+        'WHERE job_process_id IS NOT NULL;',
+    'CREATE INDEX IF NOT EXISTS idx_pr_issue '
+        'ON production_returns(parent_issue_id, transaction_at ASC);',
+    'CREATE INDEX IF NOT EXISTS idx_pr_lot_tx '
+        'ON production_returns(lot_id, transaction_at ASC);',
+    'CREATE INDEX IF NOT EXISTS idx_pr_member_tx '
+        'ON production_returns(member_id, transaction_at DESC);',
+    'CREATE INDEX IF NOT EXISTS idx_pr_process_tx '
+        'ON production_returns(process_id, transaction_at DESC);',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_pr_client_req '
+        'ON production_returns(client_request_id) '
+        'WHERE client_request_id IS NOT NULL;',
+    'CREATE INDEX IF NOT EXISTS idx_pi_return '
+        'ON production_inspections(production_return_id, transaction_at ASC);',
+    'CREATE INDEX IF NOT EXISTS idx_pi_issue '
+        'ON production_inspections(parent_issue_id, transaction_at ASC);',
+    'CREATE INDEX IF NOT EXISTS idx_pi_repair '
+        'ON production_inspections(rejection_repair_id) '
+        'WHERE rejection_repair_id IS NOT NULL;',
+    'CREATE INDEX IF NOT EXISTS idx_pi_lot_tx '
+        'ON production_inspections(lot_id, transaction_at ASC);',
+    'CREATE INDEX IF NOT EXISTS idx_pi_member_tx '
+        'ON production_inspections(member_id, transaction_at DESC);',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_pi_client_req '
+        'ON production_inspections(client_request_id) '
+        'WHERE client_request_id IS NOT NULL;',
+    'CREATE INDEX IF NOT EXISTS idx_rr_lot_status '
+        'ON rejection_records(lot_id, status);',
+    'CREATE INDEX IF NOT EXISTS idx_rr_member_status '
+        'ON rejection_records(member_id, status);',
+    'CREATE INDEX IF NOT EXISTS idx_rr_process_status '
+        'ON rejection_records(process_id, status);',
+    'CREATE INDEX IF NOT EXISTS idx_rr_issue '
+        'ON rejection_records(parent_issue_id);',
+    'CREATE INDEX IF NOT EXISTS idx_rep_rejection '
+        'ON rejection_repairs(rejection_record_id, transaction_at ASC);',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_rep_client_req '
+        'ON rejection_repairs(client_request_id) '
+        'WHERE client_request_id IS NOT NULL;',
+  ];
+
   static const List<String> allIndexStatements = [
     ...v1IndexStatements,
     ...v2IndexStatements,
     ...v3IndexStatements,
+    ...v4IndexStatements,
+    ...v5IndexStatements,
+    ...v6IndexStatements,
+    ...v7IndexStatements,
+    ...v8IndexStatements,
   ];
 }

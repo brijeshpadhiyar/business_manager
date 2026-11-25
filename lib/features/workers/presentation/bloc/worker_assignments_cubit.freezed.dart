@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$WorkerAssignmentsState {
 
- WorkerAssignmentsStatus get status; WorkerEntity? get worker; List<WorkerProcessAssignmentEntity> get assignments; List<ProcessEntity> get activeProcesses; String? get errorMessage;
+ WorkerAssignmentsStatus get status; WorkerEntity? get worker; List<WorkerProcessAssignmentEntity> get assignments; List<WorkerProcessAssignmentEntity> get inactiveAssignments; List<ProcessEntity> get activeProcesses; String? get errorMessage;
 /// Create a copy of WorkerAssignmentsState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $WorkerAssignmentsStateCopyWith<WorkerAssignmentsState> get copyWith => _$Worker
 @override
 bool operator ==(Object other) {
   final _this = this as WorkerAssignmentsState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is WorkerAssignmentsState&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.worker, _this.worker) || other.worker == _this.worker)&&const DeepCollectionEquality().equals(other.assignments, _this.assignments)&&const DeepCollectionEquality().equals(other.activeProcesses, _this.activeProcesses)&&(identical(other.errorMessage, _this.errorMessage) || other.errorMessage == _this.errorMessage));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is WorkerAssignmentsState&&(identical(other.status, _this.status) || other.status == _this.status)&&(identical(other.worker, _this.worker) || other.worker == _this.worker)&&const DeepCollectionEquality().equals(other.assignments, _this.assignments)&&const DeepCollectionEquality().equals(other.inactiveAssignments, _this.inactiveAssignments)&&const DeepCollectionEquality().equals(other.activeProcesses, _this.activeProcesses)&&(identical(other.errorMessage, _this.errorMessage) || other.errorMessage == _this.errorMessage));
 }
 
 
 @override
 int get hashCode {
   final _this = this as WorkerAssignmentsState;
-  return Object.hash(runtimeType,_this.status,_this.worker,const DeepCollectionEquality().hash(_this.assignments),const DeepCollectionEquality().hash(_this.activeProcesses),_this.errorMessage);
+  return Object.hash(runtimeType,_this.status,_this.worker,const DeepCollectionEquality().hash(_this.assignments),const DeepCollectionEquality().hash(_this.inactiveAssignments),const DeepCollectionEquality().hash(_this.activeProcesses),_this.errorMessage);
 }
 
 @override
 String toString() {
   final _this = this as WorkerAssignmentsState;
-  return 'WorkerAssignmentsState(status: ${_this.status}, worker: ${_this.worker}, assignments: ${_this.assignments}, activeProcesses: ${_this.activeProcesses}, errorMessage: ${_this.errorMessage})';
+  return 'WorkerAssignmentsState(status: ${_this.status}, worker: ${_this.worker}, assignments: ${_this.assignments}, inactiveAssignments: ${_this.inactiveAssignments}, activeProcesses: ${_this.activeProcesses}, errorMessage: ${_this.errorMessage})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $WorkerAssignmentsStateCopyWith<$Res>  {
   factory $WorkerAssignmentsStateCopyWith(WorkerAssignmentsState value, $Res Function(WorkerAssignmentsState) _then) = _$WorkerAssignmentsStateCopyWithImpl;
 @useResult
 $Res call({
- WorkerAssignmentsStatus status, WorkerEntity? worker, List<WorkerProcessAssignmentEntity> assignments, List<ProcessEntity> activeProcesses, String? errorMessage
+ WorkerAssignmentsStatus status, WorkerEntity? worker, List<WorkerProcessAssignmentEntity> assignments, List<WorkerProcessAssignmentEntity> inactiveAssignments, List<ProcessEntity> activeProcesses, String? errorMessage
 });
 
 
@@ -68,11 +68,12 @@ class _$WorkerAssignmentsStateCopyWithImpl<$Res>
 
 /// Create a copy of WorkerAssignmentsState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? worker = freezed,Object? assignments = null,Object? activeProcesses = null,Object? errorMessage = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? status = null,Object? worker = freezed,Object? assignments = null,Object? inactiveAssignments = null,Object? activeProcesses = null,Object? errorMessage = freezed,}) {
   return _then(WorkerAssignmentsState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as WorkerAssignmentsStatus,worker: freezed == worker ? _self.worker : worker // ignore: cast_nullable_to_non_nullable
 as WorkerEntity?,assignments: null == assignments ? _self.assignments : assignments // ignore: cast_nullable_to_non_nullable
+as List<WorkerProcessAssignmentEntity>,inactiveAssignments: null == inactiveAssignments ? _self.inactiveAssignments : inactiveAssignments // ignore: cast_nullable_to_non_nullable
 as List<WorkerProcessAssignmentEntity>,activeProcesses: null == activeProcesses ? _self.activeProcesses : activeProcesses // ignore: cast_nullable_to_non_nullable
 as List<ProcessEntity>,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String?,
@@ -169,10 +170,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( WorkerAssignmentsStatus status,  WorkerEntity? worker,  List<WorkerProcessAssignmentEntity> assignments,  List<ProcessEntity> activeProcesses,  String? errorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( WorkerAssignmentsStatus status,  WorkerEntity? worker,  List<WorkerProcessAssignmentEntity> assignments,  List<WorkerProcessAssignmentEntity> inactiveAssignments,  List<ProcessEntity> activeProcesses,  String? errorMessage)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _WorkerAssignmentsState() when $default != null:
-return $default(_that.status,_that.worker,_that.assignments,_that.activeProcesses,_that.errorMessage);case _:
+return $default(_that.status,_that.worker,_that.assignments,_that.inactiveAssignments,_that.activeProcesses,_that.errorMessage);case _:
   return orElse();
 
 }
@@ -190,10 +191,10 @@ return $default(_that.status,_that.worker,_that.assignments,_that.activeProcesse
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( WorkerAssignmentsStatus status,  WorkerEntity? worker,  List<WorkerProcessAssignmentEntity> assignments,  List<ProcessEntity> activeProcesses,  String? errorMessage)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( WorkerAssignmentsStatus status,  WorkerEntity? worker,  List<WorkerProcessAssignmentEntity> assignments,  List<WorkerProcessAssignmentEntity> inactiveAssignments,  List<ProcessEntity> activeProcesses,  String? errorMessage)  $default,) {final _that = this;
 switch (_that) {
 case _WorkerAssignmentsState():
-return $default(_that.status,_that.worker,_that.assignments,_that.activeProcesses,_that.errorMessage);}
+return $default(_that.status,_that.worker,_that.assignments,_that.inactiveAssignments,_that.activeProcesses,_that.errorMessage);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -207,10 +208,10 @@ return $default(_that.status,_that.worker,_that.assignments,_that.activeProcesse
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( WorkerAssignmentsStatus status,  WorkerEntity? worker,  List<WorkerProcessAssignmentEntity> assignments,  List<ProcessEntity> activeProcesses,  String? errorMessage)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( WorkerAssignmentsStatus status,  WorkerEntity? worker,  List<WorkerProcessAssignmentEntity> assignments,  List<WorkerProcessAssignmentEntity> inactiveAssignments,  List<ProcessEntity> activeProcesses,  String? errorMessage)?  $default,) {final _that = this;
 switch (_that) {
 case _WorkerAssignmentsState() when $default != null:
-return $default(_that.status,_that.worker,_that.assignments,_that.activeProcesses,_that.errorMessage);case _:
+return $default(_that.status,_that.worker,_that.assignments,_that.inactiveAssignments,_that.activeProcesses,_that.errorMessage);case _:
   return null;
 
 }
@@ -222,7 +223,7 @@ return $default(_that.status,_that.worker,_that.assignments,_that.activeProcesse
 
 
 class _WorkerAssignmentsState implements WorkerAssignmentsState {
-  const _WorkerAssignmentsState({this.status = WorkerAssignmentsStatus.initial, this.worker,  List<WorkerProcessAssignmentEntity> assignments = const [],  List<ProcessEntity> activeProcesses = const [], this.errorMessage}): _assignments = assignments,_activeProcesses = activeProcesses;
+  const _WorkerAssignmentsState({this.status = WorkerAssignmentsStatus.initial, this.worker,  List<WorkerProcessAssignmentEntity> assignments = const [],  List<WorkerProcessAssignmentEntity> inactiveAssignments = const [],  List<ProcessEntity> activeProcesses = const [], this.errorMessage}): _assignments = assignments,_inactiveAssignments = inactiveAssignments,_activeProcesses = activeProcesses;
   
 
 @override@JsonKey() final  WorkerAssignmentsStatus status;
@@ -232,6 +233,13 @@ class _WorkerAssignmentsState implements WorkerAssignmentsState {
   if (_assignments is EqualUnmodifiableListView) return _assignments;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableListView(_assignments);
+}
+
+ final  List<WorkerProcessAssignmentEntity> _inactiveAssignments;
+@override@JsonKey() List<WorkerProcessAssignmentEntity> get inactiveAssignments {
+  if (_inactiveAssignments is EqualUnmodifiableListView) return _inactiveAssignments;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_inactiveAssignments);
 }
 
  final  List<ProcessEntity> _activeProcesses;
@@ -253,18 +261,18 @@ _$WorkerAssignmentsStateCopyWith<_WorkerAssignmentsState> get copyWith => __$Wor
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _WorkerAssignmentsState&&(identical(other.status, status) || other.status == status)&&(identical(other.worker, worker) || other.worker == worker)&&const DeepCollectionEquality().equals(other.assignments, _assignments)&&const DeepCollectionEquality().equals(other.activeProcesses, _activeProcesses)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _WorkerAssignmentsState&&(identical(other.status, status) || other.status == status)&&(identical(other.worker, worker) || other.worker == worker)&&const DeepCollectionEquality().equals(other.assignments, _assignments)&&const DeepCollectionEquality().equals(other.inactiveAssignments, _inactiveAssignments)&&const DeepCollectionEquality().equals(other.activeProcesses, _activeProcesses)&&(identical(other.errorMessage, errorMessage) || other.errorMessage == errorMessage));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,status,worker,const DeepCollectionEquality().hash(_assignments),const DeepCollectionEquality().hash(_activeProcesses),errorMessage);
+    return Object.hash(runtimeType,status,worker,const DeepCollectionEquality().hash(_assignments),const DeepCollectionEquality().hash(_inactiveAssignments),const DeepCollectionEquality().hash(_activeProcesses),errorMessage);
 }
 
 @override
 String toString() {
-    return 'WorkerAssignmentsState(status: $status, worker: $worker, assignments: $assignments, activeProcesses: $activeProcesses, errorMessage: $errorMessage)';
+    return 'WorkerAssignmentsState(status: $status, worker: $worker, assignments: $assignments, inactiveAssignments: $inactiveAssignments, activeProcesses: $activeProcesses, errorMessage: $errorMessage)';
 }
 
 
@@ -275,7 +283,7 @@ abstract mixin class _$WorkerAssignmentsStateCopyWith<$Res> implements $WorkerAs
   factory _$WorkerAssignmentsStateCopyWith(_WorkerAssignmentsState value, $Res Function(_WorkerAssignmentsState) _then) = __$WorkerAssignmentsStateCopyWithImpl;
 @override @useResult
 $Res call({
- WorkerAssignmentsStatus status, WorkerEntity? worker, List<WorkerProcessAssignmentEntity> assignments, List<ProcessEntity> activeProcesses, String? errorMessage
+ WorkerAssignmentsStatus status, WorkerEntity? worker, List<WorkerProcessAssignmentEntity> assignments, List<WorkerProcessAssignmentEntity> inactiveAssignments, List<ProcessEntity> activeProcesses, String? errorMessage
 });
 
 
@@ -292,11 +300,12 @@ class __$WorkerAssignmentsStateCopyWithImpl<$Res>
 
 /// Create a copy of WorkerAssignmentsState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? worker = freezed,Object? assignments = null,Object? activeProcesses = null,Object? errorMessage = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? status = null,Object? worker = freezed,Object? assignments = null,Object? inactiveAssignments = null,Object? activeProcesses = null,Object? errorMessage = freezed,}) {
   return _then(_WorkerAssignmentsState(
 status: null == status ? _self.status : status // ignore: cast_nullable_to_non_nullable
 as WorkerAssignmentsStatus,worker: freezed == worker ? _self.worker : worker // ignore: cast_nullable_to_non_nullable
 as WorkerEntity?,assignments: null == assignments ? _self._assignments : assignments // ignore: cast_nullable_to_non_nullable
+as List<WorkerProcessAssignmentEntity>,inactiveAssignments: null == inactiveAssignments ? _self._inactiveAssignments : inactiveAssignments // ignore: cast_nullable_to_non_nullable
 as List<WorkerProcessAssignmentEntity>,activeProcesses: null == activeProcesses ? _self._activeProcesses : activeProcesses // ignore: cast_nullable_to_non_nullable
 as List<ProcessEntity>,errorMessage: freezed == errorMessage ? _self.errorMessage : errorMessage // ignore: cast_nullable_to_non_nullable
 as String?,

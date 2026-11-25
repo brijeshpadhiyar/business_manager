@@ -11,6 +11,7 @@ import 'package:business_manager/features/accounting/domain/entities/accounting_
 import 'package:business_manager/features/accounting/domain/repositories/accounting_repository.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Record Regular Payment, Advance Payment, or Advance Refund for a worker.
 final class PaymentFormPage extends StatefulWidget {
@@ -23,6 +24,14 @@ final class PaymentFormPage extends StatefulWidget {
 }
 
 final class _PaymentFormPageState extends State<PaymentFormPage> {
+  final _dirty = AppFormDirtyTracker();
+
+  /// setState for a user edit: also marks the form as unsaved.
+  void _edit(VoidCallback fn) {
+    _dirty.markDirty();
+    setState(fn);
+  }
+
   final _formKey = GlobalKey<FormState>();
   final _workerFieldKey = GlobalKey<FormFieldState<String>>();
   final _amountFieldKey = GlobalKey<FormFieldState<String>>();
@@ -53,11 +62,13 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
   @override
   void initState() {
     super.initState();
+    _dirty.watch([_amountCtrl, _refCtrl, _notesCtrl]);
     _load();
   }
 
   @override
   void dispose() {
+    _dirty.dispose();
     _amountCtrl.dispose();
     _refCtrl.dispose();
     _notesCtrl.dispose();
@@ -92,7 +103,10 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
       formKey: _formKey,
       orderedAnchors: [
         ValidatedFieldAnchor(fieldKey: _workerFieldKey),
-        ValidatedFieldAnchor(fieldKey: _amountFieldKey, focusNode: _amountFocus),
+        ValidatedFieldAnchor(
+          fieldKey: _amountFieldKey,
+          focusNode: _amountFocus,
+        ),
         ValidatedFieldAnchor(fieldKey: _refFieldKey, focusNode: _refFocus),
         ValidatedFieldAnchor(fieldKey: _notesFieldKey, focusNode: _notesFocus),
       ],
@@ -150,7 +164,7 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
       return AppScaffold(
         title: l10n.accountingRecordPaymentAction,
         body: AppEmptyState(
-          icon: Icons.people_outline_rounded,
+          icon: AppIcons.worker,
           title: l10n.workersEmptyTitle,
         ),
       );
@@ -161,168 +175,177 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
       orElse: () => _workers.first,
     );
 
-    return AppScaffold(
-      title: l10n.accountingRecordPaymentAction,
-      body: Form(
-        key: _formKey,
-        autovalidateMode: _submittedOnce
-            ? AutovalidateMode.onUserInteraction
-            : AutovalidateMode.disabled,
-        child: ListView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          children: [
-            AppCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  AppDropdown<String>(
-                    fieldKey: _workerFieldKey,
-                    label: l10n.workerNameLabel,
-                    value: _selectedWorkerId,
-                    items: _workers.map((w) => w.workerId).toList(),
-                    itemLabelBuilder: (id) =>
-                        _workers.firstWhere((w) => w.workerId == id).workerName,
-                    validator: (v) =>
-                        v == null ? l10n.validationRequired : null,
-                    onChanged: (v) => setState(() => _selectedWorkerId = v),
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Wrap(
-                    spacing: AppSpacing.sm,
-                    runSpacing: AppSpacing.xs,
-                    children: [
-                      AppStatusBadge(
-                        label:
-                            '${l10n.accountingOutstandingPayableLabel}: ${MoneyFormatter.formatPaise(selectedWorker.outstandingPayablePaise)}',
-                        tone: selectedWorker.outstandingPayablePaise > 0
-                            ? AppStatusTone.pending
-                            : AppStatusTone.good,
-                      ),
-                      if (selectedWorker.advanceCreditBalancePaise > 0)
+    return AppUnsavedChangesGuard.tracked(
+      tracker: _dirty,
+      child: AppScaffold(
+        title: l10n.accountingRecordPaymentAction,
+        contentWidth: AppContentWidth.narrow,
+        body: Form(
+          key: _formKey,
+          autovalidateMode: _submittedOnce
+              ? AutovalidateMode.onUserInteraction
+              : AutovalidateMode.disabled,
+          child: ListView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            children: [
+              AppCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    AppDropdown<String>(
+                      fieldKey: _workerFieldKey,
+                      label: l10n.workerNameLabel,
+                      value: _selectedWorkerId,
+                      items: _workers.map((w) => w.workerId).toList(),
+                      itemLabelBuilder: (id) => _workers
+                          .firstWhere((w) => w.workerId == id)
+                          .workerName,
+                      validator: (v) =>
+                          v == null ? l10n.validationRequired : null,
+                      onChanged: (v) => _edit(() => _selectedWorkerId = v),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    Wrap(
+                      spacing: AppSpacing.sm,
+                      runSpacing: AppSpacing.xs,
+                      children: [
                         AppStatusBadge(
                           label:
-                              '${l10n.accountingAdvanceCreditLabel}: ${MoneyFormatter.formatPaise(selectedWorker.advanceCreditBalancePaise)}',
-                          tone: AppStatusTone.info,
+                              '${l10n.accountingOutstandingPayableLabel}: ${MoneyFormatter.formatPaise(selectedWorker.outstandingPayablePaise)}',
+                          tone: selectedWorker.outstandingPayablePaise > 0
+                              ? AppStatusTone.pending
+                              : AppStatusTone.good,
                         ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppDropdown<PaymentType>(
-                    label: l10n.accountingPaymentTypeLabel,
-                    value: _paymentType,
-                    items: const [
-                      PaymentType.regular,
-                      PaymentType.advance,
-                      PaymentType.advanceRefund,
-                    ],
-                    itemLabelBuilder: (t) => switch (t) {
-                      PaymentType.regular => l10n.accountingPaymentTypeRegular,
-                      PaymentType.advance => l10n.accountingPaymentTypeAdvance,
-                      PaymentType.advanceRefund =>
-                        l10n.accountingPaymentTypeRefund,
-                      PaymentType.reversal => l10n.stockTypeReversal,
-                    },
-                    onChanged: (v) {
-                      if (v != null) setState(() => _paymentType = v);
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppTextField(
-                    fieldKey: _amountFieldKey,
-                    controller: _amountCtrl,
-                    focusNode: _amountFocus,
-                    label: l10n.accountingAmountLabel,
-                    prefixIcon: Icons.currency_rupee,
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
+                        if (selectedWorker.advanceCreditBalancePaise > 0)
+                          AppStatusBadge(
+                            label:
+                                '${l10n.accountingAdvanceCreditLabel}: ${MoneyFormatter.formatPaise(selectedWorker.advanceCreditBalancePaise)}',
+                            tone: AppStatusTone.info,
+                          ),
+                      ],
                     ),
-                    textInputAction: TextInputAction.next,
-                    onChanged: (_) {
-                      if (_submitError != null) {
-                        setState(() => _submitError = null);
-                      }
-                    },
-                    validator: ValidationLocalizer.wrap(
-                      l10n,
-                      (v) => AppValidators.amountValidator(v),
+                    const SizedBox(height: AppSpacing.md),
+                    AppDropdown<PaymentType>(
+                      label: l10n.accountingPaymentTypeLabel,
+                      value: _paymentType,
+                      items: const [
+                        PaymentType.regular,
+                        PaymentType.advance,
+                        PaymentType.advanceRefund,
+                      ],
+                      itemLabelBuilder: (t) => switch (t) {
+                        PaymentType.regular =>
+                          l10n.accountingPaymentTypeRegular,
+                        PaymentType.advance =>
+                          l10n.accountingPaymentTypeAdvance,
+                        PaymentType.advanceRefund =>
+                          l10n.accountingPaymentTypeRefund,
+                        PaymentType.reversal => l10n.stockTypeReversal,
+                      },
+                      onChanged: (v) {
+                        _dirty.markDirty();
+                        if (v != null) setState(() => _paymentType = v);
+                      },
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppDropdown<PaymentMode>(
-                    label: l10n.accountingPaymentModeLabel,
-                    value: _paymentMode,
-                    items: PaymentMode.values,
-                    itemLabelBuilder: (m) => switch (m) {
-                      PaymentMode.cash => l10n.accountingModeCash,
-                      PaymentMode.upi => l10n.accountingModeUpi,
-                      PaymentMode.bankTransfer => l10n.accountingModeBank,
-                      PaymentMode.cheque => l10n.accountingModeCheque,
-                      PaymentMode.other => l10n.accountingModeOther,
-                    },
-                    onChanged: (v) {
-                      if (v != null) setState(() => _paymentMode = v);
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppDatePicker(
-                    label: l10n.stockTransactionDateTimeLabel,
-                    selectedUtcMillis: _transactionAtUtc,
-                    includeTime: true,
-                    onDateSelectedUtcMillis: (utc) =>
-                        setState(() => _transactionAtUtc = utc),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppTextField(
-                    fieldKey: _refFieldKey,
-                    controller: _refCtrl,
-                    focusNode: _refFocus,
-                    label: l10n.accountingReferenceLabel,
-                    prefixIcon: Icons.receipt_outlined,
-                    textInputAction: TextInputAction.next,
-                    maxLength: ValidationLimits.maxShortNameLength,
-                    validator: ValidationLocalizer.wrap(
-                      l10n,
-                      (v) => AppValidators.maxLengthValidator(
-                        v,
-                        maxLength: ValidationLimits.maxShortNameLength,
+                    const SizedBox(height: AppSpacing.md),
+                    AppTextField(
+                      fieldKey: _amountFieldKey,
+                      controller: _amountCtrl,
+                      focusNode: _amountFocus,
+                      label: l10n.accountingAmountLabel,
+                      prefixIcon: AppIcons.rupee,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      textInputAction: TextInputAction.next,
+                      onChanged: (_) {
+                        if (_submitError != null) {
+                          setState(() => _submitError = null);
+                        }
+                      },
+                      validator: ValidationLocalizer.wrap(
+                        l10n,
+                        (v) => AppValidators.amountValidator(v),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppTextField(
-                    fieldKey: _notesFieldKey,
-                    controller: _notesCtrl,
-                    focusNode: _notesFocus,
-                    label: l10n.stockNotesLabel,
-                    maxLines: 2,
-                    maxLength: ValidationLimits.maxNotesLength,
-                    validator: ValidationLocalizer.wrap(
-                      l10n,
-                      (v) => AppValidators.maxLengthValidator(
-                        v,
-                        maxLength: ValidationLimits.maxNotesLength,
+                    const SizedBox(height: AppSpacing.md),
+                    AppDropdown<PaymentMode>(
+                      label: l10n.accountingPaymentModeLabel,
+                      value: _paymentMode,
+                      items: PaymentMode.values,
+                      itemLabelBuilder: (m) => switch (m) {
+                        PaymentMode.cash => l10n.accountingModeCash,
+                        PaymentMode.upi => l10n.accountingModeUpi,
+                        PaymentMode.bankTransfer => l10n.accountingModeBank,
+                        PaymentMode.cheque => l10n.accountingModeCheque,
+                        PaymentMode.other => l10n.accountingModeOther,
+                      },
+                      onChanged: (v) {
+                        _dirty.markDirty();
+                        if (v != null) setState(() => _paymentMode = v);
+                      },
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    AppDatePicker(
+                      label: l10n.stockTransactionDateTimeLabel,
+                      selectedUtcMillis: _transactionAtUtc,
+                      includeTime: true,
+                      onDateSelectedUtcMillis: (utc) =>
+                          _edit(() => _transactionAtUtc = utc),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    AppTextField(
+                      fieldKey: _refFieldKey,
+                      controller: _refCtrl,
+                      focusNode: _refFocus,
+                      label: l10n.accountingReferenceLabel,
+                      prefixIcon: AppIcons.receipt,
+                      textInputAction: TextInputAction.next,
+                      maxLength: ValidationLimits.maxShortNameLength,
+                      validator: ValidationLocalizer.wrap(
+                        l10n,
+                        (v) => AppValidators.maxLengthValidator(
+                          v,
+                          maxLength: ValidationLimits.maxShortNameLength,
+                        ),
                       ),
                     ),
-                  ),
-                  if (_submitError != null) ...[
-                    const SizedBox(height: AppSpacing.sm),
-                    AppText(
-                      _submitError!,
-                      color: Theme.of(context).colorScheme.error,
+                    const SizedBox(height: AppSpacing.md),
+                    AppTextField(
+                      fieldKey: _notesFieldKey,
+                      controller: _notesCtrl,
+                      focusNode: _notesFocus,
+                      label: l10n.stockNotesLabel,
+                      maxLines: 2,
+                      maxLength: ValidationLimits.maxNotesLength,
+                      validator: ValidationLocalizer.wrap(
+                        l10n,
+                        (v) => AppValidators.maxLengthValidator(
+                          v,
+                          maxLength: ValidationLimits.maxNotesLength,
+                        ),
+                      ),
+                    ),
+                    if (_submitError != null) ...[
+                      const SizedBox(height: AppSpacing.sm),
+                      AppText(
+                        _submitError!,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ],
+                    const SizedBox(height: AppSpacing.lg),
+                    AppButton(
+                      label: l10n.actionSave,
+                      icon: AppIcons.confirm,
+                      isExpanded: true,
+                      isLoading: _saving,
+                      onPressed: _submit,
                     ),
                   ],
-                  const SizedBox(height: AppSpacing.lg),
-                  AppButton(
-                    label: l10n.actionSave,
-                    icon: Icons.check_rounded,
-                    isExpanded: true,
-                    isLoading: _saving,
-                    onPressed: _submit,
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

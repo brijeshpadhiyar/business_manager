@@ -9,6 +9,7 @@ import 'package:business_manager/core/database/connection/database_connection_na
 import 'package:business_manager/core/database/migrations/database_migration_manager.dart';
 import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
+import 'package:business_manager/core/utils/app_date_time_formatter.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/features/backup/domain/entities/backup_entities.dart';
 import 'package:business_manager/features/backup/domain/services/backup_restore_service.dart';
@@ -16,21 +17,20 @@ import 'package:business_manager/features/notifications/data/services/notificati
 import 'package:crypto/crypto.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
-import 'package:injectable/injectable.dart';
+import 'package:business_manager/core/platform/app_data_directory.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 import 'package:sqlite3/sqlite3.dart' as sqlite;
 
 /// Native (Android, Windows, macOS, Linux, iOS) implementation of StitchFlow's
 /// WAL-safe backup, raw `.sqlite` export, and atomic fail-safe `.zip` restore.
-@LazySingleton(as: BackupRestoreService)
 final class NativeBackupRestoreService implements BackupRestoreService {
   NativeBackupRestoreService(
     this._db,
     this._config,
     this._idGenerator, {
-    @ignoreParam this.baseDirectoryOverride,
-    @ignoreParam this.tempDirectoryOverride,
+    this.baseDirectoryOverride,
+    this.tempDirectoryOverride,
   });
 
   static String get appVersionString =>
@@ -43,7 +43,7 @@ final class NativeBackupRestoreService implements BackupRestoreService {
   final Directory? tempDirectoryOverride;
 
   Future<Directory> _resolveBaseDir() async {
-    return baseDirectoryOverride ?? await getApplicationDocumentsDirectory();
+    return baseDirectoryOverride ?? await resolveAppDataDirectory();
   }
 
   Future<Directory> _resolveTempDir() async {
@@ -297,11 +297,8 @@ final class NativeBackupRestoreService implements BackupRestoreService {
         appVersion: appVersionString,
         flavor: _config.flavor.name,
         schemaVersion: DatabaseMigrationManager.currentSchemaVersion,
-        createdAtUtc: DateTime.fromMillisecondsSinceEpoch(
-          nowUtc,
-          isUtc: true,
-        ).toIso8601String(),
-        createdAtIst: IstDateTimeHelper.formatIstIsoDateTime(nowUtc),
+        createdAtUtc: AppDateTimeFormatter.formatUtcIso8601(nowUtc),
+        createdAtIst: AppDateTimeFormatter.formatIsoDateTimeIst(nowUtc),
         databaseSha256: dbSha256,
         databaseSizeBytes: dbSize,
         attachmentsCount: attachmentItems.length,
