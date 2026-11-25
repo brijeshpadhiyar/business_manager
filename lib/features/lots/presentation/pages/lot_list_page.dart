@@ -11,6 +11,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 final class LotListPage extends StatelessWidget {
   const LotListPage({super.key, this.refreshSignal});
@@ -165,7 +166,7 @@ final class _LotListViewState extends State<_LotListView> {
           slivers = [
             SliverToBoxAdapter(
               child: AppEmptyState(
-                icon: Icons.inventory_2_outlined,
+                icon: AppIcons.lot,
                 title: l10n.lotsEmptyTitle,
                 subtitle: l10n.lotsEmptySubtitle,
                 actionLabel: l10n.lotCreateAction,
@@ -243,7 +244,7 @@ final class _LotListViewState extends State<_LotListView> {
                     ),
                     _statusBadge(ctx, lot.status),
                     const SizedBox(width: AppSpacing.xs),
-                    const Icon(Icons.chevron_right),
+                    const Icon(AppIcons.chevronRight),
                   ],
                 ),
               ),
@@ -254,7 +255,7 @@ final class _LotListViewState extends State<_LotListView> {
         return AppScaffold(
           // Main action: floating button on phones, toolbar button on wider screens.
           primaryAction: AppPrimaryAction(
-            icon: Icons.add,
+            icon: AppIcons.add,
             label: l10n.lotCreateAction,
             onPressed: () => _openCreateLotPage(context),
           ),
@@ -268,7 +269,7 @@ final class _LotListViewState extends State<_LotListView> {
             expandedHeight: 164,
             actions: [
               AppIconButton(
-                icon: Icons.palette_outlined,
+                icon: AppIcons.designs,
                 tooltip: l10n.navDesignsColours,
                 onPressed: () => context.push(RoutePaths.designsColours),
               ),

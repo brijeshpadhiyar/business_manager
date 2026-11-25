@@ -10,6 +10,7 @@ import 'package:business_manager/features/production_history/presentation/bloc/w
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Screen 6: Worker-Wise Production History Directory.
 ///
@@ -46,7 +47,7 @@ final class _WorkerProductionHistoryView extends StatelessWidget {
           contentWidth: AppContentWidth.wide,
           actions: [
             AppIconButton(
-              icon: Icons.refresh_rounded,
+              icon: AppIcons.refresh,
               tooltip: l10n.actionRetry,
               onPressed: () => cubit.loadAll(),
             ),
@@ -129,7 +130,7 @@ final class _WorkerProductionHistoryView extends StatelessWidget {
         const SizedBox(height: AppSpacing.md),
         if (state.profiles.isEmpty)
           AppEmptyState(
-            icon: Icons.people_outline_rounded,
+            icon: AppIcons.worker,
             title: l10n.prodHistoryWorkerHistoryTitle,
           )
         else

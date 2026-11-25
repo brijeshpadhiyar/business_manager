@@ -3,6 +3,7 @@ import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Filter controls that stay out of the way on phones.
 ///
@@ -58,8 +59,8 @@ final class _AppCollapsibleFiltersState extends State<AppCollapsibleFilters> {
           child: FilterChip(
             avatar: Icon(
               _expanded
-                  ? Icons.expand_less_rounded
-                  : (widget.icon ?? Icons.tune_rounded),
+                  ? AppIcons.expandLess
+                  : (widget.icon ?? AppIcons.filter),
               size: 18,
             ),
             label: Text(label),

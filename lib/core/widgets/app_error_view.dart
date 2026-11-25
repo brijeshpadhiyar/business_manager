@@ -2,6 +2,7 @@ import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/widgets/app_button.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Standardized error state view with tonal error halo and retry action.
 final class AppErrorView extends StatelessWidget {
@@ -40,7 +41,7 @@ final class AppErrorView extends StatelessWidget {
                   borderRadius: AppRadius.fullBorder,
                 ),
                 child: Icon(
-                  Icons.error_outline_rounded,
+                  AppIcons.error,
                   size: 32,
                   color: colorScheme.error,
                 ),
@@ -67,7 +68,7 @@ final class AppErrorView extends StatelessWidget {
                 const SizedBox(height: AppSpacing.lg),
                 AppButton(
                   label: retryLabel!,
-                  icon: Icons.refresh_rounded,
+                  icon: AppIcons.refresh,
                   variant: AppButtonVariant.outlined,
                   onPressed: onRetry,
                 ),

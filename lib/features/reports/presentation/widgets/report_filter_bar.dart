@@ -8,6 +8,7 @@ import 'package:business_manager/features/reports/domain/entities/report_filter.
 import 'package:business_manager/features/reports/presentation/bloc/reports_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Compact IST Date Presets + expandable dimension filter bar (Worker, Process,
 /// cascading Lot -> Design -> Colour, custom date range, and debounced search).
@@ -94,7 +95,7 @@ final class _ReportFilterBarState extends State<ReportFilterBar> {
                 child: AppTextField(
                   controller: widget.searchController,
                   label: l10n.reportsSearchHint,
-                  prefixIcon: Icons.search_rounded,
+                  prefixIcon: AppIcons.search,
                   maxLength: ValidationLimits.maxSearchLength,
                   onChanged: cubit.updateSearchQuery,
                 ),
@@ -103,8 +104,8 @@ final class _ReportFilterBarState extends State<ReportFilterBar> {
               FilterChip(
                 avatar: Icon(
                   _expanded
-                      ? Icons.filter_list_off_rounded
-                      : Icons.tune_rounded,
+                      ? AppIcons.clearFilter
+                      : AppIcons.filter,
                   size: 18,
                 ),
                 label: Text(l10n.reportFiltersButton),

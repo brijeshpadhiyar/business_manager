@@ -6,6 +6,7 @@ import 'package:business_manager/features/security/presentation/bloc/app_lock_cu
 import 'package:business_manager/features/security/presentation/widgets/pin_keypad.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Reusable authentication gate for sensitive workshop operations:
 /// - Restore from Backup (PIN or Biometric)
@@ -148,7 +149,7 @@ final class _SecurityReauthContentState extends State<_SecurityReauthContent> {
 
         return AppDialog(
           title: widget.title,
-          icon: Icons.lock_outline_rounded,
+          icon: AppIcons.lock,
           cancelLabel: _verifying ? null : l10n.actionCancel,
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -167,7 +168,7 @@ final class _SecurityReauthContentState extends State<_SecurityReauthContent> {
                         )
                       : _errorText!,
                   tone: AppStatusTone.damaged,
-                  icon: Icons.error_outline_rounded,
+                  icon: AppIcons.error,
                 ),
                 const SizedBox(height: AppSpacing.sm),
               ],

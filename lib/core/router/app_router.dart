@@ -57,6 +57,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 const List<String> _primaryTabRoutes = [
   RoutePaths.home,
@@ -765,55 +766,55 @@ final class StitchFlowShellScaffold extends StatelessWidget {
           (
             id: 'productionHistory',
             label: l10n.navProductionHistory,
-            icon: Icons.history_rounded,
+            icon: AppIcons.productionHistory,
             route: RoutePaths.productionHistory,
           ),
           (
             id: 'inspectionQueue',
             label: l10n.navInspectionQueue,
-            icon: Icons.fact_check_outlined,
+            icon: AppIcons.qcInspect,
             route: RoutePaths.inspectionQueue,
           ),
           (
             id: 'processHistory',
             label: l10n.navProcessHistory,
-            icon: Icons.timeline_rounded,
+            icon: AppIcons.processHistory,
             route: RoutePaths.processProductionHistory,
           ),
           (
             id: 'designsColours',
             label: l10n.navDesignsColours,
-            icon: Icons.palette_outlined,
+            icon: AppIcons.designs,
             route: RoutePaths.designsColours,
           ),
           (
             id: 'processes',
             label: l10n.navProcesses,
-            icon: Icons.precision_manufacturing_outlined,
+            icon: AppIcons.process,
             route: RoutePaths.processes,
           ),
           (
             id: 'inventory',
             label: l10n.navInventory,
-            icon: Icons.bar_chart_outlined,
+            icon: AppIcons.inventory,
             route: RoutePaths.inventory,
           ),
           (
             id: 'accounting',
             label: l10n.navAccounting,
-            icon: Icons.account_balance_wallet_outlined,
+            icon: AppIcons.accounting,
             route: RoutePaths.accounting,
           ),
           (
             id: 'reports',
             label: l10n.navReports,
-            icon: Icons.analytics_outlined,
+            icon: AppIcons.reports,
             route: RoutePaths.reports,
           ),
           (
             id: 'help',
             label: l10n.settingsHelpTitle,
-            icon: Icons.menu_book_outlined,
+            icon: AppIcons.guide,
             route: RoutePaths.settingsHelp,
           ),
         ];
@@ -854,7 +855,7 @@ final class StitchFlowShellScaffold extends StatelessWidget {
         // toolbar never overflows at 320dp.
         compactActions: [
           AppIconButton(
-            icon: Icons.search_rounded,
+            icon: AppIcons.search,
             tooltip: l10n.uxSearchTooltip,
             onPressed: () => showGlobalSearch(context),
           ),
@@ -862,7 +863,7 @@ final class StitchFlowShellScaffold extends StatelessWidget {
             builder: (context, lockState) {
               return PopupMenuButton<VoidCallback>(
                 tooltip: MaterialLocalizations.of(context).showMenuTooltip,
-                icon: const Icon(Icons.more_vert_rounded),
+                icon: const Icon(AppIcons.more),
                 onSelected: (action) => action(),
                 itemBuilder: (_) => [
                   // Push (not go) so the system back button returns to the
@@ -884,7 +885,7 @@ final class StitchFlowShellScaffold extends StatelessWidget {
                       value: () => context.read<AppLockCubit>().lockNow(),
                       child: ListTile(
                         contentPadding: EdgeInsets.zero,
-                        leading: const Icon(Icons.lock_outline_rounded),
+                        leading: const Icon(AppIcons.lock),
                         title: Text(l10n.securityLockNowAction),
                       ),
                     ),
@@ -896,7 +897,7 @@ final class StitchFlowShellScaffold extends StatelessWidget {
         ],
         actions: [
           AppIconButton(
-            icon: Icons.search_rounded,
+            icon: AppIcons.search,
             tooltip: l10n.uxSearchTooltip,
             onPressed: () => showGlobalSearch(context),
           ),
@@ -904,29 +905,29 @@ final class StitchFlowShellScaffold extends StatelessWidget {
             builder: (context, lockState) {
               if (!lockState.isPinEnabled) return const SizedBox.shrink();
               return AppIconButton(
-                icon: Icons.lock_outline_rounded,
+                icon: AppIcons.lock,
                 tooltip: l10n.securityLockNowAction,
                 onPressed: () => context.read<AppLockCubit>().lockNow(),
               );
             },
           ),
           AppIconButton(
-            icon: Icons.history_rounded,
+            icon: AppIcons.productionHistory,
             tooltip: l10n.navProductionHistory,
             onPressed: () => context.push(RoutePaths.productionHistory),
           ),
           AppIconButton(
-            icon: Icons.account_balance_wallet_outlined,
+            icon: AppIcons.accounting,
             tooltip: l10n.navAccounting,
             onPressed: () => context.push(RoutePaths.accounting),
           ),
           AppIconButton(
-            icon: Icons.analytics_outlined,
+            icon: AppIcons.reports,
             tooltip: l10n.navReports,
             onPressed: () => context.push(RoutePaths.reports),
           ),
           AppIconButton(
-            icon: Icons.help_outline_rounded,
+            icon: AppIcons.help,
             tooltip: l10n.settingsHelpTitle,
             onPressed: () => context.push(RoutePaths.settingsHelp),
           ),
@@ -935,28 +936,28 @@ final class StitchFlowShellScaffold extends StatelessWidget {
         destinations: [
           ResponsiveNavDestination(
             label: l10n.navDashboard,
-            icon: Icons.dashboard_outlined,
-            selectedIcon: Icons.dashboard,
+            icon: AppIcons.dashboard,
+            selectedIcon: AppIcons.dashboardSelected,
           ),
           ResponsiveNavDestination(
             label: l10n.navLots,
-            icon: Icons.inventory_2_outlined,
-            selectedIcon: Icons.inventory_2,
+            icon: AppIcons.lot,
+            selectedIcon: AppIcons.lotsSelected,
           ),
           ResponsiveNavDestination(
             label: l10n.navStockShort,
-            icon: Icons.swap_horiz_rounded,
-            selectedIcon: Icons.swap_horiz_rounded,
+            icon: AppIcons.stockMovements,
+            selectedIcon: AppIcons.stockMovements,
           ),
           ResponsiveNavDestination(
             label: l10n.navWorkers,
-            icon: Icons.people_outline,
-            selectedIcon: Icons.people,
+            icon: AppIcons.workers,
+            selectedIcon: AppIcons.workersSelected,
           ),
           ResponsiveNavDestination(
             label: l10n.navSettings,
-            icon: Icons.settings_outlined,
-            selectedIcon: Icons.settings,
+            icon: AppIcons.settings,
+            selectedIcon: AppIcons.settingsSelected,
           ),
         ],
         body: child,

@@ -12,6 +12,7 @@ import 'package:business_manager/features/accounting/presentation/bloc/accountin
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 final class AccountingOverviewPage extends StatelessWidget {
   const AccountingOverviewPage({super.key});
@@ -69,7 +70,7 @@ final class _AccountingOverviewViewState
       context,
       builder: (ctx) => AppDialog(
         title: l10n.accountingReversePaymentTitle,
-        icon: Icons.warning_amber_rounded,
+        icon: AppIcons.warning,
         isDestructive: true,
         cancelLabel: l10n.actionCancel,
         confirmLabel: l10n.stockReverseAction,
@@ -199,7 +200,7 @@ final class _AccountingOverviewViewState
                         label: l10n.accountingAdvanceCreditLabel,
                         value: totalAdvanceCredit,
                         isCurrencyPaise: true,
-                        icon: Icons.trending_up_rounded,
+                        icon: AppIcons.trend,
                         tone: AppStatusTone.info,
                       ),
                       const SizedBox(height: AppSpacing.sm),
@@ -253,7 +254,7 @@ final class _AccountingOverviewViewState
           onRefresh: () => context.read<AccountingOverviewCubit>().load(),
           floatingActionButton: FloatingActionButton.extended(
             onPressed: _openRecordPayment,
-            icon: const Icon(Icons.payments_outlined),
+            icon: const Icon(AppIcons.payment),
             label: Text(l10n.accountingRecordPaymentAction),
           ),
           header: AppCollapsibleHeader(
@@ -261,7 +262,7 @@ final class _AccountingOverviewViewState
             expandedHeight: 176,
             actions: [
               AppIconButton(
-                icon: Icons.refresh_rounded,
+                icon: AppIcons.refresh,
                 tooltip: l10n.actionRetry,
                 onPressed: () => context.read<AccountingOverviewCubit>().load(),
               ),
@@ -331,7 +332,7 @@ final class _AccountingOverviewViewState
     if (items.isEmpty) {
       return SliverToBoxAdapter(
         child: AppEmptyState(
-          icon: Icons.people_outline_rounded,
+          icon: AppIcons.worker,
           title: l10n.workersEmptyTitle,
           subtitle: l10n.workersEmptySubtitle,
         ),
@@ -443,7 +444,7 @@ final class _AccountingOverviewViewState
     if (payments.isEmpty) {
       return SliverToBoxAdapter(
         child: AppEmptyState(
-          icon: Icons.payments_outlined,
+          icon: AppIcons.payment,
           title: l10n.accountingEmptyLedgerTitle,
           subtitle: l10n.accountingEmptyLedgerSubtitle,
           actionLabel: l10n.accountingRecordPaymentAction,
@@ -536,7 +537,7 @@ final class _AccountingOverviewViewState
     if (entries.isEmpty) {
       return SliverToBoxAdapter(
         child: AppEmptyState(
-          icon: Icons.work_history_outlined,
+          icon: AppIcons.workHistory,
           title: l10n.accountingEmptyLedgerTitle,
           subtitle: l10n.accountingEmptyLedgerSubtitle,
         ),

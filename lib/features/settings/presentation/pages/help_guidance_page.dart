@@ -6,6 +6,7 @@ import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/settings/domain/help_topics.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Searchable bilingual Help & Guidance hub listing all 15 practical workshop
 /// instructions without cluttering the main Settings screen.
@@ -43,10 +44,13 @@ final class _HelpGuidancePageState extends State<HelpGuidancePage> {
           AppTextField(
             controller: _searchCtrl,
             label: l10n.helpSearchHint,
-            prefixIcon: Icons.search_rounded,
+            prefixIcon: AppIcons.search,
             suffixIcon: _query.isNotEmpty
                 ? IconButton(
-                    icon: const Icon(Icons.close_rounded, size: 18),
+                    tooltip: MaterialLocalizations.of(
+                      context,
+                    ).deleteButtonTooltip,
+                    icon: const Icon(AppIcons.close, size: 18),
                     onPressed: () {
                       _searchCtrl.clear();
                       setState(() => _query = '');
@@ -59,7 +63,7 @@ final class _HelpGuidancePageState extends State<HelpGuidancePage> {
           Expanded(
             child: filtered.isEmpty
                 ? AppEmptyState(
-                    icon: Icons.help_outline_rounded,
+                    icon: AppIcons.help,
                     title: l10n.helpNoResults,
                   )
                 : ListView.separated(
@@ -113,7 +117,7 @@ final class _HelpGuidancePageState extends State<HelpGuidancePage> {
                             ),
                             const SizedBox(width: AppSpacing.xs),
                             Icon(
-                              Icons.chevron_right_rounded,
+                              AppIcons.chevronRight,
                               color: colorScheme.onSurfaceVariant,
                             ),
                           ],
@@ -146,7 +150,7 @@ final class HelpTopicDetailPage extends StatelessWidget {
       return AppScaffold(
         title: l10n.settingsHelpTitle,
         body: AppEmptyState(
-          icon: Icons.help_outline_rounded,
+          icon: AppIcons.help,
           title: l10n.helpNoResults,
         ),
       );
@@ -240,7 +244,7 @@ final class HelpTopicDetailPage extends StatelessWidget {
                 Row(
                   children: [
                     Icon(
-                      Icons.lightbulb_outline_rounded,
+                      AppIcons.tip,
                       size: 18,
                       color: colorScheme.secondary,
                     ),

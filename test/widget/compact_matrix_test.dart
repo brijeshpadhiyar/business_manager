@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:business_manager/app.dart';
 import 'package:business_manager/core/config/app_config.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 import 'package:business_manager/core/database/app_database.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/locale_cubit.dart';
@@ -250,12 +251,12 @@ void main() {
     await tester.pumpWidget(BusinessManagerApp(config: AppConfig.dev()));
     await settle(tester);
 
-    expect(find.byIcon(Icons.search_rounded), findsWidgets);
-    expect(find.byIcon(Icons.more_vert_rounded), findsOneWidget);
+    expect(find.byIcon(AppIcons.search), findsWidgets);
+    expect(find.byIcon(AppIcons.more), findsOneWidget);
     // The desktop/tablet icon row (e.g. the Reports icon) is not shown.
-    expect(find.byIcon(Icons.analytics_outlined), findsNothing);
+    expect(find.byIcon(AppIcons.reports), findsNothing);
 
-    await tester.tap(find.byIcon(Icons.more_vert_rounded));
+    await tester.tap(find.byIcon(AppIcons.more));
     await settle(tester);
     expect(find.text('Reports'), findsWidgets);
     expect(find.textContaining('Inspection'), findsWidgets);
@@ -273,11 +274,11 @@ void main() {
     final router = GoRouter.of(tester.element(find.byType(Scaffold).first));
     router.go(RoutePaths.reports);
     await settle(tester);
-    expect(find.byIcon(Icons.home_outlined), findsOneWidget);
+    expect(find.byIcon(AppIcons.home), findsOneWidget);
 
-    await tester.tap(find.byIcon(Icons.home_outlined));
+    await tester.tap(find.byIcon(AppIcons.home));
     await settle(tester);
-    expect(find.byIcon(Icons.more_vert_rounded), findsOneWidget);
+    expect(find.byIcon(AppIcons.more), findsOneWidget);
   });
 
   group('System back button never closes the app unexpectedly', () {
@@ -295,7 +296,7 @@ void main() {
 
       router.go(RoutePaths.lots);
       await settle(tester);
-      await tester.tap(find.byIcon(Icons.more_vert_rounded));
+      await tester.tap(find.byIcon(AppIcons.more));
       await settle(tester);
       await tester.ensureVisible(find.text('Reports').last);
       await settle(tester);

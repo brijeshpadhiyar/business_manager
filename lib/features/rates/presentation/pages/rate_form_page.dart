@@ -11,6 +11,7 @@ import 'package:business_manager/features/processes/domain/repositories/process_
 import 'package:business_manager/features/rates/domain/repositories/rate_repository.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Add a new historical per-piece rate, or safely edit an unreferenced rate.
 final class RateFormPage extends StatefulWidget {
@@ -326,7 +327,7 @@ final class _RateFormPageState extends State<RateFormPage> {
                       controller: _rateCtrl,
                       focusNode: _rateFocus,
                       label: l10n.ratesAmountLabel,
-                      prefixIcon: Icons.currency_rupee,
+                      prefixIcon: AppIcons.rupee,
                       enabled: !_isLockedByHistory,
                       keyboardType: const TextInputType.numberWithOptions(
                         decimal: true,
@@ -406,7 +407,7 @@ final class _RateFormPageState extends State<RateFormPage> {
                     const SizedBox(height: AppSpacing.lg),
                     AppButton(
                       label: l10n.actionSave,
-                      icon: Icons.check,
+                      icon: AppIcons.confirm,
                       isExpanded: true,
                       isLoading: _isSaving,
                       onPressed: _isLockedByHistory ? null : _save,

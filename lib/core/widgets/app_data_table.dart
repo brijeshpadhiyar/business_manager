@@ -6,6 +6,7 @@ import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/widgets/app_card.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 final class AppDataColumn {
   const AppDataColumn({
@@ -357,7 +358,7 @@ final class _AppDataTableState<T> extends State<AppDataTable<T>> {
                   minWidth: AppSizing.touchTargetMin,
                   minHeight: AppSizing.touchTargetMin,
                 ),
-                icon: const Icon(Icons.chevron_left_rounded),
+                icon: const Icon(AppIcons.chevronLeft),
                 onPressed: _pageIndex > 0
                     ? () => setState(() => _pageIndex--)
                     : null,
@@ -376,7 +377,7 @@ final class _AppDataTableState<T> extends State<AppDataTable<T>> {
                   minWidth: AppSizing.touchTargetMin,
                   minHeight: AppSizing.touchTargetMin,
                 ),
-                icon: const Icon(Icons.chevron_right_rounded),
+                icon: const Icon(AppIcons.chevronRight),
                 onPressed: _pageIndex + 1 < _totalPages
                     ? () => setState(() => _pageIndex++)
                     : null,

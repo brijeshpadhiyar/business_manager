@@ -13,6 +13,7 @@ import 'package:business_manager/features/stock_movements/domain/entities/stock_
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// StitchFlow V1.3 — Dedicated Colour Detail Screen.
 ///
@@ -87,7 +88,7 @@ final class _LotColourDetailView extends StatelessWidget {
           title: sku != null ? '${sku.colourName} Details' : 'Colour Details',
           actions: [
             AppIconButton(
-              icon: Icons.refresh_rounded,
+              icon: AppIcons.refresh,
               tooltip: 'Refresh',
               onPressed: () => context.read<JobRoutingCubit>().load(lotId),
             ),
@@ -105,7 +106,7 @@ final class _LotColourDetailView extends StatelessWidget {
             JobRoutingStatus.loaded =>
               sku == null
                   ? const AppEmptyState(
-                      icon: Icons.palette_outlined,
+                      icon: AppIcons.colour,
                       title: 'Colour Variant Not Found',
                       subtitle:
                           'This colour variant may have been removed from the lot.',
@@ -219,7 +220,7 @@ final class _LotColourDetailView extends StatelessWidget {
                             ),
                           ),
                           child: Icon(
-                            Icons.palette_rounded,
+                            AppIcons.colour,
                             color: onSwatch,
                             size: 28,
                           ),
@@ -298,7 +299,7 @@ final class _LotColourDetailView extends StatelessWidget {
                         AppButton(
                           label:
                               'Manage Processes for ${sku.colourName}',
-                          icon: Icons.account_tree_outlined,
+                          icon: AppIcons.routeTransfer,
                           isExpanded: true,
                           onPressed: () => context.push(
                             RoutePaths.lotRouting(
@@ -332,7 +333,7 @@ final class _LotColourDetailView extends StatelessWidget {
                         label: 'Available (Factory)',
                         value: availableQty,
                         suffix: 'pcs',
-                        icon: Icons.warehouse_outlined,
+                        icon: AppIcons.factory,
                         tone: AppStatusTone.good,
                       ),
                     ),
@@ -342,7 +343,7 @@ final class _LotColourDetailView extends StatelessWidget {
                         label: 'Pending (Workers)',
                         value: pendingQty,
                         suffix: 'pcs',
-                        icon: Icons.pending_actions_rounded,
+                        icon: AppIcons.pending,
                         tone: pendingQty > 0
                             ? AppStatusTone.pending
                             : AppStatusTone.neutral,
@@ -354,7 +355,7 @@ final class _LotColourDetailView extends StatelessWidget {
                         label: 'Completed / Handed Over',
                         value: completedQty,
                         suffix: 'pcs',
-                        icon: Icons.check_circle_outline_rounded,
+                        icon: AppIcons.successOutline,
                         tone: completedQty > 0
                             ? AppStatusTone.good
                             : AppStatusTone.neutral,
@@ -366,7 +367,7 @@ final class _LotColourDetailView extends StatelessWidget {
                         label: 'Total Production Cost',
                         value: costSummary.totalNetCostPaise,
                         isCurrencyPaise: true,
-                        icon: Icons.currency_rupee_rounded,
+                        icon: AppIcons.rupee,
                         tone: AppStatusTone.info,
                       ),
                     ),

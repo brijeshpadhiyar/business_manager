@@ -11,6 +11,7 @@ import 'package:business_manager/features/production_history/presentation/bloc/p
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Screen 1: StitchFlow Production History Dashboard.
 ///
@@ -48,7 +49,7 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
           contentWidth: AppContentWidth.wide,
           actions: [
             AppIconButton(
-              icon: Icons.fact_check_outlined,
+              icon: AppIcons.qcInspect,
               tooltip: l10n.navInspectionQueue,
               onPressed: () async {
                 await context.push(RoutePaths.inspectionQueue);
@@ -56,7 +57,7 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
               },
             ),
             AppIconButton(
-              icon: Icons.refresh_rounded,
+              icon: AppIcons.refresh,
               tooltip: l10n.actionRetry,
               onPressed: () => cubit.load(),
             ),
@@ -102,7 +103,7 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
               AppButton(
                 label:
                     '${l10n.navInspectionQueue} (${data.pendingReturnsCount + data.openRejectionsCount})',
-                icon: Icons.fact_check_outlined,
+                icon: AppIcons.qcInspect,
                 onPressed: () async {
                   await context.push(RoutePaths.inspectionQueue);
                   if (context.mounted) await cubit.load();
@@ -110,21 +111,21 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
               ),
               AppButton(
                 label: l10n.navWorkerHistory,
-                icon: Icons.people_outline_rounded,
+                icon: AppIcons.worker,
                 variant: AppButtonVariant.secondary,
                 onPressed: () =>
                     context.push(RoutePaths.workerProductionHistory),
               ),
               AppButton(
                 label: l10n.navProcessHistory,
-                icon: Icons.precision_manufacturing_outlined,
+                icon: AppIcons.process,
                 variant: AppButtonVariant.secondary,
                 onPressed: () =>
                     context.push(RoutePaths.processProductionHistory),
               ),
               AppButton(
                 label: l10n.navReports,
-                icon: Icons.analytics_outlined,
+                icon: AppIcons.reports,
                 variant: AppButtonVariant.outlined,
                 onPressed: () => context.push(RoutePaths.reports),
               ),
@@ -150,7 +151,7 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
                       label: l10n.prodHistoryTotalAssigned,
                       value: data.totalAssignedQty,
                       suffix: l10n.piecesUnit,
-                      icon: Icons.outbox_rounded,
+                      icon: AppIcons.stockIssue,
                       tone: AppStatusTone.info,
                     ),
                   ),
@@ -160,7 +161,7 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
                       label: l10n.prodHistoryTotalAccepted,
                       value: data.totalAcceptedQty,
                       suffix: l10n.piecesUnit,
-                      icon: Icons.verified_outlined,
+                      icon: AppIcons.qcPassed,
                       tone: AppStatusTone.good,
                     ),
                   ),
@@ -170,7 +171,7 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
                       label: l10n.prodHistoryPendingInspection,
                       value: data.totalPendingInspectionQty,
                       suffix: l10n.piecesUnit,
-                      icon: Icons.fact_check_outlined,
+                      icon: AppIcons.qcInspect,
                       tone: data.totalPendingInspectionQty > 0
                           ? AppStatusTone.pending
                           : AppStatusTone.neutral,
@@ -183,7 +184,7 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
                       label: l10n.prodHistoryOutstandingWork,
                       value: data.totalOutstandingQty,
                       suffix: l10n.piecesUnit,
-                      icon: Icons.hourglass_bottom_rounded,
+                      icon: AppIcons.pending,
                       tone: data.totalOutstandingQty > 0
                           ? AppStatusTone.pending
                           : AppStatusTone.good,
@@ -195,7 +196,7 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
                       label: l10n.prodHistoryTotalRejected,
                       value: data.totalRejectedQty,
                       suffix: l10n.piecesUnit,
-                      icon: Icons.report_problem_outlined,
+                      icon: AppIcons.damaged,
                       tone: data.totalRejectedQty > 0
                           ? AppStatusTone.damaged
                           : AppStatusTone.neutral,
@@ -208,7 +209,7 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
                       label: l10n.prodHistoryTotalEarned,
                       value: data.totalEarnedPaise,
                       isCurrencyPaise: true,
-                      icon: Icons.work_outline_rounded,
+                      icon: AppIcons.work,
                       tone: AppStatusTone.good,
                     ),
                   ),
@@ -218,7 +219,7 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
                       label: l10n.prodHistoryTotalPaid,
                       value: data.totalPaidPaise,
                       isCurrencyPaise: true,
-                      icon: Icons.payments_outlined,
+                      icon: AppIcons.payment,
                       tone: AppStatusTone.info,
                     ),
                   ),
@@ -228,7 +229,7 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
                       label: l10n.prodHistoryOutstandingPayable,
                       value: data.totalOutstandingPayablePaise,
                       isCurrencyPaise: true,
-                      icon: Icons.account_balance_wallet_outlined,
+                      icon: AppIcons.accounting,
                       tone: data.totalOutstandingPayablePaise > 0
                           ? AppStatusTone.pending
                           : AppStatusTone.good,
@@ -421,7 +422,7 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
           const SizedBox(height: AppSpacing.sm),
           if (data.items.isEmpty)
             AppEmptyState(
-              icon: Icons.history_rounded,
+              icon: AppIcons.productionHistory,
               title: l10n.prodHistoryDashboardTitle,
               subtitle: l10n.prodHistoryDashboardSubtitle,
             )
@@ -439,7 +440,7 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
               children: [
                 AppButton(
                   label: 'Previous',
-                  icon: Icons.chevron_left_rounded,
+                  icon: AppIcons.chevronLeft,
                   variant: AppButtonVariant.outlined,
                   onPressed: data.page > 0 ? () => cubit.previousPage() : null,
                 ),
@@ -449,7 +450,7 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
                 ),
                 AppButton(
                   label: 'Next',
-                  icon: Icons.chevron_right_rounded,
+                  icon: AppIcons.chevronRight,
                   variant: AppButtonVariant.outlined,
                   onPressed: data.hasMore ? () => cubit.nextPage() : null,
                 ),

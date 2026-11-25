@@ -11,6 +11,7 @@ import 'package:business_manager/features/production_history/presentation/bloc/p
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Screen 7: Process-Wise Production History.
 ///
@@ -44,7 +45,7 @@ final class _ProcessHistoryView extends StatelessWidget {
           contentWidth: AppContentWidth.wide,
           actions: [
             AppIconButton(
-              icon: Icons.refresh_rounded,
+              icon: AppIcons.refresh,
               tooltip: l10n.actionRetry,
               onPressed: () => cubit.loadAll(),
             ),
@@ -220,7 +221,7 @@ final class _ProcessHistoryView extends StatelessWidget {
         const SizedBox(height: AppSpacing.md),
         if (state.processes.isEmpty)
           AppEmptyState(
-            icon: Icons.precision_manufacturing_outlined,
+            icon: AppIcons.process,
             title: l10n.prodHistoryProcessHistoryTitle,
           )
         else

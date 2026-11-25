@@ -6,6 +6,8 @@ abstract final class AppSizing {
   static const double iconSm = 16;
   static const double iconMd = 20;
   static const double iconLg = 24;
+  static const double iconXl = 32;
+  static const double iconHero = 48;
   static const double touchTargetMin = 48;
 
   /// Standardized content width tiers.

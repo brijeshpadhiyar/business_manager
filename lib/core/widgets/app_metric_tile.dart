@@ -5,6 +5,7 @@ import 'package:business_manager/core/widgets/app_animated_number.dart';
 import 'package:business_manager/core/widgets/app_card.dart';
 import 'package:business_manager/core/widgets/app_status_badge.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Frosted glass KPI summary tile for dashboards, inventory, stock, and
 /// accounting headers with animated tabular numerals and luminous icon badge.
@@ -108,7 +109,7 @@ final class AppMetricTile extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: 2, left: 4),
                     child: Icon(
-                      Icons.arrow_forward_ios_rounded,
+                      AppIcons.forward,
                       size: 13,
                       color: colorScheme.onSurfaceVariant,
                     ),

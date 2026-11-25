@@ -24,6 +24,7 @@ import 'package:business_manager/features/stock_movements/domain/repositories/st
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Streamlined Receive Return & Settlement workflow (Steps 2–5) linked to an
 /// open ISSUE movement, preserving 100% of domain stock & labour rules.
@@ -469,7 +470,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
         bottomAction: detail.remainingPending > 0
             ? AppButton(
                 label: l10n.stockConfirmSaveReturnAction,
-                icon: Icons.check_rounded,
+                icon: AppIcons.confirm,
                 isExpanded: true,
                 isLoading: _saving,
                 onPressed: (!isOverReturn && totalEntered > 0 && !_saving)
@@ -520,13 +521,13 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                           tone: detail.remainingPending > 0
                               ? AppStatusTone.pending
                               : AppStatusTone.good,
-                          icon: Icons.hourglass_bottom_rounded,
+                          icon: AppIcons.pending,
                         ),
                         AppStatusBadge(
                           label:
                               '${MoneyFormatter.formatPaise(m.appliedRatePaise)} ${l10n.ratesPerPieceSuffix}',
                           tone: AppStatusTone.neutral,
-                          icon: Icons.lock_outline_rounded,
+                          icon: AppIcons.lock,
                         ),
                       ],
                     ),
@@ -567,10 +568,10 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                           children: [
                             Icon(
                               isOverReturn
-                                  ? Icons.error_outline_rounded
+                                  ? AppIcons.error
                                   : (remainingAfter == 0
-                                        ? Icons.check_circle_outline_rounded
-                                        : Icons.pending_actions_rounded),
+                                        ? AppIcons.successOutline
+                                        : AppIcons.pending),
                               size: 20,
                               color: isOverReturn
                                   ? semantic.damaged
@@ -640,7 +641,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                         children: [
                           ActionChip(
                             avatar: Icon(
-                              Icons.done_all_rounded,
+                              AppIcons.doneAll,
                               size: 16,
                               color: semantic.goodStock,
                             ),
@@ -683,7 +684,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                               remainingAfter > 0)
                             ActionChip(
                               avatar: Icon(
-                                Icons.auto_fix_high_rounded,
+                                AppIcons.autoFill,
                                 size: 16,
                                 color: semantic.goodStock,
                               ),
@@ -704,7 +705,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                         fieldKey: _goodFieldKey,
                         controller: _goodCtrl,
                         label: l10n.stockGoodReturnQtyLabel,
-                        prefixIcon: Icons.check_circle_outline_rounded,
+                        prefixIcon: AppIcons.successOutline,
                         suffixText: l10n.piecesUnit,
                         keyboardType: TextInputType.number,
                         inputFormatters: [
@@ -728,7 +729,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                         fieldKey: _damagedFieldKey,
                         controller: _damagedCtrl,
                         label: l10n.stockDamagedReturnQtyLabel,
-                        prefixIcon: Icons.report_problem_outlined,
+                        prefixIcon: AppIcons.damaged,
                         suffixText: l10n.piecesUnit,
                         keyboardType: TextInputType.number,
                         inputFormatters: [
@@ -753,7 +754,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                         controller: _lostCtrl,
                         label: l10n.stockLostQtyLabel,
                         helperText: l10n.stockLostHelper,
-                        prefixIcon: Icons.help_outline_rounded,
+                        prefixIcon: AppIcons.help,
                         suffixText: l10n.piecesUnit,
                         keyboardType: TextInputType.number,
                         inputFormatters: [
@@ -774,7 +775,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                         controller: _shortageCtrl,
                         label: l10n.stockShortageQtyLabel,
                         helperText: l10n.stockShortageHelper,
-                        prefixIcon: Icons.remove_circle_outline_rounded,
+                        prefixIcon: AppIcons.remove,
                         suffixText: l10n.piecesUnit,
                         keyboardType: TextInputType.number,
                         inputFormatters: [
@@ -819,7 +820,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                           initiallyExpanded: _showAdvanced,
                           onExpansionChanged: (v) =>
                               setState(() => _showAdvanced = v),
-                          leading: const Icon(Icons.schedule_rounded, size: 18),
+                          leading: const Icon(AppIcons.time, size: 18),
                           title: AppText(
                             '${l10n.stockTransactionDateTimeLabel} / ${l10n.stockNotesLabel}',
                             variant: AppTextVariant.label,
@@ -871,34 +872,34 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                       const SizedBox(height: AppSpacing.sm),
                       if (good > 0)
                         _ImpactLine(
-                          icon: Icons.check_circle_outline_rounded,
+                          icon: AppIcons.successOutline,
                           color: semantic.goodStock,
                           label: l10n.stockConsequenceGood,
                           value: '+$good ${l10n.piecesUnit}',
                         ),
                       if (damaged > 0)
                         _ImpactLine(
-                          icon: Icons.report_problem_outlined,
+                          icon: AppIcons.damaged,
                           color: semantic.damaged,
                           label: l10n.stockConsequenceDamaged,
                           value: '+$damaged ${l10n.piecesUnit}',
                         ),
                       if (lost > 0)
                         _ImpactLine(
-                          icon: Icons.help_outline_rounded,
+                          icon: AppIcons.help,
                           color: semantic.advanceCredit,
                           label: l10n.stockConsequenceLost,
                           value: '$lost ${l10n.piecesUnit}',
                         ),
                       if (shortage > 0)
                         _ImpactLine(
-                          icon: Icons.remove_circle_outline_rounded,
+                          icon: AppIcons.remove,
                           color: semantic.advanceCredit,
                           label: l10n.stockConsequenceShortage,
                           value: '$shortage ${l10n.piecesUnit}',
                         ),
                       _ImpactLine(
-                        icon: Icons.hourglass_bottom_rounded,
+                        icon: AppIcons.pending,
                         color: remainingAfter > 0
                             ? semantic.pending
                             : semantic.goodStock,
@@ -918,7 +919,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                         )
                       else if (labourEarned > 0)
                         _ImpactLine(
-                          icon: Icons.account_balance_wallet_outlined,
+                          icon: AppIcons.accounting,
                           color: semantic.goodStock,
                           label: l10n.stockConsequenceLabourEarned,
                           value: MoneyFormatter.formatPaise(labourEarned),
@@ -934,7 +935,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                         AppStatusBadge(
                           label: _submitError!,
                           tone: AppStatusTone.damaged,
-                          icon: Icons.error_outline_rounded,
+                          icon: AppIcons.error,
                         ),
                       ],
                     ],
@@ -1033,7 +1034,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                       borderRadius: AppRadius.fullBorder,
                     ),
                     child: Icon(
-                      Icons.check_circle_rounded,
+                      AppIcons.success,
                       color: semantic.goodStock,
                       size: 36,
                     ),
@@ -1110,7 +1111,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                 if (info.labourEarnedPaise > 0) ...[
                   const SizedBox(height: AppSpacing.sm),
                   _ImpactLine(
-                    icon: Icons.account_balance_wallet_outlined,
+                    icon: AppIcons.accounting,
                     color: semantic.goodStock,
                     label: l10n.stockConsequenceLabourEarned,
                     value: MoneyFormatter.formatPaise(info.labourEarnedPaise),
@@ -1120,7 +1121,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                 if (info.goodQty > 0) ...[
                   AppButton(
                     label: l10n.stockIssueNextProcessAction,
-                    icon: Icons.outbox_rounded,
+                    icon: AppIcons.stockIssue,
                     isExpanded: true,
                     onPressed: () => context.pushReplacement(
                       RoutePaths.stockIssue(
@@ -1137,7 +1138,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                       children: [
                         for (final proc in _otherActiveProcesses.take(4))
                           ActionChip(
-                            avatar: const Icon(Icons.outbox_rounded, size: 16),
+                            avatar: const Icon(AppIcons.stockIssue, size: 16),
                             label: Text(proc.name),
                             onPressed: () => context.pushReplacement(
                               RoutePaths.stockIssue(
@@ -1153,7 +1154,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                 ],
                 AppButton(
                   label: l10n.stockReceiveAnotherReturnAction,
-                  icon: Icons.assignment_returned_outlined,
+                  icon: AppIcons.receiveReturn,
                   variant: info.goodQty > 0
                       ? AppButtonVariant.secondary
                       : AppButtonVariant.primary,

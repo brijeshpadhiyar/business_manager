@@ -10,6 +10,8 @@ import 'package:business_manager/features/processes/presentation/bloc/process_li
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
+import 'package:business_manager/core/design_system/app_sizing.dart';
 
 final class ProcessListPage extends StatelessWidget {
   const ProcessListPage({super.key, this.showAppBar = false});
@@ -120,7 +122,7 @@ final class _ProcessListViewState extends State<_ProcessListView> {
           slivers = [
             SliverToBoxAdapter(
               child: AppEmptyState(
-                icon: Icons.precision_manufacturing_outlined,
+                icon: AppIcons.process,
                 title: l10n.processesEmptyTitle,
                 subtitle: l10n.processesEmptySubtitle,
                 actionLabel: l10n.processCreateAction,
@@ -163,7 +165,19 @@ final class _ProcessListViewState extends State<_ProcessListView> {
                 itemKeyBuilder: (p) => ValueKey<String>(p.id),
                 onRowTap: (p) => _openProcessDetail(context, p),
                 cellsBuilder: (p) => [
-                  AppText(p.name, fontWeight: FontWeight.w700),
+                  Row(
+                    children: [
+                      Icon(
+                        AppIcons.processIcon(p.name),
+                        size: AppSizing.iconMd,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Flexible(
+                        child: AppText(p.name, fontWeight: FontWeight.w700),
+                      ),
+                    ],
+                  ),
                   AppText(p.description ?? '—'),
                   AppText(
                     p.defaultRatePaise > 0
@@ -184,10 +198,22 @@ final class _ProcessListViewState extends State<_ProcessListView> {
                   content: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      AppText(
-                        process.name,
-                        variant: AppTextVariant.bodyLarge,
-                        fontWeight: FontWeight.w700,
+                      Row(
+                        children: [
+                          Icon(
+                            AppIcons.processIcon(process.name),
+                            size: AppSizing.iconMd,
+                            color: Theme.of(ctx).colorScheme.primary,
+                          ),
+                          const SizedBox(width: AppSpacing.sm),
+                          Expanded(
+                            child: AppText(
+                              process.name,
+                              variant: AppTextVariant.bodyLarge,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
                       ),
                       if (process.description != null) ...[
                         const SizedBox(height: AppSpacing.xs),
@@ -215,7 +241,7 @@ final class _ProcessListViewState extends State<_ProcessListView> {
                           ? AppStatusTone.good
                           : AppStatusTone.neutral,
                     ),
-                    const Icon(Icons.chevron_right),
+                    const Icon(AppIcons.chevronRight),
                   ],
                 ),
               ),
@@ -226,7 +252,7 @@ final class _ProcessListViewState extends State<_ProcessListView> {
         return AppScaffold(
           // Main action: floating button on phones, toolbar button on wider screens.
           primaryAction: AppPrimaryAction(
-            icon: Icons.add,
+            icon: AppIcons.add,
             label: l10n.processCreateAction,
             onPressed: () => _openCreateProcess(context),
           ),
@@ -240,7 +266,7 @@ final class _ProcessListViewState extends State<_ProcessListView> {
             expandedHeight: 164,
             actions: [
               AppIconButton(
-                icon: Icons.timeline_rounded,
+                icon: AppIcons.processHistory,
                 tooltip: l10n.navProcessHistory,
                 onPressed: () =>
                     context.push(RoutePaths.processProductionHistory),

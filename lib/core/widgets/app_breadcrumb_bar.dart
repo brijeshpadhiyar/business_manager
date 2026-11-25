@@ -2,6 +2,7 @@ import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Single crumb entry rendered inside [AppBreadcrumbBar].
 final class AppBreadcrumbItem {
@@ -35,7 +36,7 @@ final class AppBreadcrumbBar extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 2),
                   child: Icon(
-                    Icons.chevron_right_rounded,
+                    AppIcons.chevronRight,
                     size: 16,
                     color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
                   ),

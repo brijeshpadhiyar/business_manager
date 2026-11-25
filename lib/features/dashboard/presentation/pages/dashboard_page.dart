@@ -20,6 +20,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 final class DashboardPage extends StatelessWidget {
   const DashboardPage({
@@ -147,7 +148,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                                 cacheWidth: 120,
                                 cacheHeight: 120,
                                 errorBuilder: (_, _, _) => const Icon(
-                                  Icons.auto_awesome,
+                                  AppIcons.brand,
                                   color: Colors.white,
                                 ),
                               ),
@@ -201,7 +202,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                                   onPressed: () =>
                                       context.read<AppLockCubit>().lockNow(),
                                   icon: const Icon(
-                                    Icons.lock_outline_rounded,
+                                    AppIcons.lock,
                                     color: Colors.white,
                                   ),
                                 );
@@ -213,7 +214,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                                   .read<DashboardCubit>()
                                   .loadDashboard(),
                               icon: const Icon(
-                                Icons.refresh_rounded,
+                                AppIcons.refresh,
                                 color: Colors.white,
                               ),
                             ),
@@ -247,14 +248,14 @@ final class _DashboardViewState extends State<_DashboardView> {
                         // Other screens as lighter secondary links.
                         AppCollapsibleFilters(
                           label: l10n.uxMoreScreens,
-                          icon: Icons.apps_rounded,
+                          icon: AppIcons.moreScreens,
                           child: Wrap(
                           spacing: AppSpacing.sm,
                           runSpacing: AppSpacing.sm,
                           children: [
                             AppButton(
                               label: l10n.dashboardDailySummaryAction,
-                              icon: Icons.today_rounded,
+                              icon: AppIcons.dailySummary,
                               variant: AppButtonVariant.outlined,
                               onPressed: () => _pushAndRefresh(
                                 context,
@@ -263,7 +264,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                             ),
                             AppButton(
                               label: l10n.navAccounting,
-                              icon: Icons.account_balance_wallet_outlined,
+                              icon: AppIcons.accounting,
                               variant: AppButtonVariant.outlined,
                               onPressed: () => _pushAndRefresh(
                                 context,
@@ -272,7 +273,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                             ),
                             AppButton(
                               label: l10n.navStockMovements,
-                              icon: Icons.swap_horiz_rounded,
+                              icon: AppIcons.stockMovements,
                               variant: AppButtonVariant.outlined,
                               onPressed: () => _pushAndRefresh(
                                 context,
@@ -281,7 +282,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                             ),
                             AppButton(
                               label: l10n.navProcesses,
-                              icon: Icons.precision_manufacturing_outlined,
+                              icon: AppIcons.process,
                               variant: AppButtonVariant.outlined,
                               onPressed: () => _pushAndRefresh(
                                 context,
@@ -290,7 +291,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                             ),
                             AppButton(
                               label: l10n.navInventory,
-                              icon: Icons.bar_chart_outlined,
+                              icon: AppIcons.inventory,
                               variant: AppButtonVariant.outlined,
                               onPressed: () => _pushAndRefresh(
                                 context,
@@ -299,7 +300,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                             ),
                             AppButton(
                               label: l10n.navReports,
-                              icon: Icons.analytics_outlined,
+                              icon: AppIcons.reports,
                               variant: AppButtonVariant.outlined,
                               onPressed: () => _pushAndRefresh(
                                 context,
@@ -308,7 +309,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                             ),
                             AppButton(
                               label: l10n.navProductionHistory,
-                              icon: Icons.history_rounded,
+                              icon: AppIcons.productionHistory,
                               variant: AppButtonVariant.outlined,
                               onPressed: () => _pushAndRefresh(
                                 context,
@@ -318,7 +319,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                             if (widget.config.isDev)
                               AppButton(
                                 label: l10n.navDesignShowcase,
-                                icon: Icons.palette_outlined,
+                                icon: AppIcons.showcase,
                                 variant: AppButtonVariant.text,
                                 onPressed: () =>
                                     context.push(RoutePaths.showcase),
@@ -368,7 +369,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                                       label: l10n.dashboardTodayIssuedLabel,
                                       value: snap.todayIssuedQty,
                                       suffix: l10n.piecesUnit,
-                                      icon: Icons.outbox_rounded,
+                                      icon: AppIcons.stockIssue,
                                       tone: AppStatusTone.info,
                                       onTap: () => _pushAndRefresh(
                                         context,
@@ -383,7 +384,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                                       label: l10n.dashboardTodayReturnedLabel,
                                       value: snap.todayReceivedGoodQty,
                                       suffix: l10n.piecesUnit,
-                                      icon: Icons.check_circle_outline_rounded,
+                                      icon: AppIcons.successOutline,
                                       tone: AppStatusTone.good,
                                       onTap: () => _pushAndRefresh(
                                         context,
@@ -398,7 +399,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                                       label: l10n.dashboardTodayLabourLabel,
                                       value: snap.todayLabourEarnedPaise,
                                       isCurrencyPaise: true,
-                                      icon: Icons.work_outline_rounded,
+                                      icon: AppIcons.work,
                                       tone: AppStatusTone.good,
                                       onTap: () => _pushAndRefresh(
                                         context,
@@ -413,7 +414,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                                       label: l10n.dashboardTodayPaymentsLabel,
                                       value: snap.todayPaymentsPaise,
                                       isCurrencyPaise: true,
-                                      icon: Icons.payments_outlined,
+                                      icon: AppIcons.payment,
                                       tone: AppStatusTone.neutral,
                                       onTap: () => _pushAndRefresh(
                                         context,
@@ -432,7 +433,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                               label:
                                   '${l10n.dashboardTodayDamagedLostAlert}: ${snap.todayDamagedQty + snap.todayLostShortageQty} ${l10n.piecesUnit}',
                               tone: AppStatusTone.damaged,
-                              icon: Icons.warning_amber_rounded,
+                              icon: AppIcons.warning,
                             ),
                           ],
                         ],
@@ -612,7 +613,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                                             value: snap.totalLots,
                                             subtitle:
                                                 '${snap.totalDesigns} / ${snap.totalColours} ${l10n.dashboardTotalDesignsColoursLabel}',
-                                            icon: Icons.inventory_2_outlined,
+                                            icon: AppIcons.lot,
                                             tone: AppStatusTone.neutral,
                                             onTap: () => widget.onNavigateTab(1),
                                           ),
@@ -641,7 +642,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                                                 l10n.stockPendingWorkerLabel,
                                             value: snap.pendingWorkerStock,
                                             suffix: l10n.piecesUnit,
-                                            icon: Icons.pending_actions_rounded,
+                                            icon: AppIcons.pending,
                                             tone: snap.pendingWorkerStock > 0
                                                 ? AppStatusTone.pending
                                                 : AppStatusTone.good,
@@ -659,7 +660,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                                                 l10n.stockDamagedBucketLabel,
                                             value: snap.damagedStock,
                                             suffix: l10n.piecesUnit,
-                                            icon: Icons.report_problem_outlined,
+                                            icon: AppIcons.damaged,
                                             tone: snap.damagedStock > 0
                                                 ? AppStatusTone.damaged
                                                 : AppStatusTone.neutral,
@@ -709,7 +710,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                                       label: l10n.accountingEarnedLabourLabel,
                                       value: snap.totalEarnedLabourPaise,
                                       isCurrencyPaise: true,
-                                      icon: Icons.work_outline_rounded,
+                                      icon: AppIcons.work,
                                       tone: AppStatusTone.good,
                                       onTap: () => _pushAndRefresh(
                                         context,
@@ -746,7 +747,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                                       isCurrencyPaise: true,
                                       subtitle:
                                           '${l10n.accountingAdvancePaidLabel}: ${MoneyFormatter.formatPaise(snap.totalAdvancePaymentsPaise)}',
-                                      icon: Icons.trending_up_rounded,
+                                      icon: AppIcons.trend,
                                       tone: AppStatusTone.info,
                                       onTap: () => _pushAndRefresh(
                                         context,
@@ -761,7 +762,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                                       label: l10n.accountingRegularPaidLabel,
                                       value: snap.totalRegularPaymentsPaise,
                                       isCurrencyPaise: true,
-                                      icon: Icons.payments_outlined,
+                                      icon: AppIcons.payment,
                                       tone: AppStatusTone.neutral,
                                       onTap: () => _pushAndRefresh(
                                         context,
@@ -849,7 +850,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                                                   ? AppStatusTone.pending
                                                   : AppStatusTone.good,
                                             ), const Icon(
-                                              Icons.chevron_right_rounded,
+                                              AppIcons.chevronRight,
                                               size: 18,
                                             ),],),
                                       ),

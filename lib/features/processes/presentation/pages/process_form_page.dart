@@ -9,6 +9,7 @@ import 'package:business_manager/features/processes/domain/entities/process_enti
 import 'package:business_manager/features/processes/domain/repositories/process_repository.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Create or edit a dynamic production process with full billing rules and
 /// process-level default labour rate configuration.
@@ -254,7 +255,7 @@ final class _ProcessFormPageState extends State<ProcessFormPage> {
                             controller: _nameCtrl,
                             focusNode: _nameFocus,
                             label: l10n.processNameLabel,
-                            prefixIcon: Icons.precision_manufacturing_outlined,
+                            prefixIcon: AppIcons.process,
                             textInputAction: TextInputAction.next,
                             maxLength: ValidationLimits.maxShortNameLength,
                             onChanged: (_) {
@@ -344,7 +345,7 @@ final class _ProcessFormPageState extends State<ProcessFormPage> {
                             focusNode: _rateFocus,
                             label: 'Default Labour Rate (₹)',
                             hint: '0.00',
-                            prefixIcon: Icons.currency_rupee_rounded,
+                            prefixIcon: AppIcons.rupee,
                             keyboardType: const TextInputType.numberWithOptions(
                               decimal: true,
                             ),
@@ -390,7 +391,7 @@ final class _ProcessFormPageState extends State<ProcessFormPage> {
                 padding: const EdgeInsets.only(top: AppSpacing.sm),
                 child: AppButton(
                   label: l10n.actionSave,
-                  icon: Icons.check,
+                  icon: AppIcons.confirm,
                   isExpanded: true,
                   isLoading: _isSaving,
                   onPressed: _isSaving ? null : _save,

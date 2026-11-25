@@ -11,6 +11,7 @@ import 'package:business_manager/features/security/presentation/widgets/security
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Centralized Local App Lock & Security configuration screen (`/settings/security`).
 final class SecuritySettingsPage extends StatefulWidget {
@@ -110,7 +111,7 @@ final class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
         barrierDismissible: false,
         builder: (dialogCtx) => AppDialog(
           title: l10n.securityNewRecoveryKeyTitle,
-          icon: Icons.key_rounded,
+          icon: AppIcons.recoveryKey,
           confirmLabel: l10n.actionDone,
           onConfirm: () => Navigator.of(dialogCtx).pop(),
           content: Column(
@@ -187,8 +188,8 @@ final class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
                       ),
                       child: Icon(
                         enabled
-                            ? Icons.verified_user_rounded
-                            : Icons.lock_open_rounded,
+                            ? AppIcons.security
+                            : AppIcons.unlock,
                         color: enabled
                             ? Colors.white
                             : colorScheme.onSurfaceVariant,
@@ -246,7 +247,7 @@ final class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
                       const SizedBox(height: AppSpacing.md),
                       AppButton(
                         label: l10n.securityEnablePinAction,
-                        icon: Icons.lock_outline_rounded,
+                        icon: AppIcons.lock,
                         isExpanded: true,
                         onPressed: () =>
                             context.push(RoutePaths.settingsSecurityPinSetup),
@@ -266,19 +267,19 @@ final class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
                         children: [
                           AppButton(
                             label: l10n.securityLockNowAction,
-                            icon: Icons.lock_rounded,
+                            icon: AppIcons.lock,
                             onPressed: () =>
                                 context.read<AppLockCubit>().lockNow(),
                           ),
                           AppButton(
                             label: l10n.securityChangePinAction,
-                            icon: Icons.pin_outlined,
+                            icon: AppIcons.pin,
                             variant: AppButtonVariant.secondary,
                             onPressed: () => _handleChangePin(context),
                           ),
                           AppButton(
                             label: l10n.securityRegenerateRecoveryKeyAction,
-                            icon: Icons.vpn_key_outlined,
+                            icon: AppIcons.recoveryKey,
                             variant: AppButtonVariant.outlined,
                             onPressed: () =>
                                 _handleRegenerateRecoveryKey(context),
@@ -378,7 +379,7 @@ final class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
                       const SizedBox(height: AppSpacing.md),
                       AppButton(
                         label: l10n.securityDisablePinAction,
-                        icon: Icons.lock_open_rounded,
+                        icon: AppIcons.unlock,
                         variant: AppButtonVariant.destructive,
                         onPressed: () => _handleDisablePin(context),
                       ),

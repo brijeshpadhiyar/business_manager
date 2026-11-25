@@ -11,6 +11,7 @@ import 'package:business_manager/features/security/presentation/widgets/pin_keyp
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 enum _PinSetupStep { enterPin, confirmPin, recoveryKey }
 
@@ -212,7 +213,7 @@ final class _PinSetupPageState extends State<PinSetupPage> {
                 child: AppStatusBadge(
                   label: _errorText!,
                   tone: AppStatusTone.damaged,
-                  icon: Icons.error_outline_rounded,
+                  icon: AppIcons.error,
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
@@ -260,7 +261,7 @@ final class _PinSetupPageState extends State<PinSetupPage> {
                   Row(
                     children: [
                       Icon(
-                        Icons.vpn_key_outlined,
+                        AppIcons.recoveryKey,
                         color: context.semanticColors.pending,
                         size: 28,
                       ),
@@ -322,7 +323,7 @@ final class _PinSetupPageState extends State<PinSetupPage> {
                   const SizedBox(height: AppSpacing.lg),
                   AppButton(
                     label: l10n.securityActivateAppLockAction,
-                    icon: Icons.lock_outline_rounded,
+                    icon: AppIcons.lock,
                     isExpanded: true,
                     isLoading: _saving,
                     onPressed: _recoveryConfirmed && !_saving

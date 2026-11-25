@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:business_manager/core/validation/validation_error.dart';
 import 'package:business_manager/core/widgets/app_text_field.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Consistent glass-styled search input with built-in clear action, optional
 /// debounce timer, and standardized max-length enforcement
@@ -87,12 +88,12 @@ final class _AppSearchFieldState extends State<AppSearchField> {
       controller: _ctrl,
       label: widget.label,
       hint: widget.hint,
-      prefixIcon: Icons.search_rounded,
+      prefixIcon: AppIcons.search,
       maxLength: ValidationLimits.maxSearchLength,
       textInputAction: TextInputAction.search,
       suffixIcon: _currentText.isNotEmpty
           ? IconButton(
-              icon: const Icon(Icons.close_rounded, size: 18),
+              icon: const Icon(AppIcons.close, size: 18),
               tooltip: 'Clear',
               onPressed: () {
                 _debounce?.cancel();

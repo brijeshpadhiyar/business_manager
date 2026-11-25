@@ -5,6 +5,7 @@ import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/widgets/app_button.dart';
 import 'package:business_manager/core/widgets/app_glass_surface.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Reusable frosted-glass success state presentation for completed workflows,
 /// confirmations, and empty-action follow-ups.
@@ -15,7 +16,7 @@ final class AppSuccessState extends StatelessWidget {
     this.subtitle,
     this.actionLabel,
     this.onAction,
-    this.icon = Icons.check_circle_rounded,
+    this.icon = AppIcons.success,
   });
 
   final String title;
@@ -76,7 +77,7 @@ final class AppSuccessState extends StatelessWidget {
                   const SizedBox(height: AppSpacing.lg),
                   AppButton(
                     label: actionLabel!,
-                    icon: Icons.check_rounded,
+                    icon: AppIcons.confirm,
                     onPressed: onAction,
                   ),
                 ],

@@ -11,6 +11,7 @@ import 'package:business_manager/features/workers/presentation/bloc/worker_assig
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Manage many-to-many process assignments and optional custom per-process
 /// labour rates for a specific worker while preserving historical records on
@@ -239,7 +240,7 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
                                 selectedProc.defaultRatePaise > 0)
                             ? 'Leave blank to inherit ${MoneyFormatter.formatRatePaise(selectedProc.defaultRatePaise, pricingUnit: selectedProc.defaultPricingUnit)}'
                             : 'Leave blank to use process default',
-                        prefixIcon: Icons.currency_rupee_rounded,
+                        prefixIcon: AppIcons.rupee,
                         keyboardType: const TextInputType.numberWithOptions(
                           decimal: true,
                         ),
@@ -250,7 +251,7 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
                       const SizedBox(height: AppSpacing.md),
                       AppButton(
                         label: l10n.assignmentsAddAction,
-                        icon: Icons.add_link,
+                        icon: AppIcons.linkAdd,
                         isExpanded: true,
                         isLoading: _isAssigning,
                         onPressed: effectiveSelection == null || _isAssigning
@@ -268,7 +269,7 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
               const SizedBox(height: AppSpacing.lg),
               if (state.assignments.isEmpty)
                 AppEmptyState(
-                  icon: Icons.link_off,
+                  icon: AppIcons.unlink,
                   title: l10n.assignmentsEmptyTitle,
                   subtitle: l10n.assignmentsEmptySubtitle,
                 )
@@ -302,7 +303,7 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
                             ),
                           ),
                           AppIconButton(
-                            icon: Icons.currency_rupee,
+                            icon: AppIcons.pieceRate,
                             tooltip: l10n.workerViewRateHistoryAction,
                             onPressed: () => context.push(
                               RoutePaths.workerRates(
@@ -312,7 +313,7 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
                             ),
                           ),
                           AppIconButton(
-                            icon: Icons.link_off,
+                            icon: AppIcons.unlink,
                             tooltip: l10n.assignmentsRemoveAction,
                             onPressed: () => _confirmRemove(context, a),
                           ),
@@ -357,7 +358,7 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
                           if (worker.isActive && a.processIsActive)
                             AppButton(
                               label: 'Reactivate',
-                              icon: Icons.play_circle_outline_rounded,
+                              icon: AppIcons.resume,
                               variant: AppButtonVariant.outlined,
                               onPressed: _isAssigning
                                   ? null

@@ -2,6 +2,7 @@ import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/utils/app_date_time_formatter.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Compact date (or date+time) picker field that displays values in
 /// `Asia/Kolkata` (IST) and emits exact UTC epoch milliseconds to callers.
@@ -95,7 +96,7 @@ final class AppDatePicker extends StatelessWidget {
           errorText: errorText,
           enabled: enabled,
           suffixIcon: Icon(
-            includeTime ? Icons.schedule_rounded : Icons.calendar_today_rounded,
+            includeTime ? AppIcons.time : AppIcons.date,
             size: AppSizing.iconMd,
           ),
         ),

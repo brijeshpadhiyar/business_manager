@@ -15,6 +15,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Screen 9: QC Inspection Queue & Rejection Repair / Re-Approval Management.
 ///
@@ -133,7 +134,7 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                   const SizedBox(height: AppSpacing.md),
                   AppButton(
                     label: l10n.prodHistoryApproveAction,
-                    icon: Icons.verified_rounded,
+                    icon: AppIcons.qcPassed,
                     isExpanded: true,
                     isLoading: saving,
                     onPressed: saving
@@ -286,7 +287,7 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                 const SizedBox(height: AppSpacing.md),
                 AppButton(
                   label: l10n.prodHistoryRecordRepairAction,
-                  icon: Icons.build_outlined,
+                  icon: AppIcons.repair,
                   isExpanded: true,
                   isLoading: saving,
                   onPressed: saving
@@ -430,7 +431,7 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                   const SizedBox(height: AppSpacing.md),
                   AppButton(
                     label: l10n.prodHistoryReinspectAction,
-                    icon: Icons.verified_rounded,
+                    icon: AppIcons.qcPassed,
                     isExpanded: true,
                     isLoading: saving,
                     onPressed: saving
@@ -521,7 +522,7 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
           contentWidth: AppContentWidth.wide,
           actions: [
             AppIconButton(
-              icon: Icons.assignment_return_outlined,
+              icon: AppIcons.receiveReturn,
               tooltip: l10n.stockReturnAction,
               onPressed: () async {
                 await context.push(RoutePaths.stockReturnPicker);
@@ -529,7 +530,7 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
               },
             ),
             AppIconButton(
-              icon: Icons.refresh_rounded,
+              icon: AppIcons.refresh,
               tooltip: l10n.actionRetry,
               onPressed: () => cubit.load(),
             ),
@@ -590,7 +591,7 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
     final l10n = context.l10n;
     if (state.pendingReturns.isEmpty) {
       return AppEmptyState(
-        icon: Icons.verified_outlined,
+        icon: AppIcons.qcPassed,
         title: 'No Pending QC Inspections',
         subtitle: 'All returned pieces have been inspected and reconciled.',
         actionLabel: l10n.stockReturnAction,
@@ -636,7 +637,7 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                 children: [
                   AppButton(
                     label: l10n.prodHistoryApproveAction,
-                    icon: Icons.fact_check_rounded,
+                    icon: AppIcons.qcInspect,
                     onPressed: () => _showInspectReturnSheet(context, item),
                   ),
                   AppButton(
@@ -683,7 +684,7 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
         const SizedBox(height: AppSpacing.sm),
         if (state.rejections.isEmpty)
           AppEmptyState(
-            icon: Icons.verified_outlined,
+            icon: AppIcons.qcPassed,
             title: l10n.stockNoDamagedAvailable,
           )
         else
@@ -755,7 +756,7 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                           if (rej.openUnrepairedQty > 0)
                             AppButton(
                               label: l10n.prodHistoryRecordRepairAction,
-                              icon: Icons.build_outlined,
+                              icon: AppIcons.repair,
                               variant: AppButtonVariant.secondary,
                               onPressed: () =>
                                   _showLogRepairSheet(context, rej),
@@ -765,7 +766,7 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                               AppButton(
                                 label:
                                     '${l10n.prodHistoryReinspectAction} (${rep.pendingReinspectionQty})',
-                                icon: Icons.verified_rounded,
+                                icon: AppIcons.qcPassed,
                                 onPressed: () =>
                                     _showReinspectSheet(context, rej, rep),
                               ),

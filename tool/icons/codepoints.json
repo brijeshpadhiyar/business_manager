@@ -1,0 +1,17 @@
+{
+  "adjustment": 57344,
+  "colour": 57345,
+  "cutting": 57346,
+  "damaged": 57347,
+  "design": 57348,
+  "karigar": 57349,
+  "ledger": 57350,
+  "lot": 57351,
+  "lot_add": 57352,
+  "piece_rate": 57353,
+  "process": 57354,
+  "qc_inspect": 57355,
+  "receive_return": 57356,
+  "route_transfer": 57357,
+  "stock_issue": 57358
+}

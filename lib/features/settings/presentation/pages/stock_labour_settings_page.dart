@@ -10,6 +10,7 @@ import 'package:business_manager/features/processes/domain/entities/process_enti
 import 'package:business_manager/features/processes/domain/repositories/process_repository.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Stock & Labour Preferences backed directly by the authoritative
 /// `BusinessProfileRepository` and `ProcessRepository` (zero duplicate storage).
@@ -183,7 +184,7 @@ final class _StockLabourSettingsPageState
         Padding(
           padding: const EdgeInsets.only(right: AppSpacing.xs),
           child: AppIconButton(
-            icon: Icons.add_rounded,
+            icon: AppIcons.add,
             tooltip: l10n.processCreateAction,
             onPressed: _openCreateProcess,
           ),
@@ -198,7 +199,7 @@ final class _StockLabourSettingsPageState
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.verified_outlined, size: 20),
+                    const Icon(AppIcons.success, size: 20),
                     const SizedBox(width: AppSpacing.xs),
                     Expanded(
                       child: AppHeading(
@@ -262,7 +263,7 @@ final class _StockLabourSettingsPageState
               ),
               AppButton(
                 label: l10n.processCreateAction,
-                icon: Icons.add_rounded,
+                icon: AppIcons.add,
                 onPressed: _openCreateProcess,
               ),
             ],
@@ -281,7 +282,7 @@ final class _StockLabourSettingsPageState
                   const SizedBox(height: AppSpacing.sm),
                   AppButton(
                     label: l10n.processCreateAction,
-                    icon: Icons.add_rounded,
+                    icon: AppIcons.add,
                     variant: AppButtonVariant.outlined,
                     onPressed: _openCreateProcess,
                   ),
@@ -401,7 +402,7 @@ final class _StockLabourSettingsPageState
                           children: [
                             AppButton(
                               label: l10n.processEditAction,
-                              icon: Icons.edit_outlined,
+                              icon: AppIcons.edit,
                               variant: AppButtonVariant.outlined,
                               onPressed: _busyProcessId == proc.id
                                   ? null
@@ -412,8 +413,8 @@ final class _StockLabourSettingsPageState
                                   ? l10n.processDeactivateAction
                                   : l10n.processActivateAction,
                               icon: proc.isActive
-                                  ? Icons.pause_circle_outline
-                                  : Icons.play_circle_outline,
+                                  ? AppIcons.pause
+                                  : AppIcons.resume,
                               variant: proc.isActive
                                   ? AppButtonVariant.secondary
                                   : AppButtonVariant.primary,

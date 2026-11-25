@@ -15,6 +15,7 @@ import 'package:business_manager/features/production_history/domain/entities/pro
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Complete worker financial & stock ledger with date filtering,
 /// transaction-type filtering, running balance (supporting negative advance
@@ -113,7 +114,7 @@ final class _WorkerLedgerViewState extends State<_WorkerLedgerView> {
         title: isPayment
             ? l10n.accountingReversePaymentTitle
             : l10n.accountingReverseAdjustmentTitle,
-        icon: Icons.warning_amber_rounded,
+        icon: AppIcons.warning,
         isDestructive: true,
         cancelLabel: l10n.actionCancel,
         confirmLabel: l10n.stockReverseAction,
@@ -225,7 +226,7 @@ final class _WorkerLedgerViewState extends State<_WorkerLedgerView> {
           title: '${summary.workerName} — ${l10n.accountingLedgerHeading}',
           actions: [
             AppIconButton(
-              icon: Icons.refresh_rounded,
+              icon: AppIcons.refresh,
               tooltip: l10n.actionRetry,
               onPressed: () => context.read<WorkerLedgerCubit>().reload(),
             ),
@@ -253,7 +254,7 @@ final class _WorkerLedgerViewState extends State<_WorkerLedgerView> {
                                 label: l10n.accountingEarnedLabourLabel,
                                 value: summary.earnedLabourPaise,
                                 isCurrencyPaise: true,
-                                icon: Icons.work_outline_rounded,
+                                icon: AppIcons.work,
                                 tone: AppStatusTone.good,
                               ),
                             ),
@@ -263,7 +264,7 @@ final class _WorkerLedgerViewState extends State<_WorkerLedgerView> {
                                 label: l10n.accountingAdvancePaidLabel,
                                 value: summary.advancePaymentsPaise,
                                 isCurrencyPaise: true,
-                                icon: Icons.request_quote_outlined,
+                                icon: AppIcons.ledger,
                                 tone: AppStatusTone.info,
                               ),
                             ),
@@ -273,7 +274,7 @@ final class _WorkerLedgerViewState extends State<_WorkerLedgerView> {
                                 label: l10n.accountingRegularPaidLabel,
                                 value: summary.regularPaymentsPaise,
                                 isCurrencyPaise: true,
-                                icon: Icons.payments_outlined,
+                                icon: AppIcons.payment,
                                 tone: AppStatusTone.neutral,
                               ),
                             ),
@@ -284,7 +285,7 @@ final class _WorkerLedgerViewState extends State<_WorkerLedgerView> {
                                       label: l10n.accountingAdvanceCreditLabel,
                                       value: summary.advanceCreditBalancePaise,
                                       isCurrencyPaise: true,
-                                      icon: Icons.trending_up_rounded,
+                                      icon: AppIcons.trend,
                                       tone: AppStatusTone.info,
                                     )
                                   : AppMetricTile(
@@ -293,7 +294,7 @@ final class _WorkerLedgerViewState extends State<_WorkerLedgerView> {
                                       value: summary.outstandingPayablePaise,
                                       isCurrencyPaise: true,
                                       icon:
-                                          Icons.account_balance_wallet_outlined,
+                                          AppIcons.accounting,
                                       tone: summary.outstandingPayablePaise > 0
                                           ? AppStatusTone.pending
                                           : AppStatusTone.good,
@@ -310,7 +311,7 @@ final class _WorkerLedgerViewState extends State<_WorkerLedgerView> {
                       children: [
                         AppButton(
                           label: l10n.accountingRecordPaymentAction,
-                          icon: Icons.payments_outlined,
+                          icon: AppIcons.payment,
                           onPressed: () async {
                             final saved = await context.push<bool>(
                               RoutePaths.paymentCreate(workerId: workerId),
@@ -322,7 +323,7 @@ final class _WorkerLedgerViewState extends State<_WorkerLedgerView> {
                         ),
                         AppButton(
                           label: l10n.accountingAddAdjustmentAction,
-                          icon: Icons.tune_rounded,
+                          icon: AppIcons.adjustment,
                           variant: AppButtonVariant.secondary,
                           onPressed: () async {
                             final saved = await context.push<bool>(
@@ -518,7 +519,7 @@ final class _WorkerLedgerViewState extends State<_WorkerLedgerView> {
               if (_visibleLines(detail.lines).isEmpty)
                 SliverToBoxAdapter(
                   child: AppEmptyState(
-                    icon: Icons.receipt_long_outlined,
+                    icon: AppIcons.ledger,
                     title: l10n.accountingEmptyLedgerTitle,
                     subtitle: l10n.accountingEmptyLedgerSubtitle,
                   ),
@@ -663,7 +664,7 @@ final class _WorkerLedgerViewState extends State<_WorkerLedgerView> {
                   if (canReverse) ...[
                     const SizedBox(width: AppSpacing.xs),
                     AppIconButton(
-                      icon: Icons.undo_rounded,
+                      icon: AppIcons.reverse,
                       tooltip: l10n.stockReverseAction,
                       onPressed: () => _reverseLine(context, line),
                     ),

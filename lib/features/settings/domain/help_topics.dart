@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 final class HelpTopic {
   const HelpTopic({
@@ -66,7 +67,7 @@ abstract final class StitchFlowHelpCatalog {
     HelpTopic(
       id: 'getting-started',
       order: 1,
-      icon: Icons.rocket_launch_outlined,
+      icon: AppIcons.getStarted,
       titleEn: 'Getting Started with StitchFlow',
       titleGu: 'સ્ટિચફ્લોની શરૂઆત કેવી રીતે કરવી',
       summaryEn: 'Recommended 5-minute setup order to start tracking garment lots, stock, and worker accounts offline.',
@@ -94,7 +95,7 @@ abstract final class StitchFlowHelpCatalog {
     HelpTopic(
       id: 'creating-a-lot',
       order: 2,
-      icon: Icons.inventory_2_outlined,
+      icon: AppIcons.lot,
       titleEn: 'Creating a Lot',
       titleGu: 'નવો લોટ બનાવવો',
       summaryEn: 'Group each incoming fabric batch or production order under a unique Lot Number with optional photos.',
@@ -120,7 +121,7 @@ abstract final class StitchFlowHelpCatalog {
     HelpTopic(
       id: 'designs-and-colours',
       order: 3,
-      icon: Icons.palette_outlined,
+      icon: AppIcons.colour,
       titleEn: 'Adding Designs & Colours',
       titleGu: 'ડિઝાઇન અને રંગ ઉમેરવા',
       summaryEn: 'Define nested designs inside a lot and record independent initial quantities and prices per colour.',
@@ -146,7 +147,7 @@ abstract final class StitchFlowHelpCatalog {
     HelpTopic(
       id: 'creating-processes',
       order: 4,
-      icon: Icons.precision_manufacturing_outlined,
+      icon: AppIcons.process,
       titleEn: 'Creating Production Processes',
       titleGu: 'પ્રોડક્શન પ્રક્રિયાઓ બનાવવી',
       summaryEn: 'Create any custom workshop stages with zero forced sequence and optional process-specific labour rules.',
@@ -171,7 +172,7 @@ abstract final class StitchFlowHelpCatalog {
     HelpTopic(
       id: 'adding-workers',
       order: 5,
-      icon: Icons.people_outline,
+      icon: AppIcons.workers,
       titleEn: 'Adding Workers',
       titleGu: 'કારીગરો ઉમેરવા',
       summaryEn: 'Maintain a clean directory of active and inactive workers with contact details and notes.',
@@ -194,7 +195,7 @@ abstract final class StitchFlowHelpCatalog {
     HelpTopic(
       id: 'assigning-workers',
       order: 6,
-      icon: Icons.link_rounded,
+      icon: AppIcons.link,
       titleEn: 'Assigning Workers to Processes',
       titleGu: 'કારીગરોને પ્રક્રિયા સોંપવી',
       summaryEn: 'Link each worker to one or more active processes so only eligible workers appear during stock issue.',
@@ -219,7 +220,7 @@ abstract final class StitchFlowHelpCatalog {
     HelpTopic(
       id: 'setting-worker-rates',
       order: 7,
-      icon: Icons.currency_rupee_rounded,
+      icon: AppIcons.rupee,
       titleEn: 'Setting Effective-Dated Worker Rates',
       titleGu: 'કારીગરના પીસ દીઠ ભાવ સેટ કરવા',
       summaryEn: 'Record historical per-piece rates with IST effective dates so old transactions never change when rates are revised.',
@@ -244,7 +245,7 @@ abstract final class StitchFlowHelpCatalog {
     HelpTopic(
       id: 'issuing-stock',
       order: 8,
-      icon: Icons.outbox_rounded,
+      icon: AppIcons.stockIssue,
       titleEn: 'Issuing Stock to Workers',
       titleGu: 'કારીગરને સ્ટોક આપવો (ઇશ્યૂ)',
       summaryEn: 'Issue available in-house good stock to an assigned worker in 4 simple steps with automatic rate locking.',
@@ -271,7 +272,7 @@ abstract final class StitchFlowHelpCatalog {
     HelpTopic(
       id: 'receiving-returns',
       order: 9,
-      icon: Icons.assignment_returned_outlined,
+      icon: AppIcons.receiveReturn,
       titleEn: 'Receiving Returned Stock',
       titleGu: 'કારીગર પાસેથી માલ પરત લેવો',
       summaryEn: 'Record full or partial returns against an open issue while seeing live remaining pending and labour impact.',
@@ -298,7 +299,7 @@ abstract final class StitchFlowHelpCatalog {
     HelpTopic(
       id: 'damaged-lost-shortage',
       order: 10,
-      icon: Icons.report_problem_outlined,
+      icon: AppIcons.damaged,
       titleEn: 'Damaged, Lost & Shortage Explained',
       titleGu: 'ડેમેજ, ખોવાયેલ અને ઘટ વચ્ચેનો તફાવત',
       summaryEn: 'Understand how Damaged, Lost, and Shortage pieces behave differently in stock inventory and labour.',
@@ -324,7 +325,7 @@ abstract final class StitchFlowHelpCatalog {
     HelpTopic(
       id: 'worker-labour',
       order: 11,
-      icon: Icons.work_outline_rounded,
+      icon: AppIcons.work,
       titleEn: 'Understanding Worker Labour',
       titleGu: 'કારીગર મજૂરી ગણતરી કેવી રીતે થાય છે',
       summaryEn: 'Learn how Billing Mode, locked issue rates, and anti-double-counting rules keep worker earnings accurate.',
@@ -349,7 +350,7 @@ abstract final class StitchFlowHelpCatalog {
     HelpTopic(
       id: 'advances-and-payments',
       order: 12,
-      icon: Icons.payments_outlined,
+      icon: AppIcons.payment,
       titleEn: 'Recording Advances & Payments',
       titleGu: 'એડવાન્સ અને ચુકવણી નોંધવી',
       summaryEn: 'Track regular wage payouts, advance payments, and advance refunds cleanly with payment modes and references.',
@@ -375,7 +376,7 @@ abstract final class StitchFlowHelpCatalog {
     HelpTopic(
       id: 'worker-ledger',
       order: 13,
-      icon: Icons.receipt_long_outlined,
+      icon: AppIcons.ledger,
       titleEn: 'Understanding Worker Ledger Balances',
       titleGu: 'કારીગર ખાતાવહી અને બેલેન્સ સમજવું',
       summaryEn: 'Read running balances, Outstanding Payable vs Advance Credit, date filters, and audited adjustments.',
@@ -400,7 +401,7 @@ abstract final class StitchFlowHelpCatalog {
     HelpTopic(
       id: 'viewing-reports',
       order: 14,
-      icon: Icons.analytics_outlined,
+      icon: AppIcons.reports,
       titleEn: 'Viewing Business Reports',
       titleGu: 'વ્યવસાય રિપોર્ટ્સ જોવા',
       summaryEn: 'Inspect 10 live filterable reports covering stock, lots, workers, pending items, damaged/lost, labour, and payments.',
@@ -425,7 +426,7 @@ abstract final class StitchFlowHelpCatalog {
     HelpTopic(
       id: 'backup-and-restore',
       order: 15,
-      icon: Icons.backup_outlined,
+      icon: AppIcons.backup,
       titleEn: 'Creating & Restoring Backups',
       titleGu: 'બેકઅપ બનાવવો અને રિસ્ટોર કરવો',
       summaryEn: 'Protect your offline workshop records with full verified ZIP backups and raw SQLite exports.',
@@ -450,7 +451,7 @@ abstract final class StitchFlowHelpCatalog {
     HelpTopic(
       id: 'app-pin-and-biometrics',
       order: 16,
-      icon: Icons.lock_outline_rounded,
+      icon: AppIcons.lock,
       titleEn: 'App PIN & Fingerprint Unlock',
       titleGu: 'એપ પિન અને ફિંગરપ્રિન્ટ લોક',
       summaryEn: 'Protect workshop stock, rates, and karigar accounts with an optional local 4- or 6-digit PIN and fingerprint unlock.',
@@ -475,7 +476,7 @@ abstract final class StitchFlowHelpCatalog {
     HelpTopic(
       id: 'pin-recovery-and-lock-safety',
       order: 17,
-      icon: Icons.vpn_key_outlined,
+      icon: AppIcons.recoveryKey,
       titleEn: 'Recovery Key & App Lock Safety',
       titleGu: 'રિકવરી કી અને લોક સુરક્ષા',
       summaryEn: 'Reset a forgotten PIN offline using your written Recovery Key and understand what App Lock protects.',
@@ -500,7 +501,7 @@ abstract final class StitchFlowHelpCatalog {
     HelpTopic(
       id: 'advanced-reports-and-export',
       order: 18,
-      icon: Icons.ios_share_rounded,
+      icon: AppIcons.share,
       titleEn: 'Advanced Reports, PDF & Excel Export',
       titleGu: 'એડવાન્સ રિપોર્ટ્સ, PDF અને એક્સેલ એક્સપોર્ટ',
       summaryEn: 'Filter 6 unified report categories by IST dates, worker, process, or lot, and export Gujarati-safe PDF, Excel (.xlsx), or CSV.',
@@ -525,7 +526,7 @@ abstract final class StitchFlowHelpCatalog {
     HelpTopic(
       id: 'local-reminders-notifications',
       order: 19,
-      icon: Icons.notifications_outlined,
+      icon: AppIcons.notifications,
       titleEn: 'Local Reminders & Android Battery Settings',
       titleGu: 'ઓફલાઇન યાદ અપાવણી અને બેટરી સેટિંગ્સ',
       summaryEn: 'Configure 100% offline Android reminders for pending returns, weekly settlements, evening recap, and backups.',

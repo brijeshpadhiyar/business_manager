@@ -1,6 +1,7 @@
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// A long list section for detail pages that stays fast with any amount of
 /// data.
@@ -78,7 +79,7 @@ final class _AppLazySectionState<T> extends State<AppLazySection<T>> {
           if (remaining > 0)
             TextButton.icon(
               onPressed: _showMore,
-              icon: const Icon(Icons.expand_more_rounded),
+              icon: const Icon(AppIcons.expandMore),
               label: Text(
                 l10n.uxShowMore(
                   remaining < widget.pageSize ? remaining : widget.pageSize,
@@ -88,7 +89,7 @@ final class _AppLazySectionState<T> extends State<AppLazySection<T>> {
           if (canCollapse)
             TextButton.icon(
               onPressed: _showLess,
-              icon: const Icon(Icons.expand_less_rounded),
+              icon: const Icon(AppIcons.expandLess),
               label: Text(l10n.uxShowLess),
             ),
         ],

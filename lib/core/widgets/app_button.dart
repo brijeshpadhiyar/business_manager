@@ -4,6 +4,7 @@ import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/widgets/app_icon_pop.dart';
 import 'package:business_manager/core/widgets/app_loader.dart';
 
 enum AppButtonVariant { primary, secondary, outlined, destructive, text }
@@ -55,10 +56,9 @@ final class AppButton extends StatelessWidget {
         ),
       );
     } else if (icon != null) {
-      leadingWidget = Icon(
-        icon,
+      leadingWidget = AppIconPop(
         key: ValueKey<IconData>(icon!),
-        size: AppSizing.iconMd,
+        child: Icon(icon, size: AppSizing.iconMd),
       );
     } else {
       leadingWidget = const SizedBox.shrink(key: ValueKey<String>('none'));
@@ -162,10 +162,13 @@ final class AppButton extends StatelessWidget {
       ),
     };
 
-    return AppPressable(
+    return AppIconPopHost(
       enabled: effectiveOnPressed != null,
-      pressedScale: 0.96,
-      child: button,
+      child: AppPressable(
+        enabled: effectiveOnPressed != null,
+        pressedScale: 0.96,
+        child: button,
+      ),
     );
   }
 }

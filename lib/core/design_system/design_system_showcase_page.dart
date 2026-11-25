@@ -14,6 +14,7 @@ import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Development-only Milestone 2 Design System Showcase route for inspecting
 /// Material 3 tokens, Theme switching, EN/GU localization, ResponsiveNavigation,
@@ -57,18 +58,18 @@ final class _DesignSystemShowcasePageState
       destinations: [
         ResponsiveNavDestination(
           label: l10n.navOverview,
-          icon: Icons.dashboard_outlined,
-          selectedIcon: Icons.dashboard,
+          icon: AppIcons.dashboard,
+          selectedIcon: AppIcons.dashboardSelected,
         ),
         ResponsiveNavDestination(
           label: l10n.navInputs,
-          icon: Icons.edit_note_outlined,
-          selectedIcon: Icons.edit_note,
+          icon: AppIcons.notes,
+          selectedIcon: AppIcons.notes,
         ),
         ResponsiveNavDestination(
           label: l10n.navFeedback,
-          icon: Icons.widgets_outlined,
-          selectedIcon: Icons.widgets,
+          icon: AppIcons.showcase,
+          selectedIcon: AppIcons.showcase,
         ),
       ],
       body: Align(
@@ -238,7 +239,7 @@ final class _DesignSystemShowcasePageState
                   controller: _textController,
                   label: l10n.showcaseSampleFieldLabel,
                   hint: l10n.showcaseSampleFieldHint,
-                  prefixIcon: Icons.label_outline,
+                  prefixIcon: AppIcons.label,
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return l10n.validationRequired;
@@ -294,7 +295,7 @@ final class _DesignSystemShowcasePageState
                 AppButton(
                   label: l10n.showcaseValidateButton,
                   isExpanded: true,
-                  icon: Icons.check_circle_outline,
+                  icon: AppIcons.successOutline,
                   onPressed: () => _formKey.currentState?.validate(),
                 ),
               ],
@@ -343,7 +344,7 @@ final class _DesignSystemShowcasePageState
                       onPressed: null,
                     ),
                     AppIconButton(
-                      icon: Icons.info_outline,
+                      icon: AppIcons.info,
                       tooltip: l10n.showcaseOpenDialog,
                       onPressed: () {},
                     ),
@@ -380,22 +381,22 @@ final class _DesignSystemShowcasePageState
                   AppStatusBadge(
                     label: l10n.statusGood,
                     tone: AppStatusTone.good,
-                    icon: Icons.check_circle_outline,
+                    icon: AppIcons.successOutline,
                   ),
                   AppStatusBadge(
                     label: l10n.statusPending,
                     tone: AppStatusTone.pending,
-                    icon: Icons.schedule,
+                    icon: AppIcons.time,
                   ),
                   AppStatusBadge(
                     label: l10n.statusDamaged,
                     tone: AppStatusTone.damaged,
-                    icon: Icons.warning_amber_outlined,
+                    icon: AppIcons.warning,
                   ),
                   AppStatusBadge(
                     label: l10n.statusAdvanceCredit,
                     tone: AppStatusTone.info,
-                    icon: Icons.account_balance_wallet_outlined,
+                    icon: AppIcons.accounting,
                   ),
                 ],
               ),
@@ -471,7 +472,7 @@ final class _DesignSystemShowcasePageState
               AppLoader(message: l10n.showcaseLoadingMessage),
               const Divider(),
               AppEmptyState(
-                icon: Icons.inbox_outlined,
+                icon: AppIcons.empty,
                 title: l10n.showcaseEmptyTitle,
                 subtitle: l10n.showcaseEmptySubtitle,
               ),
@@ -487,6 +488,8 @@ final class _DesignSystemShowcasePageState
         ),
         const SizedBox(height: AppSpacing.md),
         const _BrandTokensCard(),
+        const SizedBox(height: AppSpacing.md),
+        const _IconCatalogueCard(),
       ],
     );
   }
@@ -644,6 +647,43 @@ final class _InfoRow extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+/// Visual QA for the action icon vocabulary (AppIcons).
+final class _IconCatalogueCard extends StatelessWidget {
+  const _IconCatalogueCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return AppCard(
+      child: Wrap(
+        spacing: AppSpacing.sm,
+        runSpacing: AppSpacing.sm,
+        children: [
+          for (final entry in AppIcons.catalogue.entries)
+            SizedBox(
+              width: 92,
+              child: Column(
+                children: [
+                  Icon(
+                    entry.value,
+                    size: AppSizing.iconXl,
+                    color: colorScheme.primary,
+                  ),
+                  const SizedBox(height: AppSpacing.xs),
+                  AppText(
+                    entry.key,
+                    variant: AppTextVariant.bodySmall,
+                    maxLines: 1,
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
     );
   }
 }

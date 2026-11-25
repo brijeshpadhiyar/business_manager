@@ -11,6 +11,7 @@ import 'package:business_manager/features/accounting/domain/entities/accounting_
 import 'package:business_manager/features/accounting/domain/repositories/accounting_repository.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Record Regular Payment, Advance Payment, or Advance Refund for a worker.
 final class PaymentFormPage extends StatefulWidget {
@@ -163,7 +164,7 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
       return AppScaffold(
         title: l10n.accountingRecordPaymentAction,
         body: AppEmptyState(
-          icon: Icons.people_outline_rounded,
+          icon: AppIcons.worker,
           title: l10n.workersEmptyTitle,
         ),
       );
@@ -252,7 +253,7 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
                       controller: _amountCtrl,
                       focusNode: _amountFocus,
                       label: l10n.accountingAmountLabel,
-                      prefixIcon: Icons.currency_rupee,
+                      prefixIcon: AppIcons.rupee,
                       keyboardType: const TextInputType.numberWithOptions(
                         decimal: true,
                       ),
@@ -298,7 +299,7 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
                       controller: _refCtrl,
                       focusNode: _refFocus,
                       label: l10n.accountingReferenceLabel,
-                      prefixIcon: Icons.receipt_outlined,
+                      prefixIcon: AppIcons.receipt,
                       textInputAction: TextInputAction.next,
                       maxLength: ValidationLimits.maxShortNameLength,
                       validator: ValidationLocalizer.wrap(
@@ -335,7 +336,7 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
                     const SizedBox(height: AppSpacing.lg),
                     AppButton(
                       label: l10n.actionSave,
-                      icon: Icons.check_rounded,
+                      icon: AppIcons.confirm,
                       isExpanded: true,
                       isLoading: _saving,
                       onPressed: _submit,

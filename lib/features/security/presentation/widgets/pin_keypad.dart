@@ -3,6 +3,7 @@ import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/design_system/app_typography.dart';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Accessible, 360dp-safe numeric PIN keypad with masked indicator dots and
 /// optional bottom-left biometric trigger button.
@@ -108,7 +109,7 @@ final class PinKeypad extends StatelessWidget {
                                 enabled: enabled,
                                 onTap: onBiometricPressed!,
                                 child: Icon(
-                                  Icons.fingerprint_rounded,
+                                  AppIcons.biometric,
                                   size: 30,
                                   color: onDarkBackground
                                       ? Colors.white
@@ -135,7 +136,7 @@ final class PinKeypad extends StatelessWidget {
                             enabled: enabled && enteredLength > 0,
                             onTap: onBackspacePressed,
                             child: Icon(
-                              Icons.backspace_outlined,
+                              AppIcons.backspace,
                               size: 24,
                               color: onDarkBackground
                                   ? Colors.white.withValues(

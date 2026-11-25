@@ -10,6 +10,7 @@ import 'package:business_manager/features/lots/domain/entities/colour_master_ent
 import 'package:business_manager/features/lots/domain/repositories/colour_master_repository.dart';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Visual Multi-Select Colour Picker, Quantity & Direct SKU Unit Price Sheet.
 ///
@@ -317,11 +318,11 @@ final class _VisualColourPickerContentState
             AppActionRow(content: AppTextField(
                     controller: searchCtrl,
                     label: 'Search colour name or HEX',
-                    prefixIcon: Icons.search_rounded,
+                    prefixIcon: AppIcons.search,
                     onChanged: (_) => setSheetState(() {}),
                   ), actions: [AppButton(
                   label: 'Custom',
-                  icon: Icons.add_rounded,
+                  icon: AppIcons.add,
                   variant: AppButtonVariant.secondary,
                   onPressed: () => openCustomColourDialog(),
                 ),],),
@@ -468,7 +469,7 @@ final class _VisualColourPickerContentState
                               ),
                             ),
                             AppIconButton(
-                              icon: Icons.close_rounded,
+                              icon: AppIcons.close,
                               tooltip: 'Remove',
                               onPressed: () => toggleColour(c),
                             ),
@@ -527,7 +528,7 @@ final class _VisualColourPickerContentState
               label: selectedList.isEmpty
                   ? 'Select Colours Above'
                   : 'Add ${selectedList.length} Colour(s) • ${MoneyFormatter.formatQuantity(totalQty)} pcs${totalValuePaise > 0 ? ' • ${MoneyFormatter.formatPaise(totalValuePaise)}' : ''}',
-              icon: Icons.check_rounded,
+              icon: AppIcons.confirm,
               isExpanded: true,
               onPressed: selectedList.isEmpty
                   ? null

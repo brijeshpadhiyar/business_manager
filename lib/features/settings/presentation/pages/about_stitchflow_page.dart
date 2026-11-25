@@ -6,6 +6,7 @@ import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// About StitchFlow screen showing brand identity, version/build, active flavor,
 /// offline local data privacy guarantee, and open-source licenses.
@@ -49,7 +50,7 @@ final class AboutStitchFlowPage extends StatelessWidget {
                     cacheWidth: 192,
                     cacheHeight: 192,
                     errorBuilder: (_, _, _) => const Icon(
-                      Icons.auto_awesome,
+                      AppIcons.brand,
                       color: Colors.white,
                       size: 48,
                     ),
@@ -113,7 +114,7 @@ final class AboutStitchFlowPage extends StatelessWidget {
                 Row(
                   children: [
                     Icon(
-                      Icons.verified_user_outlined,
+                      AppIcons.security,
                       size: 20,
                       color: context.semanticColors.goodStock,
                     ),
@@ -138,7 +139,7 @@ final class AboutStitchFlowPage extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
           AppButton(
             label: l10n.aboutLicensesAction,
-            icon: Icons.description_outlined,
+            icon: AppIcons.document,
             variant: AppButtonVariant.outlined,
             isExpanded: true,
             onPressed: () => showLicensePage(

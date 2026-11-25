@@ -11,6 +11,7 @@ import 'package:business_manager/features/reports/presentation/bloc/daily_summar
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Fast IST Daily Production & Financial Summary page (`/daily-summary`).
 /// Supports Today, Yesterday, and any Custom IST date.
@@ -61,7 +62,7 @@ final class _DailySummaryView extends StatelessWidget {
       contentWidth: AppContentWidth.wide,
       actions: [
         AppIconButton(
-          icon: Icons.refresh_rounded,
+          icon: AppIcons.refresh,
           tooltip: l10n.actionRetry,
           onPressed: () {
             final c = context.read<DailySummaryCubit>();
@@ -155,7 +156,7 @@ final class _DailySummaryView extends StatelessWidget {
 
                         if (!summary.hasAnyActivity)
                           AppEmptyState(
-                            icon: Icons.event_available_outlined,
+                            icon: AppIcons.dailySummary,
                             title: l10n.dailySummaryNoActivityTitle,
                             subtitle: l10n.dailySummaryNoActivitySubtitle,
                             actionLabel: l10n.stockIssueAction,
@@ -319,13 +320,13 @@ final class _DailySummaryView extends StatelessWidget {
                                 children: [
                                   AppButton(
                                     label: l10n.stockIssueAction,
-                                    icon: Icons.outbox_rounded,
+                                    icon: AppIcons.stockIssue,
                                     onPressed: () =>
                                         context.push(RoutePaths.stockIssue()),
                                   ),
                                   AppButton(
                                     label: l10n.stockReturnAction,
-                                    icon: Icons.assignment_returned_outlined,
+                                    icon: AppIcons.receiveReturn,
                                     variant: AppButtonVariant.secondary,
                                     onPressed: () => context.push(
                                       RoutePaths.stockReturnPicker,
@@ -333,7 +334,7 @@ final class _DailySummaryView extends StatelessWidget {
                                   ),
                                   AppButton(
                                     label: l10n.navReports,
-                                    icon: Icons.analytics_outlined,
+                                    icon: AppIcons.reports,
                                     variant: AppButtonVariant.outlined,
                                     onPressed: () =>
                                         context.push(RoutePaths.reports),
@@ -372,7 +373,7 @@ final class _DailySummaryView extends StatelessWidget {
                 label: l10n.stockIssuedLabel,
                 value: summary.issuedQty,
                 suffix: l10n.piecesUnit,
-                icon: Icons.outbox_rounded,
+                icon: AppIcons.stockIssue,
                 tone: AppStatusTone.info,
               ),
             ),
@@ -382,7 +383,7 @@ final class _DailySummaryView extends StatelessWidget {
                 label: l10n.stockGoodReturnedLabel,
                 value: summary.goodReturnedQty,
                 suffix: l10n.piecesUnit,
-                icon: Icons.check_circle_outline_rounded,
+                icon: AppIcons.successOutline,
                 tone: AppStatusTone.good,
               ),
             ),
@@ -392,7 +393,7 @@ final class _DailySummaryView extends StatelessWidget {
                 label: l10n.dailySummaryDamagedLostLabel,
                 value: summary.damagedQty + summary.lostAndShortageQty,
                 suffix: l10n.piecesUnit,
-                icon: Icons.report_problem_outlined,
+                icon: AppIcons.damaged,
                 tone: (summary.damagedQty + summary.lostAndShortageQty) > 0
                     ? AppStatusTone.damaged
                     : AppStatusTone.neutral,
@@ -404,7 +405,7 @@ final class _DailySummaryView extends StatelessWidget {
                 label: l10n.accountingEarnedLabourLabel,
                 value: summary.labourEarnedPaise,
                 isCurrencyPaise: true,
-                icon: Icons.work_outline_rounded,
+                icon: AppIcons.work,
                 tone: AppStatusTone.good,
               ),
             ),
@@ -414,7 +415,7 @@ final class _DailySummaryView extends StatelessWidget {
                 label: l10n.accountingTabPayments,
                 value: summary.netPaymentsPaise,
                 isCurrencyPaise: true,
-                icon: Icons.payments_outlined,
+                icon: AppIcons.payment,
                 tone: AppStatusTone.neutral,
               ),
             ),
@@ -424,7 +425,7 @@ final class _DailySummaryView extends StatelessWidget {
                 label: l10n.stockPendingWorkerLabel,
                 value: summary.currentTotalPendingQty,
                 suffix: l10n.piecesUnit,
-                icon: Icons.pending_actions_rounded,
+                icon: AppIcons.pending,
                 tone: summary.currentTotalPendingQty > 0
                     ? AppStatusTone.pending
                     : AppStatusTone.good,

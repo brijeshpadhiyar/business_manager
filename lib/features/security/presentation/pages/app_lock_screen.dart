@@ -10,6 +10,7 @@ import 'package:business_manager/features/security/presentation/widgets/pin_keyp
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Root branded Lock Screen rendered above all routes whenever [AppLockCubit]
 /// is in `locked` state. Prevents any flash of Dashboard or sensitive data.
@@ -154,7 +155,7 @@ final class _AppLockScreenState extends State<AppLockScreen> {
                               cacheWidth: 192,
                               cacheHeight: 192,
                               errorBuilder: (_, _, _) => const Icon(
-                                Icons.lock_outline_rounded,
+                                AppIcons.lock,
                                 color: Colors.white,
                                 size: 32,
                               ),
@@ -236,7 +237,7 @@ final class _AppLockScreenState extends State<AppLockScreen> {
                             TextButton.icon(
                               onPressed: canEnterPin ? _triggerBiometric : null,
                               icon: const Icon(
-                                Icons.fingerprint_rounded,
+                                AppIcons.biometric,
                                 color: Colors.white,
                               ),
                               label: Text(

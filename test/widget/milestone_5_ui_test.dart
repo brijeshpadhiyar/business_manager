@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:business_manager/app.dart';
 import 'package:business_manager/core/config/app_config.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 import 'package:business_manager/core/database/app_database.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/locale_cubit.dart';
@@ -107,7 +108,7 @@ void main() {
       expect(find.text('Cutting'), findsOneWidget);
 
       // 4. Open Rate History -> Add Rate ₹20
-      await tester.tap(find.byIcon(Icons.currency_rupee));
+      await tester.tap(find.byIcon(AppIcons.pieceRate));
       await tester.pumpAndSettle();
       expect(find.text('No Rates Configured'), findsOneWidget);
 

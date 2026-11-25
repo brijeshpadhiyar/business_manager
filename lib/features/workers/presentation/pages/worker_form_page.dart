@@ -13,6 +13,7 @@ import 'package:business_manager/features/workers/domain/entities/worker_entitie
 import 'package:business_manager/features/workers/domain/repositories/worker_repository.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Complete one-screen Worker Creation & Edit workflow:
 /// - Worker Details (Name, Phone, Address, Notes, Active/Inactive Status)
@@ -338,7 +339,7 @@ final class _WorkerFormPageState extends State<WorkerFormPage> {
                             controller: _nameCtrl,
                             focusNode: _nameFocus,
                             label: l10n.workerNameLabel,
-                            prefixIcon: Icons.person_outline,
+                            prefixIcon: AppIcons.worker,
                             textInputAction: TextInputAction.next,
                             maxLength: ValidationLimits.maxPersonNameLength,
                             onChanged: (_) {
@@ -360,7 +361,7 @@ final class _WorkerFormPageState extends State<WorkerFormPage> {
                             controller: _phoneCtrl,
                             focusNode: _phoneFocus,
                             label: l10n.workerPhoneLabel,
-                            prefixIcon: Icons.phone_outlined,
+                            prefixIcon: AppIcons.phone,
                             keyboardType: TextInputType.phone,
                             textInputAction: TextInputAction.next,
                             onChanged: (_) {
@@ -379,7 +380,7 @@ final class _WorkerFormPageState extends State<WorkerFormPage> {
                             controller: _addressCtrl,
                             focusNode: _addressFocus,
                             label: l10n.workerAddressLabel,
-                            prefixIcon: Icons.location_on_outlined,
+                            prefixIcon: AppIcons.location,
                             maxLines: 2,
                             maxLength: ValidationLimits.maxAddressLength,
                             validator: ValidationLocalizer.wrap(
@@ -436,7 +437,7 @@ final class _WorkerFormPageState extends State<WorkerFormPage> {
                               ),
                               AppButton(
                                 label: l10n.processCreateAction,
-                                icon: Icons.add_rounded,
+                                icon: AppIcons.add,
                                 variant: AppButtonVariant.outlined,
                                 onPressed: () async {
                                   await context.push<bool>(
@@ -493,7 +494,7 @@ final class _WorkerFormPageState extends State<WorkerFormPage> {
                 padding: const EdgeInsets.only(top: AppSpacing.sm),
                 child: AppButton(
                   label: l10n.actionSave,
-                  icon: Icons.check_rounded,
+                  icon: AppIcons.confirm,
                   isExpanded: true,
                   isLoading: _isSaving,
                   onPressed: _isSaving ? null : _save,
@@ -607,7 +608,7 @@ final class _WorkerFormPageState extends State<WorkerFormPage> {
                 hint: proc.defaultRatePaise > 0
                     ? 'Leave blank to inherit ${MoneyFormatter.formatRatePaise(proc.defaultRatePaise, pricingUnit: proc.defaultPricingUnit)}'
                     : 'e.g. 25.00',
-                prefixIcon: Icons.currency_rupee_rounded,
+                prefixIcon: AppIcons.rupee,
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
                 ),

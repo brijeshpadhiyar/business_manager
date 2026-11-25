@@ -10,6 +10,7 @@ import 'package:business_manager/features/rates/presentation/bloc/rate_history_c
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Displays current per-piece rate and full effective-dated rate history for a
 /// worker + process combination.
@@ -83,7 +84,7 @@ final class _RateHistoryView extends StatelessWidget {
           title: '${worker.name} — ${l10n.ratesHistoryHeading}',
           actions: [
             AppIconButton(
-              icon: Icons.add,
+              icon: AppIcons.add,
               tooltip: l10n.workerAddRateAction,
               onPressed: () => _openAddRate(context, state.selectedProcessId),
             ),
@@ -132,7 +133,7 @@ final class _RateHistoryView extends StatelessWidget {
                                   ],
                                 ), actions: [AppButton(
                                 label: l10n.workerAddRateAction,
-                                icon: Icons.add,
+                                icon: AppIcons.add,
                                 onPressed: () =>
                                     _openAddRate(context, state.selectedProcessId),
                               ),],),
@@ -151,7 +152,7 @@ final class _RateHistoryView extends StatelessWidget {
               if (state.rates.isEmpty)
                 SliverToBoxAdapter(
                   child: AppEmptyState(
-                    icon: Icons.currency_rupee,
+                    icon: AppIcons.pieceRate,
                     title: l10n.ratesEmptyTitle,
                     subtitle: l10n.ratesEmptySubtitle,
                     actionLabel: l10n.workerAddRateAction,
@@ -215,7 +216,7 @@ final class _RateHistoryView extends StatelessWidget {
                             ),
                           ),
                           AppIconButton(
-                            icon: Icons.edit_outlined,
+                            icon: AppIcons.edit,
                             tooltip: l10n.ratesEditHeading,
                             onPressed: () async {
                               await ctx.push(

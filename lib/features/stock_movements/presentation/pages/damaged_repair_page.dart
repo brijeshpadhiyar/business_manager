@@ -12,6 +12,7 @@ import 'package:business_manager/features/stock_movements/domain/repositories/st
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Audited Damaged-to-Good repair adjustment screen.
 final class DamagedRepairPage extends StatefulWidget {
@@ -139,7 +140,7 @@ final class _DamagedRepairPageState extends State<DamagedRepairPage> {
       return AppScaffold(
         title: l10n.stockRepairHeading,
         body: AppEmptyState(
-          icon: Icons.verified_outlined,
+          icon: AppIcons.qcPassed,
           title: l10n.stockNoDamagedAvailable,
         ),
       );
@@ -153,7 +154,7 @@ final class _DamagedRepairPageState extends State<DamagedRepairPage> {
       title: l10n.stockRepairHeading,
       actions: [
         AppIconButton(
-          icon: Icons.fact_check_outlined,
+          icon: AppIcons.qcInspect,
           tooltip: l10n.navInspectionQueue,
           onPressed: () => context.push(RoutePaths.inspectionQueue),
         ),
@@ -262,7 +263,7 @@ final class _DamagedRepairPageState extends State<DamagedRepairPage> {
                   const SizedBox(height: AppSpacing.lg),
                   AppButton(
                     label: l10n.actionSave,
-                    icon: Icons.check_rounded,
+                    icon: AppIcons.confirm,
                     isExpanded: true,
                     isLoading: _saving,
                     onPressed: _submit,

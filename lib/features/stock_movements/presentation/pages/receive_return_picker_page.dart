@@ -11,6 +11,7 @@ import 'package:business_manager/features/stock_movements/domain/entities/stock_
 import 'package:business_manager/features/stock_movements/domain/repositories/stock_movement_repository.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 enum _PendingSortMode { oldestFirst, highestPending, newestFirst }
 
@@ -166,14 +167,14 @@ final class _ReceiveReturnPickerPageState
       contentWidth: AppContentWidth.wide,
       actions: [
         AppIconButton(
-          icon: Icons.refresh_rounded,
+          icon: AppIcons.refresh,
           tooltip: l10n.actionRetry,
           onPressed: _load,
         ),
       ],
       body: _issues.isEmpty
           ? AppEmptyState(
-              icon: Icons.check_circle_outline_rounded,
+              icon: AppIcons.successOutline,
               title: l10n.stockEmptyIssuesTitle,
               subtitle: l10n.stockEmptyIssuesSubtitle,
               actionLabel: l10n.stockIssueAction,
@@ -315,7 +316,7 @@ final class _ReceiveReturnPickerPageState
                 if (filtered.isEmpty)
                   SliverToBoxAdapter(
                     child: AppEmptyState(
-                      icon: Icons.filter_alt_off_outlined,
+                      icon: AppIcons.clearFilter,
                       title: l10n.reportsEmptyTitle,
                       subtitle: l10n.reportsEmptySubtitle,
                     ),
@@ -417,7 +418,7 @@ final class _PendingIssueSelectionCard extends StatelessWidget {
                     label:
                         '${l10n.stockRemainingPendingLabel}: ${item.remainingPending} ${l10n.piecesUnit}',
                     tone: AppStatusTone.pending,
-                    icon: Icons.hourglass_bottom_rounded,
+                    icon: AppIcons.pending,
                   ),
                   const SizedBox(height: 4),
                   AppStatusBadge(label: ageLabel, tone: ageTone),
@@ -457,7 +458,7 @@ final class _PendingIssueSelectionCard extends StatelessWidget {
             actions: [
               AppButton(
                 label: l10n.stockReturnAction,
-                icon: Icons.assignment_returned_outlined,
+                icon: AppIcons.receiveReturn,
                 variant: AppButtonVariant.secondary,
                 onPressed: onSelect,
               ),

@@ -20,6 +20,7 @@ import 'package:business_manager/features/stock_movements/domain/entities/stock_
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// StitchFlow V1.2 unified 6-category Advanced Reports & Business Insights hub.
 final class ReportsPage extends StatelessWidget {
@@ -79,7 +80,7 @@ final class _ReportsViewState extends State<_ReportsView> {
           contentWidth: AppContentWidth.wide,
           actions: [
             AppIconButton(
-              icon: Icons.ios_share_rounded,
+              icon: AppIcons.share,
               tooltip: l10n.reportExportAction,
               onPressed: state.bundle == null || state.isExporting
                   ? null
@@ -90,7 +91,7 @@ final class _ReportsViewState extends State<_ReportsView> {
                     ),
             ),
             AppIconButton(
-              icon: Icons.refresh_rounded,
+              icon: AppIcons.refresh,
               tooltip: l10n.actionRetry,
               onPressed: () => cubit.loadReports(),
             ),
@@ -185,7 +186,7 @@ final class _ReportsViewState extends State<_ReportsView> {
   Widget _empty(BuildContext context) {
     final l10n = context.l10n;
     return AppEmptyState(
-      icon: Icons.analytics_outlined,
+      icon: AppIcons.reports,
       title: l10n.reportsEmptyTitle,
       subtitle: l10n.reportsEmptySubtitle,
     );
@@ -209,35 +210,35 @@ final class _ReportsViewState extends State<_ReportsView> {
               label: l10n.stockIssuedLabel,
               value: b.dailyTotalIssued,
               suffix: l10n.piecesUnit,
-              icon: Icons.outbox_rounded,
+              icon: AppIcons.stockIssue,
               tone: AppStatusTone.info,
             ),
             AppMetricTile(
               label: l10n.stockGoodReturnedLabel,
               value: b.dailyTotalGoodReturned,
               suffix: l10n.piecesUnit,
-              icon: Icons.check_circle_outline_rounded,
+              icon: AppIcons.successOutline,
               tone: AppStatusTone.good,
             ),
             AppMetricTile(
               label: l10n.reportLabourCostLabel,
               value: b.dailyTotalLabourPaise,
               isCurrencyPaise: true,
-              icon: Icons.payments_outlined,
+              icon: AppIcons.payment,
               tone: AppStatusTone.good,
             ),
             AppMetricTile(
               label: l10n.reportsTabPayments,
               value: b.dailyTotalNetPaymentsPaise,
               isCurrencyPaise: true,
-              icon: Icons.account_balance_wallet_outlined,
+              icon: AppIcons.accounting,
               tone: AppStatusTone.info,
             ),
             AppMetricTile(
               label: l10n.dailySummaryDamagedLostLabel,
               value: b.dailyTotalDamaged + b.dailyTotalLostShortage,
               suffix: l10n.piecesUnit,
-              icon: Icons.report_problem_outlined,
+              icon: AppIcons.damaged,
               tone: (b.dailyTotalDamaged + b.dailyTotalLostShortage) > 0
                   ? AppStatusTone.damaged
                   : AppStatusTone.neutral,
@@ -246,7 +247,7 @@ final class _ReportsViewState extends State<_ReportsView> {
               label: l10n.stockPendingWorkerLabel,
               value: b.currentTotalPendingQty,
               suffix: l10n.piecesUnit,
-              icon: Icons.pending_actions_rounded,
+              icon: AppIcons.pending,
               tone: b.currentTotalPendingQty > 0
                   ? AppStatusTone.pending
                   : AppStatusTone.good,
@@ -392,7 +393,7 @@ final class _ReportsViewState extends State<_ReportsView> {
                       ),
                     ),
                     AppIconButton(
-                      icon: Icons.account_balance_wallet_outlined,
+                      icon: AppIcons.accounting,
                       tooltip: l10n.reportsTabWorkerLedger,
                       onPressed: () =>
                           context.push(RoutePaths.workerLedger(w.workerId)),
@@ -668,20 +669,20 @@ final class _ReportsViewState extends State<_ReportsView> {
                     label: l10n.colourInitialQtyLabel,
                     value: inv.initialStock,
                     suffix: l10n.piecesUnit,
-                    icon: Icons.inventory_2_outlined,
+                    icon: AppIcons.lot,
                   ),
                   AppMetricTile(
                     label: l10n.stockAvailableGoodLabel,
                     value: inv.availableGoodStock,
                     suffix: l10n.piecesUnit,
-                    icon: Icons.check_circle_outline_rounded,
+                    icon: AppIcons.successOutline,
                     tone: AppStatusTone.good,
                   ),
                   AppMetricTile(
                     label: l10n.stockPendingWorkerLabel,
                     value: inv.pendingWithWorkers,
                     suffix: l10n.piecesUnit,
-                    icon: Icons.pending_actions_rounded,
+                    icon: AppIcons.pending,
                     tone: inv.pendingWithWorkers > 0
                         ? AppStatusTone.pending
                         : AppStatusTone.good,
@@ -690,7 +691,7 @@ final class _ReportsViewState extends State<_ReportsView> {
                     label: l10n.stockDamagedBucketLabel,
                     value: inv.damagedBucket,
                     suffix: l10n.piecesUnit,
-                    icon: Icons.report_problem_outlined,
+                    icon: AppIcons.damaged,
                     tone: inv.damagedBucket > 0
                         ? AppStatusTone.damaged
                         : AppStatusTone.neutral,
@@ -699,7 +700,7 @@ final class _ReportsViewState extends State<_ReportsView> {
                     label: l10n.stockLostLabel,
                     value: inv.lostStock,
                     suffix: l10n.piecesUnit,
-                    icon: Icons.help_outline_rounded,
+                    icon: AppIcons.help,
                     tone: inv.lostStock > 0
                         ? AppStatusTone.info
                         : AppStatusTone.neutral,
@@ -708,7 +709,7 @@ final class _ReportsViewState extends State<_ReportsView> {
                     label: l10n.stockShortageLabel,
                     value: inv.shortageStock,
                     suffix: l10n.piecesUnit,
-                    icon: Icons.remove_circle_outline_rounded,
+                    icon: AppIcons.remove,
                     tone: inv.shortageStock > 0
                         ? AppStatusTone.info
                         : AppStatusTone.neutral,
@@ -720,7 +721,7 @@ final class _ReportsViewState extends State<_ReportsView> {
                 label: l10n.reportRefStockValueLabel,
                 value: inv.referenceGoodStockValuePaise,
                 isCurrencyPaise: true,
-                icon: Icons.inventory_outlined,
+                icon: AppIcons.inventory,
                 tone: AppStatusTone.info,
               ),
               const SizedBox(height: AppSpacing.xs),
@@ -969,21 +970,21 @@ final class _ReportsViewState extends State<_ReportsView> {
               label: l10n.accountingEarnedLabourLabel,
               value: fin.periodEarnedLabourPaise,
               isCurrencyPaise: true,
-              icon: Icons.work_outline_rounded,
+              icon: AppIcons.work,
               tone: AppStatusTone.good,
             ),
             AppMetricTile(
               label: l10n.reportsTabPayments,
               value: fin.periodNetPaymentsPaise,
               isCurrencyPaise: true,
-              icon: Icons.payments_outlined,
+              icon: AppIcons.payment,
               tone: AppStatusTone.info,
             ),
             AppMetricTile(
               label: l10n.accountingOutstandingPayableLabel,
               value: fin.totalCurrentOutstandingPayablePaise,
               isCurrencyPaise: true,
-              icon: Icons.pending_actions_rounded,
+              icon: AppIcons.pending,
               tone: fin.totalCurrentOutstandingPayablePaise > 0
                   ? AppStatusTone.pending
                   : AppStatusTone.good,
@@ -992,7 +993,7 @@ final class _ReportsViewState extends State<_ReportsView> {
               label: l10n.accountingAdvanceCreditLabel,
               value: fin.totalCurrentAdvanceCreditPaise,
               isCurrencyPaise: true,
-              icon: Icons.account_balance_wallet_outlined,
+              icon: AppIcons.accounting,
               tone: AppStatusTone.info,
             ),
           ],

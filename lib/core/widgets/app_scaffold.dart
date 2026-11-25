@@ -12,6 +12,7 @@ import 'package:business_manager/core/widgets/app_glass_backdrop.dart';
 import 'package:business_manager/core/widgets/responsive_navigation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Centralized scroll & header presentation modes for [AppScaffold].
 enum AppScrollMode {
@@ -173,7 +174,7 @@ final class AppScaffold extends StatelessWidget {
     if (router == null) return null;
     return IconButton(
       tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-      icon: const Icon(Icons.home_outlined),
+      icon: const Icon(AppIcons.home),
       onPressed: () => router.go(RoutePaths.home),
     );
   }

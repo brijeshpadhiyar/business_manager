@@ -10,6 +10,7 @@ import 'package:business_manager/features/accounting/domain/entities/accounting_
 import 'package:business_manager/features/accounting/domain/repositories/accounting_repository.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Audited worker ledger adjustment screen (CREDIT or DEBIT with mandatory reason).
 final class WorkerAdjustmentFormPage extends StatefulWidget {
@@ -174,7 +175,7 @@ final class _WorkerAdjustmentFormPageState
                       controller: _amountCtrl,
                       focusNode: _amountFocus,
                       label: l10n.accountingAmountLabel,
-                      prefixIcon: Icons.currency_rupee,
+                      prefixIcon: AppIcons.rupee,
                       keyboardType: const TextInputType.numberWithOptions(
                         decimal: true,
                       ),
@@ -239,7 +240,7 @@ final class _WorkerAdjustmentFormPageState
                     const SizedBox(height: AppSpacing.lg),
                     AppButton(
                       label: l10n.actionSave,
-                      icon: Icons.check_rounded,
+                      icon: AppIcons.confirm,
                       isExpanded: true,
                       isLoading: _saving,
                       onPressed: _submit,

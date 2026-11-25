@@ -16,6 +16,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// StitchFlow V1.3 Multi-Process Routing, Variant Allocation, Dynamic Pricing,
 /// Additional Charges & Cost Summary Hub.
@@ -351,8 +352,8 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                               ? 'Add & Dispatch Process'
                               : 'Save Pending Process'),
                     icon: isReassign
-                        ? Icons.assignment_ind_outlined
-                        : Icons.add_task_rounded,
+                        ? AppIcons.assignWorker
+                        : AppIcons.assignWorker,
                     isExpanded: true,
                     isLoading: saving,
                     onPressed: saving
@@ -580,7 +581,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                   const SizedBox(height: AppSpacing.lg),
                   AppButton(
                     label: 'Confirm Direct Transfer',
-                    icon: Icons.compare_arrows_rounded,
+                    icon: AppIcons.routeTransfer,
                     isExpanded: true,
                     isLoading: saving,
                     onPressed: saving
@@ -708,7 +709,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                 const SizedBox(height: AppSpacing.lg),
                 AppButton(
                   label: 'Confirm Factory Return',
-                  icon: Icons.warehouse_outlined,
+                  icon: AppIcons.factory,
                   isExpanded: true,
                   isLoading: saving,
                   onPressed: saving
@@ -817,7 +818,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
               const SizedBox(height: AppSpacing.lg),
               AppButton(
                 label: 'Save ${chargeType.label}',
-                icon: Icons.add_card_rounded,
+                icon: AppIcons.addCharge,
                 isExpanded: true,
                 isLoading: saving,
                 onPressed: saving
@@ -931,7 +932,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
               const SizedBox(height: AppSpacing.lg),
               AppButton(
                 label: 'Confirm Receipt',
-                icon: Icons.check_circle_outline_rounded,
+                icon: AppIcons.successOutline,
                 isExpanded: true,
                 isLoading: saving,
                 onPressed: saving
@@ -1045,7 +1046,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
               : 'Process Routing',
           actions: [
             AppIconButton(
-              icon: Icons.refresh_rounded,
+              icon: AppIcons.refresh,
               tooltip: 'Refresh',
               onPressed: () => context.read<JobRoutingCubit>().load(lotId),
             ),
@@ -1184,7 +1185,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                     children: [
                       AppButton(
                         label: 'Add Process',
-                        icon: Icons.add_task_rounded,
+                        icon: AppIcons.assignWorker,
                         onPressed: () => _showAddOrReassignSheet(
                           context,
                           overview,
@@ -1193,7 +1194,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                       ),
                       AppButton(
                         label: 'Reassign from Factory',
-                        icon: Icons.assignment_ind_outlined,
+                        icon: AppIcons.assignWorker,
                         variant: AppButtonVariant.secondary,
                         onPressed: overview.totalFactoryAvailable > 0
                             ? () => _showAddOrReassignSheet(
@@ -1272,7 +1273,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                         label: 'Factory Ready',
                         value: totalFactory,
                         suffix: 'pcs',
-                        icon: Icons.warehouse_outlined,
+                        icon: AppIcons.factory,
                         tone: AppStatusTone.good,
                       ),
                     ),
@@ -1282,7 +1283,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                         label: 'With Workers',
                         value: totalWithWorkers,
                         suffix: 'pcs',
-                        icon: Icons.pending_actions_rounded,
+                        icon: AppIcons.pending,
                         tone: totalWithWorkers > 0
                             ? AppStatusTone.pending
                             : AppStatusTone.neutral,
@@ -1294,7 +1295,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                         label: 'Total Production Cost',
                         value: costs.totalNetCostPaise,
                         isCurrencyPaise: true,
-                        icon: Icons.currency_rupee_rounded,
+                        icon: AppIcons.rupee,
                         tone: AppStatusTone.info,
                       ),
                     ),
@@ -1304,7 +1305,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                         label: 'Outstanding Payable',
                         value: costs.totalOutstandingPaise,
                         isCurrencyPaise: true,
-                        icon: Icons.account_balance_wallet_outlined,
+                        icon: AppIcons.accounting,
                         tone: costs.totalOutstandingPaise > 0
                             ? AppStatusTone.pending
                             : AppStatusTone.good,
@@ -1391,8 +1392,8 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                               ? AppStatusTone.good
                               : AppStatusTone.pending,
                           icon: loc.isFactory
-                              ? Icons.warehouse_outlined
-                              : Icons.person_pin_circle_outlined,
+                              ? AppIcons.factory
+                              : AppIcons.worker,
                         ),
                     ],
                   ),
@@ -1411,7 +1412,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
           if (filteredProcesses.isEmpty)
             AppCard(
               child: AppEmptyState(
-                icon: Icons.account_tree_outlined,
+                icon: AppIcons.routeTransfer,
                 title: activeFilterId == null
                     ? 'No Operations Added Yet'
                     : 'No Operations for Selected Colour',
@@ -1607,7 +1608,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
               if (jp.canDispatch)
                 AppButton(
                   label: 'Dispatch (${jp.remainingToDispatch})',
-                  icon: Icons.local_shipping_outlined,
+                  icon: AppIcons.dispatch,
                   onPressed: () async {
                     final err = await cubit.dispatchProcess(
                       jobProcessId: jp.id,
@@ -1621,21 +1622,21 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
               if (jp.canTransferOrReturn)
                 AppButton(
                   label: 'Direct Transfer',
-                  icon: Icons.compare_arrows_rounded,
+                  icon: AppIcons.routeTransfer,
                   onPressed: () =>
                       _showDirectTransferSheet(context, overview, jp),
                 ),
               if (jp.canTransferOrReturn)
                 AppButton(
                   label: 'Return to Factory',
-                  icon: Icons.warehouse_outlined,
+                  icon: AppIcons.factory,
                   variant: AppButtonVariant.secondary,
                   onPressed: () => _showReturnToFactorySheet(context, jp),
                 ),
               if (jp.status != JobProcessStatus.cancelled)
                 AppButton(
                   label: '+ Charge',
-                  icon: Icons.add_card_outlined,
+                  icon: AppIcons.addCharge,
                   variant: AppButtonVariant.outlined,
                   onPressed: () => _showAdditionalChargeSheet(context, jp),
                 ),
@@ -1643,14 +1644,14 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                   jp.memberId != null)
                 AppButton(
                   label: 'Pay',
-                  icon: Icons.payments_outlined,
+                  icon: AppIcons.payment,
                   variant: AppButtonVariant.outlined,
                   onPressed: () => _openWorkerPayment(context, jp),
                 ),
               if (jp.canComplete)
                 AppButton(
                   label: 'Mark Completed',
-                  icon: Icons.check_circle_outline_rounded,
+                  icon: AppIcons.successOutline,
                   variant: AppButtonVariant.outlined,
                   onPressed: () async {
                     final err = await cubit.markCompleted(jp.id);
@@ -1662,7 +1663,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
               if (jp.canCancel)
                 AppButton(
                   label: 'Cancel',
-                  icon: Icons.cancel_outlined,
+                  icon: AppIcons.cancel,
                   variant: AppButtonVariant.text,
                   onPressed: () => _showCancelDialog(context, jp),
                 ),

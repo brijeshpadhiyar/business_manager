@@ -15,6 +15,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 final class BackupRestorePage extends StatelessWidget {
   const BackupRestorePage({super.key});
@@ -186,7 +187,7 @@ final class _BackupRestoreView extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Icon(
-                        Icons.shield_outlined,
+                        AppIcons.shield,
                         color: Colors.white,
                         size: 24,
                       ),
@@ -243,7 +244,7 @@ final class _BackupRestoreView extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.archive_outlined, size: 22),
+                        const Icon(AppIcons.backup, size: 22),
                         const SizedBox(width: AppSpacing.sm),
                         Expanded(
                           child: AppHeading(
@@ -261,7 +262,7 @@ final class _BackupRestoreView extends StatelessWidget {
                     const SizedBox(height: AppSpacing.md),
                     AppButton(
                       label: l10n.backupCreateFullAction,
-                      icon: Icons.backup_outlined,
+                      icon: AppIcons.backup,
                       isLoading: isWorking,
                       onPressed: () =>
                           context.read<BackupRestoreCubit>().createFullBackup(),
@@ -278,7 +279,7 @@ final class _BackupRestoreView extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.restore_page_outlined, size: 22),
+                        const Icon(AppIcons.restore, size: 22),
                         const SizedBox(width: AppSpacing.sm),
                         Expanded(
                           child: AppHeading(
@@ -296,7 +297,7 @@ final class _BackupRestoreView extends StatelessWidget {
                     const SizedBox(height: AppSpacing.md),
                     AppButton(
                       label: l10n.backupRestoreFullAction,
-                      icon: Icons.folder_open_rounded,
+                      icon: AppIcons.folder,
                       variant: AppButtonVariant.secondary,
                       isLoading: isWorking,
                       onPressed: () => _pickAndInspectBackup(context),
@@ -313,8 +314,8 @@ final class _BackupRestoreView extends StatelessWidget {
                             ? AppStatusTone.good
                             : AppStatusTone.damaged,
                         icon: validation.isValid
-                            ? Icons.verified_outlined
-                            : Icons.error_outline_rounded,
+                            ? AppIcons.success
+                            : AppIcons.error,
                       ),
                       const SizedBox(height: AppSpacing.sm),
                       if (validation.isValid &&
@@ -330,7 +331,7 @@ final class _BackupRestoreView extends StatelessWidget {
                         const SizedBox(height: AppSpacing.md),
                         AppButton(
                           label: l10n.backupConfirmRestoreAction,
-                          icon: Icons.warning_amber_rounded,
+                          icon: AppIcons.warning,
                           variant: AppButtonVariant.destructive,
                           onPressed: state.pendingZipPath == null
                               ? null
@@ -360,7 +361,7 @@ final class _BackupRestoreView extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.storage_outlined, size: 22),
+                        const Icon(AppIcons.storage, size: 22),
                         const SizedBox(width: AppSpacing.sm),
                         Expanded(
                           child: AppHeading(
@@ -378,7 +379,7 @@ final class _BackupRestoreView extends StatelessWidget {
                     const SizedBox(height: AppSpacing.md),
                     AppButton(
                       label: l10n.backupRawSqliteAction,
-                      icon: Icons.download_outlined,
+                      icon: AppIcons.download,
                       variant: AppButtonVariant.outlined,
                       isLoading: isWorking,
                       onPressed: () => _exportRawSqliteWithAuth(context),
@@ -411,7 +412,7 @@ final class _BackupRestoreView extends StatelessWidget {
                       const SizedBox(height: AppSpacing.sm),
                       AppButton(
                         label: l10n.backupShareLastAction,
-                        icon: Icons.share_outlined,
+                        icon: AppIcons.share,
                         variant: AppButtonVariant.secondary,
                         onPressed: () => _shareFile(context, state.lastExport!),
                       ),

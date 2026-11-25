@@ -9,6 +9,7 @@ import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Appearance settings: Theme mode (System / Light Glass / Dark Glass), App
 /// language (System / English / Gujarati), and live glass readability preview.
@@ -122,17 +123,17 @@ final class AppearanceSettingsPage extends StatelessWidget {
                       AppStatusBadge(
                         label: '${l10n.statusGood}: 120 ${l10n.piecesUnit}',
                         tone: AppStatusTone.good,
-                        icon: Icons.check_circle_outline_rounded,
+                        icon: AppIcons.successOutline,
                       ),
                       AppStatusBadge(
                         label: '${l10n.statusPending}: 45 ${l10n.piecesUnit}',
                         tone: AppStatusTone.pending,
-                        icon: Icons.hourglass_bottom_rounded,
+                        icon: AppIcons.pending,
                       ),
                       AppStatusBadge(
                         label: '${l10n.statusDamaged}: 3 ${l10n.piecesUnit}',
                         tone: AppStatusTone.damaged,
-                        icon: Icons.report_problem_outlined,
+                        icon: AppIcons.warning,
                       ),
                       AppStatusBadge(
                         label:

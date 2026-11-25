@@ -13,6 +13,7 @@ import 'package:business_manager/features/production_history/presentation/bloc/p
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 final class ProcessDetailPage extends StatelessWidget {
   const ProcessDetailPage({super.key, required this.processId});
@@ -112,7 +113,7 @@ final class _ProcessDetailViewState extends State<_ProcessDetailView> {
           title: proc.name,
           actions: [
             AppIconButton(
-              icon: Icons.edit_outlined,
+              icon: AppIcons.edit,
               tooltip: l10n.processEditAction,
               onPressed: () async {
                 await context.push(RoutePaths.processEdit(proc.id));
@@ -178,7 +179,7 @@ final class _ProcessDetailViewState extends State<_ProcessDetailView> {
                       children: [
                         AppButton(
                           label: l10n.processEditAction,
-                          icon: Icons.edit_outlined,
+                          icon: AppIcons.edit,
                           variant: AppButtonVariant.outlined,
                           onPressed: () async {
                             await context.push(RoutePaths.processEdit(proc.id));
@@ -194,8 +195,8 @@ final class _ProcessDetailViewState extends State<_ProcessDetailView> {
                               ? l10n.processDeactivateAction
                               : l10n.processActivateAction,
                           icon: proc.isActive
-                              ? Icons.pause_circle_outline
-                              : Icons.play_circle_outline,
+                              ? AppIcons.pause
+                              : AppIcons.resume,
                           variant: proc.isActive
                               ? AppButtonVariant.destructive
                               : AppButtonVariant.secondary,
@@ -461,7 +462,7 @@ final class _ProcessDetailViewState extends State<_ProcessDetailView> {
                                       ],
                                     ),
                                   ),
-                                  const Icon(Icons.chevron_right_rounded),
+                                  const Icon(AppIcons.chevronRight),
                                 ],
                               ),
                             ),
@@ -516,7 +517,7 @@ final class _ProcessDetailViewState extends State<_ProcessDetailView> {
                                 ? AppStatusTone.good
                                 : AppStatusTone.neutral,
                           ),
-                          const Icon(Icons.chevron_right),
+                          const Icon(AppIcons.chevronRight),
                         ],
                       ),
                     ),
@@ -543,7 +544,7 @@ final class _ProcessDetailViewState extends State<_ProcessDetailView> {
                           (entry) => ListTile(
                             dense: true,
                             contentPadding: EdgeInsets.zero,
-                            leading: const Icon(Icons.history),
+                            leading: const Icon(AppIcons.rateHistory),
                             title: Text(
                               DomainLabelLocalizer.auditAction(
                                 l10n,

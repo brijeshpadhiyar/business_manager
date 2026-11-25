@@ -1,6 +1,7 @@
 import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Utilities for parsing, normalizing, and contrasting textile HEX/RGB colours.
 abstract final class AppColourUtils {
@@ -175,7 +176,7 @@ final class AppColourSwatch extends StatelessWidget {
           child: isSelected
               ? Center(
                   child: Icon(
-                    Icons.check_rounded,
+                    AppIcons.confirm,
                     size: size * 0.52,
                     color: fg,
                   ),

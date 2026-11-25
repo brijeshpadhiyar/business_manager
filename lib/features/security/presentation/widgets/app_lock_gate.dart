@@ -9,6 +9,7 @@ import 'package:business_manager/features/security/presentation/pages/app_lock_s
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Root widget wrapping `MaterialApp.router`'s `builder`.
 ///
@@ -156,7 +157,7 @@ final class _PrivacyShieldOverlay extends StatelessWidget {
                   cacheWidth: 192,
                   cacheHeight: 192,
                   errorBuilder: (_, _, _) => const Icon(
-                    Icons.shield_outlined,
+                    AppIcons.shield,
                     color: Colors.white,
                     size: 36,
                   ),

@@ -11,6 +11,7 @@ import 'package:business_manager/features/production_history/presentation/bloc/p
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Screen 3: Exact-Timestamp Chronological Lot Timeline.
 final class LotTimelinePage extends StatelessWidget {
@@ -33,19 +34,19 @@ final class _LotTimelineView extends StatelessWidget {
   final String lotId;
 
   IconData _iconFor(LotTimelineEventKind kind) => switch (kind) {
-    LotTimelineEventKind.lotCreated => Icons.add_box_outlined,
+    LotTimelineEventKind.lotCreated => AppIcons.lotAdd,
     LotTimelineEventKind.processAssigned ||
-    LotTimelineEventKind.stockIssued => Icons.outbox_rounded,
-    LotTimelineEventKind.handoverTransfer => Icons.swap_horiz_rounded,
-    LotTimelineEventKind.stockReturned => Icons.assignment_return_outlined,
-    LotTimelineEventKind.inspectionApproved => Icons.verified_rounded,
-    LotTimelineEventKind.inspectionRejected => Icons.report_problem_rounded,
-    LotTimelineEventKind.rejectionRepaired => Icons.build_outlined,
-    LotTimelineEventKind.repairReapproved => Icons.check_circle_rounded,
+    LotTimelineEventKind.stockIssued => AppIcons.stockIssue,
+    LotTimelineEventKind.handoverTransfer => AppIcons.stockMovements,
+    LotTimelineEventKind.stockReturned => AppIcons.receiveReturn,
+    LotTimelineEventKind.inspectionApproved => AppIcons.qcPassed,
+    LotTimelineEventKind.inspectionRejected => AppIcons.damaged,
+    LotTimelineEventKind.rejectionRepaired => AppIcons.repair,
+    LotTimelineEventKind.repairReapproved => AppIcons.success,
     LotTimelineEventKind.settlementLost ||
-    LotTimelineEventKind.settlementShortage => Icons.warning_amber_rounded,
-    LotTimelineEventKind.movementReversed => Icons.undo_rounded,
-    LotTimelineEventKind.lotCompleted => Icons.flag_rounded,
+    LotTimelineEventKind.settlementShortage => AppIcons.warning,
+    LotTimelineEventKind.movementReversed => AppIcons.reverse,
+    LotTimelineEventKind.lotCompleted => AppIcons.milestone,
   };
 
   AppStatusTone _toneFor(LotTimelineEventKind kind) => switch (kind) {
@@ -75,7 +76,7 @@ final class _LotTimelineView extends StatelessWidget {
               : l10n.prodHistoryLotTimelineTitle,
           actions: [
             AppIconButton(
-              icon: Icons.history_rounded,
+              icon: AppIcons.productionHistory,
               tooltip: l10n.prodHistoryViewLotHistory,
               onPressed: () => context.push(RoutePaths.lotHistory(lotId)),
             ),
@@ -109,7 +110,7 @@ final class _LotTimelineView extends StatelessWidget {
 
     if (events.isEmpty) {
       return AppEmptyState(
-        icon: Icons.timeline_rounded,
+        icon: AppIcons.timeline,
         title: l10n.prodHistoryLotTimelineTitle,
       );
     }

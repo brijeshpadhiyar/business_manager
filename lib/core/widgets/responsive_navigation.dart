@@ -13,6 +13,7 @@ import 'package:business_manager/core/widgets/app_breadcrumb_bar.dart';
 import 'package:business_manager/core/widgets/app_glass_backdrop.dart';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Inherited context exposed by [ResponsiveNavigation] so descendant
 /// [AppScaffold] instances know when they are already hosted inside a
@@ -148,7 +149,7 @@ final class ResponsiveNavigation extends StatelessWidget {
             height: 26,
             cacheWidth: 96,
             cacheHeight: 96,
-            errorBuilder: (_, _, _) => const Icon(Icons.auto_awesome, size: 22),
+            errorBuilder: (_, _, _) => const Icon(AppIcons.brand, size: 22),
           ),
           const SizedBox(width: AppSpacing.sm),
         ],
@@ -519,7 +520,7 @@ final class ResponsiveNavigation extends StatelessWidget {
                                         cacheWidth: 96,
                                         cacheHeight: 96,
                                         errorBuilder: (_, _, _) =>
-                                            const Icon(Icons.auto_awesome),
+                                            const Icon(AppIcons.brand),
                                       ),
                                       const SizedBox(width: AppSpacing.sm),
                                       Expanded(

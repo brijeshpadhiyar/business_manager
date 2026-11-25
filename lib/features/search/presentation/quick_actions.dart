@@ -4,6 +4,7 @@ import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// One everyday task the user can start in a single tap.
 final class AppQuickAction {
@@ -26,37 +27,37 @@ List<AppQuickAction> buildQuickActions(BuildContext context) {
   return [
     AppQuickAction(
       id: 'issue',
-      icon: Icons.outbox_outlined,
+      icon: AppIcons.stockIssue,
       label: l10n.uxActionIssueStock,
       route: RoutePaths.stockIssuePath,
     ),
     AppQuickAction(
       id: 'receive',
-      icon: Icons.move_to_inbox_outlined,
+      icon: AppIcons.receiveReturn,
       label: l10n.uxActionReceiveWork,
       route: RoutePaths.stockReturnPicker,
     ),
     AppQuickAction(
       id: 'payment',
-      icon: Icons.payments_outlined,
+      icon: AppIcons.payment,
       label: l10n.uxActionRecordPayment,
       route: RoutePaths.paymentCreatePath,
     ),
     AppQuickAction(
       id: 'lot',
-      icon: Icons.add_box_outlined,
+      icon: AppIcons.lotAdd,
       label: l10n.uxActionNewLot,
       route: RoutePaths.lotCreate,
     ),
     AppQuickAction(
       id: 'inspect',
-      icon: Icons.fact_check_outlined,
+      icon: AppIcons.qcInspect,
       label: l10n.uxActionInspections,
       route: RoutePaths.inspectionQueue,
     ),
     AppQuickAction(
       id: 'worker',
-      icon: Icons.person_add_alt_1_outlined,
+      icon: AppIcons.workerAdd,
       label: l10n.uxActionAddWorker,
       route: RoutePaths.workerCreate,
     ),

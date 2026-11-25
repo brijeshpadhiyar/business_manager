@@ -21,6 +21,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 final class LotDetailPage extends StatelessWidget {
   const LotDetailPage({super.key, required this.lotId});
@@ -294,7 +295,7 @@ final class _LotDetailView extends StatelessWidget {
                       controller: defaultPriceCtrl,
                       label: 'Default Unit Price (₹ / pc, optional)',
                       hint: '0.00',
-                      prefixIcon: Icons.currency_rupee_rounded,
+                      prefixIcon: AppIcons.rupee,
                       keyboardType: const TextInputType.numberWithOptions(
                         decimal: true,
                       ),
@@ -313,7 +314,7 @@ final class _LotDetailView extends StatelessWidget {
                             fontWeight: FontWeight.w700,
                           ), actions: [AppButton(
                           label: 'Add Colours',
-                          icon: Icons.palette_outlined,
+                          icon: AppIcons.colour,
                           variant: AppButtonVariant.secondary,
                           onPressed: () async {
                             final parsedDefault =
@@ -368,7 +369,7 @@ final class _LotDetailView extends StatelessWidget {
                                 ),
                               ),
                               AppIconButton(
-                                icon: Icons.close_rounded,
+                                icon: AppIcons.close,
                                 tooltip: 'Remove',
                                 onPressed: () => setSheetState(
                                   () => initialColours.remove(c),
@@ -656,12 +657,12 @@ final class _LotDetailView extends StatelessWidget {
               ? null
               : [
                   AppIconButton(
-                    icon: Icons.edit_outlined,
+                    icon: AppIcons.edit,
                     tooltip: l10n.lotEditAction,
                     onPressed: () => _showEditLotSheet(context, detail.lot),
                   ),
                   AppIconButton(
-                    icon: Icons.archive_outlined,
+                    icon: AppIcons.archive,
                     tooltip: l10n.lotArchiveAction,
                     onPressed: () async {
                       final confirmed = await AppDialog.showConfirmation(
@@ -810,7 +811,7 @@ final class _LotDetailView extends StatelessWidget {
                       const SizedBox(height: AppSpacing.md),
                       AppButton(
                         label: 'Multi-Process Routing & Handovers',
-                        icon: Icons.account_tree_outlined,
+                        icon: AppIcons.routeTransfer,
                         isExpanded: true,
                         onPressed: () =>
                             context.push(RoutePaths.lotRouting(lotId)),
@@ -821,7 +822,7 @@ final class _LotDetailView extends StatelessWidget {
                           Expanded(
                             child: AppButton(
                               label: l10n.prodHistoryViewLotHistory,
-                              icon: Icons.history_rounded,
+                              icon: AppIcons.productionHistory,
                               variant: AppButtonVariant.secondary,
                               onPressed: () =>
                                   context.push(RoutePaths.lotHistory(lotId)),
@@ -831,7 +832,7 @@ final class _LotDetailView extends StatelessWidget {
                           Expanded(
                             child: AppButton(
                               label: l10n.prodHistoryViewTimeline,
-                              icon: Icons.timeline_rounded,
+                              icon: AppIcons.timeline,
                               variant: AppButtonVariant.outlined,
                               onPressed: () =>
                                   context.push(RoutePaths.lotTimeline(lotId)),
@@ -854,14 +855,14 @@ final class _LotDetailView extends StatelessWidget {
                     if (supportsCameraCapture)
                       AppButton(
                         label: l10n.lotAddPhotoCamera,
-                        icon: Icons.photo_camera_outlined,
+                        icon: AppIcons.camera,
                         variant: AppButtonVariant.outlined,
                         onPressed: () =>
                             _pickAndSavePhoto(context, ImageSource.camera),
                       ),
                     AppButton(
                       label: l10n.lotAddPhotoGallery,
-                      icon: Icons.photo_library_outlined,
+                      icon: AppIcons.gallery,
                       variant: AppButtonVariant.secondary,
                       onPressed: () =>
                           _pickAndSavePhoto(context, ImageSource.gallery),
@@ -921,7 +922,7 @@ final class _LotDetailView extends StatelessWidget {
                   children: [
                     AppButton(
                       label: 'Add Colour (No Design)',
-                      icon: Icons.palette_outlined,
+                      icon: AppIcons.colour,
                       variant: AppButtonVariant.secondary,
                       onPressed: () {
                         final colourOnlyGroup = detail.designs
@@ -944,7 +945,7 @@ final class _LotDetailView extends StatelessWidget {
                     ),
                     AppButton(
                       label: l10n.designAddAction,
-                      icon: Icons.add,
+                      icon: AppIcons.add,
                       onPressed: () => _showDesignSheet(context),
                     ),
                   ],
@@ -1002,7 +1003,7 @@ final class _LotDetailView extends StatelessWidget {
                 ),
                 sliver: SliverToBoxAdapter(
                   child: AppEmptyState(
-                    icon: Icons.style_outlined,
+                    icon: AppIcons.designs,
                     title: l10n.designsEmptyTitle,
                     subtitle: l10n.designsEmptySubtitle,
                     actionLabel: l10n.designAddAction,
@@ -1078,13 +1079,13 @@ final class _LotDetailView extends StatelessWidget {
               ),
               if (!isColourOnly)
                 AppIconButton(
-                  icon: Icons.edit_outlined,
+                  icon: AppIcons.edit,
                   tooltip: l10n.designEditAction,
                   onPressed: () =>
                       _showDesignSheet(context, existing: item.design),
                 ),
               AppIconButton(
-                icon: Icons.delete_outline,
+                icon: AppIcons.delete,
                 tooltip: l10n.actionDelete,
                 onPressed: () async {
                   final ok = await AppDialog.showConfirmation(
@@ -1110,7 +1111,7 @@ final class _LotDetailView extends StatelessWidget {
             alignment: Alignment.centerLeft,
             child: AppButton(
               label: l10n.colourAddAction,
-              icon: Icons.palette_outlined,
+              icon: AppIcons.colour,
               variant: AppButtonVariant.secondary,
               onPressed: () => _showVisualColourPicker(
                 context,
@@ -1333,7 +1334,7 @@ final class _PremiumLotColourCard extends StatelessWidget {
                       padding: EdgeInsets.zero,
                       iconSize: 18,
                       color: onSwatch,
-                      icon: const Icon(Icons.edit_outlined),
+                      icon: const Icon(AppIcons.edit),
                     ),
                     IconButton(
                       onPressed: onDelete,
@@ -1347,7 +1348,7 @@ final class _PremiumLotColourCard extends StatelessWidget {
                       padding: EdgeInsets.zero,
                       iconSize: 18,
                       color: onSwatch,
-                      icon: const Icon(Icons.delete_outline),
+                      icon: const Icon(AppIcons.delete),
                     ),
                   ],
                 ),
@@ -1397,7 +1398,7 @@ final class _PremiumLotColourCard extends StatelessWidget {
                 Row(
                   children: [
                     Icon(
-                      Icons.precision_manufacturing_outlined,
+                      AppIcons.processIcon(stageLabel),
                       size: 13,
                       color: colorScheme.onSurfaceVariant,
                     ),
@@ -1416,7 +1417,7 @@ final class _PremiumLotColourCard extends StatelessWidget {
                 Row(
                   children: [
                     Icon(
-                      Icons.location_on_outlined,
+                      AppIcons.location,
                       size: 13,
                       color: colorScheme.onSurfaceVariant,
                     ),
@@ -1527,7 +1528,7 @@ final class _LotPhotoTileState extends State<_LotPhotoTile> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.broken_image_outlined),
+                  const Icon(AppIcons.imageError),
                   AppText(
                     l10n.lotPhotoMissing,
                     variant: AppTextVariant.bodySmall,
@@ -1601,7 +1602,7 @@ final class _LotPhotoTileState extends State<_LotPhotoTile> {
                 child: IconButton.filledTonal(
                   visualDensity: VisualDensity.compact,
                   tooltip: l10n.actionDelete,
-                  icon: const Icon(Icons.close, size: 16),
+                  icon: const Icon(AppIcons.close, size: 16),
                   onPressed: widget.onRemove,
                 ),
               ),

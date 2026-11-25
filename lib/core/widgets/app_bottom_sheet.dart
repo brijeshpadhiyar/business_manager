@@ -9,6 +9,7 @@ import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/widgets/app_heading.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Adaptive frosted-glass sheet: opens as a smooth BackdropFilter glass modal
 /// bottom sheet on compact mobile viewports (`< 600dp`) and as a fade-scaled
@@ -101,7 +102,7 @@ final class AppBottomSheet {
                                     dialogContext,
                                   ).closeButtonTooltip,
                                   icon: const Icon(
-                                    Icons.close_rounded,
+                                    AppIcons.close,
                                     size: 20,
                                   ),
                                   onPressed: () =>

@@ -16,6 +16,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Daily-work Stock Movements Hub prioritizing:
 /// - Quick Issue Stock & Receive Return actions
@@ -146,7 +147,7 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
       context,
       builder: (dialogCtx) => AppDialog(
         title: l10n.stockReverseConfirmTitle,
-        icon: Icons.warning_amber_rounded,
+        icon: AppIcons.warning,
         isDestructive: true,
         cancelLabel: l10n.actionCancel,
         confirmLabel: l10n.stockReverseAction,
@@ -277,7 +278,7 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
                                 l10n.stockHeading,
                                 level: AppHeadingLevel.h2,
                                 trailing: AppIconButton(
-                                  icon: Icons.refresh_rounded,
+                                  icon: AppIcons.refresh,
                                   tooltip: l10n.actionRetry,
                                   onPressed: _reload,
                                 ),
@@ -292,18 +293,18 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
                               children: [
                                 AppButton(
                                   label: l10n.stockIssueAction,
-                                  icon: Icons.outbox_rounded,
+                                  icon: AppIcons.stockIssue,
                                   onPressed: _openIssue,
                                 ),
                                 AppButton(
                                   label: l10n.stockReturnAction,
-                                  icon: Icons.assignment_returned_outlined,
+                                  icon: AppIcons.receiveReturn,
                                   variant: AppButtonVariant.secondary,
                                   onPressed: _openReturnPicker,
                                 ),
                                 AppButton(
                                   label: l10n.stockRepairAction,
-                                  icon: Icons.build_circle_outlined,
+                                  icon: AppIcons.repair,
                                   variant: AppButtonVariant.outlined,
                                   onPressed: _openRepair,
                                 ),
@@ -331,7 +332,7 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
                                         label: l10n.stockAvailableGoodLabel,
                                         value: totalGood,
                                         suffix: l10n.piecesUnit,
-                                        icon: Icons.inventory_2_outlined,
+                                        icon: AppIcons.lot,
                                         tone: AppStatusTone.good,
                                         onTap: () => setState(() => _tab = 1),
                                       ),
@@ -342,7 +343,7 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
                                         label: l10n.stockPendingWorkerLabel,
                                         value: totalPending,
                                         suffix: l10n.piecesUnit,
-                                        icon: Icons.pending_actions_rounded,
+                                        icon: AppIcons.pending,
                                         tone: totalPending > 0
                                             ? AppStatusTone.pending
                                             : AppStatusTone.good,
@@ -355,7 +356,7 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
                                         label: l10n.stockDamagedBucketLabel,
                                         value: totalDamaged,
                                         suffix: l10n.piecesUnit,
-                                        icon: Icons.report_problem_outlined,
+                                        icon: AppIcons.damaged,
                                         tone: totalDamaged > 0
                                             ? AppStatusTone.damaged
                                             : AppStatusTone.neutral,
@@ -370,7 +371,7 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
                                         label: l10n.stockTabPendingReturns,
                                         value: state.openIssues.length,
                                         icon:
-                                            Icons.assignment_return_outlined,
+                                            AppIcons.receiveReturn,
                                         tone: AppStatusTone.info,
                                         onTap: () => setState(() => _tab = 0),
                                       ),
@@ -463,12 +464,12 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
       title: l10n.stockHeading,
       actions: [
         AppIconButton(
-          icon: Icons.build_circle_outlined,
+          icon: AppIcons.repair,
           tooltip: l10n.stockRepairAction,
           onPressed: _openRepair,
         ),
         AppIconButton(
-          icon: Icons.refresh_rounded,
+          icon: AppIcons.refresh,
           tooltip: l10n.actionRetry,
           onPressed: _reload,
         ),
@@ -496,7 +497,7 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
           ),
           sliver: SliverToBoxAdapter(
             child: AppEmptyState(
-              icon: Icons.check_circle_outline_rounded,
+              icon: AppIcons.successOutline,
               title: l10n.stockEmptyIssuesTitle,
               subtitle: l10n.stockEmptyIssuesSubtitle,
               actionLabel: l10n.stockIssueAction,
@@ -546,7 +547,7 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
           ),
           sliver: SliverToBoxAdapter(
             child: AppEmptyState(
-              icon: Icons.filter_alt_off_outlined,
+              icon: AppIcons.clearFilter,
               title: l10n.reportsEmptyTitle,
               subtitle: l10n.reportsEmptySubtitle,
             ),
@@ -609,7 +610,7 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
                 ), actions: [AppStatusBadge(
                 label: '${view.remainingPendingQty} ${l10n.piecesUnit}',
                 tone: AppStatusTone.pending,
-                icon: Icons.hourglass_bottom_rounded,
+                icon: AppIcons.pending,
               ),],),
           const SizedBox(height: AppSpacing.sm),
           Wrap(
@@ -647,7 +648,7 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
               ),
               AppButton(
                 label: l10n.stockReturnAction,
-                icon: Icons.assignment_returned_outlined,
+                icon: AppIcons.receiveReturn,
                 variant: AppButtonVariant.secondary,
                 onPressed: () => _openReturn(m.id),
               ),
@@ -674,7 +675,7 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
           ),
           sliver: SliverToBoxAdapter(
             child: AppEmptyState(
-              icon: Icons.inventory_2_outlined,
+              icon: AppIcons.lot,
               title: l10n.inventoryEmptyTitle,
               subtitle: l10n.inventoryEmptySubtitle,
             ),
@@ -872,7 +873,7 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
           ),
           sliver: SliverToBoxAdapter(
             child: AppEmptyState(
-              icon: Icons.history_rounded,
+              icon: AppIcons.productionHistory,
               title: l10n.stockEmptyHistoryTitle,
               subtitle: l10n.stockEmptyHistorySubtitle,
             ),
@@ -987,7 +988,7 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
     final l10n = context.l10n;
     if (workers.isEmpty && processes.isEmpty) {
       return AppEmptyState(
-        icon: Icons.people_outline_rounded,
+        icon: AppIcons.worker,
         title: l10n.stockEmptyHistoryTitle,
       );
     }

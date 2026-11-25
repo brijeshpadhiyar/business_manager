@@ -11,6 +11,7 @@ import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:toastification/toastification.dart';
 import 'package:business_manager/core/widgets/app_loader.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Semantic notification severity levels supported by [AppMessageService].
 enum AppMessageType { success, error, warning, info, loading }
@@ -286,23 +287,23 @@ abstract final class AppMessageService {
   static (IconData, Color) _visualsFor(AppMessageType type, bool isDark) {
     return switch (type) {
       AppMessageType.success => (
-        Icons.check_circle_rounded,
+        AppIcons.success,
         isDark ? AppColors.darkGoodStock : AppColors.lightGoodStock,
       ),
       AppMessageType.error => (
-        Icons.error_outline_rounded,
+        AppIcons.error,
         isDark ? AppColors.darkDamaged : AppColors.lightDamaged,
       ),
       AppMessageType.warning => (
-        Icons.warning_amber_rounded,
+        AppIcons.warning,
         isDark ? AppColors.darkPending : AppColors.lightPending,
       ),
       AppMessageType.info => (
-        Icons.info_outline_rounded,
+        AppIcons.info,
         isDark ? AppColors.darkInfo : AppColors.lightInfo,
       ),
       AppMessageType.loading => (
-        Icons.hourglass_top_rounded,
+        AppIcons.waiting,
         isDark ? AppColors.darkInfo : AppColors.lightInfo,
       ),
     };
@@ -450,11 +451,11 @@ final class _GlassToastCard extends StatelessWidget {
                                   minHeight: 28,
                                 ),
                                 icon: Icon(
-                                  Icons.close_rounded,
+                                  AppIcons.close,
                                   size: 16,
                                   color: theme.colorScheme.onSurfaceVariant,
                                 ),
-                                tooltip: 'Dismiss',
+                                tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
                                 onPressed: onClose,
                               ),
                           ],

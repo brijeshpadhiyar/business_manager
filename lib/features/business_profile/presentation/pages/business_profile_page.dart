@@ -9,6 +9,7 @@ import 'package:business_manager/features/business_profile/presentation/bloc/bus
 import 'package:business_manager/features/business_profile/presentation/bloc/business_profile_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 final class BusinessProfilePage extends StatelessWidget {
   const BusinessProfilePage({super.key, this.showAppBar = false});
@@ -191,7 +192,7 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
                           controller: _nameEnController,
                           focusNode: _nameEnFocus,
                           label: l10n.businessNameEnLabel,
-                          prefixIcon: Icons.storefront_outlined,
+                          prefixIcon: AppIcons.business,
                           textInputAction: TextInputAction.next,
                           maxLength: ValidationLimits.maxPersonNameLength,
                           validator: ValidationLocalizer.wrap(
@@ -208,7 +209,7 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
                           controller: _nameGuController,
                           focusNode: _nameGuFocus,
                           label: l10n.businessNameGuLabel,
-                          prefixIcon: Icons.translate,
+                          prefixIcon: AppIcons.language,
                           textInputAction: TextInputAction.next,
                           maxLength: ValidationLimits.maxPersonNameLength,
                           validator: ValidationLocalizer.wrap(
@@ -225,7 +226,7 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
                           controller: _ownerController,
                           focusNode: _ownerFocus,
                           label: l10n.businessOwnerLabel,
-                          prefixIcon: Icons.person_outline,
+                          prefixIcon: AppIcons.worker,
                           textInputAction: TextInputAction.next,
                           maxLength: ValidationLimits.maxPersonNameLength,
                           validator: ValidationLocalizer.wrap(
@@ -242,7 +243,7 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
                           controller: _phoneController,
                           focusNode: _phoneFocus,
                           label: l10n.businessPhoneLabel,
-                          prefixIcon: Icons.phone_outlined,
+                          prefixIcon: AppIcons.phone,
                           keyboardType: TextInputType.phone,
                           textInputAction: TextInputAction.next,
                           validator: ValidationLocalizer.wrap(
@@ -256,7 +257,7 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
                           controller: _addressController,
                           focusNode: _addressFocus,
                           label: l10n.businessAddressLabel,
-                          prefixIcon: Icons.location_on_outlined,
+                          prefixIcon: AppIcons.location,
                           maxLines: 3,
                           maxLength: ValidationLimits.maxAddressLength,
                           validator: ValidationLocalizer.wrap(
@@ -311,7 +312,7 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
                         const SizedBox(height: AppSpacing.lg),
                         AppButton(
                           label: l10n.actionSave,
-                          icon: Icons.save_outlined,
+                          icon: AppIcons.save,
                           isLoading: isSaving,
                           isExpanded: true,
                           onPressed: _submit,

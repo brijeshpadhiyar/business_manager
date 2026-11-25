@@ -12,6 +12,7 @@ import 'package:business_manager/features/lots/presentation/bloc/designs_colours
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Unified Designs & Colours management view backed strictly by existing
 /// `lot_designs`, `design_colours`, and `colour_master` tables.
@@ -89,7 +90,7 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
               title: existing == null
                   ? l10n.colourAddAction
                   : l10n.colourEditAction,
-              icon: Icons.palette_outlined,
+              icon: AppIcons.designs,
               cancelLabel: l10n.actionCancel,
               confirmLabel: submitting ? l10n.backupProgressWorking : l10n.actionSave,
               onConfirm: submitting
@@ -251,7 +252,7 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
                       fontWeight: FontWeight.w700,
                     ),
                     const SizedBox(width: AppSpacing.xs),
-                    const Icon(Icons.chevron_right_rounded),
+                    const Icon(AppIcons.chevronRight),
                   ],
                 ),
               ),
@@ -295,7 +296,7 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
             slivers = [
               SliverToBoxAdapter(
                 child: AppEmptyState(
-                  icon: Icons.style_outlined,
+                  icon: AppIcons.designs,
                   title: l10n.designsEmptyTitle,
                   subtitle: l10n.designsEmptySubtitle,
                   actionLabel: l10n.lotCreateAction,
@@ -393,7 +394,7 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
             slivers = [
               SliverToBoxAdapter(
                 child: AppEmptyState(
-                  icon: Icons.palette_outlined,
+                  icon: AppIcons.colour,
                   title: l10n.coloursEmptyTitle,
                   subtitle: l10n.coloursEmptySubtitle,
                   actionLabel: l10n.colourAddAction,
@@ -492,7 +493,7 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
                           ],
                         ),
                       ),
-                      const Icon(Icons.edit_outlined, size: 18),
+                      const Icon(AppIcons.edit, size: 18),
                     ],
                   ),
                 ),
@@ -504,7 +505,7 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
         return AppScaffold(
           // Main action: floating button on phones, toolbar button on wider screens.
           primaryAction: AppPrimaryAction(
-            icon: Icons.add_rounded,
+            icon: AppIcons.add,
             label: l10n.colourAddAction,
             onPressed: () => _openColourEditor(context),
           ),

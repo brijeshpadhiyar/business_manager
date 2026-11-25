@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 final class WorkerListPage extends StatelessWidget {
   const WorkerListPage({super.key, this.refreshSignal});
@@ -132,7 +133,7 @@ final class _WorkerListViewState extends State<_WorkerListView> {
           slivers = [
             SliverToBoxAdapter(
               child: AppEmptyState(
-                icon: Icons.people_outline,
+                icon: AppIcons.workers,
                 title: l10n.workersEmptyTitle,
                 subtitle: l10n.workersEmptySubtitle,
                 actionLabel: l10n.workerCreateAction,
@@ -211,7 +212,7 @@ final class _WorkerListViewState extends State<_WorkerListView> {
                       tone: worker.isActive
                           ? AppStatusTone.good
                           : AppStatusTone.neutral,
-                    ), const Icon(Icons.chevron_right),],),
+                    ), const Icon(AppIcons.chevronRight),],),
               ),
             ),
           ];
@@ -220,7 +221,7 @@ final class _WorkerListViewState extends State<_WorkerListView> {
         return AppScaffold(
           // Main action: floating button on phones, toolbar button on wider screens.
           primaryAction: AppPrimaryAction(
-            icon: Icons.person_add_outlined,
+            icon: AppIcons.workerAdd,
             label: l10n.workerCreateAction,
             onPressed: () => _openCreateWorker(context),
           ),

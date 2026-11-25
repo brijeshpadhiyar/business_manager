@@ -17,6 +17,7 @@ import 'package:business_manager/features/workers/domain/repositories/worker_rep
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:business_manager/core/widgets/app_loader.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Opens the global search: one box that finds a lot, worker or process and
 /// jumps to it. With an empty box it shows the quick actions, so it also works
@@ -138,7 +139,7 @@ final class _GlobalSearchDialogState extends State<GlobalSearchDialog> {
       onSubmitted: (_) => _openFirst(),
       decoration: InputDecoration(
         hintText: l10n.uxSearchHint,
-        prefixIcon: const Icon(Icons.search_rounded),
+        prefixIcon: const Icon(AppIcons.search),
         suffixIcon: _loading
             ? const Padding(
                 padding: EdgeInsets.all(14),
@@ -148,7 +149,7 @@ final class _GlobalSearchDialogState extends State<GlobalSearchDialog> {
             ? null
             : IconButton(
                 tooltip: MaterialLocalizations.of(context).deleteButtonTooltip,
-                icon: const Icon(Icons.close_rounded),
+                icon: const Icon(AppIcons.close),
                 onPressed: () {
                   _controller.clear();
                   _onChanged('');
@@ -185,7 +186,7 @@ final class _GlobalSearchDialogState extends State<GlobalSearchDialog> {
           _SectionTitle(l10n.uxSearchLots),
           for (final lot in _results.lots)
             ListTile(
-              leading: const Icon(Icons.inventory_2_outlined),
+              leading: const Icon(AppIcons.lot),
               title: Text(lot.lotNumber),
               subtitle: lot.title == null || lot.title!.isEmpty
                   ? null
@@ -197,7 +198,7 @@ final class _GlobalSearchDialogState extends State<GlobalSearchDialog> {
           _SectionTitle(l10n.uxSearchWorkers),
           for (final w in _results.workers)
             ListTile(
-              leading: const Icon(Icons.person_outline_rounded),
+              leading: const Icon(AppIcons.worker),
               title: Text(w.name),
               subtitle: w.phone == null || w.phone!.isEmpty
                   ? null
@@ -209,7 +210,7 @@ final class _GlobalSearchDialogState extends State<GlobalSearchDialog> {
           _SectionTitle(l10n.uxSearchProcesses),
           for (final p in _results.processes)
             ListTile(
-              leading: const Icon(Icons.account_tree_outlined),
+              leading: const Icon(AppIcons.routeTransfer),
               title: Text(p.name),
               onTap: () => _open(RoutePaths.processDetail(p.id)),
             ),
@@ -242,7 +243,7 @@ final class _GlobalSearchDialogState extends State<GlobalSearchDialog> {
                 alignment: Alignment.centerLeft,
                 child: IconButton(
                   tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
-                  icon: const Icon(Icons.arrow_back_rounded),
+                  icon: const Icon(AppIcons.back),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ),

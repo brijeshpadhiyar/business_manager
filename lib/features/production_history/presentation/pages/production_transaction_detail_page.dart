@@ -11,6 +11,7 @@ import 'package:business_manager/features/production_history/presentation/bloc/t
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Screen 10: Immutable Production / Financial Transaction Details Inspector.
 ///
@@ -118,7 +119,7 @@ final class _TransactionDetailView extends StatelessWidget {
                   if (d.lotId != null)
                     AppButton(
                       label: '${l10n.prodHistoryOpenLot}: ${d.lotNumber ?? d.lotId}',
-                      icon: Icons.inventory_2_outlined,
+                      icon: AppIcons.lot,
                       variant: AppButtonVariant.secondary,
                       onPressed: () =>
                           context.push(RoutePaths.lotHistory(d.lotId!)),
@@ -127,7 +128,7 @@ final class _TransactionDetailView extends StatelessWidget {
                     AppButton(
                       label:
                           '${l10n.prodHistoryOpenWorker}: ${d.workerName ?? d.workerId}',
-                      icon: Icons.person_outline_rounded,
+                      icon: AppIcons.worker,
                       variant: AppButtonVariant.secondary,
                       onPressed: () =>
                           context.push(RoutePaths.workerDetail(d.workerId!)),
@@ -136,7 +137,7 @@ final class _TransactionDetailView extends StatelessWidget {
                     AppButton(
                       label:
                           '${l10n.prodHistoryOpenProcess}: ${d.processName ?? d.processId}',
-                      icon: Icons.precision_manufacturing_outlined,
+                      icon: AppIcons.process,
                       variant: AppButtonVariant.outlined,
                       onPressed: () =>
                           context.push(RoutePaths.processDetail(d.processId!)),
@@ -215,10 +216,10 @@ final class _TransactionDetailView extends StatelessWidget {
                   ListTile(
                     dense: true,
                     contentPadding: EdgeInsets.zero,
-                    leading: const Icon(Icons.link_rounded),
+                    leading: const Icon(AppIcons.link),
                     title: Text(link.label),
                     subtitle: Text(link.id),
-                    trailing: const Icon(Icons.chevron_right_rounded),
+                    trailing: const Icon(AppIcons.chevronRight),
                     onTap: () => context.push(
                       RoutePaths.productionTransactionDetail(
                         link.kind.routeSegment,
@@ -246,7 +247,7 @@ final class _TransactionDetailView extends StatelessWidget {
                   ListTile(
                     dense: true,
                     contentPadding: EdgeInsets.zero,
-                    leading: const Icon(Icons.history_rounded),
+                    leading: const Icon(AppIcons.productionHistory),
                     title: Text(a.actionType),
                     subtitle: Text(
                       '${AppDateTimeFormatter.formatDateTime(a.recordedAt, locale: localeCode)}'

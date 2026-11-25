@@ -1,6 +1,7 @@
 import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
+import 'package:business_manager/core/widgets/app_icon_pop.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Accessible icon button enforcing `20dp` icon size, `48dp` touch target,
@@ -28,7 +29,9 @@ final class AppIconButton extends StatelessWidget {
       minWidth: AppSizing.touchTargetMin,
       minHeight: AppSizing.touchTargetMin,
     );
-    final iconWidget = Icon(icon, size: AppSizing.iconMd, color: color);
+    final iconWidget = AppIconPop(
+      child: Icon(icon, size: AppSizing.iconMd, color: color),
+    );
 
     final button = isFilled
         ? IconButton.filledTonal(
@@ -52,10 +55,13 @@ final class AppIconButton extends StatelessWidget {
       button: true,
       enabled: onPressed != null,
       label: tooltip,
-      child: AppPressable(
+      child: AppIconPopHost(
         enabled: onPressed != null,
-        pressedScale: 0.92,
-        child: button,
+        child: AppPressable(
+          enabled: onPressed != null,
+          pressedScale: 0.92,
+          child: button,
+        ),
       ),
     );
   }

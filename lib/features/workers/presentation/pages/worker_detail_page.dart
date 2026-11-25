@@ -15,6 +15,7 @@ import 'package:business_manager/features/workers/presentation/bloc/worker_detai
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Worker Profile Summary & Complete Worker Production Account page (Phase 3).
 final class WorkerDetailPage extends StatelessWidget {
@@ -101,7 +102,7 @@ final class _WorkerDetailView extends StatelessWidget {
           title: worker.name,
           actions: [
             AppIconButton(
-              icon: Icons.edit_outlined,
+              icon: AppIcons.edit,
               tooltip: l10n.workerEditAction,
               onPressed: () async {
                 await context.push(RoutePaths.workerEdit(worker.id));
@@ -146,7 +147,7 @@ final class _WorkerDetailView extends StatelessWidget {
                       if (worker.phone != null)
                         Row(
                           children: [
-                            const Icon(Icons.phone_outlined, size: 16),
+                            const Icon(AppIcons.phone, size: 16),
                             const SizedBox(width: AppSpacing.xs),
                             Expanded(child: AppText(worker.phone!)),
                           ],
@@ -156,7 +157,7 @@ final class _WorkerDetailView extends StatelessWidget {
                         Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Icon(Icons.location_on_outlined, size: 16),
+                            const Icon(AppIcons.location, size: 16),
                             const SizedBox(width: AppSpacing.xs),
                             Expanded(child: AppText(worker.address!)),
                           ],
@@ -179,7 +180,7 @@ final class _WorkerDetailView extends StatelessWidget {
                       children: [
                         AppButton(
                           label: l10n.workerManageAssignmentsAction,
-                          icon: Icons.link,
+                          icon: AppIcons.link,
                           onPressed: () async {
                             await context.push(
                               RoutePaths.workerAssignments(worker.id),
@@ -193,7 +194,7 @@ final class _WorkerDetailView extends StatelessWidget {
                         ),
                         AppButton(
                           label: l10n.workerViewRateHistoryAction,
-                          icon: Icons.currency_rupee,
+                          icon: AppIcons.pieceRate,
                           variant: AppButtonVariant.secondary,
                           onPressed: () async {
                             await context.push(
@@ -208,14 +209,14 @@ final class _WorkerDetailView extends StatelessWidget {
                         ),
                         AppButton(
                           label: l10n.accountingOpenLedgerAction,
-                          icon: Icons.account_balance_wallet_outlined,
+                          icon: AppIcons.accounting,
                           variant: AppButtonVariant.secondary,
                           onPressed: () =>
                               context.push(RoutePaths.workerLedger(worker.id)),
                         ),
                         AppButton(
                           label: l10n.accountingRecordPaymentAction,
-                          icon: Icons.payments_outlined,
+                          icon: AppIcons.payment,
                           variant: AppButtonVariant.outlined,
                           onPressed: () => context.push(
                             RoutePaths.paymentCreate(workerId: worker.id),
@@ -226,8 +227,8 @@ final class _WorkerDetailView extends StatelessWidget {
                               ? l10n.workerDeactivateAction
                               : l10n.workerActivateAction,
                           icon: worker.isActive
-                              ? Icons.person_off_outlined
-                              : Icons.person_outline,
+                              ? AppIcons.workerInactive
+                              : AppIcons.worker,
                           variant: worker.isActive
                               ? AppButtonVariant.destructive
                               : AppButtonVariant.outlined,
@@ -275,7 +276,7 @@ final class _WorkerDetailView extends StatelessWidget {
                                     suffix: l10n.piecesUnit,
                                     subtitle:
                                         '${openIssues.length} ${l10n.workerOpenIssuesCountLabel}',
-                                    icon: Icons.pending_actions_rounded,
+                                    icon: AppIcons.pending,
                                     tone: stock.pending > 0
                                         ? AppStatusTone.pending
                                         : AppStatusTone.good,
@@ -292,7 +293,7 @@ final class _WorkerDetailView extends StatelessWidget {
                                     label: l10n.accountingEarnedLabourLabel,
                                     value: fin.earnedLabourPaise,
                                     isCurrencyPaise: true,
-                                    icon: Icons.work_outline_rounded,
+                                    icon: AppIcons.work,
                                     tone: AppStatusTone.good,
                                     onTap: () => context.push(
                                       RoutePaths.workerLedger(worker.id),
@@ -309,7 +310,7 @@ final class _WorkerDetailView extends StatelessWidget {
                                         ? fin.advanceCreditBalancePaise
                                         : fin.outstandingPayablePaise,
                                     isCurrencyPaise: true,
-                                    icon: Icons.account_balance_wallet_outlined,
+                                    icon: AppIcons.accounting,
                                     tone: fin.advanceCreditBalancePaise > 0
                                         ? AppStatusTone.info
                                         : (fin.outstandingPayablePaise > 0
@@ -326,7 +327,7 @@ final class _WorkerDetailView extends StatelessWidget {
                                     label: l10n.stockGoodReturnedLabel,
                                     value: stock.goodReturned,
                                     suffix: l10n.piecesUnit,
-                                    icon: Icons.check_circle_outline_rounded,
+                                    icon: AppIcons.successOutline,
                                     tone: AppStatusTone.neutral,
                                   ),
                                 ),
@@ -495,7 +496,7 @@ final class _WorkerDetailView extends StatelessWidget {
                 level: AppHeadingLevel.h3,
                 trailing: AppButton(
                   label: l10n.workerAddRateAction,
-                  icon: Icons.add,
+                  icon: AppIcons.add,
                   variant: AppButtonVariant.outlined,
                   onPressed: () async {
                     await context.push(RoutePaths.workerRateCreate(worker.id));
@@ -520,7 +521,7 @@ final class _WorkerDetailView extends StatelessWidget {
                       const SizedBox(height: AppSpacing.sm),
                       AppButton(
                         label: l10n.workerManageAssignmentsAction,
-                        icon: Icons.link,
+                        icon: AppIcons.link,
                         variant: AppButtonVariant.outlined,
                         onPressed: () async {
                           await context.push(
@@ -641,10 +642,10 @@ final class _WorkerDetailView extends StatelessWidget {
                                     : (hasProcessDefault
                                           ? AppStatusTone.info
                                           : AppStatusTone.pending),
-                                icon: Icons.history,
+                                icon: AppIcons.rateHistory,
                               ),
                               const SizedBox(height: AppSpacing.xs),
-                              const Icon(Icons.chevron_right),
+                              const Icon(AppIcons.chevronRight),
                             ],
                           ),
                         ],

@@ -3,6 +3,7 @@ import 'package:business_manager/core/widgets/app_empty_state.dart';
 import 'package:business_manager/core/widgets/app_error_view.dart';
 import 'package:business_manager/core/widgets/app_skeleton.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// The phase of a screen's data, used by [AppStateView].
 enum AppViewPhase { loading, error, empty, ready }
@@ -22,7 +23,7 @@ final class AppStateView extends StatelessWidget {
     this.errorMessage,
     this.retryLabel,
     this.onRetry,
-    this.emptyIcon = Icons.inbox_outlined,
+    this.emptyIcon = AppIcons.empty,
     this.emptyTitle,
     this.emptySubtitle,
     this.emptyActionLabel,

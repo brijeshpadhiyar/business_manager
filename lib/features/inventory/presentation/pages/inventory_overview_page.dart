@@ -9,6 +9,7 @@ import 'package:business_manager/features/inventory/presentation/bloc/inventory_
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 final class InventoryOverviewPage extends StatelessWidget {
   const InventoryOverviewPage({super.key, this.showAppBar = false});
@@ -82,18 +83,18 @@ final class _InventoryOverviewViewState extends State<_InventoryOverviewView> {
                   children: [
                     AppButton(
                       label: l10n.navStockMovements,
-                      icon: Icons.swap_horiz_rounded,
+                      icon: AppIcons.stockMovements,
                       onPressed: () => context.push(RoutePaths.stockMovements),
                     ),
                     AppButton(
                       label: l10n.stockIssueAction,
-                      icon: Icons.outbox_rounded,
+                      icon: AppIcons.stockIssue,
                       variant: AppButtonVariant.secondary,
                       onPressed: () => context.push(RoutePaths.stockIssue()),
                     ),
                     AppButton(
                       label: l10n.navReports,
-                      icon: Icons.analytics_outlined,
+                      icon: AppIcons.reports,
                       variant: AppButtonVariant.outlined,
                       onPressed: () => context.push(RoutePaths.reports),
                     ),
@@ -111,7 +112,7 @@ final class _InventoryOverviewViewState extends State<_InventoryOverviewView> {
                 ),
                 sliver: SliverToBoxAdapter(
                   child: AppEmptyState(
-                    icon: Icons.inventory_outlined,
+                    icon: AppIcons.inventory,
                     title: l10n.inventoryEmptyTitle,
                     subtitle: l10n.inventoryEmptySubtitle,
                   ),
@@ -147,7 +148,7 @@ final class _InventoryOverviewViewState extends State<_InventoryOverviewView> {
             expandedHeight: 184,
             actions: [
               AppIconButton(
-                icon: Icons.refresh,
+                icon: AppIcons.refresh,
                 tooltip: l10n.actionRetry,
                 onPressed: () =>
                     context.read<InventoryOverviewCubit>().loadOverview(),

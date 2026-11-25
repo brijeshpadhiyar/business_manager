@@ -18,6 +18,7 @@ import 'package:business_manager/features/workers/domain/repositories/worker_rep
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Complete one-screen Lot Creation workflow:
 /// - Section A: Lot Information (Number, Title, Date, Notes)
@@ -314,7 +315,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                 const SizedBox(height: AppSpacing.md),
                 AppButton(
                   label: context.l10n.prodHistoryAddAssignmentAction,
-                  icon: Icons.add_task_rounded,
+                  icon: AppIcons.assignWorker,
                   isExpanded: true,
                   onPressed: () {
                     final qty = int.tryParse(qtyCtrl.text.trim()) ?? 0;
@@ -786,7 +787,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                             controller: _numberCtrl,
                             focusNode: _numberFocus,
                             label: l10n.lotNumberLabel,
-                            prefixIcon: Icons.tag_rounded,
+                            prefixIcon: AppIcons.tag,
                             textInputAction: TextInputAction.next,
                             maxLength: ValidationLimits.maxShortNameLength,
                             onChanged: (_) {
@@ -808,7 +809,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                             controller: _titleCtrl,
                             focusNode: _titleFocus,
                             label: l10n.lotTitleLabel,
-                            prefixIcon: Icons.title_rounded,
+                            prefixIcon: AppIcons.title,
                             textInputAction: TextInputAction.next,
                             maxLength: ValidationLimits.maxPersonNameLength,
                             validator: ValidationLocalizer.wrap(
@@ -921,8 +922,8 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                                       ? 'Close'
                                       : 'Add New Design',
                                   icon: _showInlineDesignForm
-                                      ? Icons.close_rounded
-                                      : Icons.add_rounded,
+                                      ? AppIcons.close
+                                      : AppIcons.add,
                                   variant: AppButtonVariant.secondary,
                                   onPressed: () => setState(() {
                                     _showInlineDesignForm =
@@ -975,7 +976,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                                       validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeAmountValidator(v, isRequired: false)),
                                       label: 'Default Unit Price (₹ / pc, optional)',
                                       hint: '0.00',
-                                      prefixIcon: Icons.currency_rupee_rounded,
+                                      prefixIcon: AppIcons.rupee,
                                       keyboardType:
                                           const TextInputType.numberWithOptions(
                                             decimal: true,
@@ -1002,7 +1003,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                                     const SizedBox(height: AppSpacing.sm),
                                     AppButton(
                                       label: 'Add Design to Lot',
-                                      icon: Icons.check_rounded,
+                                      icon: AppIcons.confirm,
                                       onPressed: _saveInlineNewDesign,
                                     ),
                                   ],
@@ -1048,7 +1049,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                               actions: [
                                 AppButton(
                                   label: 'Add Colours',
-                                  icon: Icons.palette_outlined,
+                                  icon: AppIcons.colour,
                                   variant: AppButtonVariant.secondary,
                                   onPressed: _pickColoursForColourOnly,
                                 ),
@@ -1109,7 +1110,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                             actions: [
                               AppButton(
                                 label: l10n.prodHistoryAddAssignmentAction,
-                                icon: Icons.add_task_rounded,
+                                icon: AppIcons.assignWorker,
                                 variant: AppButtonVariant.secondary,
                                 onPressed: _totalColoursCount > 0
                                     ? _showAddInitialAssignmentSheet
@@ -1138,15 +1139,15 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                                   return ListTile(
                                     dense: true,
                                     contentPadding: EdgeInsets.zero,
-                                    leading: const Icon(
-                                      Icons.precision_manufacturing_outlined,
+                                    leading: Icon(
+                                      AppIcons.processIcon(pName),
                                     ),
                                     title: Text('$pName • $wName'),
                                     subtitle: Text(
                                       '${formatVariantLabel(a.designName, a.colourName)} • ${a.quantity} pcs @ ${MoneyFormatter.formatPaise(a.agreedRatePaise)}/pc',
                                     ),
                                     trailing: AppIconButton(
-                                      icon: Icons.close_rounded,
+                                      icon: AppIcons.close,
                                       tooltip: 'Remove',
                                       onPressed: () => setState(
                                         () => _initialAssignments.removeAt(i),
@@ -1177,7 +1178,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                   label: _totalQuantity > 0
                       ? 'Save Lot (${MoneyFormatter.formatQuantity(_totalQuantity)} pcs)'
                       : l10n.actionSave,
-                  icon: Icons.check_rounded,
+                  icon: AppIcons.confirm,
                   isExpanded: true,
                   isLoading: _isSaving,
                   onPressed: _isSaving ? null : _saveLot,
@@ -1233,12 +1234,12 @@ final class _LotCreatePageState extends State<LotCreatePage> {
             actions: [
               AppButton(
                 label: 'Colours',
-                icon: Icons.palette_outlined,
+                icon: AppIcons.colour,
                 variant: AppButtonVariant.outlined,
                 onPressed: () => _pickColoursForDesign(design),
               ),
               AppIconButton(
-                icon: Icons.delete_outline_rounded,
+                icon: AppIcons.delete,
                 tooltip: 'Remove design',
                 onPressed: () => _removeDesign(design),
               ),
@@ -1303,7 +1304,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                     fontWeight: FontWeight.w600,
                   ),
                 AppIconButton(
-                  icon: Icons.close_rounded,
+                  icon: AppIcons.close,
                   tooltip: 'Remove colour',
                   onPressed: onRemove,
                 ),

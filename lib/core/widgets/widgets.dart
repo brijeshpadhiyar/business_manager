@@ -26,6 +26,7 @@ export 'app_glass_surface.dart';
 export 'app_heading.dart';
 export 'app_lazy_section.dart';
 export 'app_icon_button.dart';
+export 'app_icon_pop.dart';
 export 'app_loader.dart';
 export 'app_metric_tile.dart';
 export 'app_radio.dart';

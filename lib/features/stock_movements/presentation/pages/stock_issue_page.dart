@@ -24,6 +24,7 @@ import 'package:business_manager/features/stock_movements/domain/repositories/st
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Streamlined 4-step Stock Issue workflow (+ Step 5 Success Summary):
 /// 1. Select Stock (Lot / Design / Colour + Available Good)
@@ -470,7 +471,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
       return AppScaffold(
         title: l10n.stockIssueAction,
         body: AppEmptyState(
-          icon: Icons.inventory_2_outlined,
+          icon: AppIcons.lot,
           title: l10n.stockNoStockItemsTitle,
           subtitle: l10n.stockNoStockItemsSubtitle,
         ),
@@ -497,7 +498,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
         // to find it on a phone.
         bottomAction: AppButton(
           label: l10n.stockConfirmIssueAction,
-          icon: Icons.outbox_rounded,
+          icon: AppIcons.stockIssue,
           isExpanded: true,
           isLoading: _saving,
           onPressed: canSubmit ? _submit : null,
@@ -617,7 +618,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                   tone: selected.physicalAvailableInHouse > 0
                       ? AppStatusTone.good
                       : AppStatusTone.damaged,
-                  icon: Icons.check_circle_outline_rounded,
+                  icon: AppIcons.successOutline,
                 ),
                 if (selected.totalPendingWithWorkers > 0)
                   AppStatusBadge(
@@ -678,7 +679,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                   for (final b in _allBalances)
                     if (b.designColourId == id)
                       ActionChip(
-                        avatar: const Icon(Icons.history_rounded, size: 16),
+                        avatar: const Icon(AppIcons.productionHistory, size: 16),
                         label: Text(
                           '${b.lotNumber} • ${b.colourName} (${b.physicalAvailableInHouse})',
                         ),
@@ -691,7 +692,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
           AppTextField(
             controller: _stockSearchCtrl,
             label: l10n.stockSearchStockHint,
-            prefixIcon: Icons.search_rounded,
+            prefixIcon: AppIcons.search,
             onChanged: (_) => setState(() {}),
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -811,7 +812,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
               children: [
                 for (final pair in _recentSuggestions.workPairs)
                   ActionChip(
-                    avatar: const Icon(Icons.bolt_rounded, size: 16),
+                    avatar: const Icon(AppIcons.quick, size: 16),
                     label: Text('${pair.processName} • ${pair.workerName}'),
                     onPressed: () async {
                       setState(() => _selectedProcessId = pair.processId);
@@ -835,7 +836,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
             AppStatusBadge(
               label: l10n.stockNoActiveProcessesWarning,
               tone: AppStatusTone.pending,
-              icon: Icons.warning_amber_rounded,
+              icon: AppIcons.warning,
             )
           else
             Wrap(
@@ -865,7 +866,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
             AppStatusBadge(
               label: l10n.stockNoEligibleWorkers,
               tone: AppStatusTone.pending,
-              icon: Icons.warning_amber_rounded,
+              icon: AppIcons.warning,
             )
           else
             Wrap(
@@ -893,7 +894,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
               tilePadding: EdgeInsets.zero,
               initiallyExpanded: _showAdvanced,
               onExpansionChanged: (v) => setState(() => _showAdvanced = v),
-              leading: const Icon(Icons.tune_rounded, size: 18),
+              leading: const Icon(AppIcons.filter, size: 18),
               title: AppText(
                 l10n.stockAdvancedOptionsTitle,
                 variant: AppTextVariant.label,
@@ -921,7 +922,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                   AppTextField(
                     controller: _overrideRateCtrl,
                     label: l10n.stockOverrideRateLabel,
-                    prefixIcon: Icons.currency_rupee,
+                    prefixIcon: AppIcons.rupee,
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,
                     ),
@@ -1056,12 +1057,12 @@ final class _StockIssuePageState extends State<StockIssuePage> {
         RateResolutionMissing() => AppStatusBadge(
           label: l10n.stockRateMissingWarning,
           tone: AppStatusTone.damaged,
-          icon: Icons.error_outline_rounded,
+          icon: AppIcons.error,
         ),
         RateResolutionConflict() => AppStatusBadge(
           label: l10n.stockRateConflictWarning,
           tone: AppStatusTone.damaged,
-          icon: Icons.error_outline_rounded,
+          icon: AppIcons.error,
         ),
       };
     }
@@ -1078,7 +1079,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
           Row(
             children: [
               Icon(
-                Icons.lock_outline_rounded,
+                AppIcons.lock,
                 size: 16,
                 color: colorScheme.secondary,
               ),
@@ -1138,7 +1139,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
             controller: _qtyCtrl,
             focusNode: _qtyFocus,
             label: l10n.stockIssueQuantityLabel,
-            prefixIcon: Icons.numbers_rounded,
+            prefixIcon: AppIcons.number,
             suffixText: l10n.piecesUnit,
             keyboardType: TextInputType.number,
             textInputAction: TextInputAction.done,
@@ -1185,7 +1186,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                     onPressed: () => _addQuickQty(50, available),
                   ),
                 ActionChip(
-                  avatar: const Icon(Icons.done_all_rounded, size: 16),
+                  avatar: const Icon(AppIcons.doneAll, size: 16),
                   label: Text('${l10n.stockQuickAllAvailable} ($available)'),
                   onPressed: () => _setExactQty(available),
                 ),
@@ -1296,7 +1297,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
             AppStatusBadge(
               label: _submitError!,
               tone: AppStatusTone.damaged,
-              icon: Icons.error_outline_rounded,
+              icon: AppIcons.error,
             ),
           ],
         ],
@@ -1326,7 +1327,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                       borderRadius: AppRadius.fullBorder,
                     ),
                     child: Icon(
-                      Icons.check_circle_rounded,
+                      AppIcons.success,
                       color: semantic.goodStock,
                       size: 36,
                     ),
@@ -1382,7 +1383,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                   child: Row(
                     children: [
                       Icon(
-                        Icons.inventory_2_outlined,
+                        AppIcons.lot,
                         color: semantic.goodStock,
                       ),
                       const SizedBox(width: AppSpacing.sm),
@@ -1404,14 +1405,14 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                 const SizedBox(height: AppSpacing.lg),
                 AppButton(
                   label: l10n.stockIssueMoreAction,
-                  icon: Icons.add_circle_outline_rounded,
+                  icon: AppIcons.addCircle,
                   isExpanded: true,
                   onPressed: _issueMore,
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 AppButton(
                   label: l10n.stockViewIssueDetailsAction,
-                  icon: Icons.assignment_returned_outlined,
+                  icon: AppIcons.receiveReturn,
                   variant: AppButtonVariant.secondary,
                   isExpanded: true,
                   onPressed: () => context.pushReplacement(
@@ -1507,8 +1508,8 @@ final class _StepProgressStrip extends StatelessWidget {
                 children: [
                   Icon(
                     steps[i].completed
-                        ? Icons.check_circle_rounded
-                        : Icons.radio_button_checked_rounded,
+                        ? AppIcons.success
+                        : AppIcons.currentStep,
                     size: 14,
                     color: steps[i].completed
                         ? semantic.goodStock
@@ -1560,7 +1561,7 @@ final class _StepBadge extends StatelessWidget {
         borderRadius: AppRadius.fullBorder,
       ),
       child: completed
-          ? const Icon(Icons.check_rounded, size: 16, color: Colors.white)
+          ? const Icon(AppIcons.confirm, size: 16, color: Colors.white)
           : Text(
               '$number',
               style: Theme.of(context).textTheme.labelSmall?.copyWith(

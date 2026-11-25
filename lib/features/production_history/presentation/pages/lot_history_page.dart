@@ -11,6 +11,7 @@ import 'package:business_manager/features/production_history/presentation/bloc/p
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Screen 2: Complete Permanent Lot Production History.
 final class LotHistoryPage extends StatelessWidget {
@@ -47,12 +48,12 @@ final class _LotHistoryView extends StatelessWidget {
               : l10n.prodHistoryLotHistoryTitle,
           actions: [
             AppIconButton(
-              icon: Icons.timeline_rounded,
+              icon: AppIcons.timeline,
               tooltip: l10n.prodHistoryViewTimeline,
               onPressed: () => context.push(RoutePaths.lotTimeline(lotId)),
             ),
             AppIconButton(
-              icon: Icons.refresh_rounded,
+              icon: AppIcons.refresh,
               tooltip: l10n.actionRetry,
               onPressed: () => context.read<LotHistoryCubit>().loadLot(lotId),
             ),
@@ -125,20 +126,20 @@ final class _LotHistoryView extends StatelessWidget {
                 children: [
                   AppButton(
                     label: l10n.prodHistoryViewTimeline,
-                    icon: Icons.timeline_rounded,
+                    icon: AppIcons.timeline,
                     onPressed: () =>
                         context.push(RoutePaths.lotTimeline(lot.id)),
                   ),
                   AppButton(
                     label: 'Multi-Process Routing',
-                    icon: Icons.account_tree_outlined,
+                    icon: AppIcons.routeTransfer,
                     variant: AppButtonVariant.secondary,
                     onPressed: () =>
                         context.push(RoutePaths.lotRouting(lot.id)),
                   ),
                   AppButton(
                     label: l10n.stockReturnAction,
-                    icon: Icons.assignment_return_outlined,
+                    icon: AppIcons.receiveReturn,
                     variant: AppButtonVariant.outlined,
                     onPressed: () => context.push(
                       RoutePaths.stockReturnPickerFiltered(lotId: lot.id),
@@ -167,7 +168,7 @@ final class _LotHistoryView extends StatelessWidget {
                     label: 'Initial Qty',
                     value: history.totalInitialQty,
                     suffix: l10n.piecesUnit,
-                    icon: Icons.inventory_2_outlined,
+                    icon: AppIcons.lot,
                     tone: AppStatusTone.info,
                   ),
                 ),
@@ -177,7 +178,7 @@ final class _LotHistoryView extends StatelessWidget {
                     label: l10n.prodHistoryTotalAccepted,
                     value: history.totalAcceptedQty,
                     suffix: l10n.piecesUnit,
-                    icon: Icons.verified_outlined,
+                    icon: AppIcons.qcPassed,
                     tone: AppStatusTone.good,
                   ),
                 ),
@@ -187,7 +188,7 @@ final class _LotHistoryView extends StatelessWidget {
                     label: l10n.prodHistoryPendingInspection,
                     value: history.totalPendingInspectionQty,
                     suffix: l10n.piecesUnit,
-                    icon: Icons.fact_check_outlined,
+                    icon: AppIcons.qcInspect,
                     tone: history.totalPendingInspectionQty > 0
                         ? AppStatusTone.pending
                         : AppStatusTone.neutral,
@@ -200,7 +201,7 @@ final class _LotHistoryView extends StatelessWidget {
                     label: l10n.prodHistoryTotalRejected,
                     value: history.totalRejectedQty,
                     suffix: l10n.piecesUnit,
-                    icon: Icons.report_problem_outlined,
+                    icon: AppIcons.damaged,
                     tone: history.totalRejectedQty > 0
                         ? AppStatusTone.damaged
                         : AppStatusTone.neutral,
@@ -212,7 +213,7 @@ final class _LotHistoryView extends StatelessWidget {
                     label: l10n.prodHistoryOutstandingWork,
                     value: history.totalOutstandingQty,
                     suffix: l10n.piecesUnit,
-                    icon: Icons.hourglass_bottom_rounded,
+                    icon: AppIcons.pending,
                     tone: history.totalOutstandingQty > 0
                         ? AppStatusTone.pending
                         : AppStatusTone.good,
@@ -224,7 +225,7 @@ final class _LotHistoryView extends StatelessWidget {
                     label: 'Total Production Cost',
                     value: history.totalProductionCostPaise,
                     isCurrencyPaise: true,
-                    icon: Icons.currency_rupee_rounded,
+                    icon: AppIcons.rupee,
                     tone: AppStatusTone.good,
                   ),
                 ),

@@ -4,6 +4,7 @@ import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/widgets/app_dialog.dart';
 import 'package:business_manager/core/widgets/app_text.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Semantic tone for confirmation dialogs.
 enum AppConfirmationTone { info, warning, destructive }
@@ -36,9 +37,9 @@ abstract final class AppConfirmationDialog {
     final resolvedIcon =
         icon ??
         switch (tone) {
-          AppConfirmationTone.destructive => Icons.warning_amber_rounded,
-          AppConfirmationTone.warning => Icons.help_outline_rounded,
-          AppConfirmationTone.info => Icons.info_outline_rounded,
+          AppConfirmationTone.destructive => AppIcons.warning,
+          AppConfirmationTone.warning => AppIcons.help,
+          AppConfirmationTone.info => AppIcons.info,
         };
 
     final result = await AppDialog.showCustom<bool>(

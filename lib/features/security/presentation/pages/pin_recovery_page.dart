@@ -10,6 +10,7 @@ import 'package:business_manager/features/security/presentation/bloc/app_lock_cu
 import 'package:business_manager/features/security/presentation/widgets/pin_keypad.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 
 enum _RecoveryStep { verifyKey, enterNewPin, confirmNewPin, showFreshKey }
 
@@ -163,7 +164,7 @@ final class _PinRecoveryPageState extends State<PinRecoveryPage> {
     return AppScaffold(
       title: l10n.securityRecoveryHeading,
       leading: AppIconButton(
-        icon: Icons.arrow_back_rounded,
+        icon: AppIcons.back,
         tooltip: l10n.actionCancel,
         onPressed: widget.onBackToLock,
       ),
@@ -191,7 +192,7 @@ final class _PinRecoveryPageState extends State<PinRecoveryPage> {
                           controller: _keyCtrl,
                           label: l10n.securityRecoveryKeyLabel,
                           hint: 'XXXX-XXXX',
-                          prefixIcon: Icons.vpn_key_outlined,
+                          prefixIcon: AppIcons.recoveryKey,
                           // Recovery keys are upper-case codes: no
                           // autocorrect or suggestions mangling them.
                           textCapitalization: TextCapitalization.characters,
@@ -212,13 +213,13 @@ final class _PinRecoveryPageState extends State<PinRecoveryPage> {
                                   )
                                 : _errorText!,
                             tone: AppStatusTone.damaged,
-                            icon: Icons.error_outline_rounded,
+                            icon: AppIcons.error,
                           ),
                         ],
                         const SizedBox(height: AppSpacing.lg),
                         AppButton(
                           label: l10n.securityVerifyRecoveryKeyAction,
-                          icon: Icons.verified_user_outlined,
+                          icon: AppIcons.security,
                           isExpanded: true,
                           isLoading: _working,
                           onPressed: !_working && !state.isLockedOut
@@ -351,7 +352,7 @@ final class _PinRecoveryPageState extends State<PinRecoveryPage> {
                       const SizedBox(height: AppSpacing.lg),
                       AppButton(
                         label: l10n.securityCompleteRecoveryAction,
-                        icon: Icons.check_circle_outline_rounded,
+                        icon: AppIcons.successOutline,
                         isExpanded: true,
                         isLoading: _working,
                         onPressed: _freshKeyConfirmed && !_working
