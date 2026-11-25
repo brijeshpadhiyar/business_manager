@@ -4652,6 +4652,12 @@ abstract class AppLocalizations {
   /// **'Working...'**
   String get msgTitleLoading;
 
+  /// No description provided for @navPressBackAgainToExit.
+  ///
+  /// In en, this message translates to:
+  /// **'Press back again to exit'**
+  String get navPressBackAgainToExit;
+
   /// No description provided for @navProductionHistory.
   ///
   /// In en, this message translates to:

@@ -26,43 +26,38 @@ abstract final class AppMotion {
     return reduceMotion(context) ? Duration.zero : preferred;
   }
 
-  /// Builds a lightweight, 120Hz-friendly incoming slide + fade transition for
-  /// `go_router` that avoids double-page GPU compositing over glass backdrops.
-  static CustomTransitionPage<T> buildPage<T>({
+  /// Page for pushed screens (details, forms). Returns a [MaterialPage] so
+  /// the theme's platform transitions apply: predictive back on Android,
+  /// edge-swipe back on iOS/macOS, and fade-forwards on desktop/web (see
+  /// `pageTransitionsTheme` in `AppTheme`). [axis] is kept for API
+  /// compatibility.
+  static Page<T> buildPage<T>({
     required GoRouterState state,
     required Widget child,
     SharedAxisTransitionType axis = SharedAxisTransitionType.horizontal,
   }) {
-    final beginOffset = switch (axis) {
-      SharedAxisTransitionType.horizontal => const Offset(0.04, 0),
-      SharedAxisTransitionType.vertical => const Offset(0, 0.04),
-      SharedAxisTransitionType.scaled => Offset.zero,
-    };
+    return MaterialPage<T>(key: state.pageKey, child: child);
+  }
+
+  /// Page for switching between primary tabs / sidebar sections: a Material
+  /// "fade through" (old page fades out, new one fades and scales in).
+  /// Instant under reduced motion.
+  static Page<T> buildTabPage<T>({
+    required GoRouterState state,
+    required Widget child,
+  }) {
     return CustomTransitionPage<T>(
       key: state.pageKey,
-      transitionDuration: const Duration(milliseconds: 200),
-      reverseTransitionDuration: const Duration(milliseconds: 160),
+      transitionDuration: const Duration(milliseconds: 260),
+      reverseTransitionDuration: const Duration(milliseconds: 200),
       child: child,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
-        if (reduceMotion(context)) {
-          return child;
-        }
-        final curved = CurvedAnimation(
-          parent: animation,
-          curve: standardCurve,
-          reverseCurve: Curves.easeInCubic,
-        );
-        return FadeTransition(
-          opacity: curved,
-          child: beginOffset == Offset.zero
-              ? child
-              : SlideTransition(
-                  position: Tween<Offset>(
-                    begin: beginOffset,
-                    end: Offset.zero,
-                  ).animate(curved),
-                  child: child,
-                ),
+        if (reduceMotion(context)) return child;
+        return FadeThroughTransition(
+          animation: animation,
+          secondaryAnimation: secondaryAnimation,
+          fillColor: Colors.transparent,
+          child: child,
         );
       },
     );

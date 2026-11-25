@@ -3,6 +3,7 @@ import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/design_system_showcase_page.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
+import 'package:business_manager/core/services/app_message_service.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/accounting/presentation/pages/accounting_overview_page.dart';
 import 'package:business_manager/features/accounting/presentation/pages/payment_form_page.dart';
@@ -51,6 +52,7 @@ import 'package:business_manager/features/workers/presentation/pages/worker_assi
 import 'package:business_manager/features/workers/presentation/pages/worker_detail_page.dart';
 import 'package:business_manager/features/workers/presentation/pages/worker_form_page.dart';
 import 'package:business_manager/features/workers/presentation/pages/worker_list_page.dart';
+import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -77,8 +79,8 @@ GoRouter createAppRouter(AppConfig config) {
         routes: [
           GoRoute(
             path: RoutePaths.home,
-            pageBuilder: (context, state) => NoTransitionPage(
-              key: state.pageKey,
+            pageBuilder: (context, state) => AppMotion.buildTabPage(
+              state: state,
               child: DashboardPage(
                 config: config,
                 onNavigateTab: (idx) => _navigatePrimaryTab(context, idx),
@@ -91,8 +93,10 @@ GoRouter createAppRouter(AppConfig config) {
           ),
           GoRoute(
             path: RoutePaths.lots,
-            pageBuilder: (context, state) =>
-                NoTransitionPage(key: state.pageKey, child: const LotListPage()),
+            pageBuilder: (context, state) => AppMotion.buildTabPage(
+              state: state,
+              child: const LotListPage(),
+            ),
           ),
           GoRoute(
             path: RoutePaths.designsColours,
@@ -103,10 +107,8 @@ GoRouter createAppRouter(AppConfig config) {
           ),
           GoRoute(
             path: RoutePaths.lotCreate,
-            pageBuilder: (context, state) => AppMotion.buildPage(
-              state: state,
-              child: const LotCreatePage(),
-            ),
+            pageBuilder: (context, state) =>
+                AppMotion.buildPage(state: state, child: const LotCreatePage()),
           ),
           GoRoute(
             path: RoutePaths.lotDetailPattern,
@@ -174,8 +176,8 @@ GoRouter createAppRouter(AppConfig config) {
           // Workers, Assignments & Historical Rates
           GoRoute(
             path: RoutePaths.workers,
-            pageBuilder: (context, state) => NoTransitionPage(
-              key: state.pageKey,
+            pageBuilder: (context, state) => AppMotion.buildTabPage(
+              state: state,
               child: const WorkerListPage(),
             ),
           ),
@@ -250,8 +252,8 @@ GoRouter createAppRouter(AppConfig config) {
                   child: const StockMovementsPage(embedded: false),
                 );
               }
-              return NoTransitionPage(
-                key: state.pageKey,
+              return AppMotion.buildTabPage(
+                state: state,
                 child: const StockMovementsPage(embedded: true),
               );
             },
@@ -339,10 +341,8 @@ GoRouter createAppRouter(AppConfig config) {
           // Business Reports & Daily Summary
           GoRoute(
             path: RoutePaths.reports,
-            pageBuilder: (context, state) => AppMotion.buildPage(
-              state: state,
-              child: const ReportsPage(),
-            ),
+            pageBuilder: (context, state) =>
+                AppMotion.buildPage(state: state, child: const ReportsPage()),
           ),
           GoRoute(
             path: RoutePaths.dailySummary,
@@ -419,8 +419,8 @@ GoRouter createAppRouter(AppConfig config) {
                   child: SettingsHomePage(config: config, showAppBar: true),
                 );
               }
-              return NoTransitionPage(
-                key: state.pageKey,
+              return AppMotion.buildTabPage(
+                state: state,
                 child: SettingsHomePage(config: config),
               );
             },
@@ -755,193 +755,258 @@ final class StitchFlowShellScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final appTitle = config.isDev ? l10n.appTitleDev : l10n.appTitle;
-    final isRootChrome = _isPrimaryRootRoute && !GoRouter.of(context).canPop();
+    final router = GoRouter.of(context);
+    final isRootChrome = _isPrimaryRootRoute && !router.canPop();
 
     // Secondary screens: sidebar on desktop, drawer on tablet, and the
     // "More" menu on phones.
+    final extraRoutes =
+        <({String id, String label, IconData icon, String route})>[
+          (
+            id: 'productionHistory',
+            label: l10n.navProductionHistory,
+            icon: Icons.history_rounded,
+            route: RoutePaths.productionHistory,
+          ),
+          (
+            id: 'inspectionQueue',
+            label: l10n.navInspectionQueue,
+            icon: Icons.fact_check_outlined,
+            route: RoutePaths.inspectionQueue,
+          ),
+          (
+            id: 'processHistory',
+            label: l10n.navProcessHistory,
+            icon: Icons.timeline_rounded,
+            route: RoutePaths.processProductionHistory,
+          ),
+          (
+            id: 'designsColours',
+            label: l10n.navDesignsColours,
+            icon: Icons.palette_outlined,
+            route: RoutePaths.designsColours,
+          ),
+          (
+            id: 'processes',
+            label: l10n.navProcesses,
+            icon: Icons.precision_manufacturing_outlined,
+            route: RoutePaths.processes,
+          ),
+          (
+            id: 'inventory',
+            label: l10n.navInventory,
+            icon: Icons.bar_chart_outlined,
+            route: RoutePaths.inventory,
+          ),
+          (
+            id: 'accounting',
+            label: l10n.navAccounting,
+            icon: Icons.account_balance_wallet_outlined,
+            route: RoutePaths.accounting,
+          ),
+          (
+            id: 'reports',
+            label: l10n.navReports,
+            icon: Icons.analytics_outlined,
+            route: RoutePaths.reports,
+          ),
+          (
+            id: 'help',
+            label: l10n.settingsHelpTitle,
+            icon: Icons.menu_book_outlined,
+            route: RoutePaths.settingsHelp,
+          ),
+        ];
+    // Sidebar / drawer: sibling sections, so replace the location.
     final extraActions = <ResponsiveNavActionItem>[
-      ResponsiveNavActionItem(
-        id: 'productionHistory',
-        label: l10n.navProductionHistory,
-        icon: Icons.history_rounded,
-        onTap: () => context.go(RoutePaths.productionHistory),
-      ),
-      ResponsiveNavActionItem(
-        id: 'inspectionQueue',
-        label: l10n.navInspectionQueue,
-        icon: Icons.fact_check_outlined,
-        onTap: () => context.go(RoutePaths.inspectionQueue),
-      ),
-      ResponsiveNavActionItem(
-        id: 'processHistory',
-        label: l10n.navProcessHistory,
-        icon: Icons.timeline_rounded,
-        onTap: () => context.go(RoutePaths.processProductionHistory),
-      ),
-      ResponsiveNavActionItem(
-        id: 'designsColours',
-        label: l10n.navDesignsColours,
-        icon: Icons.palette_outlined,
-        onTap: () => context.go(RoutePaths.designsColours),
-      ),
-      ResponsiveNavActionItem(
-        id: 'processes',
-        label: l10n.navProcesses,
-        icon: Icons.precision_manufacturing_outlined,
-        onTap: () => context.go(RoutePaths.processes),
-      ),
-      ResponsiveNavActionItem(
-        id: 'inventory',
-        label: l10n.navInventory,
-        icon: Icons.bar_chart_outlined,
-        onTap: () => context.go(RoutePaths.inventory),
-      ),
-      ResponsiveNavActionItem(
-        id: 'accounting',
-        label: l10n.navAccounting,
-        icon: Icons.account_balance_wallet_outlined,
-        onTap: () => context.go(RoutePaths.accounting),
-      ),
-      ResponsiveNavActionItem(
-        id: 'reports',
-        label: l10n.navReports,
-        icon: Icons.analytics_outlined,
-        onTap: () => context.go(RoutePaths.reports),
-      ),
-      ResponsiveNavActionItem(
-        id: 'help',
-        label: l10n.settingsHelpTitle,
-        icon: Icons.menu_book_outlined,
-        onTap: () => context.go(RoutePaths.settingsHelp),
-      ),
+      for (final e in extraRoutes)
+        ResponsiveNavActionItem(
+          id: e.id,
+          label: e.label,
+          icon: e.icon,
+          onTap: () => context.go(e.route),
+        ),
     ];
 
-    return ResponsiveNavigation(
-      title: appTitle,
-      subtitle: l10n.appTagline,
-      selectedIndex: _selectedPrimaryIndex,
-      activeExtraActionId: _activeExtraId,
-      showMobileChrome: isRootChrome,
-      breadcrumbs: _buildBreadcrumbs(context),
-      onDestinationSelected: (idx) => _navigatePrimaryTab(context, idx),
-      extraShortcuts: {
-        // Ctrl+K (Cmd+K on Mac): search lots, workers, processes or start a
-        // quick action from anywhere.
-        const SingleActivator(LogicalKeyboardKey.keyK, control: true): () =>
-            showGlobalSearch(context),
-        const SingleActivator(LogicalKeyboardKey.keyK, meta: true): () =>
-            showGlobalSearch(context),
-        // Esc goes back like the system back button, so unsaved-changes
-        // guards still ask before leaving a form.
-        const SingleActivator(LogicalKeyboardKey.escape): () =>
-            GoRouter.of(context).routerDelegate.popRoute(),
-      },
-      // Phones get Search plus one "More" menu instead of six icons, so the
-      // toolbar never overflows at 320dp.
-      compactActions: [
-        AppIconButton(
-          icon: Icons.search_rounded,
-          tooltip: l10n.uxSearchTooltip,
-          onPressed: () => showGlobalSearch(context),
-        ),
-        BlocBuilder<AppLockCubit, AppLockState>(
-          builder: (context, lockState) {
-            return PopupMenuButton<VoidCallback>(
-              tooltip: MaterialLocalizations.of(context).showMenuTooltip,
-              icon: const Icon(Icons.more_vert_rounded),
-              onSelected: (action) => action(),
-              itemBuilder: (context) => [
-                for (final item in extraActions)
-                  PopupMenuItem<VoidCallback>(
-                    value: item.onTap,
-                    child: ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: Icon(item.icon),
-                      title: Text(item.label),
+    return _RootBackGuard(
+      location: location,
+      child: ResponsiveNavigation(
+        title: appTitle,
+        subtitle: l10n.appTagline,
+        selectedIndex: _selectedPrimaryIndex,
+        activeExtraActionId: _activeExtraId,
+        showMobileChrome: isRootChrome,
+        breadcrumbs: _buildBreadcrumbs(context),
+        onDestinationSelected: (idx) => _navigatePrimaryTab(context, idx),
+        extraShortcuts: {
+          // Ctrl+K (Cmd+K on Mac): search lots, workers, processes or start a
+          // quick action from anywhere.
+          const SingleActivator(LogicalKeyboardKey.keyK, control: true): () =>
+              showGlobalSearch(context),
+          const SingleActivator(LogicalKeyboardKey.keyK, meta: true): () =>
+              showGlobalSearch(context),
+          // Esc goes back like the system back button, so unsaved-changes
+          // guards still ask before leaving a form.
+          const SingleActivator(LogicalKeyboardKey.escape): () =>
+              GoRouter.of(context).routerDelegate.popRoute(),
+        },
+        // Phones get Search plus one "More" menu instead of six icons, so the
+        // toolbar never overflows at 320dp.
+        compactActions: [
+          AppIconButton(
+            icon: Icons.search_rounded,
+            tooltip: l10n.uxSearchTooltip,
+            onPressed: () => showGlobalSearch(context),
+          ),
+          BlocBuilder<AppLockCubit, AppLockState>(
+            builder: (context, lockState) {
+              return PopupMenuButton<VoidCallback>(
+                tooltip: MaterialLocalizations.of(context).showMenuTooltip,
+                icon: const Icon(Icons.more_vert_rounded),
+                onSelected: (action) => action(),
+                itemBuilder: (_) => [
+                  // Push (not go) so the system back button returns to the
+                  // tab the menu was opened from instead of closing the app.
+                  for (final item in extraRoutes)
+                    PopupMenuItem<VoidCallback>(
+                      // Captured router: the open menu makes canPop() true, which rebuilds
+                      // the shell and unmounts this menu's own context.
+                      value: () => router.push(item.route),
+                      child: ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: Icon(item.icon),
+                        title: Text(item.label),
+                      ),
                     ),
-                  ),
-                if (lockState.isPinEnabled) ...[
-                  const PopupMenuDivider(),
-                  PopupMenuItem<VoidCallback>(
-                    value: () => context.read<AppLockCubit>().lockNow(),
-                    child: ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: const Icon(Icons.lock_outline_rounded),
-                      title: Text(l10n.securityLockNowAction),
+                  if (lockState.isPinEnabled) ...[
+                    const PopupMenuDivider(),
+                    PopupMenuItem<VoidCallback>(
+                      value: () => context.read<AppLockCubit>().lockNow(),
+                      child: ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        leading: const Icon(Icons.lock_outline_rounded),
+                        title: Text(l10n.securityLockNowAction),
+                      ),
                     ),
-                  ),
+                  ],
                 ],
-              ],
-            );
-          },
-        ),
-      ],
-      actions: [
-        AppIconButton(
-          icon: Icons.search_rounded,
-          tooltip: l10n.uxSearchTooltip,
-          onPressed: () => showGlobalSearch(context),
-        ),
-        BlocBuilder<AppLockCubit, AppLockState>(
-          builder: (context, lockState) {
-            if (!lockState.isPinEnabled) return const SizedBox.shrink();
-            return AppIconButton(
-              icon: Icons.lock_outline_rounded,
-              tooltip: l10n.securityLockNowAction,
-              onPressed: () => context.read<AppLockCubit>().lockNow(),
-            );
-          },
-        ),
-        AppIconButton(
-          icon: Icons.history_rounded,
-          tooltip: l10n.navProductionHistory,
-          onPressed: () => context.push(RoutePaths.productionHistory),
-        ),
-        AppIconButton(
-          icon: Icons.account_balance_wallet_outlined,
-          tooltip: l10n.navAccounting,
-          onPressed: () => context.push(RoutePaths.accounting),
-        ),
-        AppIconButton(
-          icon: Icons.analytics_outlined,
-          tooltip: l10n.navReports,
-          onPressed: () => context.push(RoutePaths.reports),
-        ),
-        AppIconButton(
-          icon: Icons.help_outline_rounded,
-          tooltip: l10n.settingsHelpTitle,
-          onPressed: () => context.push(RoutePaths.settingsHelp),
-        ),
-      ],
-      sidebarExtraActions: extraActions,
-      destinations: [
-        ResponsiveNavDestination(
-          label: l10n.navDashboard,
-          icon: Icons.dashboard_outlined,
-          selectedIcon: Icons.dashboard,
-        ),
-        ResponsiveNavDestination(
-          label: l10n.navLots,
-          icon: Icons.inventory_2_outlined,
-          selectedIcon: Icons.inventory_2,
-        ),
-        ResponsiveNavDestination(
-          label: l10n.navStockShort,
-          icon: Icons.swap_horiz_rounded,
-          selectedIcon: Icons.swap_horiz_rounded,
-        ),
-        ResponsiveNavDestination(
-          label: l10n.navWorkers,
-          icon: Icons.people_outline,
-          selectedIcon: Icons.people,
-        ),
-        ResponsiveNavDestination(
-          label: l10n.navSettings,
-          icon: Icons.settings_outlined,
-          selectedIcon: Icons.settings,
-        ),
-      ],
-      body: child,
+              );
+            },
+          ),
+        ],
+        actions: [
+          AppIconButton(
+            icon: Icons.search_rounded,
+            tooltip: l10n.uxSearchTooltip,
+            onPressed: () => showGlobalSearch(context),
+          ),
+          BlocBuilder<AppLockCubit, AppLockState>(
+            builder: (context, lockState) {
+              if (!lockState.isPinEnabled) return const SizedBox.shrink();
+              return AppIconButton(
+                icon: Icons.lock_outline_rounded,
+                tooltip: l10n.securityLockNowAction,
+                onPressed: () => context.read<AppLockCubit>().lockNow(),
+              );
+            },
+          ),
+          AppIconButton(
+            icon: Icons.history_rounded,
+            tooltip: l10n.navProductionHistory,
+            onPressed: () => context.push(RoutePaths.productionHistory),
+          ),
+          AppIconButton(
+            icon: Icons.account_balance_wallet_outlined,
+            tooltip: l10n.navAccounting,
+            onPressed: () => context.push(RoutePaths.accounting),
+          ),
+          AppIconButton(
+            icon: Icons.analytics_outlined,
+            tooltip: l10n.navReports,
+            onPressed: () => context.push(RoutePaths.reports),
+          ),
+          AppIconButton(
+            icon: Icons.help_outline_rounded,
+            tooltip: l10n.settingsHelpTitle,
+            onPressed: () => context.push(RoutePaths.settingsHelp),
+          ),
+        ],
+        sidebarExtraActions: extraActions,
+        destinations: [
+          ResponsiveNavDestination(
+            label: l10n.navDashboard,
+            icon: Icons.dashboard_outlined,
+            selectedIcon: Icons.dashboard,
+          ),
+          ResponsiveNavDestination(
+            label: l10n.navLots,
+            icon: Icons.inventory_2_outlined,
+            selectedIcon: Icons.inventory_2,
+          ),
+          ResponsiveNavDestination(
+            label: l10n.navStockShort,
+            icon: Icons.swap_horiz_rounded,
+            selectedIcon: Icons.swap_horiz_rounded,
+          ),
+          ResponsiveNavDestination(
+            label: l10n.navWorkers,
+            icon: Icons.people_outline,
+            selectedIcon: Icons.people,
+          ),
+          ResponsiveNavDestination(
+            label: l10n.navSettings,
+            icon: Icons.settings_outlined,
+            selectedIcon: Icons.settings,
+          ),
+        ],
+        body: child,
+      ),
+    );
+  }
+}
+
+/// App-level system back handling. It only runs when nothing inside the app
+/// can pop (inner pages and form guards always handle back first):
+/// - away from Home (another tab, a sidebar section, a deep link) → Home;
+/// - on Home (Android) → "Press back again to exit", then exit on a second
+///   press within 2 seconds.
+/// Without this, back on a screen opened with `go()` closed the whole app.
+final class _RootBackGuard extends StatelessWidget {
+  const _RootBackGuard({required this.location, required this.child});
+
+  final String location;
+  final Widget child;
+
+  static DateTime? _lastBackOnHome;
+  static const Duration _exitWindow = Duration(seconds: 2);
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope<Object?>(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        if (location != RoutePaths.home) {
+          _lastBackOnHome = null;
+          context.go(RoutePaths.home);
+          return;
+        }
+        if (defaultTargetPlatform != TargetPlatform.android) return;
+        final now = DateTime.now();
+        final last = _lastBackOnHome;
+        if (last != null && now.difference(last) < _exitWindow) {
+          _lastBackOnHome = null;
+          SystemNavigator.pop();
+          return;
+        }
+        _lastBackOnHome = now;
+        AppMessageService.info(
+          context,
+          context.l10n.navPressBackAgainToExit,
+          duration: _exitWindow,
+        );
+      },
+      child: child,
     );
   }
 }

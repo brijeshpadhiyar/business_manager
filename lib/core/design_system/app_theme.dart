@@ -4,6 +4,8 @@ import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/design_system/app_typography.dart';
+import 'package:cupertino_ui/cupertino_ui.dart'
+    show CupertinoPageTransitionsBuilder;
 import 'package:material_ui/material_ui.dart';
 
 /// Centralized Material 3 light and dark themes for the v1.4 "Indigo Thread"
@@ -113,15 +115,17 @@ abstract final class AppTheme {
       textTheme: textTheme,
       extensions: [semanticColors, surfaceTokens],
       visualDensity: VisualDensity.standard,
-      // Native-feeling navigation: keep the platform defaults (predictive
-      // back on Android, swipe-back slide on iOS/macOS) and use a light fade
-      // on desktop instead of the heavier zoom.
-      pageTransitionsTheme: PageTransitionsTheme(
+      // Native-feeling navigation (used by every pushed page via
+      // `AppMotion.buildPage`): Android follows the predictive back gesture,
+      // iOS/macOS keep edge-swipe back, desktop/web use a light fade-forward.
+      pageTransitionsTheme: const PageTransitionsTheme(
         builders: {
-          ...const PageTransitionsTheme().builders,
-          TargetPlatform.windows: const FadeForwardsPageTransitionsBuilder(),
-          TargetPlatform.linux: const FadeForwardsPageTransitionsBuilder(),
-          TargetPlatform.fuchsia: const FadeForwardsPageTransitionsBuilder(),
+          TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.windows: FadeForwardsPageTransitionsBuilder(),
+          TargetPlatform.linux: FadeForwardsPageTransitionsBuilder(),
+          TargetPlatform.fuchsia: FadeForwardsPageTransitionsBuilder(),
         },
       ),
       focusColor: colorScheme.primary.withValues(alpha: isDark ? 0.24 : 0.14),

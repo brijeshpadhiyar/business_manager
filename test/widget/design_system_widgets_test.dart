@@ -89,6 +89,43 @@ void main() {
 
       expect(find.text('Required field'), findsOneWidget);
     });
+
+    testWidgets('validates live while typing, before any Save', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: AppTheme.light(),
+          home: Scaffold(
+            body: Form(
+              child: Column(
+                children: [
+                  AppTextField(
+                    label: 'Qty',
+                    validator: (v) =>
+                        (int.tryParse(v ?? '') ?? 0) > 0 ? null : 'Enter qty',
+                  ),
+                  const AppTextField(label: 'Untouched', validator: _alwaysBad),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // Nothing shows before the user interacts.
+      expect(find.text('Enter qty'), findsNothing);
+
+      await tester.enterText(find.byType(TextFormField).first, '0');
+      await tester.pump();
+      expect(find.text('Enter qty'), findsOneWidget);
+      // Fields the user has not touched stay quiet.
+      expect(find.text('bad'), findsNothing);
+
+      await tester.enterText(find.byType(TextFormField).first, '12');
+      await tester.pump();
+      expect(find.text('Enter qty'), findsNothing);
+    });
   });
 
   group('ResponsiveNavigation breakpoints', () {
@@ -205,3 +242,5 @@ void main() {
     );
   });
 }
+
+String? _alwaysBad(String? _) => 'bad';

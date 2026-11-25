@@ -15,6 +15,7 @@ dependencies:
 
   # Official decoupled Flutter Material 3 library (flutter.dev)
   material_ui: ^1.11.1
+  cupertino_ui: ^1.1.7
   cupertino_icons: ^2.0.0
 
   # State management

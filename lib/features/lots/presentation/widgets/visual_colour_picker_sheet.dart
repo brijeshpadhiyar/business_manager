@@ -3,6 +3,7 @@ import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
+import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/lots/domain/entities/colour_master_entity.dart';
@@ -197,6 +198,7 @@ final class _VisualColourPickerContentState
                           Expanded(
                             child: AppTextField(
                               controller: nameCtrl,
+                              validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.requiredValidator(v)),
                               label: 'Colour Name',
                             ),
                           ),
@@ -205,6 +207,7 @@ final class _VisualColourPickerContentState
                       const SizedBox(height: AppSpacing.md),
                       AppTextField(
                         controller: hexCtrl,
+                        validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.hexColorValidator(v)),
                         label: 'HEX Code (e.g. #DC2626)',
                         onChanged: (val) {
                           final norm = AppColourUtils.normalizeHex(val);
@@ -477,6 +480,7 @@ final class _VisualColourPickerContentState
                             Expanded(
                               child: AppTextField(
                                 controller: qtyControllers[c.id],
+                                validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.quantityValidator(v)),
                                 label: 'Qty (pcs)',
                                 keyboardType: TextInputType.number,
                                 inputFormatters: [
@@ -491,6 +495,7 @@ final class _VisualColourPickerContentState
                             Expanded(
                               child: AppTextField(
                                 controller: priceControllers[c.id],
+                                validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeAmountValidator(v, isRequired: false)),
                                 label: 'Unit Price (₹)',
                                 hint: '0.00',
                                 keyboardType:

@@ -89,6 +89,7 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                   const SizedBox(height: AppSpacing.md),
                   AppTextField(
                     controller: accCtrl,
+                    validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeQuantityValidator(v, isRequired: true)),
                     label: l10n.prodHistoryTotalAccepted,
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -97,6 +98,7 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                   const SizedBox(height: AppSpacing.sm),
                   AppTextField(
                     controller: rejCtrl,
+                    validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeQuantityValidator(v)),
                     label: l10n.prodHistoryTotalRejected,
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -106,6 +108,7 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                     const SizedBox(height: AppSpacing.sm),
                     AppTextField(
                       controller: reasonCtrl,
+                      validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.requiredValidator(v)),
                       label: l10n.stockSettlementReasonLabel,
                       maxLines: 2,
                       onChanged: (_) => setSheetState(() => error = null),
@@ -248,6 +251,7 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                 const SizedBox(height: AppSpacing.md),
                 AppTextField(
                   controller: qtyCtrl,
+                  validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.quantityValidator(v)),
                   label: l10n.stockRepairQuantityLabel,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -380,6 +384,7 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                   const SizedBox(height: AppSpacing.md),
                   AppTextField(
                     controller: accCtrl,
+                    validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeQuantityValidator(v, isRequired: true)),
                     label: l10n.prodHistoryTotalAccepted,
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -388,6 +393,7 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                   const SizedBox(height: AppSpacing.sm),
                   AppTextField(
                     controller: rejAgainCtrl,
+                    validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeQuantityValidator(v)),
                     label: 'Still Defective / Rejected Again',
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -397,6 +403,7 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                     const SizedBox(height: AppSpacing.sm),
                     AppTextField(
                       controller: reasonCtrl,
+                      validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.requiredValidator(v)),
                       label: l10n.stockSettlementReasonLabel,
                       maxLines: 2,
                     ),

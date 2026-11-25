@@ -280,6 +280,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                     Expanded(
                       child: AppTextField(
                         controller: qtyCtrl,
+                        validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.quantityValidator(v)),
                         label: 'Qty (pcs)',
                         keyboardType: TextInputType.number,
                         inputFormatters: [
@@ -291,6 +292,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                     Expanded(
                       child: AppTextField(
                         controller: rateCtrl,
+                        validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeAmountValidator(v)),
                         label: 'Locked Rate (₹/pc)',
                         keyboardType: const TextInputType.numberWithOptions(
                           decimal: true,
@@ -970,6 +972,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                                     const SizedBox(height: AppSpacing.sm),
                                     AppTextField(
                                       controller: _newDesignPriceCtrl,
+                                      validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeAmountValidator(v, isRequired: false)),
                                       label: 'Default Unit Price (₹ / pc, optional)',
                                       hint: '0.00',
                                       prefixIcon: Icons.currency_rupee_rounded,
@@ -1312,6 +1315,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                 Expanded(
                   child: AppTextField(
                     controller: colour.qtyCtrl,
+                    validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.quantityValidator(v)),
                     label: 'Qty (pcs)',
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -1322,6 +1326,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                 Expanded(
                   child: AppTextField(
                     controller: colour.priceCtrl,
+                    validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeAmountValidator(v, isRequired: false)),
                     label: 'Unit Price (₹)',
                     hint: '0.00',
                     keyboardType: const TextInputType.numberWithOptions(

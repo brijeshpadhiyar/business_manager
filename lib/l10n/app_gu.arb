@@ -782,6 +782,7 @@
   "msgTitleWarning": "ચેતવણી",
   "msgTitleInfo": "માહિતી",
   "msgTitleLoading": "પ્રક્રિયા ચાલુ છે...",
+  "navPressBackAgainToExit": "બહાર નીકળવા માટે ફરી પાછળ દબાવો",
   "navProductionHistory": "પ્રોડક્શન હિસ્ટ્રી",
   "navInspectionQueue": "QC તપાસ કતાર",
   "navWorkerHistory": "કારીગર પ્રોડક્શન",

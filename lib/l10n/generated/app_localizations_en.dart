@@ -2479,6 +2479,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get msgTitleLoading => 'Working...';
 
   @override
+  String get navPressBackAgainToExit => 'Press back again to exit';
+
+  @override
   String get navProductionHistory => 'Production History';
 
   @override

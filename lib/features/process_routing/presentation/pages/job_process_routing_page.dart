@@ -6,6 +6,7 @@ import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
+import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/process_routing/domain/calculators/process_pricing_calculator.dart';
@@ -259,6 +260,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                   const SizedBox(height: AppSpacing.md),
                   AppTextField(
                     controller: qtyCtrl,
+                    validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.quantityValidator(v, max: selectedSku.physicalAvailableInHouse)),
                     label:
                         'Quantity (Factory Ready: ${selectedSku.physicalAvailableInHouse} pcs)',
                     keyboardType: TextInputType.number,
@@ -272,6 +274,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                       Expanded(
                         child: AppTextField(
                           controller: rateCtrl,
+                          validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeAmountValidator(v)),
                           label:
                               'Agreed Rate (Default: ${MoneyFormatter.formatPaise(procDefault.defaultRatePaise)})',
                           keyboardType: const TextInputType.numberWithOptions(
@@ -313,6 +316,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                       padding: const EdgeInsets.only(top: AppSpacing.md),
                       child: AppTextField(
                         controller: overrideReasonCtrl,
+                        validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.requiredValidator(v)),
                         label: 'Reason for Changing Default Rate (Required)',
                       ),
                     ),
@@ -529,6 +533,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                   const SizedBox(height: AppSpacing.md),
                   AppTextField(
                     controller: qtyCtrl,
+                    validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.quantityValidator(v, max: source.pendingQuantity)),
                     label:
                         'Transfer Quantity (Max ${source.pendingQuantity} pcs)',
                     keyboardType: TextInputType.number,
@@ -537,6 +542,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                   const SizedBox(height: AppSpacing.md),
                   AppTextField(
                     controller: rateCtrl,
+                    validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeAmountValidator(v)),
                     label:
                         'Destination Rate (Default: ${MoneyFormatter.formatPaise(defPaise)})',
                     keyboardType: const TextInputType.numberWithOptions(
@@ -550,6 +556,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                       padding: const EdgeInsets.only(top: AppSpacing.md),
                       child: AppTextField(
                         controller: reasonCtrl,
+                        validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.requiredValidator(v)),
                         label: 'Reason for Changing Default Rate (Required)',
                       ),
                     ),
@@ -669,6 +676,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                 const SizedBox(height: AppSpacing.md),
                 AppTextField(
                   controller: goodCtrl,
+                  validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeQuantityValidator(v, isRequired: true)),
                   label: 'Good Quantity Returned to Factory',
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -676,6 +684,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                 const SizedBox(height: AppSpacing.md),
                 AppTextField(
                   controller: damagedCtrl,
+                  validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeQuantityValidator(v)),
                   label: 'Damaged Quantity (Optional)',
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -683,6 +692,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                 const SizedBox(height: AppSpacing.md),
                 AppTextField(
                   controller: reasonCtrl,
+                  validator: ValidationLocalizer.wrap(context.l10n, (v) => (int.tryParse(damagedCtrl.text.trim()) ?? 0) > 0 ? AppValidators.requiredValidator(v) : const ValidationResult.valid()),
                   label: 'Damage Reason (Required if Damaged > 0)',
                 ),
                 const SizedBox(height: AppSpacing.md),
@@ -794,6 +804,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
               const SizedBox(height: AppSpacing.md),
               AppTextField(
                 controller: amountCtrl,
+                validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.amountValidator(v)),
                 label: 'Amount (₹)',
                 keyboardType: const TextInputType.numberWithOptions(
                   decimal: true,
@@ -907,6 +918,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
               const SizedBox(height: AppSpacing.md),
               AppTextField(
                 controller: qtyCtrl,
+                validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.quantityValidator(v, max: handover.pendingReceiptQuantity)),
                 label:
                     'Received Now (Max ${handover.pendingReceiptQuantity} pcs)',
                 keyboardType: TextInputType.number,
@@ -988,6 +1000,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
               children: [
                 AppTextField(
                   controller: reasonCtrl,
+                  validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.requiredValidator(v)),
                   label: 'Cancellation Reason',
                 ),
                 if (error != null) ...[

@@ -1046,6 +1046,7 @@
   "msgTitleWarning": "Warning",
   "msgTitleInfo": "Information",
   "msgTitleLoading": "Working...",
+  "navPressBackAgainToExit": "Press back again to exit",
   "navProductionHistory": "Production History",
   "navInspectionQueue": "QC Inspection Queue",
   "navWorkerHistory": "Worker Production",

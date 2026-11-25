@@ -95,7 +95,11 @@ final class AppTextField extends StatelessWidget {
       validator: validator,
       onChanged: onChanged,
       onFieldSubmitted: onFieldSubmitted,
-      autovalidateMode: autovalidateMode,
+      // Live validation: a field re-checks itself as soon as the user edits
+      // it, so mistakes show while typing instead of only after Save.
+      autovalidateMode:
+          autovalidateMode ??
+          (validator != null ? AutovalidateMode.onUserInteraction : null),
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,

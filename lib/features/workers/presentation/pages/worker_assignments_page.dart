@@ -232,6 +232,7 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
                       const SizedBox(height: AppSpacing.md),
                       AppTextField(
                         controller: _customRateCtrl,
+                        validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeAmountValidator(v, isRequired: false)),
                         label: 'Custom Worker Rate (₹ / pc, optional)',
                         hint:
                             (selectedProc != null &&

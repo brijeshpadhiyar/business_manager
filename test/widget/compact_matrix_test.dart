@@ -280,6 +280,88 @@ void main() {
     expect(find.byIcon(Icons.more_vert_rounded), findsOneWidget);
   });
 
+  group('System back button never closes the app unexpectedly', () {
+    // Top-most location, including pushed pages.
+    String location(GoRouter router) => router.state.uri.path;
+
+    testWidgets('screen opened from the phone More menu goes back to its tab', (
+      tester,
+    ) async {
+      await configure(tester, const Size(360, 800));
+      await seedAndListRoutes();
+      await tester.pumpWidget(BusinessManagerApp(config: AppConfig.dev()));
+      await settle(tester);
+      final router = GoRouter.of(tester.element(find.byType(Scaffold).first));
+
+      router.go(RoutePaths.lots);
+      await settle(tester);
+      await tester.tap(find.byIcon(Icons.more_vert_rounded));
+      await settle(tester);
+      await tester.ensureVisible(find.text('Reports').last);
+      await settle(tester);
+      await tester.tap(find.text('Reports').last);
+      await settle(tester);
+      expect(location(router), RoutePaths.reports);
+
+      await tester.binding.handlePopRoute();
+      await settle(tester);
+      expect(location(router), RoutePaths.lots);
+    });
+
+    testWidgets('back on another tab or a go() screen returns Home', (
+      tester,
+    ) async {
+      await configure(tester, const Size(360, 800));
+      await seedAndListRoutes();
+      await tester.pumpWidget(BusinessManagerApp(config: AppConfig.dev()));
+      await settle(tester);
+      final router = GoRouter.of(tester.element(find.byType(Scaffold).first));
+
+      for (final path in [RoutePaths.workers, RoutePaths.reports]) {
+        router.go(path);
+        await settle(tester);
+        await tester.binding.handlePopRoute();
+        await settle(tester);
+        expect(location(router), RoutePaths.home, reason: path);
+      }
+    });
+
+    testWidgets('back on Home asks to press again before exiting', (
+      tester,
+    ) async {
+      final exitCalls = <String>[];
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        (call) async {
+          if (call.method == 'SystemNavigator.pop') exitCalls.add(call.method);
+          return null;
+        },
+      );
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          null,
+        ),
+      );
+      await configure(tester, const Size(360, 800));
+      await seedAndListRoutes();
+      await tester.pumpWidget(BusinessManagerApp(config: AppConfig.dev()));
+      await settle(tester);
+
+      await tester.binding.handlePopRoute();
+      for (var i = 0; i < 6; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      expect(find.text('Press back again to exit'), findsOneWidget);
+      expect(exitCalls, isEmpty);
+
+      await tester.binding.handlePopRoute();
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(exitCalls, ['SystemNavigator.pop']);
+      await settle(tester);
+    });
+  });
+
   testWidgets('PIN keypad accepts a physical keyboard (desktop / web)', (
     tester,
   ) async {

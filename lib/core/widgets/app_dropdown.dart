@@ -39,7 +39,10 @@ final class AppDropdown<T> extends StatelessWidget {
       initialValue: safeValue,
       isExpanded: true,
       validator: validator,
-      autovalidateMode: autovalidateMode,
+      // Live validation once the user changes the selection.
+      autovalidateMode:
+          autovalidateMode ??
+          (validator != null ? AutovalidateMode.onUserInteraction : null),
       onChanged: enabled ? onChanged : null,
       decoration: InputDecoration(
         labelText: label,

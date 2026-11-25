@@ -2480,6 +2480,9 @@ class AppLocalizationsGu extends AppLocalizations {
   String get msgTitleLoading => 'પ્રક્રિયા ચાલુ છે...';
 
   @override
+  String get navPressBackAgainToExit => 'બહાર નીકળવા માટે ફરી પાછળ દબાવો';
+
+  @override
   String get navProductionHistory => 'પ્રોડક્શન હિસ્ટ્રી';
 
   @override

@@ -602,6 +602,7 @@ final class _WorkerFormPageState extends State<WorkerFormPage> {
               const SizedBox(height: AppSpacing.sm),
               AppTextField(
                 controller: rateCtrl,
+                validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeAmountValidator(v, isRequired: false)),
                 label: 'Custom Worker Rate (₹ / pc, optional)',
                 hint: proc.defaultRatePaise > 0
                     ? 'Leave blank to inherit ${MoneyFormatter.formatRatePaise(proc.defaultRatePaise, pricingUnit: proc.defaultPricingUnit)}'
