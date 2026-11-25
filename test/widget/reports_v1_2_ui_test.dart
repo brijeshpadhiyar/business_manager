@@ -131,7 +131,9 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull, reason: 'Dashboard overflow');
 
-      // Open Reports tab from bottom nav
+      // Open Reports from the dashboard links (below the quick action tiles)
+      await tester.ensureVisible(find.text('Reports').last);
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Reports').last);
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull, reason: 'Daily tab overflow');

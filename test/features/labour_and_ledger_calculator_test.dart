@@ -106,7 +106,7 @@ void main() {
   group('LedgerCalculator — advances, negative balance & running ledger', () {
     test('tracks full advance lifecycle accurately without treating advance as earned labour', () {
       // Step 1: Worker takes ₹1,000 advance
-      final adv = PaymentEntity(
+      const adv = PaymentEntity(
         id: 'pay-adv',
         memberId: 'w-1',
         paymentType: PaymentType.advance,
@@ -133,7 +133,7 @@ void main() {
       expect(s1.advanceCreditBalancePaise, 100000);
 
       // Step 2: Worker earns ₹600 -> Advance Credit drops to ₹400
-      final lab1 = LabourEntryEntity(
+      const lab1 = LabourEntryEntity(
         id: 'lab-1',
         stockMovementId: 'sm-1',
         memberId: 'w-1',
@@ -162,7 +162,7 @@ void main() {
       expect(s2.outstandingPayablePaise, 0);
 
       // Step 3: Worker earns ₹1,000 more -> Outstanding Payable = ₹600
-      final lab2 = LabourEntryEntity(
+      const lab2 = LabourEntryEntity(
         id: 'lab-2',
         stockMovementId: 'sm-2',
         memberId: 'w-1',
@@ -218,7 +218,7 @@ void main() {
     });
 
     test('handles worker adjustments (credit/debit) and payment reversals accurately', () {
-      final adjCredit = WorkerAdjustmentEntity(
+      const adjCredit = WorkerAdjustmentEntity(
         id: 'adj-1',
         memberId: 'w-1',
         adjustmentType: WorkerAdjustmentType.credit,
@@ -229,7 +229,7 @@ void main() {
         createdAt: baseTs + 1000,
         updatedAt: baseTs + 1000,
       );
-      final pay = PaymentEntity(
+      const pay = PaymentEntity(
         id: 'pay-1',
         memberId: 'w-1',
         paymentType: PaymentType.regular,
@@ -240,7 +240,7 @@ void main() {
         createdAt: baseTs + 2000,
         updatedAt: baseTs + 2000,
       );
-      final payRev = PaymentEntity(
+      const payRev = PaymentEntity(
         id: 'pay-rev-1',
         memberId: 'w-1',
         paymentType: PaymentType.reversal,

@@ -32,6 +32,14 @@ final class RateFormPage extends StatefulWidget {
 }
 
 final class _RateFormPageState extends State<RateFormPage> {
+  final _dirty = AppFormDirtyTracker();
+
+  /// setState for a user edit: also marks the form as unsaved.
+  void _edit(VoidCallback fn) {
+    _dirty.markDirty();
+    setState(fn);
+  }
+
   final _formKey = GlobalKey<FormState>();
   final _rateFieldKey = GlobalKey<FormFieldState<String>>();
   final _notesFieldKey = GlobalKey<FormFieldState<String>>();
@@ -77,6 +85,7 @@ final class _RateFormPageState extends State<RateFormPage> {
   @override
   void initState() {
     super.initState();
+    _dirty.watch([_rateCtrl, _notesCtrl]);
     _loadInitial();
   }
 
@@ -115,6 +124,7 @@ final class _RateFormPageState extends State<RateFormPage> {
             widget.initialProcessId ??
             (processes.isNotEmpty ? processes.first.id : null);
       }
+      _dirty.reset();
       setState(() => _isLoading = false);
     } catch (e) {
       if (!mounted) return;
@@ -127,6 +137,7 @@ final class _RateFormPageState extends State<RateFormPage> {
 
   @override
   void dispose() {
+    _dirty.dispose();
     _rateCtrl.dispose();
     _notesCtrl.dispose();
     _rateFocus.dispose();
@@ -274,134 +285,137 @@ final class _RateFormPageState extends State<RateFormPage> {
         .where((p) => p.id == _selectedProcessId)
         .firstOrNull;
 
-    return AppScaffold(
-      title: title,
-      contentWidth: AppContentWidth.narrow,
-      body: Form(
-        key: _formKey,
-        autovalidateMode: _submittedOnce
-            ? AutovalidateMode.onUserInteraction
-            : AutovalidateMode.disabled,
-        child: ListView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          children: [
-            AppCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  if (_isLockedByHistory) ...[
-                    AppText(
-                      l10n.ratesLockedByHistoryError,
-                      color: Theme.of(context).colorScheme.error,
+    return AppUnsavedChangesGuard.tracked(
+      tracker: _dirty,
+      child: AppScaffold(
+        title: title,
+        contentWidth: AppContentWidth.narrow,
+        body: Form(
+          key: _formKey,
+          autovalidateMode: _submittedOnce
+              ? AutovalidateMode.onUserInteraction
+              : AutovalidateMode.disabled,
+          child: ListView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            children: [
+              AppCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    if (_isLockedByHistory) ...[
+                      AppText(
+                        l10n.ratesLockedByHistoryError,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                      const SizedBox(height: AppSpacing.md),
+                    ],
+                    AppDropdown<ProcessEntity>(
+                      label: l10n.ratesFilterProcessLabel,
+                      hint: l10n.ratesSelectProcessHint,
+                      value: selectedProcess,
+                      enabled: !widget.isEdit && !_isLockedByHistory,
+                      items: _processes,
+                      itemLabelBuilder: (p) => p.name,
+                      validator: (v) =>
+                          v == null ? l10n.validationRequired : null,
+                      onChanged: (p) => _edit(() => _selectedProcessId = p?.id),
                     ),
                     const SizedBox(height: AppSpacing.md),
-                  ],
-                  AppDropdown<ProcessEntity>(
-                    label: l10n.ratesFilterProcessLabel,
-                    hint: l10n.ratesSelectProcessHint,
-                    value: selectedProcess,
-                    enabled: !widget.isEdit && !_isLockedByHistory,
-                    items: _processes,
-                    itemLabelBuilder: (p) => p.name,
-                    validator: (v) =>
-                        v == null ? l10n.validationRequired : null,
-                    onChanged: (p) =>
-                        setState(() => _selectedProcessId = p?.id),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppTextField(
-                    fieldKey: _rateFieldKey,
-                    controller: _rateCtrl,
-                    focusNode: _rateFocus,
-                    label: l10n.ratesAmountLabel,
-                    prefixIcon: Icons.currency_rupee,
-                    enabled: !_isLockedByHistory,
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    onChanged: (_) {
-                      if (_submitError != null) {
-                        setState(() => _submitError = null);
-                      }
-                    },
-                    validator: ValidationLocalizer.wrap(
-                      l10n,
-                      (v) => AppValidators.nonNegativeAmountValidator(v),
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppDatePicker(
-                    label: l10n.ratesEffectiveFromLabel,
-                    selectedUtcMillis: _effectiveFromUtcMillis,
-                    enabled: !_isLockedByHistory,
-                    onDateSelectedUtcMillis: (utc) => setState(() {
-                      _effectiveFromUtcMillis = utc;
-                      _submitError = null;
-                    }),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppDatePicker(
-                    key: _effectiveToAnchorKey,
-                    label: l10n.ratesEffectiveToLabel,
-                    hint: l10n.ratesOngoingLabel,
-                    selectedUtcMillis: _effectiveToUtcMillis,
-                    enabled: !_isLockedByHistory,
-                    errorText: _inlineDateRangeError(context),
-                    onDateSelectedUtcMillis: (utc) => setState(() {
-                      _effectiveToUtcMillis = utc;
-                      _submitError = null;
-                    }),
-                  ),
-                  if (_effectiveToUtcMillis != null && !_isLockedByHistory) ...[
-                    const SizedBox(height: AppSpacing.xs),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: AppButton(
-                        label: l10n.ratesClearEffectiveTo,
-                        variant: AppButtonVariant.text,
-                        onPressed: () => setState(() {
-                          _effectiveToUtcMillis = null;
-                          _submitError = null;
-                        }),
+                    AppTextField(
+                      fieldKey: _rateFieldKey,
+                      controller: _rateCtrl,
+                      focusNode: _rateFocus,
+                      label: l10n.ratesAmountLabel,
+                      prefixIcon: Icons.currency_rupee,
+                      enabled: !_isLockedByHistory,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      onChanged: (_) {
+                        if (_submitError != null) {
+                          setState(() => _submitError = null);
+                        }
+                      },
+                      validator: ValidationLocalizer.wrap(
+                        l10n,
+                        (v) => AppValidators.nonNegativeAmountValidator(v),
                       ),
                     ),
-                  ],
-                  const SizedBox(height: AppSpacing.md),
-                  AppTextField(
-                    fieldKey: _notesFieldKey,
-                    controller: _notesCtrl,
-                    focusNode: _notesFocus,
-                    label: l10n.ratesNotesLabel,
-                    enabled: !_isLockedByHistory,
-                    maxLines: 2,
-                    maxLength: ValidationLimits.maxNotesLength,
-                    validator: ValidationLocalizer.wrap(
-                      l10n,
-                      (v) => AppValidators.maxLengthValidator(
-                        v,
-                        maxLength: ValidationLimits.maxNotesLength,
+                    const SizedBox(height: AppSpacing.md),
+                    AppDatePicker(
+                      label: l10n.ratesEffectiveFromLabel,
+                      selectedUtcMillis: _effectiveFromUtcMillis,
+                      enabled: !_isLockedByHistory,
+                      onDateSelectedUtcMillis: (utc) => _edit(() {
+                        _effectiveFromUtcMillis = utc;
+                        _submitError = null;
+                      }),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    AppDatePicker(
+                      key: _effectiveToAnchorKey,
+                      label: l10n.ratesEffectiveToLabel,
+                      hint: l10n.ratesOngoingLabel,
+                      selectedUtcMillis: _effectiveToUtcMillis,
+                      enabled: !_isLockedByHistory,
+                      errorText: _inlineDateRangeError(context),
+                      onDateSelectedUtcMillis: (utc) => _edit(() {
+                        _effectiveToUtcMillis = utc;
+                        _submitError = null;
+                      }),
+                    ),
+                    if (_effectiveToUtcMillis != null &&
+                        !_isLockedByHistory) ...[
+                      const SizedBox(height: AppSpacing.xs),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: AppButton(
+                          label: l10n.ratesClearEffectiveTo,
+                          variant: AppButtonVariant.text,
+                          onPressed: () => setState(() {
+                            _effectiveToUtcMillis = null;
+                            _submitError = null;
+                          }),
+                        ),
+                      ),
+                    ],
+                    const SizedBox(height: AppSpacing.md),
+                    AppTextField(
+                      fieldKey: _notesFieldKey,
+                      controller: _notesCtrl,
+                      focusNode: _notesFocus,
+                      label: l10n.ratesNotesLabel,
+                      enabled: !_isLockedByHistory,
+                      maxLines: 2,
+                      maxLength: ValidationLimits.maxNotesLength,
+                      validator: ValidationLocalizer.wrap(
+                        l10n,
+                        (v) => AppValidators.maxLengthValidator(
+                          v,
+                          maxLength: ValidationLimits.maxNotesLength,
+                        ),
                       ),
                     ),
-                  ),
-                  if (_submitError != null) ...[
-                    const SizedBox(height: AppSpacing.sm),
-                    AppText(
-                      _submitError!,
-                      color: Theme.of(context).colorScheme.error,
+                    if (_submitError != null) ...[
+                      const SizedBox(height: AppSpacing.sm),
+                      AppText(
+                        _submitError!,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ],
+                    const SizedBox(height: AppSpacing.lg),
+                    AppButton(
+                      label: l10n.actionSave,
+                      icon: Icons.check,
+                      isExpanded: true,
+                      isLoading: _isSaving,
+                      onPressed: _isLockedByHistory ? null : _save,
                     ),
                   ],
-                  const SizedBox(height: AppSpacing.lg),
-                  AppButton(
-                    label: l10n.actionSave,
-                    icon: Icons.check,
-                    isExpanded: true,
-                    isLoading: _isSaving,
-                    onPressed: _isLockedByHistory ? null : _save,
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -258,7 +258,7 @@ final class _AppLockScreenState extends State<AppLockScreen> {
                             },
                             child: Text(
                               l10n.securityForgotPinAction,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: AppColors.brandAmber,
                                 fontWeight: FontWeight.w600,
                               ),

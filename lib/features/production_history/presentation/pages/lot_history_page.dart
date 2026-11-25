@@ -59,15 +59,16 @@ final class _LotHistoryView extends StatelessWidget {
           ],
           body: switch (state.status) {
             ProductionHistoryLoadStatus.initial ||
-            ProductionHistoryLoadStatus.loading =>
-              const AppSkeletonList(itemCount: 4),
-            ProductionHistoryLoadStatus.error || _ when history == null =>
-              AppErrorView(
-                title: l10n.errorUnexpected,
-                message: state.errorMessage,
-                retryLabel: l10n.actionRetry,
-                onRetry: () => context.read<LotHistoryCubit>().loadLot(lotId),
-              ),
+            ProductionHistoryLoadStatus.loading => const AppSkeletonList(
+              itemCount: 4,
+            ),
+            ProductionHistoryLoadStatus.error ||
+            _ when history == null => AppErrorView(
+              title: l10n.errorUnexpected,
+              message: state.errorMessage,
+              retryLabel: l10n.actionRetry,
+              onRetry: () => context.read<LotHistoryCubit>().loadLot(lotId),
+            ),
             _ => _buildLoaded(context, history, localeCode),
           },
         );
@@ -156,7 +157,8 @@ final class _LotHistoryView extends StatelessWidget {
         LayoutBuilder(
           builder: (context, constraints) {
             final cols = constraints.maxWidth >= 720 ? 4 : 2;
-            final w = (constraints.maxWidth - (AppSpacing.sm * (cols - 1))) / cols;
+            final w =
+                (constraints.maxWidth - (AppSpacing.sm * (cols - 1))) / cols;
             return Wrap(
               spacing: AppSpacing.sm,
               runSpacing: AppSpacing.sm,
@@ -235,7 +237,10 @@ final class _LotHistoryView extends StatelessWidget {
         const SizedBox(height: AppSpacing.lg),
 
         // Design & Colour Stock Conservation Breakdown
-        AppHeading('Designs & Colours Breakdown', level: AppHeadingLevel.h3),
+        const AppHeading(
+          'Designs & Colours Breakdown',
+          level: AppHeadingLevel.h3,
+        ),
         const SizedBox(height: AppSpacing.sm),
         for (final c in history.colourSummaries) ...[
           AppCard.listItem(
@@ -305,17 +310,26 @@ final class _LotHistoryView extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.sm),
         if (history.assignments.isEmpty)
-          AppCard(
+          const AppCard(
             child: AppText(
               'No process assignments recorded for this lot yet.',
               variant: AppTextVariant.bodySmall,
             ),
           )
         else
-          for (final a in history.assignments) ...[
-            _AssignmentCard(assignment: a, localeCode: localeCode),
-            const SizedBox(height: AppSpacing.sm),
-          ],
+          AppLazySection(
+            key: const ValueKey('history.assignments'),
+            initialCount: 15,
+            items: history.assignments,
+            itemBuilder: (context, a, _) => Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _AssignmentCard(assignment: a, localeCode: localeCode),
+                const SizedBox(height: AppSpacing.sm),
+              ],
+            ),
+          ),
 
         if (history.rejections.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.lg),
@@ -324,47 +338,56 @@ final class _LotHistoryView extends StatelessWidget {
             level: AppHeadingLevel.h3,
           ),
           const SizedBox(height: AppSpacing.sm),
-          for (final r in history.rejections) ...[
-            AppCard.listItem(
-              onTap: () => context.push(
-                RoutePaths.productionTransactionDetail(
-                  ProductionTransactionKind.rejection.routeSegment,
-                  r.record.id,
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+          AppLazySection(
+            key: const ValueKey('history.rejections'),
+            initialCount: 15,
+            items: history.rejections,
+            itemBuilder: (context, r, _) => Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                AppCard.listItem(
+                  onTap: () => context.push(
+                    RoutePaths.productionTransactionDetail(
+                      ProductionTransactionKind.rejection.routeSegment,
+                      r.record.id,
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: AppText(
-                          '${r.processName} • ${r.workerName} • ${r.colourName}',
-                          fontWeight: FontWeight.w700,
-                        ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: AppText(
+                              '${r.processName} • ${r.workerName} • ${r.colourName}',
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          AppStatusBadge(
+                            label: r.record.status.dbValue,
+                            tone: r.openUnrepairedQty > 0
+                                ? AppStatusTone.damaged
+                                : AppStatusTone.good,
+                          ),
+                        ],
                       ),
-                      AppStatusBadge(
-                        label: r.record.status.dbValue,
-                        tone: r.openUnrepairedQty > 0
-                            ? AppStatusTone.damaged
-                            : AppStatusTone.good,
+                      const SizedBox(height: 4),
+                      AppText(
+                        'Rejected: ${r.record.rejectedQuantity} • Re-Approved: ${r.totalReapprovedQty} • Open: ${r.openUnrepairedQty}',
+                        variant: AppTextVariant.bodySmall,
+                      ),
+                      AppText(
+                        'Reason: ${r.record.rejectionReason}',
+                        variant: AppTextVariant.bodySmall,
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
-                  AppText(
-                    'Rejected: ${r.record.rejectedQuantity} • Re-Approved: ${r.totalReapprovedQty} • Open: ${r.openUnrepairedQty}',
-                    variant: AppTextVariant.bodySmall,
-                  ),
-                  AppText(
-                    'Reason: ${r.record.rejectionReason}',
-                    variant: AppTextVariant.bodySmall,
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(height: AppSpacing.xs),
+              ],
             ),
-            const SizedBox(height: AppSpacing.xs),
-          ],
+          ),
         ],
         const SizedBox(height: AppSpacing.xl),
       ],
@@ -402,7 +425,9 @@ final class _AssignmentCard extends StatelessWidget {
               ),
               AppStatusBadge(
                 label: a.isCompleted ? 'COMPLETED' : 'IN PROGRESS',
-                tone: a.isCompleted ? AppStatusTone.good : AppStatusTone.pending,
+                tone: a.isCompleted
+                    ? AppStatusTone.good
+                    : AppStatusTone.pending,
               ),
             ],
           ),

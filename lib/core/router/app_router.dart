@@ -41,6 +41,7 @@ import 'package:business_manager/features/settings/presentation/pages/appearance
 import 'package:business_manager/features/settings/presentation/pages/help_guidance_page.dart';
 import 'package:business_manager/features/settings/presentation/pages/settings_home_page.dart';
 import 'package:business_manager/features/settings/presentation/pages/stock_labour_settings_page.dart';
+import 'package:business_manager/features/search/presentation/global_search_dialog.dart';
 import 'package:business_manager/features/stock_movements/presentation/pages/damaged_repair_page.dart';
 import 'package:business_manager/features/stock_movements/presentation/pages/receive_return_picker_page.dart';
 import 'package:business_manager/features/stock_movements/presentation/pages/stock_issue_page.dart';
@@ -50,6 +51,7 @@ import 'package:business_manager/features/workers/presentation/pages/worker_assi
 import 'package:business_manager/features/workers/presentation/pages/worker_detail_page.dart';
 import 'package:business_manager/features/workers/presentation/pages/worker_form_page.dart';
 import 'package:business_manager/features/workers/presentation/pages/worker_list_page.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -763,7 +765,24 @@ final class StitchFlowShellScaffold extends StatelessWidget {
       showMobileChrome: isRootChrome,
       breadcrumbs: _buildBreadcrumbs(context),
       onDestinationSelected: (idx) => _navigatePrimaryTab(context, idx),
+      extraShortcuts: {
+        // Ctrl+K (Cmd+K on Mac): search lots, workers, processes or start a
+        // quick action from anywhere.
+        const SingleActivator(LogicalKeyboardKey.keyK, control: true): () =>
+            showGlobalSearch(context),
+        const SingleActivator(LogicalKeyboardKey.keyK, meta: true): () =>
+            showGlobalSearch(context),
+        // Esc goes back like the system back button, so unsaved-changes
+        // guards still ask before leaving a form.
+        const SingleActivator(LogicalKeyboardKey.escape): () =>
+            GoRouter.of(context).routerDelegate.popRoute(),
+      },
       actions: [
+        AppIconButton(
+          icon: Icons.search_rounded,
+          tooltip: l10n.uxSearchTooltip,
+          onPressed: () => showGlobalSearch(context),
+        ),
         BlocBuilder<AppLockCubit, AppLockState>(
           builder: (context, lockState) {
             if (!lockState.isPinEnabled) return const SizedBox.shrink();

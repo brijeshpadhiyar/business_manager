@@ -12,6 +12,7 @@ import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
+import 'package:business_manager/features/search/presentation/quick_actions.dart';
 import 'package:business_manager/features/dashboard/presentation/bloc/dashboard_cubit.dart';
 import 'package:business_manager/features/reports/domain/calculators/workshop_daily_calculator.dart';
 import 'package:business_manager/features/security/presentation/bloc/app_lock_cubit.dart';
@@ -229,27 +230,21 @@ final class _DashboardViewState extends State<_DashboardView> {
                           level: AppHeadingLevel.h3,
                         ),
                         const SizedBox(height: AppSpacing.sm),
+                        // Everyday tasks as large one-tap tiles.
+                        QuickActionsPanel(
+                          showTitle: false,
+                          onReturn: () {
+                            if (context.mounted) {
+                              context.read<DashboardCubit>().loadDashboard();
+                            }
+                          },
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        // Other screens as lighter secondary links.
                         Wrap(
                           spacing: AppSpacing.sm,
                           runSpacing: AppSpacing.sm,
                           children: [
-                            AppButton(
-                              label: l10n.stockIssueAction,
-                              icon: Icons.outbox_rounded,
-                              onPressed: () => _pushAndRefresh(
-                                context,
-                                RoutePaths.stockIssue(),
-                              ),
-                            ),
-                            AppButton(
-                              label: l10n.stockReturnAction,
-                              icon: Icons.assignment_returned_outlined,
-                              variant: AppButtonVariant.secondary,
-                              onPressed: () => _pushAndRefresh(
-                                context,
-                                RoutePaths.stockReturnPicker,
-                              ),
-                            ),
                             AppButton(
                               label: l10n.dashboardDailySummaryAction,
                               icon: Icons.today_rounded,
@@ -311,15 +306,6 @@ final class _DashboardViewState extends State<_DashboardView> {
                               onPressed: () => _pushAndRefresh(
                                 context,
                                 RoutePaths.productionHistory,
-                              ),
-                            ),
-                            AppButton(
-                              label: l10n.navInspectionQueue,
-                              icon: Icons.fact_check_outlined,
-                              variant: AppButtonVariant.outlined,
-                              onPressed: () => _pushAndRefresh(
-                                context,
-                                RoutePaths.inspectionQueue,
                               ),
                             ),
                             if (widget.config.isDev)

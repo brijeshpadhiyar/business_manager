@@ -84,8 +84,8 @@ final class _ProcessHistoryView extends StatelessWidget {
                 spacing: AppSpacing.sm,
                 runSpacing: AppSpacing.sm,
                 children: [
-                  SizedBox(
-                    width: 200,
+                  AppAdaptiveField(
+                    maxWidth: 200,
                     child: AppDropdown<String>(
                       label: l10n.navWorkers,
                       value: filter.workerId ?? '__ALL__',
@@ -102,8 +102,8 @@ final class _ProcessHistoryView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  SizedBox(
-                    width: 200,
+                  AppAdaptiveField(
+                    maxWidth: 200,
                     child: AppDropdown<String>(
                       label: l10n.lotsHeading,
                       value: filter.lotId ?? '__ALL__',
@@ -119,8 +119,8 @@ final class _ProcessHistoryView extends StatelessWidget {
                     ),
                   ),
                   if (options.designNames.isNotEmpty)
-                    SizedBox(
-                      width: 200,
+                    AppAdaptiveField(
+                      maxWidth: 200,
                       child: AppDropdown<String>(
                         label: l10n.designsHeading,
                         value: filter.designName ?? '__ALL__',
@@ -135,8 +135,8 @@ final class _ProcessHistoryView extends StatelessWidget {
                       ),
                     ),
                   if (options.colourNames.isNotEmpty)
-                    SizedBox(
-                      width: 200,
+                    AppAdaptiveField(
+                      maxWidth: 200,
                       child: AppDropdown<String>(
                         label: l10n.colourNameLabel,
                         value: filter.colourName ?? '__ALL__',

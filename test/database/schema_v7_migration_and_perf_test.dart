@@ -222,8 +222,8 @@ void main() {
               lotNumber: Value('L-$i'),
               transactionAt: Value(now + i * 1000),
               recordedAt: Value(now + i * 1000),
-              createdAt: Value(now),
-              updatedAt: Value(now),
+              createdAt: const Value(now),
+              updatedAt: const Value(now),
             ),
           );
         }

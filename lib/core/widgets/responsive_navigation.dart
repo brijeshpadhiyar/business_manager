@@ -91,6 +91,7 @@ final class ResponsiveNavigation extends StatelessWidget {
     this.showMobileChrome = true,
     this.floatingActionButton,
     this.enableBodyTransition = false,
+    this.extraShortcuts = const {},
   });
 
   final String title;
@@ -106,6 +107,10 @@ final class ResponsiveNavigation extends StatelessWidget {
   final bool showMobileChrome;
   final Widget? floatingActionButton;
   final bool enableBodyTransition;
+
+  /// App-level keyboard shortcuts (for example Ctrl+K search, Esc back),
+  /// active anywhere inside the shell on desktop and web.
+  final Map<ShortcutActivator, VoidCallback> extraShortcuts;
 
   Widget _animatedBody(BuildContext context) {
     if (!enableBodyTransition || AppMotion.reduceMotion(context)) {
@@ -211,6 +216,7 @@ final class ResponsiveNavigation extends StatelessWidget {
       map[SingleActivator(digitKeys[i], alt: true)] = () =>
           onDestinationSelected(idx);
     }
+    map.addAll(extraShortcuts);
     return map;
   }
 

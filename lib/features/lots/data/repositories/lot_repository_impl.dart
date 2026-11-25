@@ -578,7 +578,7 @@ final class LotRepositoryImpl implements LotRepository {
             agreedRatePaise: Value(assign.agreedRatePaise),
             pricingUnit: Value(pricingUnit),
             rateOverrideReason: Value(cleanedOverride),
-            payableAmountPaise: Value(0),
+            payableAmountPaise: const Value(0),
             paidAmountPaise: const Value(0),
             paymentStatus: Value(ProcessPaymentStatus.pending.dbValue),
             notes: Value(cleanedNotes),

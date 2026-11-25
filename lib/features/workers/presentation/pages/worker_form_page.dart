@@ -33,6 +33,14 @@ final class WorkerFormPage extends StatefulWidget {
 }
 
 final class _WorkerFormPageState extends State<WorkerFormPage> {
+  final _dirty = AppFormDirtyTracker();
+
+  /// setState for a user edit: also marks the form as unsaved.
+  void _edit(VoidCallback fn) {
+    _dirty.markDirty();
+    setState(fn);
+  }
+
   final _formKey = GlobalKey<FormState>();
   final _nameFieldKey = GlobalKey<FormFieldState<String>>();
   final _phoneFieldKey = GlobalKey<FormFieldState<String>>();
@@ -68,6 +76,7 @@ final class _WorkerFormPageState extends State<WorkerFormPage> {
   @override
   void initState() {
     super.initState();
+    _dirty.watch([_nameCtrl, _phoneCtrl, _addressCtrl, _notesCtrl]);
     _loadInitial();
   }
 
@@ -133,6 +142,10 @@ final class _WorkerFormPageState extends State<WorkerFormPage> {
         _availableProcesses = visibleProcesses;
         _isLoading = false;
       });
+      // Loaded values are the saved state; rate fields are watched too.
+      _dirty
+        ..watch(_rateControllers.values)
+        ..reset();
     } catch (e) {
       if (!mounted) return;
       setState(() {
@@ -159,6 +172,7 @@ final class _WorkerFormPageState extends State<WorkerFormPage> {
 
   @override
   void dispose() {
+    _dirty.dispose();
     _nameCtrl.dispose();
     _phoneCtrl.dispose();
     _addressCtrl.dispose();
@@ -291,199 +305,202 @@ final class _WorkerFormPageState extends State<WorkerFormPage> {
       );
     }
 
-    return AppScaffold(
-      title: title,
-      contentWidth: AppContentWidth.narrow,
-      body: Form(
-        key: _formKey,
-        autovalidateMode: _submittedOnce
-            ? AutovalidateMode.onUserInteraction
-            : AutovalidateMode.disabled,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: ListView(
-                keyboardDismissBehavior:
-                    ScrollViewKeyboardDismissBehavior.onDrag,
-                children: [
-                  // Section 1: Worker Details
-                  AppCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const AppHeading(
-                          '1. Worker Details',
-                          level: AppHeadingLevel.h3,
-                        ),
-                        const SizedBox(height: AppSpacing.md),
-                        AppTextField(
-                          fieldKey: _nameFieldKey,
-                          controller: _nameCtrl,
-                          focusNode: _nameFocus,
-                          label: l10n.workerNameLabel,
-                          prefixIcon: Icons.person_outline,
-                          textInputAction: TextInputAction.next,
-                          maxLength: ValidationLimits.maxPersonNameLength,
-                          onChanged: (_) {
-                            if (_submitError != null) {
-                              setState(() => _submitError = null);
-                            }
-                          },
-                          validator: ValidationLocalizer.wrap(
-                            l10n,
-                            (v) => AppValidators.nameValidator(
-                              v,
-                              maxLength: ValidationLimits.maxPersonNameLength,
-                            ),
+    return AppUnsavedChangesGuard.tracked(
+      tracker: _dirty,
+      child: AppScaffold(
+        title: title,
+        contentWidth: AppContentWidth.narrow,
+        body: Form(
+          key: _formKey,
+          autovalidateMode: _submittedOnce
+              ? AutovalidateMode.onUserInteraction
+              : AutovalidateMode.disabled,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: ListView(
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
+                  children: [
+                    // Section 1: Worker Details
+                    AppCard(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const AppHeading(
+                            '1. Worker Details',
+                            level: AppHeadingLevel.h3,
                           ),
-                        ),
-                        const SizedBox(height: AppSpacing.md),
-                        AppTextField(
-                          fieldKey: _phoneFieldKey,
-                          controller: _phoneCtrl,
-                          focusNode: _phoneFocus,
-                          label: l10n.workerPhoneLabel,
-                          prefixIcon: Icons.phone_outlined,
-                          keyboardType: TextInputType.phone,
-                          textInputAction: TextInputAction.next,
-                          onChanged: (_) {
-                            if (_submitError != null) {
-                              setState(() => _submitError = null);
-                            }
-                          },
-                          validator: ValidationLocalizer.wrap(
-                            l10n,
-                            (v) => AppValidators.mobileNumberValidator(v),
-                          ),
-                        ),
-                        const SizedBox(height: AppSpacing.md),
-                        AppTextField(
-                          fieldKey: _addressFieldKey,
-                          controller: _addressCtrl,
-                          focusNode: _addressFocus,
-                          label: l10n.workerAddressLabel,
-                          prefixIcon: Icons.location_on_outlined,
-                          maxLines: 2,
-                          maxLength: ValidationLimits.maxAddressLength,
-                          validator: ValidationLocalizer.wrap(
-                            l10n,
-                            (v) => AppValidators.maxLengthValidator(
-                              v,
-                              maxLength: ValidationLimits.maxAddressLength,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: AppSpacing.md),
-                        AppTextField(
-                          fieldKey: _notesFieldKey,
-                          controller: _notesCtrl,
-                          focusNode: _notesFocus,
-                          label: l10n.workerNotesLabel,
-                          maxLines: 2,
-                          maxLength: ValidationLimits.maxNotesLength,
-                          validator: ValidationLocalizer.wrap(
-                            l10n,
-                            (v) => AppValidators.maxLengthValidator(
-                              v,
-                              maxLength: ValidationLimits.maxNotesLength,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: AppSpacing.sm),
-                        AppSwitch(
-                          label: _isActive
-                              ? l10n.statusActive
-                              : l10n.statusInactive,
-                          value: _isActive,
-                          onChanged: (v) => setState(() => _isActive = v),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-
-                  // Section 2: Multi-Process Assignments & Per-Process Labour Pricing
-                  AppCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Wrap(
-                          spacing: AppSpacing.sm,
-                          runSpacing: AppSpacing.xs,
-                          alignment: WrapAlignment.spaceBetween,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            AppHeading(
-                              '2. Processes & Labour Rates (${_selectedProcessIds.length})',
-                              level: AppHeadingLevel.h3,
-                            ),
-                            AppButton(
-                              label: l10n.processCreateAction,
-                              icon: Icons.add_rounded,
-                              variant: AppButtonVariant.outlined,
-                              onPressed: () async {
-                                await context.push<bool>(
-                                  RoutePaths.processCreate,
-                                );
-                                if (mounted) {
-                                  await _refreshProcessesAfterCreate();
-                                }
-                              },
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: AppSpacing.xs),
-                        AppText(
-                          'Select one or more processes for this worker. Leave a custom rate blank to inherit the process default rate.',
-                          variant: AppTextVariant.bodySmall,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                        const SizedBox(height: AppSpacing.md),
-                        if (_availableProcesses.isEmpty)
-                          Container(
-                            padding: const EdgeInsets.all(AppSpacing.md),
-                            decoration: BoxDecoration(
-                              borderRadius: AppRadius.mdBorder,
-                              border: Border.all(
-                                color: colorScheme.outlineVariant,
+                          const SizedBox(height: AppSpacing.md),
+                          AppTextField(
+                            fieldKey: _nameFieldKey,
+                            controller: _nameCtrl,
+                            focusNode: _nameFocus,
+                            label: l10n.workerNameLabel,
+                            prefixIcon: Icons.person_outline,
+                            textInputAction: TextInputAction.next,
+                            maxLength: ValidationLimits.maxPersonNameLength,
+                            onChanged: (_) {
+                              if (_submitError != null) {
+                                setState(() => _submitError = null);
+                              }
+                            },
+                            validator: ValidationLocalizer.wrap(
+                              l10n,
+                              (v) => AppValidators.nameValidator(
+                                v,
+                                maxLength: ValidationLimits.maxPersonNameLength,
                               ),
                             ),
-                            child: AppText(
-                              'No active processes yet. Tap "${l10n.processCreateAction}" above to create processes first, or save this worker and assign processes later.',
-                              variant: AppTextVariant.bodySmall,
-                              color: colorScheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                          AppTextField(
+                            fieldKey: _phoneFieldKey,
+                            controller: _phoneCtrl,
+                            focusNode: _phoneFocus,
+                            label: l10n.workerPhoneLabel,
+                            prefixIcon: Icons.phone_outlined,
+                            keyboardType: TextInputType.phone,
+                            textInputAction: TextInputAction.next,
+                            onChanged: (_) {
+                              if (_submitError != null) {
+                                setState(() => _submitError = null);
+                              }
+                            },
+                            validator: ValidationLocalizer.wrap(
+                              l10n,
+                              (v) => AppValidators.mobileNumberValidator(v),
                             ),
-                          )
-                        else
-                          for (final proc in _availableProcesses)
-                            _buildProcessRateTile(context, proc),
-                      ],
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                          AppTextField(
+                            fieldKey: _addressFieldKey,
+                            controller: _addressCtrl,
+                            focusNode: _addressFocus,
+                            label: l10n.workerAddressLabel,
+                            prefixIcon: Icons.location_on_outlined,
+                            maxLines: 2,
+                            maxLength: ValidationLimits.maxAddressLength,
+                            validator: ValidationLocalizer.wrap(
+                              l10n,
+                              (v) => AppValidators.maxLengthValidator(
+                                v,
+                                maxLength: ValidationLimits.maxAddressLength,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                          AppTextField(
+                            fieldKey: _notesFieldKey,
+                            controller: _notesCtrl,
+                            focusNode: _notesFocus,
+                            label: l10n.workerNotesLabel,
+                            maxLines: 2,
+                            maxLength: ValidationLimits.maxNotesLength,
+                            validator: ValidationLocalizer.wrap(
+                              l10n,
+                              (v) => AppValidators.maxLengthValidator(
+                                v,
+                                maxLength: ValidationLimits.maxNotesLength,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+                          AppSwitch(
+                            label: _isActive
+                                ? l10n.statusActive
+                                : l10n.statusInactive,
+                            value: _isActive,
+                            onChanged: (v) => _edit(() => _isActive = v),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
+                    const SizedBox(height: AppSpacing.md),
 
-                  if (_submitError != null) ...[
-                    const SizedBox(height: AppSpacing.sm),
+                    // Section 2: Multi-Process Assignments & Per-Process Labour Pricing
                     AppCard(
-                      borderColor: colorScheme.error,
-                      child: AppText(_submitError!, color: colorScheme.error),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Wrap(
+                            spacing: AppSpacing.sm,
+                            runSpacing: AppSpacing.xs,
+                            alignment: WrapAlignment.spaceBetween,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            children: [
+                              AppHeading(
+                                '2. Processes & Labour Rates (${_selectedProcessIds.length})',
+                                level: AppHeadingLevel.h3,
+                              ),
+                              AppButton(
+                                label: l10n.processCreateAction,
+                                icon: Icons.add_rounded,
+                                variant: AppButtonVariant.outlined,
+                                onPressed: () async {
+                                  await context.push<bool>(
+                                    RoutePaths.processCreate,
+                                  );
+                                  if (mounted) {
+                                    await _refreshProcessesAfterCreate();
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: AppSpacing.xs),
+                          AppText(
+                            'Select one or more processes for this worker. Leave a custom rate blank to inherit the process default rate.',
+                            variant: AppTextVariant.bodySmall,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                          if (_availableProcesses.isEmpty)
+                            Container(
+                              padding: const EdgeInsets.all(AppSpacing.md),
+                              decoration: BoxDecoration(
+                                borderRadius: AppRadius.mdBorder,
+                                border: Border.all(
+                                  color: colorScheme.outlineVariant,
+                                ),
+                              ),
+                              child: AppText(
+                                'No active processes yet. Tap "${l10n.processCreateAction}" above to create processes first, or save this worker and assign processes later.',
+                                variant: AppTextVariant.bodySmall,
+                                color: colorScheme.onSurfaceVariant,
+                              ),
+                            )
+                          else
+                            for (final proc in _availableProcesses)
+                              _buildProcessRateTile(context, proc),
+                        ],
+                      ),
                     ),
+
+                    if (_submitError != null) ...[
+                      const SizedBox(height: AppSpacing.sm),
+                      AppCard(
+                        borderColor: colorScheme.error,
+                        child: AppText(_submitError!, color: colorScheme.error),
+                      ),
+                    ],
+                    const SizedBox(height: AppSpacing.md),
                   ],
-                  const SizedBox(height: AppSpacing.md),
-                ],
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: AppSpacing.sm),
-              child: AppButton(
-                label: l10n.actionSave,
-                icon: Icons.check_rounded,
-                isExpanded: true,
-                isLoading: _isSaving,
-                onPressed: _isSaving ? null : _save,
+              Padding(
+                padding: const EdgeInsets.only(top: AppSpacing.sm),
+                child: AppButton(
+                  label: l10n.actionSave,
+                  icon: Icons.check_rounded,
+                  isExpanded: true,
+                  isLoading: _isSaving,
+                  onPressed: _isSaving ? null : _save,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -535,6 +552,7 @@ final class _WorkerFormPageState extends State<WorkerFormPage> {
                   Checkbox(
                     value: isSelected,
                     onChanged: (checked) {
+                      _dirty.markDirty();
                       setState(() {
                         _submitError = null;
                         if (checked == true) {
@@ -593,7 +611,7 @@ final class _WorkerFormPageState extends State<WorkerFormPage> {
                   decimal: true,
                 ),
                 inputFormatters: [AppInputFormatters.currencyDecimal],
-                onChanged: (_) => setState(() {
+                onChanged: (_) => _edit(() {
                   _submitError = null;
                 }),
               ),

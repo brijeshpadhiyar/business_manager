@@ -330,7 +330,7 @@ void main() {
         updatedAt: t0 + 4000,
       );
 
-      final ds = ProductionHistoryDataset(
+      const ds = ProductionHistoryDataset(
         lots: {
           'lot-1': (entity: lot, createdBy: 'Owner', updatedBy: 'Owner'),
         },
@@ -347,15 +347,15 @@ void main() {
             createdAt: t0,
           ),
         },
-        movements: const [issue, smGood, smDamaged],
-        returns: const [ret1],
-        inspections: const [insp1],
-        rejections: const [rej],
-        repairs: const [],
-        labourEntries: const [labour],
-        payments: const [payment],
-        adjustments: const [],
-        handovers: const [],
+        movements: [issue, smGood, smDamaged],
+        returns: [ret1],
+        inspections: [insp1],
+        rejections: [rej],
+        repairs: [],
+        labourEntries: [labour],
+        payments: [payment],
+        adjustments: [],
+        handovers: [],
       );
 
       final lotHist = historyCalc.buildLotCompleteHistory('lot-1', ds)!;

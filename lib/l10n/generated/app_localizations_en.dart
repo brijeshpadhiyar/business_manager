@@ -2732,4 +2732,69 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get webPrintFallbackNote =>
       'Opened browser print dialog (use Save as PDF to download).';
+
+  @override
+  String get uxUndo => 'Undo';
+
+  @override
+  String uxShowMore(int count) {
+    return 'Show $count more';
+  }
+
+  @override
+  String get uxShowLess => 'Show less';
+
+  @override
+  String get uxUnsavedTitle => 'Discard changes?';
+
+  @override
+  String get uxUnsavedMessage =>
+      'You have changes that are not saved. If you leave now they will be lost.';
+
+  @override
+  String get uxUnsavedDiscard => 'Discard';
+
+  @override
+  String get uxUnsavedKeepEditing => 'Keep editing';
+
+  @override
+  String get uxSearchTooltip => 'Search (Ctrl+K)';
+
+  @override
+  String get uxSearchHint => 'Search lots, workers, processes…';
+
+  @override
+  String get uxSearchLots => 'Lots';
+
+  @override
+  String get uxSearchWorkers => 'Workers';
+
+  @override
+  String get uxSearchProcesses => 'Processes';
+
+  @override
+  String uxSearchNoResults(String query) {
+    return 'No matches for \"$query\"';
+  }
+
+  @override
+  String get uxQuickActions => 'Quick actions';
+
+  @override
+  String get uxActionNewLot => 'New lot';
+
+  @override
+  String get uxActionIssueStock => 'Issue stock to worker';
+
+  @override
+  String get uxActionReceiveWork => 'Receive work back';
+
+  @override
+  String get uxActionRecordPayment => 'Record payment';
+
+  @override
+  String get uxActionAddWorker => 'Add worker';
+
+  @override
+  String get uxActionInspections => 'Inspection queue';
 }

@@ -343,8 +343,8 @@ void main() {
       await tester.pumpWidget(BusinessManagerApp(config: config));
       await tester.pumpAndSettle();
 
-      // Open Stock Issue from Dashboard Quick Action
-      await tester.tap(find.text('Issue Stock').first);
+      // Open Stock Issue from Dashboard Quick Action tile
+      await tester.tap(find.text('Issue stock to worker').first);
       await tester.pumpAndSettle();
 
       // Single seeded colour with stock auto-selects; verify locked rate ₹25.00 preview

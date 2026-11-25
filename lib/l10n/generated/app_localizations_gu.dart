@@ -2731,4 +2731,69 @@ class AppLocalizationsGu extends AppLocalizations {
   @override
   String get webPrintFallbackNote =>
       'બ્રાઉઝર પ્રિન્ટ ડાયલોગ ખૂલ્યો છે (PDF માટે Save as PDF પસંદ કરો).';
+
+  @override
+  String get uxUndo => 'પાછું લાવો';
+
+  @override
+  String uxShowMore(int count) {
+    return 'વધુ $count બતાવો';
+  }
+
+  @override
+  String get uxShowLess => 'ઓછું બતાવો';
+
+  @override
+  String get uxUnsavedTitle => 'ફેરફારો રદ કરવા છે?';
+
+  @override
+  String get uxUnsavedMessage =>
+      'તમારા ફેરફારો સેવ થયા નથી. હમણાં બહાર જશો તો તે ગુમ થઈ જશે.';
+
+  @override
+  String get uxUnsavedDiscard => 'રદ કરો';
+
+  @override
+  String get uxUnsavedKeepEditing => 'ફેરફાર ચાલુ રાખો';
+
+  @override
+  String get uxSearchTooltip => 'શોધો (Ctrl+K)';
+
+  @override
+  String get uxSearchHint => 'લોટ, કારીગર, પ્રોસેસ શોધો…';
+
+  @override
+  String get uxSearchLots => 'લોટ';
+
+  @override
+  String get uxSearchWorkers => 'કારીગરો';
+
+  @override
+  String get uxSearchProcesses => 'પ્રોસેસ';
+
+  @override
+  String uxSearchNoResults(String query) {
+    return '\"$query\" માટે કંઈ મળ્યું નહીં';
+  }
+
+  @override
+  String get uxQuickActions => 'ઝડપી કામ';
+
+  @override
+  String get uxActionNewLot => 'નવો લોટ';
+
+  @override
+  String get uxActionIssueStock => 'કારીગરને માલ આપો';
+
+  @override
+  String get uxActionReceiveWork => 'કામ પરત લો';
+
+  @override
+  String get uxActionRecordPayment => 'ચુકવણી નોંધો';
+
+  @override
+  String get uxActionAddWorker => 'કારીગર ઉમેરો';
+
+  @override
+  String get uxActionInspections => 'ચકાસણી યાદી';
 }

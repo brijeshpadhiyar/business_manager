@@ -458,7 +458,7 @@ void main() {
         // 16–19. Verify Exact Cross-Summary Reconciliation (Lot == Worker == Process == Reports)
         final lotHist = await historyRepo.getLotCompleteHistory(lot.id);
         expect(lotHist, isNotNull);
-        final expectedTotalEarned = 58000 + (38 * 1200);
+        const expectedTotalEarned = 58000 + (38 * 1200);
         expect(lotHist!.totalProductionCostPaise, expectedTotalEarned);
 
         final timeline = await historyRepo.getLotTimeline(lot.id);

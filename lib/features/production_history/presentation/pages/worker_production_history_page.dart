@@ -95,8 +95,8 @@ final class _WorkerProductionHistoryView extends StatelessWidget {
                 runSpacing: AppSpacing.xs,
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  SizedBox(
-                    width: 220,
+                  AppAdaptiveField(
+                    maxWidth: 220,
                     child: AppDropdown<String>(
                       label: l10n.navProcesses,
                       value: filter.processId ?? '__ALL__',

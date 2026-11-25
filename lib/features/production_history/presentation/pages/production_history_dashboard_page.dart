@@ -257,8 +257,8 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
                   spacing: AppSpacing.sm,
                   runSpacing: AppSpacing.sm,
                   children: [
-                    SizedBox(
-                      width: 210,
+                    AppAdaptiveField(
+                      maxWidth: 210,
                       child: AppDropdown<String>(
                         label: l10n.lotsHeading,
                         value: filter.lotId ?? '__ALL__',
@@ -280,8 +280,8 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      width: 210,
+                    AppAdaptiveField(
+                      maxWidth: 210,
                       child: AppDropdown<String>(
                         label: l10n.navWorkers,
                         value: filter.workerId ?? '__ALL__',
@@ -304,8 +304,8 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      width: 210,
+                    AppAdaptiveField(
+                      maxWidth: 210,
                       child: AppDropdown<String>(
                         label: l10n.navProcesses,
                         value: filter.processId ?? '__ALL__',

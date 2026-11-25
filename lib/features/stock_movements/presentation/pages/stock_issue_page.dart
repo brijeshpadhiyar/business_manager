@@ -48,6 +48,14 @@ final class StockIssuePage extends StatefulWidget {
 }
 
 final class _StockIssuePageState extends State<StockIssuePage> {
+  final _dirty = AppFormDirtyTracker();
+
+  /// setState for a user edit: also marks the form as unsaved.
+  void _edit(VoidCallback fn) {
+    _dirty.markDirty();
+    setState(fn);
+  }
+
   final _formKey = GlobalKey<FormState>();
   final _stockSearchCtrl = TextEditingController();
   final _qtyCtrl = TextEditingController();
@@ -92,12 +100,19 @@ final class _StockIssuePageState extends State<StockIssuePage> {
   @override
   void initState() {
     super.initState();
+    _dirty.watch([
+      _qtyCtrl,
+      _notesCtrl,
+      _overrideRateCtrl,
+      _overrideReasonCtrl,
+    ]);
     _clientRequestId = _idGen.nextRequestId();
     _loadInitial();
   }
 
   @override
   void dispose() {
+    _dirty.dispose();
     _stockSearchCtrl.dispose();
     _qtyCtrl.dispose();
     _qtyFocus.dispose();
@@ -265,6 +280,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
   }
 
   void _selectStock(DesignColourStockBalance b) {
+    _dirty.markDirty();
     setState(() {
       _selectedColourId = b.designColourId;
       _pickingStock = false;
@@ -276,6 +292,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
   }
 
   void _addQuickQty(int delta, int maxAvailable) {
+    _dirty.markDirty();
     final next = (_parsedQty + delta).clamp(0, maxAvailable);
     setState(() {
       _qtyCtrl.text = next > 0 ? '$next' : '';
@@ -284,6 +301,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
   }
 
   void _setExactQty(int qty) {
+    _dirty.markDirty();
     setState(() {
       _qtyCtrl.text = qty > 0 ? '$qty' : '';
       _submitError = null;
@@ -471,69 +489,72 @@ final class _StockIssuePageState extends State<StockIssuePage> {
     final step3Done = step1Done && qty > 0 && !qtyExceeds;
     final canSubmit = step1Done && step2Done && step3Done && !_saving;
 
-    return AppScaffold(
-      title: l10n.stockIssueAction,
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          children: [
-            _StepProgressStrip(
-              steps: [
-                _StepItem(
-                  number: 1,
-                  label: l10n.stockStepSelectStock,
-                  completed: step1Done,
-                  active: !step1Done || _pickingStock,
-                ),
-                _StepItem(
-                  number: 2,
-                  label: l10n.stockStepSelectWork,
-                  completed: step2Done,
-                  active: step1Done && !step2Done,
-                ),
-                _StepItem(
-                  number: 3,
-                  label: l10n.stockStepEnterQty,
-                  completed: step3Done,
-                  active: step1Done && step2Done && !step3Done,
-                ),
-                _StepItem(
-                  number: 4,
-                  label: l10n.stockStepConfirm,
-                  completed: false,
-                  active: canSubmit,
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.md),
-
-            // STEP 1: SELECT STOCK
-            _buildStep1SelectStock(context, balance),
-            const SizedBox(height: AppSpacing.md),
-
-            // STEP 2: SELECT WORK (Process, Eligible Worker, Rate & Billing)
-            if (balance != null) ...[
-              _buildStep2SelectWork(context),
-              const SizedBox(height: AppSpacing.md),
-
-              // STEP 3: ENTER QUANTITY
-              _buildStep3EnterQuantity(context, balance, qtyExceeds),
-              const SizedBox(height: AppSpacing.md),
-
-              // STEP 4: COMPACT CONFIRMATION SUMMARY & SUBMIT
-              _buildStep4ConfirmCard(
-                context,
-                balance: balance,
-                proc: proc,
-                worker: worker,
-                ratePaise: ratePaise,
-                qty: qty,
-                canSubmit: canSubmit,
+    return AppUnsavedChangesGuard.tracked(
+      tracker: _dirty,
+      child: AppScaffold(
+        title: l10n.stockIssueAction,
+        body: Form(
+          key: _formKey,
+          child: ListView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            children: [
+              _StepProgressStrip(
+                steps: [
+                  _StepItem(
+                    number: 1,
+                    label: l10n.stockStepSelectStock,
+                    completed: step1Done,
+                    active: !step1Done || _pickingStock,
+                  ),
+                  _StepItem(
+                    number: 2,
+                    label: l10n.stockStepSelectWork,
+                    completed: step2Done,
+                    active: step1Done && !step2Done,
+                  ),
+                  _StepItem(
+                    number: 3,
+                    label: l10n.stockStepEnterQty,
+                    completed: step3Done,
+                    active: step1Done && step2Done && !step3Done,
+                  ),
+                  _StepItem(
+                    number: 4,
+                    label: l10n.stockStepConfirm,
+                    completed: false,
+                    active: canSubmit,
+                  ),
+                ],
               ),
-              const SizedBox(height: AppSpacing.xl),
+              const SizedBox(height: AppSpacing.md),
+
+              // STEP 1: SELECT STOCK
+              _buildStep1SelectStock(context, balance),
+              const SizedBox(height: AppSpacing.md),
+
+              // STEP 2: SELECT WORK (Process, Eligible Worker, Rate & Billing)
+              if (balance != null) ...[
+                _buildStep2SelectWork(context),
+                const SizedBox(height: AppSpacing.md),
+
+                // STEP 3: ENTER QUANTITY
+                _buildStep3EnterQuantity(context, balance, qtyExceeds),
+                const SizedBox(height: AppSpacing.md),
+
+                // STEP 4: COMPACT CONFIRMATION SUMMARY & SUBMIT
+                _buildStep4ConfirmCard(
+                  context,
+                  balance: balance,
+                  proc: proc,
+                  worker: worker,
+                  ratePaise: ratePaise,
+                  qty: qty,
+                  canSubmit: canSubmit,
+                ),
+                const SizedBox(height: AppSpacing.xl),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
@@ -554,7 +575,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
           children: [
             Row(
               children: [
-                _StepBadge(number: 1, completed: true),
+                const _StepBadge(number: 1, completed: true),
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
                   child: AppText(
@@ -820,6 +841,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                     label: Text(proc.name),
                     selected: _selectedProcessId == proc.id,
                     onSelected: (_) {
+                      _dirty.markDirty();
                       setState(() => _selectedProcessId = proc.id);
                       _loadWorkersForProcess(proc.id);
                     },
@@ -849,6 +871,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                     label: Text(w.workerName),
                     selected: _selectedWorkerId == w.workerId,
                     onSelected: (_) {
+                      _dirty.markDirty();
                       setState(() => _selectedWorkerId = w.workerId);
                       _refreshRatePreview();
                     },
@@ -876,6 +899,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                   selectedUtcMillis: _transactionAtUtc,
                   includeTime: true,
                   onDateSelectedUtcMillis: (utc) {
+                    _dirty.markDirty();
                     setState(() => _transactionAtUtc = utc);
                     _refreshRatePreview();
                   },
@@ -884,7 +908,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                 AppSwitch(
                   label: l10n.stockRateOverrideToggle,
                   value: _overrideRate,
-                  onChanged: (v) => setState(() => _overrideRate = v),
+                  onChanged: (v) => _edit(() => _overrideRate = v),
                 ),
                 if (_overrideRate) ...[
                   const SizedBox(height: AppSpacing.sm),
@@ -1193,7 +1217,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
         children: [
           Row(
             children: [
-              _StepBadge(number: 4, completed: false),
+              const _StepBadge(number: 4, completed: false),
               const SizedBox(width: AppSpacing.sm),
               Expanded(
                 child: AppHeading(

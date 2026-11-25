@@ -99,6 +99,14 @@ final class _DesignBlockState {
 }
 
 final class _LotCreatePageState extends State<LotCreatePage> {
+  final _dirty = AppFormDirtyTracker();
+
+  /// setState for a user edit: also marks the form as unsaved.
+  void _edit(VoidCallback fn) {
+    _dirty.markDirty();
+    setState(fn);
+  }
+
   final _lotRepo = getIt<LotRepository>();
   final _processRepo = getIt<ProcessRepository>();
   final _workerRepo = getIt<WorkerRepository>();
@@ -145,6 +153,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
   @override
   void initState() {
     super.initState();
+    _dirty.watch([_numberCtrl, _titleCtrl, _notesCtrl]);
     _loadDesignSuggestions();
   }
 
@@ -171,7 +180,11 @@ final class _LotCreatePageState extends State<LotCreatePage> {
       if (_useDesigns)
         for (final d in _designs)
           for (final c in d.colours)
-            (designName: d.designName, colourName: c.colourName, qty: c.quantity)
+            (
+              designName: d.designName,
+              colourName: c.colourName,
+              qty: c.quantity,
+            )
       else
         for (final c in _colourOnlyVariants)
           (
@@ -238,7 +251,9 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                       _activeProcesses.firstWhere((p) => p.id == id).name,
                   onChanged: (v) {
                     if (v != null) {
-                      final proc = _activeProcesses.firstWhere((p) => p.id == v);
+                      final proc = _activeProcesses.firstWhere(
+                        (p) => p.id == v,
+                      );
                       setSheetState(() {
                         selectedProcId = v;
                         rateCtrl.text = MoneyFormatter.formatPaiseForInput(
@@ -346,6 +361,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
 
   @override
   void dispose() {
+    _dirty.dispose();
     _numberCtrl.dispose();
     _titleCtrl.dispose();
     _notesCtrl.dispose();
@@ -385,6 +401,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
   }
 
   void _addExistingDesign(String name) {
+    _dirty.markDirty();
     final trimmed = name.trim();
     if (trimmed.isEmpty) return;
     if (_hasDesignName(trimmed)) {
@@ -457,6 +474,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
   }
 
   void _removeDesign(_DesignBlockState design) {
+    _dirty.markDirty();
     setState(() {
       _designs.remove(design);
       design.dispose();
@@ -464,6 +482,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
   }
 
   Future<void> _pickColoursForDesign(_DesignBlockState design) async {
+    _dirty.markDirty();
     final existingLower = design.colours
         .map((c) => c.colourName.trim().toLowerCase())
         .toSet();
@@ -498,6 +517,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
   }
 
   Future<void> _pickColoursForColourOnly() async {
+    _dirty.markDirty();
     final existingLower = _colourOnlyVariants
         .map((c) => c.colourName.trim().toLowerCase())
         .toSet();
@@ -603,8 +623,8 @@ final class _LotCreatePageState extends State<LotCreatePage> {
             parsedQty.value == null ||
             parsedQty.value! <= 0) {
           setState(
-            () => _submitError =
-                'Enter a positive quantity for ${c.colourName}.',
+            () =>
+                _submitError = 'Enter a positive quantity for ${c.colourName}.',
           );
           return;
         }
@@ -669,9 +689,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
       final raw = e.toString();
       setState(() {
         _isSaving = false;
-        _submitError = raw.contains('UNIQUE')
-            ? l10n.lotDuplicateError
-            : raw;
+        _submitError = raw.contains('UNIQUE') ? l10n.lotDuplicateError : raw;
       });
     }
   }
@@ -684,282 +702,315 @@ final class _LotCreatePageState extends State<LotCreatePage> {
         .where((n) => !_hasDesignName(n))
         .toList();
 
-    return AppScaffold(
-      title: l10n.lotCreateAction,
-      body: Form(
-        key: _formKey,
-        autovalidateMode: _submittedOnce
-            ? AutovalidateMode.onUserInteraction
-            : AutovalidateMode.disabled,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: ListView(
-                keyboardDismissBehavior:
-                    ScrollViewKeyboardDismissBehavior.onDrag,
-                children: [
-            // Live Summary Header (full glass hero)
-            AppCard(
-              isGlass: true,
-              blurSigma: 12,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const AppText(
-                    'Lot Summary (Live)',
-                    variant: AppTextVariant.bodySmall,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  AppSummaryStrip(
-                    metrics: [
-                      if (_useDesigns)
-                        AppSummaryMetric(
-                          label: 'Designs',
-                          value: '${_designs.length}',
-                          tone: AppStatusTone.info,
-                        ),
-                      AppSummaryMetric(
-                        label: 'Colours',
-                        value: '$_totalColoursCount',
-                        tone: AppStatusTone.info,
-                      ),
-                      AppSummaryMetric(
-                        label: 'Total Qty',
-                        value:
-                            '${MoneyFormatter.formatQuantity(_totalQuantity)} pcs',
-                        tone: _totalQuantity > 0
-                            ? AppStatusTone.good
-                            : AppStatusTone.neutral,
-                      ),
-                      AppSummaryMetric(
-                        label: 'SKU Value',
-                        value: MoneyFormatter.formatPaise(_totalValuePaise),
-                        tone: _totalValuePaise > 0
-                            ? AppStatusTone.good
-                            : AppStatusTone.neutral,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: AppSpacing.md),
-
-            // Section A: Lot Information
-            AppCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const AppHeading(
-                    '1. Lot Information',
-                    level: AppHeadingLevel.h3,
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppTextField(
-                    fieldKey: _numberFieldKey,
-                    controller: _numberCtrl,
-                    focusNode: _numberFocus,
-                    label: l10n.lotNumberLabel,
-                    prefixIcon: Icons.tag_rounded,
-                    textInputAction: TextInputAction.next,
-                    maxLength: ValidationLimits.maxShortNameLength,
-                    onChanged: (_) {
-                      if (_submitError != null) {
-                        setState(() => _submitError = null);
-                      }
-                    },
-                    validator: ValidationLocalizer.wrap(
-                      l10n,
-                      (v) => AppValidators.nameValidator(
-                        v,
-                        maxLength: ValidationLimits.maxShortNameLength,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppTextField(
-                    fieldKey: _titleFieldKey,
-                    controller: _titleCtrl,
-                    focusNode: _titleFocus,
-                    label: l10n.lotTitleLabel,
-                    prefixIcon: Icons.title_rounded,
-                    textInputAction: TextInputAction.next,
-                    maxLength: ValidationLimits.maxPersonNameLength,
-                    validator: ValidationLocalizer.wrap(
-                      l10n,
-                      (v) => AppValidators.maxLengthValidator(
-                        v,
-                        maxLength: ValidationLimits.maxPersonNameLength,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppDatePicker(
-                    label: l10n.lotDateLabel,
-                    selectedUtcMillis: _txDateUtc,
-                    onDateSelectedUtcMillis: (utc) =>
-                        setState(() => _txDateUtc = utc),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppTextField(
-                    fieldKey: _notesFieldKey,
-                    controller: _notesCtrl,
-                    focusNode: _notesFocus,
-                    label: l10n.lotNotesLabel,
-                    maxLines: 2,
-                    maxLength: ValidationLimits.maxNotesLength,
-                    validator: ValidationLocalizer.wrap(
-                      l10n,
-                      (v) => AppValidators.maxLengthValidator(
-                        v,
-                        maxLength: ValidationLimits.maxNotesLength,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: AppSpacing.md),
-
-            // Section B & C: Designs, Colours & Direct SKU Pricing
-            AppCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const AppHeading(
-                    '2. Designs, Colours & SKU Pricing',
-                    level: AppHeadingLevel.h3,
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  AppText(
-                    'Unit prices here are SKU reference prices (separate from worker labour rates). You can add designs, colours, quantities, and prices in one workflow.',
-                    variant: AppTextVariant.bodySmall,
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  Wrap(
-                    spacing: AppSpacing.sm,
-                    runSpacing: AppSpacing.xs,
-                    children: [
-                      ChoiceChip(
-                        label: const Text('With Design(s)'),
-                        selected: _useDesigns,
-                        onSelected: (selected) {
-                          if (selected && !_useDesigns) {
-                            setState(() => _useDesigns = true);
-                          }
-                        },
-                      ),
-                      ChoiceChip(
-                        label: const Text('Colour-Only (No Design)'),
-                        selected: !_useDesigns,
-                        onSelected: (selected) {
-                          if (selected && _useDesigns) {
-                            setState(() => _useDesigns = false);
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  if (_useDesigns) ...[
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        if (availableKnownDesigns.isNotEmpty) ...[
-                          Expanded(
-                            child: AppDropdown<String>(
-                              key: ValueKey<String>(
-                                'known_designs_${availableKnownDesigns.join('|')}',
+    return AppUnsavedChangesGuard.tracked(
+      tracker: _dirty,
+      child: AppScaffold(
+        title: l10n.lotCreateAction,
+        body: Form(
+          key: _formKey,
+          autovalidateMode: _submittedOnce
+              ? AutovalidateMode.onUserInteraction
+              : AutovalidateMode.disabled,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: ListView(
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
+                  children: [
+                    // Live Summary Header (full glass hero)
+                    AppCard(
+                      isGlass: true,
+                      blurSigma: 12,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const AppText(
+                            'Lot Summary (Live)',
+                            variant: AppTextVariant.bodySmall,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          const SizedBox(height: AppSpacing.xs),
+                          AppSummaryStrip(
+                            metrics: [
+                              if (_useDesigns)
+                                AppSummaryMetric(
+                                  label: 'Designs',
+                                  value: '${_designs.length}',
+                                  tone: AppStatusTone.info,
+                                ),
+                              AppSummaryMetric(
+                                label: 'Colours',
+                                value: '$_totalColoursCount',
+                                tone: AppStatusTone.info,
                               ),
-                              label: 'Select Existing Design',
-                              value:
-                                  availableKnownDesigns.contains(
-                                    _selectedKnownDesign,
-                                  )
-                                  ? _selectedKnownDesign
-                                  : null,
-                              items: availableKnownDesigns,
-                              itemLabelBuilder: (name) => name,
-                              onChanged: (val) {
-                                if (val != null) {
-                                  _addExistingDesign(val);
-                                }
-                              },
-                            ),
+                              AppSummaryMetric(
+                                label: 'Total Qty',
+                                value:
+                                    '${MoneyFormatter.formatQuantity(_totalQuantity)} pcs',
+                                tone: _totalQuantity > 0
+                                    ? AppStatusTone.good
+                                    : AppStatusTone.neutral,
+                              ),
+                              AppSummaryMetric(
+                                label: 'SKU Value',
+                                value: MoneyFormatter.formatPaise(
+                                  _totalValuePaise,
+                                ),
+                                tone: _totalValuePaise > 0
+                                    ? AppStatusTone.good
+                                    : AppStatusTone.neutral,
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: AppSpacing.sm),
                         ],
-                        AppButton(
-                          label: _showInlineDesignForm
-                              ? 'Close'
-                              : 'Add New Design',
-                          icon: _showInlineDesignForm
-                              ? Icons.close_rounded
-                              : Icons.add_rounded,
-                          variant: AppButtonVariant.secondary,
-                          onPressed: () => setState(() {
-                            _showInlineDesignForm = !_showInlineDesignForm;
-                            _inlineDesignError = null;
-                          }),
-                        ),
-                      ],
+                      ),
                     ),
-                    if (_showInlineDesignForm) ...[
-                      const SizedBox(height: AppSpacing.md),
-                      Container(
-                        padding: const EdgeInsets.all(AppSpacing.md),
-                        decoration: BoxDecoration(
-                          borderRadius: AppRadius.mdBorder,
-                          border: Border.all(
-                            color: colorScheme.primary.withValues(alpha: 0.4),
+                    const SizedBox(height: AppSpacing.md),
+
+                    // Section A: Lot Information
+                    AppCard(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const AppHeading(
+                            '1. Lot Information',
+                            level: AppHeadingLevel.h3,
                           ),
-                          color: colorScheme.surfaceContainerLowest.withValues(
-                            alpha: 0.55,
+                          const SizedBox(height: AppSpacing.md),
+                          AppTextField(
+                            fieldKey: _numberFieldKey,
+                            controller: _numberCtrl,
+                            focusNode: _numberFocus,
+                            label: l10n.lotNumberLabel,
+                            prefixIcon: Icons.tag_rounded,
+                            textInputAction: TextInputAction.next,
+                            maxLength: ValidationLimits.maxShortNameLength,
+                            onChanged: (_) {
+                              if (_submitError != null) {
+                                setState(() => _submitError = null);
+                              }
+                            },
+                            validator: ValidationLocalizer.wrap(
+                              l10n,
+                              (v) => AppValidators.nameValidator(
+                                v,
+                                maxLength: ValidationLimits.maxShortNameLength,
+                              ),
+                            ),
                           ),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            const AppText(
-                              'New Design (Inline)',
-                              fontWeight: FontWeight.w700,
+                          const SizedBox(height: AppSpacing.md),
+                          AppTextField(
+                            fieldKey: _titleFieldKey,
+                            controller: _titleCtrl,
+                            focusNode: _titleFocus,
+                            label: l10n.lotTitleLabel,
+                            prefixIcon: Icons.title_rounded,
+                            textInputAction: TextInputAction.next,
+                            maxLength: ValidationLimits.maxPersonNameLength,
+                            validator: ValidationLocalizer.wrap(
+                              l10n,
+                              (v) => AppValidators.maxLengthValidator(
+                                v,
+                                maxLength: ValidationLimits.maxPersonNameLength,
+                              ),
                             ),
-                            const SizedBox(height: AppSpacing.sm),
-                            AppTextField(
-                              controller: _newDesignNameCtrl,
-                              label: l10n.designNameLabel,
-                              maxLength: ValidationLimits.maxShortNameLength,
-                              onChanged: (_) {
-                                if (_inlineDesignError != null) {
-                                  setState(() => _inlineDesignError = null);
-                                }
-                              },
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                          AppDatePicker(
+                            label: l10n.lotDateLabel,
+                            selectedUtcMillis: _txDateUtc,
+                            onDateSelectedUtcMillis: (utc) =>
+                                _edit(() => _txDateUtc = utc),
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                          AppTextField(
+                            fieldKey: _notesFieldKey,
+                            controller: _notesCtrl,
+                            focusNode: _notesFocus,
+                            label: l10n.lotNotesLabel,
+                            maxLines: 2,
+                            maxLength: ValidationLimits.maxNotesLength,
+                            validator: ValidationLocalizer.wrap(
+                              l10n,
+                              (v) => AppValidators.maxLengthValidator(
+                                v,
+                                maxLength: ValidationLimits.maxNotesLength,
+                              ),
                             ),
-                            const SizedBox(height: AppSpacing.sm),
-                            AppTextField(
-                              controller: _newDesignPriceCtrl,
-                              label:
-                                  'Default Unit Price (₹ / pc, optional)',
-                              hint: '0.00',
-                              prefixIcon: Icons.currency_rupee_rounded,
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(
-                                    decimal: true,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+
+                    // Section B & C: Designs, Colours & Direct SKU Pricing
+                    AppCard(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const AppHeading(
+                            '2. Designs, Colours & SKU Pricing',
+                            level: AppHeadingLevel.h3,
+                          ),
+                          const SizedBox(height: AppSpacing.xs),
+                          AppText(
+                            'Unit prices here are SKU reference prices (separate from worker labour rates). You can add designs, colours, quantities, and prices in one workflow.',
+                            variant: AppTextVariant.bodySmall,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                          Wrap(
+                            spacing: AppSpacing.sm,
+                            runSpacing: AppSpacing.xs,
+                            children: [
+                              ChoiceChip(
+                                label: const Text('With Design(s)'),
+                                selected: _useDesigns,
+                                onSelected: (selected) {
+                                  _dirty.markDirty();
+                                  if (selected && !_useDesigns) {
+                                    setState(() => _useDesigns = true);
+                                  }
+                                },
+                              ),
+                              ChoiceChip(
+                                label: const Text('Colour-Only (No Design)'),
+                                selected: !_useDesigns,
+                                onSelected: (selected) {
+                                  _dirty.markDirty();
+                                  if (selected && _useDesigns) {
+                                    setState(() => _useDesigns = false);
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                          if (_useDesigns) ...[
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (availableKnownDesigns.isNotEmpty) ...[
+                                  Expanded(
+                                    child: AppDropdown<String>(
+                                      key: ValueKey<String>(
+                                        'known_designs_${availableKnownDesigns.join('|')}',
+                                      ),
+                                      label: 'Select Existing Design',
+                                      value:
+                                          availableKnownDesigns.contains(
+                                            _selectedKnownDesign,
+                                          )
+                                          ? _selectedKnownDesign
+                                          : null,
+                                      items: availableKnownDesigns,
+                                      itemLabelBuilder: (name) => name,
+                                      onChanged: (val) {
+                                        _dirty.markDirty();
+                                        if (val != null) {
+                                          _addExistingDesign(val);
+                                        }
+                                      },
+                                    ),
                                   ),
-                              inputFormatters: [
-                                AppInputFormatters.currencyDecimal,
+                                  const SizedBox(width: AppSpacing.sm),
+                                ],
+                                AppButton(
+                                  label: _showInlineDesignForm
+                                      ? 'Close'
+                                      : 'Add New Design',
+                                  icon: _showInlineDesignForm
+                                      ? Icons.close_rounded
+                                      : Icons.add_rounded,
+                                  variant: AppButtonVariant.secondary,
+                                  onPressed: () => setState(() {
+                                    _showInlineDesignForm =
+                                        !_showInlineDesignForm;
+                                    _inlineDesignError = null;
+                                  }),
+                                ),
                               ],
                             ),
-                            const SizedBox(height: AppSpacing.sm),
-                            AppTextField(
-                              controller: _newDesignNotesCtrl,
-                              label: l10n.lotNotesLabel,
-                              maxLength: ValidationLimits.maxNotesLength,
-                            ),
-                            if (_inlineDesignError != null) ...[
+                            if (_showInlineDesignForm) ...[
+                              const SizedBox(height: AppSpacing.md),
+                              Container(
+                                padding: const EdgeInsets.all(AppSpacing.md),
+                                decoration: BoxDecoration(
+                                  borderRadius: AppRadius.mdBorder,
+                                  border: Border.all(
+                                    color: colorScheme.primary.withValues(
+                                      alpha: 0.4,
+                                    ),
+                                  ),
+                                  color: colorScheme.surfaceContainerLowest
+                                      .withValues(alpha: 0.55),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    const AppText(
+                                      'New Design (Inline)',
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    const SizedBox(height: AppSpacing.sm),
+                                    AppTextField(
+                                      controller: _newDesignNameCtrl,
+                                      label: l10n.designNameLabel,
+                                      maxLength:
+                                          ValidationLimits.maxShortNameLength,
+                                      onChanged: (_) {
+                                        _dirty.markDirty();
+                                        if (_inlineDesignError != null) {
+                                          setState(
+                                            () => _inlineDesignError = null,
+                                          );
+                                        }
+                                      },
+                                    ),
+                                    const SizedBox(height: AppSpacing.sm),
+                                    AppTextField(
+                                      controller: _newDesignPriceCtrl,
+                                      label: 'Default Unit Price (₹ / pc, optional)',
+                                      hint: '0.00',
+                                      prefixIcon: Icons.currency_rupee_rounded,
+                                      keyboardType:
+                                          const TextInputType.numberWithOptions(
+                                            decimal: true,
+                                          ),
+                                      inputFormatters: [
+                                        AppInputFormatters.currencyDecimal,
+                                      ],
+                                    ),
+                                    const SizedBox(height: AppSpacing.sm),
+                                    AppTextField(
+                                      controller: _newDesignNotesCtrl,
+                                      label: l10n.lotNotesLabel,
+                                      maxLength:
+                                          ValidationLimits.maxNotesLength,
+                                    ),
+                                    if (_inlineDesignError != null) ...[
+                                      const SizedBox(height: AppSpacing.xs),
+                                      AppText(
+                                        _inlineDesignError!,
+                                        color: colorScheme.error,
+                                        variant: AppTextVariant.bodySmall,
+                                      ),
+                                    ],
+                                    const SizedBox(height: AppSpacing.sm),
+                                    AppButton(
+                                      label: 'Add Design to Lot',
+                                      icon: Icons.check_rounded,
+                                      onPressed: _saveInlineNewDesign,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                            if (!_showInlineDesignForm &&
+                                _inlineDesignError != null) ...[
                               const SizedBox(height: AppSpacing.xs),
                               AppText(
                                 _inlineDesignError!,
@@ -967,189 +1018,177 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                                 variant: AppTextVariant.bodySmall,
                               ),
                             ],
-                            const SizedBox(height: AppSpacing.sm),
-                            AppButton(
-                              label: 'Add Design to Lot',
-                              icon: Icons.check_rounded,
-                              onPressed: _saveInlineNewDesign,
+                            const SizedBox(height: AppSpacing.md),
+                            if (_designs.isEmpty)
+                              Container(
+                                padding: const EdgeInsets.all(AppSpacing.md),
+                                decoration: BoxDecoration(
+                                  borderRadius: AppRadius.mdBorder,
+                                  border: Border.all(
+                                    color: colorScheme.outlineVariant,
+                                  ),
+                                ),
+                                child: AppText(
+                                  'No designs added yet. Select an existing design or tap "+ Add New Design" above (or save an empty lot and add designs later).',
+                                  variant: AppTextVariant.bodySmall,
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                              )
+                            else
+                              for (final design in _designs) ...[
+                                _buildDesignCard(context, design),
+                                const SizedBox(height: AppSpacing.sm),
+                              ],
+                          ] else ...[
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: AppText(
+                                    'Colour Variants (${_colourOnlyVariants.length})',
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                                AppButton(
+                                  label: 'Add Colours',
+                                  icon: Icons.palette_outlined,
+                                  variant: AppButtonVariant.secondary,
+                                  onPressed: _pickColoursForColourOnly,
+                                ),
+                              ],
                             ),
+                            const SizedBox(height: AppSpacing.sm),
+                            if (_colourOnlyVariants.isEmpty)
+                              Container(
+                                padding: const EdgeInsets.all(AppSpacing.md),
+                                decoration: BoxDecoration(
+                                  borderRadius: AppRadius.mdBorder,
+                                  border: Border.all(
+                                    color: colorScheme.outlineVariant,
+                                  ),
+                                ),
+                                child: AppText(
+                                  'Tap "Add Colours" to pick colours from the palette or create custom colours with quantity & price.',
+                                  variant: AppTextVariant.bodySmall,
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                              )
+                            else
+                              for (final c in _colourOnlyVariants)
+                                _buildColourRow(
+                                  context,
+                                  c,
+                                  onRemove: () => setState(() {
+                                    _colourOnlyVariants.remove(c);
+                                    c.dispose();
+                                  }),
+                                ),
                           ],
-                        ),
+                        ],
                       ),
-                    ],
-                    if (!_showInlineDesignForm &&
-                        _inlineDesignError != null) ...[
-                      const SizedBox(height: AppSpacing.xs),
-                      AppText(
-                        _inlineDesignError!,
-                        color: colorScheme.error,
-                        variant: AppTextVariant.bodySmall,
+                    ),
+
+                    // Section 3: Optional Initial Process Assignments (Phase 5)
+                    const SizedBox(height: AppSpacing.md),
+                    AppCard(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    AppHeading(
+                                      l10n.prodHistoryInitialAssignmentsTitle,
+                                      level: AppHeadingLevel.h3,
+                                    ),
+                                    AppText(
+                                      l10n.prodHistoryInitialAssignmentsSubtitle,
+                                      variant: AppTextVariant.bodySmall,
+                                      color: colorScheme.onSurfaceVariant,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              AppButton(
+                                label: l10n.prodHistoryAddAssignmentAction,
+                                icon: Icons.add_task_rounded,
+                                variant: AppButtonVariant.secondary,
+                                onPressed: _totalColoursCount > 0
+                                    ? _showAddInitialAssignmentSheet
+                                    : null,
+                              ),
+                            ],
+                          ),
+                          if (_initialAssignments.isNotEmpty) ...[
+                            const SizedBox(height: AppSpacing.sm),
+                            for (var i = 0; i < _initialAssignments.length; i++)
+                              Builder(
+                                builder: (context) {
+                                  final a = _initialAssignments[i];
+                                  final pName =
+                                      _activeProcesses
+                                          .where((p) => p.id == a.processId)
+                                          .firstOrNull
+                                          ?.name ??
+                                      a.processId;
+                                  final wName =
+                                      _activeWorkers
+                                          .where((w) => w.id == a.workerId)
+                                          .firstOrNull
+                                          ?.name ??
+                                      a.workerId;
+                                  return ListTile(
+                                    dense: true,
+                                    contentPadding: EdgeInsets.zero,
+                                    leading: const Icon(
+                                      Icons.precision_manufacturing_outlined,
+                                    ),
+                                    title: Text('$pName • $wName'),
+                                    subtitle: Text(
+                                      '${formatVariantLabel(a.designName, a.colourName)} • ${a.quantity} pcs @ ${MoneyFormatter.formatPaise(a.agreedRatePaise)}/pc',
+                                    ),
+                                    trailing: AppIconButton(
+                                      icon: Icons.close_rounded,
+                                      tooltip: 'Remove',
+                                      onPressed: () => setState(
+                                        () => _initialAssignments.removeAt(i),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                          ],
+                        ],
+                      ),
+                    ),
+
+                    if (_submitError != null) ...[
+                      const SizedBox(height: AppSpacing.sm),
+                      AppCard(
+                        borderColor: colorScheme.error,
+                        child: AppText(_submitError!, color: colorScheme.error),
                       ),
                     ],
                     const SizedBox(height: AppSpacing.md),
-                    if (_designs.isEmpty)
-                      Container(
-                        padding: const EdgeInsets.all(AppSpacing.md),
-                        decoration: BoxDecoration(
-                          borderRadius: AppRadius.mdBorder,
-                          border: Border.all(color: colorScheme.outlineVariant),
-                        ),
-                        child: AppText(
-                          'No designs added yet. Select an existing design or tap "+ Add New Design" above (or save an empty lot and add designs later).',
-                          variant: AppTextVariant.bodySmall,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      )
-                    else
-                      for (final design in _designs) ...[
-                        _buildDesignCard(context, design),
-                        const SizedBox(height: AppSpacing.sm),
-                      ],
-                  ] else ...[
-                    Row(
-                      children: [
-                        Expanded(
-                          child: AppText(
-                            'Colour Variants (${_colourOnlyVariants.length})',
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        AppButton(
-                          label: 'Add Colours',
-                          icon: Icons.palette_outlined,
-                          variant: AppButtonVariant.secondary,
-                          onPressed: _pickColoursForColourOnly,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    if (_colourOnlyVariants.isEmpty)
-                      Container(
-                        padding: const EdgeInsets.all(AppSpacing.md),
-                        decoration: BoxDecoration(
-                          borderRadius: AppRadius.mdBorder,
-                          border: Border.all(color: colorScheme.outlineVariant),
-                        ),
-                        child: AppText(
-                          'Tap "Add Colours" to pick colours from the palette or create custom colours with quantity & price.',
-                          variant: AppTextVariant.bodySmall,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      )
-                    else
-                      for (final c in _colourOnlyVariants)
-                        _buildColourRow(
-                          context,
-                          c,
-                          onRemove: () => setState(() {
-                            _colourOnlyVariants.remove(c);
-                            c.dispose();
-                          }),
-                        ),
                   ],
-                ],
+                ),
               ),
-            ),
-
-            // Section 3: Optional Initial Process Assignments (Phase 5)
-            const SizedBox(height: AppSpacing.md),
-            AppCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AppHeading(
-                              l10n.prodHistoryInitialAssignmentsTitle,
-                              level: AppHeadingLevel.h3,
-                            ),
-                            AppText(
-                              l10n.prodHistoryInitialAssignmentsSubtitle,
-                              variant: AppTextVariant.bodySmall,
-                              color: colorScheme.onSurfaceVariant,
-                            ),
-                          ],
-                        ),
-                      ),
-                      AppButton(
-                        label: l10n.prodHistoryAddAssignmentAction,
-                        icon: Icons.add_task_rounded,
-                        variant: AppButtonVariant.secondary,
-                        onPressed: _totalColoursCount > 0
-                            ? _showAddInitialAssignmentSheet
-                            : null,
-                      ),
-                    ],
-                  ),
-                  if (_initialAssignments.isNotEmpty) ...[
-                    const SizedBox(height: AppSpacing.sm),
-                    for (var i = 0; i < _initialAssignments.length; i++)
-                      Builder(
-                        builder: (context) {
-                          final a = _initialAssignments[i];
-                          final pName = _activeProcesses
-                              .where((p) => p.id == a.processId)
-                              .firstOrNull
-                              ?.name ??
-                              a.processId;
-                          final wName = _activeWorkers
-                              .where((w) => w.id == a.workerId)
-                              .firstOrNull
-                              ?.name ??
-                              a.workerId;
-                          return ListTile(
-                            dense: true,
-                            contentPadding: EdgeInsets.zero,
-                            leading: const Icon(
-                              Icons.precision_manufacturing_outlined,
-                            ),
-                            title: Text('$pName • $wName'),
-                            subtitle: Text(
-                              '${formatVariantLabel(a.designName, a.colourName)} • ${a.quantity} pcs @ ${MoneyFormatter.formatPaise(a.agreedRatePaise)}/pc',
-                            ),
-                            trailing: AppIconButton(
-                              icon: Icons.close_rounded,
-                              tooltip: 'Remove',
-                              onPressed: () => setState(
-                                () => _initialAssignments.removeAt(i),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                  ],
-                ],
-              ),
-            ),
-
-            if (_submitError != null) ...[
-              const SizedBox(height: AppSpacing.sm),
-              AppCard(
-                borderColor: colorScheme.error,
-                child: AppText(_submitError!, color: colorScheme.error),
+              Padding(
+                padding: const EdgeInsets.only(top: AppSpacing.sm),
+                child: AppButton(
+                  label: _totalQuantity > 0
+                      ? 'Save Lot (${MoneyFormatter.formatQuantity(_totalQuantity)} pcs)'
+                      : l10n.actionSave,
+                  icon: Icons.check_rounded,
+                  isExpanded: true,
+                  isLoading: _isSaving,
+                  onPressed: _isSaving ? null : _saveLot,
+                ),
               ),
             ],
-            const SizedBox(height: AppSpacing.md),
-          ],
-        ),
-      ),
-      Padding(
-        padding: const EdgeInsets.only(top: AppSpacing.sm),
-        child: AppButton(
-          label: _totalQuantity > 0
-              ? 'Save Lot (${MoneyFormatter.formatQuantity(_totalQuantity)} pcs)'
-              : l10n.actionSave,
-          icon: Icons.check_rounded,
-          isExpanded: true,
-          isLoading: _isSaving,
-          onPressed: _isSaving ? null : _saveLot,
-        ),
-      ),
-    ],
+          ),
         ),
       ),
     );
@@ -1258,7 +1297,10 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                 ),
                 const SizedBox(width: AppSpacing.sm),
                 Expanded(
-                  child: AppText(colour.colourName, fontWeight: FontWeight.w600),
+                  child: AppText(
+                    colour.colourName,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 if (lineTotalPaise > 0)
                   AppText(
@@ -1282,7 +1324,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                     label: 'Qty (pcs)',
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    onChanged: (_) => setState(() {}),
+                    onChanged: (_) => _edit(() {}),
                   ),
                 ),
                 const SizedBox(width: AppSpacing.sm),
@@ -1295,7 +1337,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                       decimal: true,
                     ),
                     inputFormatters: [AppInputFormatters.currencyDecimal],
-                    onChanged: (_) => setState(() {}),
+                    onChanged: (_) => _edit(() {}),
                   ),
                 ),
               ],

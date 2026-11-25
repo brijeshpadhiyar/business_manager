@@ -1,4 +1,5 @@
 import 'package:business_manager/core/config/app_config.dart';
+import 'package:business_manager/core/design_system/app_scroll_behavior.dart';
 import 'package:business_manager/core/design_system/app_theme.dart';
 import 'package:business_manager/core/di/app_session_controller.dart';
 import 'package:business_manager/core/di/injection.dart';
@@ -90,13 +91,21 @@ final class _BusinessManagerAppState extends State<BusinessManagerApp> {
                   theme: AppTheme.light(),
                   darkTheme: AppTheme.dark(),
                   routerConfig: _router,
-                  builder: (context, child) => ToastificationWrapper(
-                    child: AppLockGate(
-                      onNavigateDeepLink: (routePath) =>
-                          _router.push(routePath),
-                      child: child ?? const SizedBox.shrink(),
-                    ),
-                  ),
+                  scrollBehavior: const AppScrollBehavior(),
+                  // Respect the phone's font-size setting, but cap it so very
+                  // large system fonts cannot break tables and forms.
+                  builder: (context, child) =>
+                      MediaQuery.withClampedTextScaling(
+                        minScaleFactor: 1.0,
+                        maxScaleFactor: 1.3,
+                        child: ToastificationWrapper(
+                          child: AppLockGate(
+                            onNavigateDeepLink: (routePath) =>
+                                _router.push(routePath),
+                            child: child ?? const SizedBox.shrink(),
+                          ),
+                        ),
+                      ),
                 );
               },
             );

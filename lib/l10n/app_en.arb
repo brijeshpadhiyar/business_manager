@@ -1128,5 +1128,95 @@
   "webBackupExportDesc": "Downloads a verified offline snapshot of all local workshop records from this browser.",
   "webBackupRestoreAction": "Restore Web Backup (.json)",
   "webBackupRestoreDesc": "Validates checksum and schema before restoring all records into this browser's offline database.",
-  "webPrintFallbackNote": "Opened browser print dialog (use Save as PDF to download)."
+  "webPrintFallbackNote": "Opened browser print dialog (use Save as PDF to download).",
+  "uxUndo": "Undo",
+  "@uxUndo": {
+    "description": "Action label on a success message that reverses the last change."
+  },
+  "uxShowMore": "Show {count} more",
+  "@uxShowMore": {
+    "description": "Button that reveals more rows in a long list section.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "uxShowLess": "Show less",
+  "@uxShowLess": {
+    "description": "Button that collapses an expanded list section."
+  },
+  "uxUnsavedTitle": "Discard changes?",
+  "@uxUnsavedTitle": {
+    "description": "Title of the dialog shown when leaving a form with unsaved changes."
+  },
+  "uxUnsavedMessage": "You have changes that are not saved. If you leave now they will be lost.",
+  "@uxUnsavedMessage": {
+    "description": "Body of the unsaved-changes dialog."
+  },
+  "uxUnsavedDiscard": "Discard",
+  "@uxUnsavedDiscard": {
+    "description": "Confirm button that leaves the form and drops unsaved changes."
+  },
+  "uxUnsavedKeepEditing": "Keep editing",
+  "@uxUnsavedKeepEditing": {
+    "description": "Cancel button that stays on the form."
+  },
+  "uxSearchTooltip": "Search (Ctrl+K)",
+  "@uxSearchTooltip": {
+    "description": "Tooltip on the global search button."
+  },
+  "uxSearchHint": "Search lots, workers, processes…",
+  "@uxSearchHint": {
+    "description": "Hint in the global search box."
+  },
+  "uxSearchLots": "Lots",
+  "@uxSearchLots": {
+    "description": "Section title for lot results."
+  },
+  "uxSearchWorkers": "Workers",
+  "@uxSearchWorkers": {
+    "description": "Section title for worker results."
+  },
+  "uxSearchProcesses": "Processes",
+  "@uxSearchProcesses": {
+    "description": "Section title for process results."
+  },
+  "uxSearchNoResults": "No matches for \"{query}\"",
+  "@uxSearchNoResults": {
+    "description": "Shown when global search finds nothing.",
+    "placeholders": {
+      "query": {
+        "type": "String"
+      }
+    }
+  },
+  "uxQuickActions": "Quick actions",
+  "@uxQuickActions": {
+    "description": "Title of the quick actions group."
+  },
+  "uxActionNewLot": "New lot",
+  "@uxActionNewLot": {
+    "description": "Quick action: create a lot."
+  },
+  "uxActionIssueStock": "Issue stock to worker",
+  "@uxActionIssueStock": {
+    "description": "Quick action: issue stock."
+  },
+  "uxActionReceiveWork": "Receive work back",
+  "@uxActionReceiveWork": {
+    "description": "Quick action: receive returned work."
+  },
+  "uxActionRecordPayment": "Record payment",
+  "@uxActionRecordPayment": {
+    "description": "Quick action: record a worker payment."
+  },
+  "uxActionAddWorker": "Add worker",
+  "@uxActionAddWorker": {
+    "description": "Quick action: add a worker."
+  },
+  "uxActionInspections": "Inspection queue",
+  "@uxActionInspections": {
+    "description": "Quick action: open the inspection queue."
+  }
 }

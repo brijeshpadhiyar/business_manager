@@ -36,50 +36,50 @@ void main() {
         await seedDb.verifyPragmas();
 
         await seedDb.lotDao.insertLot(
-          LotsCompanion(
-            id: const Value('lot-legacy-1'),
-            lotNumber: const Value('LOT-LEGACY-01'),
-            title: const Value('Pre-v8 Cotton Kurti'),
-            transactionAt: const Value(now),
-            recordedAt: const Value(now),
-            createdAt: const Value(now),
-            updatedAt: const Value(now),
+          const LotsCompanion(
+            id: Value('lot-legacy-1'),
+            lotNumber: Value('LOT-LEGACY-01'),
+            title: Value('Pre-v8 Cotton Kurti'),
+            transactionAt: Value(now),
+            recordedAt: Value(now),
+            createdAt: Value(now),
+            updatedAt: Value(now),
           ),
         );
         await seedDb.lotDao.insertDesign(
-          LotDesignsCompanion(
-            id: const Value('des-legacy-1'),
-            lotId: const Value('lot-legacy-1'),
-            designName: const Value('Floral Kurti'),
-            createdAt: const Value(now),
-            updatedAt: const Value(now),
+          const LotDesignsCompanion(
+            id: Value('des-legacy-1'),
+            lotId: Value('lot-legacy-1'),
+            designName: Value('Floral Kurti'),
+            createdAt: Value(now),
+            updatedAt: Value(now),
           ),
         );
         await seedDb.lotDao.insertDesignColour(
-          DesignColoursCompanion(
-            id: const Value('col-legacy-1'),
-            lotDesignId: const Value('des-legacy-1'),
-            colourName: const Value('Red'),
-            initialQuantity: const Value(100),
-            unitPricePaise: const Value(50000),
-            createdAt: const Value(now),
-            updatedAt: const Value(now),
+          const DesignColoursCompanion(
+            id: Value('col-legacy-1'),
+            lotDesignId: Value('des-legacy-1'),
+            colourName: Value('Red'),
+            initialQuantity: Value(100),
+            unitPricePaise: Value(50000),
+            createdAt: Value(now),
+            updatedAt: Value(now),
           ),
         );
         await seedDb.processMemberDao.insertProcess(
-          ProcessesCompanion(
-            id: const Value('proc-legacy-1'),
-            name: const Value('Stitching'),
-            createdAt: const Value(now),
-            updatedAt: const Value(now),
+          const ProcessesCompanion(
+            id: Value('proc-legacy-1'),
+            name: Value('Stitching'),
+            createdAt: Value(now),
+            updatedAt: Value(now),
           ),
         );
         await seedDb.processMemberDao.insertMember(
-          MembersCompanion(
-            id: const Value('mem-legacy-1'),
-            name: const Value('Rameshbhai'),
-            createdAt: const Value(now),
-            updatedAt: const Value(now),
+          const MembersCompanion(
+            id: Value('mem-legacy-1'),
+            name: Value('Rameshbhai'),
+            createdAt: Value(now),
+            updatedAt: Value(now),
           ),
         );
 

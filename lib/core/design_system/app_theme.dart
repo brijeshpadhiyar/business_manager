@@ -84,6 +84,17 @@ abstract final class AppTheme {
       textTheme: textTheme,
       extensions: [semanticColors, surfaceTokens],
       visualDensity: VisualDensity.standard,
+      // Native-feeling navigation: keep the platform defaults (predictive
+      // back on Android, swipe-back slide on iOS/macOS) and use a light fade
+      // on desktop instead of the heavier zoom.
+      pageTransitionsTheme: PageTransitionsTheme(
+        builders: {
+          ...const PageTransitionsTheme().builders,
+          TargetPlatform.windows: const FadeForwardsPageTransitionsBuilder(),
+          TargetPlatform.linux: const FadeForwardsPageTransitionsBuilder(),
+          TargetPlatform.fuchsia: const FadeForwardsPageTransitionsBuilder(),
+        },
+      ),
       focusColor: colorScheme.secondary.withValues(alpha: isDark ? 0.24 : 0.16),
       hoverColor: colorScheme.primary.withValues(alpha: isDark ? 0.10 : 0.05),
       appBarTheme: AppBarTheme(
@@ -114,7 +125,9 @@ abstract final class AppTheme {
         indicatorShape: RoundedRectangleBorder(
           borderRadius: AppRadius.fullBorder,
           side: BorderSide(
-            color: colorScheme.secondary.withValues(alpha: isDark ? 0.42 : 0.28),
+            color: colorScheme.secondary.withValues(
+              alpha: isDark ? 0.42 : 0.28,
+            ),
             width: 1,
           ),
         ),
@@ -152,7 +165,9 @@ abstract final class AppTheme {
         indicatorShape: RoundedRectangleBorder(
           borderRadius: AppRadius.mdBorder,
           side: BorderSide(
-            color: colorScheme.secondary.withValues(alpha: isDark ? 0.36 : 0.24),
+            color: colorScheme.secondary.withValues(
+              alpha: isDark ? 0.36 : 0.24,
+            ),
           ),
         ),
       ),
@@ -286,11 +301,11 @@ abstract final class AppTheme {
           side: BorderSide(color: surfaceTokens.glassBorder, width: 1.2),
         ),
       ),
-      bottomSheetTheme: BottomSheetThemeData(
+      bottomSheetTheme: const BottomSheetThemeData(
         showDragHandle: false,
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
-        shape: const RoundedRectangleBorder(
+        shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(AppRadius.xl),
           ),

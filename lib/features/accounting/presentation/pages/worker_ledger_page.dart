@@ -1,3 +1,4 @@
+import 'package:business_manager/core/utils/app_memo.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/error/exceptions.dart';
@@ -44,6 +45,15 @@ final class _WorkerLedgerView extends StatefulWidget {
 }
 
 final class _WorkerLedgerViewState extends State<_WorkerLedgerView> {
+  // Filtered ledger lines, recomputed only when lines or the filter change.
+  final _linesMemo = AppMemo<List<WorkerLedgerLine>>();
+
+  List<WorkerLedgerLine> _visibleLines(List<WorkerLedgerLine> lines) =>
+      _linesMemo([
+        lines,
+        _typeFilter,
+      ], () => lines.where(_matchesFilter).toList(growable: false));
+
   _LedgerTypeFilter _typeFilter = _LedgerTypeFilter.all;
 
   String get workerId => widget.workerId;
@@ -228,273 +238,284 @@ final class _WorkerLedgerViewState extends State<_WorkerLedgerView> {
                   children: [
                     // Financial KPI Grid
                     LayoutBuilder(
-                builder: (context, constraints) {
-                  final isWide = constraints.maxWidth >= 680;
-                  final tileW = isWide
-                      ? (constraints.maxWidth - AppSpacing.sm * 3) / 4
-                      : (constraints.maxWidth - AppSpacing.sm) / 2;
-                  return Wrap(
-                    spacing: AppSpacing.sm,
-                    runSpacing: AppSpacing.sm,
-                    children: [
-                      SizedBox(
-                        width: tileW,
-                        child: AppMetricTile(
-                          label: l10n.accountingEarnedLabourLabel,
-                          value: summary.earnedLabourPaise,
-                          isCurrencyPaise: true,
-                          icon: Icons.work_outline_rounded,
-                          tone: AppStatusTone.good,
-                        ),
-                      ),
-                      SizedBox(
-                        width: tileW,
-                        child: AppMetricTile(
-                          label: l10n.accountingAdvancePaidLabel,
-                          value: summary.advancePaymentsPaise,
-                          isCurrencyPaise: true,
-                          icon: Icons.request_quote_outlined,
-                          tone: AppStatusTone.info,
-                        ),
-                      ),
-                      SizedBox(
-                        width: tileW,
-                        child: AppMetricTile(
-                          label: l10n.accountingRegularPaidLabel,
-                          value: summary.regularPaymentsPaise,
-                          isCurrencyPaise: true,
-                          icon: Icons.payments_outlined,
-                          tone: AppStatusTone.neutral,
-                        ),
-                      ),
-                      SizedBox(
-                        width: tileW,
-                        child: summary.advanceCreditBalancePaise > 0
-                            ? AppMetricTile(
-                                label: l10n.accountingAdvanceCreditLabel,
-                                value: summary.advanceCreditBalancePaise,
+                      builder: (context, constraints) {
+                        final isWide = constraints.maxWidth >= 680;
+                        final tileW = isWide
+                            ? (constraints.maxWidth - AppSpacing.sm * 3) / 4
+                            : (constraints.maxWidth - AppSpacing.sm) / 2;
+                        return Wrap(
+                          spacing: AppSpacing.sm,
+                          runSpacing: AppSpacing.sm,
+                          children: [
+                            SizedBox(
+                              width: tileW,
+                              child: AppMetricTile(
+                                label: l10n.accountingEarnedLabourLabel,
+                                value: summary.earnedLabourPaise,
                                 isCurrencyPaise: true,
-                                icon: Icons.trending_up_rounded,
-                                tone: AppStatusTone.info,
-                              )
-                            : AppMetricTile(
-                                label: l10n.accountingOutstandingPayableLabel,
-                                value: summary.outstandingPayablePaise,
-                                isCurrencyPaise: true,
-                                icon: Icons.account_balance_wallet_outlined,
-                                tone: summary.outstandingPayablePaise > 0
-                                    ? AppStatusTone.pending
-                                    : AppStatusTone.good,
+                                icon: Icons.work_outline_rounded,
+                                tone: AppStatusTone.good,
                               ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-              const SizedBox(height: AppSpacing.md),
-              Wrap(
-                spacing: AppSpacing.sm,
-                runSpacing: AppSpacing.sm,
-                children: [
-                  AppButton(
-                    label: l10n.accountingRecordPaymentAction,
-                    icon: Icons.payments_outlined,
-                    onPressed: () async {
-                      final saved = await context.push<bool>(
-                        RoutePaths.paymentCreate(workerId: workerId),
-                      );
-                      if (saved == true && context.mounted) {
-                        await context.read<WorkerLedgerCubit>().reload();
-                      }
-                    },
-                  ),
-                  AppButton(
-                    label: l10n.accountingAddAdjustmentAction,
-                    icon: Icons.tune_rounded,
-                    variant: AppButtonVariant.secondary,
-                    onPressed: () async {
-                      final saved = await context.push<bool>(
-                        RoutePaths.workerAdjustmentCreate(workerId),
-                      );
-                      if (saved == true && context.mounted) {
-                        await context.read<WorkerLedgerCubit>().reload();
-                      }
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-              // Stock summary bar
-              AppCard(
-                child: Wrap(
-                  spacing: AppSpacing.md,
-                  runSpacing: AppSpacing.xs,
-                  children: [
-                    AppStatusBadge(
-                      label:
-                          '${l10n.stockIssuedLabel}: ${detail.stockSummary.issued}',
-                      tone: AppStatusTone.info,
+                            ),
+                            SizedBox(
+                              width: tileW,
+                              child: AppMetricTile(
+                                label: l10n.accountingAdvancePaidLabel,
+                                value: summary.advancePaymentsPaise,
+                                isCurrencyPaise: true,
+                                icon: Icons.request_quote_outlined,
+                                tone: AppStatusTone.info,
+                              ),
+                            ),
+                            SizedBox(
+                              width: tileW,
+                              child: AppMetricTile(
+                                label: l10n.accountingRegularPaidLabel,
+                                value: summary.regularPaymentsPaise,
+                                isCurrencyPaise: true,
+                                icon: Icons.payments_outlined,
+                                tone: AppStatusTone.neutral,
+                              ),
+                            ),
+                            SizedBox(
+                              width: tileW,
+                              child: summary.advanceCreditBalancePaise > 0
+                                  ? AppMetricTile(
+                                      label: l10n.accountingAdvanceCreditLabel,
+                                      value: summary.advanceCreditBalancePaise,
+                                      isCurrencyPaise: true,
+                                      icon: Icons.trending_up_rounded,
+                                      tone: AppStatusTone.info,
+                                    )
+                                  : AppMetricTile(
+                                      label: l10n
+                                          .accountingOutstandingPayableLabel,
+                                      value: summary.outstandingPayablePaise,
+                                      isCurrencyPaise: true,
+                                      icon:
+                                          Icons.account_balance_wallet_outlined,
+                                      tone: summary.outstandingPayablePaise > 0
+                                          ? AppStatusTone.pending
+                                          : AppStatusTone.good,
+                                    ),
+                            ),
+                          ],
+                        );
+                      },
                     ),
-                    AppStatusBadge(
-                      label:
-                          '${l10n.stockGoodReturnedLabel}: ${detail.stockSummary.goodReturned}',
-                      tone: AppStatusTone.good,
-                    ),
-                    AppStatusBadge(
-                      label:
-                          '${l10n.stockRemainingPendingLabel}: ${detail.stockSummary.pending}',
-                      tone: detail.stockSummary.pending > 0
-                          ? AppStatusTone.pending
-                          : AppStatusTone.good,
-                    ),
-                    if (summary.netAdjustmentsPaise != 0)
-                      AppStatusBadge(
-                        label:
-                            '${l10n.accountingAdjustmentsLabel}: ${MoneyFormatter.formatPaise(summary.netAdjustmentsPaise)}',
-                        tone: AppStatusTone.neutral,
-                      ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              // Date range filter
-              AppCard(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Row(
+                    const SizedBox(height: AppSpacing.md),
+                    Wrap(
+                      spacing: AppSpacing.sm,
+                      runSpacing: AppSpacing.sm,
                       children: [
-                        Expanded(
-                          child: AppDatePicker(
-                            label: l10n.accountingFromDateLabel,
-                            selectedUtcMillis: state.fromUtcMillis,
-                            onDateSelectedUtcMillis: (utc) {
-                              final ist = IstDateTimeHelper.fromUtcMillisToIst(
-                                utc,
-                              );
-                              final startOfDayUtc =
-                                  IstDateTimeHelper.istDateTimeToUtcMillis(
-                                    year: ist.year,
-                                    month: ist.month,
-                                    day: ist.day,
-                                  );
-                              context.read<WorkerLedgerCubit>().loadLedger(
-                                workerId,
-                                fromUtcMillis: startOfDayUtc,
-                              );
-                            },
+                        AppButton(
+                          label: l10n.accountingRecordPaymentAction,
+                          icon: Icons.payments_outlined,
+                          onPressed: () async {
+                            final saved = await context.push<bool>(
+                              RoutePaths.paymentCreate(workerId: workerId),
+                            );
+                            if (saved == true && context.mounted) {
+                              await context.read<WorkerLedgerCubit>().reload();
+                            }
+                          },
+                        ),
+                        AppButton(
+                          label: l10n.accountingAddAdjustmentAction,
+                          icon: Icons.tune_rounded,
+                          variant: AppButtonVariant.secondary,
+                          onPressed: () async {
+                            final saved = await context.push<bool>(
+                              RoutePaths.workerAdjustmentCreate(workerId),
+                            );
+                            if (saved == true && context.mounted) {
+                              await context.read<WorkerLedgerCubit>().reload();
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    // Stock summary bar
+                    AppCard(
+                      child: Wrap(
+                        spacing: AppSpacing.md,
+                        runSpacing: AppSpacing.xs,
+                        children: [
+                          AppStatusBadge(
+                            label:
+                                '${l10n.stockIssuedLabel}: ${detail.stockSummary.issued}',
+                            tone: AppStatusTone.info,
+                          ),
+                          AppStatusBadge(
+                            label:
+                                '${l10n.stockGoodReturnedLabel}: ${detail.stockSummary.goodReturned}',
+                            tone: AppStatusTone.good,
+                          ),
+                          AppStatusBadge(
+                            label:
+                                '${l10n.stockRemainingPendingLabel}: ${detail.stockSummary.pending}',
+                            tone: detail.stockSummary.pending > 0
+                                ? AppStatusTone.pending
+                                : AppStatusTone.good,
+                          ),
+                          if (summary.netAdjustmentsPaise != 0)
+                            AppStatusBadge(
+                              label:
+                                  '${l10n.accountingAdjustmentsLabel}: ${MoneyFormatter.formatPaise(summary.netAdjustmentsPaise)}',
+                              tone: AppStatusTone.neutral,
+                            ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    // Date range filter
+                    AppCard(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
+                                child: AppDatePicker(
+                                  label: l10n.accountingFromDateLabel,
+                                  selectedUtcMillis: state.fromUtcMillis,
+                                  onDateSelectedUtcMillis: (utc) {
+                                    final ist =
+                                        IstDateTimeHelper.fromUtcMillisToIst(
+                                          utc,
+                                        );
+                                    final startOfDayUtc =
+                                        IstDateTimeHelper.istDateTimeToUtcMillis(
+                                          year: ist.year,
+                                          month: ist.month,
+                                          day: ist.day,
+                                        );
+                                    context
+                                        .read<WorkerLedgerCubit>()
+                                        .loadLedger(
+                                          workerId,
+                                          fromUtcMillis: startOfDayUtc,
+                                        );
+                                  },
+                                ),
+                              ),
+                              const SizedBox(width: AppSpacing.sm),
+                              Expanded(
+                                child: AppDatePicker(
+                                  label: l10n.accountingToDateLabel,
+                                  selectedUtcMillis: state.toUtcMillis,
+                                  errorText: state.dateRangeErrorCode != null
+                                      ? ValidationLocalizer.localizeDomainCode(
+                                          l10n,
+                                          state.dateRangeErrorCode!,
+                                        )
+                                      : null,
+                                  onDateSelectedUtcMillis: (utc) {
+                                    final ist =
+                                        IstDateTimeHelper.fromUtcMillisToIst(
+                                          utc,
+                                        );
+                                    final endOfDayUtc =
+                                        IstDateTimeHelper.istDateTimeToUtcMillis(
+                                          year: ist.year,
+                                          month: ist.month,
+                                          day: ist.day,
+                                          hour: 23,
+                                          minute: 59,
+                                          second: 59,
+                                        );
+                                    context
+                                        .read<WorkerLedgerCubit>()
+                                        .loadLedger(
+                                          workerId,
+                                          toUtcMillis: endOfDayUtc,
+                                        );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          if (state.fromUtcMillis != null ||
+                              state.toUtcMillis != null) ...[
+                            const SizedBox(height: AppSpacing.sm),
+                            Wrap(
+                              spacing: AppSpacing.sm,
+                              runSpacing: AppSpacing.xs,
+                              alignment: WrapAlignment.spaceBetween,
+                              crossAxisAlignment: WrapCrossAlignment.center,
+                              children: [
+                                AppText(
+                                  '${l10n.accountingOpeningBalanceLabel}: ${MoneyFormatter.formatPaise(detail.openingBalancePaise)}',
+                                  variant: AppTextVariant.numeric,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                AppButton(
+                                  label: l10n.accountingClearFilters,
+                                  variant: AppButtonVariant.text,
+                                  onPressed: () => context
+                                      .read<WorkerLedgerCubit>()
+                                      .loadLedger(
+                                        workerId,
+                                        clearFrom: true,
+                                        clearTo: true,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    // Transaction-type filter chips (Phase 3 Worker Financial Ledger)
+                    Wrap(
+                      spacing: AppSpacing.xs,
+                      runSpacing: AppSpacing.xs,
+                      children: [
+                        ChoiceChip(
+                          label: Text(l10n.prodHistoryAllEntries),
+                          selected: _typeFilter == _LedgerTypeFilter.all,
+                          onSelected: (_) => setState(
+                            () => _typeFilter = _LedgerTypeFilter.all,
                           ),
                         ),
-                        const SizedBox(width: AppSpacing.sm),
-                        Expanded(
-                          child: AppDatePicker(
-                            label: l10n.accountingToDateLabel,
-                            selectedUtcMillis: state.toUtcMillis,
-                            errorText: state.dateRangeErrorCode != null
-                                ? ValidationLocalizer.localizeDomainCode(
-                                    l10n,
-                                    state.dateRangeErrorCode!,
-                                  )
-                                : null,
-                            onDateSelectedUtcMillis: (utc) {
-                              final ist = IstDateTimeHelper.fromUtcMillisToIst(
-                                utc,
-                              );
-                              final endOfDayUtc =
-                                  IstDateTimeHelper.istDateTimeToUtcMillis(
-                                    year: ist.year,
-                                    month: ist.month,
-                                    day: ist.day,
-                                    hour: 23,
-                                    minute: 59,
-                                    second: 59,
-                                  );
-                              context.read<WorkerLedgerCubit>().loadLedger(
-                                workerId,
-                                toUtcMillis: endOfDayUtc,
-                              );
-                            },
+                        ChoiceChip(
+                          label: Text(l10n.accountingEarnedLabourLabel),
+                          selected: _typeFilter == _LedgerTypeFilter.earnings,
+                          onSelected: (_) => setState(
+                            () => _typeFilter = _LedgerTypeFilter.earnings,
+                          ),
+                        ),
+                        ChoiceChip(
+                          label: Text(l10n.accountingPaymentTypeRegular),
+                          selected: _typeFilter == _LedgerTypeFilter.payments,
+                          onSelected: (_) => setState(
+                            () => _typeFilter = _LedgerTypeFilter.payments,
+                          ),
+                        ),
+                        ChoiceChip(
+                          label: Text(l10n.accountingPaymentTypeAdvance),
+                          selected: _typeFilter == _LedgerTypeFilter.advances,
+                          onSelected: (_) => setState(
+                            () => _typeFilter = _LedgerTypeFilter.advances,
+                          ),
+                        ),
+                        ChoiceChip(
+                          label: Text(l10n.accountingAdjustmentsLabel),
+                          selected:
+                              _typeFilter == _LedgerTypeFilter.adjustments,
+                          onSelected: (_) => setState(
+                            () => _typeFilter = _LedgerTypeFilter.adjustments,
                           ),
                         ),
                       ],
                     ),
-                    if (state.fromUtcMillis != null ||
-                        state.toUtcMillis != null) ...[
-                      const SizedBox(height: AppSpacing.sm),
-                      Wrap(
-                        spacing: AppSpacing.sm,
-                        runSpacing: AppSpacing.xs,
-                        alignment: WrapAlignment.spaceBetween,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          AppText(
-                            '${l10n.accountingOpeningBalanceLabel}: ${MoneyFormatter.formatPaise(detail.openingBalancePaise)}',
-                            variant: AppTextVariant.numeric,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          AppButton(
-                            label: l10n.accountingClearFilters,
-                            variant: AppButtonVariant.text,
-                            onPressed: () =>
-                                context.read<WorkerLedgerCubit>().loadLedger(
-                                  workerId,
-                                  clearFrom: true,
-                                  clearTo: true,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ],
+                    const SizedBox(height: AppSpacing.md),
                   ],
                 ),
               ),
-              const SizedBox(height: AppSpacing.sm),
-              // Transaction-type filter chips (Phase 3 Worker Financial Ledger)
-              Wrap(
-                spacing: AppSpacing.xs,
-                runSpacing: AppSpacing.xs,
-                children: [
-                  ChoiceChip(
-                    label: Text(l10n.prodHistoryAllEntries),
-                    selected: _typeFilter == _LedgerTypeFilter.all,
-                    onSelected: (_) =>
-                        setState(() => _typeFilter = _LedgerTypeFilter.all),
-                  ),
-                  ChoiceChip(
-                    label: Text(l10n.accountingEarnedLabourLabel),
-                    selected: _typeFilter == _LedgerTypeFilter.earnings,
-                    onSelected: (_) => setState(
-                      () => _typeFilter = _LedgerTypeFilter.earnings,
-                    ),
-                  ),
-                  ChoiceChip(
-                    label: Text(l10n.accountingPaymentTypeRegular),
-                    selected: _typeFilter == _LedgerTypeFilter.payments,
-                    onSelected: (_) => setState(
-                      () => _typeFilter = _LedgerTypeFilter.payments,
-                    ),
-                  ),
-                  ChoiceChip(
-                    label: Text(l10n.accountingPaymentTypeAdvance),
-                    selected: _typeFilter == _LedgerTypeFilter.advances,
-                    onSelected: (_) => setState(
-                      () => _typeFilter = _LedgerTypeFilter.advances,
-                    ),
-                  ),
-                  ChoiceChip(
-                    label: Text(l10n.accountingAdjustmentsLabel),
-                    selected: _typeFilter == _LedgerTypeFilter.adjustments,
-                    onSelected: (_) => setState(
-                      () => _typeFilter = _LedgerTypeFilter.adjustments,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-                  ],
-                ),
-              ),
-              if (detail.lines.where(_matchesFilter).isEmpty)
+              if (_visibleLines(detail.lines).isEmpty)
                 SliverToBoxAdapter(
                   child: AppEmptyState(
                     icon: Icons.receipt_long_outlined,
@@ -505,9 +526,7 @@ final class _WorkerLedgerViewState extends State<_WorkerLedgerView> {
               else
                 Builder(
                   builder: (context) {
-                    final visibleLines = detail.lines
-                        .where(_matchesFilter)
-                        .toList(growable: false);
+                    final visibleLines = _visibleLines(detail.lines);
                     return SliverList.separated(
                       itemCount: visibleLines.length,
                       separatorBuilder: (_, _) =>

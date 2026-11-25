@@ -53,7 +53,7 @@ final class AppCollapsibleHeader {
     final theme = Theme.of(context);
     final tokens = context.surfaceTokens;
     final topPadding = primary ? MediaQuery.paddingOf(context).top : 0.0;
-    final toolbarHeight = AppSizing.appBarHeight;
+    const toolbarHeight = AppSizing.appBarHeight;
     final bottomHeight = bottom?.preferredSize.height ?? 0.0;
     final minExtent = toolbarHeight + bottomHeight + topPadding;
     final maxExtent = effectiveExpandedHeight + topPadding;

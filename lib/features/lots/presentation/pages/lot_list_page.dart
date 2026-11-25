@@ -1,3 +1,4 @@
+import 'package:business_manager/core/utils/app_memo.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
@@ -35,6 +36,9 @@ final class _LotListView extends StatefulWidget {
 }
 
 final class _LotListViewState extends State<_LotListView> {
+  // Sorting and counting run only when the lots or sort settings change.
+  final _sortMemo = AppMemo<List<LotEntity>>();
+  final _countsMemo = AppMemo<(int, int)>();
   final _searchController = TextEditingController();
   int _sortColumnIndex = 2;
   bool _sortAscending = false;
@@ -120,13 +124,20 @@ final class _LotListViewState extends State<_LotListView> {
     final localeCode = Localizations.localeOf(context).languageCode;
     return BlocBuilder<LotListCubit, LotListState>(
       builder: (context, state) {
-        final activeCount = state.lots
-            .where((l) => l.status == LotStatus.active)
-            .length;
-        final completedCount = state.lots
-            .where((l) => l.status == LotStatus.completed)
-            .length;
-        final sortedLots = _sortedLots(state.lots);
+        final (activeCount, completedCount) = _countsMemo([state.lots], () {
+          var active = 0;
+          var completed = 0;
+          for (final l in state.lots) {
+            if (l.status == LotStatus.active) active++;
+            if (l.status == LotStatus.completed) completed++;
+          }
+          return (active, completed);
+        });
+        final sortedLots = _sortMemo([
+          state.lots,
+          _sortColumnIndex,
+          _sortAscending,
+        ], () => _sortedLots(state.lots));
 
         final List<Widget> slivers;
         if (state.status == LotListStatus.loading ||
@@ -304,25 +315,25 @@ final class _LotListViewState extends State<_LotListView> {
                     FilterChip(
                       label: Text(l10n.lotsFilterAll),
                       selected: state.statusFilter == null,
-                      onSelected: (_) => context
-                          .read<LotListCubit>()
-                          .loadLots(clearStatusFilter: true),
+                      onSelected: (_) => context.read<LotListCubit>().loadLots(
+                        clearStatusFilter: true,
+                      ),
                     ),
                     const SizedBox(width: AppSpacing.sm),
                     FilterChip(
                       label: Text(l10n.lotsStatusActive),
                       selected: state.statusFilter == LotStatus.active,
-                      onSelected: (_) => context
-                          .read<LotListCubit>()
-                          .loadLots(statusFilter: LotStatus.active),
+                      onSelected: (_) => context.read<LotListCubit>().loadLots(
+                        statusFilter: LotStatus.active,
+                      ),
                     ),
                     const SizedBox(width: AppSpacing.sm),
                     FilterChip(
                       label: Text(l10n.lotsStatusCompleted),
                       selected: state.statusFilter == LotStatus.completed,
-                      onSelected: (_) => context
-                          .read<LotListCubit>()
-                          .loadLots(statusFilter: LotStatus.completed),
+                      onSelected: (_) => context.read<LotListCubit>().loadLots(
+                        statusFilter: LotStatus.completed,
+                      ),
                     ),
                   ],
                 ),

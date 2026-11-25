@@ -181,11 +181,12 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                               if (sheetCtx.mounted) {
                                 setSheetState(() {
                                   saving = false;
-                                  error = ValidationLocalizer.localizeDomainCode(
-                                    l10n,
-                                    err,
-                                    fallback: err,
-                                  );
+                                  error =
+                                      ValidationLocalizer.localizeDomainCode(
+                                        l10n,
+                                        err,
+                                        fallback: err,
+                                      );
                                 });
                               }
                             } else if (sheetCtx.mounted) {
@@ -411,7 +412,9 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                     label: creditWorker
                         ? 'Worker earning generated: ${MoneyFormatter.formatPaise(earnPreview)}'
                         : 'In-House Repair: ₹0 worker earning',
-                    tone: creditWorker ? AppStatusTone.good : AppStatusTone.info,
+                    tone: creditWorker
+                        ? AppStatusTone.good
+                        : AppStatusTone.info,
                   ),
                   if (error != null) ...[
                     const SizedBox(height: AppSpacing.xs),
@@ -430,8 +433,7 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                                 acc + rejAgain >
                                     repairView.pendingReinspectionQty) {
                               setSheetState(
-                                () =>
-                                    error = l10n.validationExceedsRepairedQty,
+                                () => error = l10n.validationExceedsRepairedQty,
                               );
                               return;
                             }
@@ -466,11 +468,12 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                               if (sheetCtx.mounted) {
                                 setSheetState(() {
                                   saving = false;
-                                  error = ValidationLocalizer.localizeDomainCode(
-                                    l10n,
-                                    err,
-                                    fallback: err,
-                                  );
+                                  error =
+                                      ValidationLocalizer.localizeDomainCode(
+                                        l10n,
+                                        err,
+                                        fallback: err,
+                                      );
                                 });
                               }
                             } else if (sheetCtx.mounted) {
@@ -606,7 +609,8 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                     ),
                   ),
                   AppStatusBadge(
-                    label: '${item.remainingPendingInspectionQty} pcs Pending QC',
+                    label:
+                        '${item.remainingPendingInspectionQty} pcs Pending QC',
                     tone: AppStatusTone.pending,
                   ),
                 ],
@@ -678,98 +682,111 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
             title: l10n.stockNoDamagedAvailable,
           )
         else
-          for (final rej in state.rejections) ...[
-            AppCard.listItem(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
+          AppLazySection(
+            key: const ValueKey('state.rejections'),
+            initialCount: 15,
+            items: state.rejections,
+            itemBuilder: (context, rej, _) => Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                AppCard.listItem(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: AppText(
-                          '${rej.lotNumber} • ${rej.processName} • ${rej.workerName}',
-                          fontWeight: FontWeight.w700,
-                        ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: AppText(
+                              '${rej.lotNumber} • ${rej.processName} • ${rej.workerName}',
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          AppStatusBadge(
+                            label: rej.record.status.dbValue,
+                            tone: rej.openUnrepairedQty > 0
+                                ? AppStatusTone.damaged
+                                : (rej.pendingReinspectionQty > 0
+                                      ? AppStatusTone.pending
+                                      : AppStatusTone.good),
+                          ),
+                        ],
                       ),
-                      AppStatusBadge(
-                        label: rej.record.status.dbValue,
-                        tone: rej.openUnrepairedQty > 0
-                            ? AppStatusTone.damaged
-                            : (rej.pendingReinspectionQty > 0
-                                  ? AppStatusTone.pending
-                                  : AppStatusTone.good),
+                      const SizedBox(height: 2),
+                      AppText(
+                        '${rej.designName} • ${rej.colourName} • Reason: ${rej.record.rejectionReason}',
+                        variant: AppTextVariant.bodySmall,
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 2),
-                  AppText(
-                    '${rej.designName} • ${rej.colourName} • Reason: ${rej.record.rejectionReason}',
-                    variant: AppTextVariant.bodySmall,
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Wrap(
-                    spacing: AppSpacing.xs,
-                    runSpacing: 4,
-                    children: [
-                      AppStatusBadge(
-                        label: 'Rejected: ${rej.record.rejectedQuantity}',
-                        tone: AppStatusTone.damaged,
+                      const SizedBox(height: AppSpacing.xs),
+                      Wrap(
+                        spacing: AppSpacing.xs,
+                        runSpacing: 4,
+                        children: [
+                          AppStatusBadge(
+                            label: 'Rejected: ${rej.record.rejectedQuantity}',
+                            tone: AppStatusTone.damaged,
+                          ),
+                          AppStatusBadge(
+                            label: 'Open: ${rej.openUnrepairedQty}',
+                            tone: rej.openUnrepairedQty > 0
+                                ? AppStatusTone.pending
+                                : AppStatusTone.neutral,
+                          ),
+                          AppStatusBadge(
+                            label: 'Re-Approved: ${rej.totalReapprovedQty}',
+                            tone: AppStatusTone.good,
+                          ),
+                          if (rej.pendingReinspectionQty > 0)
+                            AppStatusBadge(
+                              label:
+                                  'Awaiting Re-QC: ${rej.pendingReinspectionQty}',
+                              tone: AppStatusTone.info,
+                            ),
+                        ],
                       ),
-                      AppStatusBadge(
-                        label: 'Open: ${rej.openUnrepairedQty}',
-                        tone: rej.openUnrepairedQty > 0
-                            ? AppStatusTone.pending
-                            : AppStatusTone.neutral,
-                      ),
-                      AppStatusBadge(
-                        label: 'Re-Approved: ${rej.totalReapprovedQty}',
-                        tone: AppStatusTone.good,
-                      ),
-                      if (rej.pendingReinspectionQty > 0)
-                        AppStatusBadge(
-                          label: 'Awaiting Re-QC: ${rej.pendingReinspectionQty}',
-                          tone: AppStatusTone.info,
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Wrap(
-                    spacing: AppSpacing.sm,
-                    runSpacing: AppSpacing.xs,
-                    children: [
-                      if (rej.openUnrepairedQty > 0)
-                        AppButton(
-                          label: l10n.prodHistoryRecordRepairAction,
-                          icon: Icons.build_outlined,
-                          variant: AppButtonVariant.secondary,
-                          onPressed: () => _showLogRepairSheet(context, rej),
-                        ),
-                      for (final rep in rej.repairs)
-                        if (rep.pendingReinspectionQty > 0)
+                      const SizedBox(height: AppSpacing.sm),
+                      Wrap(
+                        spacing: AppSpacing.sm,
+                        runSpacing: AppSpacing.xs,
+                        children: [
+                          if (rej.openUnrepairedQty > 0)
+                            AppButton(
+                              label: l10n.prodHistoryRecordRepairAction,
+                              icon: Icons.build_outlined,
+                              variant: AppButtonVariant.secondary,
+                              onPressed: () =>
+                                  _showLogRepairSheet(context, rej),
+                            ),
+                          for (final rep in rej.repairs)
+                            if (rep.pendingReinspectionQty > 0)
+                              AppButton(
+                                label:
+                                    '${l10n.prodHistoryReinspectAction} (${rep.pendingReinspectionQty})',
+                                icon: Icons.verified_rounded,
+                                onPressed: () =>
+                                    _showReinspectSheet(context, rej, rep),
+                              ),
                           AppButton(
-                            label:
-                                '${l10n.prodHistoryReinspectAction} (${rep.pendingReinspectionQty})',
-                            icon: Icons.verified_rounded,
-                            onPressed: () =>
-                                _showReinspectSheet(context, rej, rep),
+                            label: l10n.prodHistoryTxDetailTitle,
+                            variant: AppButtonVariant.text,
+                            onPressed: () => context.push(
+                              RoutePaths.productionTransactionDetail(
+                                ProductionTransactionKind
+                                    .rejection
+                                    .routeSegment,
+                                rej.record.id,
+                              ),
+                            ),
                           ),
-                      AppButton(
-                        label: l10n.prodHistoryTxDetailTitle,
-                        variant: AppButtonVariant.text,
-                        onPressed: () => context.push(
-                          RoutePaths.productionTransactionDetail(
-                            ProductionTransactionKind.rejection.routeSegment,
-                            rej.record.id,
-                          ),
-                        ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+              ],
             ),
-            const SizedBox(height: AppSpacing.sm),
-          ],
+          ),
       ],
     );
   }

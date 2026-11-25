@@ -250,7 +250,8 @@ final class _ProcessDetailViewState extends State<_ProcessDetailView> {
                                   tone: AppStatusTone.good,
                                 ),
                                 AppStatusBadge(
-                                  label: 'Pending QC: ${ph.pendingInspectionQty}',
+                                  label:
+                                      'Pending QC: ${ph.pendingInspectionQty}',
                                   tone: ph.pendingInspectionQty > 0
                                       ? AppStatusTone.pending
                                       : AppStatusTone.neutral,
@@ -315,8 +316,11 @@ final class _ProcessDetailViewState extends State<_ProcessDetailView> {
                       ),
                       const SizedBox(height: AppSpacing.sm),
                       if (_historyTab == 0)
-                        for (final r in ph.lotHistory)
-                          Padding(
+                        AppLazySection(
+                          key: const ValueKey('ph.lotHistory'),
+                          initialCount: 15,
+                          items: ph.lotHistory,
+                          itemBuilder: (context, r, _) => Padding(
                             padding: const EdgeInsets.only(bottom: 6),
                             child: AppCard.listItem(
                               onTap: () =>
@@ -349,10 +353,14 @@ final class _ProcessDetailViewState extends State<_ProcessDetailView> {
                                 ],
                               ),
                             ),
-                          )
+                          ),
+                        )
                       else if (_historyTab == 1)
-                        for (final w in ph.workerHistory)
-                          Padding(
+                        AppLazySection(
+                          key: const ValueKey('ph.workerHistory'),
+                          initialCount: 15,
+                          items: ph.workerHistory,
+                          itemBuilder: (context, w, _) => Padding(
                             padding: const EdgeInsets.only(bottom: 6),
                             child: AppCard.listItem(
                               onTap: () => context.push(
@@ -386,10 +394,14 @@ final class _ProcessDetailViewState extends State<_ProcessDetailView> {
                                 ],
                               ),
                             ),
-                          )
+                          ),
+                        )
                       else if (_historyTab == 2)
-                        for (final d in ph.dateHistory)
-                          Padding(
+                        AppLazySection(
+                          key: const ValueKey('ph.dateHistory'),
+                          initialCount: 15,
+                          items: ph.dateHistory,
+                          itemBuilder: (context, d, _) => Padding(
                             padding: const EdgeInsets.only(bottom: 6),
                             child: AppCard.listItem(
                               child: Row(
@@ -418,10 +430,14 @@ final class _ProcessDetailViewState extends State<_ProcessDetailView> {
                                 ],
                               ),
                             ),
-                          )
+                          ),
+                        )
                       else
-                        for (final p in ph.pendingAssignments)
-                          Padding(
+                        AppLazySection(
+                          key: const ValueKey('ph.pendingAssignments'),
+                          initialCount: 15,
+                          items: ph.pendingAssignments,
+                          itemBuilder: (context, p, _) => Padding(
                             padding: const EdgeInsets.only(bottom: 6),
                             child: AppCard.listItem(
                               onTap: () => context.push(
@@ -455,6 +471,7 @@ final class _ProcessDetailViewState extends State<_ProcessDetailView> {
                               ),
                             ),
                           ),
+                        ),
                     ],
                   );
                 },

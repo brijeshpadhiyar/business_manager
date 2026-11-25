@@ -1536,8 +1536,19 @@ final class _LotPhotoTileState extends State<_LotPhotoTile> {
                 content: InteractiveViewer(
                   child: ClipRRect(
                     borderRadius: AppRadius.mdBorder,
-                    child: Image.memory(
-                      bytes,
+                    child: Image(
+                      // Decode at most 2x screen width (zoom headroom), not
+                      // the camera's full size, so large photos open quickly
+                      // and use far less memory. Small photos are not upscaled.
+                      image: ResizeImage(
+                        MemoryImage(bytes),
+                        width:
+                            (MediaQuery.sizeOf(dlgCtx).width *
+                                    MediaQuery.devicePixelRatioOf(dlgCtx) *
+                                    2)
+                                .round(),
+                        policy: ResizeImagePolicy.fit,
+                      ),
                       fit: BoxFit.contain,
                       gaplessPlayback: true,
                     ),

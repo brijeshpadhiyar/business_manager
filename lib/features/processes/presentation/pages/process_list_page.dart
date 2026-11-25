@@ -1,3 +1,4 @@
+import 'package:business_manager/core/utils/app_memo.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
@@ -34,6 +35,9 @@ final class _ProcessListView extends StatefulWidget {
 }
 
 final class _ProcessListViewState extends State<_ProcessListView> {
+  // Sorting and counting run only when the data or sort settings change.
+  final _sortMemo = AppMemo<List<ProcessEntity>>();
+  final _countMemo = AppMemo<int>();
   final _searchController = TextEditingController();
   int _sortColumnIndex = 0;
   bool _sortAscending = true;
@@ -80,9 +84,15 @@ final class _ProcessListViewState extends State<_ProcessListView> {
     final l10n = context.l10n;
     return BlocBuilder<ProcessListCubit, ProcessListState>(
       builder: (context, state) {
-        final activeCount = state.processes.where((p) => p.isActive).length;
+        final activeCount = _countMemo([
+          state.processes,
+        ], () => state.processes.where((p) => p.isActive).length);
         final inactiveCount = state.processes.length - activeCount;
-        final sortedProcesses = _sortedProcesses(state.processes);
+        final sortedProcesses = _sortMemo([
+          state.processes,
+          _sortColumnIndex,
+          _sortAscending,
+        ], () => _sortedProcesses(state.processes));
 
         final List<Widget> slivers;
         if (state.status == ProcessListStatus.loading ||
@@ -102,8 +112,7 @@ final class _ProcessListViewState extends State<_ProcessListView> {
                 title: l10n.errorUnexpected,
                 message: state.errorMessage,
                 retryLabel: l10n.actionRetry,
-                onRetry: () =>
-                    context.read<ProcessListCubit>().loadProcesses(),
+                onRetry: () => context.read<ProcessListCubit>().loadProcesses(),
               ),
             ),
           ];
@@ -195,9 +204,7 @@ final class _ProcessListViewState extends State<_ProcessListView> {
                                 ? 'Default Rate: ${MoneyFormatter.formatRatePaise(process.defaultRatePaise, pricingUnit: process.defaultPricingUnit)}'
                                 : 'No default labour rate',
                             variant: AppTextVariant.bodySmall,
-                            color: Theme.of(
-                              ctx,
-                            ).colorScheme.onSurfaceVariant,
+                            color: Theme.of(ctx).colorScheme.onSurfaceVariant,
                           ),
                         ],
                       ),

@@ -1,3 +1,4 @@
+import 'package:business_manager/core/utils/app_memo.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
@@ -34,6 +35,8 @@ final class ReceiveReturnPickerPage extends StatefulWidget {
 
 final class _ReceiveReturnPickerPageState
     extends State<ReceiveReturnPickerPage> {
+  final _viewMemo =
+      AppMemo<(List<String>, List<String>, List<OpenIssueSummary>)>();
   final _repo = getIt<StockMovementRepository>();
   final _searchCtrl = TextEditingController();
 
@@ -108,44 +111,54 @@ final class _ReceiveReturnPickerPageState
       );
     }
 
-    final workerNames = <String>{
-      for (final i in _issues)
-        if (i.issueView.workerName != null) i.issueView.workerName!,
-    }.toList()..sort();
-
-    final processNames = <String>{
-      for (final i in _issues)
-        if (i.issueView.processName != null) i.issueView.processName!,
-    }.toList()..sort();
-
     final query = _searchCtrl.text.trim().toLowerCase();
-    final filtered = _issues.where((item) {
-      final v = item.issueView;
-      if (_workerFilter != null && v.workerName != _workerFilter) return false;
-      if (_processFilter != null && v.processName != _processFilter) {
-        return false;
-      }
-      if (query.isEmpty) return true;
-      final hay =
-          '${v.workerName ?? ''} ${v.processName ?? ''} ${v.lotNumber} ${v.designName} ${v.colourName}'
-              .toLowerCase();
-      return hay.contains(query);
-    }).toList();
+    // Names, filtering and sorting run only when the data or a filter changes.
+    final (
+      workerNames,
+      processNames,
+      filtered,
+    ) = _viewMemo([_issues, _workerFilter, _processFilter, query, _sortMode], () {
+      final workerNames = <String>{
+        for (final i in _issues)
+          if (i.issueView.workerName != null) i.issueView.workerName!,
+      }.toList()..sort();
 
-    filtered.sort((a, b) {
-      return switch (_sortMode) {
-        _PendingSortMode.oldestFirst =>
-          a.issueView.movement.transactionAt.compareTo(
-            b.issueView.movement.transactionAt,
+      final processNames = <String>{
+        for (final i in _issues)
+          if (i.issueView.processName != null) i.issueView.processName!,
+      }.toList()..sort();
+
+      final filtered = _issues.where((item) {
+        final v = item.issueView;
+        if (_workerFilter != null && v.workerName != _workerFilter) {
+          return false;
+        }
+        if (_processFilter != null && v.processName != _processFilter) {
+          return false;
+        }
+        if (query.isEmpty) return true;
+        final hay =
+            '${v.workerName ?? ''} ${v.processName ?? ''} ${v.lotNumber} ${v.designName} ${v.colourName}'
+                .toLowerCase();
+        return hay.contains(query);
+      }).toList();
+
+      filtered.sort((a, b) {
+        return switch (_sortMode) {
+          _PendingSortMode.oldestFirst =>
+            a.issueView.movement.transactionAt.compareTo(
+              b.issueView.movement.transactionAt,
+            ),
+          _PendingSortMode.highestPending => b.remainingPending.compareTo(
+            a.remainingPending,
           ),
-        _PendingSortMode.highestPending => b.remainingPending.compareTo(
-          a.remainingPending,
-        ),
-        _PendingSortMode.newestFirst =>
-          b.issueView.movement.transactionAt.compareTo(
-            a.issueView.movement.transactionAt,
-          ),
-      };
+          _PendingSortMode.newestFirst =>
+            b.issueView.movement.transactionAt.compareTo(
+              a.issueView.movement.transactionAt,
+            ),
+        };
+      });
+      return (workerNames, processNames, filtered);
     });
 
     return AppScaffold(
@@ -241,8 +254,9 @@ final class _ReceiveReturnPickerPageState
                                   label: Text(w),
                                   selected: _workerFilter == w,
                                   onSelected: (_) => setState(
-                                    () => _workerFilter =
-                                        _workerFilter == w ? null : w,
+                                    () => _workerFilter = _workerFilter == w
+                                        ? null
+                                        : w,
                                   ),
                                 ),
                                 const SizedBox(width: AppSpacing.xs),
@@ -269,8 +283,9 @@ final class _ReceiveReturnPickerPageState
                                   label: Text(p),
                                   selected: _processFilter == p,
                                   onSelected: (_) => setState(
-                                    () => _processFilter =
-                                        _processFilter == p ? null : p,
+                                    () => _processFilter = _processFilter == p
+                                        ? null
+                                        : p,
                                   ),
                                 ),
                                 const SizedBox(width: AppSpacing.xs),

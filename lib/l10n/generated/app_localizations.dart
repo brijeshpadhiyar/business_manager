@@ -5113,6 +5113,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Opened browser print dialog (use Save as PDF to download).'**
   String get webPrintFallbackNote;
+
+  /// Action label on a success message that reverses the last change.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get uxUndo;
+
+  /// Button that reveals more rows in a long list section.
+  ///
+  /// In en, this message translates to:
+  /// **'Show {count} more'**
+  String uxShowMore(int count);
+
+  /// Button that collapses an expanded list section.
+  ///
+  /// In en, this message translates to:
+  /// **'Show less'**
+  String get uxShowLess;
+
+  /// Title of the dialog shown when leaving a form with unsaved changes.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard changes?'**
+  String get uxUnsavedTitle;
+
+  /// Body of the unsaved-changes dialog.
+  ///
+  /// In en, this message translates to:
+  /// **'You have changes that are not saved. If you leave now they will be lost.'**
+  String get uxUnsavedMessage;
+
+  /// Confirm button that leaves the form and drops unsaved changes.
+  ///
+  /// In en, this message translates to:
+  /// **'Discard'**
+  String get uxUnsavedDiscard;
+
+  /// Cancel button that stays on the form.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep editing'**
+  String get uxUnsavedKeepEditing;
+
+  /// Tooltip on the global search button.
+  ///
+  /// In en, this message translates to:
+  /// **'Search (Ctrl+K)'**
+  String get uxSearchTooltip;
+
+  /// Hint in the global search box.
+  ///
+  /// In en, this message translates to:
+  /// **'Search lots, workers, processes…'**
+  String get uxSearchHint;
+
+  /// Section title for lot results.
+  ///
+  /// In en, this message translates to:
+  /// **'Lots'**
+  String get uxSearchLots;
+
+  /// Section title for worker results.
+  ///
+  /// In en, this message translates to:
+  /// **'Workers'**
+  String get uxSearchWorkers;
+
+  /// Section title for process results.
+  ///
+  /// In en, this message translates to:
+  /// **'Processes'**
+  String get uxSearchProcesses;
+
+  /// Shown when global search finds nothing.
+  ///
+  /// In en, this message translates to:
+  /// **'No matches for \"{query}\"'**
+  String uxSearchNoResults(String query);
+
+  /// Title of the quick actions group.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick actions'**
+  String get uxQuickActions;
+
+  /// Quick action: create a lot.
+  ///
+  /// In en, this message translates to:
+  /// **'New lot'**
+  String get uxActionNewLot;
+
+  /// Quick action: issue stock.
+  ///
+  /// In en, this message translates to:
+  /// **'Issue stock to worker'**
+  String get uxActionIssueStock;
+
+  /// Quick action: receive returned work.
+  ///
+  /// In en, this message translates to:
+  /// **'Receive work back'**
+  String get uxActionReceiveWork;
+
+  /// Quick action: record a worker payment.
+  ///
+  /// In en, this message translates to:
+  /// **'Record payment'**
+  String get uxActionRecordPayment;
+
+  /// Quick action: add a worker.
+  ///
+  /// In en, this message translates to:
+  /// **'Add worker'**
+  String get uxActionAddWorker;
+
+  /// Quick action: open the inspection queue.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspection queue'**
+  String get uxActionInspections;
 }
 
 class _AppLocalizationsDelegate
