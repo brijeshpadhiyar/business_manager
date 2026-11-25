@@ -24,6 +24,14 @@ final class ProcessFormPage extends StatefulWidget {
 }
 
 final class _ProcessFormPageState extends State<ProcessFormPage> {
+  final _dirty = AppFormDirtyTracker();
+
+  /// setState for a user edit: also marks the form as unsaved.
+  void _edit(VoidCallback fn) {
+    _dirty.markDirty();
+    setState(fn);
+  }
+
   final _formKey = GlobalKey<FormState>();
   final _nameFieldKey = GlobalKey<FormFieldState<String>>();
   final _descFieldKey = GlobalKey<FormFieldState<String>>();
@@ -50,6 +58,7 @@ final class _ProcessFormPageState extends State<ProcessFormPage> {
   @override
   void initState() {
     super.initState();
+    _dirty.watch([_nameCtrl, _descCtrl, _rateCtrl]);
     if (widget.isEdit) {
       _loadExisting();
     }
@@ -80,6 +89,7 @@ final class _ProcessFormPageState extends State<ProcessFormPage> {
       _pricingUnit = proc.defaultPricingUnit;
       _includeDamaged = proc.includeDamagedInLabour;
       _isActive = proc.isActive;
+      _dirty.reset();
       setState(() => _isLoading = false);
     } catch (e) {
       if (!mounted) return;
@@ -92,6 +102,7 @@ final class _ProcessFormPageState extends State<ProcessFormPage> {
 
   @override
   void dispose() {
+    _dirty.dispose();
     _nameCtrl.dispose();
     _descCtrl.dispose();
     _rateCtrl.dispose();
@@ -211,171 +222,182 @@ final class _ProcessFormPageState extends State<ProcessFormPage> {
       );
     }
 
-    return AppScaffold(
-      title: title,
-      contentWidth: AppContentWidth.narrow,
-      body: Form(
-        key: _formKey,
-        autovalidateMode: _submittedOnce
-            ? AutovalidateMode.onUserInteraction
-            : AutovalidateMode.disabled,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: ListView(
-                keyboardDismissBehavior:
-                    ScrollViewKeyboardDismissBehavior.onDrag,
-                children: [
-                  AppCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        AppHeading(
-                          l10n.processDetailsHeading,
-                          level: AppHeadingLevel.h3,
-                        ),
-                        const SizedBox(height: AppSpacing.md),
-                        AppTextField(
-                          fieldKey: _nameFieldKey,
-                          controller: _nameCtrl,
-                          focusNode: _nameFocus,
-                          label: l10n.processNameLabel,
-                          prefixIcon: Icons.precision_manufacturing_outlined,
-                          textInputAction: TextInputAction.next,
-                          maxLength: ValidationLimits.maxShortNameLength,
-                          onChanged: (_) {
-                            if (_submitError != null) {
-                              setState(() => _submitError = null);
-                            }
-                          },
-                          validator: ValidationLocalizer.wrap(
-                            l10n,
-                            (v) => AppValidators.nameValidator(
-                              v,
-                              maxLength: ValidationLimits.maxShortNameLength,
+    return AppUnsavedChangesGuard.tracked(
+      tracker: _dirty,
+      child: AppScaffold(
+        title: title,
+        contentWidth: AppContentWidth.narrow,
+        body: Form(
+          key: _formKey,
+          autovalidateMode: _submittedOnce
+              ? AutovalidateMode.onUserInteraction
+              : AutovalidateMode.disabled,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: ListView(
+                  keyboardDismissBehavior:
+                      ScrollViewKeyboardDismissBehavior.onDrag,
+                  children: [
+                    AppCard(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          AppHeading(
+                            l10n.processDetailsHeading,
+                            level: AppHeadingLevel.h3,
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                          AppTextField(
+                            fieldKey: _nameFieldKey,
+                            controller: _nameCtrl,
+                            focusNode: _nameFocus,
+                            label: l10n.processNameLabel,
+                            prefixIcon: Icons.precision_manufacturing_outlined,
+                            textInputAction: TextInputAction.next,
+                            maxLength: ValidationLimits.maxShortNameLength,
+                            onChanged: (_) {
+                              if (_submitError != null) {
+                                setState(() => _submitError = null);
+                              }
+                            },
+                            validator: ValidationLocalizer.wrap(
+                              l10n,
+                              (v) => AppValidators.nameValidator(
+                                v,
+                                maxLength: ValidationLimits.maxShortNameLength,
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: AppSpacing.md),
-                        AppTextField(
-                          fieldKey: _descFieldKey,
-                          controller: _descCtrl,
-                          focusNode: _descFocus,
-                          label: l10n.processDescriptionLabel,
-                          maxLines: 3,
-                          maxLength: ValidationLimits.maxNotesLength,
-                          validator: ValidationLocalizer.wrap(
-                            l10n,
-                            (v) => AppValidators.maxLengthValidator(
-                              v,
-                              maxLength: ValidationLimits.maxNotesLength,
+                          const SizedBox(height: AppSpacing.md),
+                          AppTextField(
+                            fieldKey: _descFieldKey,
+                            controller: _descCtrl,
+                            focusNode: _descFocus,
+                            label: l10n.processDescriptionLabel,
+                            maxLines: 3,
+                            maxLength: ValidationLimits.maxNotesLength,
+                            validator: ValidationLocalizer.wrap(
+                              l10n,
+                              (v) => AppValidators.maxLengthValidator(
+                                v,
+                                maxLength: ValidationLimits.maxNotesLength,
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: AppSpacing.sm),
-                        AppSwitch(
-                          label: _isActive
-                              ? l10n.statusActive
-                              : l10n.statusInactive,
-                          value: _isActive,
-                          onChanged: (v) => setState(() => _isActive = v),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppCard(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const AppHeading(
-                          'Labour Billing & Default Rate',
-                          level: AppHeadingLevel.h3,
-                        ),
-                        const SizedBox(height: AppSpacing.xs),
-                        AppText(
-                          'Workers assigned to this process inherit the default labour rate unless a worker-specific custom rate is set.',
-                          variant: AppTextVariant.bodySmall,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                        const SizedBox(height: AppSpacing.md),
-                        AppDropdown<String>(
-                          label: l10n.processBillingOverrideLabel,
-                          value: _billingChoice,
-                          items: const ['GLOBAL', 'RECEIVED_QTY', 'GIVEN_QTY'],
-                          itemLabelBuilder: (item) => switch (item) {
-                            'RECEIVED_QTY' => l10n.billingModeReceivedQty,
-                            'GIVEN_QTY' => l10n.billingModeGivenQty,
-                            _ => l10n.processBillingInheritGlobal,
-                          },
-                          onChanged: (v) {
-                            if (v != null) setState(() => _billingChoice = v);
-                          },
-                        ),
-                        const SizedBox(height: AppSpacing.sm),
-                        AppSwitch(
-                          label: l10n.processIncludeDamagedLabel,
-                          value: _includeDamaged,
-                          onChanged: (v) => setState(() => _includeDamaged = v),
-                        ),
-                        const SizedBox(height: AppSpacing.md),
-                        AppTextField(
-                          fieldKey: _rateFieldKey,
-                          controller: _rateCtrl,
-                          focusNode: _rateFocus,
-                          label: 'Default Labour Rate (₹)',
-                          hint: '0.00',
-                          prefixIcon: Icons.currency_rupee_rounded,
-                          keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true,
-                          ),
-                          inputFormatters: [AppInputFormatters.currencyDecimal],
-                          validator: ValidationLocalizer.wrap(
-                            l10n,
-                            (v) => AppValidators.nonNegativeAmountValidator(
-                              v,
-                              isRequired: false,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: AppSpacing.md),
-                        AppDropdown<String>(
-                          label: 'Pricing Unit',
-                          value: _pricingUnit,
-                          items: const [
-                            'PER_PIECE',
-                            'PER_DOZEN',
-                            'PER_LOT',
-                            'FIXED_AMOUNT',
-                          ],
-                          itemLabelBuilder: _pricingUnitLabel,
-                          onChanged: (v) {
-                            if (v != null) setState(() => _pricingUnit = v);
-                          },
-                        ),
-                        if (_submitError != null) ...[
                           const SizedBox(height: AppSpacing.sm),
-                          AppText(_submitError!, color: colorScheme.error),
+                          AppSwitch(
+                            label: _isActive
+                                ? l10n.statusActive
+                                : l10n.statusInactive,
+                            value: _isActive,
+                            onChanged: (v) => _edit(() => _isActive = v),
+                          ),
                         ],
-                      ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                ],
+                    const SizedBox(height: AppSpacing.md),
+                    AppCard(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          const AppHeading(
+                            'Labour Billing & Default Rate',
+                            level: AppHeadingLevel.h3,
+                          ),
+                          const SizedBox(height: AppSpacing.xs),
+                          AppText(
+                            'Workers assigned to this process inherit the default labour rate unless a worker-specific custom rate is set.',
+                            variant: AppTextVariant.bodySmall,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                          AppDropdown<String>(
+                            label: l10n.processBillingOverrideLabel,
+                            value: _billingChoice,
+                            items: const [
+                              'GLOBAL',
+                              'RECEIVED_QTY',
+                              'GIVEN_QTY',
+                            ],
+                            itemLabelBuilder: (item) => switch (item) {
+                              'RECEIVED_QTY' => l10n.billingModeReceivedQty,
+                              'GIVEN_QTY' => l10n.billingModeGivenQty,
+                              _ => l10n.processBillingInheritGlobal,
+                            },
+                            onChanged: (v) {
+                              _dirty.markDirty();
+                              if (v != null) setState(() => _billingChoice = v);
+                            },
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+                          AppSwitch(
+                            label: l10n.processIncludeDamagedLabel,
+                            value: _includeDamaged,
+                            onChanged: (v) => _edit(() => _includeDamaged = v),
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                          AppTextField(
+                            fieldKey: _rateFieldKey,
+                            controller: _rateCtrl,
+                            focusNode: _rateFocus,
+                            label: 'Default Labour Rate (₹)',
+                            hint: '0.00',
+                            prefixIcon: Icons.currency_rupee_rounded,
+                            keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true,
+                            ),
+                            inputFormatters: [
+                              AppInputFormatters.currencyDecimal,
+                            ],
+                            validator: ValidationLocalizer.wrap(
+                              l10n,
+                              (v) => AppValidators.nonNegativeAmountValidator(
+                                v,
+                                isRequired: false,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                          AppDropdown<String>(
+                            label: 'Pricing Unit',
+                            value: _pricingUnit,
+                            items: const [
+                              'PER_PIECE',
+                              'PER_DOZEN',
+                              'PER_LOT',
+                              'FIXED_AMOUNT',
+                            ],
+                            itemLabelBuilder: _pricingUnitLabel,
+                            onChanged: (v) {
+                              _dirty.markDirty();
+                              if (v != null) setState(() => _pricingUnit = v);
+                            },
+                          ),
+                          if (_submitError != null) ...[
+                            const SizedBox(height: AppSpacing.sm),
+                            AppText(_submitError!, color: colorScheme.error),
+                          ],
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                  ],
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: AppSpacing.sm),
-              child: AppButton(
-                label: l10n.actionSave,
-                icon: Icons.check,
-                isExpanded: true,
-                isLoading: _isSaving,
-                onPressed: _isSaving ? null : _save,
+              Padding(
+                padding: const EdgeInsets.only(top: AppSpacing.sm),
+                child: AppButton(
+                  label: l10n.actionSave,
+                  icon: Icons.check,
+                  isExpanded: true,
+                  isLoading: _isSaving,
+                  onPressed: _isSaving ? null : _save,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

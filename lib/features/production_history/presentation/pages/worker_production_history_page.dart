@@ -195,15 +195,11 @@ final class _WorkerSummaryCard extends StatelessWidget {
     final l10n = context.l10n;
     final fin = profile.financialSummary;
 
-    return AppCard.listItem(
-      onTap: () => context.push(RoutePaths.workerDetail(profile.workerId)),
-      child: Column(
+    // The table already wraps each row in a tappable card.
+    return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Column(
+          AppActionRow(content: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     AppText(
@@ -214,18 +210,14 @@ final class _WorkerSummaryCard extends StatelessWidget {
                     if (profile.phone != null)
                       AppText(profile.phone!, variant: AppTextVariant.bodySmall),
                   ],
-                ),
-              ),
-              AppStatusBadge(
+                ), actions: [AppStatusBadge(
                 label: profile.isActive
                     ? l10n.statusActive
                     : l10n.statusInactive,
                 tone: profile.isActive
                     ? AppStatusTone.good
                     : AppStatusTone.neutral,
-              ),
-            ],
-          ),
+              ),],),
           const SizedBox(height: AppSpacing.xs),
           Wrap(
             spacing: AppSpacing.xs,
@@ -261,25 +253,17 @@ final class _WorkerSummaryCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppSpacing.xs),
-          Row(
-            children: [
-              Expanded(
-                child: AppText(
+          AppActionRow(content: AppText(
                   'Earned: ${MoneyFormatter.formatPaise(fin.earnedLabourPaise)} • Paid: ${MoneyFormatter.formatPaise(fin.netPaidToWorkerPaise)} • Due: ${MoneyFormatter.formatPaise(fin.outstandingPayablePaise)}',
                   variant: AppTextVariant.numeric,
                   fontWeight: FontWeight.w600,
-                ),
-              ),
-              AppButton(
+                ), actions: [AppButton(
                 label: l10n.accountingOpenLedgerAction,
                 variant: AppButtonVariant.text,
                 onPressed: () =>
                     context.push(RoutePaths.workerLedger(profile.workerId)),
-              ),
-            ],
-          ),
+              ),],),
         ],
-      ),
-    );
+      );
   }
 }

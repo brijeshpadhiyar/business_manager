@@ -91,14 +91,12 @@ final class _NotificationSettingsView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: AppHeading(
-                            l10n.notificationsStatusTitle,
-                            level: AppHeadingLevel.h3,
-                          ),
-                        ),
+                    AppActionRow(
+                      content: AppHeading(
+                        l10n.notificationsStatusTitle,
+                        level: AppHeadingLevel.h3,
+                      ),
+                      actions: [
                         AppStatusBadge(label: permLabel, tone: permTone),
                       ],
                     ),

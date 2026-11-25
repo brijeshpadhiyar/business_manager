@@ -1146,10 +1146,7 @@ final class _ReportsViewState extends State<_ReportsView> {
                     : AppStatusTone.good),
         ),
       ],
-      mobileCardBuilder: (_, w) => Row(
-        children: [
-          Expanded(
-            child: Column(
+      mobileCardBuilder: (_, w) => AppActionRow(content: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AppText(w.workerName, fontWeight: FontWeight.w700),
@@ -1158,18 +1155,14 @@ final class _ReportsViewState extends State<_ReportsView> {
                   variant: AppTextVariant.bodySmall,
                 ),
               ],
-            ),
-          ),
-          AppStatusBadge(
+            ), actions: [AppStatusBadge(
             label: MoneyFormatter.formatPaise(w.netBalancePaise),
             tone: w.netBalancePaise > 0
                 ? AppStatusTone.pending
                 : (w.netBalancePaise < 0
                       ? AppStatusTone.info
                       : AppStatusTone.good),
-          ),
-        ],
-      ),
+          ),],),
     );
   }
 
@@ -1354,10 +1347,7 @@ final class _ReportsViewState extends State<_ReportsView> {
                       padding: const EdgeInsets.symmetric(
                         vertical: AppSpacing.xs,
                       ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
+                      child: AppActionRow(content: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 AppText(
@@ -1369,18 +1359,14 @@ final class _ReportsViewState extends State<_ReportsView> {
                                   variant: AppTextVariant.bodySmall,
                                 ),
                               ],
-                            ),
-                          ),
-                          AppStatusBadge(
+                            ), actions: [AppStatusBadge(
                             label: l10n.pendingAgeDaysBadge(
                               bn.oldestOpenIssueAgeDays,
                             ),
                             tone: bn.oldestOpenIssueAgeDays >= 3
                                 ? AppStatusTone.damaged
                                 : AppStatusTone.pending,
-                          ),
-                        ],
-                      ),
+                          ),],),
                     ),
                   ),
                 ],
@@ -1491,15 +1477,10 @@ final class _ReportsViewState extends State<_ReportsView> {
                 for (final dr in ins.topDefectReasons)
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: Row(
-                      children: [
-                        Expanded(child: AppText(dr.reason)),
-                        AppStatusBadge(
+                    child: AppActionRow(content: AppText(dr.reason), actions: [AppStatusBadge(
                           label: '${dr.quantity} ${l10n.piecesUnit}',
                           tone: AppStatusTone.damaged,
-                        ),
-                      ],
-                    ),
+                        ),],),
                   ),
               ],
             ),

@@ -301,15 +301,10 @@ final class _LotDetailView extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: AppSpacing.md),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: AppText(
+                    AppActionRow(content: AppText(
                             'Initial Colours (${initialColours.length})',
                             fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        AppButton(
+                          ), actions: [AppButton(
                           label: 'Add Colours',
                           icon: Icons.palette_outlined,
                           variant: AppButtonVariant.secondary,
@@ -346,9 +341,7 @@ final class _LotDetailView extends StatelessWidget {
                               });
                             }
                           },
-                        ),
-                      ],
-                    ),
+                        ),],),
                     if (initialColours.isNotEmpty) ...[
                       const SizedBox(height: AppSpacing.xs),
                       for (final c in initialColours)
@@ -774,14 +767,13 @@ final class _LotDetailView extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          AppText(
-                            detail.lot.lotNumber,
-                            variant: AppTextVariant.bodyLarge,
-                            fontWeight: FontWeight.w700,
-                          ),
+                      AppActionRow(
+                        content: AppText(
+                          detail.lot.lotNumber,
+                          variant: AppTextVariant.bodyLarge,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        actions: [
                           AppStatusBadge(
                             label: detail.lot.status == LotStatus.active
                                 ? l10n.lotsStatusActive
@@ -1272,9 +1264,10 @@ final class _PremiumLotColourCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Large Actual Colour Preview Banner
+          // Large Actual Colour Preview Banner (tall enough for 44dp
+          // edit / delete touch targets plus the colour name).
           Container(
-            height: 68,
+            height: 80,
             padding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.sm,
               vertical: 6,
@@ -1292,7 +1285,8 @@ final class _PremiumLotColourCard extends StatelessWidget {
               children: [
                 Row(
                   children: [
-                    Container(
+                    Flexible(
+                      child: Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 6,
                         vertical: 2,
@@ -1306,6 +1300,8 @@ final class _PremiumLotColourCard extends StatelessWidget {
                       ),
                       child: Text(
                         hexLabel,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           color: onSwatch,
                           fontWeight: FontWeight.w700,
@@ -1313,30 +1309,35 @@ final class _PremiumLotColourCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const Spacer(),
-                    InkWell(
-                      onTap: onEdit,
-                      borderRadius: BorderRadius.circular(14),
-                      child: Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Icon(
-                          Icons.edit_outlined,
-                          size: 16,
-                          color: onSwatch,
-                        ),
-                      ),
                     ),
-                    InkWell(
-                      onTap: onDelete,
-                      borderRadius: BorderRadius.circular(14),
-                      child: Padding(
-                        padding: const EdgeInsets.all(4),
-                        child: Icon(
-                          Icons.delete_outline,
-                          size: 16,
-                          color: onSwatch,
-                        ),
+                    const Spacer(),
+                    // 44dp touch targets (were ~24dp) so edit/delete are
+                    // easy to hit on a phone.
+                    IconButton(
+                      onPressed: onEdit,
+                      tooltip: context.l10n.colourEditAction,
+                      constraints: const BoxConstraints.tightFor(
+                        width: 40,
+                        height: 44,
                       ),
+                      padding: EdgeInsets.zero,
+                      iconSize: 18,
+                      color: onSwatch,
+                      icon: const Icon(Icons.edit_outlined),
+                    ),
+                    IconButton(
+                      onPressed: onDelete,
+                      tooltip: MaterialLocalizations.of(
+                        context,
+                      ).deleteButtonTooltip,
+                      constraints: const BoxConstraints.tightFor(
+                        width: 40,
+                        height: 44,
+                      ),
+                      padding: EdgeInsets.zero,
+                      iconSize: 18,
+                      color: onSwatch,
+                      icon: const Icon(Icons.delete_outline),
                     ),
                   ],
                 ),
@@ -1368,8 +1369,10 @@ final class _PremiumLotColourCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                 ],
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  spacing: AppSpacing.sm,
+                  runSpacing: 4,
                   children: [
                     _MiniMetric(label: 'Total', value: '$totalQty'),
                     _MiniMetric(label: 'Done', value: '$completedQty'),

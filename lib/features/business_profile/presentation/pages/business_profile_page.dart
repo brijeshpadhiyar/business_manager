@@ -34,6 +34,7 @@ final class _BusinessProfileView extends StatefulWidget {
 }
 
 final class _BusinessProfileViewState extends State<_BusinessProfileView> {
+  final _dirty = AppFormDirtyTracker();
   final _formKey = GlobalKey<FormState>();
   final _nameEnKey = GlobalKey<FormFieldState<String>>();
   final _nameGuKey = GlobalKey<FormFieldState<String>>();
@@ -59,6 +60,7 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
 
   @override
   void dispose() {
+    _dirty.dispose();
     _nameEnController.dispose();
     _nameGuController.dispose();
     _ownerController.dispose();
@@ -81,6 +83,14 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
     _addressController.text = profile.address ?? '';
     _billingMode = profile.defaultBillingMode;
     _hydrated = true;
+    // Loaded values are the saved state; edits from here on are unsaved.
+    _dirty.watch([
+      _nameEnController,
+      _nameGuController,
+      _ownerController,
+      _phoneController,
+      _addressController,
+    ]);
   }
 
   Future<void> _submit() async {
@@ -117,6 +127,7 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
           _hydrateFrom(state.profile!);
         }
         if (state.status == BusinessProfileStatus.saved) {
+          _dirty.reset();
           AppFeedback.showSuccess(context, l10n.businessProfileSaved);
         }
       },
@@ -265,6 +276,7 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
                         AppRadio<BillingMode>(
                           groupValue: _billingMode,
                           onChanged: (mode) {
+                            _dirty.markDirty();
                             if (mode != null) {
                               setState(() => _billingMode = mode);
                             }
@@ -316,12 +328,15 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
     );
 
     if (widget.showAppBar) {
-      return AppScaffold(
-        title: l10n.businessProfileHeading,
-        contentWidth: AppContentWidth.narrow,
-        padding: EdgeInsets.zero,
-        constrainMaxWidth: false,
-        body: body,
+      return AppUnsavedChangesGuard.tracked(
+        tracker: _dirty,
+        child: AppScaffold(
+          title: l10n.businessProfileHeading,
+          contentWidth: AppContentWidth.narrow,
+          padding: EdgeInsets.zero,
+          constrainMaxWidth: false,
+          body: body,
+        ),
       );
     }
     return body;

@@ -91,12 +91,7 @@ final class _TransactionDetailView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Expanded(child: AppHeading(d.title, level: AppHeadingLevel.h3)),
-                  AppStatusBadge(label: d.statusLabel, tone: AppStatusTone.info),
-                ],
-              ),
+              AppActionRow(content: AppHeading(d.title, level: AppHeadingLevel.h3), actions: [AppStatusBadge(label: d.statusLabel, tone: AppStatusTone.info),],),
               const SizedBox(height: AppSpacing.xs),
               AppText('Transaction ID: ${d.id}', variant: AppTextVariant.bodySmall),
               AppText(

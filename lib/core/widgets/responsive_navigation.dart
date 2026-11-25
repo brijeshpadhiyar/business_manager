@@ -92,6 +92,7 @@ final class ResponsiveNavigation extends StatelessWidget {
     this.floatingActionButton,
     this.enableBodyTransition = false,
     this.extraShortcuts = const {},
+    this.compactActions,
   });
 
   final String title;
@@ -112,6 +113,10 @@ final class ResponsiveNavigation extends StatelessWidget {
   /// active anywhere inside the shell on desktop and web.
   final Map<ShortcutActivator, VoidCallback> extraShortcuts;
 
+  /// Toolbar actions for compact screens (phones, narrow windows). Falls back
+  /// to [actions] when null.
+  final List<Widget>? compactActions;
+
   Widget _animatedBody(BuildContext context) {
     if (!enableBodyTransition || AppMotion.reduceMotion(context)) {
       return body;
@@ -131,9 +136,11 @@ final class ResponsiveNavigation extends StatelessWidget {
   }
 
   Widget _brandTitle(BuildContext context) {
+    final showLogo = MediaQuery.sizeOf(context).width >= 360;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
+        if (showLogo) ...[
         Image.asset(
           AppIdentity.symbolPngAsset,
           width: 26,
@@ -143,6 +150,7 @@ final class ResponsiveNavigation extends StatelessWidget {
           errorBuilder: (_, _, _) => const Icon(Icons.auto_awesome, size: 22),
         ),
         const SizedBox(width: AppSpacing.sm),
+        ],
         Flexible(
           child: Text(title, overflow: TextOverflow.ellipsis, maxLines: 1),
         ),
@@ -156,6 +164,7 @@ final class ResponsiveNavigation extends StatelessWidget {
     bool automaticallyImplyLeading = true,
     Widget? customTitle,
     double toolbarHeight = AppSizing.appBarHeight,
+    List<Widget>? actionsOverride,
   }) {
     final tokens = context.surfaceTokens;
     return AppBar(
@@ -166,7 +175,7 @@ final class ResponsiveNavigation extends StatelessWidget {
       scrolledUnderElevation: 0,
       automaticallyImplyLeading: automaticallyImplyLeading,
       title: customTitle ?? (showTitle ? _brandTitle(context) : null),
-      actions: actions,
+      actions: actionsOverride ?? actions,
       flexibleSpace: ClipRect(
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
@@ -247,7 +256,10 @@ final class ResponsiveNavigation extends StatelessWidget {
               child: AppGlassBackdrop(
                 child: Scaffold(
                   backgroundColor: Colors.transparent,
-                  appBar: _buildGlassAppBar(context),
+                  appBar: _buildGlassAppBar(
+                    context,
+                    actionsOverride: compactActions,
+                  ),
                   body: SafeArea(child: transitionBody),
                   floatingActionButton: floatingActionButton,
                   bottomNavigationBar: RepaintBoundary(

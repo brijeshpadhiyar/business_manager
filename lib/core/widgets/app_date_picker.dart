@@ -99,7 +99,12 @@ final class AppDatePicker extends StatelessWidget {
             size: AppSizing.iconMd,
           ),
         ),
-        child: Text(displayText, style: Theme.of(context).textTheme.bodyMedium),
+        child: Text(
+          displayText,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
       ),
     );
   }

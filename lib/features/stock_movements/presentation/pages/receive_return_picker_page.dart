@@ -236,64 +236,78 @@ final class _ReceiveReturnPickerPageState
                           ],
                         ),
                       ),
-                      if (workerNames.length > 1) ...[
-                        const SizedBox(height: AppSpacing.sm),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
+                      // Phones: worker / process chips fold behind one
+                      // Filters toggle so the pending list starts higher.
+                      if (workerNames.length > 1 || processNames.length > 1)
+                        AppCollapsibleFilters(
+                          activeCount:
+                              (_workerFilter != null ? 1 : 0) +
+                              (_processFilter != null ? 1 : 0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              FilterChip(
-                                label: Text(l10n.stockFilterAllWorkers),
-                                selected: _workerFilter == null,
-                                onSelected: (_) =>
-                                    setState(() => _workerFilter = null),
-                              ),
-                              const SizedBox(width: AppSpacing.xs),
-                              for (final w in workerNames) ...[
-                                FilterChip(
-                                  label: Text(w),
-                                  selected: _workerFilter == w,
-                                  onSelected: (_) => setState(
-                                    () => _workerFilter = _workerFilter == w
-                                        ? null
-                                        : w,
+                          if (workerNames.length > 1) ...[
+                            const SizedBox(height: AppSpacing.sm),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  FilterChip(
+                                    label: Text(l10n.stockFilterAllWorkers),
+                                    selected: _workerFilter == null,
+                                    onSelected: (_) =>
+                                        setState(() => _workerFilter = null),
                                   ),
-                                ),
-                                const SizedBox(width: AppSpacing.xs),
-                              ],
+                                  const SizedBox(width: AppSpacing.xs),
+                                  for (final w in workerNames) ...[
+                                    FilterChip(
+                                      label: Text(w),
+                                      selected: _workerFilter == w,
+                                      onSelected: (_) => setState(
+                                        () => _workerFilter = _workerFilter == w
+                                            ? null
+                                            : w,
+                                      ),
+                                    ),
+                                    const SizedBox(width: AppSpacing.xs),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          ],
+                          if (processNames.length > 1) ...[
+                            const SizedBox(height: AppSpacing.xs),
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  FilterChip(
+                                    label: Text(l10n.stockFilterAllProcesses),
+                                    selected: _processFilter == null,
+                                    onSelected: (_) =>
+                                        setState(() => _processFilter = null),
+                                  ),
+                                  const SizedBox(width: AppSpacing.xs),
+                                  for (final p in processNames) ...[
+                                    FilterChip(
+                                      label: Text(p),
+                                      selected: _processFilter == p,
+                                      onSelected: (_) => setState(
+                                        () => _processFilter = _processFilter == p
+                                            ? null
+                                            : p,
+                                      ),
+                                    ),
+                                    const SizedBox(width: AppSpacing.xs),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          ],
                             ],
                           ),
                         ),
-                      ],
-                      if (processNames.length > 1) ...[
-                        const SizedBox(height: AppSpacing.xs),
-                        SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: [
-                              FilterChip(
-                                label: Text(l10n.stockFilterAllProcesses),
-                                selected: _processFilter == null,
-                                onSelected: (_) =>
-                                    setState(() => _processFilter = null),
-                              ),
-                              const SizedBox(width: AppSpacing.xs),
-                              for (final p in processNames) ...[
-                                FilterChip(
-                                  label: Text(p),
-                                  selected: _processFilter == p,
-                                  onSelected: (_) => setState(
-                                    () => _processFilter = _processFilter == p
-                                        ? null
-                                        : p,
-                                  ),
-                                ),
-                                const SizedBox(width: AppSpacing.xs),
-                              ],
-                            ],
-                          ),
-                        ),
-                      ],
                       const SizedBox(height: AppSpacing.md),
                     ],
                   ),
@@ -431,18 +445,16 @@ final class _PendingIssueSelectionCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppSpacing.sm),
-          Row(
-            children: [
-              Expanded(
-                child: AppText(
-                  IstDateTimeHelper.formatIstDateTime(
-                    m.transactionAt,
-                    locale: localeCode,
-                  ),
-                  variant: AppTextVariant.bodySmall,
-                  color: colorScheme.onSurfaceVariant,
-                ),
+          AppActionRow(
+            content: AppText(
+              IstDateTimeHelper.formatIstDateTime(
+                m.transactionAt,
+                locale: localeCode,
               ),
+              variant: AppTextVariant.bodySmall,
+              color: colorScheme.onSurfaceVariant,
+            ),
+            actions: [
               AppButton(
                 label: l10n.stockReturnAction,
                 icon: Icons.assignment_returned_outlined,

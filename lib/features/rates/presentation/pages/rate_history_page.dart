@@ -115,10 +115,7 @@ final class _RateHistoryView extends StatelessWidget {
                               },
                             ),
                           const SizedBox(height: AppSpacing.md),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Column(
+                          AppActionRow(content: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     AppText(
@@ -133,16 +130,12 @@ final class _RateHistoryView extends StatelessWidget {
                                       level: AppHeadingLevel.h2,
                                     ),
                                   ],
-                                ),
-                              ),
-                              AppButton(
+                                ), actions: [AppButton(
                                 label: l10n.workerAddRateAction,
                                 icon: Icons.add,
                                 onPressed: () =>
                                     _openAddRate(context, state.selectedProcessId),
-                              ),
-                            ],
-                          ),
+                              ),],),
                           const SizedBox(height: AppSpacing.sm),
                           AppText(
                             l10n.ratesHistoricalNotice,

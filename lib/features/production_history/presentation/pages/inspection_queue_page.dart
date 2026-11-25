@@ -600,14 +600,12 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: AppText(
-                      '${item.workerName} • ${item.processName}',
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
+              AppActionRow(
+                content: AppText(
+                  '${item.workerName} • ${item.processName}',
+                  fontWeight: FontWeight.w700,
+                ),
+                actions: [
                   AppStatusBadge(
                     label:
                         '${item.remainingPendingInspectionQty} pcs Pending QC',
@@ -694,14 +692,12 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: AppText(
-                              '${rej.lotNumber} • ${rej.processName} • ${rej.workerName}',
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
+                      AppActionRow(
+                        content: AppText(
+                          '${rej.lotNumber} • ${rej.processName} • ${rej.workerName}',
+                          fontWeight: FontWeight.w700,
+                        ),
+                        actions: [
                           AppStatusBadge(
                             label: rej.record.status.dbValue,
                             tone: rej.openUnrepairedQty > 0

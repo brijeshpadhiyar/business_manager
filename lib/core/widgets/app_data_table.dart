@@ -4,6 +4,7 @@ import 'package:business_manager/core/design_system/app_breakpoints.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/widgets/app_card.dart';
+import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:material_ui/material_ui.dart';
 
 final class AppDataColumn {
@@ -331,12 +332,11 @@ final class _AppDataTableState<T> extends State<AppDataTable<T>> {
                   ? _pageSize
                   : widget.pageSizeOptions.first,
               underline: const SizedBox.shrink(),
-              isDense: true,
               items: widget.pageSizeOptions
                   .map(
                     (size) => DropdownMenuItem<int>(
                       value: size,
-                      child: Text('$size / pg'),
+                      child: Text(context.l10n.uxPerPage(size)),
                     ),
                   )
                   .toList(),
@@ -351,8 +351,9 @@ final class _AppDataTableState<T> extends State<AppDataTable<T>> {
             const SizedBox(width: AppSpacing.sm),
             Semantics(
               button: true,
-              label: 'Previous page',
+              label: MaterialLocalizations.of(context).previousPageTooltip,
               child: IconButton(
+                tooltip: MaterialLocalizations.of(context).previousPageTooltip,
                 constraints: const BoxConstraints(
                   minWidth: AppSizing.touchTargetMin,
                   minHeight: AppSizing.touchTargetMin,
@@ -369,8 +370,9 @@ final class _AppDataTableState<T> extends State<AppDataTable<T>> {
             ),
             Semantics(
               button: true,
-              label: 'Next page',
+              label: MaterialLocalizations.of(context).nextPageTooltip,
               child: IconButton(
+                tooltip: MaterialLocalizations.of(context).nextPageTooltip,
                 constraints: const BoxConstraints(
                   minWidth: AppSizing.touchTargetMin,
                   minHeight: AppSizing.touchTargetMin,

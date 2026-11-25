@@ -311,25 +311,17 @@ final class _VisualColourPickerContentState
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: AppTextField(
+            AppActionRow(content: AppTextField(
                     controller: searchCtrl,
                     label: 'Search colour name or HEX',
                     prefixIcon: Icons.search_rounded,
                     onChanged: (_) => setSheetState(() {}),
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.xs),
-                AppButton(
+                  ), actions: [AppButton(
                   label: 'Custom',
                   icon: Icons.add_rounded,
                   variant: AppButtonVariant.secondary,
                   onPressed: () => openCustomColourDialog(),
-                ),
-              ],
-            ),
+                ),],),
             if (recentColours.isNotEmpty && q.isEmpty) ...[
               const SizedBox(height: AppSpacing.md),
               const AppText(

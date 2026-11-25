@@ -161,6 +161,8 @@ final class _DashboardViewState extends State<_DashboardView> {
                                     widget.config.isDev
                                         ? l10n.appTitleDev
                                         : l10n.appTitle,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                     style: Theme.of(context)
                                         .textTheme
                                         .headlineSmall
@@ -176,6 +178,8 @@ final class _DashboardViewState extends State<_DashboardView> {
                                               ? snap.businessNameGu
                                               : snap.businessNameEn)
                                         : l10n.appTagline,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                     style: Theme.of(context).textTheme.bodySmall
                                         ?.copyWith(
                                           color: Colors.white.withValues(
@@ -241,7 +245,10 @@ final class _DashboardViewState extends State<_DashboardView> {
                         ),
                         const SizedBox(height: AppSpacing.md),
                         // Other screens as lighter secondary links.
-                        Wrap(
+                        AppCollapsibleFilters(
+                          label: l10n.uxMoreScreens,
+                          icon: Icons.apps_rounded,
+                          child: Wrap(
                           spacing: AppSpacing.sm,
                           runSpacing: AppSpacing.sm,
                           children: [
@@ -317,6 +324,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                                     context.push(RoutePaths.showcase),
                               ),
                           ],
+                        ),
                         ),
                       ],
                     ),
@@ -810,12 +818,8 @@ final class _DashboardViewState extends State<_DashboardView> {
                                         padding: const EdgeInsets.symmetric(
                                           vertical: AppSpacing.xs,
                                         ),
-                                        child: Row(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Expanded(
-                                              child: Column(
+                                        child: AppActionRow(crossAxisAlignment:
+                                              CrossAxisAlignment.center, content: Column(
                                                 crossAxisAlignment:
                                                     CrossAxisAlignment.start,
                                                 children: [
@@ -834,12 +838,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                                                         .onSurfaceVariant,
                                                   ),
                                                 ],
-                                              ),
-                                            ),
-                                            const SizedBox(
-                                              width: AppSpacing.sm,
-                                            ),
-                                            AppStatusBadge(
+                                              ), actions: [AppStatusBadge(
                                               label:
                                                   '${snap.processPendingList[i].pending} ${l10n.piecesUnit}',
                                               tone:
@@ -849,16 +848,10 @@ final class _DashboardViewState extends State<_DashboardView> {
                                                       0
                                                   ? AppStatusTone.pending
                                                   : AppStatusTone.good,
-                                            ),
-                                            const SizedBox(
-                                              width: AppSpacing.xs,
-                                            ),
-                                            const Icon(
+                                            ), const Icon(
                                               Icons.chevron_right_rounded,
                                               size: 18,
-                                            ),
-                                          ],
-                                        ),
+                                            ),],),
                                       ),
                                     ),
                                     if (i < snap.processPendingList.length - 1)

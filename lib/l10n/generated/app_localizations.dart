@@ -5233,6 +5233,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Inspection queue'**
   String get uxActionInspections;
+
+  /// Rows-per-page option in paged tables.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} / page'**
+  String uxPerPage(int count);
+
+  /// Button that opens the filter panel on phones.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters'**
+  String get uxFilters;
+
+  /// Filter button label when some filters are set.
+  ///
+  /// In en, this message translates to:
+  /// **'Filters ({count})'**
+  String uxFiltersActive(int count);
+
+  /// Expandable group of secondary screen links on the dashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'More screens'**
+  String get uxMoreScreens;
+
+  /// Tooltip of the overflow menu that holds extra card actions.
+  ///
+  /// In en, this message translates to:
+  /// **'More actions'**
+  String get uxMoreActions;
+
+  /// Button that applies filters and closes the filter panel.
+  ///
+  /// In en, this message translates to:
+  /// **'Apply'**
+  String get uxApply;
+
+  /// Button that clears all filters.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear all'**
+  String get uxClearAll;
 }
 
 class _AppLocalizationsDelegate

@@ -884,5 +884,12 @@
   "uxActionReceiveWork": "કામ પરત લો",
   "uxActionRecordPayment": "ચુકવણી નોંધો",
   "uxActionAddWorker": "કારીગર ઉમેરો",
-  "uxActionInspections": "ચકાસણી યાદી"
+  "uxActionInspections": "ચકાસણી યાદી",
+  "uxPerPage": "{count} / પેજ",
+  "uxFilters": "ફિલ્ટર",
+  "uxFiltersActive": "ફિલ્ટર ({count})",
+  "uxMoreScreens": "બીજી સ્ક્રીન",
+  "uxMoreActions": "વધુ ક્રિયાઓ",
+  "uxApply": "લાગુ કરો",
+  "uxClearAll": "બધું સાફ કરો"
 }

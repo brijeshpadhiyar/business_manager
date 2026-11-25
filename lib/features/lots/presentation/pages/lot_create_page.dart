@@ -889,34 +889,31 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                           ),
                           const SizedBox(height: AppSpacing.md),
                           if (_useDesigns) ...[
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            // Side by side when there is room, stacked on phones.
+                            AppFormRow(
+                              spacing: AppSpacing.sm,
                               children: [
-                                if (availableKnownDesigns.isNotEmpty) ...[
-                                  Expanded(
-                                    child: AppDropdown<String>(
-                                      key: ValueKey<String>(
-                                        'known_designs_${availableKnownDesigns.join('|')}',
-                                      ),
-                                      label: 'Select Existing Design',
-                                      value:
-                                          availableKnownDesigns.contains(
-                                            _selectedKnownDesign,
-                                          )
-                                          ? _selectedKnownDesign
-                                          : null,
-                                      items: availableKnownDesigns,
-                                      itemLabelBuilder: (name) => name,
-                                      onChanged: (val) {
-                                        _dirty.markDirty();
-                                        if (val != null) {
-                                          _addExistingDesign(val);
-                                        }
-                                      },
+                                if (availableKnownDesigns.isNotEmpty)
+                                  AppDropdown<String>(
+                                    key: ValueKey<String>(
+                                      'known_designs_${availableKnownDesigns.join('|')}',
                                     ),
+                                    label: 'Select Existing Design',
+                                    value:
+                                        availableKnownDesigns.contains(
+                                          _selectedKnownDesign,
+                                        )
+                                        ? _selectedKnownDesign
+                                        : null,
+                                    items: availableKnownDesigns,
+                                    itemLabelBuilder: (name) => name,
+                                    onChanged: (val) {
+                                      _dirty.markDirty();
+                                      if (val != null) {
+                                        _addExistingDesign(val);
+                                      }
+                                    },
                                   ),
-                                  const SizedBox(width: AppSpacing.sm),
-                                ],
                                 AppButton(
                                   label: _showInlineDesignForm
                                       ? 'Close'
@@ -1040,14 +1037,12 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                                 const SizedBox(height: AppSpacing.sm),
                               ],
                           ] else ...[
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: AppText(
-                                    'Colour Variants (${_colourOnlyVariants.length})',
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
+                            AppActionRow(
+                              content: AppText(
+                                'Colour Variants (${_colourOnlyVariants.length})',
+                                fontWeight: FontWeight.w700,
+                              ),
+                              actions: [
                                 AppButton(
                                   label: 'Add Colours',
                                   icon: Icons.palette_outlined,
@@ -1093,24 +1088,22 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Row(
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    AppHeading(
-                                      l10n.prodHistoryInitialAssignmentsTitle,
-                                      level: AppHeadingLevel.h3,
-                                    ),
-                                    AppText(
-                                      l10n.prodHistoryInitialAssignmentsSubtitle,
-                                      variant: AppTextVariant.bodySmall,
-                                      color: colorScheme.onSurfaceVariant,
-                                    ),
-                                  ],
+                          AppActionRow(
+                            content: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                AppHeading(
+                                  l10n.prodHistoryInitialAssignmentsTitle,
+                                  level: AppHeadingLevel.h3,
                                 ),
-                              ),
+                                AppText(
+                                  l10n.prodHistoryInitialAssignmentsSubtitle,
+                                  variant: AppTextVariant.bodySmall,
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                              ],
+                            ),
+                            actions: [
                               AppButton(
                                 label: l10n.prodHistoryAddAssignmentAction,
                                 icon: Icons.add_task_rounded,
@@ -1206,37 +1199,35 @@ final class _LotCreatePageState extends State<LotCreatePage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          AppActionRow(
+            content: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppText(
+                  design.designName,
+                  variant: AppTextVariant.bodyLarge,
+                  fontWeight: FontWeight.w700,
+                ),
+                Wrap(
+                  spacing: AppSpacing.xs,
+                  runSpacing: AppSpacing.xs,
                   children: [
                     AppText(
-                      design.designName,
-                      variant: AppTextVariant.bodyLarge,
-                      fontWeight: FontWeight.w700,
+                      '${design.colours.length} colour(s) • ${MoneyFormatter.formatQuantity(design.totalQty)} pcs',
+                      variant: AppTextVariant.bodySmall,
+                      color: colorScheme.onSurfaceVariant,
                     ),
-                    Wrap(
-                      spacing: AppSpacing.xs,
-                      runSpacing: AppSpacing.xs,
-                      children: [
-                        AppText(
-                          '${design.colours.length} colour(s) • ${MoneyFormatter.formatQuantity(design.totalQty)} pcs',
-                          variant: AppTextVariant.bodySmall,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                        if (design.defaultUnitPricePaise > 0)
-                          AppStatusBadge(
-                            label:
-                                'Default: ${MoneyFormatter.formatPaise(design.defaultUnitPricePaise)}',
-                            tone: AppStatusTone.info,
-                          ),
-                      ],
-                    ),
+                    if (design.defaultUnitPricePaise > 0)
+                      AppStatusBadge(
+                        label:
+                            'Default: ${MoneyFormatter.formatPaise(design.defaultUnitPricePaise)}',
+                        tone: AppStatusTone.info,
+                      ),
                   ],
                 ),
-              ),
+              ],
+            ),
+            actions: [
               AppButton(
                 label: 'Colours',
                 icon: Icons.palette_outlined,

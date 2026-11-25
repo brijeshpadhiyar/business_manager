@@ -162,8 +162,9 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
                               hexController.text = hex;
                               setDialogState(() {});
                             },
+                            // 48dp touch target around the 26dp swatch.
                             child: Padding(
-                              padding: const EdgeInsets.all(4),
+                              padding: const EdgeInsets.all(11),
                               child: AppColourSwatch(
                                 color: AppColourUtils.resolveColor(hex),
                                 size: 26,
@@ -361,21 +362,14 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
                   mobileCardBuilder: (ctx, d) => Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: AppText(
+                      AppActionRow(content: AppText(
                               d.designName,
                               variant: AppTextVariant.bodyLarge,
                               fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                          AppStatusBadge(
+                            ), actions: [AppStatusBadge(
                             label: '${d.lotCount} ${l10n.lotsHeading}',
                             tone: AppStatusTone.info,
-                          ),
-                        ],
-                      ),
+                          ),],),
                       const SizedBox(height: AppSpacing.xs),
                       AppText(
                         '${d.colourVariantCount} variants • ${d.totalInitialQuantity} pcs • ${_formatPriceRange(d.minUnitPricePaise, d.maxUnitPricePaise)}',
@@ -508,6 +502,12 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
         }
 
         return AppScaffold(
+          // Main action: floating button on phones, toolbar button on wider screens.
+          primaryAction: AppPrimaryAction(
+            icon: Icons.add_rounded,
+            label: l10n.colourAddAction,
+            onPressed: () => _openColourEditor(context),
+          ),
           scrollMode: AppScrollMode.collapsible,
           contentWidth: AppContentWidth.wide,
           onRefresh: () => context.read<DesignsColoursCubit>().load(),
@@ -516,14 +516,6 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
             subtitle: l10n.designsColoursSubtitle,
             expandedHeight: 184,
             actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: AppSpacing.sm),
-                child: AppButton(
-                  label: l10n.colourAddAction,
-                  icon: Icons.add_rounded,
-                  onPressed: () => _openColourEditor(context),
-                ),
-              ),
             ],
             summary: AppSummaryStrip(
               metrics: [

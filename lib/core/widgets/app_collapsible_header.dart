@@ -4,6 +4,7 @@ import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
+import 'package:business_manager/core/widgets/app_icon_button.dart';
 import 'package:business_manager/core/widgets/app_status_badge.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -41,6 +42,45 @@ final class AppCollapsibleHeader {
   final bool pinned;
   final bool floating;
   final bool snap;
+
+  /// Copy with a different leading widget, actions or pin behaviour.
+  AppCollapsibleHeader copyWith({
+    Widget? leading,
+    List<Widget>? actions,
+    bool? pinned,
+  }) {
+    return AppCollapsibleHeader(
+      title: title,
+      subtitle: subtitle,
+      leading: leading ?? this.leading,
+      automaticallyImplyLeading: automaticallyImplyLeading,
+      actions: actions ?? this.actions,
+      summary: summary,
+      background: background,
+      bottom: bottom,
+      expandedHeight: expandedHeight,
+      pinned: pinned ?? this.pinned,
+      floating: floating,
+      snap: snap,
+    );
+  }
+
+  /// Space the toolbar actions take, so the collapsed title never runs
+  /// under them. Icon buttons are 48dp; labelled buttons are wider.
+  double _actionsReserve() {
+    final list = actions;
+    if (list == null || list.isEmpty) return AppSpacing.lg;
+    var width = AppSpacing.sm;
+    for (final a in list) {
+      final isIcon =
+          a is IconButton ||
+          a is AppIconButton ||
+          a is PopupMenuButton ||
+          a is SizedBox;
+      width += isIcon ? 48 : 148;
+    }
+    return width;
+  }
 
   /// Builds the native `SliverAppBar` with frosted glass toolbar, smooth
   /// expanded-to-collapsed title crossfade, and collapsible summary content.
@@ -171,9 +211,7 @@ final class AppCollapsibleHeader {
                           left: leading != null || automaticallyImplyLeading
                               ? 56
                               : AppSpacing.lg,
-                          right: (actions != null && actions!.isNotEmpty)
-                              ? 112
-                              : AppSpacing.lg,
+                          right: _actionsReserve(),
                           height: toolbarHeight,
                           child: Align(
                             alignment: Alignment.centerLeft,
@@ -327,55 +365,84 @@ final class AppSummaryStrip extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
     final tokens = context.surfaceTokens;
 
-    return Row(
-      children: [
-        for (var i = 0; i < metrics.length; i++) ...[
-          if (i > 0) const SizedBox(width: AppSpacing.xs),
-          Expanded(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                color: tokens.glassFill,
-                borderRadius: AppRadius.mdBorder,
-                border: Border.all(
-                  color: _accentFor(metrics[i].tone, isDark).withValues(
-                    alpha: isDark ? 0.36 : 0.24,
+    Widget cell(AppSummaryMetric metric) {
+      final accent = _accentFor(metric.tone, isDark);
+      return DecoratedBox(
+        decoration: BoxDecoration(
+          color: tokens.glassFill,
+          borderRadius: AppRadius.mdBorder,
+          border: Border.all(
+            color: accent.withValues(alpha: isDark ? 0.36 : 0.24),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm,
+            vertical: 6,
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                metric.label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 1),
+              // Amounts shrink to fit rather than being cut off.
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  metric.value,
+                  maxLines: 1,
+                  style: theme.textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: accent,
                   ),
                 ),
               ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.sm,
-                  vertical: 6,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      metrics[i].label,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                    const SizedBox(height: 1),
-                    Text(
-                      metrics[i].value,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w800,
-                        color: _accentFor(metrics[i].tone, isDark),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            ],
           ),
-        ],
-      ],
+        ),
+      );
+    }
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const gap = AppSpacing.xs;
+        const minCell = 104.0;
+        final n = metrics.length;
+        final available = constraints.maxWidth;
+        final fits =
+            !available.isFinite || (available - gap * (n - 1)) / n >= minCell;
+        if (fits) {
+          return Row(
+            children: [
+              for (var i = 0; i < n; i++) ...[
+                if (i > 0) const SizedBox(width: gap),
+                Expanded(child: cell(metrics[i])),
+              ],
+            ],
+          );
+        }
+        // Narrow phone: keep one compact row, readable cells, swipe for more.
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              for (var i = 0; i < n; i++) ...[
+                if (i > 0) const SizedBox(width: gap),
+                SizedBox(width: 120, child: cell(metrics[i])),
+              ],
+            ],
+          ),
+        );
+      },
     );
   }
 }

@@ -118,14 +118,9 @@ final class _WorkerDetailView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: AppHeading(
-                            worker.name,
-                            level: AppHeadingLevel.h2,
-                          ),
-                        ),
+                    AppActionRow(
+                      content: AppHeading(worker.name, level: AppHeadingLevel.h2),
+                      actions: [
                         AppStatusBadge(
                           label: worker.isActive
                               ? l10n.statusActive
@@ -345,14 +340,12 @@ final class _WorkerDetailView extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: AppText(
-                                        l10n.workerOpenIssuesHeading,
-                                        variant: AppTextVariant.label,
-                                      ),
-                                    ),
+                                AppActionRow(
+                                  content: AppText(
+                                    l10n.workerOpenIssuesHeading,
+                                    variant: AppTextVariant.label,
+                                  ),
+                                  actions: [
                                     AppButton(
                                       label: l10n.dashboardViewAllPendingAction,
                                       variant: AppButtonVariant.text,
@@ -389,25 +382,23 @@ final class _WorkerDetailView extends StatelessWidget {
                                         padding: const EdgeInsets.symmetric(
                                           vertical: AppSpacing.xs,
                                         ),
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  AppText(
-                                                    '${v.processName ?? '-'} • ${v.lotNumber} • ${v.colourName}',
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                  AppText(
-                                                    '${issue.remainingPending} ${l10n.piecesUnit} • ${ageDays == 0 ? l10n.reportPresetToday : l10n.pendingAgeDaysBadge(ageDays)}',
-                                                    variant: AppTextVariant
-                                                        .bodySmall,
-                                                  ),
-                                                ],
+                                        child: AppActionRow(
+                                          content: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              AppText(
+                                                '${v.processName ?? '-'} • ${v.lotNumber} • ${v.colourName}',
+                                                fontWeight: FontWeight.w600,
                                               ),
-                                            ),
+                                              AppText(
+                                                '${issue.remainingPending} ${l10n.piecesUnit} • ${ageDays == 0 ? l10n.reportPresetToday : l10n.pendingAgeDaysBadge(ageDays)}',
+                                                variant:
+                                                    AppTextVariant.bodySmall,
+                                              ),
+                                            ],
+                                          ),
+                                          actions: [
                                             AppButton(
                                               label: l10n.stockReturnAction,
                                               variant:
@@ -779,14 +770,12 @@ final class _WorkerDetailView extends StatelessWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: AppText(
-                                          '${item.lotNumber} • ${item.processName}',
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
+                                  AppActionRow(
+                                    content: AppText(
+                                      '${item.lotNumber} • ${item.processName}',
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    actions: [
                                       AppStatusBadge(
                                         label: item.isCompleted
                                             ? 'COMPLETED'

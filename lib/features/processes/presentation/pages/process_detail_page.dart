@@ -128,14 +128,9 @@ final class _ProcessDetailViewState extends State<_ProcessDetailView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: AppHeading(
-                            proc.name,
-                            level: AppHeadingLevel.h2,
-                          ),
-                        ),
+                    AppActionRow(
+                      content: AppHeading(proc.name, level: AppHeadingLevel.h2),
+                      actions: [
                         AppStatusBadge(
                           label: proc.isActive
                               ? l10n.statusActive
@@ -496,25 +491,23 @@ final class _ProcessDetailViewState extends State<_ProcessDetailView> {
                     child: AppCard(
                       onTap: () =>
                           context.push(RoutePaths.workerDetail(w.workerId)),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                AppText(
-                                  w.workerName,
-                                  variant: AppTextVariant.bodyLarge,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                if (w.workerPhone != null)
-                                  AppText(
-                                    w.workerPhone!,
-                                    variant: AppTextVariant.bodySmall,
-                                  ),
-                              ],
+                      child: AppActionRow(
+                        content: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppText(
+                              w.workerName,
+                              variant: AppTextVariant.bodyLarge,
+                              fontWeight: FontWeight.w600,
                             ),
-                          ),
+                            if (w.workerPhone != null)
+                              AppText(
+                                w.workerPhone!,
+                                variant: AppTextVariant.bodySmall,
+                              ),
+                          ],
+                        ),
+                        actions: [
                           AppStatusBadge(
                             label: w.workerIsActive
                                 ? l10n.statusActive
@@ -523,7 +516,6 @@ final class _ProcessDetailViewState extends State<_ProcessDetailView> {
                                 ? AppStatusTone.good
                                 : AppStatusTone.neutral,
                           ),
-                          const SizedBox(width: AppSpacing.xs),
                           const Icon(Icons.chevron_right),
                         ],
                       ),

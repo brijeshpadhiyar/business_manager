@@ -2797,4 +2797,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get uxActionInspections => 'Inspection queue';
+
+  @override
+  String uxPerPage(int count) {
+    return '$count / page';
+  }
+
+  @override
+  String get uxFilters => 'Filters';
+
+  @override
+  String uxFiltersActive(int count) {
+    return 'Filters ($count)';
+  }
+
+  @override
+  String get uxMoreScreens => 'More screens';
+
+  @override
+  String get uxMoreActions => 'More actions';
+
+  @override
+  String get uxApply => 'Apply';
+
+  @override
+  String get uxClearAll => 'Clear all';
 }

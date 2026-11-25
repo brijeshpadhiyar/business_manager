@@ -181,10 +181,7 @@ final class _WorkerListViewState extends State<_WorkerListView> {
                         : AppStatusTone.neutral,
                   ),
                 ],
-                mobileCardBuilder: (ctx, worker) => Row(
-                  children: [
-                    Expanded(
-                      child: Column(
+                mobileCardBuilder: (ctx, worker) => AppActionRow(content: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           AppText(
@@ -207,27 +204,26 @@ final class _WorkerListViewState extends State<_WorkerListView> {
                             ),
                           ],
                         ],
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
-                    AppStatusBadge(
+                      ), actions: [AppStatusBadge(
                       label: worker.isActive
                           ? l10n.statusActive
                           : l10n.statusInactive,
                       tone: worker.isActive
                           ? AppStatusTone.good
                           : AppStatusTone.neutral,
-                    ),
-                    const SizedBox(width: AppSpacing.xs),
-                    const Icon(Icons.chevron_right),
-                  ],
-                ),
+                    ), const Icon(Icons.chevron_right),],),
               ),
             ),
           ];
         }
 
         return AppScaffold(
+          // Main action: floating button on phones, toolbar button on wider screens.
+          primaryAction: AppPrimaryAction(
+            icon: Icons.person_add_outlined,
+            label: l10n.workerCreateAction,
+            onPressed: () => _openCreateWorker(context),
+          ),
           scrollMode: AppScrollMode.collapsible,
           contentWidth: AppContentWidth.wide,
           embedded: true,
@@ -237,14 +233,6 @@ final class _WorkerListViewState extends State<_WorkerListView> {
             automaticallyImplyLeading: false,
             expandedHeight: 164,
             actions: [
-              Padding(
-                padding: const EdgeInsets.only(right: AppSpacing.sm),
-                child: AppButton(
-                  label: l10n.workerCreateAction,
-                  icon: Icons.person_add_outlined,
-                  onPressed: () => _openCreateWorker(context),
-                ),
-              ),
             ],
             summary: AppSummaryStrip(
               metrics: [

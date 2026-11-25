@@ -24,6 +24,15 @@ final class WorkerAdjustmentFormPage extends StatefulWidget {
 
 final class _WorkerAdjustmentFormPageState
     extends State<WorkerAdjustmentFormPage> {
+  late final _dirty = AppFormDirtyTracker()
+    ..watch([_amountCtrl, _reasonCtrl, _notesCtrl]);
+
+  /// setState for a user edit: also marks the form as unsaved.
+  void _edit(VoidCallback fn) {
+    _dirty.markDirty();
+    setState(fn);
+  }
+
   final _formKey = GlobalKey<FormState>();
   final _amountFieldKey = GlobalKey<FormFieldState<String>>();
   final _reasonFieldKey = GlobalKey<FormFieldState<String>>();
@@ -48,6 +57,7 @@ final class _WorkerAdjustmentFormPageState
 
   @override
   void dispose() {
+    _dirty.dispose();
     _amountCtrl.dispose();
     _reasonCtrl.dispose();
     _notesCtrl.dispose();
@@ -126,115 +136,119 @@ final class _WorkerAdjustmentFormPageState
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return AppScaffold(
-      title: l10n.accountingAddAdjustmentAction,
-      contentWidth: AppContentWidth.narrow,
-      body: Form(
-        key: _formKey,
-        autovalidateMode: _submittedOnce
-            ? AutovalidateMode.onUserInteraction
-            : AutovalidateMode.disabled,
-        child: ListView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          children: [
-            AppCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  AppDropdown<WorkerAdjustmentType>(
-                    label: l10n.accountingAdjustmentTypeLabel,
-                    value: _type,
-                    items: const [
-                      WorkerAdjustmentType.credit,
-                      WorkerAdjustmentType.debit,
+    return AppUnsavedChangesGuard.tracked(
+      tracker: _dirty,
+      child: AppScaffold(
+        title: l10n.accountingAddAdjustmentAction,
+        contentWidth: AppContentWidth.narrow,
+        body: Form(
+          key: _formKey,
+          autovalidateMode: _submittedOnce
+              ? AutovalidateMode.onUserInteraction
+              : AutovalidateMode.disabled,
+          child: ListView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            children: [
+              AppCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    AppDropdown<WorkerAdjustmentType>(
+                      label: l10n.accountingAdjustmentTypeLabel,
+                      value: _type,
+                      items: const [
+                        WorkerAdjustmentType.credit,
+                        WorkerAdjustmentType.debit,
+                      ],
+                      itemLabelBuilder: (t) => t == WorkerAdjustmentType.credit
+                          ? l10n.accountingAdjustmentCredit
+                          : l10n.accountingAdjustmentDebit,
+                      onChanged: (v) {
+                        _dirty.markDirty();
+                        if (v != null) setState(() => _type = v);
+                      },
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    AppTextField(
+                      fieldKey: _amountFieldKey,
+                      controller: _amountCtrl,
+                      focusNode: _amountFocus,
+                      label: l10n.accountingAmountLabel,
+                      prefixIcon: Icons.currency_rupee,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      textInputAction: TextInputAction.next,
+                      onChanged: (_) {
+                        if (_submitError != null) {
+                          setState(() => _submitError = null);
+                        }
+                      },
+                      validator: ValidationLocalizer.wrap(
+                        l10n,
+                        (v) => AppValidators.amountValidator(v),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    AppDatePicker(
+                      label: l10n.stockTransactionDateTimeLabel,
+                      selectedUtcMillis: _transactionAtUtc,
+                      includeTime: true,
+                      onDateSelectedUtcMillis: (utc) =>
+                          _edit(() => _transactionAtUtc = utc),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    AppTextField(
+                      fieldKey: _reasonFieldKey,
+                      controller: _reasonCtrl,
+                      focusNode: _reasonFocus,
+                      label: l10n.accountingAdjustmentReasonLabel,
+                      maxLines: 2,
+                      maxLength: ValidationLimits.maxNotesLength,
+                      validator: ValidationLocalizer.wrap(
+                        l10n,
+                        (v) => AppValidators.nameValidator(
+                          v,
+                          maxLength: ValidationLimits.maxNotesLength,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    AppTextField(
+                      fieldKey: _notesFieldKey,
+                      controller: _notesCtrl,
+                      focusNode: _notesFocus,
+                      label: l10n.stockNotesLabel,
+                      maxLines: 2,
+                      maxLength: ValidationLimits.maxNotesLength,
+                      validator: ValidationLocalizer.wrap(
+                        l10n,
+                        (v) => AppValidators.maxLengthValidator(
+                          v,
+                          maxLength: ValidationLimits.maxNotesLength,
+                        ),
+                      ),
+                    ),
+                    if (_submitError != null) ...[
+                      const SizedBox(height: AppSpacing.sm),
+                      AppText(
+                        _submitError!,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
                     ],
-                    itemLabelBuilder: (t) => t == WorkerAdjustmentType.credit
-                        ? l10n.accountingAdjustmentCredit
-                        : l10n.accountingAdjustmentDebit,
-                    onChanged: (v) {
-                      if (v != null) setState(() => _type = v);
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppTextField(
-                    fieldKey: _amountFieldKey,
-                    controller: _amountCtrl,
-                    focusNode: _amountFocus,
-                    label: l10n.accountingAmountLabel,
-                    prefixIcon: Icons.currency_rupee,
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    textInputAction: TextInputAction.next,
-                    onChanged: (_) {
-                      if (_submitError != null) {
-                        setState(() => _submitError = null);
-                      }
-                    },
-                    validator: ValidationLocalizer.wrap(
-                      l10n,
-                      (v) => AppValidators.amountValidator(v),
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppDatePicker(
-                    label: l10n.stockTransactionDateTimeLabel,
-                    selectedUtcMillis: _transactionAtUtc,
-                    includeTime: true,
-                    onDateSelectedUtcMillis: (utc) =>
-                        setState(() => _transactionAtUtc = utc),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppTextField(
-                    fieldKey: _reasonFieldKey,
-                    controller: _reasonCtrl,
-                    focusNode: _reasonFocus,
-                    label: l10n.accountingAdjustmentReasonLabel,
-                    maxLines: 2,
-                    maxLength: ValidationLimits.maxNotesLength,
-                    validator: ValidationLocalizer.wrap(
-                      l10n,
-                      (v) => AppValidators.nameValidator(
-                        v,
-                        maxLength: ValidationLimits.maxNotesLength,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppTextField(
-                    fieldKey: _notesFieldKey,
-                    controller: _notesCtrl,
-                    focusNode: _notesFocus,
-                    label: l10n.stockNotesLabel,
-                    maxLines: 2,
-                    maxLength: ValidationLimits.maxNotesLength,
-                    validator: ValidationLocalizer.wrap(
-                      l10n,
-                      (v) => AppValidators.maxLengthValidator(
-                        v,
-                        maxLength: ValidationLimits.maxNotesLength,
-                      ),
-                    ),
-                  ),
-                  if (_submitError != null) ...[
-                    const SizedBox(height: AppSpacing.sm),
-                    AppText(
-                      _submitError!,
-                      color: Theme.of(context).colorScheme.error,
+                    const SizedBox(height: AppSpacing.lg),
+                    AppButton(
+                      label: l10n.actionSave,
+                      icon: Icons.check_rounded,
+                      isExpanded: true,
+                      isLoading: _saving,
+                      onPressed: _submit,
                     ),
                   ],
-                  const SizedBox(height: AppSpacing.lg),
-                  AppButton(
-                    label: l10n.actionSave,
-                    icon: Icons.check_rounded,
-                    isExpanded: true,
-                    isLoading: _saving,
-                    onPressed: _submit,
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:animations/animations.dart';
+import 'package:business_manager/core/design_system/app_breakpoints.dart';
 import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
@@ -93,21 +94,38 @@ final class AppDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final tokens = context.surfaceTokens;
     final theme = Theme.of(context);
+    // On phones (and narrow windows) the dialog becomes a full-width panel
+    // anchored to the bottom edge: within thumb reach, above the keyboard,
+    // and clear of the home indicator.
+    final compact = AppBreakpoints.fromWidth(
+      MediaQuery.sizeOf(context).width,
+    ).isCompact;
+    final radius = compact
+        ? const BorderRadius.vertical(top: Radius.circular(AppRadius.xl))
+        : AppRadius.xlBorder;
+    final bottomSafe = compact ? MediaQuery.viewPaddingOf(context).bottom : 0.0;
 
     return Dialog(
       backgroundColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
-      insetPadding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.lg,
-        vertical: AppSpacing.xl,
-      ),
+      insetPadding: compact
+          ? EdgeInsets.only(top: MediaQuery.paddingOf(context).top + 24)
+          : const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.xl,
+            ),
+      alignment: compact ? Alignment.bottomCenter : null,
+      shape: RoundedRectangleBorder(borderRadius: radius),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: AppSizing.maxDialogWidth),
+        constraints: BoxConstraints(
+          maxWidth: compact ? double.infinity : AppSizing.maxDialogWidth,
+          minWidth: compact ? MediaQuery.sizeOf(context).width : 0,
+        ),
         child: RepaintBoundary(
           child: DecoratedBox(
             decoration: BoxDecoration(
-              borderRadius: AppRadius.xlBorder,
+              borderRadius: radius,
               boxShadow: [
                 BoxShadow(
                   color: tokens.cardShadow,
@@ -117,21 +135,21 @@ final class AppDialog extends StatelessWidget {
               ],
             ),
             child: ClipRRect(
-              borderRadius: AppRadius.xlBorder,
+              borderRadius: radius,
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     color: tokens.dialogGlassFill,
-                    borderRadius: AppRadius.xlBorder,
+                    borderRadius: radius,
                     border: Border.all(color: tokens.glassBorder, width: 1.2),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(
+                    padding: EdgeInsets.fromLTRB(
+                      compact ? AppSpacing.lg : AppSpacing.xl,
                       AppSpacing.xl,
-                      AppSpacing.xl,
-                      AppSpacing.xl,
-                      AppSpacing.lg,
+                      compact ? AppSpacing.lg : AppSpacing.xl,
+                      AppSpacing.lg + bottomSafe,
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,

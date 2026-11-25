@@ -252,6 +252,12 @@ final class _LotListViewState extends State<_LotListView> {
         }
 
         return AppScaffold(
+          // Main action: floating button on phones, toolbar button on wider screens.
+          primaryAction: AppPrimaryAction(
+            icon: Icons.add,
+            label: l10n.lotCreateAction,
+            onPressed: () => _openCreateLotPage(context),
+          ),
           scrollMode: AppScrollMode.collapsible,
           contentWidth: AppContentWidth.wide,
           embedded: true,
@@ -265,14 +271,6 @@ final class _LotListViewState extends State<_LotListView> {
                 icon: Icons.palette_outlined,
                 tooltip: l10n.navDesignsColours,
                 onPressed: () => context.push(RoutePaths.designsColours),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: AppSpacing.sm),
-                child: AppButton(
-                  label: l10n.lotCreateAction,
-                  icon: Icons.add,
-                  onPressed: () => _openCreateLotPage(context),
-                ),
               ),
             ],
             summary: AppSummaryStrip(

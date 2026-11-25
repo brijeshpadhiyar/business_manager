@@ -757,6 +757,65 @@ final class StitchFlowShellScaffold extends StatelessWidget {
     final appTitle = config.isDev ? l10n.appTitleDev : l10n.appTitle;
     final isRootChrome = _isPrimaryRootRoute && !GoRouter.of(context).canPop();
 
+    // Secondary screens: sidebar on desktop, drawer on tablet, and the
+    // "More" menu on phones.
+    final extraActions = <ResponsiveNavActionItem>[
+      ResponsiveNavActionItem(
+        id: 'productionHistory',
+        label: l10n.navProductionHistory,
+        icon: Icons.history_rounded,
+        onTap: () => context.go(RoutePaths.productionHistory),
+      ),
+      ResponsiveNavActionItem(
+        id: 'inspectionQueue',
+        label: l10n.navInspectionQueue,
+        icon: Icons.fact_check_outlined,
+        onTap: () => context.go(RoutePaths.inspectionQueue),
+      ),
+      ResponsiveNavActionItem(
+        id: 'processHistory',
+        label: l10n.navProcessHistory,
+        icon: Icons.timeline_rounded,
+        onTap: () => context.go(RoutePaths.processProductionHistory),
+      ),
+      ResponsiveNavActionItem(
+        id: 'designsColours',
+        label: l10n.navDesignsColours,
+        icon: Icons.palette_outlined,
+        onTap: () => context.go(RoutePaths.designsColours),
+      ),
+      ResponsiveNavActionItem(
+        id: 'processes',
+        label: l10n.navProcesses,
+        icon: Icons.precision_manufacturing_outlined,
+        onTap: () => context.go(RoutePaths.processes),
+      ),
+      ResponsiveNavActionItem(
+        id: 'inventory',
+        label: l10n.navInventory,
+        icon: Icons.bar_chart_outlined,
+        onTap: () => context.go(RoutePaths.inventory),
+      ),
+      ResponsiveNavActionItem(
+        id: 'accounting',
+        label: l10n.navAccounting,
+        icon: Icons.account_balance_wallet_outlined,
+        onTap: () => context.go(RoutePaths.accounting),
+      ),
+      ResponsiveNavActionItem(
+        id: 'reports',
+        label: l10n.navReports,
+        icon: Icons.analytics_outlined,
+        onTap: () => context.go(RoutePaths.reports),
+      ),
+      ResponsiveNavActionItem(
+        id: 'help',
+        label: l10n.settingsHelpTitle,
+        icon: Icons.menu_book_outlined,
+        onTap: () => context.go(RoutePaths.settingsHelp),
+      ),
+    ];
+
     return ResponsiveNavigation(
       title: appTitle,
       subtitle: l10n.appTagline,
@@ -777,6 +836,46 @@ final class StitchFlowShellScaffold extends StatelessWidget {
         const SingleActivator(LogicalKeyboardKey.escape): () =>
             GoRouter.of(context).routerDelegate.popRoute(),
       },
+      // Phones get Search plus one "More" menu instead of six icons, so the
+      // toolbar never overflows at 320dp.
+      compactActions: [
+        AppIconButton(
+          icon: Icons.search_rounded,
+          tooltip: l10n.uxSearchTooltip,
+          onPressed: () => showGlobalSearch(context),
+        ),
+        BlocBuilder<AppLockCubit, AppLockState>(
+          builder: (context, lockState) {
+            return PopupMenuButton<VoidCallback>(
+              tooltip: MaterialLocalizations.of(context).showMenuTooltip,
+              icon: const Icon(Icons.more_vert_rounded),
+              onSelected: (action) => action(),
+              itemBuilder: (context) => [
+                for (final item in extraActions)
+                  PopupMenuItem<VoidCallback>(
+                    value: item.onTap,
+                    child: ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: Icon(item.icon),
+                      title: Text(item.label),
+                    ),
+                  ),
+                if (lockState.isPinEnabled) ...[
+                  const PopupMenuDivider(),
+                  PopupMenuItem<VoidCallback>(
+                    value: () => context.read<AppLockCubit>().lockNow(),
+                    child: ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: const Icon(Icons.lock_outline_rounded),
+                      title: Text(l10n.securityLockNowAction),
+                    ),
+                  ),
+                ],
+              ],
+            );
+          },
+        ),
+      ],
       actions: [
         AppIconButton(
           icon: Icons.search_rounded,
@@ -814,77 +913,7 @@ final class StitchFlowShellScaffold extends StatelessWidget {
           onPressed: () => context.push(RoutePaths.settingsHelp),
         ),
       ],
-      sidebarExtraActions: [
-        ResponsiveNavActionItem(
-          id: 'productionHistory',
-          label: l10n.navProductionHistory,
-          icon: Icons.history_rounded,
-          onTap: () => context.go(RoutePaths.productionHistory),
-        ),
-        ResponsiveNavActionItem(
-          id: 'inspectionQueue',
-          label: l10n.navInspectionQueue,
-          icon: Icons.fact_check_outlined,
-          onTap: () => context.go(RoutePaths.inspectionQueue),
-        ),
-        ResponsiveNavActionItem(
-          id: 'processHistory',
-          label: l10n.navProcessHistory,
-          icon: Icons.timeline_rounded,
-          onTap: () => context.go(RoutePaths.processProductionHistory),
-        ),
-        ResponsiveNavActionItem(
-          id: 'designsColours',
-          label: l10n.navDesignsColours,
-          icon: Icons.palette_outlined,
-          onTap: () => context.go(RoutePaths.designsColours),
-        ),
-        ResponsiveNavActionItem(
-          id: 'processes',
-          label: l10n.navProductionHistory,
-          icon: Icons.history_rounded,
-          onTap: () => context.push(RoutePaths.productionHistory),
-        ),
-        ResponsiveNavActionItem(
-          label: l10n.navInspectionQueue,
-          icon: Icons.fact_check_outlined,
-          onTap: () => context.push(RoutePaths.inspectionQueue),
-        ),
-        ResponsiveNavActionItem(
-          label: l10n.navProcessHistory,
-          icon: Icons.timeline_rounded,
-          onTap: () => context.push(RoutePaths.processProductionHistory),
-        ),
-        ResponsiveNavActionItem(
-          label: l10n.navProcesses,
-          icon: Icons.precision_manufacturing_outlined,
-          onTap: () => context.go(RoutePaths.processes),
-        ),
-        ResponsiveNavActionItem(
-          id: 'inventory',
-          label: l10n.navInventory,
-          icon: Icons.bar_chart_outlined,
-          onTap: () => context.go(RoutePaths.inventory),
-        ),
-        ResponsiveNavActionItem(
-          id: 'accounting',
-          label: l10n.navAccounting,
-          icon: Icons.account_balance_wallet_outlined,
-          onTap: () => context.go(RoutePaths.accounting),
-        ),
-        ResponsiveNavActionItem(
-          id: 'reports',
-          label: l10n.navReports,
-          icon: Icons.analytics_outlined,
-          onTap: () => context.go(RoutePaths.reports),
-        ),
-        ResponsiveNavActionItem(
-          id: 'help',
-          label: l10n.settingsHelpTitle,
-          icon: Icons.menu_book_outlined,
-          onTap: () => context.go(RoutePaths.settingsHelp),
-        ),
-      ],
+      sidebarExtraActions: extraActions,
       destinations: [
         ResponsiveNavDestination(
           label: l10n.navDashboard,

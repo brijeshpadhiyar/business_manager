@@ -390,10 +390,7 @@ final class _LotColourDetailView extends StatelessWidget {
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   for (var i = 0; i < stageSummaries.length; i++) ...[
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Column(
+                    AppActionRow(content: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               AppText(
@@ -408,14 +405,10 @@ final class _LotColourDetailView extends StatelessWidget {
                                 color: colorScheme.onSurfaceVariant,
                               ),
                             ],
-                          ),
-                        ),
-                        AppStatusBadge(
+                          ), actions: [AppStatusBadge(
                           label: stageSummaries[i].statusLabel,
                           tone: stageSummaries[i].tone,
-                        ),
-                      ],
-                    ),
+                        ),],),
                     if (i < stageSummaries.length - 1)
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 6),

@@ -28,6 +28,8 @@ final class AppTextField extends StatelessWidget {
     this.obscureText = false,
     this.autofocus = false,
     this.maxLines = 1,
+    this.textCapitalization = TextCapitalization.none,
+    this.autocorrect = true,
     this.maxLength,
     this.showCounter = false,
     this.textAlign = TextAlign.start,
@@ -57,6 +59,8 @@ final class AppTextField extends StatelessWidget {
   final bool obscureText;
   final bool autofocus;
   final int maxLines;
+  final TextCapitalization textCapitalization;
+  final bool autocorrect;
   final int? maxLength;
   final bool showCounter;
   final TextAlign textAlign;
@@ -75,12 +79,18 @@ final class AppTextField extends StatelessWidget {
       obscureText: obscureText,
       autofocus: autofocus,
       maxLines: maxLines,
+      textCapitalization: textCapitalization,
+      autocorrect: autocorrect,
+      enableSuggestions: autocorrect,
       maxLength: maxLength,
       maxLengthEnforcement: MaxLengthEnforcement.none,
       textAlign: textAlign,
       style: style,
       keyboardType: keyboardType,
-      textInputAction: textInputAction,
+      textInputAction:
+          textInputAction ??
+          (maxLines == 1 ? TextInputAction.next : TextInputAction.newline),
+      scrollPadding: const EdgeInsets.fromLTRB(20, 20, 20, 96),
       inputFormatters: inputFormatters,
       validator: validator,
       onChanged: onChanged,

@@ -493,6 +493,15 @@ final class _StockIssuePageState extends State<StockIssuePage> {
       tracker: _dirty,
       child: AppScaffold(
         title: l10n.stockIssueAction,
+        // Confirm stays pinned at the bottom: no scrolling past three steps
+        // to find it on a phone.
+        bottomAction: AppButton(
+          label: l10n.stockConfirmIssueAction,
+          icon: Icons.outbox_rounded,
+          isExpanded: true,
+          isLoading: _saving,
+          onPressed: canSubmit ? _submit : null,
+        ),
         body: Form(
           key: _formKey,
           child: ListView(
@@ -728,26 +737,23 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                         ? colorScheme.secondary
                         : colorScheme.outlineVariant,
                     onTap: () => _selectStock(b),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              AppText(
-                                '${b.lotNumber} • ${b.designName}',
-                                fontWeight: FontWeight.w700,
-                              ),
-                              const SizedBox(height: 2),
-                              AppText(
-                                b.colourName,
-                                variant: AppTextVariant.bodySmall,
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                            ],
+                    child: AppActionRow(
+                      content: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AppText(
+                            '${b.lotNumber} • ${b.designName}',
+                            fontWeight: FontWeight.w700,
                           ),
-                        ),
-                        const SizedBox(width: AppSpacing.sm),
+                          const SizedBox(height: 2),
+                          AppText(
+                            b.colourName,
+                            variant: AppTextVariant.bodySmall,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ],
+                      ),
+                      actions: [
                         AppStatusBadge(
                           label: hasStock
                               ? '${b.physicalAvailableInHouse} ${l10n.piecesUnit}'
@@ -1293,14 +1299,6 @@ final class _StockIssuePageState extends State<StockIssuePage> {
               icon: Icons.error_outline_rounded,
             ),
           ],
-          const SizedBox(height: AppSpacing.lg),
-          AppButton(
-            label: l10n.stockConfirmIssueAction,
-            icon: Icons.outbox_rounded,
-            isExpanded: true,
-            isLoading: _saving,
-            onPressed: canSubmit ? _submit : null,
-          ),
         ],
       ),
     );

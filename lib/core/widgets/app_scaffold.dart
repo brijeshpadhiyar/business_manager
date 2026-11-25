@@ -4,10 +4,13 @@ import 'package:business_manager/core/design_system/app_breakpoints.dart';
 import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
+import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/widgets/app_breadcrumb_bar.dart';
+import 'package:business_manager/core/widgets/app_button.dart';
 import 'package:business_manager/core/widgets/app_collapsible_header.dart';
 import 'package:business_manager/core/widgets/app_glass_backdrop.dart';
 import 'package:business_manager/core/widgets/responsive_navigation.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Centralized scroll & header presentation modes for [AppScaffold].
@@ -25,6 +28,23 @@ enum AppScrollMode {
   /// Minimal compact glass toolbar (`48dp`) with maximum working space and no
   /// expanded header animation.
   compact,
+}
+
+/// A page's main action, such as "Create lot".
+///
+/// [AppScaffold] shows it as a floating action button on compact screens
+/// (phones, narrow windows) where it sits under the thumb and never crowds the
+/// toolbar, and as a labelled toolbar button on tablet and desktop.
+final class AppPrimaryAction {
+  const AppPrimaryAction({
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback? onPressed;
 }
 
 /// Centralized StitchFlow adaptive page scaffold supporting:
@@ -59,6 +79,8 @@ final class AppScaffold extends StatelessWidget {
     this.constrainMaxWidth = true,
     this.contentWidth = AppContentWidth.standard,
     this.breadcrumbs,
+    this.primaryAction,
+    this.bottomAction,
   }) : assert(
          scrollMode == AppScrollMode.collapsible
              ? (slivers != null || body != null)
@@ -87,16 +109,97 @@ final class AppScaffold extends StatelessWidget {
   final AppContentWidth contentWidth;
   final List<AppBreadcrumbItem>? breadcrumbs;
 
+  /// The page's main action: FAB on compact, toolbar button elsewhere.
+  final AppPrimaryAction? primaryAction;
+
+  /// Save / Confirm area pinned to the bottom of the screen (above the
+  /// keyboard and home indicator), so long forms never hide their main button.
+  final Widget? bottomAction;
+
   double get effectiveMaxWidth =>
       constrainMaxWidth ? contentWidth.maxWidth : double.infinity;
 
+  static bool _isCompact(BuildContext context) =>
+      AppBreakpoints.fromWidth(MediaQuery.sizeOf(context).width).isCompact;
+
+  /// Toolbar actions plus [primaryAction] on tablet/desktop.
+  List<Widget>? actionsFor(BuildContext context, List<Widget>? base) {
+    final action = primaryAction;
+    if (action == null || _isCompact(context)) return base;
+    return [
+      ...?base,
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+        child: Center(
+          child: AppButton(
+            label: action.label,
+            icon: action.icon,
+            onPressed: action.onPressed,
+          ),
+        ),
+      ),
+    ];
+  }
+
+  /// Explicit FAB, or [primaryAction] as a FAB on compact screens.
+  Widget? fabFor(BuildContext context) {
+    if (floatingActionButton != null) return floatingActionButton;
+    final action = primaryAction;
+    if (action == null || !_isCompact(context)) return null;
+    return FloatingActionButton.extended(
+      heroTag: null,
+      onPressed: action.onPressed,
+      icon: Icon(action.icon),
+      label: Text(action.label),
+    );
+  }
+
+  /// [bottomAction] as a pinned bar, else the plain bottom bar.
+  Widget? bottomBarFor(BuildContext context) {
+    final action = bottomAction;
+    if (action == null) return bottomNavigationBar;
+    return AppStickyActionBar(child: action);
+  }
+
+  /// [leading], or a Home button when a compact page was opened directly
+  /// (deep link, browser refresh, bookmark) and has nothing to go back to.
+  Widget? leadingFor(BuildContext context, Widget? base) {
+    if (base != null || embedded) return base;
+    final shell = ResponsiveShellScope.maybeOf(context);
+    if (shell == null || shell.hasPersistentChrome) return null;
+    final route = ModalRoute.of(context);
+    if (route == null || route.impliesAppBarDismissal) return null;
+    final router = GoRouter.maybeOf(context);
+    if (router == null) return null;
+    return IconButton(
+      tooltip: MaterialLocalizations.of(context).backButtonTooltip,
+      icon: const Icon(Icons.home_outlined),
+      onPressed: () => router.go(RoutePaths.home),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return switch (scrollMode) {
+    final Widget layout = switch (scrollMode) {
       AppScrollMode.standard => _StandardScaffoldLayout(config: this),
       AppScrollMode.collapsible => _CollapsibleScaffoldLayout(config: this),
       AppScrollMode.compact => _CompactScaffoldLayout(config: this),
     };
+    // Embedded pages (root tabs inside the navigation shell) have no Scaffold
+    // of their own, so the compact FAB floats over the content instead.
+    if (embedded && primaryAction != null && _isCompact(context)) {
+      return Stack(
+        children: [
+          Positioned.fill(child: layout),
+          Positioned(
+            right: AppSpacing.lg,
+            bottom: AppSpacing.lg,
+            child: fabFor(context)!,
+          ),
+        ],
+      );
+    }
+    return layout;
   }
 }
 
@@ -181,7 +284,8 @@ final class _StandardScaffoldLayout extends StatelessWidget {
     final showAppBar =
         config.title != null ||
         config.titleWidget != null ||
-        config.actions != null;
+        config.actions != null ||
+        config.primaryAction != null;
 
     return _wrapWithBackdropIfNeeded(
       context,
@@ -193,13 +297,13 @@ final class _StandardScaffoldLayout extends StatelessWidget {
                 toolbarHeight: AppSizing.appBarHeight,
                 title: config.title,
                 titleWidget: config.titleWidget,
-                leading: config.leading,
-                actions: config.actions,
+                leading: config.leadingFor(context, config.leading),
+                actions: config.actionsFor(context, config.actions),
               )
             : null,
-        body: SafeArea(child: content),
-        floatingActionButton: config.floatingActionButton,
-        bottomNavigationBar: config.bottomNavigationBar,
+        body: SafeArea(bottom: config.bottomAction == null, child: content),
+        floatingActionButton: config.fabFor(context),
+        bottomNavigationBar: config.bottomBarFor(context),
       ),
     );
   }
@@ -234,7 +338,8 @@ final class _CompactScaffoldLayout extends StatelessWidget {
     final showAppBar =
         config.title != null ||
         config.titleWidget != null ||
-        config.actions != null;
+        config.actions != null ||
+        config.primaryAction != null;
 
     return _wrapWithBackdropIfNeeded(
       context,
@@ -246,13 +351,13 @@ final class _CompactScaffoldLayout extends StatelessWidget {
                 toolbarHeight: 48,
                 title: config.title,
                 titleWidget: config.titleWidget,
-                leading: config.leading,
-                actions: config.actions,
+                leading: config.leadingFor(context, config.leading),
+                actions: config.actionsFor(context, config.actions),
               )
             : null,
-        body: SafeArea(child: content),
-        floatingActionButton: config.floatingActionButton,
-        bottomNavigationBar: config.bottomNavigationBar,
+        body: SafeArea(bottom: config.bottomAction == null, child: content),
+        floatingActionButton: config.fabFor(context),
+        bottomNavigationBar: config.bottomBarFor(context),
       ),
     );
   }
@@ -277,13 +382,20 @@ final class _CollapsibleScaffoldLayoutState
     final config = widget.config;
     final shell = ResponsiveShellScope.maybeOf(context);
     final inPersistentShell = shell != null && shell.hasPersistentChrome;
-    final hdr =
+    final baseHdr =
         config.header ??
         AppCollapsibleHeader(
           title: config.title ?? '',
           leading: config.leading,
           actions: config.actions,
         );
+    // Short landscape phones: let the header scroll away so content has room.
+    final shortScreen = MediaQuery.sizeOf(context).height < 480;
+    final hdr = baseHdr.copyWith(
+      leading: config.leadingFor(context, baseHdr.leading),
+      actions: config.actionsFor(context, baseHdr.actions),
+      pinned: shortScreen ? false : baseHdr.pinned,
+    );
 
     final scrollBody = BackdropGroup(
       backdropKey: _chromeBackdropKey,
@@ -371,7 +483,7 @@ final class _CollapsibleScaffoldLayoutState
             ],
             if (config.pinnedHeader != null)
               SliverPersistentHeader(
-                pinned: true,
+                pinned: !shortScreen,
                 delegate: AppPinnedSliverHeader(
                   height: config.pinnedHeaderHeight,
                   backdropKey: _chromeBackdropKey,
@@ -394,6 +506,12 @@ final class _CollapsibleScaffoldLayoutState
                 sliver: SliverToBoxAdapter(child: config.body!),
               ),
           ];
+
+          // Leave room so the floating action button never hides the last row.
+          if (config.primaryAction != null &&
+              AppScaffold._isCompact(context)) {
+            allSlivers.add(const SliverToBoxAdapter(child: SizedBox(height: 88)));
+          }
 
           Widget scrollView = CustomScrollView(
             controller: config.scrollController,
@@ -420,9 +538,60 @@ final class _CollapsibleScaffoldLayoutState
       context,
       Scaffold(
         backgroundColor: Colors.transparent,
-        body: scrollBody,
-        floatingActionButton: config.floatingActionButton,
-        bottomNavigationBar: config.bottomNavigationBar,
+        // Keep content clear of the home indicator and landscape notches.
+        body: SafeArea(
+          top: false,
+          bottom: config.bottomAction == null,
+          child: scrollBody,
+        ),
+        floatingActionButton: config.fabFor(context),
+        bottomNavigationBar: config.bottomBarFor(context),
+      ),
+    );
+  }
+}
+
+/// Bottom bar that pins a page's Save / Confirm action. It sits above the
+/// keyboard when typing and clear of the home indicator otherwise.
+final class AppStickyActionBar extends StatelessWidget {
+  const AppStickyActionBar({super.key, required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final tokens = context.surfaceTokens;
+    return ClipRect(
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: tokens.navGlassFill,
+            border: Border(
+              top: BorderSide(color: tokens.navGlassBorder, width: 0.9),
+            ),
+          ),
+          child: SafeArea(
+            top: false,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                AppSpacing.sm,
+                AppSpacing.lg,
+                AppSpacing.sm,
+              ),
+              child: Center(
+                heightFactor: 1,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: AppSizing.narrowContentWidth,
+                  ),
+                  child: child,
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -591,11 +591,7 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: Column(
+          AppActionRow(crossAxisAlignment: CrossAxisAlignment.start, content: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     AppText(
@@ -610,16 +606,11 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
                       color: colorScheme.onSurfaceVariant,
                     ),
                   ],
-                ),
-              ),
-              const SizedBox(width: AppSpacing.sm),
-              AppStatusBadge(
+                ), actions: [AppStatusBadge(
                 label: '${view.remainingPendingQty} ${l10n.piecesUnit}',
                 tone: AppStatusTone.pending,
                 icon: Icons.hourglass_bottom_rounded,
-              ),
-            ],
-          ),
+              ),],),
           const SizedBox(height: AppSpacing.sm),
           Wrap(
             spacing: AppSpacing.md,
@@ -1032,10 +1023,7 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
                     : AppStatusTone.good,
               ),
             ],
-            mobileCardBuilder: (_, w) => Row(
-              children: [
-                Expanded(
-                  child: Column(
+            mobileCardBuilder: (_, w) => AppActionRow(content: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       AppText(w.workerName, fontWeight: FontWeight.w700),
@@ -1044,17 +1032,12 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
                         variant: AppTextVariant.bodySmall,
                       ),
                     ],
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                AppStatusBadge(
+                  ), actions: [AppStatusBadge(
                   label: '${l10n.stockRemainingPendingLabel}: ${w.pending}',
                   tone: w.pending > 0
                       ? AppStatusTone.pending
                       : AppStatusTone.good,
-                ),
-              ],
-            ),
+                ),],),
           ),
           const SizedBox(height: AppSpacing.lg),
         ],
@@ -1086,10 +1069,7 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
                     : AppStatusTone.good,
               ),
             ],
-            mobileCardBuilder: (_, p) => Row(
-              children: [
-                Expanded(
-                  child: Column(
+            mobileCardBuilder: (_, p) => AppActionRow(content: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       AppText(p.processName, fontWeight: FontWeight.w700),
@@ -1098,17 +1078,12 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
                         variant: AppTextVariant.bodySmall,
                       ),
                     ],
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                AppStatusBadge(
+                  ), actions: [AppStatusBadge(
                   label: '${l10n.stockRemainingPendingLabel}: ${p.pending}',
                   tone: p.pending > 0
                       ? AppStatusTone.pending
                       : AppStatusTone.good,
-                ),
-              ],
-            ),
+                ),],),
           ),
         ],
       ],

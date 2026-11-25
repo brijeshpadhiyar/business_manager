@@ -192,6 +192,11 @@ final class _PinRecoveryPageState extends State<PinRecoveryPage> {
                           label: l10n.securityRecoveryKeyLabel,
                           hint: 'XXXX-XXXX',
                           prefixIcon: Icons.vpn_key_outlined,
+                          // Recovery keys are upper-case codes: no
+                          // autocorrect or suggestions mangling them.
+                          textCapitalization: TextCapitalization.characters,
+                          autocorrect: false,
+                          textInputAction: TextInputAction.done,
                           onChanged: (_) => setState(() => _errorText = null),
                           validator: ValidationLocalizer.wrap(
                             l10n,

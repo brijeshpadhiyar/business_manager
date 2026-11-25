@@ -180,36 +180,33 @@ final class _ProcessListViewState extends State<_ProcessListView> {
                         : AppStatusTone.neutral,
                   ),
                 ],
-                mobileCardBuilder: (ctx, process) => Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          AppText(
-                            process.name,
-                            variant: AppTextVariant.bodyLarge,
-                            fontWeight: FontWeight.w700,
-                          ),
-                          if (process.description != null) ...[
-                            const SizedBox(height: AppSpacing.xs),
-                            AppText(
-                              process.description!,
-                              variant: AppTextVariant.bodySmall,
-                            ),
-                          ],
-                          const SizedBox(height: AppSpacing.xs),
-                          AppText(
-                            process.defaultRatePaise > 0
-                                ? 'Default Rate: ${MoneyFormatter.formatRatePaise(process.defaultRatePaise, pricingUnit: process.defaultPricingUnit)}'
-                                : 'No default labour rate',
-                            variant: AppTextVariant.bodySmall,
-                            color: Theme.of(ctx).colorScheme.onSurfaceVariant,
-                          ),
-                        ],
+                mobileCardBuilder: (ctx, process) => AppActionRow(
+                  content: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppText(
+                        process.name,
+                        variant: AppTextVariant.bodyLarge,
+                        fontWeight: FontWeight.w700,
                       ),
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
+                      if (process.description != null) ...[
+                        const SizedBox(height: AppSpacing.xs),
+                        AppText(
+                          process.description!,
+                          variant: AppTextVariant.bodySmall,
+                        ),
+                      ],
+                      const SizedBox(height: AppSpacing.xs),
+                      AppText(
+                        process.defaultRatePaise > 0
+                            ? 'Default Rate: ${MoneyFormatter.formatRatePaise(process.defaultRatePaise, pricingUnit: process.defaultPricingUnit)}'
+                            : 'No default labour rate',
+                        variant: AppTextVariant.bodySmall,
+                        color: Theme.of(ctx).colorScheme.onSurfaceVariant,
+                      ),
+                    ],
+                  ),
+                  actions: [
                     AppStatusBadge(
                       label: process.isActive
                           ? l10n.statusActive
@@ -218,7 +215,6 @@ final class _ProcessListViewState extends State<_ProcessListView> {
                           ? AppStatusTone.good
                           : AppStatusTone.neutral,
                     ),
-                    const SizedBox(width: AppSpacing.xs),
                     const Icon(Icons.chevron_right),
                   ],
                 ),
@@ -228,6 +224,12 @@ final class _ProcessListViewState extends State<_ProcessListView> {
         }
 
         return AppScaffold(
+          // Main action: floating button on phones, toolbar button on wider screens.
+          primaryAction: AppPrimaryAction(
+            icon: Icons.add,
+            label: l10n.processCreateAction,
+            onPressed: () => _openCreateProcess(context),
+          ),
           scrollMode: AppScrollMode.collapsible,
           contentWidth: AppContentWidth.wide,
           embedded: !widget.showAppBar,
@@ -242,14 +244,6 @@ final class _ProcessListViewState extends State<_ProcessListView> {
                 tooltip: l10n.navProcessHistory,
                 onPressed: () =>
                     context.push(RoutePaths.processProductionHistory),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(right: AppSpacing.sm),
-                child: AppButton(
-                  label: l10n.processCreateAction,
-                  icon: Icons.add,
-                  onPressed: () => _openCreateProcess(context),
-                ),
               ),
             ],
             summary: AppSummaryStrip(

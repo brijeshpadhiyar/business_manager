@@ -2796,4 +2796,29 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get uxActionInspections => 'ચકાસણી યાદી';
+
+  @override
+  String uxPerPage(int count) {
+    return '$count / પેજ';
+  }
+
+  @override
+  String get uxFilters => 'ફિલ્ટર';
+
+  @override
+  String uxFiltersActive(int count) {
+    return 'ફિલ્ટર ($count)';
+  }
+
+  @override
+  String get uxMoreScreens => 'બીજી સ્ક્રીન';
+
+  @override
+  String get uxMoreActions => 'વધુ ક્રિયાઓ';
+
+  @override
+  String get uxApply => 'લાગુ કરો';
+
+  @override
+  String get uxClearAll => 'બધું સાફ કરો';
 }

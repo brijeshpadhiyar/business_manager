@@ -1218,5 +1218,43 @@
   "uxActionInspections": "Inspection queue",
   "@uxActionInspections": {
     "description": "Quick action: open the inspection queue."
+  },
+  "uxPerPage": "{count} / page",
+  "@uxPerPage": {
+    "description": "Rows-per-page option in paged tables.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "uxFilters": "Filters",
+  "@uxFilters": {
+    "description": "Button that opens the filter panel on phones."
+  },
+  "uxFiltersActive": "Filters ({count})",
+  "@uxFiltersActive": {
+    "description": "Filter button label when some filters are set.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "uxMoreScreens": "More screens",
+  "@uxMoreScreens": {
+    "description": "Expandable group of secondary screen links on the dashboard."
+  },
+  "uxMoreActions": "More actions",
+  "@uxMoreActions": {
+    "description": "Tooltip of the overflow menu that holds extra card actions."
+  },
+  "uxApply": "Apply",
+  "@uxApply": {
+    "description": "Button that applies filters and closes the filter panel."
+  },
+  "uxClearAll": "Clear all",
+  "@uxClearAll": {
+    "description": "Button that clears all filters."
   }
 }

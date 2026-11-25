@@ -298,10 +298,7 @@ final class _StockLabourSettingsPageState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Column(
+                      AppActionRow(content: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 AppText(
@@ -319,19 +316,14 @@ final class _StockLabourSettingsPageState
                                     overflow: TextOverflow.ellipsis,
                                   ),
                               ],
-                            ),
-                          ),
-                          const SizedBox(width: AppSpacing.xs),
-                          AppStatusBadge(
+                            ), actions: [AppStatusBadge(
                             label: proc.isActive
                                 ? l10n.statusActive
                                 : l10n.statusInactive,
                             tone: proc.isActive
                                 ? AppStatusTone.good
                                 : AppStatusTone.neutral,
-                          ),
-                        ],
-                      ),
+                          ),],),
                       const SizedBox(height: AppSpacing.sm),
                       Wrap(
                         spacing: AppSpacing.xs,

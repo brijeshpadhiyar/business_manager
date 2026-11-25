@@ -765,7 +765,10 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
         context,
         title: 'Add Extra Charge / Deduction',
         builder: (sheetCtx) => StatefulBuilder(
-          builder: (ctx, setSheetState) => Column(
+          builder: (ctx, setSheetState) => SingleChildScrollView(
+            // Scrolls when the keyboard is open on a short phone.
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -849,6 +852,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
               ),
             ],
           ),
+          ),
         ),
       );
     } finally {
@@ -884,7 +888,10 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
         context,
         title: 'Confirm Material Receipt',
         builder: (sheetCtx) => StatefulBuilder(
-          builder: (ctx, setSheetState) => Column(
+          builder: (ctx, setSheetState) => SingleChildScrollView(
+            // Scrolls when the keyboard is open on a short phone.
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -953,6 +960,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                       },
               ),
             ],
+          ),
           ),
         ),
       );
@@ -1131,18 +1139,15 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          'Job #${overview.lot.lotNumber}',
-                          style: Theme.of(context).textTheme.titleLarge
-                              ?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w700,
-                              ),
-                        ),
+                  AppActionRow(
+                    content: Text(
+                      'Job #${overview.lot.lotNumber}',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w700,
                       ),
+                    ),
+                    actions: [
                       AppStatusBadge(
                         label: '$totalInitial pcs Total',
                         tone: AppStatusTone.info,
@@ -1313,23 +1318,21 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                     ),
                     const SizedBox(height: AppSpacing.sm),
                     for (var i = 0; i < costs.workerPayables.length; i++) ...[
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                AppText(
-                                  costs.workerPayables[i].workerName,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                                AppText(
-                                  '${costs.workerPayables[i].totalQuantity} pcs • Net: ${MoneyFormatter.formatPaise(costs.workerPayables[i].netPayablePaise)} • Paid: ${MoneyFormatter.formatPaise(costs.workerPayables[i].paidPaise)}',
-                                  variant: AppTextVariant.bodySmall,
-                                ),
-                              ],
+                      AppActionRow(
+                        content: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppText(
+                              costs.workerPayables[i].workerName,
+                              fontWeight: FontWeight.w700,
                             ),
-                          ),
+                            AppText(
+                              '${costs.workerPayables[i].totalQuantity} pcs • Net: ${MoneyFormatter.formatPaise(costs.workerPayables[i].netPayablePaise)} • Paid: ${MoneyFormatter.formatPaise(costs.workerPayables[i].paidPaise)}',
+                              variant: AppTextVariant.bodySmall,
+                            ),
+                          ],
+                        ),
+                        actions: [
                           AppStatusBadge(
                             label: costs.workerPayables[i].paymentStatus.label,
                             tone: _paymentTone(

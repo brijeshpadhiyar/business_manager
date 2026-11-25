@@ -18,7 +18,27 @@ final class AppBottomSheet {
     BuildContext context, {
     required String title,
     required WidgetBuilder builder,
+    WidgetBuilder? actionsBuilder,
   }) {
+    // Content that is a plain Column cannot scroll by itself; on a short
+    // phone with the keyboard open it would overflow. Make it scrollable.
+    Widget body(BuildContext ctx) {
+      final content = builder(ctx);
+      if (content is Column) {
+        return SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          child: content,
+        );
+      }
+      return content;
+    }
+
+    // Primary actions stay pinned below the scrolling content.
+    List<Widget> pinnedActions(BuildContext ctx) {
+      if (actionsBuilder == null) return const [];
+      return [const SizedBox(height: AppSpacing.md), actionsBuilder(ctx)];
+    }
+
     final width = MediaQuery.sizeOf(context).width;
     final sizeClass = AppBreakpoints.fromWidth(width);
     final reduce = AppMotion.reduceMotion(context);
@@ -76,6 +96,9 @@ final class AppBottomSheet {
                                   ),
                                 ),
                                 IconButton(
+                                  tooltip: MaterialLocalizations.of(
+                                    dialogContext,
+                                  ).closeButtonTooltip,
                                   icon: const Icon(
                                     Icons.close_rounded,
                                     size: 20,
@@ -88,7 +111,8 @@ final class AppBottomSheet {
                             const SizedBox(height: AppSpacing.sm),
                             const Divider(),
                             const SizedBox(height: AppSpacing.md),
-                            Flexible(child: builder(dialogContext)),
+                            Flexible(child: body(dialogContext)),
+                            ...pinnedActions(dialogContext),
                           ],
                         ),
                       ),
@@ -143,7 +167,12 @@ final class AppBottomSheet {
                     AppSpacing.lg,
                     AppSpacing.sm,
                     AppSpacing.lg,
-                    MediaQuery.viewInsetsOf(sheetContext).bottom +
+                    // Above the keyboard when it is open, otherwise clear of
+                    // the home indicator / gesture bar.
+                    (MediaQuery.viewInsetsOf(sheetContext).bottom >
+                                MediaQuery.viewPaddingOf(sheetContext).bottom
+                            ? MediaQuery.viewInsetsOf(sheetContext).bottom
+                            : MediaQuery.viewPaddingOf(sheetContext).bottom) +
                         AppSpacing.lg,
                   ),
                   child: Column(
@@ -165,7 +194,8 @@ final class AppBottomSheet {
                       ),
                       AppHeading(title, level: AppHeadingLevel.h3),
                       const SizedBox(height: AppSpacing.md),
-                      Flexible(child: builder(sheetContext)),
+                      Flexible(child: body(sheetContext)),
+                      ...pinnedActions(sheetContext),
                     ],
                   ),
                 ),

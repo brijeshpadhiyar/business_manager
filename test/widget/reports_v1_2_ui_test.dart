@@ -131,7 +131,12 @@ void main() {
       await tester.pumpAndSettle();
       expect(tester.takeException(), isNull, reason: 'Dashboard overflow');
 
-      // Open Reports from the dashboard links (below the quick action tiles)
+      // Open Reports from the dashboard links; on phones they sit behind the
+      // "More screens" toggle below the quick action tiles.
+      await tester.ensureVisible(find.text('More screens'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('More screens'));
+      await tester.pumpAndSettle();
       await tester.ensureVisible(find.text('Reports').last);
       await tester.pumpAndSettle();
       await tester.tap(find.text('Reports').last);

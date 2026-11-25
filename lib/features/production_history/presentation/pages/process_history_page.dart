@@ -77,7 +77,16 @@ final class _ProcessHistoryView extends StatelessWidget {
       children: [
         // Filters: Date range, Worker, Lot, Design, Colour
         AppCard(
-          child: Column(
+          child: AppCollapsibleFilters(
+            activeCount: [
+              filter.fromUtcMillis,
+              filter.toUtcMillis,
+              filter.lotId,
+              filter.workerId,
+              filter.designName,
+              filter.colourName,
+            ].where((v) => v != null).length,
+            child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Wrap(
@@ -206,6 +215,7 @@ final class _ProcessHistoryView extends StatelessWidget {
               ),
             ],
           ),
+          ),
         ),
         const SizedBox(height: AppSpacing.md),
         if (state.processes.isEmpty)
@@ -273,28 +283,20 @@ final class _ProcessHistoryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    return AppCard.listItem(
-      onTap: () => context.push(RoutePaths.processDetail(proc.processId)),
-      child: Column(
+    // The table already wraps each row in a tappable card.
+    return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: AppText(
+          AppActionRow(content: AppText(
                   proc.processName,
                   variant: AppTextVariant.bodyLarge,
                   fontWeight: FontWeight.w700,
-                ),
-              ),
-              AppStatusBadge(
+                ), actions: [AppStatusBadge(
                 label: proc.isActive ? l10n.statusActive : l10n.statusInactive,
                 tone: proc.isActive
                     ? AppStatusTone.good
                     : AppStatusTone.neutral,
-              ),
-            ],
-          ),
+              ),],),
           const SizedBox(height: AppSpacing.xs),
           Wrap(
             spacing: AppSpacing.xs,
@@ -340,7 +342,6 @@ final class _ProcessHistoryCard extends StatelessWidget {
             fontWeight: FontWeight.w600,
           ),
         ],
-      ),
-    );
+      );
   }
 }

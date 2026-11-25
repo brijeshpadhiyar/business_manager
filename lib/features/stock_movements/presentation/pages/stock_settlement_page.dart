@@ -465,6 +465,18 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
       tracker: _dirty,
       child: AppScaffold(
         title: l10n.stockSettlementHeading,
+        // Save stays pinned at the bottom while entering quantities.
+        bottomAction: detail.remainingPending > 0
+            ? AppButton(
+                label: l10n.stockConfirmSaveReturnAction,
+                icon: Icons.check_rounded,
+                isExpanded: true,
+                isLoading: _saving,
+                onPressed: (!isOverReturn && totalEntered > 0 && !_saving)
+                    ? _submit
+                    : null,
+              )
+            : null,
         body: Form(
           key: _formKey,
           autovalidateMode: _submittedOnce
@@ -925,17 +937,6 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                           icon: Icons.error_outline_rounded,
                         ),
                       ],
-                      const SizedBox(height: AppSpacing.lg),
-                      AppButton(
-                        label: l10n.stockConfirmSaveReturnAction,
-                        icon: Icons.check_rounded,
-                        isExpanded: true,
-                        isLoading: _saving,
-                        onPressed:
-                            (!isOverReturn && totalEntered > 0 && !_saving)
-                            ? _submit
-                            : null,
-                      ),
                     ],
                   ),
                 ),
@@ -1089,14 +1090,12 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                   color: info.updatedPending == 0
                       ? semantic.goodStockContainer.withValues(alpha: 0.55)
                       : semantic.pendingContainer.withValues(alpha: 0.55),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: AppText(
-                          l10n.stockReturnUpdatedPendingLabel,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                  child: AppActionRow(
+                    content: AppText(
+                      l10n.stockReturnUpdatedPendingLabel,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    actions: [
                       AppStatusBadge(
                         label: info.updatedPending == 0
                             ? l10n.stockReturnFullySettledBadge

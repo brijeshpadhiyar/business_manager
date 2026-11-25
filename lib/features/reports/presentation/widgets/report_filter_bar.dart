@@ -121,60 +121,52 @@ final class _ReportFilterBarState extends State<ReportFilterBar> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: AppSpacing.sm),
-                Row(
+                AppFormRow(
+                  spacing: AppSpacing.sm,
                   children: [
-                    Expanded(
-                      child: AppDatePicker(
-                        label: l10n.accountingFromDateLabel,
-                        selectedUtcMillis: filter.fromUtcMillis,
-                        onDateSelectedUtcMillis: (utc) =>
-                            cubit.setCustomDateRange(
-                              fromUtcMillis: IstDateRangePresets.startOfIstDay(
-                                utc,
-                              ),
+                    AppDatePicker(
+                      label: l10n.accountingFromDateLabel,
+                      selectedUtcMillis: filter.fromUtcMillis,
+                      onDateSelectedUtcMillis: (utc) =>
+                          cubit.setCustomDateRange(
+                            fromUtcMillis: IstDateRangePresets.startOfIstDay(
+                              utc,
                             ),
-                      ),
+                          ),
                     ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Expanded(
-                      child: AppDatePicker(
-                        label: l10n.accountingToDateLabel,
-                        selectedUtcMillis: filter.toUtcMillis,
-                        errorText: widget.state.dateRangeErrorCode != null
-                            ? ValidationLocalizer.localizeDomainCode(
-                                l10n,
-                                widget.state.dateRangeErrorCode!,
-                              )
-                            : null,
-                        onDateSelectedUtcMillis: (utc) =>
-                            cubit.setCustomDateRange(
-                              toUtcMillis: IstDateRangePresets.endOfIstDay(utc),
-                            ),
-                      ),
+                    AppDatePicker(
+                      label: l10n.accountingToDateLabel,
+                      selectedUtcMillis: filter.toUtcMillis,
+                      errorText: widget.state.dateRangeErrorCode != null
+                          ? ValidationLocalizer.localizeDomainCode(
+                              l10n,
+                              widget.state.dateRangeErrorCode!,
+                            )
+                          : null,
+                      onDateSelectedUtcMillis: (utc) =>
+                          cubit.setCustomDateRange(
+                            toUtcMillis: IstDateRangePresets.endOfIstDay(utc),
+                          ),
                     ),
                   ],
                 ),
                 const SizedBox(height: AppSpacing.sm),
-                Row(
+                AppFormRow(
+                  spacing: AppSpacing.sm,
                   children: [
-                    Expanded(
-                      child: _NullableOptionDropdown(
-                        label: l10n.workerNameLabel,
-                        allLabel: l10n.reportAllOption,
-                        options: opts.workers,
-                        selectedId: filter.workerId,
-                        onChanged: cubit.setWorkerFilter,
-                      ),
+                    _NullableOptionDropdown(
+                      label: l10n.workerNameLabel,
+                      allLabel: l10n.reportAllOption,
+                      options: opts.workers,
+                      selectedId: filter.workerId,
+                      onChanged: cubit.setWorkerFilter,
                     ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Expanded(
-                      child: _NullableOptionDropdown(
-                        label: l10n.processNameLabel,
-                        allLabel: l10n.reportAllOption,
-                        options: opts.processes,
-                        selectedId: filter.processId,
-                        onChanged: cubit.setProcessFilter,
-                      ),
+                    _NullableOptionDropdown(
+                      label: l10n.processNameLabel,
+                      allLabel: l10n.reportAllOption,
+                      options: opts.processes,
+                      selectedId: filter.processId,
+                      onChanged: cubit.setProcessFilter,
                     ),
                   ],
                 ),
@@ -188,29 +180,24 @@ final class _ReportFilterBarState extends State<ReportFilterBar> {
                 ),
                 if (filteredDesigns.isNotEmpty) ...[
                   const SizedBox(height: AppSpacing.sm),
-                  Row(
+                  AppFormRow(
+                    spacing: AppSpacing.sm,
                     children: [
-                      Expanded(
-                        child: _NullableOptionDropdown(
-                          label: l10n.designNameLabel,
-                          allLabel: l10n.reportAllOption,
-                          options: filteredDesigns,
-                          selectedId: filter.lotDesignId,
-                          onChanged: cubit.setDesignFilter,
-                        ),
+                      _NullableOptionDropdown(
+                        label: l10n.designNameLabel,
+                        allLabel: l10n.reportAllOption,
+                        options: filteredDesigns,
+                        selectedId: filter.lotDesignId,
+                        onChanged: cubit.setDesignFilter,
                       ),
-                      if (filteredColours.isNotEmpty) ...[
-                        const SizedBox(width: AppSpacing.sm),
-                        Expanded(
-                          child: _NullableOptionDropdown(
-                            label: l10n.colourNameLabel,
-                            allLabel: l10n.reportAllOption,
-                            options: filteredColours,
-                            selectedId: filter.designColourId,
-                            onChanged: cubit.setColourFilter,
-                          ),
+                      if (filteredColours.isNotEmpty)
+                        _NullableOptionDropdown(
+                          label: l10n.colourNameLabel,
+                          allLabel: l10n.reportAllOption,
+                          options: filteredColours,
+                          selectedId: filter.designColourId,
+                          onChanged: cubit.setColourFilter,
                         ),
-                      ],
                     ],
                   ),
                 ],

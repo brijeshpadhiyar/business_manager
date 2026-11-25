@@ -253,141 +253,160 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.sm),
-                Wrap(
-                  spacing: AppSpacing.sm,
-                  runSpacing: AppSpacing.sm,
-                  children: [
-                    AppAdaptiveField(
-                      maxWidth: 210,
-                      child: AppDropdown<String>(
-                        label: l10n.lotsHeading,
-                        value: filter.lotId ?? '__ALL__',
-                        items: [
-                          '__ALL__',
-                          ...options.lots.map((o) => o.id),
+                // Phones: filters fold behind one toggle so the feed starts
+                // near the top of the screen.
+                AppCollapsibleFilters(
+                  activeCount: [
+                    filter.fromUtcMillis,
+                    filter.toUtcMillis,
+                    filter.lotId,
+                    filter.workerId,
+                    filter.processId,
+                    filter.designName,
+                    filter.colourName,
+                  ].where((v) => v != null).length +
+                      (filter.onlyPending ? 1 : 0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Wrap(
+                        spacing: AppSpacing.sm,
+                        runSpacing: AppSpacing.sm,
+                        children: [
+                          AppAdaptiveField(
+                            maxWidth: 210,
+                            child: AppDropdown<String>(
+                              label: l10n.lotsHeading,
+                              value: filter.lotId ?? '__ALL__',
+                              items: [
+                                '__ALL__',
+                                ...options.lots.map((o) => o.id),
+                              ],
+                              itemLabelBuilder: (id) {
+                                if (id == '__ALL__') return l10n.prodHistoryAllEntries;
+                                final item = options.lots.firstWhere((o) => o.id == id);
+                                return item.isActive
+                                    ? item.label
+                                    : '${item.label} (${l10n.statusInactive})';
+                              },
+                              onChanged: (v) => cubit.updateFilter(
+                                v == null || v == '__ALL__'
+                                    ? filter.copyWith(clearLot: true)
+                                    : filter.copyWith(lotId: v),
+                              ),
+                            ),
+                          ),
+                          AppAdaptiveField(
+                            maxWidth: 210,
+                            child: AppDropdown<String>(
+                              label: l10n.navWorkers,
+                              value: filter.workerId ?? '__ALL__',
+                              items: [
+                                '__ALL__',
+                                ...options.workers.map((o) => o.id),
+                              ],
+                              itemLabelBuilder: (id) {
+                                if (id == '__ALL__') return l10n.prodHistoryAllEntries;
+                                final item =
+                                    options.workers.firstWhere((o) => o.id == id);
+                                return item.isActive
+                                    ? item.label
+                                    : '${item.label} (${l10n.statusInactive})';
+                              },
+                              onChanged: (v) => cubit.updateFilter(
+                                v == null || v == '__ALL__'
+                                    ? filter.copyWith(clearWorker: true)
+                                    : filter.copyWith(workerId: v),
+                              ),
+                            ),
+                          ),
+                          AppAdaptiveField(
+                            maxWidth: 210,
+                            child: AppDropdown<String>(
+                              label: l10n.navProcesses,
+                              value: filter.processId ?? '__ALL__',
+                              items: [
+                                '__ALL__',
+                                ...options.processes.map((o) => o.id),
+                              ],
+                              itemLabelBuilder: (id) {
+                                if (id == '__ALL__') return l10n.prodHistoryAllEntries;
+                                final item =
+                                    options.processes.firstWhere((o) => o.id == id);
+                                return item.isActive
+                                    ? item.label
+                                    : '${item.label} (${l10n.statusInactive})';
+                              },
+                              onChanged: (v) => cubit.updateFilter(
+                                v == null || v == '__ALL__'
+                                    ? filter.copyWith(clearProcess: true)
+                                    : filter.copyWith(processId: v),
+                              ),
+                            ),
+                          ),
                         ],
-                        itemLabelBuilder: (id) {
-                          if (id == '__ALL__') return l10n.prodHistoryAllEntries;
-                          final item = options.lots.firstWhere((o) => o.id == id);
-                          return item.isActive
-                              ? item.label
-                              : '${item.label} (${l10n.statusInactive})';
-                        },
-                        onChanged: (v) => cubit.updateFilter(
-                          v == null || v == '__ALL__'
-                              ? filter.copyWith(clearLot: true)
-                              : filter.copyWith(lotId: v),
-                        ),
                       ),
-                    ),
-                    AppAdaptiveField(
-                      maxWidth: 210,
-                      child: AppDropdown<String>(
-                        label: l10n.navWorkers,
-                        value: filter.workerId ?? '__ALL__',
-                        items: [
-                          '__ALL__',
-                          ...options.workers.map((o) => o.id),
+                      const SizedBox(height: AppSpacing.sm),
+                      AppFormRow(
+                        spacing: AppSpacing.sm,
+                        children: [
+                          AppDatePicker(
+                            label: l10n.accountingFromDateLabel,
+                            selectedUtcMillis: filter.fromUtcMillis,
+                            onDateSelectedUtcMillis: (utc) {
+                              final ist = IstDateTimeHelper.fromUtcMillisToIst(utc);
+                              final start = IstDateTimeHelper.istDateTimeToUtcMillis(
+                                year: ist.year,
+                                month: ist.month,
+                                day: ist.day,
+                              );
+                              cubit.updateFilter(
+                                filter.copyWith(fromUtcMillis: start),
+                              );
+                            },
+                          ),
+                          AppDatePicker(
+                            label: l10n.accountingToDateLabel,
+                            selectedUtcMillis: filter.toUtcMillis,
+                            onDateSelectedUtcMillis: (utc) {
+                              final ist = IstDateTimeHelper.fromUtcMillisToIst(utc);
+                              final end = IstDateTimeHelper.istDateTimeToUtcMillis(
+                                year: ist.year,
+                                month: ist.month,
+                                day: ist.day,
+                                hour: 23,
+                                minute: 59,
+                                second: 59,
+                              );
+                              cubit.updateFilter(
+                                filter.copyWith(toUtcMillis: end),
+                              );
+                            },
+                          ),
                         ],
-                        itemLabelBuilder: (id) {
-                          if (id == '__ALL__') return l10n.prodHistoryAllEntries;
-                          final item =
-                              options.workers.firstWhere((o) => o.id == id);
-                          return item.isActive
-                              ? item.label
-                              : '${item.label} (${l10n.statusInactive})';
-                        },
-                        onChanged: (v) => cubit.updateFilter(
-                          v == null || v == '__ALL__'
-                              ? filter.copyWith(clearWorker: true)
-                              : filter.copyWith(workerId: v),
-                        ),
                       ),
-                    ),
-                    AppAdaptiveField(
-                      maxWidth: 210,
-                      child: AppDropdown<String>(
-                        label: l10n.navProcesses,
-                        value: filter.processId ?? '__ALL__',
-                        items: [
-                          '__ALL__',
-                          ...options.processes.map((o) => o.id),
+                      const SizedBox(height: AppSpacing.xs),
+                      Wrap(
+                        spacing: AppSpacing.xs,
+                        runSpacing: AppSpacing.xs,
+                        alignment: WrapAlignment.spaceBetween,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          FilterChip(
+                            label: Text(l10n.prodHistoryOnlyPending),
+                            selected: filter.onlyPending,
+                            onSelected: (v) =>
+                                cubit.updateFilter(filter.copyWith(onlyPending: v)),
+                          ),
+                          AppButton(
+                            label: l10n.accountingClearFilters,
+                            variant: AppButtonVariant.text,
+                            onPressed: () => cubit.clearFilters(),
+                          ),
                         ],
-                        itemLabelBuilder: (id) {
-                          if (id == '__ALL__') return l10n.prodHistoryAllEntries;
-                          final item =
-                              options.processes.firstWhere((o) => o.id == id);
-                          return item.isActive
-                              ? item.label
-                              : '${item.label} (${l10n.statusInactive})';
-                        },
-                        onChanged: (v) => cubit.updateFilter(
-                          v == null || v == '__ALL__'
-                              ? filter.copyWith(clearProcess: true)
-                              : filter.copyWith(processId: v),
-                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                AppFormRow(
-                  spacing: AppSpacing.sm,
-                  children: [
-                    AppDatePicker(
-                      label: l10n.accountingFromDateLabel,
-                      selectedUtcMillis: filter.fromUtcMillis,
-                      onDateSelectedUtcMillis: (utc) {
-                        final ist = IstDateTimeHelper.fromUtcMillisToIst(utc);
-                        final start = IstDateTimeHelper.istDateTimeToUtcMillis(
-                          year: ist.year,
-                          month: ist.month,
-                          day: ist.day,
-                        );
-                        cubit.updateFilter(
-                          filter.copyWith(fromUtcMillis: start),
-                        );
-                      },
-                    ),
-                    AppDatePicker(
-                      label: l10n.accountingToDateLabel,
-                      selectedUtcMillis: filter.toUtcMillis,
-                      onDateSelectedUtcMillis: (utc) {
-                        final ist = IstDateTimeHelper.fromUtcMillisToIst(utc);
-                        final end = IstDateTimeHelper.istDateTimeToUtcMillis(
-                          year: ist.year,
-                          month: ist.month,
-                          day: ist.day,
-                          hour: 23,
-                          minute: 59,
-                          second: 59,
-                        );
-                        cubit.updateFilter(
-                          filter.copyWith(toUtcMillis: end),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                Wrap(
-                  spacing: AppSpacing.xs,
-                  runSpacing: AppSpacing.xs,
-                  alignment: WrapAlignment.spaceBetween,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    FilterChip(
-                      label: Text(l10n.prodHistoryOnlyPending),
-                      selected: filter.onlyPending,
-                      onSelected: (v) =>
-                          cubit.updateFilter(filter.copyWith(onlyPending: v)),
-                    ),
-                    AppButton(
-                      label: l10n.accountingClearFilters,
-                      variant: AppButtonVariant.text,
-                      onPressed: () => cubit.clearFilters(),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),

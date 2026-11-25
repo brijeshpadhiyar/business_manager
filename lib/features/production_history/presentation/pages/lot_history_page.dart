@@ -92,11 +92,9 @@ final class _LotHistoryView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: AppHeading(lot.lotNumber, level: AppHeadingLevel.h2),
-                  ),
+              AppActionRow(
+                content: AppHeading(lot.lotNumber, level: AppHeadingLevel.h2),
+                actions: [
                   AppStatusBadge(
                     label: lot.status.dbValue,
                     tone: history.isFullyReconciled
@@ -356,14 +354,12 @@ final class _LotHistoryView extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: AppText(
-                              '${r.processName} • ${r.workerName} • ${r.colourName}',
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
+                      AppActionRow(
+                        content: AppText(
+                          '${r.processName} • ${r.workerName} • ${r.colourName}',
+                          fontWeight: FontWeight.w700,
+                        ),
+                        actions: [
                           AppStatusBadge(
                             label: r.record.status.dbValue,
                             tone: r.openUnrepairedQty > 0
@@ -415,14 +411,12 @@ final class _AssignmentCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: AppText(
-                  '${a.processName} • ${a.workerName}',
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
+          AppActionRow(
+            content: AppText(
+              '${a.processName} • ${a.workerName}',
+              fontWeight: FontWeight.w700,
+            ),
+            actions: [
               AppStatusBadge(
                 label: a.isCompleted ? 'COMPLETED' : 'IN PROGRESS',
                 tone: a.isCompleted
@@ -471,15 +465,13 @@ final class _AssignmentCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppSpacing.xs),
-          Row(
-            children: [
-              Expanded(
-                child: AppText(
-                  'Rate: ${MoneyFormatter.formatPaise(a.lockedRatePaise)}/pc • Earned: ${MoneyFormatter.formatPaise(a.earnedAmountPaise)}',
-                  variant: AppTextVariant.numeric,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
+          AppActionRow(
+            content: AppText(
+              'Rate: ${MoneyFormatter.formatPaise(a.lockedRatePaise)}/pc • Earned: ${MoneyFormatter.formatPaise(a.earnedAmountPaise)}',
+              variant: AppTextVariant.numeric,
+              fontWeight: FontWeight.w700,
+            ),
+            actions: [
               AppButton(
                 label: l10n.prodHistoryOpenWorker,
                 variant: AppButtonVariant.text,

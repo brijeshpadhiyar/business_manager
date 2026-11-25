@@ -412,8 +412,9 @@ void main() {
             matching: find.byType(Scrollable),
           )
           .first;
+      // Save is pinned in the bottom bar; scroll to the labour impact card.
       await tester.scrollUntilVisible(
-        find.text('Confirm & Save Return'),
+        find.textContaining('₹625.00'),
         250,
         scrollable: returnListScroll,
       );
