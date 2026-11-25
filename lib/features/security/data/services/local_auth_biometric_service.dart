@@ -53,7 +53,8 @@ final class LocalAuthBiometricService implements BiometricAuthService {
     try {
       final ok = await _auth.authenticate(
         localizedReason: localizedReason,
-        biometricOnly: true,
+        // Windows Hello rejects biometricOnly (it may offer its own PIN).
+        biometricOnly: defaultTargetPlatform != TargetPlatform.windows,
         persistAcrossBackgrounding: true,
       );
       return ok ? BiometricAuthOutcome.success : BiometricAuthOutcome.failed;

@@ -6,9 +6,9 @@ import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/design_system/app_typography.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Centralized Material 3 Light Glass and Dark Glass theme definitions built on
-/// `package:material_ui/material_ui.dart` with StitchFlow's brand identity,
-/// genuine frosted glass tokens, and high-contrast bilingual readability.
+/// Centralized Material 3 light and dark themes for the v1.4 "Indigo Thread"
+/// color system: solid surfaces, soft layered shadows (see `AppShadows`) and
+/// WCAG AA text contrast for bilingual (Gujarati/English) readability.
 abstract final class AppTheme {
   static final ThemeData _lightTheme = _build(Brightness.light);
   static final ThemeData _darkTheme = _build(Brightness.dark);
@@ -20,42 +20,71 @@ abstract final class AppTheme {
   static ThemeData _build(Brightness brightness) {
     final isDark = brightness == Brightness.dark;
     final baseScheme = ColorScheme.fromSeed(
-      seedColor: AppColors.brandNavy,
-      secondary: AppColors.brandTeal,
-      tertiary: AppColors.brandAmber,
+      seedColor: AppColors.brandPrimary,
+      secondary: AppColors.brandSecondary,
+      tertiary: AppColors.brandAccent,
       brightness: brightness,
     );
     final colorScheme = isDark
         ? baseScheme.copyWith(
-            primary: const Color(0xFF7DD3FC),
-            onPrimary: const Color(0xFF082032),
-            secondary: AppColors.brandTeal,
-            onSecondary: Colors.white,
-            tertiary: AppColors.brandAmber,
-            error: const Color(0xFFFCA5A5),
+            primary: AppColors.indigo400,
+            onPrimary: AppColors.indigo950,
+            primaryContainer: AppColors.indigo900,
+            onPrimaryContainer: AppColors.indigo100,
+            secondary: AppColors.emerald400,
+            onSecondary: AppColors.emerald950,
+            secondaryContainer: AppColors.emerald900,
+            onSecondaryContainer: AppColors.emerald100,
+            tertiary: AppColors.saffron400,
+            onTertiary: AppColors.saffron900,
+            error: AppColors.darkDamaged,
             onError: const Color(0xFF450A0A),
             errorContainer: AppColors.darkDamagedContainer,
-            onErrorContainer: const Color(0xFFFEE2E2),
+            onErrorContainer: AppColors.lightDamagedContainer,
             surface: AppColors.darkSurface,
-            surfaceContainerLowest: const Color(0xFF0A101C),
+            onSurface: AppColors.slate100,
+            onSurfaceVariant: AppColors.slate400,
+            surfaceContainerLowest: AppColors.darkSurfaceLowest,
             surfaceContainerLow: AppColors.darkSurfaceLow,
-            surfaceContainer: const Color(0xFF162235),
+            surfaceContainer: AppColors.darkSurfaceContainer,
             surfaceContainerHigh: AppColors.darkSurfaceHigh,
+            surfaceContainerHighest: AppColors.darkSurfaceHighest,
+            outline: AppColors.darkBorderStrong,
             outlineVariant: AppColors.darkBorder,
+            inverseSurface: AppColors.slate100,
+            onInverseSurface: AppColors.slate900,
+            inversePrimary: AppColors.indigo600,
           )
         : baseScheme.copyWith(
-            primary: AppColors.brandNavy,
-            secondary: AppColors.brandTeal,
-            tertiary: AppColors.brandAmber,
+            primary: AppColors.indigo600,
+            onPrimary: Colors.white,
+            primaryContainer: AppColors.indigo100,
+            onPrimaryContainer: AppColors.indigo900,
+            secondary: AppColors.emerald600,
+            onSecondary: Colors.white,
+            secondaryContainer: AppColors.emerald100,
+            onSecondaryContainer: AppColors.emerald900,
+            tertiary: AppColors.saffron500,
+            onTertiary: AppColors.slate900,
+            tertiaryContainer: AppColors.saffron100,
+            onTertiaryContainer: AppColors.saffron800,
             error: AppColors.lightDamaged,
             onError: Colors.white,
             errorContainer: AppColors.lightDamagedContainer,
-            onErrorContainer: const Color(0xFF7F1D1D),
-            surface: AppColors.brandSoftWhite,
+            onErrorContainer: AppColors.darkDamagedContainer,
+            surface: AppColors.lightBackground,
+            onSurface: AppColors.slate900,
+            onSurfaceVariant: AppColors.slate600,
             surfaceContainerLowest: AppColors.lightCardSurface,
             surfaceContainerLow: AppColors.lightCardSurface,
-            surfaceContainer: const Color(0xFFEDF3F9),
+            surfaceContainer: AppColors.slate100,
+            surfaceContainerHigh: AppColors.slate100,
+            surfaceContainerHighest: AppColors.slate200,
+            outline: AppColors.lightBorderStrong,
             outlineVariant: AppColors.lightBorder,
+            inverseSurface: AppColors.slate800,
+            onInverseSurface: AppColors.slate50,
+            inversePrimary: AppColors.indigo300,
           );
     final textTheme = AppTypography.buildTextTheme(colorScheme);
     final semanticColors = isDark
@@ -66,12 +95,12 @@ abstract final class AppTheme {
         : AppSurfaceTokens.light;
 
     final glassInputBorderColor = isDark
-        ? Colors.white.withValues(alpha: 0.16)
-        : const Color(0xFF172B4D).withValues(alpha: 0.14);
+        ? AppColors.darkBorderStrong
+        : AppColors.lightBorderStrong;
 
     final outlineBorder = OutlineInputBorder(
       borderRadius: AppRadius.mdBorder,
-      borderSide: BorderSide(color: glassInputBorderColor, width: 1.1),
+      borderSide: BorderSide(color: glassInputBorderColor),
     );
 
     return ThemeData(
@@ -95,7 +124,7 @@ abstract final class AppTheme {
           TargetPlatform.fuchsia: const FadeForwardsPageTransitionsBuilder(),
         },
       ),
-      focusColor: colorScheme.secondary.withValues(alpha: isDark ? 0.24 : 0.16),
+      focusColor: colorScheme.primary.withValues(alpha: isDark ? 0.24 : 0.14),
       hoverColor: colorScheme.primary.withValues(alpha: isDark ? 0.10 : 0.05),
       appBarTheme: AppBarTheme(
         toolbarHeight: AppSizing.appBarHeight,
@@ -113,23 +142,15 @@ abstract final class AppTheme {
         color: surfaceTokens.glassFill,
         shape: RoundedRectangleBorder(
           borderRadius: AppRadius.lgBorder,
-          side: BorderSide(color: surfaceTokens.glassBorder, width: 1.1),
+          side: BorderSide(color: surfaceTokens.glassBorder),
         ),
       ),
       navigationBarTheme: NavigationBarThemeData(
         height: 70,
         backgroundColor: Colors.transparent,
-        indicatorColor: colorScheme.secondary.withValues(
-          alpha: isDark ? 0.28 : 0.18,
-        ),
-        indicatorShape: RoundedRectangleBorder(
+        indicatorColor: colorScheme.primaryContainer,
+        indicatorShape: const RoundedRectangleBorder(
           borderRadius: AppRadius.fullBorder,
-          side: BorderSide(
-            color: colorScheme.secondary.withValues(
-              alpha: isDark ? 0.42 : 0.28,
-            ),
-            width: 1,
-          ),
         ),
         surfaceTintColor: Colors.transparent,
         elevation: AppElevation.none,
@@ -138,19 +159,18 @@ abstract final class AppTheme {
           return textTheme.labelSmall?.copyWith(
             fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
             color: selected
-                ? (isDark ? colorScheme.secondary : colorScheme.primary)
+                ? colorScheme.primary
                 : colorScheme.onSurfaceVariant,
           );
         }),
       ),
       navigationRailTheme: NavigationRailThemeData(
         backgroundColor: Colors.transparent,
-        indicatorColor: colorScheme.secondary.withValues(
-          alpha: isDark ? 0.28 : 0.18,
-        ),
+        indicatorColor: colorScheme.primaryContainer,
+        selectedIconTheme: IconThemeData(color: colorScheme.onPrimaryContainer),
         selectedLabelTextStyle: textTheme.labelSmall?.copyWith(
           fontWeight: FontWeight.w700,
-          color: isDark ? colorScheme.secondary : colorScheme.primary,
+          color: colorScheme.primary,
         ),
         unselectedLabelTextStyle: textTheme.labelSmall?.copyWith(
           color: colorScheme.onSurfaceVariant,
@@ -159,40 +179,25 @@ abstract final class AppTheme {
       navigationDrawerTheme: NavigationDrawerThemeData(
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
-        indicatorColor: colorScheme.secondary.withValues(
-          alpha: isDark ? 0.26 : 0.16,
-        ),
-        indicatorShape: RoundedRectangleBorder(
+        indicatorColor: colorScheme.primaryContainer,
+        indicatorShape: const RoundedRectangleBorder(
           borderRadius: AppRadius.mdBorder,
-          side: BorderSide(
-            color: colorScheme.secondary.withValues(
-              alpha: isDark ? 0.36 : 0.24,
-            ),
-          ),
         ),
       ),
       chipTheme: ChipThemeData(
         backgroundColor: surfaceTokens.glassFill,
         shape: const RoundedRectangleBorder(borderRadius: AppRadius.fullBorder),
-        side: BorderSide(
-          color: isDark
-              ? Colors.white.withValues(alpha: 0.15)
-              : const Color(0xFF172B4D).withValues(alpha: 0.12),
-        ),
+        side: BorderSide(color: colorScheme.outlineVariant),
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        selectedColor: colorScheme.secondary.withValues(
-          alpha: isDark ? 0.30 : 0.18,
-        ),
-        checkmarkColor: colorScheme.secondary,
+        selectedColor: colorScheme.primaryContainer,
+        checkmarkColor: colorScheme.onPrimaryContainer,
         labelStyle: textTheme.labelMedium,
       ),
       segmentedButtonTheme: SegmentedButtonThemeData(
         style: ButtonStyle(
           backgroundColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
-              return colorScheme.secondary.withValues(
-                alpha: isDark ? 0.30 : 0.18,
-              );
+              return colorScheme.primaryContainer;
             }
             return surfaceTokens.glassFill;
           }),
@@ -220,7 +225,7 @@ abstract final class AppTheme {
           color: colorScheme.onSurfaceVariant,
         ),
         floatingLabelStyle: textTheme.bodySmall?.copyWith(
-          color: colorScheme.secondary,
+          color: colorScheme.primary,
           fontWeight: FontWeight.w600,
         ),
         hintStyle: textTheme.bodyMedium?.copyWith(
@@ -236,7 +241,7 @@ abstract final class AppTheme {
         enabledBorder: outlineBorder,
         focusedBorder: OutlineInputBorder(
           borderRadius: AppRadius.mdBorder,
-          borderSide: BorderSide(color: colorScheme.secondary, width: 1.8),
+          borderSide: BorderSide(color: colorScheme.primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: AppRadius.mdBorder,
@@ -269,11 +274,7 @@ abstract final class AppTheme {
             vertical: 10,
           ),
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdBorder),
-          side: BorderSide(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.22)
-                : const Color(0xFF172B4D).withValues(alpha: 0.16),
-          ),
+          side: BorderSide(color: colorScheme.outline),
           textStyle: textTheme.labelLarge,
         ),
       ),
@@ -298,7 +299,7 @@ abstract final class AppTheme {
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: AppRadius.xlBorder,
-          side: BorderSide(color: surfaceTokens.glassBorder, width: 1.2),
+          side: BorderSide(color: surfaceTokens.glassBorder),
         ),
       ),
       bottomSheetTheme: const BottomSheetThemeData(
@@ -313,19 +314,23 @@ abstract final class AppTheme {
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: AppRadius.mdBorder,
-          side: BorderSide(color: Colors.white.withValues(alpha: 0.18)),
+        shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdBorder),
+        backgroundColor: colorScheme.inverseSurface,
+        actionTextColor: colorScheme.inversePrimary,
+        contentTextStyle: textTheme.bodyMedium?.copyWith(
+          color: colorScheme.onInverseSurface,
         ),
-        backgroundColor: isDark
-            ? const Color(0xEB182B47)
-            : const Color(0xEB172B4D),
-        contentTextStyle: textTheme.bodyMedium?.copyWith(color: Colors.white),
+      ),
+      // Determinate/linear progress (export, backup) matches the brand spinner.
+      progressIndicatorTheme: ProgressIndicatorThemeData(
+        color: colorScheme.primary,
+        linearTrackColor: colorScheme.primary.withValues(alpha: 0.14),
+        circularTrackColor: colorScheme.primary.withValues(alpha: 0.14),
+        linearMinHeight: 4,
+        borderRadius: AppRadius.fullBorder,
       ),
       dividerTheme: DividerThemeData(
-        color: isDark
-            ? Colors.white.withValues(alpha: 0.10)
-            : const Color(0xFF172B4D).withValues(alpha: 0.10),
+        color: colorScheme.outlineVariant,
         thickness: 1,
         space: 1,
       ),

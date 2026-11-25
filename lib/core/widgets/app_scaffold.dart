@@ -232,6 +232,7 @@ PreferredSizeWidget _buildGlassAppBar(
     flexibleSpace: ClipRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        enabled: false, // v1.4 soft elevation: opaque surfaces
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: tokens.navGlassFill,
@@ -447,14 +448,14 @@ final class _CollapsibleScaffoldLayoutState
                 automaticallyImplyLeading: hdr.automaticallyImplyLeading,
                 title: Text(
                   hdr.title,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+                  style: Theme.of(context).textTheme.titleLarge
+                      ?.copyWith(fontWeight: FontWeight.w700),
                 ),
                 actions: hdr.actions,
                 flexibleSpace: ClipRect(
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                    enabled: false, // v1.4 soft elevation: opaque surfaces
                     backdropGroupKey: _chromeBackdropKey,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
@@ -508,9 +509,10 @@ final class _CollapsibleScaffoldLayoutState
           ];
 
           // Leave room so the floating action button never hides the last row.
-          if (config.primaryAction != null &&
-              AppScaffold._isCompact(context)) {
-            allSlivers.add(const SliverToBoxAdapter(child: SizedBox(height: 88)));
+          if (config.primaryAction != null && AppScaffold._isCompact(context)) {
+            allSlivers.add(
+              const SliverToBoxAdapter(child: SizedBox(height: 88)),
+            );
           }
 
           Widget scrollView = CustomScrollView(
@@ -564,6 +566,7 @@ final class AppStickyActionBar extends StatelessWidget {
     return ClipRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+        enabled: false, // v1.4 soft elevation: opaque surfaces
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: tokens.navGlassFill,

@@ -1,3 +1,4 @@
+import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -55,7 +56,12 @@ abstract final class AppColourUtils {
         0,
         (a, b) => (a * 31 + b) & 0xFFFFFF,
       );
-      return HSLColor.fromAHSL(1, (hash % 360).toDouble(), 0.55, 0.48).toColor();
+      return HSLColor.fromAHSL(
+        1,
+        (hash % 360).toDouble(),
+        0.55,
+        0.48,
+      ).toColor();
     }
     return const Color(0xFF64748B);
   }
@@ -87,12 +93,10 @@ abstract final class AppColourUtils {
     return 'RGB($r, $g, $b)';
   }
 
-  /// Returns a crisp high-contrast foreground color (dark navy or white) so
+  /// Returns a crisp high-contrast foreground color (Slate 900 or white) so
   /// white, ivory, cream, yellow, and pastel swatches remain 100% legible.
   static Color contrastForeground(Color bg) {
-    return bg.computeLuminance() > 0.56
-        ? const Color(0xFF172B4D)
-        : Colors.white;
+    return bg.computeLuminance() > 0.56 ? AppColors.slate900 : Colors.white;
   }
 
   /// Returns a subtle contrast border so very light or very dark swatches
@@ -101,8 +105,8 @@ abstract final class AppColourUtils {
     final lum = swatch.computeLuminance();
     if (brightness == Brightness.light) {
       return lum > 0.72
-          ? const Color(0xFF172B4D).withValues(alpha: 0.28)
-          : const Color(0xFF172B4D).withValues(alpha: 0.14);
+          ? AppColors.slate900.withValues(alpha: 0.28)
+          : AppColors.slate900.withValues(alpha: 0.14);
     }
     return lum < 0.12
         ? Colors.white.withValues(alpha: 0.34)
@@ -146,10 +150,7 @@ final class AppColourSwatch extends StatelessWidget {
         decoration: BoxDecoration(
           color: color,
           borderRadius: borderRadius,
-          border: Border.all(
-            color: borderColor,
-            width: isSelected ? 2.4 : 1.2,
-          ),
+          border: Border.all(color: borderColor, width: isSelected ? 2.4 : 1.2),
           boxShadow: [
             BoxShadow(
               color: color.withValues(alpha: 0.24),

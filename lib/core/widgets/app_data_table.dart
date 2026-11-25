@@ -86,9 +86,7 @@ final class AppDataTable<T> extends StatefulWidget {
   }) {
     return SliverLayoutBuilder(
       builder: (ctx, constraints) {
-        final sizeClass = AppBreakpoints.fromWidth(
-          constraints.crossAxisExtent,
-        );
+        final sizeClass = AppBreakpoints.fromWidth(constraints.crossAxisExtent);
         if (sizeClass.isCompact) {
           return SliverList.separated(
             itemCount: items.length,
@@ -172,7 +170,8 @@ final class _AppDataTableState<T> extends State<AppDataTable<T>> {
     final colorScheme = theme.colorScheme;
     final pageItems = _visibleItems;
     final showPagination =
-        widget.enablePagination && widget.items.length > widget.pageSizeOptions.first;
+        widget.enablePagination &&
+        widget.items.length > widget.pageSizeOptions.first;
 
     return LayoutBuilder(
       builder: (context, constraints) {

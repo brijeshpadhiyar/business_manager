@@ -99,7 +99,12 @@ An **offline-first, multi-platform Flutter Garment & Production Management Syste
 .\build_apk.bat prod debug
 ```
 
-## Planned Flavor Commands (Post-Implementation)
+## Build Commands (All Platforms)
+
+Full dev / prod build commands for Android, Windows, iOS, macOS, Linux and
+Web: see [docs/42_BUILD_COMMANDS_ALL_PLATFORMS.md](docs/42_BUILD_COMMANDS_ALL_PLATFORMS.md).
+
+## Android Flavor Run Commands
 
 ```bash
 # Android Development Flavor

@@ -72,6 +72,7 @@ final class AppBottomSheet {
                   borderRadius: AppRadius.xlBorder,
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+                    enabled: false, // v1.4 soft elevation: opaque surfaces
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         color: tokens.dialogGlassFill,
@@ -152,6 +153,7 @@ final class AppBottomSheet {
             borderRadius: topRadius,
             child: BackdropFilter(
               filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+              enabled: false, // v1.4 soft elevation: opaque surfaces
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   color: tokens.dialogGlassFill,

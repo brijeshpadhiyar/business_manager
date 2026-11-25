@@ -16,6 +16,7 @@ import 'package:business_manager/features/workers/domain/entities/worker_entitie
 import 'package:business_manager/features/workers/domain/repositories/worker_repository.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/widgets/app_loader.dart';
 
 /// Opens the global search: one box that finds a lot, worker or process and
 /// jumps to it. With an empty box it shows the quick actions, so it also works
@@ -141,10 +142,7 @@ final class _GlobalSearchDialogState extends State<GlobalSearchDialog> {
         suffixIcon: _loading
             ? const Padding(
                 padding: EdgeInsets.all(14),
-                child: SizedBox.square(
-                  dimension: 18,
-                  child: CircularProgressIndicator(strokeWidth: 2),
-                ),
+                child: AppSpinner(size: 18, strokeWidth: 2),
               )
             : query.isEmpty
             ? null

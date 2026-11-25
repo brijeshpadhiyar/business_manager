@@ -9,6 +9,7 @@ import 'package:business_manager/features/security/presentation/pages/pin_recove
 import 'package:business_manager/features/security/presentation/widgets/pin_keypad.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/widgets/widgets.dart';
 
 /// Root branded Lock Screen rendered above all routes whenever [AppLockCubit]
 /// is in `locked` state. Prevents any flash of Dashboard or sensitive data.
@@ -185,13 +186,9 @@ final class _AppLockScreenState extends State<AppLockScreen> {
                             constraints: const BoxConstraints(minHeight: 44),
                             child: Center(
                               child: state.isVerifying
-                                  ? const SizedBox(
-                                      width: 24,
-                                      height: 24,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2.5,
-                                        color: Colors.white,
-                                      ),
+                                  ? const AppSpinner(
+                                      size: 24,
+                                      color: Colors.white,
                                     )
                                   : errorText != null
                                   ? Container(
@@ -259,7 +256,7 @@ final class _AppLockScreenState extends State<AppLockScreen> {
                             child: Text(
                               l10n.securityForgotPinAction,
                               style: const TextStyle(
-                                color: AppColors.brandAmber,
+                                color: AppColors.saffron400,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),

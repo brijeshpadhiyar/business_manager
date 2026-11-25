@@ -1,3 +1,4 @@
+import 'package:business_manager/core/platform/platform_env.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
@@ -46,14 +47,20 @@ final class _LotDetailView extends StatelessWidget {
   ) async {
     final cubit = context.read<LotDetailCubit>();
     final picker = ImagePicker();
-    final picked = await getIt<AppLockCubit>().runWithSystemPicker(
-      () => picker.pickImage(
-        source: source,
-        maxWidth: 1600,
-        maxHeight: 1600,
-        imageQuality: 80,
-      ),
-    );
+    final XFile? picked;
+    try {
+      picked = await getIt<AppLockCubit>().runWithSystemPicker(
+        () => picker.pickImage(
+          source: source,
+          maxWidth: 1600,
+          maxHeight: 1600,
+          imageQuality: 80,
+        ),
+      );
+    } catch (_) {
+      // e.g. no camera / picker unavailable on this device: do nothing.
+      return;
+    }
     if (picked == null) return;
     final bytes = await picked.readAsBytes();
     final ext = picked.name.contains('.') ? picked.name.split('.').last : 'jpg';
@@ -842,13 +849,16 @@ final class _LotDetailView extends StatelessWidget {
                   spacing: AppSpacing.sm,
                   runSpacing: AppSpacing.sm,
                   children: [
-                    AppButton(
-                      label: l10n.lotAddPhotoCamera,
-                      icon: Icons.photo_camera_outlined,
-                      variant: AppButtonVariant.outlined,
-                      onPressed: () =>
-                          _pickAndSavePhoto(context, ImageSource.camera),
-                    ),
+                    // Desktop builds (Windows / macOS / Linux) have no camera
+                    // capture: only "choose from files" is offered there.
+                    if (supportsCameraCapture)
+                      AppButton(
+                        label: l10n.lotAddPhotoCamera,
+                        icon: Icons.photo_camera_outlined,
+                        variant: AppButtonVariant.outlined,
+                        onPressed: () =>
+                            _pickAndSavePhoto(context, ImageSource.camera),
+                      ),
                     AppButton(
                       label: l10n.lotAddPhotoGallery,
                       icon: Icons.photo_library_outlined,

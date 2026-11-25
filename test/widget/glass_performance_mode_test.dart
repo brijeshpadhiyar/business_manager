@@ -46,7 +46,7 @@ void main() {
     );
 
     testWidgets(
-      'Explicit full-blur Hero AppCard and AppScaffold AppBar preserve real BackdropFilter blur',
+      'v1.4 soft elevation: full-style Hero AppCard and AppScaffold AppBar render no active backdrop blur',
       (tester) async {
         await tester.pumpWidget(
           MaterialApp(
@@ -64,8 +64,12 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.text('Hero Banner'), findsOneWidget);
-        // 1 from AppScaffold frosted AppBar + 1 from full-blur Hero AppCard
-        expect(find.byType(BackdropFilter), findsNWidgets(2));
+        // Surfaces are opaque in v1.4: the card has no BackdropFilter and the
+        // AppBar keeps its filter disabled.
+        final activeBlurs = tester
+            .widgetList<BackdropFilter>(find.byType(BackdropFilter))
+            .where((f) => f.enabled);
+        expect(activeBlurs, isEmpty);
       },
     );
 

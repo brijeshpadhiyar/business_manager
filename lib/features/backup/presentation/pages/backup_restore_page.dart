@@ -1,7 +1,9 @@
+import 'package:business_manager/core/platform/share_origin.dart';
 import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
+import 'package:business_manager/core/platform/platform_env.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/backup/data/services/web_backup_restore_service.dart';
 import 'package:business_manager/features/backup/domain/entities/backup_entities.dart';
@@ -34,9 +36,33 @@ final class _BackupRestoreView extends StatelessWidget {
     BackupExportResult result,
   ) async {
     try {
+      if (isDesktopPlatform) {
+        // Desktop: let the user choose where to keep the backup (USB drive,
+        // another disk) with a normal "Save as" dialog.
+        final bytes = await XFile(result.filePath).readAsBytes();
+        if (!context.mounted) return;
+        final uri = await context.read<AppLockCubit>().runWithSystemPicker(
+          () => FilePicker.saveFile(
+            fileName: result.fileName,
+            bytes: bytes,
+            mimeType: 'application/zip',
+          ),
+        );
+        if (uri != null && context.mounted) {
+          AppFeedback.showInfo(
+            context,
+            uri.scheme == 'file' ? uri.toFilePath() : result.fileName,
+          );
+        }
+        return;
+      }
       await context.read<AppLockCubit>().runWithSystemPicker(
         () => SharePlus.instance.share(
-          ShareParams(files: [XFile(result.filePath)], text: result.fileName),
+          ShareParams(
+            files: [XFile(result.filePath)],
+            text: result.fileName,
+            sharePositionOrigin: defaultShareOrigin(),
+          ),
         ),
       );
     } catch (e) {

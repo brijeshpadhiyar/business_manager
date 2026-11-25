@@ -5,6 +5,7 @@ import 'package:business_manager/core/design_system/app_breakpoints.dart';
 import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
+import 'package:business_manager/core/design_system/app_shadows.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/widgets/app_button.dart';
@@ -97,9 +98,8 @@ final class AppDialog extends StatelessWidget {
     // On phones (and narrow windows) the dialog becomes a full-width panel
     // anchored to the bottom edge: within thumb reach, above the keyboard,
     // and clear of the home indicator.
-    final compact = AppBreakpoints.fromWidth(
-      MediaQuery.sizeOf(context).width,
-    ).isCompact;
+    final compact = AppBreakpoints.fromWidth(MediaQuery.sizeOf(context).width)
+        .isCompact;
     final radius = compact
         ? const BorderRadius.vertical(top: Radius.circular(AppRadius.xl))
         : AppRadius.xlBorder;
@@ -126,18 +126,13 @@ final class AppDialog extends StatelessWidget {
           child: DecoratedBox(
             decoration: BoxDecoration(
               borderRadius: radius,
-              boxShadow: [
-                BoxShadow(
-                  color: tokens.cardShadow,
-                  blurRadius: 32,
-                  offset: const Offset(0, 14),
-                ),
-              ],
+              boxShadow: AppShadows.of(context).xl,
             ),
             child: ClipRRect(
               borderRadius: radius,
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
+                enabled: false, // v1.4 soft elevation: opaque surfaces
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     color: tokens.dialogGlassFill,

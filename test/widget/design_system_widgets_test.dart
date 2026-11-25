@@ -50,7 +50,7 @@ void main() {
 
       await tester.tap(find.text('Loading'));
       expect(taps, 1);
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      expect(find.byType(AppSpinner), findsOneWidget);
     });
   });
 

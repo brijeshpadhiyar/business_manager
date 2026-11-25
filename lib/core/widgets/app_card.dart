@@ -1,6 +1,6 @@
-import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
+import 'package:business_manager/core/design_system/app_shadows.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/widgets/app_glass_surface.dart';
 import 'package:material_ui/material_ui.dart';
@@ -94,7 +94,6 @@ final class AppCard extends StatelessWidget {
     }
 
     final colorScheme = Theme.of(context).colorScheme;
-    final tokens = context.surfaceTokens;
 
     Widget surface = Container(
       decoration: BoxDecoration(
@@ -107,15 +106,7 @@ final class AppCard extends StatelessWidget {
           color: borderColor ?? colorScheme.outlineVariant,
           width: 1,
         ),
-        boxShadow: elevated
-            ? [
-                BoxShadow(
-                  color: tokens.cardShadow,
-                  blurRadius: 12,
-                  offset: const Offset(0, 3),
-                ),
-              ]
-            : null,
+        boxShadow: elevated ? AppShadows.of(context).sm : null,
       ),
       child: Material(
         type: MaterialType.transparency,

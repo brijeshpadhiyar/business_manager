@@ -40,10 +40,7 @@ final class AppBreadcrumbBar extends StatelessWidget {
                     color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
                   ),
                 ),
-              _BreadcrumbChip(
-                item: items[i],
-                isCurrent: i == items.length - 1,
-              ),
+              _BreadcrumbChip(item: items[i], isCurrent: i == items.length - 1),
             ],
           ],
         ),

@@ -4,6 +4,7 @@ import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/widgets/app_loader.dart';
 
 enum AppButtonVariant { primary, secondary, outlined, destructive, text }
 
@@ -41,7 +42,8 @@ final class AppButton extends StatelessWidget {
         key: const ValueKey<String>('loading'),
         width: AppSizing.iconSm,
         height: AppSizing.iconSm,
-        child: CircularProgressIndicator(
+        child: AppSpinner(
+          size: AppSizing.iconSm,
           strokeWidth: 2,
           color: switch (variant) {
             AppButtonVariant.primary => colorScheme.onPrimary,
@@ -131,11 +133,7 @@ final class AppButton extends StatelessWidget {
           padding: padding,
           backgroundColor: tokens.glassFill,
           shape: shape,
-          side: BorderSide(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.22)
-                : const Color(0xFF172B4D).withValues(alpha: 0.16),
-          ),
+          side: BorderSide(color: Theme.of(context).colorScheme.outline),
           tapTargetSize: MaterialTapTargetSize.padded,
         ),
         child: content,

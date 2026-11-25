@@ -8,6 +8,7 @@ import 'package:business_manager/features/security/presentation/bloc/app_lock_cu
 import 'package:business_manager/features/security/presentation/pages/app_lock_screen.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/widgets/widgets.dart';
 
 /// Root widget wrapping `MaterialApp.router`'s `builder`.
 ///
@@ -130,7 +131,7 @@ final class _PrivacyShieldOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppColors.brandNavy,
+      color: AppColors.indigo950,
       child: Container(
         width: double.infinity,
         height: double.infinity,
@@ -172,14 +173,7 @@ final class _PrivacyShieldOverlay extends StatelessWidget {
               ),
               if (showProgress) ...[
                 const SizedBox(height: AppSpacing.md),
-                const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    color: Colors.white70,
-                  ),
-                ),
+                const AppSpinner(size: 20, color: Colors.white70),
               ],
             ],
           ),

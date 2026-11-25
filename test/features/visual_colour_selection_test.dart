@@ -1,6 +1,7 @@
 import 'package:business_manager/core/config/app_config.dart';
 import 'package:business_manager/core/database/app_database.dart';
 import 'package:business_manager/core/database/database_transaction_runner.dart';
+import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_theme.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/error/exceptions.dart';
@@ -324,7 +325,7 @@ void main() {
       );
       expect(
         AppColourUtils.contrastForeground(whiteColor),
-        const Color(0xFF172B4D),
+        AppColors.slate900,
       );
       expect(AppColourUtils.contrastForeground(blackColor), Colors.white);
     });

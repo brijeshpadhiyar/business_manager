@@ -5,10 +5,12 @@ import 'package:business_manager/core/design_system/app_breakpoints.dart';
 import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
+import 'package:business_manager/core/design_system/app_shadows.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:toastification/toastification.dart';
+import 'package:business_manager/core/widgets/app_loader.dart';
 
 /// Semantic notification severity levels supported by [AppMessageService].
 enum AppMessageType { success, error, warning, info, loading }
@@ -297,11 +299,11 @@ abstract final class AppMessageService {
       ),
       AppMessageType.info => (
         Icons.info_outline_rounded,
-        AppColors.brandTeal,
+        isDark ? AppColors.darkInfo : AppColors.lightInfo,
       ),
       AppMessageType.loading => (
         Icons.hourglass_top_rounded,
-        AppColors.brandTeal,
+        isDark ? AppColors.darkInfo : AppColors.lightInfo,
       ),
     };
   }
@@ -347,18 +349,13 @@ final class _GlassToastCard extends StatelessWidget {
             child: DecoratedBox(
               decoration: BoxDecoration(
                 borderRadius: AppRadius.lgBorder,
-                boxShadow: [
-                  BoxShadow(
-                    color: tokens.cardShadow,
-                    blurRadius: 22,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
+                boxShadow: AppShadows.of(context).lg,
               ),
               child: ClipRRect(
                 borderRadius: AppRadius.lgBorder,
                 child: BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                  enabled: false, // v1.4 soft elevation: opaque surfaces
                   child: Material(
                     color: Colors.transparent,
                     child: DecoratedBox(
@@ -392,14 +389,7 @@ final class _GlassToastCard extends StatelessWidget {
                               ),
                               child: Center(
                                 child: type == AppMessageType.loading
-                                    ? SizedBox(
-                                        width: 16,
-                                        height: 16,
-                                        child: CircularProgressIndicator(
-                                          strokeWidth: 2,
-                                          color: accent,
-                                        ),
-                                      )
+                                    ? AppSpinner.small(color: accent)
                                     : Icon(icon, size: 19, color: accent),
                               ),
                             ),

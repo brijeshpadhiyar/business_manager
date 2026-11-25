@@ -6,6 +6,7 @@ import 'package:business_manager/core/design_system/app_breakpoints.dart';
 import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
+import 'package:business_manager/core/design_system/app_shadows.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/widgets/app_breadcrumb_bar.dart';
@@ -141,15 +142,15 @@ final class ResponsiveNavigation extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         if (showLogo) ...[
-        Image.asset(
-          AppIdentity.symbolPngAsset,
-          width: 26,
-          height: 26,
-          cacheWidth: 96,
-          cacheHeight: 96,
-          errorBuilder: (_, _, _) => const Icon(Icons.auto_awesome, size: 22),
-        ),
-        const SizedBox(width: AppSpacing.sm),
+          Image.asset(
+            AppIdentity.symbolPngAsset,
+            width: 26,
+            height: 26,
+            cacheWidth: 96,
+            cacheHeight: 96,
+            errorBuilder: (_, _, _) => const Icon(Icons.auto_awesome, size: 22),
+          ),
+          const SizedBox(width: AppSpacing.sm),
         ],
         Flexible(
           child: Text(title, overflow: TextOverflow.ellipsis, maxLines: 1),
@@ -179,6 +180,7 @@ final class ResponsiveNavigation extends StatelessWidget {
       flexibleSpace: ClipRect(
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+          enabled: false, // v1.4 soft elevation: opaque surfaces
           child: DecoratedBox(
             decoration: BoxDecoration(
               color: tokens.navGlassFill,
@@ -239,446 +241,439 @@ final class ResponsiveNavigation extends StatelessWidget {
 
     Widget buildShell() {
       if (sizeClass.isCompact) {
-            if (!showMobileChrome) {
-              return ResponsiveShellScope(
-                sizeClass: sizeClass,
-                hasPersistentChrome: false,
-                child: Material(
-                  type: MaterialType.transparency,
-                  child: transitionBody,
-                ),
-              );
-            }
-
-            return ResponsiveShellScope(
-              sizeClass: sizeClass,
-              hasPersistentChrome: true,
-              child: AppGlassBackdrop(
-                child: Scaffold(
-                  backgroundColor: Colors.transparent,
-                  appBar: _buildGlassAppBar(
-                    context,
-                    actionsOverride: compactActions,
-                  ),
-                  body: SafeArea(child: transitionBody),
-                  floatingActionButton: floatingActionButton,
-                  bottomNavigationBar: RepaintBoundary(
-                    child: ClipRRect(
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(AppRadius.xl),
-                      ),
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: tokens.navGlassFill,
-                            borderRadius: const BorderRadius.vertical(
-                              top: Radius.circular(AppRadius.xl),
-                            ),
-                            border: Border(
-                              top: BorderSide(
-                                color: tokens.navGlassBorder,
-                                width: 1.1,
-                              ),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: tokens.cardShadow,
-                                blurRadius: 16,
-                                offset: const Offset(0, -4),
-                              ),
-                            ],
-                          ),
-                          child: NavigationBar(
-                            selectedIndex: selectedIndex.clamp(
-                              0,
-                              destinations.length - 1,
-                            ),
-                            onDestinationSelected: onDestinationSelected,
-                            backgroundColor: Colors.transparent,
-                            surfaceTintColor: Colors.transparent,
-                            elevation: 0,
-                            animationDuration: AppMotion.duration(
-                              context,
-                              AppMotion.normal,
-                            ),
-                            labelBehavior:
-                                NavigationDestinationLabelBehavior.alwaysShow,
-                            destinations: [
-                              for (int i = 0; i < destinations.length; i++)
-                                NavigationDestination(
-                                  icon: _animatedNavIcon(
-                                    context,
-                                    destinations[i].icon,
-                                    selected: false,
-                                  ),
-                                  selectedIcon: _animatedNavIcon(
-                                    context,
-                                    destinations[i].selectedIcon ??
-                                        destinations[i].icon,
-                                    selected: true,
-                                  ),
-                                  label: destinations[i].label,
-                                  tooltip: destinations[i].label,
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }
-
-          if (sizeClass.isMedium) {
-            final safeSelected = activeExtraActionId != null
-                ? null
-                : selectedIndex.clamp(0, destinations.length - 1);
-            return ResponsiveShellScope(
-              sizeClass: sizeClass,
-              hasPersistentChrome: true,
-              child: AppGlassBackdrop(
-                child: Scaffold(
-                  backgroundColor: Colors.transparent,
-                  drawer: sidebarExtraActions.isNotEmpty
-                      ? Drawer(
-                          child: SafeArea(
-                            child: ListView(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: AppSpacing.md,
-                              ),
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: AppSpacing.lg,
-                                    vertical: AppSpacing.sm,
-                                  ),
-                                  child: _brandTitle(context),
-                                ),
-                                const Divider(),
-                                for (final item in sidebarExtraActions)
-                                  ListTile(
-                                    selected:
-                                        item.id != null &&
-                                        item.id == activeExtraActionId,
-                                    leading: Icon(
-                                      item.icon,
-                                      size: AppSizing.iconMd,
-                                    ),
-                                    title: Text(item.label),
-                                    onTap: () {
-                                      Navigator.of(context).pop();
-                                      item.onTap();
-                                    },
-                                  ),
-                              ],
-                            ),
-                          ),
-                        )
-                      : null,
-                  appBar: showMobileChrome
-                      ? _buildGlassAppBar(
-                          context,
-                          customTitle: breadcrumbs.length > 1
-                              ? AppBreadcrumbBar(items: breadcrumbs)
-                              : _brandTitle(context),
-                        )
-                      : null,
-                  floatingActionButton: floatingActionButton,
-                  body: SafeArea(
-                    child: Row(
-                      children: [
-                        RepaintBoundary(
-                          child: ClipRect(
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(
-                                  color: tokens.navGlassFill,
-                                  border: Border(
-                                    right: BorderSide(
-                                      color: tokens.navGlassBorder,
-                                      width: 0.9,
-                                    ),
-                                  ),
-                                ),
-                                child: LayoutBuilder(
-                                  builder: (context, railConstraints) =>
-                                      SingleChildScrollView(
-                                        child: ConstrainedBox(
-                                          constraints: BoxConstraints(
-                                            minHeight:
-                                                railConstraints.maxHeight,
-                                          ),
-                                          child: IntrinsicHeight(
-                                            child: NavigationRail(
-                                              selectedIndex: safeSelected,
-                                              onDestinationSelected:
-                                                  onDestinationSelected,
-                                              backgroundColor:
-                                                  Colors.transparent,
-                                              labelType:
-                                                  NavigationRailLabelType.all,
-                                              destinations: destinations
-                                                  .map(
-                                                    (d) =>
-                                                        NavigationRailDestination(
-                                                          icon:
-                                                              _animatedNavIcon(
-                                                                context,
-                                                                d.icon,
-                                                                selected: false,
-                                                              ),
-                                                          selectedIcon:
-                                                              _animatedNavIcon(
-                                                                context,
-                                                                d.selectedIcon ??
-                                                                    d.icon,
-                                                                selected: true,
-                                                              ),
-                                                          label: Text(d.label),
-                                                        ),
-                                                  )
-                                                  .toList(),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Expanded(child: transitionBody),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            );
-          }
-
-          // Expanded desktop frosted glass sidebar with active extra items &
-          // top breadcrumb bar.
-          final isDark = Theme.of(context).brightness == Brightness.dark;
-          final showTopBar =
-              breadcrumbs.isNotEmpty || (actions != null && actions!.isNotEmpty);
-          final safeDesktopSelected = activeExtraActionId != null
-              ? null
-              : selectedIndex.clamp(0, destinations.length - 1);
-
+        if (!showMobileChrome) {
           return ResponsiveShellScope(
             sizeClass: sizeClass,
-            hasPersistentChrome: true,
-            child: AppGlassBackdrop(
-              child: Scaffold(
-                backgroundColor: Colors.transparent,
-                floatingActionButton: floatingActionButton,
-                body: SafeArea(
-                  child: Row(
-                    children: [
-                      RepaintBoundary(
-                        child: SizedBox(
-                          width: AppSizing.desktopSidebarWidth,
-                          child: ClipRect(
-                            child: BackdropFilter(
-                              filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(
-                                  color: tokens.navGlassFill,
-                                  border: Border(
-                                    right: BorderSide(
-                                      color: tokens.navGlassBorder,
-                                      width: 0.9,
-                                    ),
-                                  ),
-                                ),
-                                child: NavigationDrawer(
-                                  selectedIndex: safeDesktopSelected,
-                                  onDestinationSelected: onDestinationSelected,
-                                  backgroundColor: Colors.transparent,
-                                  surfaceTintColor: Colors.transparent,
-                                  elevation: 0,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                        AppSpacing.lg,
-                                        AppSpacing.lg,
-                                        AppSpacing.lg,
-                                        AppSpacing.md,
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Image.asset(
-                                            AppIdentity.symbolPngAsset,
-                                            width: 34,
-                                            height: 34,
-                                            cacheWidth: 96,
-                                            cacheHeight: 96,
-                                            errorBuilder: (_, _, _) =>
-                                                const Icon(Icons.auto_awesome),
-                                          ),
-                                          const SizedBox(width: AppSpacing.sm),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  title,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .titleMedium
-                                                      ?.copyWith(
-                                                        fontWeight:
-                                                            FontWeight.w700,
-                                                      ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 1,
-                                                ),
-                                                if (subtitle != null)
-                                                  Text(
-                                                    subtitle!,
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .labelSmall
-                                                        ?.copyWith(
-                                                          color: colorScheme
-                                                              .onSurfaceVariant,
-                                                        ),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 1,
-                                                  ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const Divider(),
-                                    const SizedBox(height: AppSpacing.xs),
-                                    ...destinations.map(
-                                      (d) => NavigationDrawerDestination(
-                                        icon: _animatedNavIcon(
-                                          context,
-                                          d.icon,
-                                          selected: false,
-                                        ),
-                                        selectedIcon: _animatedNavIcon(
-                                          context,
-                                          d.selectedIcon ?? d.icon,
-                                          selected: true,
-                                        ),
-                                        label: Flexible(
-                                          child: Text(
-                                            d.label,
-                                            overflow: TextOverflow.ellipsis,
-                                            maxLines: 1,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    if (sidebarExtraActions.isNotEmpty) ...[
-                                      const Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: AppSpacing.lg,
-                                          vertical: AppSpacing.sm,
-                                        ),
-                                        child: Divider(),
-                                      ),
-                                      ...sidebarExtraActions.map((item) {
-                                        final isActive =
-                                            item.id != null &&
-                                            item.id == activeExtraActionId;
-                                        return Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: AppSpacing.md,
-                                            vertical: 2,
-                                          ),
-                                          child: ListTile(
-                                            dense: true,
-                                            selected: isActive,
-                                            selectedTileColor: colorScheme
-                                                .secondary
-                                                .withValues(
-                                                  alpha: isDark ? 0.26 : 0.16,
-                                                ),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  AppRadius.mdBorder,
-                                              side: isActive
-                                                  ? BorderSide(
-                                                      color: colorScheme
-                                                          .secondary
-                                                          .withValues(
-                                                            alpha: isDark
-                                                                ? 0.36
-                                                                : 0.24,
-                                                          ),
-                                                    )
-                                                  : BorderSide.none,
-                                            ),
-                                            leading: Icon(
-                                              item.icon,
-                                              size: AppSizing.iconMd,
-                                              color: isActive
-                                                  ? (isDark
-                                                        ? colorScheme.secondary
-                                                        : colorScheme.primary)
-                                                  : colorScheme.secondary,
-                                            ),
-                                            title: Text(
-                                              item.label,
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                              style: Theme.of(context)
-                                                  .textTheme
-                                                  .labelLarge
-                                                  ?.copyWith(
-                                                    fontWeight: isActive
-                                                        ? FontWeight.w700
-                                                        : FontWeight.w500,
-                                                  ),
-                                            ),
-                                            onTap: item.onTap,
-                                          ),
-                                        );
-                                      }),
-                                    ],
-                                  ],
-                                ),
-                              ),
-                            ),
+            hasPersistentChrome: false,
+            child: Material(
+              type: MaterialType.transparency,
+              child: transitionBody,
+            ),
+          );
+        }
+
+        return ResponsiveShellScope(
+          sizeClass: sizeClass,
+          hasPersistentChrome: true,
+          child: AppGlassBackdrop(
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              appBar: _buildGlassAppBar(
+                context,
+                actionsOverride: compactActions,
+              ),
+              body: SafeArea(child: transitionBody),
+              floatingActionButton: floatingActionButton,
+              bottomNavigationBar: RepaintBoundary(
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(AppRadius.xl),
+                  ),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                    enabled: false, // v1.4 soft elevation: opaque surfaces
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: tokens.navGlassFill,
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(AppRadius.xl),
+                        ),
+                        border: Border(
+                          top: BorderSide(
+                            color: tokens.navGlassBorder,
+                            width: 1.1,
                           ),
                         ),
+                        boxShadow: [
+                          for (final sh in AppShadows.of(context).lg)
+                            sh.copyWith(offset: Offset(0, -sh.offset.dy)),
+                        ],
                       ),
-                      Expanded(
-                        child: Column(
-                          children: [
-                            if (showTopBar)
-                              _buildGlassAppBar(
-                                context,
-                                showTitle: false,
-                                automaticallyImplyLeading: false,
-                                toolbarHeight: 44,
-                                customTitle: breadcrumbs.isNotEmpty
-                                    ? AppBreadcrumbBar(items: breadcrumbs)
-                                    : null,
-                              ),
-                            Expanded(child: transitionBody),
-                          ],
+                      child: NavigationBar(
+                        selectedIndex: selectedIndex.clamp(
+                          0,
+                          destinations.length - 1,
                         ),
+                        onDestinationSelected: onDestinationSelected,
+                        backgroundColor: Colors.transparent,
+                        surfaceTintColor: Colors.transparent,
+                        elevation: 0,
+                        animationDuration: AppMotion.duration(
+                          context,
+                          AppMotion.normal,
+                        ),
+                        labelBehavior:
+                            NavigationDestinationLabelBehavior.alwaysShow,
+                        destinations: [
+                          for (int i = 0; i < destinations.length; i++)
+                            NavigationDestination(
+                              icon: _animatedNavIcon(
+                                context,
+                                destinations[i].icon,
+                                selected: false,
+                              ),
+                              selectedIcon: _animatedNavIcon(
+                                context,
+                                destinations[i].selectedIcon ??
+                                    destinations[i].icon,
+                                selected: true,
+                              ),
+                              label: destinations[i].label,
+                              tooltip: destinations[i].label,
+                            ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
             ),
-          );
+          ),
+        );
+      }
+
+      if (sizeClass.isMedium) {
+        final safeSelected = activeExtraActionId != null
+            ? null
+            : selectedIndex.clamp(0, destinations.length - 1);
+        return ResponsiveShellScope(
+          sizeClass: sizeClass,
+          hasPersistentChrome: true,
+          child: AppGlassBackdrop(
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              drawer: sidebarExtraActions.isNotEmpty
+                  ? Drawer(
+                      child: SafeArea(
+                        child: ListView(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: AppSpacing.md,
+                          ),
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.lg,
+                                vertical: AppSpacing.sm,
+                              ),
+                              child: _brandTitle(context),
+                            ),
+                            const Divider(),
+                            for (final item in sidebarExtraActions)
+                              ListTile(
+                                selected:
+                                    item.id != null &&
+                                    item.id == activeExtraActionId,
+                                leading: Icon(
+                                  item.icon,
+                                  size: AppSizing.iconMd,
+                                ),
+                                title: Text(item.label),
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                  item.onTap();
+                                },
+                              ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : null,
+              appBar: showMobileChrome
+                  ? _buildGlassAppBar(
+                      context,
+                      customTitle: breadcrumbs.length > 1
+                          ? AppBreadcrumbBar(items: breadcrumbs)
+                          : _brandTitle(context),
+                    )
+                  : null,
+              floatingActionButton: floatingActionButton,
+              body: SafeArea(
+                child: Row(
+                  children: [
+                    RepaintBoundary(
+                      child: ClipRect(
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                          enabled:
+                              false, // v1.4 soft elevation: opaque surfaces
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: tokens.navGlassFill,
+                              border: Border(
+                                right: BorderSide(
+                                  color: tokens.navGlassBorder,
+                                  width: 0.9,
+                                ),
+                              ),
+                            ),
+                            child: LayoutBuilder(
+                              builder: (context, railConstraints) =>
+                                  SingleChildScrollView(
+                                    child: ConstrainedBox(
+                                      constraints: BoxConstraints(
+                                        minHeight: railConstraints.maxHeight,
+                                      ),
+                                      child: IntrinsicHeight(
+                                        child: NavigationRail(
+                                          selectedIndex: safeSelected,
+                                          onDestinationSelected:
+                                              onDestinationSelected,
+                                          backgroundColor: Colors.transparent,
+                                          labelType:
+                                              NavigationRailLabelType.all,
+                                          destinations: destinations
+                                              .map(
+                                                (d) =>
+                                                    NavigationRailDestination(
+                                                      icon: _animatedNavIcon(
+                                                        context,
+                                                        d.icon,
+                                                        selected: false,
+                                                      ),
+                                                      selectedIcon:
+                                                          _animatedNavIcon(
+                                                            context,
+                                                            d.selectedIcon ??
+                                                                d.icon,
+                                                            selected: true,
+                                                          ),
+                                                      label: Text(d.label),
+                                                    ),
+                                              )
+                                              .toList(),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(child: transitionBody),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      }
+
+      // Expanded desktop frosted glass sidebar with active extra items &
+      // top breadcrumb bar.
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+      final showTopBar =
+          breadcrumbs.isNotEmpty || (actions != null && actions!.isNotEmpty);
+      final safeDesktopSelected = activeExtraActionId != null
+          ? null
+          : selectedIndex.clamp(0, destinations.length - 1);
+
+      return ResponsiveShellScope(
+        sizeClass: sizeClass,
+        hasPersistentChrome: true,
+        child: AppGlassBackdrop(
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            floatingActionButton: floatingActionButton,
+            body: SafeArea(
+              child: Row(
+                children: [
+                  RepaintBoundary(
+                    child: SizedBox(
+                      width: AppSizing.desktopSidebarWidth,
+                      child: ClipRect(
+                        child: BackdropFilter(
+                          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
+                          enabled:
+                              false, // v1.4 soft elevation: opaque surfaces
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              color: tokens.navGlassFill,
+                              border: Border(
+                                right: BorderSide(
+                                  color: tokens.navGlassBorder,
+                                  width: 0.9,
+                                ),
+                              ),
+                            ),
+                            child: NavigationDrawer(
+                              selectedIndex: safeDesktopSelected,
+                              onDestinationSelected: onDestinationSelected,
+                              backgroundColor: Colors.transparent,
+                              surfaceTintColor: Colors.transparent,
+                              elevation: 0,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                    AppSpacing.lg,
+                                    AppSpacing.lg,
+                                    AppSpacing.lg,
+                                    AppSpacing.md,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Image.asset(
+                                        AppIdentity.symbolPngAsset,
+                                        width: 34,
+                                        height: 34,
+                                        cacheWidth: 96,
+                                        cacheHeight: 96,
+                                        errorBuilder: (_, _, _) =>
+                                            const Icon(Icons.auto_awesome),
+                                      ),
+                                      const SizedBox(width: AppSpacing.sm),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              title,
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleMedium
+                                                  ?.copyWith(
+                                                    fontWeight: FontWeight.w700,
+                                                  ),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
+                                            ),
+                                            if (subtitle != null)
+                                              Text(
+                                                subtitle!,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .labelSmall
+                                                    ?.copyWith(
+                                                      color: colorScheme
+                                                          .onSurfaceVariant,
+                                                    ),
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const Divider(),
+                                const SizedBox(height: AppSpacing.xs),
+                                ...destinations.map(
+                                  (d) => NavigationDrawerDestination(
+                                    icon: _animatedNavIcon(
+                                      context,
+                                      d.icon,
+                                      selected: false,
+                                    ),
+                                    selectedIcon: _animatedNavIcon(
+                                      context,
+                                      d.selectedIcon ?? d.icon,
+                                      selected: true,
+                                    ),
+                                    label: Flexible(
+                                      child: Text(
+                                        d.label,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                if (sidebarExtraActions.isNotEmpty) ...[
+                                  const Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: AppSpacing.lg,
+                                      vertical: AppSpacing.sm,
+                                    ),
+                                    child: Divider(),
+                                  ),
+                                  ...sidebarExtraActions.map((item) {
+                                    final isActive =
+                                        item.id != null &&
+                                        item.id == activeExtraActionId;
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: AppSpacing.md,
+                                        vertical: 2,
+                                      ),
+                                      child: ListTile(
+                                        dense: true,
+                                        selected: isActive,
+                                        selectedTileColor: colorScheme.secondary
+                                            .withValues(
+                                              alpha: isDark ? 0.26 : 0.16,
+                                            ),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: AppRadius.mdBorder,
+                                          side: isActive
+                                              ? BorderSide(
+                                                  color: colorScheme.secondary
+                                                      .withValues(
+                                                        alpha: isDark
+                                                            ? 0.36
+                                                            : 0.24,
+                                                      ),
+                                                )
+                                              : BorderSide.none,
+                                        ),
+                                        leading: Icon(
+                                          item.icon,
+                                          size: AppSizing.iconMd,
+                                          color: isActive
+                                              ? (isDark
+                                                    ? colorScheme.secondary
+                                                    : colorScheme.primary)
+                                              : colorScheme.secondary,
+                                        ),
+                                        title: Text(
+                                          item.label,
+                                          overflow: TextOverflow.ellipsis,
+                                          maxLines: 1,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelLarge
+                                              ?.copyWith(
+                                                fontWeight: isActive
+                                                    ? FontWeight.w700
+                                                    : FontWeight.w500,
+                                              ),
+                                        ),
+                                        onTap: item.onTap,
+                                      ),
+                                    );
+                                  }),
+                                ],
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        if (showTopBar)
+                          _buildGlassAppBar(
+                            context,
+                            showTitle: false,
+                            automaticallyImplyLeading: false,
+                            toolbarHeight: 44,
+                            customTitle: breadcrumbs.isNotEmpty
+                                ? AppBreadcrumbBar(items: breadcrumbs)
+                                : null,
+                          ),
+                        Expanded(child: transitionBody),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
     }
 
     return CallbackShortcuts(

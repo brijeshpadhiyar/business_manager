@@ -75,7 +75,9 @@ final class _AppAnimatedNumberState extends State<AppAnimatedNumber> {
             ?.copyWith(fontWeight: FontWeight.w700) ??
         const TextStyle(fontSize: 18, fontWeight: FontWeight.w700);
     final effectiveStyle = AppTypography.tabular(
-      widget.color != null ? baseStyle.copyWith(color: widget.color) : baseStyle,
+      widget.color != null
+          ? baseStyle.copyWith(color: widget.color)
+          : baseStyle,
     );
 
     final duration = AppMotion.duration(context, AppMotion.numberCount);

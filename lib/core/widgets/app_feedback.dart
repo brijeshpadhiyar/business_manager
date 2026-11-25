@@ -5,7 +5,11 @@ import 'package:material_ui/material_ui.dart';
 /// [AppMessageService] so every existing screen renders StitchFlow V1.3
 /// Glassmorphism notifications consistently.
 abstract final class AppFeedback {
-  static void showSuccess(BuildContext context, String message, {String? title}) {
+  static void showSuccess(
+    BuildContext context,
+    String message, {
+    String? title,
+  }) {
     AppMessageService.success(context, message, title: title);
   }
 
@@ -25,7 +29,11 @@ abstract final class AppFeedback {
     );
   }
 
-  static void showWarning(BuildContext context, String message, {String? title}) {
+  static void showWarning(
+    BuildContext context,
+    String message, {
+    String? title,
+  }) {
     AppMessageService.warning(context, message, title: title);
   }
 

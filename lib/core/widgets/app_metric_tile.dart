@@ -65,86 +65,86 @@ final class AppMetricTile extends StatelessWidget {
           ? '$label: $semanticValue. $subtitle'
           : '$label: $semanticValue',
       child: AppCard(
-      isGlass: isGlass,
-      backdropKey: backdropKey,
-      onTap: onTap,
-      padding: const EdgeInsets.all(AppSpacing.md),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (icon != null) ...[
-                Container(
-                  width: 34,
-                  height: 34,
-                  decoration: BoxDecoration(
-                    color: accentBg.withValues(alpha: 0.85),
-                    borderRadius: AppRadius.mdBorder,
-                    border: Border.all(
-                      color: accent.withValues(alpha: 0.25),
-                      width: 0.9,
+        isGlass: isGlass,
+        backdropKey: backdropKey,
+        onTap: onTap,
+        padding: const EdgeInsets.all(AppSpacing.md),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (icon != null) ...[
+                  Container(
+                    width: 34,
+                    height: 34,
+                    decoration: BoxDecoration(
+                      color: accentBg.withValues(alpha: 0.85),
+                      borderRadius: AppRadius.mdBorder,
+                      border: Border.all(
+                        color: accent.withValues(alpha: 0.25),
+                        width: 0.9,
+                      ),
+                    ),
+                    child: Icon(icon, size: 18, color: accent),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                ],
+                Expanded(
+                  child: Text(
+                    label,
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    maxLines: 2,
+                    softWrap: true,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                if (onTap != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2, left: 4),
+                    child: Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      size: 13,
+                      color: colorScheme.onSurfaceVariant,
                     ),
                   ),
-                  child: Icon(icon, size: 18, color: accent),
-                ),
-                const SizedBox(width: AppSpacing.sm),
               ],
-              Expanded(
-                child: Text(
-                  label,
-                  style: theme.textTheme.labelMedium?.copyWith(
-                    color: colorScheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  maxLines: 2,
-                  softWrap: true,
-                  overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            SizedBox(
+              width: double.infinity,
+              child: AppAnimatedNumber(
+                value: value,
+                isCurrencyPaise: isCurrencyPaise,
+                suffix: suffix,
+                color: tone == AppStatusTone.neutral
+                    ? colorScheme.onSurface
+                    : accent,
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 19,
                 ),
               ),
-              if (onTap != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 2, left: 4),
-                  child: Icon(
-                    Icons.arrow_forward_ios_rounded,
-                    size: 13,
-                    color: colorScheme.onSurfaceVariant,
-                  ),
+            ),
+            if (subtitle != null && subtitle!.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                subtitle!,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: colorScheme.onSurfaceVariant,
                 ),
+                maxLines: 2,
+                softWrap: true,
+                overflow: TextOverflow.ellipsis,
+              ),
             ],
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          SizedBox(
-            width: double.infinity,
-            child: AppAnimatedNumber(
-              value: value,
-              isCurrencyPaise: isCurrencyPaise,
-              suffix: suffix,
-              color: tone == AppStatusTone.neutral
-                  ? colorScheme.onSurface
-                  : accent,
-              style: theme.textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.w700,
-                fontSize: 19,
-              ),
-            ),
-          ),
-          if (subtitle != null && subtitle!.isNotEmpty) ...[
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              subtitle!,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-              ),
-              maxLines: 2,
-              softWrap: true,
-              overflow: TextOverflow.ellipsis,
-            ),
           ],
-        ],
-      ),
+        ),
       ),
     );
   }

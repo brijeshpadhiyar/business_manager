@@ -1,29 +1,22 @@
-import 'dart:ui';
-
 import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
+import 'package:business_manager/core/design_system/app_shadows.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Rendering mode for [AppGlassSurface] and [AppCard].
+/// Elevation mode for [AppGlassSurface] and [AppCard].
 enum AppGlassStyle {
-  /// Full frosted glassmorphism with native [BackdropFilter] blur, specular
-  /// highlight gradient, luminous border, and dual ambient shadows.
-  /// Best for hero banners, KPI tiles, navigation chrome, dialogs, and sheets.
+  /// Raised surface (`AppShadows.md`). Hero banners, KPI tiles, dialogs.
   full,
 
-  /// High-refresh-rate (120Hz) lightweight frosted glass with translucent
-  /// specular gradient, luminous border, and soft single shadow — skipping
-  /// per-card GPU backdrop readback (`BackdropFilter`) and extra layer
-  /// allocations. Best for dense scrolling list rows and nested cards.
+  /// Resting surface (`AppShadows.sm`). Dense list rows and nested cards.
   lightweight,
 }
 
-/// Genuine frosted glassmorphism surface powered by Flutter's native
-/// [BackdropFilter] (or lightweight specular translucency for 120Hz scrolling
-/// lists), luminous hairline border, ambient shadow depth, and optional tactile
-/// press animation when interactive.
+/// Opaque card surface with a 1px border, soft layered shadow from
+/// `AppShadows`, and optional tactile press animation when interactive.
+/// (Name kept from the v1.3 glass system for API compatibility.)
 final class AppGlassSurface extends StatelessWidget {
   const AppGlassSurface({
     super.key,
@@ -59,26 +52,22 @@ final class AppGlassSurface extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = context.surfaceTokens;
-    final useBlur = glassStyle == AppGlassStyle.full && blurSigma > 0;
-    final useRepaintBoundary = isolateRepaintBoundary ?? useBlur;
+    final shadows = AppShadows.of(context);
+    // v1.4 soft elevation: surfaces are opaque. `blurSigma` / `backdropKey`
+    // are accepted for API compatibility but no BackdropFilter is used.
+    final isFull = glassStyle == AppGlassStyle.full;
+    final useRepaintBoundary = isolateRepaintBoundary ?? false;
 
-    final Gradient? effectiveGradient =
-        gradient ??
-        (tintColor == null
-            ? (useBlur ? tokens.glassGradient : tokens.lightweightGlassGradient)
-            : null);
-
-    Widget glassBody = DecoratedBox(
+    final Widget body = DecoratedBox(
       decoration: BoxDecoration(
-        color: effectiveGradient == null
-            ? (tintColor ?? (useBlur ? tokens.glassFill : tokens.glassFillStrong))
+        color: gradient == null
+            ? (tintColor ??
+                  (isFull ? tokens.glassFill : tokens.glassFillStrong))
             : null,
-        gradient: effectiveGradient,
+        gradient: gradient,
         borderRadius: borderRadius,
-        border: Border.all(
-          color: borderColor ?? tokens.glassBorder,
-          width: 1.15,
-        ),
+        border: Border.all(color: borderColor ?? tokens.glassBorder),
+        boxShadow: elevated ? (isFull ? shadows.md : shadows.sm) : null,
       ),
       child: onTap != null
           ? Material(
@@ -91,53 +80,16 @@ final class AppGlassSurface extends StatelessWidget {
                 child: Padding(padding: padding, child: child),
               ),
             )
-          : Padding(padding: padding, child: child),
+          // Own transparent Material so ListTile ink/backgrounds paint on top
+          // of the opaque surface instead of being hidden behind it.
+          : Material(
+              type: MaterialType.transparency,
+              borderRadius: borderRadius,
+              child: Padding(padding: padding, child: child),
+            ),
     );
 
-    if (useBlur) {
-      final filter = ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma);
-      glassBody = ClipRRect(
-        borderRadius: borderRadius,
-        child: BackdropFilter(
-          filter: filter,
-          backdropGroupKey: backdropKey,
-          child: glassBody,
-        ),
-      );
-    }
-
-    Widget container = DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: borderRadius,
-        boxShadow: elevated
-            ? (useBlur
-                  ? [
-                      BoxShadow(
-                        color: tokens.cardShadow,
-                        blurRadius: 20,
-                        spreadRadius: -2,
-                        offset: const Offset(0, 8),
-                      ),
-                      BoxShadow(
-                        color: tokens.ambientGlow,
-                        blurRadius: 12,
-                        spreadRadius: -4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ]
-                  : [
-                      BoxShadow(
-                        color: tokens.cardShadow,
-                        blurRadius: 12,
-                        spreadRadius: -2,
-                        offset: const Offset(0, 4),
-                      ),
-                    ])
-            : null,
-      ),
-      child: glassBody,
-    );
-
+    Widget container = body;
     if (useRepaintBoundary) {
       container = RepaintBoundary(child: container);
     }

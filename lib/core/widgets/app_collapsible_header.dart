@@ -177,6 +177,7 @@ final class AppCollapsibleHeader {
             child: ClipRect(
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+                enabled: false, // v1.4 soft elevation: opaque surfaces
                 backdropGroupKey: backdropKey,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
@@ -353,9 +354,8 @@ final class AppSummaryStrip extends StatelessWidget {
       isDark ? AppColors.darkPending : AppColors.lightPending,
     AppStatusTone.damaged =>
       isDark ? AppColors.darkDamaged : AppColors.lightDamaged,
-    AppStatusTone.info => AppColors.brandTeal,
-    AppStatusTone.neutral =>
-      isDark ? const Color(0xFF94A3B8) : const Color(0xFF475569),
+    AppStatusTone.info => isDark ? AppColors.darkInfo : AppColors.lightInfo,
+    AppStatusTone.neutral => isDark ? AppColors.slate400 : AppColors.slate600,
   };
 
   @override

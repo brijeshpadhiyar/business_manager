@@ -30,7 +30,8 @@ abstract final class AppConfirmationDialog {
         isDark ? AppColors.darkDamaged : AppColors.lightDamaged,
       AppConfirmationTone.warning =>
         isDark ? AppColors.darkPending : AppColors.lightPending,
-      AppConfirmationTone.info => AppColors.brandTeal,
+      AppConfirmationTone.info =>
+        isDark ? AppColors.darkInfo : AppColors.lightInfo,
     };
     final resolvedIcon =
         icon ??
@@ -55,7 +56,8 @@ abstract final class AppConfirmationDialog {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             AppText(message),
-            if (consequenceNote != null && consequenceNote.trim().isNotEmpty) ...[
+            if (consequenceNote != null &&
+                consequenceNote.trim().isNotEmpty) ...[
               const SizedBox(height: AppSpacing.md),
               Container(
                 padding: const EdgeInsets.all(AppSpacing.sm),
