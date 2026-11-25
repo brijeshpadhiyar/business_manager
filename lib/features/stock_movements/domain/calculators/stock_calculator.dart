@@ -423,6 +423,7 @@ final class StockCalculator {
     required List<StockMovementEntity> existingMovementsForColour,
     required int quantity,
     required String? reason,
+    int reservedForOpenRepairsQty = 0,
   }) {
     if (quantity <= 0) return 'invalid_quantity';
     if (reason == null || reason.trim().isEmpty) return 'reason_required';
@@ -436,7 +437,12 @@ final class StockCalculator {
         damaged -= m.quantity;
       }
     }
-    if (quantity > damaged) {
+    // Pieces already sent for repair through a rejection record stay in the
+    // Damaged bucket until re-inspected; they cannot be repaired twice.
+    final reserved = reservedForOpenRepairsQty < 0
+        ? 0
+        : reservedForOpenRepairsQty;
+    if (quantity > damaged - reserved) {
       return 'exceeds_damaged_stock';
     }
     return null;

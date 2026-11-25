@@ -156,12 +156,7 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
         createdAt: r.createdAt,
       );
 
-  Future<
-    ({
-      Map<String, int> pendingByColour,
-      Map<String, int> pendingByIssue,
-    })
-  >
+  Future<({Map<String, int> pendingByColour, Map<String, int> pendingByIssue})>
   _loadPendingInspectionMaps(List<StockMovementEntity> movements) async {
     final reversedIds = _stockCalc.reversedMovementIds(movements);
     final returns = (await _db.productionTrackingDao.getAllReturns())
@@ -256,6 +251,30 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
   }
 
   @override
+  Future<List<StockMovementEntity>> getMovementsForColour(
+    String designColourId,
+  ) async =>
+      (await _db.stockMovementDao.getMovementsForDesignColour(designColourId))
+          .map(_mapRow)
+          .toList();
+
+  @override
+  Future<Map<String, int>> getPendingInspectionByIssue() async {
+    final all = (await _db.stockMovementDao.getAllMovements())
+        .map(_mapRow)
+        .toList();
+    return (await _loadPendingInspectionMaps(all)).pendingByIssue;
+  }
+
+  @override
+  Future<List<LabourEntryEntity>> getLabourEntriesForLot(String lotId) async =>
+      (await (_db.select(
+            _db.labourEntries,
+          )..where((t) => t.lotId.equals(lotId))).get())
+          .map(_mapLabourRow)
+          .toList();
+
+  @override
   Future<DesignColourStockBalance?> getDesignColourBalance(
     String designColourId,
   ) async {
@@ -285,8 +304,7 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
       initialQuantity: colour.initialQuantity,
       allMovementsForColour: movements,
       processNamesById: procNames,
-      pendingInspectionQuantity:
-          pendingMaps.pendingByColour[colour.id] ?? 0,
+      pendingInspectionQuantity: pendingMaps.pendingByColour[colour.id] ?? 0,
     );
   }
 
@@ -1172,6 +1190,9 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
           const lockedMode = BillingMode.receivedQty;
           const lockedIncludeDamaged = false;
 
+          final issueLabourAlreadyPaid = await _db.labourEntryDao
+              .issueHasPayableLabour(parentIssue.id);
+
           final created = <StockMovementEntity>[];
           String? goodMovId;
           String? dmgMovId;
@@ -1220,6 +1241,7 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
               lockedRatePaise: parentIssue.appliedRatePaise,
               lockedBillingMode: lockedMode,
               lockedIncludeDamaged: lockedIncludeDamaged,
+              issueLabourAlreadyPaid: issueLabourAlreadyPaid,
             );
             if (plannedLabour != null &&
                 parentIssue.memberId != null &&
@@ -1374,11 +1396,11 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
           );
           final remaining =
               (_stockCalc.calculateIssueRemainingPending(
-                    issue: parentIssue,
-                    allMovementsForColour: updatedMovements,
-                  ) -
-                  (updatedPending.pendingByIssue[parentIssue.id] ?? 0))
-              .clamp(0, parentIssue.quantity);
+                        issue: parentIssue,
+                        allMovementsForColour: updatedMovements,
+                      ) -
+                      (updatedPending.pendingByIssue[parentIssue.id] ?? 0))
+                  .clamp(0, parentIssue.quantity);
 
           return SettlementBatchResult(
             createdMovements: created,
@@ -1457,6 +1479,8 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
             existingMovementsForColour: existingMovements,
             quantity: quantity,
             reason: reason,
+            reservedForOpenRepairsQty: await _db.productionTrackingDao
+                .pendingReinspectionQtyForColour(designColourId),
           );
           if (validationErr != null) {
             throw DomainValidationException(
@@ -1555,6 +1579,20 @@ final class StockMovementRepositoryImpl implements StockMovementRepository {
           (await _db.stockMovementDao.getMovementsForDesignColour(
             targetRow.designColourId,
           )).map(_mapRow).toList();
+
+      // An ISSUE whose pieces are sitting in the QC queue cannot be reversed:
+      // approving that QC later would push good stock above the initial qty.
+      if (targetRow.movementType == StockMovementType.issue.dbValue) {
+        final pendingMaps = await _loadPendingInspectionMaps(
+          allColourMovements,
+        );
+        if ((pendingMaps.pendingByIssue[targetRow.id] ?? 0) > 0) {
+          throw const DomainValidationException(
+            'pending_inspection_exists',
+            'This issue has returned pieces waiting for QC. Inspect them first.',
+          );
+        }
+      }
 
       final validation = _stockCalc.validateReversal(
         initialQuantity: colour.initialQuantity,

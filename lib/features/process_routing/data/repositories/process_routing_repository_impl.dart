@@ -5,7 +5,9 @@ import 'package:business_manager/core/database/database_transaction_runner.dart'
 import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
+import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
+import 'package:business_manager/features/process_routing/domain/calculators/job_process_progress_calculator.dart';
 import 'package:business_manager/features/process_routing/domain/calculators/process_pricing_calculator.dart';
 import 'package:business_manager/features/process_routing/domain/calculators/process_routing_validator.dart';
 import 'package:business_manager/features/process_routing/domain/entities/process_routing_entities.dart';
@@ -38,6 +40,186 @@ final class ProcessRoutingRepositoryImpl implements ProcessRoutingRepository {
   static const ProcessRoutingValidator _validator = ProcessRoutingValidator();
   static const ProcessPricingCalculator _pricingCalc =
       ProcessPricingCalculator();
+  static const JobProcessProgressCalculator _progressCalc =
+      JobProcessProgressCalculator();
+
+  /// Live progress for [rows], derived from Stock movements, the QC queue and
+  /// labour entries. Routing owns only plan data (sequence, planned qty,
+  /// worker, agreed rate); every quantity and amount is read from Stock.
+  Future<Map<String, JobProcessProgress>> _loadProgress(
+    List<JobProcessRow> rows,
+  ) async {
+    if (rows.isEmpty) return const {};
+    final pendingByIssue = await _stockRepo.getPendingInspectionByIssue();
+    final movsByColour = <String, List<StockMovementEntity>>{};
+    for (final c in {for (final r in rows) r.designColourId}) {
+      movsByColour[c] = await _stockRepo.getMovementsForColour(c);
+    }
+    final labourByLot = <String, List<LabourEntryEntity>>{};
+    final transferOut = <String, int>{};
+    for (final lotId in {for (final r in rows) r.lotId}) {
+      labourByLot[lotId] = await _stockRepo.getLabourEntriesForLot(lotId);
+      for (final h in await _db.jobProcessDao.getHandoversForLot(lotId)) {
+        if (h.handoverType == ProcessHandoverType.directTransfer.dbValue &&
+            h.fromJobProcessId != null) {
+          transferOut[h.fromJobProcessId!] =
+              (transferOut[h.fromJobProcessId!] ?? 0) + h.quantityDispatched;
+        }
+      }
+    }
+    return {
+      for (final r in rows)
+        r.id: _progressCalc.calculate(
+          jobProcessId: r.id,
+          movementsForColour: movsByColour[r.designColourId] ?? const [],
+          pendingInspectionByIssue: pendingByIssue,
+          labourEntries: labourByLot[r.lotId] ?? const [],
+          legacyLinkedIssueId: r.linkedIssueMovementId,
+          directTransferOutQty: transferOut[r.id] ?? 0,
+        ),
+    };
+  }
+
+  JobProcessEntity _toEntity(
+    JobProcessRow row,
+    JobProcessProgress p, {
+    required String designName,
+    required String colourName,
+    required String processName,
+    required String? workerName,
+  }) {
+    // Rows with no linked Stock issue (planned only, or very old data) keep
+    // their stored counters.
+    final fromStock = p.issueIds.isNotEmpty;
+    final dispatched = fromStock
+        ? p.dispatchedQuantity
+        : row.dispatchedQuantity;
+    final returned = fromStock
+        ? p.returnedToFactoryQuantity
+        : row.returnedToFactoryQuantity;
+    final transferred = fromStock
+        ? p.transferredOutQuantity
+        : row.transferredOutQuantity;
+    final damaged = fromStock
+        ? p.damagedQuantity + p.lostShortageQuantity
+        : row.damagedQuantity;
+    final inQc = fromStock ? p.pendingInspectionQuantity : 0;
+    final withWorker = fromStock ? p.withWorkerQuantity : 0;
+    final stored = JobProcessStatus.fromDbValue(row.status);
+    final JobProcessStatus status;
+    if (stored == JobProcessStatus.cancelled) {
+      status = stored;
+    } else if (stored == JobProcessStatus.completed &&
+        withWorker == 0 &&
+        inQc == 0) {
+      status = stored;
+    } else if (fromStock) {
+      final derived = _validator.resolveStatus(
+        dispatchedQty: dispatched,
+        receivedQty: row.receivedQuantity,
+        returnedQty: returned,
+        transferredOutQty: transferred,
+        damagedQty: damaged + inQc,
+        isCancelled: false,
+      );
+      // Never show "done" while pieces still wait for QC.
+      status = inQc > 0 && derived.isTerminal
+          ? JobProcessStatus.partiallyReturned
+          : derived;
+    } else {
+      status = stored;
+    }
+
+    return JobProcessEntity(
+      id: row.id,
+      lotId: row.lotId,
+      lotDesignId: row.lotDesignId,
+      designColourId: row.designColourId,
+      designName: designName,
+      colourName: colourName,
+      processId: row.processId,
+      processName: processName,
+      memberId: row.memberId,
+      workerName: workerName,
+      sequenceOrder: row.sequenceOrder,
+      plannedQuantity: dispatched > row.plannedQuantity
+          ? dispatched
+          : row.plannedQuantity,
+      dispatchedQuantity: dispatched,
+      receivedQuantity: row.receivedQuantity > dispatched
+          ? dispatched
+          : row.receivedQuantity,
+      returnedToFactoryQuantity: returned,
+      transferredOutQuantity: transferred,
+      damagedQuantity: damaged,
+      pendingInspectionQuantity: inQc,
+      openIssueIds: p.openIssueIds,
+      status: status,
+      sourceJobProcessId: row.sourceJobProcessId,
+      linkedIssueMovementId: row.linkedIssueMovementId,
+      defaultRatePaise: row.defaultRatePaise,
+      agreedRatePaise: row.agreedRatePaise,
+      pricingUnit: row.pricingUnit,
+      rateOverrideReason: row.rateOverrideReason,
+      // Earnings = accepted qty x locked per-piece rate, from labour entries.
+      payableAmountPaise: fromStock
+          ? p.payableAmountPaise
+          : row.payableAmountPaise,
+      // Payments live only in the worker ledger (Accounting). This is the
+      // per-operation figure recorded before v1.4, read-only.
+      paidAmountPaise: row.paidAmountPaise,
+      paymentStatus: ProcessPaymentStatus.fromDbValue(row.paymentStatus),
+      notes: row.notes,
+      transactionAt: row.transactionAt,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+    );
+  }
+
+  /// Splits a settlement over every open ISSUE of the operation (oldest
+  /// first) so multi-batch dispatches can be returned or transferred in full.
+  Future<List<SettlementBatchResult>> _settleFifo({
+    required JobProcessProgress progress,
+    required int goodQuantity,
+    required int damagedQuantity,
+    required int transactionAtUtcMillis,
+    required String? reason,
+    required String notes,
+    required String? requestIdPrefix,
+  }) async {
+    final parts = _progressCalc.allocateFifo(
+      quantity: goodQuantity + damagedQuantity,
+      openIssueIds: progress.openIssueIds,
+      withWorkerByIssue: progress.withWorkerByIssue,
+    );
+    final allocated = parts.fold<int>(0, (s, p) => s + p.quantity);
+    if (allocated < goodQuantity + damagedQuantity) {
+      _throwValidation('exceeds_pending_quantity');
+    }
+    var goodLeft = goodQuantity;
+    final results = <SettlementBatchResult>[];
+    for (var i = 0; i < parts.length; i++) {
+      final part = parts[i];
+      final good = goodLeft < part.quantity ? goodLeft : part.quantity;
+      goodLeft -= good;
+      results.add(
+        await _stockRepo.recordSettlement(
+          parentIssueId: part.issueId,
+          goodQuantity: good,
+          damagedQuantity: part.quantity - good,
+          lostQuantity: 0,
+          shortageQuantity: 0,
+          transactionAtUtcMillis: transactionAtUtcMillis,
+          reason: reason,
+          notes: notes,
+          clientRequestId: requestIdPrefix == null
+              ? null
+              : (i == 0 ? requestIdPrefix : '${requestIdPrefix}_$i'),
+        ),
+      );
+    }
+    return results;
+  }
 
   Never _throwValidation(String code) =>
       throw DomainValidationException(code, code);
@@ -230,46 +412,29 @@ final class ProcessRoutingRepositoryImpl implements ProcessRoutingRepository {
     );
   }
 
-  Future<JobProcessEntity> _hydrateJobProcess(JobProcessRow row) async {
+  Future<JobProcessEntity> _hydrateJobProcess(JobProcessRow row) async =>
+      (await _hydrateWithProgress(row)).entity;
+
+  Future<({JobProcessEntity entity, JobProcessProgress progress})>
+  _hydrateWithProgress(JobProcessRow row) async {
     final design = await _db.lotDao.findDesignById(row.lotDesignId);
     final colour = await _db.lotDao.findDesignColourById(row.designColourId);
     final proc = await _db.processMemberDao.findProcessById(row.processId);
     final member = row.memberId != null
         ? await _db.processMemberDao.findMemberById(row.memberId!)
         : null;
-
-    return JobProcessEntity(
-      id: row.id,
-      lotId: row.lotId,
-      lotDesignId: row.lotDesignId,
-      designColourId: row.designColourId,
-      designName: design?.designName ?? '-',
-      colourName: colour?.colourName ?? '-',
-      processId: row.processId,
-      processName: proc?.name ?? '-',
-      memberId: row.memberId,
-      workerName: member?.name,
-      sequenceOrder: row.sequenceOrder,
-      plannedQuantity: row.plannedQuantity,
-      dispatchedQuantity: row.dispatchedQuantity,
-      receivedQuantity: row.receivedQuantity,
-      returnedToFactoryQuantity: row.returnedToFactoryQuantity,
-      transferredOutQuantity: row.transferredOutQuantity,
-      damagedQuantity: row.damagedQuantity,
-      status: JobProcessStatus.fromDbValue(row.status),
-      sourceJobProcessId: row.sourceJobProcessId,
-      linkedIssueMovementId: row.linkedIssueMovementId,
-      defaultRatePaise: row.defaultRatePaise,
-      agreedRatePaise: row.agreedRatePaise,
-      pricingUnit: row.pricingUnit,
-      rateOverrideReason: row.rateOverrideReason,
-      payableAmountPaise: row.payableAmountPaise,
-      paidAmountPaise: row.paidAmountPaise,
-      paymentStatus: ProcessPaymentStatus.fromDbValue(row.paymentStatus),
-      notes: row.notes,
-      transactionAt: row.transactionAt,
-      createdAt: row.createdAt,
-      updatedAt: row.updatedAt,
+    final progress =
+        (await _loadProgress([row]))[row.id] ?? JobProcessProgress.empty;
+    return (
+      entity: _toEntity(
+        row,
+        progress,
+        designName: design?.designName ?? '-',
+        colourName: colour?.colourName ?? '-',
+        processName: proc?.name ?? '-',
+        workerName: member?.name,
+      ),
+      progress: progress,
     );
   }
 
@@ -374,40 +539,16 @@ final class ProcessRoutingRepositoryImpl implements ProcessRoutingRepository {
         ),
     };
 
+    final progressById = await _loadProgress(processRows);
     final jobProcesses = processRows.map((row) {
       final sku = colourById[row.designColourId];
-      return JobProcessEntity(
-        id: row.id,
-        lotId: row.lotId,
-        lotDesignId: row.lotDesignId,
-        designColourId: row.designColourId,
+      return _toEntity(
+        row,
+        progressById[row.id] ?? JobProcessProgress.empty,
         designName: sku?.designName ?? designById[row.lotDesignId] ?? '-',
         colourName: sku?.colourName ?? '-',
-        processId: row.processId,
         processName: procById[row.processId] ?? '-',
-        memberId: row.memberId,
         workerName: row.memberId != null ? memberById[row.memberId!] : null,
-        sequenceOrder: row.sequenceOrder,
-        plannedQuantity: row.plannedQuantity,
-        dispatchedQuantity: row.dispatchedQuantity,
-        receivedQuantity: row.receivedQuantity,
-        returnedToFactoryQuantity: row.returnedToFactoryQuantity,
-        transferredOutQuantity: row.transferredOutQuantity,
-        damagedQuantity: row.damagedQuantity,
-        status: JobProcessStatus.fromDbValue(row.status),
-        sourceJobProcessId: row.sourceJobProcessId,
-        linkedIssueMovementId: row.linkedIssueMovementId,
-        defaultRatePaise: row.defaultRatePaise,
-        agreedRatePaise: row.agreedRatePaise,
-        pricingUnit: row.pricingUnit,
-        rateOverrideReason: row.rateOverrideReason,
-        payableAmountPaise: row.payableAmountPaise,
-        paidAmountPaise: row.paidAmountPaise,
-        paymentStatus: ProcessPaymentStatus.fromDbValue(row.paymentStatus),
-        notes: row.notes,
-        transactionAt: row.transactionAt,
-        createdAt: row.createdAt,
-        updatedAt: row.updatedAt,
       );
     }).toList();
 
@@ -1126,7 +1267,8 @@ final class ProcessRoutingRepositoryImpl implements ProcessRoutingRepository {
     if (srcRow == null || srcRow.deletedAt != null) {
       _throwValidation('process_not_found');
     }
-    final srcEntity = await _hydrateJobProcess(srcRow);
+    final hydrated = await _hydrateWithProgress(srcRow);
+    final srcEntity = hydrated.entity;
 
     final err = _validator.validateDirectTransfer(
       sourceProcess: srcEntity,
@@ -1157,21 +1299,18 @@ final class ProcessRoutingRepositoryImpl implements ProcessRoutingRepository {
     );
 
     await _txRunner.runInTransaction(() async {
-      if (srcRow.linkedIssueMovementId != null) {
-        await _stockRepo.recordSettlement(
-          parentIssueId: srcRow.linkedIssueMovementId!,
-          goodQuantity: quantity,
-          damagedQuantity: 0,
-          lostQuantity: 0,
-          shortageQuantity: 0,
-          transactionAtUtcMillis: transactionAtUtcMillis,
-          notes:
-              'Direct transfer $ref${notes != null && notes.trim().isNotEmpty ? ' • ${notes.trim()}' : ''}',
-          clientRequestId: trimmedReqId != null && trimmedReqId.isNotEmpty
-              ? 'dt_ret_$trimmedReqId'
-              : null,
-        );
-      }
+      await _settleFifo(
+        progress: hydrated.progress,
+        goodQuantity: quantity,
+        damagedQuantity: 0,
+        transactionAtUtcMillis: transactionAtUtcMillis,
+        reason: null,
+        notes:
+            'Direct transfer $ref${notes != null && notes.trim().isNotEmpty ? ' • ${notes.trim()}' : ''}',
+        requestIdPrefix: trimmedReqId != null && trimmedReqId.isNotEmpty
+            ? 'dt_ret_$trimmedReqId'
+            : null,
+      );
 
       final destIssue = await _issueStockWithResolvedRate(
         designColourId: srcRow.designColourId,
@@ -1358,7 +1497,8 @@ final class ProcessRoutingRepositoryImpl implements ProcessRoutingRepository {
     if (srcRow == null || srcRow.deletedAt != null) {
       _throwValidation('process_not_found');
     }
-    final srcEntity = await _hydrateJobProcess(srcRow);
+    final hydrated = await _hydrateWithProgress(srcRow);
+    final srcEntity = hydrated.entity;
 
     final err = _validator.validateFactoryReturn(
       sourceProcess: srcEntity,
@@ -1380,23 +1520,22 @@ final class ProcessRoutingRepositoryImpl implements ProcessRoutingRepository {
 
     await _txRunner.runInTransaction(() async {
       String? linkedMovementId;
-      if (srcRow.linkedIssueMovementId != null) {
-        final batch = await _stockRepo.recordSettlement(
-          parentIssueId: srcRow.linkedIssueMovementId!,
-          goodQuantity: goodQuantity,
-          damagedQuantity: damagedQuantity,
-          lostQuantity: 0,
-          shortageQuantity: 0,
-          transactionAtUtcMillis: transactionAtUtcMillis,
-          reason: reason,
-          notes:
-              'Factory return $ref${notes != null && notes.trim().isNotEmpty ? ' • ${notes.trim()}' : ''}',
-          clientRequestId: trimmedReqId != null && trimmedReqId.isNotEmpty
-              ? 'fr_ret_$trimmedReqId'
-              : null,
-        );
-        if (batch.createdMovements.isNotEmpty) {
-          linkedMovementId = batch.createdMovements.first.id;
+      final batches = await _settleFifo(
+        progress: hydrated.progress,
+        goodQuantity: goodQuantity,
+        damagedQuantity: damagedQuantity,
+        transactionAtUtcMillis: transactionAtUtcMillis,
+        reason: reason,
+        notes:
+            'Factory return $ref${notes != null && notes.trim().isNotEmpty ? ' • ${notes.trim()}' : ''}',
+        requestIdPrefix: trimmedReqId != null && trimmedReqId.isNotEmpty
+            ? 'fr_ret_$trimmedReqId'
+            : null,
+      );
+      for (final b in batches) {
+        if (b.createdMovements.isNotEmpty) {
+          linkedMovementId = b.createdMovements.first.id;
+          break;
         }
       }
 
@@ -1687,7 +1826,31 @@ final class ProcessRoutingRepositoryImpl implements ProcessRoutingRepository {
     final now = IstDateTimeHelper.nowUtcMillis();
     final chargeId = _idGenerator.nextEntityId();
 
+    final adjustmentId = _idGenerator.nextEntityId();
+    final isExtra = chargeType == ProcessChargeType.extraCharge;
+
     await _txRunner.runInTransaction(() async {
+      // One worker ledger: the charge / deduction is a CREDIT / DEBIT
+      // adjustment, so Accounting, Reports and balances all see it.
+      await _db.workerAdjustmentDao.insertAdjustment(
+        WorkerLedgerAdjustmentsCompanion.insert(
+          id: adjustmentId,
+          memberId: jp.memberId!,
+          adjustmentType: isExtra ? 'CREDIT' : 'DEBIT',
+          clientRequestId: Value('pac_$chargeId'),
+          amountPaise: amountPaise,
+          reason: cleanDesc,
+          notes: const Value('Routing charge'),
+          sourceChargeId: Value(chargeId),
+          jobProcessId: Value(jp.id),
+          transactionAt: transactionAtUtcMillis,
+          recordedAt: now,
+          createdBy: Value(actor),
+          updatedBy: Value(actor),
+          createdAt: now,
+          updatedAt: now,
+        ),
+      );
       await _db.jobProcessDao.insertAdditionalCharge(
         ProcessAdditionalChargesCompanion.insert(
           id: chargeId,
@@ -1706,6 +1869,7 @@ final class ProcessRoutingRepositoryImpl implements ProcessRoutingRepository {
           createdBy: Value(actor),
           transactionAt: transactionAtUtcMillis,
           createdAt: now,
+          ledgerAdjustmentId: Value(adjustmentId),
         ),
       );
 
@@ -1750,6 +1914,7 @@ final class ProcessRoutingRepositoryImpl implements ProcessRoutingRepository {
           'chargeType': chargeType.dbValue,
           'description': cleanDesc,
           'amountPaise': amountPaise,
+          'ledgerAdjustmentId': adjustmentId,
         },
         transactionAt: transactionAtUtcMillis,
         now: now,
@@ -1758,118 +1923,6 @@ final class ProcessRoutingRepositoryImpl implements ProcessRoutingRepository {
 
     final rows = await _db.jobProcessDao.getChargesForJobProcess(jp.id);
     return _mapCharge(rows.firstWhere((r) => r.id == chargeId));
-  }
-
-  @override
-  Future<JobProcessEntity> recordProcessPayment({
-    required String jobProcessId,
-    required int amountPaise,
-    required String paymentMode,
-    required int transactionAtUtcMillis,
-    String? referenceNo,
-    String? notes,
-    String? clientRequestId,
-  }) async {
-    if (amountPaise <= 0) _throwValidation('invalid_amount');
-    final jp = await _db.jobProcessDao.findJobProcessById(jobProcessId);
-    if (jp == null || jp.deletedAt != null || jp.memberId == null) {
-      _throwValidation('process_not_found');
-    }
-
-    final trimmedReqId = clientRequestId?.trim();
-    if (trimmedReqId != null && trimmedReqId.isNotEmpty) {
-      final existingPay = await _db.paymentDao.findByClientRequestId(
-        trimmedReqId,
-      );
-      if (existingPay != null) return _hydrateJobProcess(jp);
-    }
-
-    final allOpCharges = await _db.jobProcessDao.getChargesForJobProcess(jp.id);
-    var extra = 0;
-    var deduct = 0;
-    for (final c in allOpCharges) {
-      if (c.chargeType == ProcessChargeType.extraCharge.dbValue) {
-        extra += c.amountPaise;
-      } else {
-        deduct += c.amountPaise;
-      }
-    }
-    final netPayable = (jp.payableAmountPaise + extra - deduct).clamp(
-      0,
-      1 << 62,
-    );
-    final remaining = netPayable - jp.paidAmountPaise;
-    if (amountPaise > remaining) {
-      _throwValidation('exceeds_outstanding_payable');
-    }
-
-    final actor = await _resolveActor();
-    final now = IstDateTimeHelper.nowUtcMillis();
-    final paymentId = _idGenerator.nextEntityId();
-    final newPaid = jp.paidAmountPaise + amountPaise;
-    final payStatus = _pricingCalc.resolvePaymentStatus(
-      netPayablePaise: netPayable,
-      paidPaise: newPaid,
-    );
-
-    await _txRunner.runInTransaction(() async {
-      // Single unified payments ledger (zero duplicate payment system!)
-      await _db.paymentDao.insertPayment(
-        PaymentsCompanion.insert(
-          id: paymentId,
-          memberId: jp.memberId!,
-          paymentType: 'REGULAR',
-          clientRequestId: Value(
-            trimmedReqId != null && trimmedReqId.isNotEmpty
-                ? trimmedReqId
-                : null,
-          ),
-          amountPaise: amountPaise,
-          paymentMode: paymentMode,
-          referenceNo: Value(referenceNo?.trim()),
-          notes: Value(
-            notes?.trim().isNotEmpty == true
-                ? notes!.trim()
-                : 'Process payment (${jp.id})',
-          ),
-          transactionAt: transactionAtUtcMillis,
-          recordedAt: now,
-          createdBy: Value(actor),
-          updatedBy: Value(actor),
-          createdAt: now,
-          updatedAt: now,
-        ),
-      );
-
-      await _db.jobProcessDao.updateJobProcess(
-        jp.id,
-        JobProcessesCompanion(
-          paidAmountPaise: Value(newPaid),
-          paymentStatus: Value(payStatus.dbValue),
-          updatedBy: Value(actor),
-          updatedAt: Value(now),
-        ),
-      );
-
-      await _writeAudit(
-        entityType: 'JOB_PROCESS_PAYMENT',
-        entityId: paymentId,
-        actionType: 'CREATE',
-        actor: actor,
-        payload: {
-          'jobProcessId': jp.id,
-          'memberId': jp.memberId,
-          'amountPaise': amountPaise,
-          'totalPaidPaise': newPaid,
-          'paymentStatus': payStatus.dbValue,
-        },
-        transactionAt: transactionAtUtcMillis,
-        now: now,
-      );
-    });
-
-    final updated = await _db.jobProcessDao.findJobProcessById(jp.id);
-    return _hydrateJobProcess(updated!);
   }
 
   @override

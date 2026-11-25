@@ -336,35 +336,6 @@ final class JobRoutingCubit extends Cubit<JobRoutingState> {
     }
   }
 
-  Future<String?> recordPayment({
-    required String jobProcessId,
-    required int amountPaise,
-    required String paymentMode,
-    String? referenceNo,
-    String? notes,
-  }) async {
-    final lotId = _currentLotId;
-    if (lotId == null || state.isSubmitting) return 'Not ready';
-    emit(state.copyWith(isSubmitting: true, clearError: true));
-    try {
-      await _repo.recordProcessPayment(
-        jobProcessId: jobProcessId,
-        amountPaise: amountPaise,
-        paymentMode: paymentMode,
-        transactionAtUtcMillis: IstDateTimeHelper.nowUtcMillis(),
-        referenceNo: referenceNo,
-        notes: notes,
-        clientRequestId: _idGenerator.nextRequestId(),
-      );
-      await load(lotId);
-      return null;
-    } catch (e) {
-      final msg = _friendlyError(e);
-      emit(state.copyWith(isSubmitting: false, errorMessage: msg));
-      return msg;
-    }
-  }
-
   Future<String?> markCompleted(String jobProcessId) async {
     final lotId = _currentLotId;
     if (lotId == null || state.isSubmitting) return 'Not ready';
@@ -420,8 +391,7 @@ final class JobRoutingCubit extends Cubit<JobRoutingState> {
         'Cannot complete process while pending quantity remains unaccounted.',
       'cannot_cancel_with_pending_stock' =>
         'Return or transfer all held pieces before cancelling this process.',
-      'same_worker_and_process' =>
-        'Select a different destination worker or operation for direct transfer.',
+      'same_worker_and_process' => 'Select a different destination worker or operation for direct transfer.',
       'rate_override_reason_required' =>
         'Please enter a reason when changing the agreed rate from the default.',
       'exceeds_outstanding_payable' =>

@@ -1,12 +1,13 @@
 import 'package:business_manager/core/database/app_database.dart';
 import 'package:business_manager/core/database/migrations/schema_indexes.dart';
+import 'package:business_manager/core/database/migrations/schema_v9_ledger_unification.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:drift/drift.dart';
 
 /// Coordinates initial schema creation, default singleton seeding, and
-/// step-by-step schema upgrades (`v1 -> v2 -> v3 -> v4 -> v5 -> v6 -> v7 -> v8`).
+/// step-by-step schema upgrades (`v1 -> ... -> v8 -> v9`).
 abstract final class DatabaseMigrationManager {
-  static const int currentSchemaVersion = 8;
+  static const int currentSchemaVersion = 9;
   static const String defaultBusinessProfileId = 'default';
 
   static Future<void> handleOnCreate(Migrator m, AppDatabase db) async {
@@ -372,6 +373,13 @@ abstract final class DatabaseMigrationManager {
           CHECK(status IN ('PENDING_REINSPECTION', 'PARTIALLY_REINSPECTED', 'COMPLETED'))
         );
       ''');
+    }
+
+    if (from < 9) {
+      await SchemaV9LedgerUnification.run(
+        db,
+        nowUtcMillis: IstDateTimeHelper.nowUtcMillis(),
+      );
     }
 
     // Ensure all idempotent indexes exist after any upgrade.

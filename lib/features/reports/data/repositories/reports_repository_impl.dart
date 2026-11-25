@@ -5,6 +5,7 @@ import 'package:business_manager/features/accounting/domain/repositories/account
 import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
 import 'package:business_manager/features/production_history/domain/calculators/production_history_calculator.dart';
+import 'package:business_manager/features/stock_movements/domain/calculators/stock_calculator.dart';
 import 'package:business_manager/features/production_history/domain/entities/production_history_entities.dart';
 import 'package:business_manager/features/reports/domain/calculators/reports_analytics_calculator.dart';
 import 'package:business_manager/features/reports/domain/calculators/workshop_daily_calculator.dart';
@@ -190,21 +191,6 @@ final class ReportsRepositoryImpl implements ReportsRepository {
         )
         .toList();
 
-    final base = _analyticsCalc.compute(
-      filter: filter,
-      businessNameEn: profile?.nameEn ?? 'StitchFlow',
-      businessNameGu: profile?.nameGu ?? 'સ્ટિચફ્લો',
-      lots: lotInputs,
-      designs: designInputs,
-      colours: colourInputs,
-      processes: processInputs,
-      workers: workerInputs,
-      allMovements: allMovements,
-      allLabourEntries: allLabour,
-      allPayments: allPayments,
-      allAdjustments: allAdjustments,
-    );
-
     // Enrich bundle with Schema v8 Pending Inspection, Rejection Records, and
     // Complete Production History rows (Rule 7 & Phase 10).
     final allReturns = (await _db.productionTrackingDao.getAllReturns())
@@ -267,6 +253,28 @@ final class ReportsRepositoryImpl implements ReportsRepository {
           ),
         )
         .toList();
+    final base = _analyticsCalc.compute(
+      filter: filter,
+      businessNameEn: profile?.nameEn ?? 'StitchFlow',
+      businessNameGu: profile?.nameGu ?? 'સ્ટિચફ્લો',
+      lots: lotInputs,
+      designs: designInputs,
+      colours: colourInputs,
+      processes: processInputs,
+      workers: workerInputs,
+      allMovements: allMovements,
+      allLabourEntries: allLabour,
+      allPayments: allPayments,
+      allAdjustments: allAdjustments,
+      pendingInspectionByIssue: const ProductionHistoryCalculator()
+          .pendingInspectionByIssue(
+            returns: allReturns,
+            inspections: allInspections,
+            reversedMovementIds: const StockCalculator().reversedMovementIds(
+              allMovements,
+            ),
+          ),
+    );
     final allRejections = (await _db.productionTrackingDao.getAllRejections())
         .map(
           (r) => RejectionRecordEntity(
@@ -534,6 +542,7 @@ final class ReportsRepositoryImpl implements ReportsRepository {
     var availableGood = 0;
     var damaged = 0;
     var pending = 0;
+    var pendingInspection = 0;
     var lost = 0;
     var shortage = 0;
     for (final b in colourBalances) {
@@ -541,6 +550,7 @@ final class ReportsRepositoryImpl implements ReportsRepository {
       availableGood += b.physicalAvailableInHouse;
       damaged += b.damagedBucket;
       pending += b.totalPendingWithWorkers;
+      pendingInspection += b.totalPendingInspection;
       lost += b.totalLost;
       shortage += b.totalShortage;
     }
@@ -607,6 +617,7 @@ final class ReportsRepositoryImpl implements ReportsRepository {
       availableGoodStock: availableGood,
       damagedStock: damaged,
       pendingWorkerStock: pending,
+      pendingInspectionStock: pendingInspection,
       lostStock: lost,
       shortageStock: shortage,
       processPendingList: processSummaries,
@@ -760,6 +771,7 @@ final class ReportsRepositoryImpl implements ReportsRepository {
       var initQty = 0;
       var avail = 0;
       var pend = 0;
+      var pendInsp = 0;
       var dmg = 0;
       var lost = 0;
       var shrt = 0;
@@ -768,6 +780,7 @@ final class ReportsRepositoryImpl implements ReportsRepository {
         initQty += c.initialQuantity;
         avail += c.physicalAvailableInHouse;
         pend += c.totalPendingWithWorkers;
+        pendInsp += c.totalPendingInspection;
         dmg += c.damagedBucket;
         lost += c.totalLost;
         shrt += c.totalShortage;
@@ -788,6 +801,7 @@ final class ReportsRepositoryImpl implements ReportsRepository {
           lostQuantity: lost,
           shortageQuantity: shrt,
           goodStockValuePaise: valuePaise,
+          pendingInspection: pendInsp,
         ),
       );
     }

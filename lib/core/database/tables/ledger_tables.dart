@@ -176,6 +176,10 @@ class WorkerLedgerAdjustments extends Table {
   TextColumn get clientRequestId => text().nullable()();
   IntColumn get amountPaise => integer()();
   TextColumn get reason => text()();
+  // Schema v9: traceability for adjustments created from a Routing extra
+  // charge / deduction (`process_additional_charges.id`) and its operation.
+  TextColumn get sourceChargeId => text().nullable()();
+  TextColumn get jobProcessId => text().nullable()();
   TextColumn get notes => text().nullable()();
   IntColumn get transactionAt => integer()();
   IntColumn get recordedAt => integer()();

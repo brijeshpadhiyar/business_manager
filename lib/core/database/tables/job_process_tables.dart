@@ -177,6 +177,9 @@ class ProcessAdditionalCharges extends Table {
   TextColumn get createdBy => text().nullable()();
   IntColumn get transactionAt => integer()();
   IntColumn get createdAt => integer()();
+  // Schema v9: the worker_ledger_adjustments row that carries this charge into
+  // the worker ledger (set for new charges and by the v8 -> v9 migration).
+  TextColumn get ledgerAdjustmentId => text().nullable()();
 
   @override
   Set<Column<Object>> get primaryKey => {id};

@@ -10,6 +10,8 @@ import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
 import 'package:business_manager/features/lots/domain/repositories/lot_repository.dart';
+import 'package:business_manager/features/process_routing/domain/calculators/process_pricing_calculator.dart';
+import 'package:business_manager/features/process_routing/domain/calculators/process_routing_validator.dart';
 import 'package:business_manager/features/process_routing/domain/entities/process_routing_entities.dart';
 import 'package:business_manager/features/production_history/domain/calculators/production_history_calculator.dart';
 import 'package:business_manager/features/production_history/domain/entities/production_history_entities.dart';
@@ -452,7 +454,9 @@ final class LotRepositoryImpl implements LotRepository {
         final worker = await _db.processMemberDao.findMemberById(
           assign.workerId,
         );
-        if (worker == null || worker.deletedAt != null || worker.isActive != 1) {
+        if (worker == null ||
+            worker.deletedAt != null ||
+            worker.isActive != 1) {
           throw const DomainValidationException(
             'worker_inactive',
             'Selected worker is inactive or unavailable.',
@@ -498,6 +502,17 @@ final class LotRepositoryImpl implements LotRepository {
         final movId = _idGenerator.nextEntityId();
         final cleanedNotes = _nullIfBlank(assign.notes);
         final cleanedOverride = _nullIfBlank(assign.rateOverrideReason);
+        final pricingUnit = assign.pricingUnit.trim().isEmpty
+            ? ProcessPricingCalculator.unitPerPiece
+            : assign.pricingUnit.trim().toUpperCase();
+        // Earnings = accepted qty x per-piece rate, so the ISSUE always locks
+        // a per-piece rate (PER_DOZEN etc. converted here, never 12x).
+        final perPieceRatePaise = const ProcessPricingCalculator()
+            .effectivePerPieceRatePaise(
+              quantity: assign.quantity,
+              ratePaise: assign.agreedRatePaise,
+              pricingUnit: pricingUnit,
+            );
 
         await _db.stockMovementDao.insertMovement(
           StockMovementsCompanion(
@@ -510,7 +525,7 @@ final class LotRepositoryImpl implements LotRepository {
             jobProcessId: Value(jpId),
             movementType: Value(StockMovementType.issue.dbValue),
             quantity: Value(assign.quantity),
-            appliedRatePaise: Value(assign.agreedRatePaise),
+            appliedRatePaise: Value(perPieceRatePaise),
             isRateOverridden: Value(cleanedOverride != null ? 1 : 0),
             overrideReason: Value(cleanedOverride),
             lockedBillingMode: Value(BillingMode.receivedQty.dbValue),
@@ -535,8 +550,8 @@ final class LotRepositoryImpl implements LotRepository {
             lotId: Value(lotId),
             basisType: const Value('ISSUED'),
             quantity: Value(assign.quantity),
-            ratePaise: Value(assign.agreedRatePaise),
-            amountPaise: Value(assign.quantity * assign.agreedRatePaise),
+            ratePaise: Value(perPieceRatePaise),
+            amountPaise: Value(assign.quantity * perPieceRatePaise),
             isPayable: const Value(0),
             transactionAt: Value(transactionAtUtcMillis),
             recordedAt: Value(now),
@@ -561,7 +576,7 @@ final class LotRepositoryImpl implements LotRepository {
             linkedIssueMovementId: Value(movId),
             defaultRatePaise: Value(proc.defaultRatePaise),
             agreedRatePaise: Value(assign.agreedRatePaise),
-            pricingUnit: Value(assign.pricingUnit),
+            pricingUnit: Value(pricingUnit),
             rateOverrideReason: Value(cleanedOverride),
             payableAmountPaise: Value(0),
             paidAmountPaise: const Value(0),
@@ -574,6 +589,56 @@ final class LotRepositoryImpl implements LotRepository {
             updatedAt: now,
           ),
         );
+
+        // Same records as a Routing dispatch: handover timeline row and, for
+        // an agreed rate that differs from the default, a rate-history row.
+        final handoverId = _idGenerator.nextEntityId();
+        await _db.jobProcessDao.insertHandover(
+          ProcessHandoversCompanion.insert(
+            id: handoverId,
+            transferReference: const ProcessRoutingValidator()
+                .generateReference(
+                  type: ProcessHandoverType.factoryDispatch,
+                  transactionAtUtcMillis: transactionAtUtcMillis,
+                  uniqueId: handoverId,
+                ),
+            lotId: lotId,
+            lotDesignId: sku.designId,
+            designColourId: sku.colourId,
+            handoverType: ProcessHandoverType.factoryDispatch.dbValue,
+            toJobProcessId: Value(jpId),
+            toMemberId: Value(worker.id),
+            processId: proc.id,
+            quantityDispatched: assign.quantity,
+            status: Value(ProcessHandoverStatus.pendingReceipt.dbValue),
+            linkedStockMovementId: Value(movId),
+            notes: Value(cleanedNotes),
+            transactionAt: transactionAtUtcMillis,
+            recordedAt: now,
+            createdBy: Value(actor),
+            createdAt: now,
+            updatedAt: now,
+          ),
+        );
+        if (cleanedOverride != null &&
+            assign.agreedRatePaise != proc.defaultRatePaise) {
+          await _db.jobProcessDao.insertRateHistory(
+            ProcessRateHistoriesCompanion.insert(
+              id: _idGenerator.nextEntityId(),
+              scope: 'JOB_ASSIGNMENT',
+              processId: proc.id,
+              jobProcessId: Value(jpId),
+              memberId: Value(worker.id),
+              designColourId: Value(sku.colourId),
+              previousRatePaise: proc.defaultRatePaise,
+              newRatePaise: assign.agreedRatePaise,
+              pricingUnit: pricingUnit,
+              reason: cleanedOverride,
+              changedBy: Value(actor),
+              changedAt: now,
+            ),
+          );
+        }
 
         createdSkuByKey[skuKey] = (
           designId: sku.designId,

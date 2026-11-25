@@ -23,16 +23,15 @@ class ProductionTrackingDao extends DatabaseAccessor<AppDatabase>
   Future<void> insertReturn(ProductionReturnsCompanion entry) =>
       into(productionReturns).insert(entry);
 
-  Future<ProductionReturnRow?> findReturnById(String id) =>
-      (select(productionReturns)..where((t) => t.id.equals(id)))
-          .getSingleOrNull();
+  Future<ProductionReturnRow?> findReturnById(String id) => (select(
+    productionReturns,
+  )..where((t) => t.id.equals(id))).getSingleOrNull();
 
   Future<ProductionReturnRow?> findReturnByClientRequestId(
     String clientRequestId,
-  ) =>
-      (select(productionReturns)
-            ..where((t) => t.clientRequestId.equals(clientRequestId)))
-          .getSingleOrNull();
+  ) => (select(
+    productionReturns,
+  )..where((t) => t.clientRequestId.equals(clientRequestId))).getSingleOrNull();
 
   Future<List<ProductionReturnRow>> getAllReturns() {
     return (select(productionReturns)
@@ -48,8 +47,7 @@ class ProductionTrackingDao extends DatabaseAccessor<AppDatabase>
   Future<List<ProductionReturnRow>> getReturnsForIssue(String parentIssueId) {
     return (select(productionReturns)
           ..where(
-            (t) =>
-                t.parentIssueId.equals(parentIssueId) & t.deletedAt.isNull(),
+            (t) => t.parentIssueId.equals(parentIssueId) & t.deletedAt.isNull(),
           )
           ..orderBy([
             (t) => OrderingTerm.asc(t.transactionAt),
@@ -94,24 +92,22 @@ class ProductionTrackingDao extends DatabaseAccessor<AppDatabase>
   Future<void> insertInspection(ProductionInspectionsCompanion entry) =>
       into(productionInspections).insert(entry);
 
-  Future<ProductionInspectionRow?> findInspectionById(String id) =>
-      (select(productionInspections)..where((t) => t.id.equals(id)))
-          .getSingleOrNull();
+  Future<ProductionInspectionRow?> findInspectionById(String id) => (select(
+    productionInspections,
+  )..where((t) => t.id.equals(id))).getSingleOrNull();
 
   Future<ProductionInspectionRow?> findInspectionByClientRequestId(
     String clientRequestId,
-  ) =>
-      (select(productionInspections)
-            ..where((t) => t.clientRequestId.equals(clientRequestId)))
-          .getSingleOrNull();
+  ) => (select(
+    productionInspections,
+  )..where((t) => t.clientRequestId.equals(clientRequestId))).getSingleOrNull();
 
   Future<List<ProductionInspectionRow>> getAllInspections() {
-    return (select(productionInspections)
-          ..orderBy([
-            (t) => OrderingTerm.asc(t.transactionAt),
-            (t) => OrderingTerm.asc(t.recordedAt),
-            (t) => OrderingTerm.asc(t.id),
-          ]))
+    return (select(productionInspections)..orderBy([
+          (t) => OrderingTerm.asc(t.transactionAt),
+          (t) => OrderingTerm.asc(t.recordedAt),
+          (t) => OrderingTerm.asc(t.id),
+        ]))
         .get();
   }
 
@@ -190,16 +186,15 @@ class ProductionTrackingDao extends DatabaseAccessor<AppDatabase>
   Future<void> insertRejectionRecord(RejectionRecordsCompanion entry) =>
       into(rejectionRecords).insert(entry);
 
-  Future<RejectionRecordRow?> findRejectionById(String id) =>
-      (select(rejectionRecords)..where((t) => t.id.equals(id)))
-          .getSingleOrNull();
+  Future<RejectionRecordRow?> findRejectionById(String id) => (select(
+    rejectionRecords,
+  )..where((t) => t.id.equals(id))).getSingleOrNull();
 
   Future<List<RejectionRecordRow>> getAllRejections() {
-    return (select(rejectionRecords)
-          ..orderBy([
-            (t) => OrderingTerm.desc(t.inspectedAt),
-            (t) => OrderingTerm.desc(t.createdAt),
-          ]))
+    return (select(rejectionRecords)..orderBy([
+          (t) => OrderingTerm.desc(t.inspectedAt),
+          (t) => OrderingTerm.desc(t.createdAt),
+        ]))
         .get();
   }
 
@@ -242,23 +237,21 @@ class ProductionTrackingDao extends DatabaseAccessor<AppDatabase>
   Future<void> insertRejectionRepair(RejectionRepairsCompanion entry) =>
       into(rejectionRepairs).insert(entry);
 
-  Future<RejectionRepairRow?> findRepairById(String id) =>
-      (select(rejectionRepairs)..where((t) => t.id.equals(id)))
-          .getSingleOrNull();
+  Future<RejectionRepairRow?> findRepairById(String id) => (select(
+    rejectionRepairs,
+  )..where((t) => t.id.equals(id))).getSingleOrNull();
 
   Future<RejectionRepairRow?> findRepairByClientRequestId(
     String clientRequestId,
-  ) =>
-      (select(rejectionRepairs)
-            ..where((t) => t.clientRequestId.equals(clientRequestId)))
-          .getSingleOrNull();
+  ) => (select(
+    rejectionRepairs,
+  )..where((t) => t.clientRequestId.equals(clientRequestId))).getSingleOrNull();
 
   Future<List<RejectionRepairRow>> getAllRepairs() {
-    return (select(rejectionRepairs)
-          ..orderBy([
-            (t) => OrderingTerm.desc(t.transactionAt),
-            (t) => OrderingTerm.desc(t.recordedAt),
-          ]))
+    return (select(rejectionRepairs)..orderBy([
+          (t) => OrderingTerm.desc(t.transactionAt),
+          (t) => OrderingTerm.desc(t.recordedAt),
+        ]))
         .get();
   }
 
@@ -276,6 +269,22 @@ class ProductionTrackingDao extends DatabaseAccessor<AppDatabase>
           ..where((t) => t.lotId.equals(lotId))
           ..orderBy([(t) => OrderingTerm.asc(t.transactionAt)]))
         .get();
+  }
+
+  /// Repaired pieces of [designColourId] that are still waiting for
+  /// re-inspection. They are still in the Damaged bucket but reserved for an
+  /// open repair, so no other repair flow may move them to good stock.
+  Future<int> pendingReinspectionQtyForColour(String designColourId) async {
+    final row = await customSelect(
+      'SELECT COALESCE(SUM(MAX(r.repaired_quantity - COALESCE(('
+      '  SELECT SUM(i.accepted_quantity + i.rejected_quantity)'
+      '  FROM production_inspections i WHERE i.rejection_repair_id = r.id'
+      '), 0), 0)), 0) AS pending '
+      'FROM rejection_repairs r WHERE r.design_colour_id = ?',
+      variables: [Variable.withString(designColourId)],
+      readsFrom: {rejectionRepairs, productionInspections},
+    ).getSingle();
+    return row.read<int>('pending');
   }
 
   Future<int> updateRepairStatus(

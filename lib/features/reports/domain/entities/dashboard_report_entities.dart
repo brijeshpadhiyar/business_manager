@@ -58,6 +58,7 @@ final class DashboardSnapshot {
     this.todayLabourEarnedPaise = 0,
     this.todayPaymentsPaise = 0,
     this.importantPendingIssues = const [],
+    this.pendingInspectionStock = 0,
   });
 
   final String businessNameEn;
@@ -90,6 +91,10 @@ final class DashboardSnapshot {
   final int todayLabourEarnedPaise;
   final int todayPaymentsPaise;
   final List<OpenIssueSummary> importantPendingIssues;
+
+  /// Pieces returned and waiting for QC. Golden rule:
+  /// initial = available + withWorkers + pendingInspection + damaged + lost + shortage.
+  final int pendingInspectionStock;
 }
 
 /// Per-process activity totals for a single IST business day.
@@ -208,6 +213,7 @@ final class LotStockReportRow {
     required this.lostQuantity,
     required this.shortageQuantity,
     required this.goodStockValuePaise,
+    this.pendingInspection = 0,
   });
 
   final String lotId;
@@ -223,6 +229,10 @@ final class LotStockReportRow {
   final int lostQuantity;
   final int shortageQuantity;
   final int goodStockValuePaise;
+
+  /// Pieces returned by workers and waiting for QC (not with workers, not in
+  /// available stock).
+  final int pendingInspection;
 }
 
 /// Comprehensive reports bundle filtered by date/search/lot/worker/process.

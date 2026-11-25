@@ -35,7 +35,9 @@ void main() {
           id: Value(p.$1),
           name: Value(p.$2),
           defaultRatePaise: Value(p.$3),
-          defaultPricingUnit: const Value(ProcessPricingCalculator.unitPerPiece),
+          defaultPricingUnit: const Value(
+            ProcessPricingCalculator.unitPerPiece,
+          ),
           createdAt: const Value(now),
           updatedAt: const Value(now),
         ),
@@ -86,65 +88,74 @@ void main() {
   });
 
   group('StitchFlow V1.3 – 12-Scenario Business Workflow QA', () {
-    test('Scenario 1: Lot Creation with multiple designs & colours + exact totals', () async {
-      final lot = await lotRepo.createLot(
-        lotNumber: 'QA-1001',
-        title: 'Multi-Design Production Lot',
-        transactionAtUtcMillis: now,
-      );
-      final d101 = await lotRepo.createDesign(lotId: lot.id, designName: 'D-101');
-      final d102 = await lotRepo.createDesign(lotId: lot.id, designName: 'D-102');
+    test(
+      'Scenario 1: Lot Creation with multiple designs & colours + exact totals',
+      () async {
+        final lot = await lotRepo.createLot(
+          lotNumber: 'QA-1001',
+          title: 'Multi-Design Production Lot',
+          transactionAtUtcMillis: now,
+        );
+        final d101 = await lotRepo.createDesign(
+          lotId: lot.id,
+          designName: 'D-101',
+        );
+        final d102 = await lotRepo.createDesign(
+          lotId: lot.id,
+          designName: 'D-102',
+        );
 
-      await lotRepo.createDesignColour(
-        lotDesignId: d101.id,
-        colourName: 'Red',
-        colourHex: '#DC2626',
-        initialQuantity: 100,
-        unitPricePaise: 5000,
-      );
-      await lotRepo.createDesignColour(
-        lotDesignId: d101.id,
-        colourName: 'Blue',
-        colourHex: '#2563EB',
-        initialQuantity: 100,
-        unitPricePaise: 5000,
-      );
-      await lotRepo.createDesignColour(
-        lotDesignId: d101.id,
-        colourName: 'Green',
-        colourHex: '#16A34A',
-        initialQuantity: 100,
-        unitPricePaise: 5000,
-      );
-      await lotRepo.createDesignColour(
-        lotDesignId: d102.id,
-        colourName: 'Black',
-        colourHex: '#111827',
-        initialQuantity: 100,
-        unitPricePaise: 5000,
-      );
-      await lotRepo.createDesignColour(
-        lotDesignId: d102.id,
-        colourName: 'Yellow',
-        colourHex: '#FACC15',
-        initialQuantity: 100,
-        unitPricePaise: 5000,
-      );
+        await lotRepo.createDesignColour(
+          lotDesignId: d101.id,
+          colourName: 'Red',
+          colourHex: '#DC2626',
+          initialQuantity: 100,
+          unitPricePaise: 5000,
+        );
+        await lotRepo.createDesignColour(
+          lotDesignId: d101.id,
+          colourName: 'Blue',
+          colourHex: '#2563EB',
+          initialQuantity: 100,
+          unitPricePaise: 5000,
+        );
+        await lotRepo.createDesignColour(
+          lotDesignId: d101.id,
+          colourName: 'Green',
+          colourHex: '#16A34A',
+          initialQuantity: 100,
+          unitPricePaise: 5000,
+        );
+        await lotRepo.createDesignColour(
+          lotDesignId: d102.id,
+          colourName: 'Black',
+          colourHex: '#111827',
+          initialQuantity: 100,
+          unitPricePaise: 5000,
+        );
+        await lotRepo.createDesignColour(
+          lotDesignId: d102.id,
+          colourName: 'Yellow',
+          colourHex: '#FACC15',
+          initialQuantity: 100,
+          unitPricePaise: 5000,
+        );
 
-      final detail = (await lotRepo.getLotDetail(lot.id))!;
-      expect(detail.designs.length, 2);
-      final d101Total = detail.designs
-          .firstWhere((d) => d.design.designName == 'D-101')
-          .colours
-          .fold<int>(0, (s, c) => s + c.initialQuantity);
-      final d102Total = detail.designs
-          .firstWhere((d) => d.design.designName == 'D-102')
-          .colours
-          .fold<int>(0, (s, c) => s + c.initialQuantity);
-      expect(d101Total, 300);
-      expect(d102Total, 200);
-      expect(d101Total + d102Total, 500);
-    });
+        final detail = (await lotRepo.getLotDetail(lot.id))!;
+        expect(detail.designs.length, 2);
+        final d101Total = detail.designs
+            .firstWhere((d) => d.design.designName == 'D-101')
+            .colours
+            .fold<int>(0, (s, c) => s + c.initialQuantity);
+        final d102Total = detail.designs
+            .firstWhere((d) => d.design.designName == 'D-102')
+            .colours
+            .fold<int>(0, (s, c) => s + c.initialQuantity);
+        expect(d101Total, 300);
+        expect(d102Total, 200);
+        expect(d101Total + d102Total, 500);
+      },
+    );
 
     test('Scenario 2: Colour-Only Lot hides internal sentinel in labels & calculates totals', () async {
       final lot = await lotRepo.createLot(
@@ -193,7 +204,10 @@ void main() {
         lotNumber: 'QA-1003',
         transactionAtUtcMillis: now,
       );
-      final d101 = await lotRepo.createDesign(lotId: lot.id, designName: 'D-101');
+      final d101 = await lotRepo.createDesign(
+        lotId: lot.id,
+        designName: 'D-101',
+      );
       final red = await lotRepo.createDesignColour(
         lotDesignId: d101.id,
         colourName: 'Red',
@@ -235,8 +249,12 @@ void main() {
       );
 
       final overview = (await routingRepo.getJobRoutingOverview(lot.id))!;
-      final redBal = overview.skuBalances.firstWhere((b) => b.designColourId == red.id);
-      final blueBal = overview.skuBalances.firstWhere((b) => b.designColourId == blue.id);
+      final redBal = overview.skuBalances.firstWhere(
+        (b) => b.designColourId == red.id,
+      );
+      final blueBal = overview.skuBalances.firstWhere(
+        (b) => b.designColourId == blue.id,
+      );
       expect(redBal.physicalAvailableInHouse, 100);
       expect(redBal.totalPendingWithWorkers, 100);
       expect(blueBal.physicalAvailableInHouse, 200);
@@ -244,52 +262,59 @@ void main() {
       expect(overview.totalInitialQuantity, 500);
     });
 
-    test('Scenario 5: Direct Worker Transfer (100 -> 60 Packing + 40 remain)', () async {
-      final lot = await lotRepo.createLot(
-        lotNumber: 'QA-1005',
-        transactionAtUtcMillis: now,
-      );
-      final red = await lotRepo.addColourDirectlyToLot(
-        lotId: lot.id,
-        colourName: 'Red',
-        initialQuantity: 100,
-        unitPricePaise: 0,
-      );
-      final cutOp = await routingRepo.addJobProcess(
-        lotId: lot.id,
-        designColourId: red.id,
-        processId: 'p-cut',
-        workerId: 'w-dharmesh',
-        quantity: 100,
-        transactionAtUtcMillis: now,
-      );
-      final transfer = await routingRepo.directTransfer(
-        sourceJobProcessId: cutOp.id,
-        destinationProcessId: 'p-pack',
-        destinationWorkerId: 'w-packing',
-        quantity: 60,
-        transactionAtUtcMillis: now,
-        autoConfirmReceipt: false,
-      );
-      expect(transfer.transferReference, startsWith('TRF-'));
-      expect(transfer.status, ProcessHandoverStatus.pendingReceipt);
+    test(
+      'Scenario 5: Direct Worker Transfer (100 -> 60 Packing + 40 remain)',
+      () async {
+        final lot = await lotRepo.createLot(
+          lotNumber: 'QA-1005',
+          transactionAtUtcMillis: now,
+        );
+        final red = await lotRepo.addColourDirectlyToLot(
+          lotId: lot.id,
+          colourName: 'Red',
+          initialQuantity: 100,
+          unitPricePaise: 0,
+        );
+        final cutOp = await routingRepo.addJobProcess(
+          lotId: lot.id,
+          designColourId: red.id,
+          processId: 'p-cut',
+          workerId: 'w-dharmesh',
+          quantity: 100,
+          transactionAtUtcMillis: now,
+        );
+        final transfer = await routingRepo.directTransfer(
+          sourceJobProcessId: cutOp.id,
+          destinationProcessId: 'p-pack',
+          destinationWorkerId: 'w-packing',
+          quantity: 60,
+          transactionAtUtcMillis: now,
+          autoConfirmReceipt: false,
+        );
+        expect(transfer.transferReference, startsWith('TRF-'));
+        expect(transfer.status, ProcessHandoverStatus.pendingReceipt);
 
-      final confirmed = await routingRepo.confirmHandoverReceipt(
-        handoverId: transfer.id,
-        receivedQuantity: 60,
-        transactionAtUtcMillis: now,
-      );
-      expect(confirmed.status, ProcessHandoverStatus.received);
+        final confirmed = await routingRepo.confirmHandoverReceipt(
+          handoverId: transfer.id,
+          receivedQuantity: 60,
+          transactionAtUtcMillis: now,
+        );
+        expect(confirmed.status, ProcessHandoverStatus.received);
 
-      final overview = (await routingRepo.getJobRoutingOverview(lot.id))!;
-      final bal = overview.skuBalances.single;
-      expect(bal.physicalAvailableInHouse, 0);
-      expect(bal.totalPendingWithWorkers, 100);
-      final dharmeshOp = overview.jobProcesses.firstWhere((p) => p.id == cutOp.id);
-      expect(dharmeshOp.pendingQuantity, 40);
-      final packingOp = overview.jobProcesses.firstWhere((p) => p.memberId == 'w-packing');
-      expect(packingOp.pendingQuantity, 60);
-    });
+        final overview = (await routingRepo.getJobRoutingOverview(lot.id))!;
+        final bal = overview.skuBalances.single;
+        expect(bal.physicalAvailableInHouse, 0);
+        expect(bal.totalPendingWithWorkers, 100);
+        final dharmeshOp = overview.jobProcesses.firstWhere(
+          (p) => p.id == cutOp.id,
+        );
+        expect(dharmeshOp.pendingQuantity, 40);
+        final packingOp = overview.jobProcesses.firstWhere(
+          (p) => p.memberId == 'w-packing',
+        );
+        expect(packingOp.pendingQuantity, 60);
+      },
+    );
 
     test('Scenario 6 & 7: Factory Return (Good + Damaged, Partial & Full) & Partial Split (500 = 300 + 150 + 50)', () async {
       final lot = await lotRepo.createLot(
@@ -335,7 +360,9 @@ void main() {
       expect(bal.damagedBucket, 5);
       expect(bal.totalPendingWithWorkers, 350); // 300 Packing + 50 Dharmesh
       expect(
-        bal.physicalAvailableInHouse + bal.damagedBucket + bal.totalPendingWithWorkers,
+        bal.physicalAvailableInHouse +
+            bal.damagedBucket +
+            bal.totalPendingWithWorkers,
         500,
       );
       final src = overview.jobProcesses.firstWhere((p) => p.id == cut.id);
@@ -365,7 +392,8 @@ void main() {
         rateOverrideReason: 'Urgent heavy fabric',
         transactionAtUtcMillis: now,
       );
-      expect(op.payableAmountPaise, 295000);
+      // v1.4: earnings follow ACCEPTED pieces only; nothing accepted yet.
+      expect(op.payableAmountPaise, 0);
 
       // Update default process rate to ₹8.00 -> historical assignment must stay ₹5.90
       await routingRepo.updateProcessDefaultRate(
@@ -394,48 +422,32 @@ void main() {
       );
 
       var overview = (await routingRepo.getJobRoutingOverview(lot.id))!;
-      expect(overview.costSummary.totalBasePaise, 295000);
+      expect(overview.costSummary.totalBasePaise, 0);
       expect(overview.costSummary.totalAdditionalChargesPaise, 15000);
       expect(overview.costSummary.totalDeductionsPaise, 5000);
+
+      // Charges / deductions land in the worker ledger as CREDIT / DEBIT.
+      final adjustments = await db.workerAdjustmentDao.getAdjustmentsForMember(
+        'w-dharmesh',
+      );
+      expect(
+        adjustments.map((a) => (a.adjustmentType, a.amountPaise)).toSet(),
+        {('CREDIT', 15000), ('DEBIT', 5000)},
+      );
+      expect(adjustments.every((a) => a.jobProcessId == op.id), isTrue);
+
+      // All 500 pcs accepted at the locked ₹5.90 -> base ₹2,950, net ₹3,050.
+      await routingRepo.returnToFactory(
+        sourceJobProcessId: op.id,
+        goodQuantity: 500,
+        transactionAtUtcMillis: now,
+      );
+      overview = (await routingRepo.getJobRoutingOverview(lot.id))!;
+      expect(overview.jobProcesses.single.payableAmountPaise, 295000);
+      expect(overview.costSummary.totalBasePaise, 295000);
       expect(overview.costSummary.totalNetCostPaise, 305000);
-
-      // Partial payment ₹1,000 + idempotent duplicate retry -> still ₹1,000
-      await routingRepo.recordProcessPayment(
-        jobProcessId: op.id,
-        amountPaise: 100000,
-        paymentMode: 'UPI',
-        clientRequestId: 'pay-req-1',
-        transactionAtUtcMillis: now,
-      );
-      await routingRepo.recordProcessPayment(
-        jobProcessId: op.id,
-        amountPaise: 100000,
-        paymentMode: 'UPI',
-        clientRequestId: 'pay-req-1',
-        transactionAtUtcMillis: now,
-      );
-      overview = (await routingRepo.getJobRoutingOverview(lot.id))!;
-      expect(overview.costSummary.totalPaidPaise, 100000);
-      expect(overview.costSummary.totalOutstandingPaise, 205000);
-      expect(
-        overview.jobProcesses.single.paymentStatus,
-        ProcessPaymentStatus.partiallyPaid,
-      );
-
-      // Remaining payment ₹2,050 -> PAID
-      await routingRepo.recordProcessPayment(
-        jobProcessId: op.id,
-        amountPaise: 205000,
-        paymentMode: 'CASH',
-        transactionAtUtcMillis: now,
-      );
-      overview = (await routingRepo.getJobRoutingOverview(lot.id))!;
-      expect(overview.costSummary.totalPaidPaise, 305000);
-      expect(overview.costSummary.totalOutstandingPaise, 0);
-      expect(
-        overview.jobProcesses.single.paymentStatus,
-        ProcessPaymentStatus.paid,
-      );
+      // Payments are recorded in Accounting only; Routing never adds any.
+      expect(overview.costSummary.totalPaidPaise, 0);
     });
 
     test('Scenario 11: Full End-to-End Production Lifecycle', () async {
@@ -444,7 +456,10 @@ void main() {
         title: 'Full Lifecycle Order',
         transactionAtUtcMillis: now,
       );
-      final design = await lotRepo.createDesign(lotId: lot.id, designName: 'D-201');
+      final design = await lotRepo.createDesign(
+        lotId: lot.id,
+        designName: 'D-201',
+      );
       final colour = await lotRepo.createDesignColour(
         lotDesignId: design.id,
         colourName: 'Navy Blue',
@@ -488,17 +503,10 @@ void main() {
         jobProcessId: packOp.id,
         transactionAtUtcMillis: now,
       );
-      await routingRepo.recordProcessPayment(
-        jobProcessId: cut.id,
-        amountPaise: 60000,
-        paymentMode: 'CASH',
-        transactionAtUtcMillis: now,
-      );
-
       final finalOverview = (await routingRepo.getJobRoutingOverview(lot.id))!;
       expect(finalOverview.totalFactoryAvailable, 120);
       expect(finalOverview.totalPendingWithWorkers, 0);
-      expect(finalOverview.costSummary.totalPaidPaise, 60000);
+      expect(finalOverview.costSummary.totalPaidPaise, 0);
     });
 
     test('Scenario 12: Negative Workflow Testing rejects every invalid operation safely', () async {
@@ -611,12 +619,13 @@ void main() {
         ),
         throwsA(isA<DomainValidationException>()),
       );
-      // Invalid payment amount <= 0
+      // Invalid charge amount <= 0
       await expectLater(
-        routingRepo.recordProcessPayment(
+        routingRepo.addAdditionalCharge(
           jobProcessId: op.id,
+          chargeType: ProcessChargeType.extraCharge,
+          description: 'Zero',
           amountPaise: 0,
-          paymentMode: 'CASH',
           transactionAtUtcMillis: now,
         ),
         throwsA(isA<DomainValidationException>()),

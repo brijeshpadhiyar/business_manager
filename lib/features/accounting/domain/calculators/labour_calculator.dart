@@ -67,12 +67,16 @@ final class LabourCalculator {
   /// - `returnDamaged` (rejected/damaged): NEVER payable (`null`), even if
   ///   legacy `lockedIncludeDamaged` was true.
   /// - `lost` / `shortage` / other types: NEVER payable (`null`).
+  /// - Legacy (pre-v1.2) `GIVEN_QTY` issues that already carry a payable
+  ///   `ISSUED` labour entry ([issueLabourAlreadyPaid]) earn NOTHING more on
+  ///   settlement, so the worker is never paid twice for the same pieces.
   PlannedLabourEntry? planForSettlement({
     required StockMovementType movementType,
     required int quantity,
     required int lockedRatePaise,
     required BillingMode lockedBillingMode,
     required bool lockedIncludeDamaged,
+    bool issueLabourAlreadyPaid = false,
   }) {
     if (quantity <= 0) {
       throw ArgumentError.value(quantity, 'quantity', 'Must be > 0.');
@@ -84,6 +88,8 @@ final class LabourCalculator {
         'Must be >= 0.',
       );
     }
+
+    if (issueLabourAlreadyPaid) return null;
 
     switch (movementType) {
       case StockMovementType.returnGood:
@@ -115,6 +121,7 @@ final class LabourCalculator {
     required int acceptedQuantity,
     required int lockedRatePaise,
     required bool creditOriginalWorker,
+    bool issueLabourAlreadyPaid = false,
   }) {
     if (acceptedQuantity < 0) {
       throw ArgumentError.value(
@@ -130,7 +137,9 @@ final class LabourCalculator {
         'Must be >= 0.',
       );
     }
-    if (acceptedQuantity == 0 || !creditOriginalWorker) {
+    if (acceptedQuantity == 0 ||
+        !creditOriginalWorker ||
+        issueLabourAlreadyPaid) {
       return null;
     }
     return PlannedLabourEntry(

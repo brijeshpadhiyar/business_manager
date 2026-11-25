@@ -3,6 +3,7 @@ import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
+import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/validation/validation.dart';
@@ -12,6 +13,7 @@ import 'package:business_manager/features/process_routing/domain/entities/proces
 import 'package:business_manager/features/process_routing/presentation/bloc/job_routing_cubit.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// StitchFlow V1.3 Multi-Process Routing, Variant Allocation, Dynamic Pricing,
@@ -162,9 +164,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
       text: '${initialSku.physicalAvailableInHouse}',
     );
     final rateCtrl = TextEditingController(
-      text: MoneyFormatter.formatPaiseForInput(
-        initialPricing.defaultRatePaise,
-      ),
+      text: MoneyFormatter.formatPaiseForInput(initialPricing.defaultRatePaise),
     );
     final overrideReasonCtrl = TextEditingController();
     final notesCtrl = TextEditingController();
@@ -365,8 +365,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                             }
                             if (paise < 0) {
                               setSheetState(
-                                () => error =
-                                    'Enter a valid non-negative rate (max 2 decimals).',
+                                () => error = 'Enter a valid non-negative rate (max 2 decimals).',
                               );
                               return;
                             }
@@ -591,8 +590,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                             }
                             if (paise < 0) {
                               setSheetState(
-                                () => error =
-                                    'Enter a valid destination rate (max 2 decimals).',
+                                () => error = 'Enter a valid destination rate (max 2 decimals).',
                               );
                               return;
                             }
@@ -817,8 +815,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                         );
                         if (paise <= 0) {
                           setSheetState(
-                            () => error =
-                                'Enter a valid positive amount (max 2 decimals).',
+                            () => error = 'Enter a valid positive amount (max 2 decimals).',
                           );
                           return;
                         }
@@ -860,113 +857,15 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
     }
   }
 
-  Future<void> _showRecordPaymentSheet(
+  /// Payments are recorded only in the worker ledger (Accounting), so Stock,
+  /// Routing, Ledger and Reports always agree. Refreshes on return.
+  Future<void> _openWorkerPayment(
     BuildContext context,
     JobProcessEntity jp,
   ) async {
     final cubit = context.read<JobRoutingCubit>();
-    final amountCtrl = TextEditingController();
-    final refCtrl = TextEditingController();
-    String mode = 'CASH';
-    String? error;
-    bool saving = false;
-
-    try {
-      await AppBottomSheet.show<void>(
-        context,
-        title: 'Record Worker Payment',
-        builder: (sheetCtx) => StatefulBuilder(
-          builder: (ctx, setSheetState) => Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              AppText(
-                '${jp.workerName ?? '-'} • ${jp.processName} • Paid: ${MoneyFormatter.formatPaise(jp.paidAmountPaise)}',
-                fontWeight: FontWeight.w600,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              AppTextField(
-                controller: amountCtrl,
-                label: 'Payment Amount (₹)',
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
-                ),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              AppDropdown<String>(
-                label: 'Payment Mode',
-                value: mode,
-                items: const ['CASH', 'UPI', 'BANK_TRANSFER', 'CHEQUE'],
-                itemLabelBuilder: (m) => m.replaceAll('_', ' '),
-                onChanged: (v) {
-                  if (v != null) setSheetState(() => mode = v);
-                },
-              ),
-              const SizedBox(height: AppSpacing.md),
-              AppTextField(
-                controller: refCtrl,
-                label: 'Reference No (Optional)',
-              ),
-              if (error != null) ...[
-                const SizedBox(height: AppSpacing.sm),
-                AppText(error!, color: Theme.of(ctx).colorScheme.error),
-              ],
-              const SizedBox(height: AppSpacing.lg),
-              AppButton(
-                label: 'Confirm Payment',
-                icon: Icons.payments_outlined,
-                isExpanded: true,
-                isLoading: saving,
-                onPressed: saving
-                    ? null
-                    : () async {
-                        final paise = _parseRupeesToPaise(
-                          amountCtrl.text,
-                          allowZero: false,
-                        );
-                        if (paise <= 0) {
-                          setSheetState(
-                            () => error =
-                                'Enter a valid positive amount (max 2 decimals).',
-                          );
-                          return;
-                        }
-                        setSheetState(() {
-                          saving = true;
-                          error = null;
-                        });
-                        final err = await cubit.recordPayment(
-                          jobProcessId: jp.id,
-                          amountPaise: paise,
-                          paymentMode: mode,
-                          referenceNo: refCtrl.text,
-                        );
-                        if (err != null) {
-                          if (sheetCtx.mounted) {
-                            setSheetState(() {
-                              saving = false;
-                              error = err;
-                            });
-                          }
-                        } else if (sheetCtx.mounted) {
-                          Navigator.of(sheetCtx).pop();
-                          if (context.mounted) {
-                            AppFeedback.showSuccess(
-                              context,
-                              'Payment recorded.',
-                            );
-                          }
-                        }
-                      },
-              ),
-            ],
-          ),
-        ),
-      );
-    } finally {
-      amountCtrl.dispose();
-      refCtrl.dispose();
-    }
+    await context.push(RoutePaths.paymentCreate(workerId: jp.memberId));
+    await cubit.load(jp.lotId);
   }
 
   Future<void> _showConfirmReceiptSheet(
@@ -1304,7 +1203,9 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                   Padding(
                     padding: const EdgeInsets.only(right: AppSpacing.xs),
                     child: ChoiceChip(
-                      label: Text('All Colours (${overview.skuBalances.length})'),
+                      label: Text(
+                        'All Colours (${overview.skuBalances.length})',
+                      ),
                       selected: activeFilterId == null,
                       onSelected: (_) =>
                           setState(() => _selectedDesignColourId = null),
@@ -1451,7 +1352,8 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
           ],
 
           // 4. Live Goods Location Summary
-          if (activeFilterId == null && overview.currentLocations.isNotEmpty) ...[
+          if (activeFilterId == null &&
+              overview.currentLocations.isNotEmpty) ...[
             AppCard(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1497,8 +1399,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                 title: activeFilterId == null
                     ? 'No Operations Added Yet'
                     : 'No Operations for Selected Colour',
-                subtitle:
-                    'Assign Cutting, Stitching, Checking, Finishing, Ironing, or Packing at variant level with custom worker rates.',
+                subtitle: 'Assign Cutting, Stitching, Checking, Finishing, Ironing, or Packing at variant level with custom worker rates.',
                 actionLabel: 'Add Process',
                 onAction: () => _showAddOrReassignSheet(
                   context,
@@ -1574,188 +1475,185 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
     return AppCard.listItem(
       key: ValueKey<String>(jp.id),
       child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                AppColourSwatch(
-                  color: AppColourUtils.resolveColor(
-                    colourHex,
-                    fallbackName: jp.colourName,
-                  ),
-                  size: 26,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              AppColourSwatch(
+                color: AppColourUtils.resolveColor(
+                  colourHex,
+                  fallbackName: jp.colourName,
+                ),
+                size: 26,
+                borderRadius: AppRadius.smBorder,
+              ),
+              const SizedBox(width: AppSpacing.xs),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: colorScheme.secondary.withValues(alpha: 0.16),
                   borderRadius: AppRadius.smBorder,
                 ),
-                const SizedBox(width: AppSpacing.xs),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8,
-                    vertical: 4,
-                  ),
-                  decoration: BoxDecoration(
-                    color: colorScheme.secondary.withValues(alpha: 0.16),
-                    borderRadius: AppRadius.smBorder,
-                  ),
-                  child: AppText(
-                    '#${jp.sequenceOrder}',
-                    variant: AppTextVariant.bodySmall,
-                    fontWeight: FontWeight.w700,
-                    color: colorScheme.secondary,
-                  ),
+                child: AppText(
+                  '#${jp.sequenceOrder}',
+                  variant: AppTextVariant.bodySmall,
+                  fontWeight: FontWeight.w700,
+                  color: colorScheme.secondary,
                 ),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AppText(
-                        jp.processName,
-                        variant: AppTextVariant.bodyLarge,
-                        fontWeight: FontWeight.w700,
-                      ),
-                      AppText(
-                        '${jp.workerName ?? 'Unassigned'} • ${jp.variantLabel}',
-                        variant: AppTextVariant.bodySmall,
-                        color: colorScheme.onSurfaceVariant,
-                      ),
-                    ],
-                  ),
+              ),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppText(
+                      jp.processName,
+                      variant: AppTextVariant.bodyLarge,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    AppText(
+                      '${jp.workerName ?? 'Unassigned'} • ${jp.variantLabel}',
+                      variant: AppTextVariant.bodySmall,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ],
                 ),
-                AppStatusBadge(
-                  label: jp.status.label,
-                  tone: _statusTone(jp.status),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            // Default vs Agreed Rate & Payment Status Line
-            Wrap(
-              spacing: AppSpacing.xs,
-              runSpacing: AppSpacing.xs,
-              children: [
+              ),
+              AppStatusBadge(
+                label: jp.status.label,
+                tone: _statusTone(jp.status),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          // Default vs Agreed Rate & Payment Status Line
+          Wrap(
+            spacing: AppSpacing.xs,
+            runSpacing: AppSpacing.xs,
+            children: [
+              AppStatusBadge(
+                label:
+                    'Rate: ${MoneyFormatter.formatPaise(jp.agreedRatePaise)} / ${ProcessPricingCalculator.unitLabel(jp.pricingUnit)}',
+                tone: jp.isRateOverridden
+                    ? AppStatusTone.info
+                    : AppStatusTone.neutral,
+              ),
+              if (jp.isRateOverridden)
                 AppStatusBadge(
                   label:
-                      'Rate: ${MoneyFormatter.formatPaise(jp.agreedRatePaise)} / ${ProcessPricingCalculator.unitLabel(jp.pricingUnit)}',
-                  tone: jp.isRateOverridden
-                      ? AppStatusTone.info
-                      : AppStatusTone.neutral,
-                ),
-                if (jp.isRateOverridden)
-                  AppStatusBadge(
-                    label:
-                        'Default: ${MoneyFormatter.formatPaise(jp.defaultRatePaise)}',
-                    tone: AppStatusTone.neutral,
-                  ),
-                AppStatusBadge(
-                  label:
-                      'Payable: ${MoneyFormatter.formatPaise(jp.payableAmountPaise)} (${jp.paymentStatus.label})',
-                  tone: _paymentTone(jp.paymentStatus),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Wrap(
-              spacing: AppSpacing.xs,
-              runSpacing: AppSpacing.xs,
-              children: [
-                AppStatusBadge(
-                  label: 'Dispatched: ${jp.dispatchedQuantity}',
+                      'Default: ${MoneyFormatter.formatPaise(jp.defaultRatePaise)}',
                   tone: AppStatusTone.neutral,
                 ),
-                if (jp.receivedQuantity > 0)
-                  AppStatusBadge(
-                    label: 'Received: ${jp.receivedQuantity}',
-                    tone: AppStatusTone.info,
-                  ),
-                if (jp.transferredOutQuantity > 0)
-                  AppStatusBadge(
-                    label: 'Transferred: ${jp.transferredOutQuantity}',
-                    tone: AppStatusTone.info,
-                  ),
-                if (jp.returnedToFactoryQuantity > 0)
-                  AppStatusBadge(
-                    label: 'Returned: ${jp.returnedToFactoryQuantity}',
-                    tone: AppStatusTone.good,
-                  ),
+              AppStatusBadge(
+                label:
+                    'Payable: ${MoneyFormatter.formatPaise(jp.payableAmountPaise)} (${jp.paymentStatus.label})',
+                tone: _paymentTone(jp.paymentStatus),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.xs),
+          Wrap(
+            spacing: AppSpacing.xs,
+            runSpacing: AppSpacing.xs,
+            children: [
+              AppStatusBadge(
+                label: 'Dispatched: ${jp.dispatchedQuantity}',
+                tone: AppStatusTone.neutral,
+              ),
+              if (jp.receivedQuantity > 0)
                 AppStatusBadge(
-                  label: 'Pending: ${jp.pendingQuantity} pcs',
-                  tone: jp.pendingQuantity > 0
-                      ? AppStatusTone.pending
-                      : AppStatusTone.good,
+                  label: 'Received: ${jp.receivedQuantity}',
+                  tone: AppStatusTone.info,
                 ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.md),
-            Wrap(
-              spacing: AppSpacing.xs,
-              runSpacing: AppSpacing.xs,
-              children: [
-                if (jp.canDispatch)
-                  AppButton(
-                    label: 'Dispatch (${jp.remainingToDispatch})',
-                    icon: Icons.local_shipping_outlined,
-                    onPressed: () async {
-                      final err = await cubit.dispatchProcess(
-                        jobProcessId: jp.id,
-                        quantity: jp.remainingToDispatch,
-                      );
-                      if (err != null && context.mounted) {
-                        AppFeedback.showError(context, err);
-                      }
-                    },
-                  ),
-                if (jp.canTransferOrReturn)
-                  AppButton(
-                    label: 'Direct Transfer',
-                    icon: Icons.compare_arrows_rounded,
-                    onPressed: () =>
-                        _showDirectTransferSheet(context, overview, jp),
-                  ),
-                if (jp.canTransferOrReturn)
-                  AppButton(
-                    label: 'Return to Factory',
-                    icon: Icons.warehouse_outlined,
-                    variant: AppButtonVariant.secondary,
-                    onPressed: () => _showReturnToFactorySheet(context, jp),
-                  ),
-                if (jp.status != JobProcessStatus.cancelled)
-                  AppButton(
-                    label: '+ Charge',
-                    icon: Icons.add_card_outlined,
-                    variant: AppButtonVariant.outlined,
-                    onPressed: () => _showAdditionalChargeSheet(context, jp),
-                  ),
-                if (jp.status != JobProcessStatus.cancelled &&
-                    jp.paymentStatus != ProcessPaymentStatus.paid)
-                  AppButton(
-                    label: 'Pay',
-                    icon: Icons.payments_outlined,
-                    variant: AppButtonVariant.outlined,
-                    onPressed: () => _showRecordPaymentSheet(context, jp),
-                  ),
-                if (jp.canComplete)
-                  AppButton(
-                    label: 'Mark Completed',
-                    icon: Icons.check_circle_outline_rounded,
-                    variant: AppButtonVariant.outlined,
-                    onPressed: () async {
-                      final err = await cubit.markCompleted(jp.id);
-                      if (err != null && context.mounted) {
-                        AppFeedback.showError(context, err);
-                      }
-                    },
-                  ),
-                if (jp.canCancel)
-                  AppButton(
-                    label: 'Cancel',
-                    icon: Icons.cancel_outlined,
-                    variant: AppButtonVariant.text,
-                    onPressed: () => _showCancelDialog(context, jp),
-                  ),
-              ],
-            ),
-          ],
-        ),
+              if (jp.transferredOutQuantity > 0)
+                AppStatusBadge(
+                  label: 'Transferred: ${jp.transferredOutQuantity}',
+                  tone: AppStatusTone.info,
+                ),
+              if (jp.returnedToFactoryQuantity > 0)
+                AppStatusBadge(
+                  label: 'Returned: ${jp.returnedToFactoryQuantity}',
+                  tone: AppStatusTone.good,
+                ),
+              AppStatusBadge(
+                label: 'Pending: ${jp.pendingQuantity} pcs',
+                tone: jp.pendingQuantity > 0
+                    ? AppStatusTone.pending
+                    : AppStatusTone.good,
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Wrap(
+            spacing: AppSpacing.xs,
+            runSpacing: AppSpacing.xs,
+            children: [
+              if (jp.canDispatch)
+                AppButton(
+                  label: 'Dispatch (${jp.remainingToDispatch})',
+                  icon: Icons.local_shipping_outlined,
+                  onPressed: () async {
+                    final err = await cubit.dispatchProcess(
+                      jobProcessId: jp.id,
+                      quantity: jp.remainingToDispatch,
+                    );
+                    if (err != null && context.mounted) {
+                      AppFeedback.showError(context, err);
+                    }
+                  },
+                ),
+              if (jp.canTransferOrReturn)
+                AppButton(
+                  label: 'Direct Transfer',
+                  icon: Icons.compare_arrows_rounded,
+                  onPressed: () =>
+                      _showDirectTransferSheet(context, overview, jp),
+                ),
+              if (jp.canTransferOrReturn)
+                AppButton(
+                  label: 'Return to Factory',
+                  icon: Icons.warehouse_outlined,
+                  variant: AppButtonVariant.secondary,
+                  onPressed: () => _showReturnToFactorySheet(context, jp),
+                ),
+              if (jp.status != JobProcessStatus.cancelled)
+                AppButton(
+                  label: '+ Charge',
+                  icon: Icons.add_card_outlined,
+                  variant: AppButtonVariant.outlined,
+                  onPressed: () => _showAdditionalChargeSheet(context, jp),
+                ),
+              if (jp.status != JobProcessStatus.cancelled &&
+                  jp.memberId != null)
+                AppButton(
+                  label: 'Pay',
+                  icon: Icons.payments_outlined,
+                  variant: AppButtonVariant.outlined,
+                  onPressed: () => _openWorkerPayment(context, jp),
+                ),
+              if (jp.canComplete)
+                AppButton(
+                  label: 'Mark Completed',
+                  icon: Icons.check_circle_outline_rounded,
+                  variant: AppButtonVariant.outlined,
+                  onPressed: () async {
+                    final err = await cubit.markCompleted(jp.id);
+                    if (err != null && context.mounted) {
+                      AppFeedback.showError(context, err);
+                    }
+                  },
+                ),
+              if (jp.canCancel)
+                AppButton(
+                  label: 'Cancel',
+                  icon: Icons.cancel_outlined,
+                  variant: AppButtonVariant.text,
+                  onPressed: () => _showCancelDialog(context, jp),
+                ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 

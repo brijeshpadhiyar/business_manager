@@ -214,6 +214,7 @@ final class InventoryReportSection {
     required this.openIssues,
     required this.movementHistory,
     required this.damagedLostShortageMovements,
+    this.pendingInspection = 0,
   });
 
   final int initialStock;
@@ -222,6 +223,9 @@ final class InventoryReportSection {
   final int damagedBucket;
   final int lostStock;
   final int shortageStock;
+
+  /// Pieces returned and waiting for QC.
+  final int pendingInspection;
 
   /// `SUM(totalGoodPhysicalStock * unitPricePaise)`. Reference value only — NOT profit/revenue.
   final int referenceGoodStockValuePaise;

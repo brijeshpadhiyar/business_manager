@@ -111,27 +111,15 @@ abstract interface class ProcessRoutingRepository {
     String? clientRequestId,
   });
 
-  /// Adds an approved additional charge or deduction to a specific Job
-  /// operation with idempotent duplicate protection.
+  /// Adds an approved extra charge or deduction to a Job operation. It is
+  /// written to the worker ledger as a CREDIT / DEBIT adjustment (v1.4), with
+  /// idempotent duplicate protection. Payments are recorded in Accounting.
   Future<ProcessAdditionalChargeEntity> addAdditionalCharge({
     required String jobProcessId,
     required ProcessChargeType chargeType,
     required String description,
     required int amountPaise,
     required int transactionAtUtcMillis,
-    String? clientRequestId,
-  });
-
-  /// Records a worker payment against a Job operation, atomically inserting
-  /// into StitchFlow's existing `payments` ledger and updating the operation's
-  /// `paidAmountPaise` and `paymentStatus` (`PENDING` / `PARTIALLY_PAID` / `PAID`).
-  Future<JobProcessEntity> recordProcessPayment({
-    required String jobProcessId,
-    required int amountPaise,
-    required String paymentMode,
-    required int transactionAtUtcMillis,
-    String? referenceNo,
-    String? notes,
     String? clientRequestId,
   });
 

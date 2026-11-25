@@ -364,18 +364,42 @@ final class ProductionHistoryRepositoryImpl
     );
   }
 
-  Future<int> _computeIssueOutstandingTx(StockMovementEntity parentIssue) async {
-    final colourMovs =
-        (await _db.stockMovementDao.getMovementsForDesignColour(
-          parentIssue.designColourId,
-        )).map(_mapMovement).toList();
+  Future<String?> _validateDamagedStockForRepair({
+    required String designColourId,
+    required int quantity,
+    required bool reserveOpenRepairs,
+  }) async {
+    final colour = await _db.lotDao.findDesignColourById(designColourId);
+    if (colour == null) return 'colour_not_found';
+    final movs = (await _db.stockMovementDao.getMovementsForDesignColour(
+      designColourId,
+    )).map(_mapMovement).toList();
+    return _stockCalc.validateDamagedToGoodAdjustment(
+      initialQuantity: colour.initialQuantity,
+      existingMovementsForColour: movs,
+      quantity: quantity,
+      reason: 'repair',
+      reservedForOpenRepairsQty: reserveOpenRepairs
+          ? await _db.productionTrackingDao.pendingReinspectionQtyForColour(
+              designColourId,
+            )
+          : 0,
+    );
+  }
+
+  Future<int> _computeIssueOutstandingTx(
+    StockMovementEntity parentIssue,
+  ) async {
+    final colourMovs = (await _db.stockMovementDao.getMovementsForDesignColour(
+      parentIssue.designColourId,
+    )).map(_mapMovement).toList();
     final issueReturns = (await _db.productionTrackingDao.getReturnsForIssue(
       parentIssue.id,
     )).map(_mapReturn).toList();
     final issueInspections =
-        (await _db.productionTrackingDao.getInspectionsForIssue(
-          parentIssue.id,
-        )).map(_mapInspection).toList();
+        (await _db.productionTrackingDao.getInspectionsForIssue(parentIssue.id))
+            .map(_mapInspection)
+            .toList();
 
     final reversedIds = _stockCalc.reversedMovementIds(colourMovs);
     final pendingByIssue = _calc.pendingInspectionByIssue(
@@ -418,10 +442,20 @@ final class ProductionHistoryRepositoryImpl
       );
     }
 
-    final existingInsps = (await _db.productionTrackingDao
-            .getInspectionsForReturn(retRow.id))
-        .map(_mapInspection)
-        .toList();
+    final colourMovs = (await _db.stockMovementDao.getMovementsForDesignColour(
+      parentIssue.designColourId,
+    )).map(_mapMovement).toList();
+    if (_stockCalc.reversedMovementIds(colourMovs).contains(parentIssue.id)) {
+      throw const DomainValidationException(
+        'parent_issue_inactive',
+        'The original issue was reversed; this return can no longer be approved.',
+      );
+    }
+
+    final existingInsps =
+        (await _db.productionTrackingDao.getInspectionsForReturn(retRow.id))
+            .map(_mapInspection)
+            .toList();
     final remainingPending = _calc.remainingPendingInspectionForReturn(
       productionReturn: _mapReturn(retRow),
       inspections: existingInsps,
@@ -485,6 +519,9 @@ final class ProductionHistoryRepositoryImpl
         lockedRatePaise: lockedRatePaise,
         lockedBillingMode: BillingMode.receivedQty,
         lockedIncludeDamaged: false,
+        issueLabourAlreadyPaid: await _db.labourEntryDao.issueHasPayableLabour(
+          parentIssue.id,
+        ),
       );
       if (planned != null &&
           parentIssue.memberId != null &&
@@ -685,10 +722,10 @@ final class ProductionHistoryRepositoryImpl
 
           if (existing != null) {
             final mappedRet = _mapReturn(existing);
-            final insps = (await _db.productionTrackingDao
-                    .getInspectionsForReturn(existing.id))
-                .map(_mapInspection)
-                .toList();
+            final insps =
+                (await _db.productionTrackingDao.getInspectionsForReturn(
+                  existing.id,
+                )).map(_mapInspection).toList();
             final remOut = await _computeIssueOutstandingTx(parentIssue);
             final remInsp = _calc.remainingPendingInspectionForReturn(
               productionReturn: mappedRet,
@@ -808,8 +845,10 @@ final class ProductionHistoryRepositoryImpl
 
           final remOut = await _computeIssueOutstandingTx(parentIssue);
           final remInsp = inspectImmediately
-              ? (returnedQuantity - acceptedQuantity - rejectedQuantity)
-                    .clamp(0, returnedQuantity)
+              ? (returnedQuantity - acceptedQuantity - rejectedQuantity).clamp(
+                  0,
+                  returnedQuantity,
+                )
               : returnedQuantity;
 
           return ProductionReturnResult(
@@ -959,6 +998,20 @@ final class ProductionHistoryRepositoryImpl
         throw DomainValidationException(err, 'Invalid repair ($err).');
       }
 
+      // One damaged bucket, two repair flows: the pieces must still be in the
+      // Damaged bucket and not already reserved by another open repair.
+      final stockErr = await _validateDamagedStockForRepair(
+        designColourId: rejRow.designColourId,
+        quantity: repairedQuantity,
+        reserveOpenRepairs: true,
+      );
+      if (stockErr != null) {
+        throw DomainValidationException(
+          stockErr,
+          'Invalid repair ($stockErr).',
+        );
+      }
+
       final now = IstDateTimeHelper.nowUtcMillis();
       final actor = await _resolveActor(repairedBy);
       final repairId = _idGenerator.nextEntityId();
@@ -1104,7 +1157,10 @@ final class ProductionHistoryRepositoryImpl
             rejectionReason: rejectionReason,
           );
           if (err != null) {
-            throw DomainValidationException(err, 'Invalid reinspection ($err).');
+            throw DomainValidationException(
+              err,
+              'Invalid reinspection ($err).',
+            );
           }
 
           // Strict anti-duplicate guard: total reapproved across ALL repairs
@@ -1145,6 +1201,17 @@ final class ProductionHistoryRepositoryImpl
           var earnedPaise = 0;
 
           if (acceptedQuantity > 0) {
+            final stockErr = await _validateDamagedStockForRepair(
+              designColourId: parentIssue.designColourId,
+              quantity: acceptedQuantity,
+              reserveOpenRepairs: false,
+            );
+            if (stockErr != null) {
+              throw DomainValidationException(
+                stockErr,
+                'Invalid reinspection ($stockErr).',
+              );
+            }
             adjMovId = _idGenerator.nextEntityId();
             await _db.stockMovementDao.insertMovement(
               StockMovementsCompanion(
@@ -1186,6 +1253,8 @@ final class ProductionHistoryRepositoryImpl
               acceptedQuantity: acceptedQuantity,
               lockedRatePaise: lockedRatePaise,
               creditOriginalWorker: creditWorker,
+              issueLabourAlreadyPaid: await _db.labourEntryDao
+                  .issueHasPayableLabour(parentIssue.id),
             );
             if (planned != null) {
               labourId = _idGenerator.nextEntityId();
@@ -1370,8 +1439,9 @@ final class ProductionHistoryRepositoryImpl
       }
     }
     profiles.sort(
-      (a, b) => b.financialSummary.outstandingPayablePaise
-          .compareTo(a.financialSummary.outstandingPayablePaise),
+      (a, b) => b.financialSummary.outstandingPayablePaise.compareTo(
+        a.financialSummary.outstandingPayablePaise,
+      ),
     );
     return profiles;
   }
@@ -1392,8 +1462,9 @@ final class ProductionHistoryRepositoryImpl
     final data = await _loadDataset();
     final list = _calc.buildAllProcessHistories(
       data,
-      filter: (filter ?? const ProductionHistoryFilter())
-          .copyWith(processId: processId),
+      filter: (filter ?? const ProductionHistoryFilter()).copyWith(
+        processId: processId,
+      ),
     );
     return list.isNotEmpty ? list.first : null;
   }
@@ -1518,21 +1589,20 @@ final class ProductionHistoryRepositoryImpl
         final insps = await _db.productionTrackingDao.getInspectionsForReturn(
           r.id,
         );
-        final links =
-            <({String label, ProductionTransactionKind kind, String id})>[
-              (
-                label: 'Parent Assignment Issue',
-                kind: ProductionTransactionKind.stockMovement,
-                id: r.parentIssueId,
-              ),
-              for (final i in insps)
-                (
-                  label:
-                      'Inspection (Acc ${i.acceptedQuantity}, Rej ${i.rejectedQuantity})',
-                  kind: ProductionTransactionKind.inspection,
-                  id: i.id,
-                ),
-            ];
+        final links = <({String label, ProductionTransactionKind kind, String id})>[
+          (
+            label: 'Parent Assignment Issue',
+            kind: ProductionTransactionKind.stockMovement,
+            id: r.parentIssueId,
+          ),
+          for (final i in insps)
+            (
+              label:
+                  'Inspection (Acc ${i.acceptedQuantity}, Rej ${i.rejectedQuantity})',
+              kind: ProductionTransactionKind.inspection,
+              id: i.id,
+            ),
+        ];
         return ProductionTransactionDetail(
           kind: kind,
           id: r.id,
@@ -1660,7 +1730,10 @@ final class ProductionHistoryRepositoryImpl
                 id: rep.id,
               ),
           ],
-          auditTrail: await loadAudits('production_inspections', r.inspectionId),
+          auditTrail: await loadAudits(
+            'production_inspections',
+            r.inspectionId,
+          ),
         );
 
       case ProductionTransactionKind.repair:
@@ -1826,36 +1899,39 @@ final class ProductionHistoryRepositoryImpl
     }
 
     return ProductionHistoryFilterOptions(
-      lots: allLots
-          .map(
-            (l) => HistoryFilterOption(
-              id: l.id,
-              label: l.lotNumber,
-              isActive: l.deletedAt == null && l.status != 'ARCHIVED',
-            ),
-          )
-          .toList()
-        ..sort((a, b) => a.label.compareTo(b.label)),
-      workers: allWorkers
-          .map(
-            (w) => HistoryFilterOption(
-              id: w.id,
-              label: w.name,
-              isActive: w.isActive == 1 && w.deletedAt == null,
-            ),
-          )
-          .toList()
-        ..sort((a, b) => a.label.compareTo(b.label)),
-      processes: allProcs
-          .map(
-            (p) => HistoryFilterOption(
-              id: p.id,
-              label: p.name,
-              isActive: p.isActive == 1 && p.deletedAt == null,
-            ),
-          )
-          .toList()
-        ..sort((a, b) => a.label.compareTo(b.label)),
+      lots:
+          allLots
+              .map(
+                (l) => HistoryFilterOption(
+                  id: l.id,
+                  label: l.lotNumber,
+                  isActive: l.deletedAt == null && l.status != 'ARCHIVED',
+                ),
+              )
+              .toList()
+            ..sort((a, b) => a.label.compareTo(b.label)),
+      workers:
+          allWorkers
+              .map(
+                (w) => HistoryFilterOption(
+                  id: w.id,
+                  label: w.name,
+                  isActive: w.isActive == 1 && w.deletedAt == null,
+                ),
+              )
+              .toList()
+            ..sort((a, b) => a.label.compareTo(b.label)),
+      processes:
+          allProcs
+              .map(
+                (p) => HistoryFilterOption(
+                  id: p.id,
+                  label: p.name,
+                  isActive: p.isActive == 1 && p.deletedAt == null,
+                ),
+              )
+              .toList()
+            ..sort((a, b) => a.label.compareTo(b.label)),
       designNames: designNames.toList()..sort(),
       colourNames: colourNames.toList()..sort(),
     );

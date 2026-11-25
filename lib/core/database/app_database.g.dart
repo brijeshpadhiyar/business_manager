@@ -9435,6 +9435,28 @@ class $WorkerLedgerAdjustmentsTable extends WorkerLedgerAdjustments
     type: DriftSqlType.string,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _sourceChargeIdMeta = const VerificationMeta(
+    'sourceChargeId',
+  );
+  @override
+  late final GeneratedColumn<String> sourceChargeId = GeneratedColumn<String>(
+    'source_charge_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _jobProcessIdMeta = const VerificationMeta(
+    'jobProcessId',
+  );
+  @override
+  late final GeneratedColumn<String> jobProcessId = GeneratedColumn<String>(
+    'job_process_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _notesMeta = const VerificationMeta('notes');
   @override
   late final GeneratedColumn<String> notes = GeneratedColumn<String>(
@@ -9530,6 +9552,8 @@ class $WorkerLedgerAdjustmentsTable extends WorkerLedgerAdjustments
     clientRequestId,
     amountPaise,
     reason,
+    sourceChargeId,
+    jobProcessId,
     notes,
     transactionAt,
     recordedAt,
@@ -9611,6 +9635,24 @@ class $WorkerLedgerAdjustmentsTable extends WorkerLedgerAdjustments
       );
     } else if (isInserting) {
       context.missing(_reasonMeta);
+    }
+    if (data.containsKey('source_charge_id')) {
+      context.handle(
+        _sourceChargeIdMeta,
+        sourceChargeId.isAcceptableOrUnknown(
+          data['source_charge_id']!,
+          _sourceChargeIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('job_process_id')) {
+      context.handle(
+        _jobProcessIdMeta,
+        jobProcessId.isAcceptableOrUnknown(
+          data['job_process_id']!,
+          _jobProcessIdMeta,
+        ),
+      );
     }
     if (data.containsKey('notes')) {
       context.handle(
@@ -9711,6 +9753,14 @@ class $WorkerLedgerAdjustmentsTable extends WorkerLedgerAdjustments
         DriftSqlType.string,
         data['${effectivePrefix}reason'],
       )!,
+      sourceChargeId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}source_charge_id'],
+      ),
+      jobProcessId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}job_process_id'],
+      ),
       notes: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}notes'],
@@ -9761,6 +9811,8 @@ class WorkerLedgerAdjustmentRow extends DataClass
   final String? clientRequestId;
   final int amountPaise;
   final String reason;
+  final String? sourceChargeId;
+  final String? jobProcessId;
   final String? notes;
   final int transactionAt;
   final int recordedAt;
@@ -9777,6 +9829,8 @@ class WorkerLedgerAdjustmentRow extends DataClass
     this.clientRequestId,
     required this.amountPaise,
     required this.reason,
+    this.sourceChargeId,
+    this.jobProcessId,
     this.notes,
     required this.transactionAt,
     required this.recordedAt,
@@ -9800,6 +9854,12 @@ class WorkerLedgerAdjustmentRow extends DataClass
     }
     map['amount_paise'] = Variable<int>(amountPaise);
     map['reason'] = Variable<String>(reason);
+    if (!nullToAbsent || sourceChargeId != null) {
+      map['source_charge_id'] = Variable<String>(sourceChargeId);
+    }
+    if (!nullToAbsent || jobProcessId != null) {
+      map['job_process_id'] = Variable<String>(jobProcessId);
+    }
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
     }
@@ -9832,6 +9892,12 @@ class WorkerLedgerAdjustmentRow extends DataClass
           : Value(clientRequestId),
       amountPaise: Value(amountPaise),
       reason: Value(reason),
+      sourceChargeId: sourceChargeId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(sourceChargeId),
+      jobProcessId: jobProcessId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(jobProcessId),
       notes: notes == null && nullToAbsent
           ? const Value.absent()
           : Value(notes),
@@ -9866,6 +9932,8 @@ class WorkerLedgerAdjustmentRow extends DataClass
       clientRequestId: serializer.fromJson<String?>(json['clientRequestId']),
       amountPaise: serializer.fromJson<int>(json['amountPaise']),
       reason: serializer.fromJson<String>(json['reason']),
+      sourceChargeId: serializer.fromJson<String?>(json['sourceChargeId']),
+      jobProcessId: serializer.fromJson<String?>(json['jobProcessId']),
       notes: serializer.fromJson<String?>(json['notes']),
       transactionAt: serializer.fromJson<int>(json['transactionAt']),
       recordedAt: serializer.fromJson<int>(json['recordedAt']),
@@ -9887,6 +9955,8 @@ class WorkerLedgerAdjustmentRow extends DataClass
       'clientRequestId': serializer.toJson<String?>(clientRequestId),
       'amountPaise': serializer.toJson<int>(amountPaise),
       'reason': serializer.toJson<String>(reason),
+      'sourceChargeId': serializer.toJson<String?>(sourceChargeId),
+      'jobProcessId': serializer.toJson<String?>(jobProcessId),
       'notes': serializer.toJson<String?>(notes),
       'transactionAt': serializer.toJson<int>(transactionAt),
       'recordedAt': serializer.toJson<int>(recordedAt),
@@ -9906,6 +9976,8 @@ class WorkerLedgerAdjustmentRow extends DataClass
     Value<String?> clientRequestId = const Value.absent(),
     int? amountPaise,
     String? reason,
+    Value<String?> sourceChargeId = const Value.absent(),
+    Value<String?> jobProcessId = const Value.absent(),
     Value<String?> notes = const Value.absent(),
     int? transactionAt,
     int? recordedAt,
@@ -9926,6 +9998,10 @@ class WorkerLedgerAdjustmentRow extends DataClass
         : this.clientRequestId,
     amountPaise: amountPaise ?? this.amountPaise,
     reason: reason ?? this.reason,
+    sourceChargeId: sourceChargeId.present
+        ? sourceChargeId.value
+        : this.sourceChargeId,
+    jobProcessId: jobProcessId.present ? jobProcessId.value : this.jobProcessId,
     notes: notes.present ? notes.value : this.notes,
     transactionAt: transactionAt ?? this.transactionAt,
     recordedAt: recordedAt ?? this.recordedAt,
@@ -9954,6 +10030,12 @@ class WorkerLedgerAdjustmentRow extends DataClass
           ? data.amountPaise.value
           : this.amountPaise,
       reason: data.reason.present ? data.reason.value : this.reason,
+      sourceChargeId: data.sourceChargeId.present
+          ? data.sourceChargeId.value
+          : this.sourceChargeId,
+      jobProcessId: data.jobProcessId.present
+          ? data.jobProcessId.value
+          : this.jobProcessId,
       notes: data.notes.present ? data.notes.value : this.notes,
       transactionAt: data.transactionAt.present
           ? data.transactionAt.value
@@ -9979,6 +10061,8 @@ class WorkerLedgerAdjustmentRow extends DataClass
           ..write('clientRequestId: $clientRequestId, ')
           ..write('amountPaise: $amountPaise, ')
           ..write('reason: $reason, ')
+          ..write('sourceChargeId: $sourceChargeId, ')
+          ..write('jobProcessId: $jobProcessId, ')
           ..write('notes: $notes, ')
           ..write('transactionAt: $transactionAt, ')
           ..write('recordedAt: $recordedAt, ')
@@ -10000,6 +10084,8 @@ class WorkerLedgerAdjustmentRow extends DataClass
     clientRequestId,
     amountPaise,
     reason,
+    sourceChargeId,
+    jobProcessId,
     notes,
     transactionAt,
     recordedAt,
@@ -10020,6 +10106,8 @@ class WorkerLedgerAdjustmentRow extends DataClass
           other.clientRequestId == this.clientRequestId &&
           other.amountPaise == this.amountPaise &&
           other.reason == this.reason &&
+          other.sourceChargeId == this.sourceChargeId &&
+          other.jobProcessId == this.jobProcessId &&
           other.notes == this.notes &&
           other.transactionAt == this.transactionAt &&
           other.recordedAt == this.recordedAt &&
@@ -10039,6 +10127,8 @@ class WorkerLedgerAdjustmentsCompanion
   final Value<String?> clientRequestId;
   final Value<int> amountPaise;
   final Value<String> reason;
+  final Value<String?> sourceChargeId;
+  final Value<String?> jobProcessId;
   final Value<String?> notes;
   final Value<int> transactionAt;
   final Value<int> recordedAt;
@@ -10056,6 +10146,8 @@ class WorkerLedgerAdjustmentsCompanion
     this.clientRequestId = const Value.absent(),
     this.amountPaise = const Value.absent(),
     this.reason = const Value.absent(),
+    this.sourceChargeId = const Value.absent(),
+    this.jobProcessId = const Value.absent(),
     this.notes = const Value.absent(),
     this.transactionAt = const Value.absent(),
     this.recordedAt = const Value.absent(),
@@ -10074,6 +10166,8 @@ class WorkerLedgerAdjustmentsCompanion
     this.clientRequestId = const Value.absent(),
     required int amountPaise,
     required String reason,
+    this.sourceChargeId = const Value.absent(),
+    this.jobProcessId = const Value.absent(),
     this.notes = const Value.absent(),
     required int transactionAt,
     required int recordedAt,
@@ -10100,6 +10194,8 @@ class WorkerLedgerAdjustmentsCompanion
     Expression<String>? clientRequestId,
     Expression<int>? amountPaise,
     Expression<String>? reason,
+    Expression<String>? sourceChargeId,
+    Expression<String>? jobProcessId,
     Expression<String>? notes,
     Expression<int>? transactionAt,
     Expression<int>? recordedAt,
@@ -10119,6 +10215,8 @@ class WorkerLedgerAdjustmentsCompanion
       if (clientRequestId != null) 'client_request_id': clientRequestId,
       if (amountPaise != null) 'amount_paise': amountPaise,
       if (reason != null) 'reason': reason,
+      if (sourceChargeId != null) 'source_charge_id': sourceChargeId,
+      if (jobProcessId != null) 'job_process_id': jobProcessId,
       if (notes != null) 'notes': notes,
       if (transactionAt != null) 'transaction_at': transactionAt,
       if (recordedAt != null) 'recorded_at': recordedAt,
@@ -10139,6 +10237,8 @@ class WorkerLedgerAdjustmentsCompanion
     Value<String?>? clientRequestId,
     Value<int>? amountPaise,
     Value<String>? reason,
+    Value<String?>? sourceChargeId,
+    Value<String?>? jobProcessId,
     Value<String?>? notes,
     Value<int>? transactionAt,
     Value<int>? recordedAt,
@@ -10157,6 +10257,8 @@ class WorkerLedgerAdjustmentsCompanion
       clientRequestId: clientRequestId ?? this.clientRequestId,
       amountPaise: amountPaise ?? this.amountPaise,
       reason: reason ?? this.reason,
+      sourceChargeId: sourceChargeId ?? this.sourceChargeId,
+      jobProcessId: jobProcessId ?? this.jobProcessId,
       notes: notes ?? this.notes,
       transactionAt: transactionAt ?? this.transactionAt,
       recordedAt: recordedAt ?? this.recordedAt,
@@ -10194,6 +10296,12 @@ class WorkerLedgerAdjustmentsCompanion
     }
     if (reason.present) {
       map['reason'] = Variable<String>(reason.value);
+    }
+    if (sourceChargeId.present) {
+      map['source_charge_id'] = Variable<String>(sourceChargeId.value);
+    }
+    if (jobProcessId.present) {
+      map['job_process_id'] = Variable<String>(jobProcessId.value);
     }
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
@@ -10235,6 +10343,8 @@ class WorkerLedgerAdjustmentsCompanion
           ..write('clientRequestId: $clientRequestId, ')
           ..write('amountPaise: $amountPaise, ')
           ..write('reason: $reason, ')
+          ..write('sourceChargeId: $sourceChargeId, ')
+          ..write('jobProcessId: $jobProcessId, ')
           ..write('notes: $notes, ')
           ..write('transactionAt: $transactionAt, ')
           ..write('recordedAt: $recordedAt, ')
@@ -13384,6 +13494,17 @@ class $ProcessAdditionalChargesTable extends ProcessAdditionalCharges
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _ledgerAdjustmentIdMeta =
+      const VerificationMeta('ledgerAdjustmentId');
+  @override
+  late final GeneratedColumn<String> ledgerAdjustmentId =
+      GeneratedColumn<String>(
+        'ledger_adjustment_id',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -13398,6 +13519,7 @@ class $ProcessAdditionalChargesTable extends ProcessAdditionalCharges
     createdBy,
     transactionAt,
     createdAt,
+    ledgerAdjustmentId,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -13518,6 +13640,15 @@ class $ProcessAdditionalChargesTable extends ProcessAdditionalCharges
     } else if (isInserting) {
       context.missing(_createdAtMeta);
     }
+    if (data.containsKey('ledger_adjustment_id')) {
+      context.handle(
+        _ledgerAdjustmentIdMeta,
+        ledgerAdjustmentId.isAcceptableOrUnknown(
+          data['ledger_adjustment_id']!,
+          _ledgerAdjustmentIdMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -13578,6 +13709,10 @@ class $ProcessAdditionalChargesTable extends ProcessAdditionalCharges
         DriftSqlType.int,
         data['${effectivePrefix}created_at'],
       )!,
+      ledgerAdjustmentId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}ledger_adjustment_id'],
+      ),
     );
   }
 
@@ -13601,6 +13736,7 @@ class ProcessAdditionalChargeRow extends DataClass
   final String? createdBy;
   final int transactionAt;
   final int createdAt;
+  final String? ledgerAdjustmentId;
   const ProcessAdditionalChargeRow({
     required this.id,
     required this.jobProcessId,
@@ -13614,6 +13750,7 @@ class ProcessAdditionalChargeRow extends DataClass
     this.createdBy,
     required this.transactionAt,
     required this.createdAt,
+    this.ledgerAdjustmentId,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -13634,6 +13771,9 @@ class ProcessAdditionalChargeRow extends DataClass
     }
     map['transaction_at'] = Variable<int>(transactionAt);
     map['created_at'] = Variable<int>(createdAt);
+    if (!nullToAbsent || ledgerAdjustmentId != null) {
+      map['ledger_adjustment_id'] = Variable<String>(ledgerAdjustmentId);
+    }
     return map;
   }
 
@@ -13655,6 +13795,9 @@ class ProcessAdditionalChargeRow extends DataClass
           : Value(createdBy),
       transactionAt: Value(transactionAt),
       createdAt: Value(createdAt),
+      ledgerAdjustmentId: ledgerAdjustmentId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(ledgerAdjustmentId),
     );
   }
 
@@ -13676,6 +13819,9 @@ class ProcessAdditionalChargeRow extends DataClass
       createdBy: serializer.fromJson<String?>(json['createdBy']),
       transactionAt: serializer.fromJson<int>(json['transactionAt']),
       createdAt: serializer.fromJson<int>(json['createdAt']),
+      ledgerAdjustmentId: serializer.fromJson<String?>(
+        json['ledgerAdjustmentId'],
+      ),
     );
   }
   @override
@@ -13694,6 +13840,7 @@ class ProcessAdditionalChargeRow extends DataClass
       'createdBy': serializer.toJson<String?>(createdBy),
       'transactionAt': serializer.toJson<int>(transactionAt),
       'createdAt': serializer.toJson<int>(createdAt),
+      'ledgerAdjustmentId': serializer.toJson<String?>(ledgerAdjustmentId),
     };
   }
 
@@ -13710,6 +13857,7 @@ class ProcessAdditionalChargeRow extends DataClass
     Value<String?> createdBy = const Value.absent(),
     int? transactionAt,
     int? createdAt,
+    Value<String?> ledgerAdjustmentId = const Value.absent(),
   }) => ProcessAdditionalChargeRow(
     id: id ?? this.id,
     jobProcessId: jobProcessId ?? this.jobProcessId,
@@ -13725,6 +13873,9 @@ class ProcessAdditionalChargeRow extends DataClass
     createdBy: createdBy.present ? createdBy.value : this.createdBy,
     transactionAt: transactionAt ?? this.transactionAt,
     createdAt: createdAt ?? this.createdAt,
+    ledgerAdjustmentId: ledgerAdjustmentId.present
+        ? ledgerAdjustmentId.value
+        : this.ledgerAdjustmentId,
   );
   ProcessAdditionalChargeRow copyWithCompanion(
     ProcessAdditionalChargesCompanion data,
@@ -13756,6 +13907,9 @@ class ProcessAdditionalChargeRow extends DataClass
           ? data.transactionAt.value
           : this.transactionAt,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      ledgerAdjustmentId: data.ledgerAdjustmentId.present
+          ? data.ledgerAdjustmentId.value
+          : this.ledgerAdjustmentId,
     );
   }
 
@@ -13773,7 +13927,8 @@ class ProcessAdditionalChargeRow extends DataClass
           ..write('clientRequestId: $clientRequestId, ')
           ..write('createdBy: $createdBy, ')
           ..write('transactionAt: $transactionAt, ')
-          ..write('createdAt: $createdAt')
+          ..write('createdAt: $createdAt, ')
+          ..write('ledgerAdjustmentId: $ledgerAdjustmentId')
           ..write(')'))
         .toString();
   }
@@ -13792,6 +13947,7 @@ class ProcessAdditionalChargeRow extends DataClass
     createdBy,
     transactionAt,
     createdAt,
+    ledgerAdjustmentId,
   );
   @override
   bool operator ==(Object other) =>
@@ -13808,7 +13964,8 @@ class ProcessAdditionalChargeRow extends DataClass
           other.clientRequestId == this.clientRequestId &&
           other.createdBy == this.createdBy &&
           other.transactionAt == this.transactionAt &&
-          other.createdAt == this.createdAt);
+          other.createdAt == this.createdAt &&
+          other.ledgerAdjustmentId == this.ledgerAdjustmentId);
 }
 
 class ProcessAdditionalChargesCompanion
@@ -13825,6 +13982,7 @@ class ProcessAdditionalChargesCompanion
   final Value<String?> createdBy;
   final Value<int> transactionAt;
   final Value<int> createdAt;
+  final Value<String?> ledgerAdjustmentId;
   final Value<int> rowid;
   const ProcessAdditionalChargesCompanion({
     this.id = const Value.absent(),
@@ -13839,6 +13997,7 @@ class ProcessAdditionalChargesCompanion
     this.createdBy = const Value.absent(),
     this.transactionAt = const Value.absent(),
     this.createdAt = const Value.absent(),
+    this.ledgerAdjustmentId = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   ProcessAdditionalChargesCompanion.insert({
@@ -13854,6 +14013,7 @@ class ProcessAdditionalChargesCompanion
     this.createdBy = const Value.absent(),
     required int transactionAt,
     required int createdAt,
+    this.ledgerAdjustmentId = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        jobProcessId = Value(jobProcessId),
@@ -13878,6 +14038,7 @@ class ProcessAdditionalChargesCompanion
     Expression<String>? createdBy,
     Expression<int>? transactionAt,
     Expression<int>? createdAt,
+    Expression<String>? ledgerAdjustmentId,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -13893,6 +14054,8 @@ class ProcessAdditionalChargesCompanion
       if (createdBy != null) 'created_by': createdBy,
       if (transactionAt != null) 'transaction_at': transactionAt,
       if (createdAt != null) 'created_at': createdAt,
+      if (ledgerAdjustmentId != null)
+        'ledger_adjustment_id': ledgerAdjustmentId,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -13910,6 +14073,7 @@ class ProcessAdditionalChargesCompanion
     Value<String?>? createdBy,
     Value<int>? transactionAt,
     Value<int>? createdAt,
+    Value<String?>? ledgerAdjustmentId,
     Value<int>? rowid,
   }) {
     return ProcessAdditionalChargesCompanion(
@@ -13925,6 +14089,7 @@ class ProcessAdditionalChargesCompanion
       createdBy: createdBy ?? this.createdBy,
       transactionAt: transactionAt ?? this.transactionAt,
       createdAt: createdAt ?? this.createdAt,
+      ledgerAdjustmentId: ledgerAdjustmentId ?? this.ledgerAdjustmentId,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -13968,6 +14133,9 @@ class ProcessAdditionalChargesCompanion
     if (createdAt.present) {
       map['created_at'] = Variable<int>(createdAt.value);
     }
+    if (ledgerAdjustmentId.present) {
+      map['ledger_adjustment_id'] = Variable<String>(ledgerAdjustmentId.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -13989,6 +14157,7 @@ class ProcessAdditionalChargesCompanion
           ..write('createdBy: $createdBy, ')
           ..write('transactionAt: $transactionAt, ')
           ..write('createdAt: $createdAt, ')
+          ..write('ledgerAdjustmentId: $ledgerAdjustmentId, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -32867,6 +33036,8 @@ typedef $$WorkerLedgerAdjustmentsTableCreateCompanionBuilder =
       Value<String?> clientRequestId,
       required int amountPaise,
       required String reason,
+      Value<String?> sourceChargeId,
+      Value<String?> jobProcessId,
       Value<String?> notes,
       required int transactionAt,
       required int recordedAt,
@@ -32886,6 +33057,8 @@ typedef $$WorkerLedgerAdjustmentsTableUpdateCompanionBuilder =
       Value<String?> clientRequestId,
       Value<int> amountPaise,
       Value<String> reason,
+      Value<String?> sourceChargeId,
+      Value<String?> jobProcessId,
       Value<String?> notes,
       Value<int> transactionAt,
       Value<int> recordedAt,
@@ -32982,6 +33155,16 @@ class $$WorkerLedgerAdjustmentsTableFilterComposer
 
   ColumnFilters<String> get reason => $composableBuilder(
     column: $table.reason,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sourceChargeId => $composableBuilder(
+    column: $table.sourceChargeId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get jobProcessId => $composableBuilder(
+    column: $table.jobProcessId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -33107,6 +33290,16 @@ class $$WorkerLedgerAdjustmentsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get sourceChargeId => $composableBuilder(
+    column: $table.sourceChargeId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get jobProcessId => $composableBuilder(
+    column: $table.jobProcessId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get notes => $composableBuilder(
     column: $table.notes,
     builder: (column) => ColumnOrderings(column),
@@ -33224,6 +33417,16 @@ class $$WorkerLedgerAdjustmentsTableAnnotationComposer
 
   GeneratedColumn<String> get reason =>
       $composableBuilder(column: $table.reason, builder: (column) => column);
+
+  GeneratedColumn<String> get sourceChargeId => $composableBuilder(
+    column: $table.sourceChargeId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get jobProcessId => $composableBuilder(
+    column: $table.jobProcessId,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<String> get notes =>
       $composableBuilder(column: $table.notes, builder: (column) => column);
@@ -33347,6 +33550,8 @@ class $$WorkerLedgerAdjustmentsTableTableManager
                 Value<String?> clientRequestId = const Value.absent(),
                 Value<int> amountPaise = const Value.absent(),
                 Value<String> reason = const Value.absent(),
+                Value<String?> sourceChargeId = const Value.absent(),
+                Value<String?> jobProcessId = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 Value<int> transactionAt = const Value.absent(),
                 Value<int> recordedAt = const Value.absent(),
@@ -33364,6 +33569,8 @@ class $$WorkerLedgerAdjustmentsTableTableManager
                 clientRequestId: clientRequestId,
                 amountPaise: amountPaise,
                 reason: reason,
+                sourceChargeId: sourceChargeId,
+                jobProcessId: jobProcessId,
                 notes: notes,
                 transactionAt: transactionAt,
                 recordedAt: recordedAt,
@@ -33383,6 +33590,8 @@ class $$WorkerLedgerAdjustmentsTableTableManager
                 Value<String?> clientRequestId = const Value.absent(),
                 required int amountPaise,
                 required String reason,
+                Value<String?> sourceChargeId = const Value.absent(),
+                Value<String?> jobProcessId = const Value.absent(),
                 Value<String?> notes = const Value.absent(),
                 required int transactionAt,
                 required int recordedAt,
@@ -33400,6 +33609,8 @@ class $$WorkerLedgerAdjustmentsTableTableManager
                 clientRequestId: clientRequestId,
                 amountPaise: amountPaise,
                 reason: reason,
+                sourceChargeId: sourceChargeId,
+                jobProcessId: jobProcessId,
                 notes: notes,
                 transactionAt: transactionAt,
                 recordedAt: recordedAt,
@@ -36736,6 +36947,7 @@ typedef $$ProcessAdditionalChargesTableCreateCompanionBuilder =
       Value<String?> createdBy,
       required int transactionAt,
       required int createdAt,
+      Value<String?> ledgerAdjustmentId,
       Value<int> rowid,
     });
 typedef $$ProcessAdditionalChargesTableUpdateCompanionBuilder =
@@ -36752,6 +36964,7 @@ typedef $$ProcessAdditionalChargesTableUpdateCompanionBuilder =
       Value<String?> createdBy,
       Value<int> transactionAt,
       Value<int> createdAt,
+      Value<String?> ledgerAdjustmentId,
       Value<int> rowid,
     });
 
@@ -36887,6 +37100,11 @@ class $$ProcessAdditionalChargesTableFilterComposer
 
   ColumnFilters<int> get createdAt => $composableBuilder(
     column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get ledgerAdjustmentId => $composableBuilder(
+    column: $table.ledgerAdjustmentId,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -37032,6 +37250,11 @@ class $$ProcessAdditionalChargesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get ledgerAdjustmentId => $composableBuilder(
+    column: $table.ledgerAdjustmentId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   $$JobProcessesTableOrderingComposer get jobProcessId {
     final $$JobProcessesTableOrderingComposer composer = $composerBuilder(
       composer: this,
@@ -37167,6 +37390,11 @@ class $$ProcessAdditionalChargesTableAnnotationComposer
 
   GeneratedColumn<int> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<String> get ledgerAdjustmentId => $composableBuilder(
+    column: $table.ledgerAdjustmentId,
+    builder: (column) => column,
+  );
 
   $$JobProcessesTableAnnotationComposer get jobProcessId {
     final $$JobProcessesTableAnnotationComposer composer = $composerBuilder(
@@ -37320,6 +37548,7 @@ class $$ProcessAdditionalChargesTableTableManager
                 Value<String?> createdBy = const Value.absent(),
                 Value<int> transactionAt = const Value.absent(),
                 Value<int> createdAt = const Value.absent(),
+                Value<String?> ledgerAdjustmentId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ProcessAdditionalChargesCompanion(
                 id: id,
@@ -37334,6 +37563,7 @@ class $$ProcessAdditionalChargesTableTableManager
                 createdBy: createdBy,
                 transactionAt: transactionAt,
                 createdAt: createdAt,
+                ledgerAdjustmentId: ledgerAdjustmentId,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -37350,6 +37580,7 @@ class $$ProcessAdditionalChargesTableTableManager
                 Value<String?> createdBy = const Value.absent(),
                 required int transactionAt,
                 required int createdAt,
+                Value<String?> ledgerAdjustmentId = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => ProcessAdditionalChargesCompanion.insert(
                 id: id,
@@ -37364,6 +37595,7 @@ class $$ProcessAdditionalChargesTableTableManager
                 createdBy: createdBy,
                 transactionAt: transactionAt,
                 createdAt: createdAt,
+                ledgerAdjustmentId: ledgerAdjustmentId,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

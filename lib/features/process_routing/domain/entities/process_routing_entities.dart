@@ -169,6 +169,8 @@ final class JobProcessEntity {
     this.payableAmountPaise = 0,
     this.paidAmountPaise = 0,
     this.paymentStatus = ProcessPaymentStatus.pending,
+    this.pendingInspectionQuantity = 0,
+    this.openIssueIds = const [],
     this.notes,
     required this.transactionAt,
     required this.createdAt,
@@ -202,6 +204,12 @@ final class JobProcessEntity {
   final int payableAmountPaise;
   final int paidAmountPaise;
   final ProcessPaymentStatus paymentStatus;
+
+  /// Pieces this worker returned that are waiting for QC (derived from Stock).
+  final int pendingInspectionQuantity;
+
+  /// Stock ISSUE ids that still have pieces with the worker, oldest first.
+  final List<String> openIssueIds;
   final String? notes;
   final int transactionAt;
   final int createdAt;
@@ -218,7 +226,8 @@ final class JobProcessEntity {
         dispatchedQuantity -
         returnedToFactoryQuantity -
         transferredOutQuantity -
-        damagedQuantity;
+        damagedQuantity -
+        pendingInspectionQuantity;
     return rem < 0 ? 0 : rem;
   }
 

@@ -370,7 +370,7 @@ void main() {
         'getNextSequenceOrderForLot(100_rows)=${swNextSeq.elapsedMicroseconds}us',
       );
 
-      expect(DatabaseMigrationManager.currentSchemaVersion, 8);
+      expect(DatabaseMigrationManager.currentSchemaVersion, 9);
       await db.close();
     });
   });

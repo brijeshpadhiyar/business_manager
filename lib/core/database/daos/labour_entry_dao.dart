@@ -39,6 +39,18 @@ class LabourEntryDao extends DatabaseAccessor<AppDatabase>
         .get();
   }
 
+  /// True when [issueMovementId] carries a payable, non-reversed `ISSUED`
+  /// labour entry. Only legacy (pre-v1.2) `GIVEN_QTY` issues have one; their
+  /// settlements must not pay labour a second time.
+  Future<bool> issueHasPayableLabour(String issueMovementId) async {
+    final rows = await getEntriesForMovement(issueMovementId);
+    for (final r in rows) {
+      if (r.basisType != 'ISSUED' || r.isPayable != 1) continue;
+      if (await findReversalForEntry(r.id) == null) return true;
+    }
+    return false;
+  }
+
   Future<List<LabourEntryRow>> getEntriesForMovement(String stockMovementId) {
     return (select(
       labourEntries,

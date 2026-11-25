@@ -1,3 +1,4 @@
+import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:business_manager/features/rates/domain/entities/rate_entities.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 
@@ -29,6 +30,18 @@ abstract interface class StockMovementRepository {
     String? lotId,
     String? designColourId,
   });
+
+  /// All movements (incl. reversals) of one design colour, oldest first.
+  /// Read model for Routing, which derives its progress from Stock.
+  Future<List<StockMovementEntity>> getMovementsForColour(
+    String designColourId,
+  );
+
+  /// Pieces returned and waiting for QC, keyed by parent ISSUE id.
+  Future<Map<String, int>> getPendingInspectionByIssue();
+
+  /// Every labour entry (incl. reversals) of a lot.
+  Future<List<LabourEntryEntity>> getLabourEntriesForLot(String lotId);
 
   /// Returns detailed view of a single issue and all its child settlements.
   Future<OpenIssueSummary?> getIssueDetail(String issueId);
