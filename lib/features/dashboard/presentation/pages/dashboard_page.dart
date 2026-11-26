@@ -275,10 +275,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                               label: l10n.navStockMovements,
                               icon: AppIcons.stockMovements,
                               variant: AppButtonVariant.outlined,
-                              onPressed: () => _pushAndRefresh(
-                                context,
-                                RoutePaths.stockMovements,
-                              ),
+                              onPressed: () => widget.onNavigateTab(2),
                             ),
                             AppButton(
                               label: l10n.navProcesses,
@@ -628,10 +625,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                                             icon: Icons
                                                 .check_circle_outline_rounded,
                                             tone: AppStatusTone.good,
-                                            onTap: () => _pushAndRefresh(
-                                              context,
-                                              RoutePaths.stockMovements,
-                                            ),
+                                            onTap: () => widget.onNavigateTab(2),
                                           ),
                                         ),
                                         SizedBox(

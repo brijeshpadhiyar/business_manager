@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import 'package:animations/animations.dart';
 import 'package:business_manager/core/config/app_identity.dart';
 import 'package:business_manager/core/design_system/app_breakpoints.dart';
 import 'package:business_manager/core/design_system/app_colors.dart';
@@ -123,16 +122,12 @@ final class ResponsiveNavigation extends StatelessWidget {
     if (!enableBodyTransition || AppMotion.reduceMotion(context)) {
       return body;
     }
-    return PageTransitionSwitcher(
-      duration: AppMotion.fast,
-      transitionBuilder: (child, primaryAnimation, secondaryAnimation) {
-        return FadeThroughTransition(
-          animation: primaryAnimation,
-          secondaryAnimation: secondaryAnimation,
-          fillColor: Colors.transparent,
-          child: child,
-        );
-      },
+    return AnimatedSwitcher(
+      duration: AppMotion.tabFade,
+      switchInCurve: AppMotion.standardCurve,
+      switchOutCurve: Curves.easeInCubic,
+      transitionBuilder: (child, animation) =>
+          FadeTransition(opacity: animation, child: child),
       child: KeyedSubtree(key: ValueKey<int>(selectedIndex), child: body),
     );
   }

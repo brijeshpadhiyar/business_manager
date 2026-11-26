@@ -84,7 +84,7 @@ final class _InventoryOverviewViewState extends State<_InventoryOverviewView> {
                     AppButton(
                       label: l10n.navStockMovements,
                       icon: AppIcons.stockMovements,
-                      onPressed: () => context.push(RoutePaths.stockMovements),
+                      onPressed: () => context.go(RoutePaths.stockMovements),
                     ),
                     AppButton(
                       label: l10n.stockIssueAction,

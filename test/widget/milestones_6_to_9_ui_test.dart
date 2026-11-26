@@ -80,7 +80,8 @@ void main() {
       await tester.tap(find.text('Stock Movements').first);
       await tester.pumpAndSettle();
       expect(find.text('No Pending Issues'), findsOneWidget);
-      await tester.pageBack();
+      // Stock Movements is a persistent primary tab; switch back to Dashboard tab.
+      await tester.tap(find.text('Dashboard').first);
       await tester.pumpAndSettle();
 
       // Open Labour & Payments screen

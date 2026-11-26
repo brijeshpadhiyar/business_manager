@@ -204,11 +204,12 @@ final class AppScaffold extends StatelessWidget {
   }
 }
 
+/// Always paints an opaque canvas behind non-embedded routes so native
+/// [MaterialPage] transitions (Android predictive back, iOS swipe-back,
+/// Desktop FadeForwards) never let the previous page bleed through and snap
+/// away at transition end. [AppGlassBackdrop] is a static `RepaintBoundary`
+/// gradient with zero blur cost.
 Widget _wrapWithBackdropIfNeeded(BuildContext context, Widget child) {
-  final shell = ResponsiveShellScope.maybeOf(context);
-  if (shell != null && shell.hasPersistentChrome) {
-    return child;
-  }
   return AppGlassBackdrop(child: child);
 }
 
