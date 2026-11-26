@@ -157,6 +157,15 @@ final class AppLockCubit extends Cubit<AppLockState> {
     await _syncWindowFlagSecure();
   }
 
+  /// Switches PIN storage namespace to the active signed-in user (or local
+  /// guest scope when `null`) without locking an already-unlocked session.
+  Future<void> syncAccountScope(String? userId) async {
+    _repository.setActiveAccountScope(userId);
+    final settings = await _repository.loadSettings();
+    if (isClosed) return;
+    emit(state.copyWith(settings: settings));
+  }
+
   /// Refreshes device biometric capability (e.g., when returning from OS Settings).
   Future<void> refreshBiometricAvailability() async {
     final bioAvail = await _biometricService.checkAvailability();

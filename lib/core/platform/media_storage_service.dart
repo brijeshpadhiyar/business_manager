@@ -41,9 +41,18 @@ abstract interface class MediaStorageService {
 
   Future<Uint8List?> readBytes(String relativePath);
 
+  /// Writes raw bytes directly to a validated relative path (used by cloud
+  /// media sync when caching downloaded attachments locally).
+  Future<void> writeBytesAtRelativePath(String relativePath, Uint8List bytes);
+
   Future<bool> exists(String relativePath);
 
   Future<bool> deleteIfExists(String relativePath);
+
+  /// Lists all POSIX-normalized relative file paths currently stored inside the
+  /// private flavor media root (returns empty list on platforms without local
+  /// filesystem storage such as Web).
+  Future<List<String>> listAllRelativePaths();
 
   /// Computes SHA-256 checksum hex for any byte payload.
   String computeSha256(Uint8List bytes);

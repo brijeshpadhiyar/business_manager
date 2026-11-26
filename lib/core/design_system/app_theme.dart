@@ -14,12 +14,25 @@ import 'package:material_ui/material_ui.dart';
 abstract final class AppTheme {
   static final ThemeData _lightTheme = _build(Brightness.light);
   static final ThemeData _darkTheme = _build(Brightness.dark);
+  static final ThemeData _lightCompactTheme = _build(
+    Brightness.light,
+    visualDensity: VisualDensity.compact,
+  );
+  static final ThemeData _darkCompactTheme = _build(
+    Brightness.dark,
+    visualDensity: VisualDensity.compact,
+  );
 
-  static ThemeData light() => _lightTheme;
+  static ThemeData light({VisualDensity? visualDensity}) =>
+      visualDensity == VisualDensity.compact ? _lightCompactTheme : _lightTheme;
 
-  static ThemeData dark() => _darkTheme;
+  static ThemeData dark({VisualDensity? visualDensity}) =>
+      visualDensity == VisualDensity.compact ? _darkCompactTheme : _darkTheme;
 
-  static ThemeData _build(Brightness brightness) {
+  static ThemeData _build(
+    Brightness brightness, {
+    VisualDensity visualDensity = VisualDensity.standard,
+  }) {
     final isDark = brightness == Brightness.dark;
     final baseScheme = ColorScheme.fromSeed(
       seedColor: AppColors.brandPrimary,
@@ -108,24 +121,38 @@ abstract final class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: brightness,
+      visualDensity: visualDensity,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: colorScheme.surface,
       fontFamily: AppTypography.fontFamily,
       fontFamilyFallback: AppTypography.fontFamilyFallback,
       textTheme: textTheme,
       extensions: [semanticColors, surfaceTokens],
-      visualDensity: VisualDensity.standard,
       // Native-feeling navigation (used by every pushed page via
       // `AppMotion.buildPage`): Android follows the predictive back gesture,
       // iOS/macOS keep edge-swipe back, desktop/web use a light fade-forward.
-      pageTransitionsTheme: const PageTransitionsTheme(
+      // `allowSnapshotting: false` prevents freezing a frame-0 loading spinner
+      // bitmap across the transition and snapping to loaded content at t=1.0.
+      pageTransitionsTheme: PageTransitionsTheme(
         builders: {
-          TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
-          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-          TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
-          TargetPlatform.windows: FadeForwardsPageTransitionsBuilder(),
-          TargetPlatform.linux: FadeForwardsPageTransitionsBuilder(),
-          TargetPlatform.fuchsia: FadeForwardsPageTransitionsBuilder(),
+          TargetPlatform.android: PredictiveBackPageTransitionsBuilder(
+            fallbackColor: colorScheme.surface,
+            allowSnapshotting: false,
+          ),
+          TargetPlatform.iOS: const CupertinoPageTransitionsBuilder(),
+          TargetPlatform.macOS: const CupertinoPageTransitionsBuilder(),
+          TargetPlatform.windows: FadeForwardsPageTransitionsBuilder(
+            backgroundColor: colorScheme.surface,
+            allowSnapshotting: false,
+          ),
+          TargetPlatform.linux: FadeForwardsPageTransitionsBuilder(
+            backgroundColor: colorScheme.surface,
+            allowSnapshotting: false,
+          ),
+          TargetPlatform.fuchsia: FadeForwardsPageTransitionsBuilder(
+            backgroundColor: colorScheme.surface,
+            allowSnapshotting: false,
+          ),
         },
       ),
       focusColor: colorScheme.primary.withValues(alpha: isDark ? 0.24 : 0.14),

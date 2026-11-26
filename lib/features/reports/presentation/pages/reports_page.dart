@@ -9,6 +9,9 @@ import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
+import 'package:business_manager/features/guidance/domain/entities/guide_entities.dart';
+import 'package:business_manager/features/guidance/presentation/registry/guide_target_registry.dart';
+import 'package:business_manager/features/guidance/presentation/widgets/screen_first_visit_hint.dart';
 import 'package:business_manager/features/reports/domain/entities/advanced_report_entities.dart';
 import 'package:business_manager/features/reports/domain/entities/dashboard_report_entities.dart';
 import 'package:business_manager/features/reports/domain/entities/report_filter.dart';
@@ -79,16 +82,19 @@ final class _ReportsViewState extends State<_ReportsView> {
           title: l10n.reportsHeading,
           contentWidth: AppContentWidth.wide,
           actions: [
-            AppIconButton(
-              icon: AppIcons.share,
-              tooltip: l10n.reportExportAction,
-              onPressed: state.bundle == null || state.isExporting
-                  ? null
-                  : () => ReportExportSheet.show(
-                      context,
-                      cubit: cubit,
-                      state: state,
-                    ),
+            GuideTarget(
+              id: GuideTargetId.reportsExportAction,
+              child: AppIconButton(
+                icon: AppIcons.share,
+                tooltip: l10n.reportExportAction,
+                onPressed: state.bundle == null || state.isExporting
+                    ? null
+                    : () => ReportExportSheet.show(
+                        context,
+                        cubit: cubit,
+                        state: state,
+                      ),
+              ),
             ),
             AppIconButton(
               icon: AppIcons.refresh,
@@ -100,30 +106,37 @@ final class _ReportsViewState extends State<_ReportsView> {
           body: ListView(
             padding: AppSpacing.screenAll,
             children: [
+              const ScreenFirstVisitHint(screenId: GuideScreenId.reports),
               // 1. Unified IST Presets + Collapsible Dimension Filter Bar
-              AppMotionEntrance(
-                index: 0,
-                child: ReportFilterBar(
-                  state: state,
-                  searchController: _searchCtrl,
+              GuideTarget(
+                id: GuideTargetId.reportsFilterBar,
+                child: AppMotionEntrance(
+                  index: 0,
+                  child: ReportFilterBar(
+                    state: state,
+                    searchController: _searchCtrl,
+                  ),
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
 
               // 2. 6 Unified Report Category Selectors
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: [
-                    for (final (cat, label) in categories) ...[
-                      ChoiceChip(
-                        label: Text(label),
-                        selected: state.category == cat,
-                        onSelected: (_) => cubit.selectCategory(cat),
-                      ),
-                      const SizedBox(width: AppSpacing.xs),
+              GuideTarget(
+                id: GuideTargetId.reportsCategories,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      for (final (cat, label) in categories) ...[
+                        ChoiceChip(
+                          label: Text(label),
+                          selected: state.category == cat,
+                          onSelected: (_) => cubit.selectCategory(cat),
+                        ),
+                        const SizedBox(width: AppSpacing.xs),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
@@ -688,6 +701,15 @@ final class _ReportsViewState extends State<_ReportsView> {
                         : AppStatusTone.good,
                   ),
                   AppMetricTile(
+                    label: l10n.stockPendingQcLabel,
+                    value: inv.pendingInspection,
+                    suffix: l10n.piecesUnit,
+                    icon: AppIcons.qcInspect,
+                    tone: inv.pendingInspection > 0
+                        ? AppStatusTone.pending
+                        : AppStatusTone.neutral,
+                  ),
+                  AppMetricTile(
                     label: l10n.stockDamagedBucketLabel,
                     value: inv.damagedBucket,
                     suffix: l10n.piecesUnit,
@@ -763,6 +785,7 @@ final class _ReportsViewState extends State<_ReportsView> {
         AppDataColumn(label: l10n.lotNumberLabel),
         AppDataColumn(label: l10n.stockAvailableGoodLabel, numeric: true),
         AppDataColumn(label: l10n.stockPendingWorkerLabel, numeric: true),
+        AppDataColumn(label: l10n.stockPendingQcLabel, numeric: true),
         AppDataColumn(label: l10n.stockDamagedBucketLabel, numeric: true),
         AppDataColumn(label: l10n.reportRefStockValueLabel, numeric: true),
       ],
@@ -771,6 +794,7 @@ final class _ReportsViewState extends State<_ReportsView> {
         AppText(r.lotNumber, fontWeight: FontWeight.w700),
         AppText('${r.availableGoodStock}', variant: AppTextVariant.numeric),
         AppText('${r.pendingWithWorkers}', variant: AppTextVariant.numeric),
+        AppText('${r.pendingInspection}', variant: AppTextVariant.numeric),
         AppText('${r.damagedBucket}', variant: AppTextVariant.numeric),
         AppText(
           MoneyFormatter.formatPaise(r.goodStockValuePaise),
@@ -799,6 +823,11 @@ final class _ReportsViewState extends State<_ReportsView> {
                     '${l10n.stockPendingWorkerLabel}: ${r.pendingWithWorkers}',
                 tone: AppStatusTone.pending,
               ),
+              if (r.pendingInspection > 0)
+                AppStatusBadge(
+                  label: '${l10n.stockPendingQcLabel}: ${r.pendingInspection}',
+                  tone: AppStatusTone.pending,
+                ),
               if (r.damagedBucket > 0)
                 AppStatusBadge(
                   label: '${l10n.stockDamagedBucketLabel}: ${r.damagedBucket}',
@@ -829,6 +858,7 @@ final class _ReportsViewState extends State<_ReportsView> {
         AppDataColumn(label: l10n.colourNameLabel),
         AppDataColumn(label: l10n.stockAvailableGoodLabel, numeric: true),
         AppDataColumn(label: l10n.stockPendingWorkerLabel, numeric: true),
+        AppDataColumn(label: l10n.stockPendingQcLabel, numeric: true),
         AppDataColumn(label: l10n.stockDamagedBucketLabel, numeric: true),
       ],
       items: rows,
@@ -842,6 +872,10 @@ final class _ReportsViewState extends State<_ReportsView> {
         ),
         AppText(
           '${r.totalPendingWithWorkers}',
+          variant: AppTextVariant.numeric,
+        ),
+        AppText(
+          '${r.totalPendingInspection}',
           variant: AppTextVariant.numeric,
         ),
         AppText('${r.damagedBucket}', variant: AppTextVariant.numeric),
@@ -868,6 +902,12 @@ final class _ReportsViewState extends State<_ReportsView> {
                     '${l10n.stockPendingWorkerLabel}: ${r.totalPendingWithWorkers}',
                 tone: AppStatusTone.pending,
               ),
+              if (r.totalPendingInspection > 0)
+                AppStatusBadge(
+                  label:
+                      '${l10n.stockPendingQcLabel}: ${r.totalPendingInspection}',
+                  tone: AppStatusTone.pending,
+                ),
               if (r.damagedBucket > 0)
                 AppStatusBadge(
                   label: '${l10n.stockDamagedBucketLabel}: ${r.damagedBucket}',

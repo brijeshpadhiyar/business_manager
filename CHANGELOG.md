@@ -4,6 +4,75 @@ All notable changes to the **Business Manager (`બિઝનેસ મેને�
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - System Improvements (Phases 1–4)
+
+### Added
+- **Interactive System Guidance, Button Spotlights, Voice Narration & Complete User Guide Hub**:
+  - Built a custom native Flutter `Overlay`/root-stack spotlight engine (`GuideSpotlightOverlay`, `GuideTarget`, `GuideTargetRegistry`) with button-upper callout bubbles, automatic scroll-into-view, and interactive pass-through.
+  - Added offline bilingual Text-to-Speech narration (`flutter_tts: ^4.2.5`, `FlutterTtsGuideVoiceService`) supporting English & Gujarati (`gu-IN`) with 1-tap Mute/Replay/Speed controls and silent graceful fallback when a device voice pack is unavailable.
+  - Added **First-Time Welcome Card** on Dashboard (language picker EN/GU, Voice ON/OFF, Start Complete Training, Explain This Screen, Skip), **9-Chapter End-to-End Action Coach** (walking across Dashboard, Settings, Processes, Workers, Lots, Stock Issue, Receive Return, Accounting, and Reports with floating "What To Do Next" Action Coach banner), per-screen `?` Guide Quick Menu, and subtle first-visit screen hints.
+  - Upgraded **Help & Guidance** (`HelpGuidancePage` & `HelpTopicDetailPage`) into a full Training & User Guide Hub with 9-chapter progress tracking, **"Show Me Live"** deep-launch links, step-highlighted audio playback across all 19 bilingual topics, and **"What To Do Next"** workflow links.
+- **Phase 1 — CI/CD Safety Net & Data Trust (`v1.5.1`)**:
+  - Added GitHub Actions CI workflows (`.github/workflows/ci.yml` for PR `gen-l10n`, `analyze`, `test`, and Web release build; `.github/workflows/release_builds.yml` for tag/manual Android `dev`/`prod` APK & Windows release bundles).
+  - Built **Data Health & Reconciliation Center** (`Settings → Data Health & Diagnostics`) verifying `PRAGMA integrity_check`, `PRAGMA foreign_key_check`, golden stock equation across every design/colour, worker ledger parity, sync queue counts, and media parity, plus safe audited maintenance actions (WAL checkpoint, orphan media cleanup, failed sync retry) and shareable diagnostic export.
+  - Surfaced `Pending QC` (`pendingInspectionStock` / `pendingInspection`) KPIs & columns across Dashboard and Reports (Inventory KPI strip, Lot Stock table, Colour Stock table).
+  - Localized all 53 remaining hardcoded English strings in Process Routing (`job_process_routing_page.dart`, `job_routing_cubit.dart`, `RoutingErrorLocalizer`) with a regression guard test (`hardcoded_ui_strings_guard_test.dart`).
+  - Updated `ReportHtmlBuilder` print/PDF styling to the Indigo Thread palette (`#4F46E5`, `#059669`, `#F59E0B`) and added Material 3 `Badge` support to `ResponsiveNavigation` with live Sync attention badges.
+- **Phase 2 — Bilingual Karigar Slips & Daily Speed (`v1.6.0`)**:
+  - Built unified bilingual **Karigar Slips** (`lib/features/slips/`) supporting Stock Issue Challan, Return/QC Slip, Payment Receipt, and Worker Khata Statement with 3 zero-dependency sharing modes: **Branded PNG Receipt Image (`RepaintBoundary`)**, **WhatsApp/SMS Bilingual Text (+ Copy)**, and **Offline Printable HTML/PDF**, plus an in-sheet EN/GU language toggle.
+  - Added **Audited Undo Snackbars** (6-second Undo triggering standard audited reversal rows), **Form Draft Autosave & Remembered Defaults** (`FormDraftService`), **First-Run Workshop Setup Checklist** (`SetupChecklistCard` on Dashboard), and **Compact/Comfortable Layout Density Toggle** (`DensityCubit` wired into `AppTheme` & `AppearanceSettingsPage`).
+- **Phase 3 — Multi-User Team RBAC & Cloud Sync v2 (`v1.7.0`, Drift Schema v11)**:
+  - Added Supabase Migration 4 (`supabase/migrations/20261127000004_v1_7_team_rbac.sql`) introducing `business_members`, `business_invites`, `stitchflow_user_role()`, `stitchflow_redeem_invite()`, and role-aware RLS across all 23 domain tables and private storage.
+  - Added pure-Dart 4-role `RbacPolicy` (`OWNER`, `MANAGER`, `QC_INSPECTOR`, `ACCOUNTANT`) + `PermissionGate` widget, `SupabaseTeamRepository`, and `TeamManagementPage` (`Settings → Team & Role Access`) with WhatsApp-shareable 8-char invite codes (`XXXX-XXXX`).
+  - Executed additive Drift SQLite **Schema v10 → v11** migration (`active_role`, `active_business_name`, `cached_team_members`, `idx_audit_logs_reason_rec`).
+  - Built **Sync Conflict Inspector** (`SyncConflictInspectorPage` + `SyncConflictService`) with side-by-side field diffs (`Your Superseded Edit` vs `Applied Cloud Version`) and non-blocking Acknowledge / One-Tap Audited Restore.
+- **Phase 4 — SQLite DB Pagination, Modular Cleanup & Portable QA Gates (`v1.8.0`)**:
+  - Added true SQLite `LIMIT`/`OFFSET` and O(log N) keyset/cursor pagination (`PageRequest`, `CursorPageRequest`, `PagedResult<T>`) across `LotDao`, `ProcessMemberDao`, `StockMovementDao`, `PaymentDao`, and `AttachmentAuditDao`, plus `buildWhen` scoping on heavy pages.
+  - Extracted modular UI widgets (`stock_issue_step_widgets.dart`, `routing_handover_row.dart`) and added Indigo Thread semantic surface aliases (`AppElevatedSurface`, `surfaceFill`, `navBarFill`).
+  - Added **5,000-movement SQLite scale & index benchmark** (`scale_5000_movements_benchmark_test.dart`) and **Android tap-target/contrast accessibility + 300px keyboard-open sheet** tests (`accessibility_and_keyboard_sheets_test.dart`).
+
+## [Unreleased] - System Improvements (Phases 1–4)
+
+### Added
+- **Phase 1 — CI/CD Safety Net & Data Trust (`v1.5.1`)**:
+  - Added GitHub Actions CI workflows (`.github/workflows/ci.yml` for PR `gen-l10n`, `analyze`, `test`, and Web release build; `.github/workflows/release_builds.yml` for tag/manual Android `dev`/`prod` APK & Windows release bundles).
+  - Built **Data Health & Reconciliation Center** (`Settings → Data Health & Diagnostics`) verifying `PRAGMA integrity_check`, `PRAGMA foreign_key_check`, golden stock equation across every design/colour, worker ledger parity, sync queue counts, and media parity, plus safe audited maintenance actions (WAL checkpoint, orphan media cleanup, failed sync retry) and shareable diagnostic export.
+  - Surfaced `Pending QC` (`pendingInspectionStock` / `pendingInspection`) KPIs & columns across Dashboard and Reports (Inventory KPI strip, Lot Stock table, Colour Stock table).
+  - Localized all 53 remaining hardcoded English strings in Process Routing (`job_process_routing_page.dart`, `job_routing_cubit.dart`, `RoutingErrorLocalizer`) with a regression guard test (`hardcoded_ui_strings_guard_test.dart`).
+  - Updated `ReportHtmlBuilder` print/PDF styling to the Indigo Thread palette (`#4F46E5`, `#059669`, `#F59E0B`) and added Material 3 `Badge` support to `ResponsiveNavigation` with live Sync attention badges.
+- **Phase 2 — Bilingual Karigar Slips & Daily Speed (`v1.6.0`)**:
+  - Built unified bilingual **Karigar Slips** (`lib/features/slips/`) supporting Stock Issue Challan, Return/QC Slip, Payment Receipt, and Worker Khata Statement with 3 zero-dependency sharing modes: **Branded PNG Receipt Image (`RepaintBoundary`)**, **WhatsApp/SMS Bilingual Text (+ Copy)**, and **Offline Printable HTML/PDF**, plus an in-sheet EN/GU language toggle.
+  - Added **Audited Undo Snackbars** (6-second Undo triggering standard audited reversal rows), **Form Draft Autosave & Remembered Defaults** (`FormDraftService`), **First-Run Workshop Setup Checklist** (`SetupChecklistCard` on Dashboard), and **Compact/Comfortable Layout Density Toggle** (`DensityCubit` wired into `AppTheme` & `AppearanceSettingsPage`).
+- **Phase 3 — Multi-User Team RBAC & Cloud Sync v2 (`v1.7.0`, Drift Schema v11)**:
+  - Added Supabase Migration 4 (`supabase/migrations/20261127000004_v1_7_team_rbac.sql`) introducing `business_members`, `business_invites`, `stitchflow_user_role()`, `stitchflow_redeem_invite()`, and role-aware RLS across all 23 domain tables and private storage.
+  - Added pure-Dart 4-role `RbacPolicy` (`OWNER`, `MANAGER`, `QC_INSPECTOR`, `ACCOUNTANT`) + `PermissionGate` widget, `SupabaseTeamRepository`, and `TeamManagementPage` (`Settings → Team & Role Access`) with WhatsApp-shareable 8-char invite codes (`XXXX-XXXX`).
+  - Executed additive Drift SQLite **Schema v10 → v11** migration (`active_role`, `active_business_name`, `cached_team_members`, `idx_audit_logs_reason_rec`).
+  - Built **Sync Conflict Inspector** (`SyncConflictInspectorPage` + `SyncConflictService`) with side-by-side field diffs (`Your Superseded Edit` vs `Applied Cloud Version`) and non-blocking Acknowledge / One-Tap Audited Restore.
+- **Phase 4 — SQLite DB Pagination, Modular Cleanup & Portable QA Gates (`v1.8.0`)**:
+  - Added true SQLite `LIMIT`/`OFFSET` and O(log N) keyset/cursor pagination (`PageRequest`, `CursorPageRequest`, `PagedResult<T>`) across `LotDao`, `ProcessMemberDao`, `StockMovementDao`, `PaymentDao`, and `AttachmentAuditDao`, plus `buildWhen` scoping on heavy pages.
+  - Extracted modular UI widgets (`stock_issue_step_widgets.dart`, `routing_handover_row.dart`) and added Indigo Thread semantic surface aliases (`AppElevatedSurface`, `surfaceFill`, `navBarFill`).
+  - Added **5,000-movement SQLite scale & index benchmark** (`scale_5000_movements_benchmark_test.dart`) and **Android tap-target/contrast accessibility + 300px keyboard-open sheet** tests (`accessibility_and_keyboard_sheets_test.dart`).
+
+## [1.5.0] - 2026-11-26
+
+### Added
+- **Dual Cloud Authentication (Google Sign-In + Phone Number OTP) (`lib/features/auth/`)**:
+  - Offline-first optional sign-in: existing v1.4 users continue working offline immediately, new users can choose **Continue with Google**, **Continue with Phone Number (SMS OTP)**, or **Continue Offline (Local Only)**.
+  - Cached secure auth sessions (`flutter_secure_storage`) allow indefinite offline usage once signed in.
+  - Added **Account & Identity Linking** screen (`AccountSettingsPage`) to link both Google and Phone Number to the same StitchFlow account, view synced devices, and sign out safely with unsynced-changes warnings.
+- **Complete Supabase Backend & Storage (`supabase/migrations/`)**:
+  - Added full PostgreSQL migrations mirroring all 23 Drift SQLite tables with composite `(business_id, id)` primary keys, server-side `server_updated_at` triggers, strict owner-scoped Row-Level Security (RLS), Realtime `sync_notifications` wake-ups, and a private `stitchflow-media` Storage bucket for lot photos and business logo.
+  - Added `supabase/README.md` with isolated `dev`/`prod` project setup, Google OAuth, and Phone OTP (test OTPs in `dev`, MSG91/Twilio in `prod`) instructions.
+- **Offline-First Bidirectional Sync Engine (`lib/features/sync/`, Drift Schema v10)**:
+  - Additive SQLite schema migration `v9 -> v10` adding `sync_session_state`, `sync_outbox`, `sync_cursors`, and `sync_media_queue` plus guarded SQLite change-capture triggers across all 23 domain tables (zero echo loops during remote apply).
+  - Implemented `SyncEngine` with FK topological push order, self-referencing parent-first ordering, incremental delta pulls (`server_updated_at > cursor`), SHA-256 cloud media upload/lazy download, exponential backoff retries, Smart First-Login Merge Prompt, and Last-Write-Wins (LWW) conflict resolution with `audit_logs` diff recording.
+  - Added live **SyncStatusBadge** in the app shell and dedicated **Cloud Sync Center** (`SyncCenterPage`) in Settings.
+- **Account-Scoped App Lock & Cloud PIN Recovery (`lib/features/security/`)**:
+  - Namespaced local App Lock PIN storage by active user ID with seamless v1.4 legacy PIN migration and optional Google re-authentication recovery on `PinRecoveryPage`.
+- **Localization & Tests**:
+  - Added complete English and Gujarati (`app_en.arb` + `app_gu.arb`) translations for all v1.5 auth, sync, merge, and recovery flows.
+  - Added automated tests for Schema v10 migration & triggers, `SyncConflictResolver`, `SyncEngine`, and `AuthCubit`.
+
 ## [1.1.0] - 2026-11-23
 
 ### Added

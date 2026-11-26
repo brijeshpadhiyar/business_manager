@@ -22,10 +22,19 @@ final class _NoopMediaStorage implements MediaStorageService {
   Future<bool> deleteIfExists(String relativePath) async => false;
 
   @override
+  Future<List<String>> listAllRelativePaths() async => const [];
+
+  @override
   Future<bool> exists(String relativePath) async => false;
 
   @override
   Future<Uint8List?> readBytes(String relativePath) async => null;
+
+  @override
+  Future<void> writeBytesAtRelativePath(
+    String relativePath,
+    Uint8List bytes,
+  ) async {}
 
   @override
   Future<SavedMediaFile> saveBytes({

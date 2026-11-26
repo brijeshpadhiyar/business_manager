@@ -90,7 +90,7 @@ final class ReportHtmlBuilder {
   * { box-sizing: border-box; }
   body {
     font-family: 'NotoSansGujarati', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    color: #172B4D;
+    color: #0F172A;
     background: #FFFFFF;
     margin: 0;
     padding: 0;
@@ -98,7 +98,7 @@ final class ReportHtmlBuilder {
     line-height: 1.45;
   }
   .header {
-    border-bottom: 2px solid #172B4D;
+    border-bottom: 2px solid #4F46E5;
     padding-bottom: 10px;
     margin-bottom: 14px;
     display: flex;
@@ -106,10 +106,10 @@ final class ReportHtmlBuilder {
     align-items: flex-end;
     gap: 12px;
   }
-  .brand { font-size: 18px; font-weight: 700; color: #172B4D; margin: 0; }
-  .tagline { font-size: 10px; color: #0D9488; font-weight: 700; margin-top: 2px; }
+  .brand { font-size: 18px; font-weight: 700; color: #312E81; margin: 0; }
+  .tagline { font-size: 10px; color: #059669; font-weight: 700; margin-top: 2px; }
   .meta { text-align: right; font-size: 10px; color: #475569; }
-  .report-title { font-size: 14px; font-weight: 700; color: #172B4D; margin: 0 0 8px 0; }
+  .report-title { font-size: 14px; font-weight: 700; color: #312E81; margin: 0 0 8px 0; }
   .kpi-grid {
     display: flex;
     flex-wrap: wrap;
@@ -119,15 +119,15 @@ final class ReportHtmlBuilder {
   .kpi {
     flex: 1 1 115px;
     border: 1px solid #CBD5E1;
-    border-left: 3px solid #0D9488;
+    border-left: 3px solid #4F46E5;
     border-radius: 6px;
     padding: 7px 9px;
     background: #F8FAFC;
   }
-  .kpi.warn { border-left-color: #F4A340; }
+  .kpi.warn { border-left-color: #F59E0B; }
   .kpi-label { font-size: 9.5px; color: #475569; margin-bottom: 2px; }
-  .kpi-val { font-size: 13px; font-weight: 700; color: #172B4D; font-variant-numeric: tabular-nums; }
-  h3 { font-size: 12px; font-weight: 700; color: #172B4D; margin: 14px 0 6px 0; }
+  .kpi-val { font-size: 13px; font-weight: 700; color: #0F172A; font-variant-numeric: tabular-nums; }
+  h3 { font-size: 12px; font-weight: 700; color: #312E81; margin: 14px 0 6px 0; }
   table {
     width: 100%;
     border-collapse: collapse;
@@ -141,7 +141,7 @@ final class ReportHtmlBuilder {
     vertical-align: top;
   }
   th {
-    background: #172B4D;
+    background: #4F46E5;
     color: #FFFFFF;
     font-weight: 700;
     font-size: 10px;

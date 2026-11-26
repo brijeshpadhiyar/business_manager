@@ -8,6 +8,10 @@ final class AppConfig {
     required this.databaseName,
     required this.mediaDirName,
     required this.enableDebugLogs,
+    this.supabaseUrl = '',
+    this.supabaseAnonKey = '',
+    this.googleWebClientId = '',
+    this.googleIosClientId = '',
   });
 
   factory AppConfig.dev() {
@@ -19,11 +23,31 @@ final class AppConfig {
       'MEDIA_DIR_NAME',
       defaultValue: 'media_dev',
     );
+    const supabaseUrl = String.fromEnvironment(
+      'SUPABASE_URL',
+      defaultValue: '',
+    );
+    const supabaseAnonKey = String.fromEnvironment(
+      'SUPABASE_ANON_KEY',
+      defaultValue: '',
+    );
+    const googleWebClientId = String.fromEnvironment(
+      'GOOGLE_WEB_CLIENT_ID',
+      defaultValue: '',
+    );
+    const googleIosClientId = String.fromEnvironment(
+      'GOOGLE_IOS_CLIENT_ID',
+      defaultValue: '',
+    );
     return const AppConfig(
       flavor: AppFlavor.dev,
       databaseName: dbName,
       mediaDirName: mediaDir,
       enableDebugLogs: true,
+      supabaseUrl: supabaseUrl,
+      supabaseAnonKey: supabaseAnonKey,
+      googleWebClientId: googleWebClientId,
+      googleIosClientId: googleIosClientId,
     );
   }
 
@@ -36,12 +60,32 @@ final class AppConfig {
       'MEDIA_DIR_NAME',
       defaultValue: 'media_prod',
     );
+    const supabaseUrl = String.fromEnvironment(
+      'SUPABASE_URL',
+      defaultValue: '',
+    );
+    const supabaseAnonKey = String.fromEnvironment(
+      'SUPABASE_ANON_KEY',
+      defaultValue: '',
+    );
+    const googleWebClientId = String.fromEnvironment(
+      'GOOGLE_WEB_CLIENT_ID',
+      defaultValue: '',
+    );
+    const googleIosClientId = String.fromEnvironment(
+      'GOOGLE_IOS_CLIENT_ID',
+      defaultValue: '',
+    );
     return const AppConfig(
       flavor: AppFlavor.prod,
       databaseName: dbName,
       mediaDirName: mediaDir,
       // Debug logging is strictly disabled in production regardless of defines.
       enableDebugLogs: false,
+      supabaseUrl: supabaseUrl,
+      supabaseAnonKey: supabaseAnonKey,
+      googleWebClientId: googleWebClientId,
+      googleIosClientId: googleIosClientId,
     );
   }
 
@@ -57,7 +101,16 @@ final class AppConfig {
   final String databaseName;
   final String mediaDirName;
   final bool enableDebugLogs;
+  final String supabaseUrl;
+  final String supabaseAnonKey;
+  final String googleWebClientId;
+  final String googleIosClientId;
 
   bool get isDev => flavor.isDev;
   bool get isProd => flavor.isProd;
+
+  /// True when both Supabase URL and anon key have been supplied via
+  /// `--dart-define-from-file=config/<flavor>.local.json` (or `--dart-define`).
+  bool get isCloudConfigured =>
+      supabaseUrl.trim().isNotEmpty && supabaseAnonKey.trim().isNotEmpty;
 }

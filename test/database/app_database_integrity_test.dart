@@ -94,6 +94,7 @@ void main() {
       'attachments',
       'audit_logs',
       'business_profile',
+      'cached_team_members',
       'colour_master',
       'design_colours',
       'job_processes',
@@ -113,6 +114,10 @@ void main() {
       'rejection_records',
       'rejection_repairs',
       'stock_movements',
+      'sync_cursors',
+      'sync_media_queue',
+      'sync_outbox',
+      'sync_session_state',
       'worker_ledger_adjustments',
     });
 

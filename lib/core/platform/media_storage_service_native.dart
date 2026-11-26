@@ -103,6 +103,24 @@ final class NativeMediaStorageService implements MediaStorageService {
   }
 
   @override
+  Future<void> writeBytesAtRelativePath(
+    String relativePath,
+    Uint8List bytes,
+  ) async {
+    try {
+      final file = await resolveSafeFile(relativePath);
+      if (!file.parent.existsSync()) {
+        await file.parent.create(recursive: true);
+      }
+      await file.writeAsBytes(bytes, flush: true);
+    } on LocalStorageException {
+      rethrow;
+    } catch (error) {
+      throw LocalStorageException('Failed to write private media file.', error);
+    }
+  }
+
+  @override
   Future<bool> exists(String relativePath) async {
     try {
       final file = await resolveSafeFile(relativePath);
@@ -126,6 +144,25 @@ final class NativeMediaStorageService implements MediaStorageService {
         'Failed to delete private media file.',
         error,
       );
+    }
+  }
+
+  @override
+  Future<List<String>> listAllRelativePaths() async {
+    try {
+      final root = await _resolveMediaRoot();
+      if (!root.existsSync()) return const [];
+      final results = <String>[];
+      await for (final entity in root.list(recursive: true, followLinks: false)) {
+        if (entity is File) {
+          final rel = p.relative(entity.path, from: root.path);
+          results.add(p.posix.normalize(rel.replaceAll('\\', '/')));
+        }
+      }
+      results.sort();
+      return results;
+    } catch (_) {
+      return const [];
     }
   }
 }

@@ -14,6 +14,10 @@ import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/search/presentation/quick_actions.dart';
 import 'package:business_manager/features/dashboard/presentation/bloc/dashboard_cubit.dart';
+import 'package:business_manager/features/dashboard/presentation/widgets/setup_checklist_card.dart';
+import 'package:business_manager/features/guidance/domain/entities/guide_entities.dart';
+import 'package:business_manager/features/guidance/presentation/registry/guide_target_registry.dart';
+import 'package:business_manager/features/guidance/presentation/widgets/first_time_welcome_card.dart';
 import 'package:business_manager/features/reports/domain/calculators/workshop_daily_calculator.dart';
 import 'package:business_manager/features/security/presentation/bloc/app_lock_cubit.dart';
 import 'package:flutter/foundation.dart';
@@ -110,6 +114,10 @@ final class _DashboardViewState extends State<_DashboardView> {
           maxWidth: AppSizing.wideContentWidth,
         ),
         child: BlocBuilder<DashboardCubit, DashboardState>(
+          buildWhen: (prev, curr) =>
+              prev.status != curr.status ||
+              prev.snapshot != curr.snapshot ||
+              prev.errorMessage != curr.errorMessage,
           builder: (context, state) {
             final snap = state.snapshot;
 
@@ -224,6 +232,8 @@ final class _DashboardViewState extends State<_DashboardView> {
                     ),
                   const SizedBox(height: AppSpacing.lg),
 
+                  if (snap != null) FirstTimeWelcomeCard(snapshot: snap),
+
                   // 2. Daily Workshop Quick Operations Dock
                   AppMotionEntrance(
                     index: 1,
@@ -275,10 +285,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                               label: l10n.navStockMovements,
                               icon: AppIcons.stockMovements,
                               variant: AppButtonVariant.outlined,
-                              onPressed: () => _pushAndRefresh(
-                                context,
-                                RoutePaths.stockMovements,
-                              ),
+                              onPressed: () => widget.onNavigateTab(2),
                             ),
                             AppButton(
                               label: l10n.navProcesses,
@@ -332,11 +339,22 @@ final class _DashboardViewState extends State<_DashboardView> {
                   ),
                   const SizedBox(height: AppSpacing.lg),
 
+                  if (snap != null)
+                    GuideTarget(
+                      id: GuideTargetId.dashSetupChecklist,
+                      child: SetupChecklistCard(
+                        snapshot: snap,
+                        onNavigate: (route) => _pushAndRefresh(context, route),
+                      ),
+                    ),
+
                   if (snap != null) ...[
                     // 2B. Today's Workshop Activity (IST Business Day)
-                    AppMotionEntrance(
-                      index: 2,
-                      child: Column(
+                    GuideTarget(
+                      id: GuideTargetId.dashTodayKpis,
+                      child: AppMotionEntrance(
+                        index: 2,
+                        child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           AppHeading(
@@ -438,6 +456,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                           ],
                         ],
                       ),
+                    ),
                     ),
                     const SizedBox(height: AppSpacing.lg),
 
@@ -625,13 +644,9 @@ final class _DashboardViewState extends State<_DashboardView> {
                                             label: l10n.stockAvailableGoodLabel,
                                             value: snap.availableGoodStock,
                                             suffix: l10n.piecesUnit,
-                                            icon: Icons
-                                                .check_circle_outline_rounded,
+                                            icon: AppIcons.successOutline,
                                             tone: AppStatusTone.good,
-                                            onTap: () => _pushAndRefresh(
-                                              context,
-                                              RoutePaths.stockMovements,
-                                            ),
+                                            onTap: () => widget.onNavigateTab(2),
                                           ),
                                         ),
                                         SizedBox(
@@ -649,6 +664,23 @@ final class _DashboardViewState extends State<_DashboardView> {
                                             onTap: () => _pushAndRefresh(
                                               context,
                                               RoutePaths.stockReturnPicker,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: tileW,
+                                          child: AppMetricTile(
+                                            backdropKey: null,
+                                            label: l10n.stockPendingQcLabel,
+                                            value: snap.pendingInspectionStock,
+                                            suffix: l10n.piecesUnit,
+                                            icon: AppIcons.qcInspect,
+                                            tone: snap.pendingInspectionStock > 0
+                                                ? AppStatusTone.pending
+                                                : AppStatusTone.neutral,
+                                            onTap: () => _pushAndRefresh(
+                                              context,
+                                              RoutePaths.inspectionQueue,
                                             ),
                                           ),
                                         ),

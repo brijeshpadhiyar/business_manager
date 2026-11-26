@@ -1,6 +1,0 @@
-{
-  "APP_FLAVOR": "dev",
-  "ENABLE_DEBUG_LOGS": "true",
-  "DATABASE_NAME": "business_manager_dev.sqlite",
-  "MEDIA_DIR_NAME": "media_dev"
-}

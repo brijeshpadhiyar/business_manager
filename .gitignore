@@ -57,3 +57,6 @@ key.properties
 *.jks
 *.keystore
 *.p12
+
+# Local flavor configs containing Supabase/OAuth credentials (NEVER commit)
+# config/*.local.json

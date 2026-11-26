@@ -14,6 +14,9 @@ final class InMemorySecurityRepository implements SecurityRepository {
   String? _recoveryVerifier;
 
   @override
+  void setActiveAccountScope(String? userId) {}
+
+  @override
   Future<SecuritySettings> loadSettings() async => _settings;
 
   @override

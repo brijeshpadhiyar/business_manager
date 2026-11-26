@@ -73,17 +73,25 @@ void main() {
         scrollable: find.byType(Scrollable).last,
       );
       expect(find.text('Worker Accounting Summary'), findsOneWidget);
-      await tester.drag(find.byType(ListView).first, const Offset(0, 900));
+      await tester.scrollUntilVisible(
+        find.text('Stock Movements'),
+        -300,
+        scrollable: find.byType(Scrollable).last,
+      );
+      await tester.ensureVisible(find.text('Stock Movements').first);
       await tester.pumpAndSettle();
 
       // Open Stock Movements screen
       await tester.tap(find.text('Stock Movements').first);
       await tester.pumpAndSettle();
       expect(find.text('No Pending Issues'), findsOneWidget);
-      await tester.pageBack();
+      // Stock Movements is a persistent primary tab; switch back to Dashboard tab.
+      await tester.tap(find.text('Dashboard').first);
       await tester.pumpAndSettle();
 
       // Open Labour & Payments screen
+      await tester.ensureVisible(find.text('Labour & Payments').first);
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Labour & Payments').first);
       await tester.pumpAndSettle();
       expect(find.text('Labour & Worker Accounts'), findsOneWidget);
@@ -91,6 +99,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // Open Business Reports screen & verify V1.2 report categories
+      await tester.ensureVisible(find.text('Reports').first);
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Reports').first);
       await tester.pumpAndSettle();
       expect(find.text('Business Reports'), findsOneWidget);
@@ -102,9 +112,12 @@ void main() {
       await tester.tap(find.text('Settings').last);
       await tester.pumpAndSettle();
       await tester.scrollUntilVisible(
-        find.text('Backup & Data Safety').first,
+        find.text('Backup & Data Safety'),
         200,
-        scrollable: find.byType(Scrollable).last,
+        scrollable: find.descendant(
+          of: find.byType(ListView).last,
+          matching: find.byType(Scrollable),
+        ),
       );
       await tester.ensureVisible(find.text('Backup & Data Safety').first);
       await tester.pumpAndSettle();

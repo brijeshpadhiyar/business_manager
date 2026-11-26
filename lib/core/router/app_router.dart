@@ -9,9 +9,19 @@ import 'package:business_manager/features/accounting/presentation/pages/accounti
 import 'package:business_manager/features/accounting/presentation/pages/payment_form_page.dart';
 import 'package:business_manager/features/accounting/presentation/pages/worker_adjustment_form_page.dart';
 import 'package:business_manager/features/accounting/presentation/pages/worker_ledger_page.dart';
+import 'package:business_manager/features/auth/presentation/pages/account_settings_page.dart';
+import 'package:business_manager/features/auth/presentation/pages/login_page.dart';
 import 'package:business_manager/features/backup/presentation/pages/backup_restore_page.dart';
+import 'package:business_manager/features/backup/presentation/pages/data_health_page.dart';
+import 'package:business_manager/features/sync/domain/entities/sync_entities.dart';
+import 'package:business_manager/features/sync/presentation/bloc/sync_cubit.dart';
+import 'package:business_manager/features/sync/presentation/pages/sync_conflict_inspector_page.dart';
+import 'package:business_manager/features/team/presentation/pages/team_management_page.dart';
 import 'package:business_manager/features/business_profile/presentation/pages/business_profile_page.dart';
 import 'package:business_manager/features/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:business_manager/features/guidance/domain/entities/guide_entities.dart';
+import 'package:business_manager/features/guidance/presentation/registry/guide_target_registry.dart';
+import 'package:business_manager/features/guidance/presentation/widgets/guide_quick_menu_sheet.dart';
 import 'package:business_manager/features/inventory/presentation/pages/inventory_overview_page.dart';
 import 'package:business_manager/features/lots/presentation/pages/designs_colours_page.dart';
 import 'package:business_manager/features/lots/presentation/pages/lot_colour_detail_page.dart';
@@ -48,11 +58,14 @@ import 'package:business_manager/features/stock_movements/presentation/pages/rec
 import 'package:business_manager/features/stock_movements/presentation/pages/stock_issue_page.dart';
 import 'package:business_manager/features/stock_movements/presentation/pages/stock_movements_page.dart';
 import 'package:business_manager/features/stock_movements/presentation/pages/stock_settlement_page.dart';
+import 'package:business_manager/features/sync/presentation/pages/sync_center_page.dart';
+import 'package:business_manager/features/sync/presentation/widgets/sync_status_badge.dart';
 import 'package:business_manager/features/workers/presentation/pages/worker_assignments_page.dart';
 import 'package:business_manager/features/workers/presentation/pages/worker_detail_page.dart';
 import 'package:business_manager/features/workers/presentation/pages/worker_form_page.dart';
 import 'package:business_manager/features/workers/presentation/pages/worker_list_page.dart';
-import 'package:flutter/foundation.dart' show defaultTargetPlatform;
+import 'package:flutter/foundation.dart'
+    show ValueListenable, ValueNotifier, defaultTargetPlatform;
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -67,37 +80,139 @@ const List<String> _primaryTabRoutes = [
   RoutePaths.settings,
 ];
 
+/// Coordinates silent background data refreshes when revisiting an already-alive
+/// primary tab branch inside [StatefulShellRoute], avoiding skeleton flashes.
+final class PrimaryTabRefreshBus {
+  PrimaryTabRefreshBus()
+    : _signals = List<ValueNotifier<int>>.generate(
+        _primaryTabRoutes.length,
+        (_) => ValueNotifier<int>(0),
+        growable: false,
+      );
+
+  final List<ValueNotifier<int>> _signals;
+  final Set<int> _visited = <int>{0};
+
+  ValueListenable<int> signalFor(int index) => _signals[index];
+
+  void onTabSelected(int index) {
+    final safe = index.clamp(0, _signals.length - 1);
+    if (_visited.contains(safe)) {
+      _signals[safe].value++;
+    } else {
+      _visited.add(safe);
+    }
+  }
+}
+
 GoRouter createAppRouter(AppConfig config) {
+  final rootNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'root');
+  final shellNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'shell');
+  final tabRefreshBus = PrimaryTabRefreshBus();
+
   return GoRouter(
+    navigatorKey: rootNavigatorKey,
     initialLocation: RoutePaths.home,
     routes: [
       ShellRoute(
+        navigatorKey: shellNavigatorKey,
         builder: (context, state, child) => StitchFlowShellScaffold(
           config: config,
           location: state.uri.path,
+          tabRefreshBus: tabRefreshBus,
           child: child,
         ),
         routes: [
-          GoRoute(
-            path: RoutePaths.home,
-            pageBuilder: (context, state) => AppMotion.buildTabPage(
-              state: state,
-              child: DashboardPage(
-                config: config,
-                onNavigateTab: (idx) => _navigatePrimaryTab(context, idx),
-              ),
+          // 5 primary tabs kept alive in memory via StatefulShellRoute.
+          // On mobile (< 600dp), _PrimaryTabsViewport owns the AppBar and
+          // Bottom NavigationBar inside this page so pushed sibling routes
+          // slide cleanly OVER it without ever unmounting/swapping shell chrome.
+          StatefulShellRoute(
+            pageBuilder: (context, state, navigationShell) => MaterialPage<void>(
+              key: state.pageKey,
+              child: navigationShell,
             ),
+            navigatorContainerBuilder: (context, navigationShell, children) {
+              return _PrimaryTabsViewport(
+                config: config,
+                navigationShell: navigationShell,
+                tabRefreshBus: tabRefreshBus,
+                children: children,
+              );
+            },
+            branches: [
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: RoutePaths.home,
+                    pageBuilder: (context, state) => NoTransitionPage<void>(
+                      key: state.pageKey,
+                      child: DashboardPage(
+                        config: config,
+                        refreshSignal: tabRefreshBus.signalFor(0),
+                        onNavigateTab: (idx) =>
+                            _navigatePrimaryTab(context, idx, tabRefreshBus),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: RoutePaths.lots,
+                    pageBuilder: (context, state) => NoTransitionPage<void>(
+                      key: state.pageKey,
+                      child: LotListPage(
+                        refreshSignal: tabRefreshBus.signalFor(1),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: RoutePaths.stockMovements,
+                    pageBuilder: (context, state) => NoTransitionPage<void>(
+                      key: state.pageKey,
+                      child: StockMovementsPage(
+                        embedded: true,
+                        refreshSignal: tabRefreshBus.signalFor(2),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: RoutePaths.workers,
+                    pageBuilder: (context, state) => NoTransitionPage<void>(
+                      key: state.pageKey,
+                      child: WorkerListPage(
+                        refreshSignal: tabRefreshBus.signalFor(3),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
+                    path: RoutePaths.settings,
+                    pageBuilder: (context, state) => NoTransitionPage<void>(
+                      key: state.pageKey,
+                      child: SettingsHomePage(config: config),
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ),
           GoRoute(
             path: RoutePaths.dashboard,
             redirect: (_, _) => RoutePaths.home,
-          ),
-          GoRoute(
-            path: RoutePaths.lots,
-            pageBuilder: (context, state) => AppMotion.buildTabPage(
-              state: state,
-              child: const LotListPage(),
-            ),
           ),
           GoRoute(
             path: RoutePaths.designsColours,
@@ -176,13 +291,6 @@ GoRouter createAppRouter(AppConfig config) {
           ),
           // Workers, Assignments & Historical Rates
           GoRoute(
-            path: RoutePaths.workers,
-            pageBuilder: (context, state) => AppMotion.buildTabPage(
-              state: state,
-              child: const WorkerListPage(),
-            ),
-          ),
-          GoRoute(
             path: RoutePaths.workerCreate,
             pageBuilder: (context, state) => AppMotion.buildPage(
               state: state,
@@ -243,22 +351,6 @@ GoRouter createAppRouter(AppConfig config) {
             ),
           ),
           // Stock Movements, Issue & Receive Return
-          GoRoute(
-            path: RoutePaths.stockMovements,
-            pageBuilder: (context, state) {
-              final pushed = GoRouter.of(context).canPop();
-              if (pushed) {
-                return AppMotion.buildPage(
-                  state: state,
-                  child: const StockMovementsPage(embedded: false),
-                );
-              }
-              return AppMotion.buildTabPage(
-                state: state,
-                child: const StockMovementsPage(embedded: true),
-              );
-            },
-          ),
           GoRoute(
             path: RoutePaths.stockIssuePath,
             pageBuilder: (context, state) => AppMotion.buildPage(
@@ -411,22 +503,6 @@ GoRouter createAppRouter(AppConfig config) {
           ),
           // Centralized Settings & Help Hub
           GoRoute(
-            path: RoutePaths.settings,
-            pageBuilder: (context, state) {
-              final pushed = GoRouter.of(context).canPop();
-              if (pushed) {
-                return AppMotion.buildPage(
-                  state: state,
-                  child: SettingsHomePage(config: config, showAppBar: true),
-                );
-              }
-              return AppMotion.buildTabPage(
-                state: state,
-                child: SettingsHomePage(config: config),
-              );
-            },
-          ),
-          GoRoute(
             path: RoutePaths.settingsAppearance,
             pageBuilder: (context, state) => AppMotion.buildPage(
               state: state,
@@ -505,9 +581,51 @@ GoRouter createAppRouter(AppConfig config) {
               child: AboutStitchFlowPage(config: config),
             ),
           ),
+          // V1.5 — Cloud Auth & Sync Center
+          GoRoute(
+            path: RoutePaths.authLogin,
+            pageBuilder: (context, state) =>
+                AppMotion.buildPage(state: state, child: const LoginPage()),
+          ),
+          GoRoute(
+            path: RoutePaths.settingsAccount,
+            pageBuilder: (context, state) => AppMotion.buildPage(
+              state: state,
+              child: const AccountSettingsPage(),
+            ),
+          ),
+          GoRoute(
+            path: RoutePaths.settingsSync,
+            pageBuilder: (context, state) => AppMotion.buildPage(
+              state: state,
+              child: const SyncCenterPage(),
+            ),
+          ),
+          GoRoute(
+            path: RoutePaths.settingsDataHealth,
+            pageBuilder: (context, state) => AppMotion.buildPage(
+              state: state,
+              child: const DataHealthPage(),
+            ),
+          ),
+          GoRoute(
+            path: RoutePaths.settingsTeam,
+            pageBuilder: (context, state) => AppMotion.buildPage(
+              state: state,
+              child: const TeamManagementPage(),
+            ),
+          ),
+          GoRoute(
+            path: RoutePaths.settingsSyncConflicts,
+            pageBuilder: (context, state) => AppMotion.buildPage(
+              state: state,
+              child: const SyncConflictInspectorPage(),
+            ),
+          ),
         ],
       ),
       GoRoute(
+        parentNavigatorKey: rootNavigatorKey,
         path: RoutePaths.showcase,
         pageBuilder: (context, state) => AppMotion.buildPage(
           state: state,
@@ -518,28 +636,276 @@ GoRouter createAppRouter(AppConfig config) {
   );
 }
 
-void _navigatePrimaryTab(BuildContext context, int index) {
+void _navigatePrimaryTab(
+  BuildContext context,
+  int index, [
+  PrimaryTabRefreshBus? refreshBus,
+]) {
   final safeIndex = index.clamp(0, _primaryTabRoutes.length - 1);
+  refreshBus?.onTabSelected(safeIndex);
   context.go(_primaryTabRoutes[safeIndex]);
+}
+
+List<({String id, String label, IconData icon, String route})>
+_buildExtraRoutes(BuildContext context) {
+  final l10n = context.l10n;
+  return <({String id, String label, IconData icon, String route})>[
+    (
+      id: 'productionHistory',
+      label: l10n.navProductionHistory,
+      icon: AppIcons.productionHistory,
+      route: RoutePaths.productionHistory,
+    ),
+    (
+      id: 'inspectionQueue',
+      label: l10n.navInspectionQueue,
+      icon: AppIcons.qcInspect,
+      route: RoutePaths.inspectionQueue,
+    ),
+    (
+      id: 'processHistory',
+      label: l10n.navProcessHistory,
+      icon: AppIcons.processHistory,
+      route: RoutePaths.processProductionHistory,
+    ),
+    (
+      id: 'designsColours',
+      label: l10n.navDesignsColours,
+      icon: AppIcons.designs,
+      route: RoutePaths.designsColours,
+    ),
+    (
+      id: 'processes',
+      label: l10n.navProcesses,
+      icon: AppIcons.process,
+      route: RoutePaths.processes,
+    ),
+    (
+      id: 'inventory',
+      label: l10n.navInventory,
+      icon: AppIcons.inventory,
+      route: RoutePaths.inventory,
+    ),
+    (
+      id: 'accounting',
+      label: l10n.navAccounting,
+      icon: AppIcons.accounting,
+      route: RoutePaths.accounting,
+    ),
+    (
+      id: 'reports',
+      label: l10n.navReports,
+      icon: AppIcons.reports,
+      route: RoutePaths.reports,
+    ),
+    (
+      id: 'help',
+      label: l10n.settingsHelpTitle,
+      icon: AppIcons.guide,
+      route: RoutePaths.settingsHelp,
+    ),
+  ];
+}
+
+List<ResponsiveNavDestination> _buildPrimaryDestinations(BuildContext context) {
+  final l10n = context.l10n;
+  int? syncAttentionBadge;
+  final syncCubit = context.read<SyncCubit?>();
+  if (syncCubit != null) {
+    final syncState = context.watch<SyncCubit>().state;
+    final attentionCount =
+        syncState.failedItems.length +
+        (syncState.phase == SyncPhase.needsAttention &&
+                syncState.failedItems.isEmpty
+            ? 1
+            : 0);
+    if (attentionCount > 0) {
+      syncAttentionBadge = attentionCount;
+    }
+  }
+  return [
+    ResponsiveNavDestination(
+      label: l10n.navDashboard,
+      icon: AppIcons.dashboard,
+      selectedIcon: AppIcons.dashboardSelected,
+    ),
+    ResponsiveNavDestination(
+      label: l10n.navLots,
+      icon: AppIcons.lot,
+      selectedIcon: AppIcons.lotsSelected,
+    ),
+    ResponsiveNavDestination(
+      label: l10n.navStockShort,
+      icon: AppIcons.stockMovements,
+      selectedIcon: AppIcons.stockMovements,
+    ),
+    ResponsiveNavDestination(
+      label: l10n.navWorkers,
+      icon: AppIcons.workers,
+      selectedIcon: AppIcons.workersSelected,
+    ),
+    ResponsiveNavDestination(
+      label: l10n.navSettings,
+      icon: AppIcons.settings,
+      selectedIcon: AppIcons.settingsSelected,
+      badgeCount: syncAttentionBadge,
+    ),
+  ];
+}
+
+Map<ShortcutActivator, VoidCallback> _buildGlobalShortcuts(
+  BuildContext context, {
+  required ValueChanged<int> onSelectTab,
+}) {
+  const digitKeys = [
+    LogicalKeyboardKey.digit1,
+    LogicalKeyboardKey.digit2,
+    LogicalKeyboardKey.digit3,
+    LogicalKeyboardKey.digit4,
+    LogicalKeyboardKey.digit5,
+  ];
+  return <ShortcutActivator, VoidCallback>{
+    for (var i = 0; i < digitKeys.length; i++)
+      SingleActivator(digitKeys[i], alt: true): () => onSelectTab(i),
+    const SingleActivator(LogicalKeyboardKey.keyK, control: true): () =>
+        showGlobalSearch(context),
+    const SingleActivator(LogicalKeyboardKey.keyK, meta: true): () =>
+        showGlobalSearch(context),
+    const SingleActivator(LogicalKeyboardKey.escape): () =>
+        GoRouter.of(context).routerDelegate.popRoute(),
+  };
+}
+
+/// Hosts the 5 alive primary tabs inside [StatefulShellRoute] with a smooth
+/// 150ms zero-blank cross-fade.
+///
+/// - On Compact mobile (`< 600dp`), renders the Mobile AppBar and Bottom
+///   NavigationBar inside this page itself, so pushing any detail/form sibling
+///   route transitions cleanly OVER the tab chrome with zero layout jump or
+///   unmount blink.
+/// - On Tablet / Desktop (`>= 600dp`), renders the tab stack directly because
+///   [StitchFlowShellScaffold] already provides the persistent Rail / Sidebar.
+final class _PrimaryTabsViewport extends StatelessWidget {
+  const _PrimaryTabsViewport({
+    required this.config,
+    required this.navigationShell,
+    required this.tabRefreshBus,
+    required this.children,
+  });
+
+  final AppConfig config;
+  final StatefulNavigationShell navigationShell;
+  final PrimaryTabRefreshBus tabRefreshBus;
+  final List<Widget> children;
+
+  void _onSelectTab(int index) {
+    final safeIndex = index.clamp(0, _primaryTabRoutes.length - 1);
+    tabRefreshBus.onTabSelected(safeIndex);
+    navigationShell.goBranch(
+      safeIndex,
+      initialLocation: safeIndex == navigationShell.currentIndex,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
+    final isCompact = AppBreakpoints.fromWidth(width).isCompact;
+    final tabStack = AppCrossFadeIndexedStack(
+      index: navigationShell.currentIndex,
+      children: children,
+    );
+
+    if (!isCompact) {
+      return tabStack;
+    }
+
+    final l10n = context.l10n;
+    final appTitle = config.isDev ? l10n.appTitleDev : l10n.appTitle;
+    final router = GoRouter.of(context);
+    final extraRoutes = _buildExtraRoutes(context);
+
+    return ResponsiveNavigation(
+      title: appTitle,
+      subtitle: l10n.appTagline,
+      selectedIndex: navigationShell.currentIndex,
+      showMobileChrome: true,
+      onDestinationSelected: _onSelectTab,
+      compactActions: [
+        const SyncStatusBadge(compact: true),
+        GuideTarget(
+          id: GuideTargetId.appBarGuide,
+          child: AppIconButton(
+            icon: AppIcons.help,
+            tooltip: l10n.guideTooltip,
+            onPressed: () => GuideQuickMenuSheet.show(context),
+          ),
+        ),
+        GuideTarget(
+          id: GuideTargetId.appBarSearch,
+          child: AppIconButton(
+            icon: AppIcons.search,
+            tooltip: l10n.uxSearchTooltip,
+            onPressed: () => showGlobalSearch(context),
+          ),
+        ),
+        BlocBuilder<AppLockCubit, AppLockState>(
+          builder: (context, lockState) {
+            return PopupMenuButton<VoidCallback>(
+              tooltip: MaterialLocalizations.of(context).showMenuTooltip,
+              icon: const Icon(AppIcons.more),
+              onSelected: (action) => action(),
+              itemBuilder: (_) => [
+                for (final item in extraRoutes)
+                  PopupMenuItem<VoidCallback>(
+                    value: () => router.push(item.route),
+                    child: ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: Icon(item.icon),
+                      title: Text(item.label),
+                    ),
+                  ),
+                if (lockState.isPinEnabled) ...[
+                  const PopupMenuDivider(),
+                  PopupMenuItem<VoidCallback>(
+                    value: () => context.read<AppLockCubit>().lockNow(),
+                    child: ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: const Icon(AppIcons.lock),
+                      title: Text(l10n.securityLockNowAction),
+                    ),
+                  ),
+                ],
+              ],
+            );
+          },
+        ),
+      ],
+      destinations: _buildPrimaryDestinations(context),
+      body: tabStack,
+    );
+  }
 }
 
 /// Persistent adaptive GoRouter shell:
 /// - Keeps Desktop Sidebar & Tablet Rail mounted across all 45+ routes
 /// - Computes active primary/secondary destination highlight and clickable
 ///   breadcrumbs directly from the current URL [location]
-/// - On Mobile (`< 600dp`), renders the 5-tab Bottom Bar on root routes and
-///   lets detail/form pages render full-screen with standard back navigation.
+/// - On Mobile (`< 600dp`), keeps a single stable passthrough tree so the
+///   nested Navigator is NEVER reparented or stripped of chrome mid-transition.
 final class StitchFlowShellScaffold extends StatelessWidget {
   const StitchFlowShellScaffold({
     super.key,
     required this.config,
     required this.location,
     required this.child,
+    this.tabRefreshBus,
   });
 
   final AppConfig config;
   final String location;
   final Widget child;
+  final PrimaryTabRefreshBus? tabRefreshBus;
 
   bool get _isPrimaryRootRoute =>
       location == RoutePaths.home ||
@@ -740,6 +1106,16 @@ final class StitchFlowShellScaffold extends StatelessWidget {
         items.add(AppBreadcrumbItem(label: l10n.settingsStockLabourTitle));
       } else if (location == RoutePaths.settingsAppearance) {
         items.add(AppBreadcrumbItem(label: l10n.settingsAppearanceTitle));
+      } else if (location == RoutePaths.settingsAccount) {
+        items.add(AppBreadcrumbItem(label: l10n.authAccountTitle));
+      } else if (location == RoutePaths.settingsSync) {
+        items.add(AppBreadcrumbItem(label: l10n.syncCenterTitle));
+      } else if (location == RoutePaths.settingsDataHealth) {
+        items.add(AppBreadcrumbItem(label: l10n.dataHealthHeading));
+      } else if (location == RoutePaths.settingsTeam) {
+        items.add(AppBreadcrumbItem(label: l10n.teamHeading));
+      } else if (location == RoutePaths.settingsSyncConflicts) {
+        items.add(AppBreadcrumbItem(label: l10n.syncConflictsTitle));
       }
       return items;
     }
@@ -754,70 +1130,34 @@ final class StitchFlowShellScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.sizeOf(context).width;
+    final sizeClass = AppBreakpoints.fromWidth(width);
+
+    // On mobile (< 600dp), keep the outer shell tree 100% invariant across
+    // every route so pushing/popping detail pages or opening menus never
+    // reparents the Navigator or snaps the Bottom Bar / AppBar away.
+    if (sizeClass.isCompact) {
+      return _RootBackGuard(
+        location: location,
+        tabRefreshBus: tabRefreshBus,
+        child: CallbackShortcuts(
+          bindings: _buildGlobalShortcuts(
+            context,
+            onSelectTab: (idx) =>
+                _navigatePrimaryTab(context, idx, tabRefreshBus),
+          ),
+          child: ResponsiveShellScope(
+            sizeClass: sizeClass,
+            hasPersistentChrome: false,
+            child: child,
+          ),
+        ),
+      );
+    }
+
     final l10n = context.l10n;
     final appTitle = config.isDev ? l10n.appTitleDev : l10n.appTitle;
-    final router = GoRouter.of(context);
-    final isRootChrome = _isPrimaryRootRoute && !router.canPop();
-
-    // Secondary screens: sidebar on desktop, drawer on tablet, and the
-    // "More" menu on phones.
-    final extraRoutes =
-        <({String id, String label, IconData icon, String route})>[
-          (
-            id: 'productionHistory',
-            label: l10n.navProductionHistory,
-            icon: AppIcons.productionHistory,
-            route: RoutePaths.productionHistory,
-          ),
-          (
-            id: 'inspectionQueue',
-            label: l10n.navInspectionQueue,
-            icon: AppIcons.qcInspect,
-            route: RoutePaths.inspectionQueue,
-          ),
-          (
-            id: 'processHistory',
-            label: l10n.navProcessHistory,
-            icon: AppIcons.processHistory,
-            route: RoutePaths.processProductionHistory,
-          ),
-          (
-            id: 'designsColours',
-            label: l10n.navDesignsColours,
-            icon: AppIcons.designs,
-            route: RoutePaths.designsColours,
-          ),
-          (
-            id: 'processes',
-            label: l10n.navProcesses,
-            icon: AppIcons.process,
-            route: RoutePaths.processes,
-          ),
-          (
-            id: 'inventory',
-            label: l10n.navInventory,
-            icon: AppIcons.inventory,
-            route: RoutePaths.inventory,
-          ),
-          (
-            id: 'accounting',
-            label: l10n.navAccounting,
-            icon: AppIcons.accounting,
-            route: RoutePaths.accounting,
-          ),
-          (
-            id: 'reports',
-            label: l10n.navReports,
-            icon: AppIcons.reports,
-            route: RoutePaths.reports,
-          ),
-          (
-            id: 'help',
-            label: l10n.settingsHelpTitle,
-            icon: AppIcons.guide,
-            route: RoutePaths.settingsHelp,
-          ),
-        ];
+    final extraRoutes = _buildExtraRoutes(context);
     // Sidebar / drawer: sibling sections, so replace the location.
     final extraActions = <ResponsiveNavActionItem>[
       for (final e in extraRoutes)
@@ -831,14 +1171,16 @@ final class StitchFlowShellScaffold extends StatelessWidget {
 
     return _RootBackGuard(
       location: location,
+      tabRefreshBus: tabRefreshBus,
       child: ResponsiveNavigation(
         title: appTitle,
         subtitle: l10n.appTagline,
         selectedIndex: _selectedPrimaryIndex,
         activeExtraActionId: _activeExtraId,
-        showMobileChrome: isRootChrome,
+        showMobileChrome: _isPrimaryRootRoute,
         breadcrumbs: _buildBreadcrumbs(context),
-        onDestinationSelected: (idx) => _navigatePrimaryTab(context, idx),
+        onDestinationSelected: (idx) =>
+            _navigatePrimaryTab(context, idx, tabRefreshBus),
         extraShortcuts: {
           // Ctrl+K (Cmd+K on Mac): search lots, workers, processes or start a
           // quick action from anywhere.
@@ -851,55 +1193,18 @@ final class StitchFlowShellScaffold extends StatelessWidget {
           const SingleActivator(LogicalKeyboardKey.escape): () =>
               GoRouter.of(context).routerDelegate.popRoute(),
         },
-        // Phones get Search plus one "More" menu instead of six icons, so the
-        // toolbar never overflows at 320dp.
-        compactActions: [
-          AppIconButton(
-            icon: AppIcons.search,
-            tooltip: l10n.uxSearchTooltip,
-            onPressed: () => showGlobalSearch(context),
-          ),
-          BlocBuilder<AppLockCubit, AppLockState>(
-            builder: (context, lockState) {
-              return PopupMenuButton<VoidCallback>(
-                tooltip: MaterialLocalizations.of(context).showMenuTooltip,
-                icon: const Icon(AppIcons.more),
-                onSelected: (action) => action(),
-                itemBuilder: (_) => [
-                  // Push (not go) so the system back button returns to the
-                  // tab the menu was opened from instead of closing the app.
-                  for (final item in extraRoutes)
-                    PopupMenuItem<VoidCallback>(
-                      // Captured router: the open menu makes canPop() true, which rebuilds
-                      // the shell and unmounts this menu's own context.
-                      value: () => router.push(item.route),
-                      child: ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: Icon(item.icon),
-                        title: Text(item.label),
-                      ),
-                    ),
-                  if (lockState.isPinEnabled) ...[
-                    const PopupMenuDivider(),
-                    PopupMenuItem<VoidCallback>(
-                      value: () => context.read<AppLockCubit>().lockNow(),
-                      child: ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        leading: const Icon(AppIcons.lock),
-                        title: Text(l10n.securityLockNowAction),
-                      ),
-                    ),
-                  ],
-                ],
-              );
-            },
-          ),
-        ],
         actions: [
-          AppIconButton(
-            icon: AppIcons.search,
-            tooltip: l10n.uxSearchTooltip,
-            onPressed: () => showGlobalSearch(context),
+          const Padding(
+            padding: EdgeInsets.only(right: 8),
+            child: Center(child: SyncStatusBadge()),
+          ),
+          GuideTarget(
+            id: GuideTargetId.appBarSearch,
+            child: AppIconButton(
+              icon: AppIcons.search,
+              tooltip: l10n.uxSearchTooltip,
+              onPressed: () => showGlobalSearch(context),
+            ),
           ),
           BlocBuilder<AppLockCubit, AppLockState>(
             builder: (context, lockState) {
@@ -926,40 +1231,17 @@ final class StitchFlowShellScaffold extends StatelessWidget {
             tooltip: l10n.navReports,
             onPressed: () => context.push(RoutePaths.reports),
           ),
-          AppIconButton(
-            icon: AppIcons.help,
-            tooltip: l10n.settingsHelpTitle,
-            onPressed: () => context.push(RoutePaths.settingsHelp),
+          GuideTarget(
+            id: GuideTargetId.appBarGuide,
+            child: AppIconButton(
+              icon: AppIcons.help,
+              tooltip: l10n.guideTooltip,
+              onPressed: () => GuideQuickMenuSheet.show(context),
+            ),
           ),
         ],
         sidebarExtraActions: extraActions,
-        destinations: [
-          ResponsiveNavDestination(
-            label: l10n.navDashboard,
-            icon: AppIcons.dashboard,
-            selectedIcon: AppIcons.dashboardSelected,
-          ),
-          ResponsiveNavDestination(
-            label: l10n.navLots,
-            icon: AppIcons.lot,
-            selectedIcon: AppIcons.lotsSelected,
-          ),
-          ResponsiveNavDestination(
-            label: l10n.navStockShort,
-            icon: AppIcons.stockMovements,
-            selectedIcon: AppIcons.stockMovements,
-          ),
-          ResponsiveNavDestination(
-            label: l10n.navWorkers,
-            icon: AppIcons.workers,
-            selectedIcon: AppIcons.workersSelected,
-          ),
-          ResponsiveNavDestination(
-            label: l10n.navSettings,
-            icon: AppIcons.settings,
-            selectedIcon: AppIcons.settingsSelected,
-          ),
-        ],
+        destinations: _buildPrimaryDestinations(context),
         body: child,
       ),
     );
@@ -973,10 +1255,15 @@ final class StitchFlowShellScaffold extends StatelessWidget {
 ///   press within 2 seconds.
 /// Without this, back on a screen opened with `go()` closed the whole app.
 final class _RootBackGuard extends StatelessWidget {
-  const _RootBackGuard({required this.location, required this.child});
+  const _RootBackGuard({
+    required this.location,
+    required this.child,
+    this.tabRefreshBus,
+  });
 
   final String location;
   final Widget child;
+  final PrimaryTabRefreshBus? tabRefreshBus;
 
   static DateTime? _lastBackOnHome;
   static const Duration _exitWindow = Duration(seconds: 2);
@@ -989,7 +1276,7 @@ final class _RootBackGuard extends StatelessWidget {
         if (didPop) return;
         if (location != RoutePaths.home) {
           _lastBackOnHome = null;
-          context.go(RoutePaths.home);
+          _navigatePrimaryTab(context, 0, tabRefreshBus);
           return;
         }
         if (defaultTargetPlatform != TargetPlatform.android) return;

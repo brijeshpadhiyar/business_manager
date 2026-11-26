@@ -12,7 +12,13 @@ import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/theme/theme_cubit.dart';
 import 'package:business_manager/core/theme/theme_state.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
+import 'package:business_manager/features/auth/domain/entities/auth_entities.dart';
+import 'package:business_manager/features/auth/presentation/bloc/auth_cubit.dart';
+import 'package:business_manager/features/guidance/domain/entities/guide_entities.dart';
+import 'package:business_manager/features/guidance/presentation/registry/guide_target_registry.dart';
 import 'package:business_manager/features/security/presentation/bloc/app_lock_cubit.dart';
+import 'package:business_manager/features/sync/domain/entities/sync_entities.dart';
+import 'package:business_manager/features/sync/presentation/bloc/sync_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -74,45 +80,113 @@ final class SettingsHomePage extends StatelessWidget {
               const SizedBox(height: AppSpacing.lg),
             ],
 
+            // Section 0 (v1.5): Account & Cloud Sync
+            if (context.read<AuthCubit?>() != null &&
+                context.read<SyncCubit?>() != null) ...[
+              AppMotionEntrance(
+                index: 0,
+                slideOffsetY: 0,
+                child: _SettingsSectionCard(
+                  children: [
+                    BlocBuilder<AuthCubit, AuthState>(
+                      builder: (context, authState) => _SettingsTile(
+                        icon: authState.isAuthenticated
+                            ? AppIcons.account
+                            : AppIcons.signIn,
+                        iconBg: authState.isAuthenticated
+                            ? context.semanticColors.goodStockContainer
+                            : colorScheme.primaryContainer,
+                        iconColor: authState.isAuthenticated
+                            ? context.semanticColors.goodStock
+                            : colorScheme.onPrimaryContainer,
+                        title: l10n.authAccountTitle,
+                        subtitle: authState.isAuthenticated
+                            ? authState.user!.primaryLabel
+                            : l10n.authSignInPromptCardSubtitle,
+                        badgeText: authState.isAuthenticated
+                            ? l10n.authSignedInBadge
+                            : l10n.authOfflineModeBadge,
+                        onTap: () => context.push(
+                          authState.isAuthenticated
+                              ? RoutePaths.settingsAccount
+                              : RoutePaths.authLogin,
+                        ),
+                      ),
+                    ),
+                    const Divider(indent: 64),
+                    BlocBuilder<SyncCubit, SyncState>(
+                      builder: (context, syncState) => _SettingsTile(
+                        icon: AppIcons.cloudSync,
+                        iconBg: colorScheme.secondaryContainer,
+                        iconColor: colorScheme.onSecondaryContainer,
+                        title: l10n.syncCenterTitle,
+                        subtitle: l10n.syncCenterSubtitle,
+                        badgeText: switch (syncState.phase) {
+                          SyncPhase.synced => l10n.syncStatusSynced,
+                          SyncPhase.syncing => l10n.syncStatusSyncing,
+                          SyncPhase.offline => l10n.syncStatusOffline,
+                          SyncPhase.needsAttention =>
+                            l10n.syncStatusNeedsAttention,
+                          SyncPhase.awaitingMergeChoice => l10n.syncMergeTitle,
+                          SyncPhase.localOnly => l10n.syncStatusLocalOnly,
+                        },
+                        onTap: () => context.push(RoutePaths.settingsSync),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
+            ],
+
             // Section 1: App & Workshop Setup
             AppMotionEntrance(
               index: 0,
               slideOffsetY: 0,
               child: _SettingsSectionCard(
               children: [
-                BlocBuilder<ThemeCubit, ThemeState>(
-                  builder: (context, themeState) =>
-                      BlocBuilder<LocaleCubit, LocaleState>(
-                        builder: (context, localeState) => _SettingsTile(
-                          icon: AppIcons.appearance,
-                          iconBg: colorScheme.secondaryContainer,
-                          iconColor: colorScheme.onSecondaryContainer,
-                          title: l10n.settingsAppearanceTitle,
-                          subtitle: l10n.settingsAppearanceSubtitle,
-                          badgeText:
-                              '${_themeLabel(context, themeState.preference)} • ${_localeLabel(context, localeState.preference)}',
-                          onTap: () =>
-                              context.push(RoutePaths.settingsAppearance),
+                GuideTarget(
+                  id: GuideTargetId.settingsAppearanceTile,
+                  child: BlocBuilder<ThemeCubit, ThemeState>(
+                    builder: (context, themeState) =>
+                        BlocBuilder<LocaleCubit, LocaleState>(
+                          builder: (context, localeState) => _SettingsTile(
+                            icon: AppIcons.appearance,
+                            iconBg: colorScheme.secondaryContainer,
+                            iconColor: colorScheme.onSecondaryContainer,
+                            title: l10n.settingsAppearanceTitle,
+                            subtitle: l10n.settingsAppearanceSubtitle,
+                            badgeText:
+                                '${_themeLabel(context, themeState.preference)} • ${_localeLabel(context, localeState.preference)}',
+                            onTap: () =>
+                                context.push(RoutePaths.settingsAppearance),
+                          ),
                         ),
-                      ),
+                  ),
                 ),
                 const Divider(indent: 64),
-                _SettingsTile(
-                  icon: AppIcons.business,
-                  iconBg: colorScheme.primaryContainer,
-                  iconColor: colorScheme.onPrimaryContainer,
-                  title: l10n.settingsBusinessTitle,
-                  subtitle: l10n.settingsBusinessSubtitle,
-                  onTap: () => context.push(RoutePaths.settingsBusinessProfile),
+                GuideTarget(
+                  id: GuideTargetId.settingsBusinessProfileTile,
+                  child: _SettingsTile(
+                    icon: AppIcons.business,
+                    iconBg: colorScheme.primaryContainer,
+                    iconColor: colorScheme.onPrimaryContainer,
+                    title: l10n.settingsBusinessTitle,
+                    subtitle: l10n.settingsBusinessSubtitle,
+                    onTap: () => context.push(RoutePaths.settingsBusinessProfile),
+                  ),
                 ),
                 const Divider(indent: 64),
-                _SettingsTile(
-                  icon: AppIcons.stockLabourSettings,
-                  iconBg: context.semanticColors.pendingContainer,
-                  iconColor: context.semanticColors.pending,
-                  title: l10n.settingsStockLabourTitle,
-                  subtitle: l10n.settingsStockLabourSubtitle,
-                  onTap: () => context.push(RoutePaths.settingsStockLabour),
+                GuideTarget(
+                  id: GuideTargetId.settingsStockLabourTile,
+                  child: _SettingsTile(
+                    icon: AppIcons.stockLabourSettings,
+                    iconBg: context.semanticColors.pendingContainer,
+                    iconColor: context.semanticColors.pending,
+                    title: l10n.settingsStockLabourTitle,
+                    subtitle: l10n.settingsStockLabourSubtitle,
+                    onTap: () => context.push(RoutePaths.settingsStockLabour),
+                  ),
                 ),
                 const Divider(indent: 64),
                 _SettingsTile(
@@ -133,24 +207,36 @@ final class SettingsHomePage extends StatelessWidget {
               index: 1,
               child: _SettingsSectionCard(
               children: [
-                BlocBuilder<AppLockCubit, AppLockState>(
-                  builder: (context, lockState) => _SettingsTile(
-                    icon: lockState.isPinEnabled
-                        ? AppIcons.security
-                        : AppIcons.lock,
-                    iconBg: lockState.isPinEnabled
-                        ? context.semanticColors.goodStockContainer
-                        : colorScheme.surfaceContainerHighest,
-                    iconColor: lockState.isPinEnabled
-                        ? context.semanticColors.goodStock
-                        : colorScheme.onSurfaceVariant,
-                    title: l10n.settingsSecurityTitle,
-                    subtitle: l10n.settingsSecuritySubtitle,
-                    badgeText: lockState.isPinEnabled
-                        ? l10n.securityBadgeEnabled
-                        : l10n.securityBadgeOff,
-                    onTap: () => context.push(RoutePaths.settingsSecurity),
+                GuideTarget(
+                  id: GuideTargetId.settingsSecurityTile,
+                  child: BlocBuilder<AppLockCubit, AppLockState>(
+                    builder: (context, lockState) => _SettingsTile(
+                      icon: lockState.isPinEnabled
+                          ? AppIcons.security
+                          : AppIcons.lock,
+                      iconBg: lockState.isPinEnabled
+                          ? context.semanticColors.goodStockContainer
+                          : colorScheme.surfaceContainerHighest,
+                      iconColor: lockState.isPinEnabled
+                          ? context.semanticColors.goodStock
+                          : colorScheme.onSurfaceVariant,
+                      title: l10n.settingsSecurityTitle,
+                      subtitle: l10n.settingsSecuritySubtitle,
+                      badgeText: lockState.isPinEnabled
+                          ? l10n.securityBadgeEnabled
+                          : l10n.securityBadgeOff,
+                      onTap: () => context.push(RoutePaths.settingsSecurity),
+                    ),
                   ),
+                ),
+                const Divider(indent: 64),
+                _SettingsTile(
+                  icon: AppIcons.team,
+                  iconBg: colorScheme.primaryContainer,
+                  iconColor: colorScheme.onPrimaryContainer,
+                  title: l10n.settingsTeamTitle,
+                  subtitle: l10n.settingsTeamSubtitle,
+                  onTap: () => context.push(RoutePaths.settingsTeam),
                 ),
                 const Divider(indent: 64),
                 _SettingsTile(
@@ -162,22 +248,37 @@ final class SettingsHomePage extends StatelessWidget {
                   onTap: () => context.push(RoutePaths.settingsNotifications),
                 ),
                 const Divider(indent: 64),
-                _SettingsTile(
-                  icon: AppIcons.backup,
-                  iconBg: context.semanticColors.goodStockContainer,
-                  iconColor: context.semanticColors.goodStock,
-                  title: l10n.settingsBackupTitle,
-                  subtitle: l10n.settingsBackupSubtitle,
-                  onTap: () => context.push(RoutePaths.settingsBackup),
+                GuideTarget(
+                  id: GuideTargetId.settingsBackupTile,
+                  child: _SettingsTile(
+                    icon: AppIcons.backup,
+                    iconBg: context.semanticColors.goodStockContainer,
+                    iconColor: context.semanticColors.goodStock,
+                    title: l10n.settingsBackupTitle,
+                    subtitle: l10n.settingsBackupSubtitle,
+                    onTap: () => context.push(RoutePaths.settingsBackup),
+                  ),
                 ),
                 const Divider(indent: 64),
                 _SettingsTile(
-                  icon: AppIcons.guide,
-                  iconBg: context.semanticColors.advanceCreditContainer,
-                  iconColor: context.semanticColors.advanceCredit,
-                  title: l10n.settingsHelpTitle,
-                  subtitle: l10n.settingsHelpSubtitle,
-                  onTap: () => context.push(RoutePaths.settingsHelp),
+                  icon: AppIcons.dataHealth,
+                  iconBg: colorScheme.primaryContainer,
+                  iconColor: colorScheme.onPrimaryContainer,
+                  title: l10n.settingsDataHealthTitle,
+                  subtitle: l10n.settingsDataHealthSubtitle,
+                  onTap: () => context.push(RoutePaths.settingsDataHealth),
+                ),
+                const Divider(indent: 64),
+                GuideTarget(
+                  id: GuideTargetId.settingsHelpTile,
+                  child: _SettingsTile(
+                    icon: AppIcons.guide,
+                    iconBg: context.semanticColors.advanceCreditContainer,
+                    iconColor: context.semanticColors.advanceCredit,
+                    title: l10n.settingsHelpTitle,
+                    subtitle: l10n.settingsHelpSubtitle,
+                    onTap: () => context.push(RoutePaths.settingsHelp),
+                  ),
                 ),
               ],
             ),

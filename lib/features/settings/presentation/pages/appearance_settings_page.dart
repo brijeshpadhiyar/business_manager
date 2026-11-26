@@ -3,6 +3,7 @@ import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/localization/locale_cubit.dart';
 import 'package:business_manager/core/localization/locale_state.dart';
+import 'package:business_manager/core/theme/density_cubit.dart';
 import 'package:business_manager/core/theme/theme_cubit.dart';
 import 'package:business_manager/core/theme/theme_state.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
@@ -104,8 +105,47 @@ final class AppearanceSettingsPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.md),
+          if (context.read<DensityCubit?>() != null) ...[
+            AppMotionEntrance(
+              index: 2,
+              child: AppCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    AppHeading(
+                      l10n.densitySectionTitle,
+                      level: AppHeadingLevel.h3,
+                    ),
+                    const SizedBox(height: AppSpacing.sm),
+                    BlocBuilder<DensityCubit, DensityState>(
+                      builder: (context, densityState) =>
+                          AppRadio<UiDensityMode>(
+                            groupValue: densityState.mode,
+                            onChanged: (mode) {
+                              if (mode != null) {
+                                context.read<DensityCubit>().setMode(mode);
+                              }
+                            },
+                            options: [
+                              AppRadioOption(
+                                value: UiDensityMode.comfortable,
+                                label: l10n.densityComfortable,
+                              ),
+                              AppRadioOption(
+                                value: UiDensityMode.compact,
+                                label: l10n.densityCompact,
+                              ),
+                            ],
+                          ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+          ],
           AppMotionEntrance(
-            index: 2,
+            index: 3,
             child: AppCard(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,0 +1,52 @@
+name: StitchFlow CI
+
+on:
+  push:
+    branches: [main, 'v*']
+  pull_request:
+    branches: [main, 'v*']
+
+concurrency:
+  group: stitchflow-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality_and_web:
+    name: Analyze, Test, L10n & Web Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Verify EN/GU localization (0 untranslated keys)
+        run: |
+          flutter gen-l10n
+          python3 -c '
+          import json, pathlib, sys
+          p = pathlib.Path("l10n_untranslated.txt")
+          if p.exists():
+              data = json.loads(p.read_text(encoding="utf-8") or "{}")
+              if data:
+                  print("Untranslated l10n keys found:", data)
+                  sys.exit(1)
+          print("L10n check passed: 0 untranslated keys.")
+          '
+
+      - name: Static analysis
+        run: flutter analyze --no-pub --fatal-infos
+
+      - name: Run full test suite
+        run: flutter test --reporter expanded
+
+      - name: Verify Web release build
+        run: flutter build web --release

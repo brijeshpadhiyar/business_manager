@@ -2824,4 +2824,925 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get uxClearAll => 'બધું સાફ કરો';
+
+  @override
+  String get authSignInHeading => 'ક્લાઉડ સિંક માટે સાઇન ઇન કરો';
+
+  @override
+  String get authSignInSubtitle =>
+      'તમારા વર્કશોપનો ડેટા બધા ડિવાઇસ પર સિંક કરવા Google અથવા મોબાઇલ નંબરથી સાઇન ઇન કરો. ઓફલાઇન પણ ૧૦૦% કામ કરે છે.';
+
+  @override
+  String get authContinueWithGoogle => 'Google સાથે ચાલુ રાખો';
+
+  @override
+  String get authContinueWithPhone => 'મોબાઇલ નંબરથી ચાલુ રાખો';
+
+  @override
+  String get authContinueOffline => 'ઓફલાઇન ચાલુ રાખો (ફક્ત લોકલ)';
+
+  @override
+  String get authPhoneLabel => 'મોબાઇલ નંબર';
+
+  @override
+  String get authPhoneHint => '+91 98765 43210';
+
+  @override
+  String get authSendOtpAction => 'OTP મોકલો';
+
+  @override
+  String get authOtpLabel => '૬-અંકનો OTP કોડ';
+
+  @override
+  String get authOtpHint => '123456';
+
+  @override
+  String authOtpSentMessage(String phone) {
+    return '$phone પર વેરિફિકેશન કોડ મોકલવામાં આવ્યો છે';
+  }
+
+  @override
+  String get authVerifyOtpAction => 'વેરિફાય કરો અને સાઇન ઇન કરો';
+
+  @override
+  String get authChangePhoneAction => 'નંબર બદલો';
+
+  @override
+  String get authInvalidPhoneError =>
+      'માન્ય ૧૦-અંકનો મોબાઇલ નંબર અથવા +91 સાથે નંબર દાખલ કરો.';
+
+  @override
+  String get authCloudNotConfiguredBanner =>
+      'આ બિલ્ડમાં ક્લાઉડ સિંક કી સેટ નથી. તમે StitchFlow ૧૦૦% ઓફલાઇન વાપરી શકો છો.';
+
+  @override
+  String get authAccountTitle => 'એકાઉન્ટ અને ક્લાઉડ સિંક';
+
+  @override
+  String get authAccountSubtitle =>
+      'Google અને ફોન લોગિન, જોડાયેલા ડિવાઇસ અને સાઇન આઉટ મેનેજ કરો';
+
+  @override
+  String get authOfflineModeBadge => 'ઓફલાઇન મોડ';
+
+  @override
+  String get authSignedInBadge => 'સાઇન ઇન';
+
+  @override
+  String get authSignInPromptCardSubtitle =>
+      'બધા ડિવાઇસ પર ડેટા સિંક અને બેકઅપ માટે Google અથવા ફોન OTP થી સાઇન ઇન કરો';
+
+  @override
+  String get authLinkedIdentitiesHeading => 'જોડાયેલા લોગિન વિકલ્પો';
+
+  @override
+  String get authGoogleProvider => 'Google એકાઉન્ટ';
+
+  @override
+  String get authPhoneProvider => 'મોબાઇલ નંબર';
+
+  @override
+  String get authLinkedStatus => 'જોડાયેલ';
+
+  @override
+  String get authNotLinkedStatus => 'જોડાયેલ નથી';
+
+  @override
+  String get authLinkAction => 'જોડો';
+
+  @override
+  String get authLinkedDevicesHeading => 'સિંક થયેલા ડિવાઇસ';
+
+  @override
+  String get authCurrentDeviceBadge => 'આ ડિવાઇસ';
+
+  @override
+  String get authNoDevicesYet => 'હજુ સુધી કોઈ ક્લાઉડ ડિવાઇસ નોંધાયેલ નથી.';
+
+  @override
+  String get authSignOutAction => 'સાઇન આઉટ';
+
+  @override
+  String get authSignOutConfirmTitle => 'ક્લાઉડ સિંકમાંથી સાઇન આઉટ કરવું છે?';
+
+  @override
+  String get authSignOutConfirmBody =>
+      'તમારો લોકલ ડેટા આ ડિવાઇસ પર સુરક્ષિત રહેશે અને ફરી સાઇન ઇન કરો ત્યાં સુધી ક્લાઉડ સિંક થંભી જશે.';
+
+  @override
+  String authSignOutUnsyncedWarning(int count) {
+    return 'તમારા $count લોકલ ફેરફારો હજુ સિંક થયા નથી. સાઇન આઉટ કરતા પહેલા સિંક કરો.';
+  }
+
+  @override
+  String get authSyncAndSignOutAction => 'સિંક કરો અને સાઇન આઉટ કરો';
+
+  @override
+  String get authSignOutAnywayAction => 'છતાં સાઇન આઉટ કરો';
+
+  @override
+  String get syncCenterTitle => 'ક્લાઉડ સિંક સેન્ટર';
+
+  @override
+  String get syncCenterSubtitle => 'Supabase સાથે ઓફલાઇન-ફર્સ્ટ બંને બાજુ સિંક';
+
+  @override
+  String get syncStatusLocalOnly => 'ફક્ત લોકલ';
+
+  @override
+  String get syncStatusOffline => 'ઓફલાઇન';
+
+  @override
+  String get syncStatusSynced => 'સિંક થયેલ';
+
+  @override
+  String get syncStatusSyncing => 'સિંક થઈ રહ્યું છે…';
+
+  @override
+  String get syncStatusNeedsAttention => 'ધ્યાન જરૂરી';
+
+  @override
+  String syncStatusPending(int count) {
+    return '$count બાકી';
+  }
+
+  @override
+  String get syncNowAction => 'હવે સિંક કરો';
+
+  @override
+  String get syncRetryFailedAction => 'ફરી પ્રયાસ કરો';
+
+  @override
+  String get syncLastSyncedLabel => 'છેલ્લું સિંક';
+
+  @override
+  String get syncNeverSynced => 'હજુ સિંક થયું નથી';
+
+  @override
+  String get syncPendingRowsLabel => 'બાકી ડેટા ફેરફારો';
+
+  @override
+  String get syncPendingMediaLabel => 'બાકી ફોટો અપલોડ/ડાઉનલોડ';
+
+  @override
+  String get syncFailedItemsHeading => 'ફરી પ્રયાસ જરૂરી એન્ટ્રીઓ';
+
+  @override
+  String get syncMergeTitle => 'બંને જગ્યાએ ડેટા મળ્યો';
+
+  @override
+  String syncMergeSubtitle(int localCount, int cloudCount) {
+    return 'આ ડિવાઇસ પર $localCount લોકલ રેકોર્ડ અને ક્લાઉડ એકાઉન્ટમાં $cloudCount રેકોર્ડ છે. તમે કેવી રીતે આગળ વધવા માંગો છો?';
+  }
+
+  @override
+  String get syncMergeBothAction => 'લોકલ + ક્લાઉડ મર્જ કરો (ભલામણ કરેલ)';
+
+  @override
+  String get syncMergeBothDesc =>
+      'બધા લેજર સુરક્ષિત રીતે જોડે છે અને નવા સુધારા રાખે છે.';
+
+  @override
+  String get syncKeepCloudAction => 'ફક્ત ક્લાઉડ ડેટા રાખો';
+
+  @override
+  String get syncKeepCloudDesc =>
+      'આ ડિવાઇસનો લોકલ ડેટા બદલીને ક્લાઉડ એકાઉન્ટનો ડેટા લાવે છે.';
+
+  @override
+  String get syncKeepLocalAction => 'લોકલ રાખો અને ક્લાઉડ પર મોકલો';
+
+  @override
+  String get syncKeepLocalDesc =>
+      'આ ડિવાઇસના બધા લોકલ રેકોર્ડ ક્લાઉડ પર અપલોડ કરે છે.';
+
+  @override
+  String get securityCloudRecoveryTitle =>
+      'અથવા ક્લાઉડ એકાઉન્ટથી PIN રીસેટ કરો';
+
+  @override
+  String get securityCloudRecoverySubtitle =>
+      'ડેટા ગુમાવ્યા વગર લોકલ PIN રીસેટ કરવા તમારા સાઇન ઇન Google એકાઉન્ટને ફરી વેરિફાય કરો.';
+
+  @override
+  String get securityVerifyWithGoogleAction => 'Google થી વેરિફાય કરો';
+
+  @override
+  String get securityCloudReauthFailed =>
+      'ક્લાઉડ એકાઉન્ટ વેરિફિકેશન સાઇન ઇન માલિક સાથે મેળ ખાતું નથી.';
+
+  @override
+  String get stockPendingQcLabel => 'બાકી QC તપાસ';
+
+  @override
+  String get settingsDataHealthTitle => 'ડેટા હેલ્થ અને ડાયગ્નોસ્ટિક્સ';
+
+  @override
+  String get settingsDataHealthSubtitle =>
+      'SQLite અખંડિતતા, સ્ટોક સમીકરણ, લેજર સુમેળ અને સિંક કતાર ચકાસો';
+
+  @override
+  String get dataHealthHeading => 'ડેટા હેલ્થ સેન્ટર';
+
+  @override
+  String get dataHealthSubtitle =>
+      'તમારા સ્થાનિક StitchFlow ડેટાબેઝ પર સુરક્ષિત ચકાસણી અને સુમેળ તપાસ.';
+
+  @override
+  String get dataHealthRunCheckAction => 'હેલ્થ ચેક ચલાવો';
+
+  @override
+  String get dataHealthShareReportAction => 'ડાયગ્નોસ્ટિક રિપોર્ટ શેર કરો';
+
+  @override
+  String get dataHealthStatusHealthy => 'બધી ચકાસણી સ્વસ્થ';
+
+  @override
+  String get dataHealthStatusWarning => 'નાનું ધ્યાન જરૂરી';
+
+  @override
+  String get dataHealthStatusCritical => 'અખંડિતતા સમસ્યા મળી';
+
+  @override
+  String get dataHealthCheckedAtLabel => 'છેલ્લી તપાસ';
+
+  @override
+  String get dataHealthSchemaVersionLabel => 'સ્કીમા વર્ઝન';
+
+  @override
+  String get dataHealthDbSizeLabel => 'ડેટાબેઝ સાઇઝ';
+
+  @override
+  String get dataHealthSqliteIntegrityLabel => 'SQLite અખંડિતતા';
+
+  @override
+  String get dataHealthSqliteOk => 'ચકાસણી સફળ';
+
+  @override
+  String get dataHealthSqliteFailed => 'અખંડિતતા ભૂલ';
+
+  @override
+  String get dataHealthForeignKeysLabel => 'ફોરેન કી અખંડિતતા';
+
+  @override
+  String get dataHealthZeroViolations => '0 ઉલ્લંઘન';
+
+  @override
+  String dataHealthViolationsCount(int count) {
+    return '$count ઉલ્લંઘન';
+  }
+
+  @override
+  String get dataHealthStockReconciliationLabel => 'ગોલ્ડન સ્ટોક સમીકરણ';
+
+  @override
+  String dataHealthStockAllReconciled(int count) {
+    return 'બધા $count રંગો સુમેળમાં';
+  }
+
+  @override
+  String dataHealthStockIssuesCount(int count) {
+    return '$count તફાવત મળ્યા';
+  }
+
+  @override
+  String get dataHealthLedgerParityLabel => 'કારીગર લેજર સુમેળ';
+
+  @override
+  String get dataHealthLedgerParityOk => '0 સુમેળ સમસ્યા';
+
+  @override
+  String get dataHealthSyncQueueLabel => 'સિંક આઉટબોક્સ અને મીડિયા કતાર';
+
+  @override
+  String dataHealthSyncQueueSummary(int pending, int failed) {
+    return '$pending બાકી • $failed નિષ્ફળ';
+  }
+
+  @override
+  String get dataHealthMediaParityLabel => 'ખાનગી મીડિયા સુમેળ';
+
+  @override
+  String dataHealthMediaParitySummary(int orphans, int missing) {
+    return '$orphans વધારાની • $missing ખૂટતી';
+  }
+
+  @override
+  String get dataHealthMaintenanceHeading => 'સુરક્ષિત ઓડિટેડ જાળવણી';
+
+  @override
+  String get dataHealthWalCheckpointAction => 'WAL ચેકપોઇન્ટ ચલાવો';
+
+  @override
+  String get dataHealthWalCheckpointDesc =>
+      'SQLite WAL લોગને મુખ્ય ડેટાબેઝ ફાઇલમાં સુરક્ષિત રીતે સાચવે છે.';
+
+  @override
+  String get dataHealthWalCheckpointSuccess =>
+      'WAL ચેકપોઇન્ટ પૂર્ણ અને લોગ થયું.';
+
+  @override
+  String get dataHealthCleanOrphansAction => 'વધારાની મીડિયા ફાઇલો સાફ કરો';
+
+  @override
+  String get dataHealthCleanOrphansDesc =>
+      'સક્રિય જોડાણોને સ્પર્શ્યા વિના બિનજરૂરી સ્થાનિક ફોટા દૂર કરે છે.';
+
+  @override
+  String dataHealthCleanOrphansSuccess(int count) {
+    return '$count વધારાની મીડિયા ફાઇલ(લો) સાફ કરી.';
+  }
+
+  @override
+  String get dataHealthRetrySyncAction => 'નિષ્ફળ સિંક ફરી કતારમાં મૂકો';
+
+  @override
+  String get dataHealthRetrySyncDesc =>
+      'નિષ્ફળ સિંક આઉટબોક્સ અને મીડિયા એન્ટ્રીઓને તાત્કાલિક ફરી પ્રયાસ માટે મૂકે છે.';
+
+  @override
+  String dataHealthRetrySyncSuccess(int count) {
+    return '$count નિષ્ફળ સિંક એન્ટ્રી(ઓ) ફરી કતારમાં મૂકી.';
+  }
+
+  @override
+  String get routingTitle => 'પ્રોસેસ રૂટિંગ';
+
+  @override
+  String get routingRefreshTooltip => 'રિફ્રેશ કરો';
+
+  @override
+  String get routingLoadErrorTitle => 'જોબ રૂટિંગ લોડ કરી શકાયું નહીં';
+
+  @override
+  String get routingAddProcessAction => 'પ્રોસેસ ઉમેરો';
+
+  @override
+  String get routingReassignFromFactoryAction => 'ફેક્ટરીથી ફરી સોંપો';
+
+  @override
+  String get routingAddOperationTitle => 'પ્રોસેસ ઓપરેશન ઉમેરો';
+
+  @override
+  String get routingVariantLabel => 'વેરિઅન્ટ (ડિઝાઇન / રંગ)';
+
+  @override
+  String get routingOperationLabel => 'ઓપરેશન / પ્રોસેસ';
+
+  @override
+  String get routingAssignWorkerLabel => 'કારીગર / વિભાગ સોંપો';
+
+  @override
+  String get routingPricingUnitLabel => 'દર એકમ';
+
+  @override
+  String get routingRateOverrideReasonLabel =>
+      'ડિફોલ્ટ દર બદલવાનું કારણ (જરૂરી)';
+
+  @override
+  String get routingDispatchImmediatelyTitle => 'ફેક્ટરીમાંથી તરત ડિસ્પેચ કરો';
+
+  @override
+  String get routingDispatchImmediatelySubtitle =>
+      'બાકી તરીકે સાચવીને પછીથી ડિસ્પેચ કરવા બંધ કરો';
+
+  @override
+  String get routingNotesOptionalLabel => 'નોંધ (વૈકલ્પિક)';
+
+  @override
+  String get routingConfirmReassignmentAction => 'ફરી સોંપણી કન્ફર્મ કરો';
+
+  @override
+  String get routingAddDispatchAction => 'ઉમેરો અને ડિસ્પેચ કરો';
+
+  @override
+  String get routingSavePendingAction => 'બાકી પ્રોસેસ સાચવો';
+
+  @override
+  String get routingAddColourFirstError =>
+      'પહેલા આ લોટમાં ઓછામાં ઓછો એક રંગ અથવા ડિઝાઇન વેરિઅન્ટ ઉમેરો.';
+
+  @override
+  String get routingAddProcessWorkerFirstError =>
+      'કૃપા કરીને પહેલા ઓછામાં ઓછી એક સક્રિય પ્રોસેસ અને કારીગર બનાવો.';
+
+  @override
+  String get routingInvalidQuantityError => 'માન્ય ધન પૂર્ણાંક જથ્થો દાખલ કરો.';
+
+  @override
+  String get routingInvalidRateError => 'માન્ય દર દાખલ કરો (મહત્તમ 2 દશાંશ).';
+
+  @override
+  String get routingOperationAddedSuccess => 'ઓપરેશન સફળતાપૂર્વક ઉમેરાયું.';
+
+  @override
+  String get routingDirectTransferTitle => 'સીધું કારીગર-થી-કારીગર ટ્રાન્સફર';
+
+  @override
+  String get routingNextOperationLabel => 'આગળનું ઓપરેશન / પ્રોસેસ';
+
+  @override
+  String get routingDestinationWorkerLabel => 'ગંતવ્ય કારીગર / વિભાગ';
+
+  @override
+  String get routingMarkReceivedImmediatelyTitle =>
+      'તરત જ પ્રાપ્ત થયેલ ચિહ્નિત કરો';
+
+  @override
+  String get routingTransferNotesLabel => 'ટ્રાન્સફર નોંધ (વૈકલ્પિક)';
+
+  @override
+  String get routingConfirmDirectTransferAction =>
+      'સીધું ટ્રાન્સફર કન્ફર્મ કરો';
+
+  @override
+  String get routingInvalidTransferQtyError =>
+      'માન્ય ધન ટ્રાન્સફર જથ્થો દાખલ કરો.';
+
+  @override
+  String get routingInvalidDestRateError =>
+      'માન્ય ગંતવ્ય દર દાખલ કરો (મહત્તમ 2 દશાંશ).';
+
+  @override
+  String get routingReturnToFactoryTitle => 'ફેક્ટરીમાં પરત કરો';
+
+  @override
+  String get routingGoodReturnedLabel => 'ફેક્ટરીમાં પરત સારો જથ્થો';
+
+  @override
+  String get routingDamagedOptionalLabel => 'નુકસાન જથ્થો (વૈકલ્પિક)';
+
+  @override
+  String get routingVerificationNotesLabel => 'ચકાસણી નોંધ (વૈકલ્પિક)';
+
+  @override
+  String get routingConfirmFactoryReturnAction => 'ફેક્ટરી પરત કન્ફર્મ કરો';
+
+  @override
+  String get routingAddChargeTitle => 'વધારાનો ચાર્જ / કપાત ઉમેરો';
+
+  @override
+  String get routingChargeTypeLabel => 'પ્રકાર';
+
+  @override
+  String get routingChargeDescLabel => 'વિગત (દા.ત. તાત્કાલિક કામ, ખાસ કટિંગ)';
+
+  @override
+  String get routingInvalidAmountError =>
+      'માન્ય ધન રકમ દાખલ કરો (મહત્તમ 2 દશાંશ).';
+
+  @override
+  String get routingConfirmReceiptTitle => 'માલ પ્રાપ્તિ કન્ફર્મ કરો';
+
+  @override
+  String get routingConfirmReceiptAction => 'પ્રાપ્તિ કન્ફર્મ કરો';
+
+  @override
+  String get routingInvalidReceivedQtyError =>
+      'માન્ય ધન પ્રાપ્ત જથ્થો દાખલ કરો.';
+
+  @override
+  String get routingCancelReasonLabel => 'રદ કરવાનું કારણ';
+
+  @override
+  String get routingKeepAction => 'રાખો';
+
+  @override
+  String get routingCancelProcessAction => 'પ્રોસેસ રદ કરો';
+
+  @override
+  String get routingFactoryReadyLabel => 'ફેક્ટરીમાં તૈયાર';
+
+  @override
+  String get routingWithWorkersLabel => 'કારીગરો પાસે';
+
+  @override
+  String get routingTotalProductionCostLabel => 'કુલ ઉત્પાદન ખર્ચ';
+
+  @override
+  String get routingOutstandingPayableLabel => 'બાકી ચૂકવવાપાત્ર';
+
+  @override
+  String get routingWorkerPayableSummaryHeading => 'કારીગર ચૂકવણી સારાંશ';
+
+  @override
+  String get routingCurrentGoodsLocationHeading => 'માલનું વર્તમાન સ્થાન';
+
+  @override
+  String get routingNoOperationsTitle => 'હજુ કોઈ ઓપરેશન ઉમેરાયું નથી';
+
+  @override
+  String get routingNoOperationsForColourTitle =>
+      'પસંદ કરેલ રંગ માટે કોઈ ઓપરેશન નથી';
+
+  @override
+  String get routingNoOperationsSubtitle =>
+      'કસ્ટમ કારીગર દર સાથે વેરિઅન્ટ સ્તરે કટિંગ, સિલાઈ, ચેકિંગ, ફિનિશિંગ, પ્રેસ અથવા પેકિંગ સોંપો.';
+
+  @override
+  String get routingNoHandoversSubtitle =>
+      'ડિસ્પેચ, સીધા ટ્રાન્સફર, પરત અને ફરી સોંપણી અહીં સમયક્રમ મુજબ દેખાશે.';
+
+  @override
+  String get routingUnassignedWorker => 'સોંપેલ નથી';
+
+  @override
+  String get routingDirectTransferAction => 'સીધું ટ્રાન્સફર';
+
+  @override
+  String get routingReturnToFactoryAction => 'ફેક્ટરીમાં પરત';
+
+  @override
+  String get routingPayAction => 'ચૂકવો';
+
+  @override
+  String get routingMarkCompletedAction => 'પૂર્ણ ચિહ્નિત કરો';
+
+  @override
+  String get routingCancelAction => 'રદ કરો';
+
+  @override
+  String get routingErrJobNotFound => 'જોબ / લોટ મળ્યો નથી.';
+
+  @override
+  String get routingErrNotReady => 'તૈયાર નથી';
+
+  @override
+  String get routingErrExceedsFactoryStock =>
+      'જથ્થો ઉપલબ્ધ ફેક્ટરી સ્ટોક કરતાં વધારે છે.';
+
+  @override
+  String get routingErrExceedsDispatched =>
+      'પ્રાપ્ત જથ્થો ડિસ્પેચ જથ્થા કરતાં વધારે ન હોઈ શકે.';
+
+  @override
+  String get routingErrExceedsWorkerStock =>
+      'ટ્રાન્સફર જથ્થો આ કારીગર પાસે રહેલા સ્ટોક કરતાં વધારે છે.';
+
+  @override
+  String get routingErrExceedsReturnable =>
+      'પરત જથ્થો કારીગર પાસે બાકી જથ્થા કરતાં વધારે છે.';
+
+  @override
+  String get routingErrPendingRemaining =>
+      'બાકી જથ્થો હિસાબમાં લીધા વિના પ્રોસેસ પૂર્ણ કરી શકાતી નથી.';
+
+  @override
+  String get routingErrHeldPiecesCancel =>
+      'આ પ્રોસેસ રદ કરતા પહેલા બધા પીસ પરત અથવા ટ્રાન્સફર કરો.';
+
+  @override
+  String get routingErrSameWorkerProcess =>
+      'સીધા ટ્રાન્સફર માટે અલગ ગંતવ્ય કારીગર અથવા ઓપરેશન પસંદ કરો.';
+
+  @override
+  String get routingErrRateOverrideReason =>
+      'ડિફોલ્ટ દર બદલતી વખતે કારણ દાખલ કરો.';
+
+  @override
+  String get routingErrPaymentExceedsPayable =>
+      'ચૂકવણી રકમ બાકી ચૂકવવાપાત્ર કરતાં વધારે ન હોઈ શકે.';
+
+  @override
+  String get routingErrDescriptionRequired => 'કૃપા કરીને ચાર્જ વિગત દાખલ કરો.';
+
+  @override
+  String get routingErrReasonRequired => 'કૃપા કરીને કારણ દાખલ કરો.';
+
+  @override
+  String get routingErrProcessRequired => 'એક ઓપરેશન/પ્રોસેસ પસંદ કરો.';
+
+  @override
+  String get routingErrWorkerRequired => 'એક કારીગર પસંદ કરો.';
+
+  @override
+  String get routingErrSkuRequired => 'એક ડિઝાઇન અને રંગ પસંદ કરો.';
+
+  @override
+  String get routingErrAlreadyClosed => 'આ ઓપરેશન પહેલાથી જ બંધ છે.';
+
+  @override
+  String get slipShareSheetTitle => 'કારીગર સ્લિપ શેર કરો';
+
+  @override
+  String get slipShareChallanAction => 'ઇશ્યુ ચલણ શેર કરો';
+
+  @override
+  String get slipShareReturnAction => 'પરત / QC સ્લિપ શેર કરો';
+
+  @override
+  String get slipShareReceiptAction => 'ચુકવણી રસીદ શેર કરો';
+
+  @override
+  String get slipShareKhataAction => 'ખાતાવહી સ્ટેટમેન્ટ શેર કરો';
+
+  @override
+  String get slipShareImageAction => 'ઇમેજ શેર કરો (PNG)';
+
+  @override
+  String get slipShareTextAction => 'ટેક્સ્ટ શેર કરો (WhatsApp)';
+
+  @override
+  String get slipCopyTextAction => 'ટેક્સ્ટ કોપી કરો';
+
+  @override
+  String get slipPrintPdfAction => 'પ્રિન્ટ / PDF સાચવો';
+
+  @override
+  String get slipLanguageLabel => 'સ્લિપની ભાષા';
+
+  @override
+  String get slipCopiedMessage => 'સ્લિપ ટેક્સ્ટ ક્લિપબોર્ડમાં કોપી થયું.';
+
+  @override
+  String get slipGeneratedSuccess => 'સ્લિપ શેર કરવા માટે તૈયાર છે.';
+
+  @override
+  String get slipRefLabel => 'સંદર્ભ';
+
+  @override
+  String get slipBalancePayable => 'બાકી ચૂકવવાપાત્ર';
+
+  @override
+  String get slipBalanceAdvance => 'એડવાન્સ જમા';
+
+  @override
+  String get slipBalanceSettled => 'હિસાબ ચોખ્ખો';
+
+  @override
+  String get slipFooterOffline => 'StitchFlow ઓફલાઇન દ્વારા તૈયાર';
+
+  @override
+  String get undoAuditedSuccess => 'રિવર્સલ ઓડિટ લેજરમાં નોંધાયું.';
+
+  @override
+  String get draftRestoredBanner => 'અધૂરો ડ્રાફ્ટ પુનઃસ્થાપિત થયો.';
+
+  @override
+  String get draftClearAction => 'ડ્રાફ્ટ સાફ કરો';
+
+  @override
+  String get setupChecklistTitle => 'વર્કશોપ સેટઅપ ચેકલિસ્ટ';
+
+  @override
+  String get setupChecklistSubtitle =>
+      'ઉત્પાદન ટ્રેકિંગ શરૂ કરવા આ 4 ઝડપી પગલાં પૂર્ણ કરો.';
+
+  @override
+  String get setupChecklistDismissAction => 'બંધ કરો';
+
+  @override
+  String get setupStepProfile => 'વ્યવસાય પ્રોફાઇલ સેટ કરો';
+
+  @override
+  String get setupStepProcesses => 'ઉત્પાદન પ્રોસેસ બનાવો';
+
+  @override
+  String get setupStepWorkers => 'કારીગરો અને દર ઉમેરો';
+
+  @override
+  String get setupStepFirstLot => 'તમારો પહેલો લોટ બનાવો';
+
+  @override
+  String get densitySectionTitle => 'લેઆઉટ ઘનતા (Density)';
+
+  @override
+  String get densityComfortable => 'આરામદાયક (ડિફોલ્ટ)';
+
+  @override
+  String get densityCompact => 'કોમ્પેક્ટ (સ્ક્રીન પર વધુ હરોળ)';
+
+  @override
+  String get settingsTeamTitle => 'ટીમ અને રોલ ઍક્સેસ';
+
+  @override
+  String get settingsTeamSubtitle =>
+      'સુપરવાઇઝર, QC ઇન્સ્પેક્ટર અને એકાઉન્ટન્ટને રોલ પરવાનગી સાથે આમંત્રિત કરો';
+
+  @override
+  String get teamHeading => 'ટીમ મેનેજમેન્ટ';
+
+  @override
+  String get teamMembersSection => 'વર્કસ્પેસ સભ્યો';
+
+  @override
+  String get teamInvitesSection => 'આમંત્રણ કોડ';
+
+  @override
+  String get teamCreateInviteAction => 'આમંત્રણ કોડ બનાવો';
+
+  @override
+  String get teamJoinWorkspaceAction => 'કોડ વડે વર્કશોપમાં જોડાઓ';
+
+  @override
+  String get teamInviteCodeLabel => '8-અક્ષરનો આમંત્રણ કોડ';
+
+  @override
+  String get teamInviteCodeHint => 'દા.ત. SF7K-9M2P';
+
+  @override
+  String get teamInvitePhoneOptionalLabel =>
+      'ફોન નંબર સુધી મર્યાદિત (વૈકલ્પિક)';
+
+  @override
+  String get teamInviteEmailOptionalLabel => 'ઈમેલ સુધી મર્યાદિત (વૈકલ્પિક)';
+
+  @override
+  String get teamShareInviteWhatsAppAction => 'WhatsApp પર કોડ શેર કરો';
+
+  @override
+  String get teamRevokeAction => 'રદ કરો';
+
+  @override
+  String get teamRoleOwner => 'માલિક (Owner)';
+
+  @override
+  String get teamRoleManager => 'મેનેજર / સુપરવાઇઝર';
+
+  @override
+  String get teamRoleQcInspector => 'QC ઇન્સ્પેક્ટર';
+
+  @override
+  String get teamRoleAccountant => 'એકાઉન્ટન્ટ';
+
+  @override
+  String get teamSignInRequiredSubtitle =>
+      'ટીમ સભ્યોને આમંત્રિત કરવા અથવા બીજા વર્કશોપમાં જોડાવા ક્લાઉડ સિંકમાં સાઇન ઇન કરો.';
+
+  @override
+  String get teamNoInvitesEmpty => 'હજુ સુધી કોઈ સક્રિય આમંત્રણ કોડ નથી.';
+
+  @override
+  String get teamJoinSuccess => 'વર્કશોપમાં સફળતાપૂર્વક જોડાયા.';
+
+  @override
+  String get teamInviteCreatedSuccess =>
+      'આમંત્રણ કોડ તૈયાર અને શેર કરવા માટે સજ્જ છે.';
+
+  @override
+  String get syncConflictsTitle => 'સિંક કન્ફ્લિક્ટ ઇન્સ્પેક્ટર';
+
+  @override
+  String get syncConflictsSubtitle =>
+      'મલ્ટી-ડિવાઇસ/ટીમ સિંકના તફાવતો તપાસો અને જરૂર હોય તો તમારો ફેરફાર પુનઃસ્થાપિત કરો.';
+
+  @override
+  String get syncConflictsOpenAction => 'તફાવતો તપાસો';
+
+  @override
+  String get syncConflictsEmptyTitle => 'કોઈ સિંક કન્ફ્લિક્ટ નથી';
+
+  @override
+  String get syncConflictsEmptySubtitle =>
+      'બધા ડિવાઇસ અને ટીમના ફેરફારો સુમેળમાં મર્જ થયા છે.';
+
+  @override
+  String get syncConflictLocalLabel => 'તમારો જૂનો ફેરફાર';
+
+  @override
+  String get syncConflictCloudLabel => 'લાગુ ક્લાઉડ વર્ઝન';
+
+  @override
+  String get syncConflictKeepCloudAction => 'ક્લાઉડ રાખો';
+
+  @override
+  String get syncConflictRestoreLocalAction => 'મારો ફેરફાર પાછો લાવો';
+
+  @override
+  String get syncConflictStatusUnresolved => 'તપાસ જરૂરી';
+
+  @override
+  String get syncConflictStatusAcknowledged => 'ક્લાઉડ રાખેલ';
+
+  @override
+  String get syncConflictStatusRestored => 'પુનઃસ્થાપિત';
+
+  @override
+  String get syncConflictRestoredSuccess =>
+      'જૂનો ફેરફાર નવા ઓડિટેડ અપડેટ તરીકે પુનઃસ્થાપિત થયો.';
+
+  @override
+  String get syncConflictAcknowledgedSuccess =>
+      'કન્ફ્લિક્ટ ઉકેલાયેલ ચિહ્નિત થયું.';
+
+  @override
+  String get guideTitle => 'ઇન્ટરેક્ટિવ માર્ગદર્શન';
+
+  @override
+  String get guideTooltip => 'સ્ક્રીન ગાઇડ અને તાલીમ';
+
+  @override
+  String get guideWelcomeTitle => 'બિઝનેસ મેનેજરમાં સ્વાગત છે';
+
+  @override
+  String get guideWelcomeSubtitle =>
+      'તમારું આખું ગાર્મેન્ટ કારખાનું કેવી રીતે ચાલે છે તે એપની અંદર જ સ્ટેપ બાય સ્ટેપ અને અવાજ સાથે શીખો — કોઈ વિડિયો વગર.';
+
+  @override
+  String get guideStartFullTraining => 'સંપૂર્ણ તાલીમ શરૂ કરો';
+
+  @override
+  String get guideResumeTraining => 'તાલીમ આગળ વધારો';
+
+  @override
+  String get guideRestartTraining => 'તાલીમ ફરીથી શરૂ કરો';
+
+  @override
+  String get guideTourThisScreen => 'આ સ્ક્રીનના બટનો સમજો';
+
+  @override
+  String get guideOpenUserGuide => 'સંપૂર્ણ યુઝર ગાઇડ ખોલો';
+
+  @override
+  String get guideSkipForNow => 'અત્યારે છોડો';
+
+  @override
+  String get guideVoiceOn => 'અવાજ ચાલુ';
+
+  @override
+  String get guideVoiceOff => 'અવાજ બંધ';
+
+  @override
+  String get guideVoiceReplay => 'ફરી સાંભળો';
+
+  @override
+  String get guideVoiceListen => 'સાંભળો';
+
+  @override
+  String get guideVoiceStop => 'બંધ કરો';
+
+  @override
+  String get guideSpeedSlow => 'ધીમું';
+
+  @override
+  String get guideSpeedNormal => 'સામાન્ય';
+
+  @override
+  String get guideSpeedFast => 'ઝડપી';
+
+  @override
+  String get guideVoicePackMissingHint =>
+      'આ ડિવાઇસમાં ગુજરાતી અવાજ પેક ઇન્સ્ટોલ નથી. સ્ક્રીન માર્ગદર્શન રાબેતા મુજબ ચાલુ રહેશે.';
+
+  @override
+  String guideStepCounter(int current, int total) {
+    return 'સ્ટેપ $current / $total';
+  }
+
+  @override
+  String get guideActionBack => 'પાછળ';
+
+  @override
+  String get guideActionNext => 'આગળ';
+
+  @override
+  String get guideActionFinish => 'પૂર્ણ કરો';
+
+  @override
+  String get guideActionSkip => 'છોડો';
+
+  @override
+  String get guideMinimizeCoach => 'હમણાં કરો';
+
+  @override
+  String get guideExpandSpotlight => 'સ્પોટલાઇટ';
+
+  @override
+  String get guideFirstVisitHint =>
+      'આ સ્ક્રીન પર પહેલી વાર આવ્યા છો? દરેક બટનનું કામ જાણવા ટેપ કરો.';
+
+  @override
+  String get guideFirstVisitAction => 'ગાઇડ જુઓ';
+
+  @override
+  String get guideNewScreenHintsLabel => 'નવી સ્ક્રીન પર પ્રથમ મુલાકાતની ટિપ';
+
+  @override
+  String get guideTrainingTabLabel => 'લાઇવ તાલીમ';
+
+  @override
+  String get guideTopicsTabLabel => 'સંપૂર્ણ ગાઇડ (૧૯)';
+
+  @override
+  String guideProgressSummary(int completed, int total) {
+    return '$total માંથી $completed પ્રકરણ પૂર્ણ';
+  }
+
+  @override
+  String get guideShowMeLive => 'લાઇવ બતાવો';
+
+  @override
+  String get guideShowMeOnScreen => 'સ્ક્રીન પર લાઇવ જુઓ';
+
+  @override
+  String get guideChapterCompleted => 'પૂર્ણ';
+
+  @override
+  String get guideNextTopicHeading => 'આગળનું પગલું';
+
+  @override
+  String get guideResetProgressAction => 'તાલીમ પ્રગતિ રીસેટ કરો';
+
+  @override
+  String get guideResetProgressDone => 'તાલીમ પ્રગતિ રીસેટ થઈ ગઈ છે.';
 }

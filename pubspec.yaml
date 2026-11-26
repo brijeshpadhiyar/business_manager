@@ -2,7 +2,7 @@ name: business_manager
 description: "Offline-first multi-platform Flutter Business Management System (Business Manager / બિઝનેસ મેનેજર)."
 publish_to: 'none'
 
-version: 1.4.0+4
+version: 1.5.0+5
 
 environment:
   sdk: ^3.14.0
@@ -60,6 +60,11 @@ dependencies:
   excel_plus: ^2.29.3
   flutter_local_notifications: ^23.0.4
   toastification: ^3.2.2
+  supabase_flutter: ^2.18.3
+  google_sign_in: ^7.2.0
+  connectivity_plus: ^7.3.2
+  device_info_plus: ^13.3.0
+  flutter_tts: ^4.2.5
 
 dev_dependencies:
   flutter_test:

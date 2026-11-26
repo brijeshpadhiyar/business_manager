@@ -20888,6 +20888,2597 @@ class RejectionRepairsCompanion extends UpdateCompanion<RejectionRepairRow> {
   }
 }
 
+class $SyncSessionStatesTable extends SyncSessionStates
+    with TableInfo<$SyncSessionStatesTable, SyncSessionStateRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SyncSessionStatesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  static const VerificationMeta _isApplyingRemoteMeta = const VerificationMeta(
+    'isApplyingRemote',
+  );
+  @override
+  late final GeneratedColumn<int> isApplyingRemote = GeneratedColumn<int>(
+    'is_applying_remote',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _deviceIdMeta = const VerificationMeta(
+    'deviceId',
+  );
+  @override
+  late final GeneratedColumn<String> deviceId = GeneratedColumn<String>(
+    'device_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _boundUserIdMeta = const VerificationMeta(
+    'boundUserId',
+  );
+  @override
+  late final GeneratedColumn<String> boundUserId = GeneratedColumn<String>(
+    'bound_user_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _boundBusinessIdMeta = const VerificationMeta(
+    'boundBusinessId',
+  );
+  @override
+  late final GeneratedColumn<String> boundBusinessId = GeneratedColumn<String>(
+    'bound_business_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _activeRoleMeta = const VerificationMeta(
+    'activeRole',
+  );
+  @override
+  late final GeneratedColumn<String> activeRole = GeneratedColumn<String>(
+    'active_role',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('OWNER'),
+  );
+  static const VerificationMeta _activeBusinessNameMeta =
+      const VerificationMeta('activeBusinessName');
+  @override
+  late final GeneratedColumn<String> activeBusinessName =
+      GeneratedColumn<String>(
+        'active_business_name',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _lastFullSyncAtMeta = const VerificationMeta(
+    'lastFullSyncAt',
+  );
+  @override
+  late final GeneratedColumn<int> lastFullSyncAt = GeneratedColumn<int>(
+    'last_full_sync_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    isApplyingRemote,
+    deviceId,
+    boundUserId,
+    boundBusinessId,
+    activeRole,
+    activeBusinessName,
+    lastFullSyncAt,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sync_session_state';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SyncSessionStateRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('is_applying_remote')) {
+      context.handle(
+        _isApplyingRemoteMeta,
+        isApplyingRemote.isAcceptableOrUnknown(
+          data['is_applying_remote']!,
+          _isApplyingRemoteMeta,
+        ),
+      );
+    }
+    if (data.containsKey('device_id')) {
+      context.handle(
+        _deviceIdMeta,
+        deviceId.isAcceptableOrUnknown(data['device_id']!, _deviceIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_deviceIdMeta);
+    }
+    if (data.containsKey('bound_user_id')) {
+      context.handle(
+        _boundUserIdMeta,
+        boundUserId.isAcceptableOrUnknown(
+          data['bound_user_id']!,
+          _boundUserIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('bound_business_id')) {
+      context.handle(
+        _boundBusinessIdMeta,
+        boundBusinessId.isAcceptableOrUnknown(
+          data['bound_business_id']!,
+          _boundBusinessIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('active_role')) {
+      context.handle(
+        _activeRoleMeta,
+        activeRole.isAcceptableOrUnknown(data['active_role']!, _activeRoleMeta),
+      );
+    }
+    if (data.containsKey('active_business_name')) {
+      context.handle(
+        _activeBusinessNameMeta,
+        activeBusinessName.isAcceptableOrUnknown(
+          data['active_business_name']!,
+          _activeBusinessNameMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_full_sync_at')) {
+      context.handle(
+        _lastFullSyncAtMeta,
+        lastFullSyncAt.isAcceptableOrUnknown(
+          data['last_full_sync_at']!,
+          _lastFullSyncAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  SyncSessionStateRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SyncSessionStateRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      isApplyingRemote: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}is_applying_remote'],
+      )!,
+      deviceId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}device_id'],
+      )!,
+      boundUserId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}bound_user_id'],
+      ),
+      boundBusinessId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}bound_business_id'],
+      ),
+      activeRole: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}active_role'],
+      )!,
+      activeBusinessName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}active_business_name'],
+      ),
+      lastFullSyncAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}last_full_sync_at'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $SyncSessionStatesTable createAlias(String alias) {
+    return $SyncSessionStatesTable(attachedDatabase, alias);
+  }
+}
+
+class SyncSessionStateRow extends DataClass
+    implements Insertable<SyncSessionStateRow> {
+  final int id;
+  final int isApplyingRemote;
+  final String deviceId;
+  final String? boundUserId;
+  final String? boundBusinessId;
+  final String activeRole;
+  final String? activeBusinessName;
+  final int? lastFullSyncAt;
+  final int updatedAt;
+  const SyncSessionStateRow({
+    required this.id,
+    required this.isApplyingRemote,
+    required this.deviceId,
+    this.boundUserId,
+    this.boundBusinessId,
+    required this.activeRole,
+    this.activeBusinessName,
+    this.lastFullSyncAt,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['is_applying_remote'] = Variable<int>(isApplyingRemote);
+    map['device_id'] = Variable<String>(deviceId);
+    if (!nullToAbsent || boundUserId != null) {
+      map['bound_user_id'] = Variable<String>(boundUserId);
+    }
+    if (!nullToAbsent || boundBusinessId != null) {
+      map['bound_business_id'] = Variable<String>(boundBusinessId);
+    }
+    map['active_role'] = Variable<String>(activeRole);
+    if (!nullToAbsent || activeBusinessName != null) {
+      map['active_business_name'] = Variable<String>(activeBusinessName);
+    }
+    if (!nullToAbsent || lastFullSyncAt != null) {
+      map['last_full_sync_at'] = Variable<int>(lastFullSyncAt);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    return map;
+  }
+
+  SyncSessionStatesCompanion toCompanion(bool nullToAbsent) {
+    return SyncSessionStatesCompanion(
+      id: Value(id),
+      isApplyingRemote: Value(isApplyingRemote),
+      deviceId: Value(deviceId),
+      boundUserId: boundUserId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(boundUserId),
+      boundBusinessId: boundBusinessId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(boundBusinessId),
+      activeRole: Value(activeRole),
+      activeBusinessName: activeBusinessName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(activeBusinessName),
+      lastFullSyncAt: lastFullSyncAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastFullSyncAt),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory SyncSessionStateRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SyncSessionStateRow(
+      id: serializer.fromJson<int>(json['id']),
+      isApplyingRemote: serializer.fromJson<int>(json['isApplyingRemote']),
+      deviceId: serializer.fromJson<String>(json['deviceId']),
+      boundUserId: serializer.fromJson<String?>(json['boundUserId']),
+      boundBusinessId: serializer.fromJson<String?>(json['boundBusinessId']),
+      activeRole: serializer.fromJson<String>(json['activeRole']),
+      activeBusinessName: serializer.fromJson<String?>(
+        json['activeBusinessName'],
+      ),
+      lastFullSyncAt: serializer.fromJson<int?>(json['lastFullSyncAt']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'isApplyingRemote': serializer.toJson<int>(isApplyingRemote),
+      'deviceId': serializer.toJson<String>(deviceId),
+      'boundUserId': serializer.toJson<String?>(boundUserId),
+      'boundBusinessId': serializer.toJson<String?>(boundBusinessId),
+      'activeRole': serializer.toJson<String>(activeRole),
+      'activeBusinessName': serializer.toJson<String?>(activeBusinessName),
+      'lastFullSyncAt': serializer.toJson<int?>(lastFullSyncAt),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+    };
+  }
+
+  SyncSessionStateRow copyWith({
+    int? id,
+    int? isApplyingRemote,
+    String? deviceId,
+    Value<String?> boundUserId = const Value.absent(),
+    Value<String?> boundBusinessId = const Value.absent(),
+    String? activeRole,
+    Value<String?> activeBusinessName = const Value.absent(),
+    Value<int?> lastFullSyncAt = const Value.absent(),
+    int? updatedAt,
+  }) => SyncSessionStateRow(
+    id: id ?? this.id,
+    isApplyingRemote: isApplyingRemote ?? this.isApplyingRemote,
+    deviceId: deviceId ?? this.deviceId,
+    boundUserId: boundUserId.present ? boundUserId.value : this.boundUserId,
+    boundBusinessId: boundBusinessId.present
+        ? boundBusinessId.value
+        : this.boundBusinessId,
+    activeRole: activeRole ?? this.activeRole,
+    activeBusinessName: activeBusinessName.present
+        ? activeBusinessName.value
+        : this.activeBusinessName,
+    lastFullSyncAt: lastFullSyncAt.present
+        ? lastFullSyncAt.value
+        : this.lastFullSyncAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  SyncSessionStateRow copyWithCompanion(SyncSessionStatesCompanion data) {
+    return SyncSessionStateRow(
+      id: data.id.present ? data.id.value : this.id,
+      isApplyingRemote: data.isApplyingRemote.present
+          ? data.isApplyingRemote.value
+          : this.isApplyingRemote,
+      deviceId: data.deviceId.present ? data.deviceId.value : this.deviceId,
+      boundUserId: data.boundUserId.present
+          ? data.boundUserId.value
+          : this.boundUserId,
+      boundBusinessId: data.boundBusinessId.present
+          ? data.boundBusinessId.value
+          : this.boundBusinessId,
+      activeRole: data.activeRole.present
+          ? data.activeRole.value
+          : this.activeRole,
+      activeBusinessName: data.activeBusinessName.present
+          ? data.activeBusinessName.value
+          : this.activeBusinessName,
+      lastFullSyncAt: data.lastFullSyncAt.present
+          ? data.lastFullSyncAt.value
+          : this.lastFullSyncAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncSessionStateRow(')
+          ..write('id: $id, ')
+          ..write('isApplyingRemote: $isApplyingRemote, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('boundUserId: $boundUserId, ')
+          ..write('boundBusinessId: $boundBusinessId, ')
+          ..write('activeRole: $activeRole, ')
+          ..write('activeBusinessName: $activeBusinessName, ')
+          ..write('lastFullSyncAt: $lastFullSyncAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    isApplyingRemote,
+    deviceId,
+    boundUserId,
+    boundBusinessId,
+    activeRole,
+    activeBusinessName,
+    lastFullSyncAt,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SyncSessionStateRow &&
+          other.id == this.id &&
+          other.isApplyingRemote == this.isApplyingRemote &&
+          other.deviceId == this.deviceId &&
+          other.boundUserId == this.boundUserId &&
+          other.boundBusinessId == this.boundBusinessId &&
+          other.activeRole == this.activeRole &&
+          other.activeBusinessName == this.activeBusinessName &&
+          other.lastFullSyncAt == this.lastFullSyncAt &&
+          other.updatedAt == this.updatedAt);
+}
+
+class SyncSessionStatesCompanion extends UpdateCompanion<SyncSessionStateRow> {
+  final Value<int> id;
+  final Value<int> isApplyingRemote;
+  final Value<String> deviceId;
+  final Value<String?> boundUserId;
+  final Value<String?> boundBusinessId;
+  final Value<String> activeRole;
+  final Value<String?> activeBusinessName;
+  final Value<int?> lastFullSyncAt;
+  final Value<int> updatedAt;
+  const SyncSessionStatesCompanion({
+    this.id = const Value.absent(),
+    this.isApplyingRemote = const Value.absent(),
+    this.deviceId = const Value.absent(),
+    this.boundUserId = const Value.absent(),
+    this.boundBusinessId = const Value.absent(),
+    this.activeRole = const Value.absent(),
+    this.activeBusinessName = const Value.absent(),
+    this.lastFullSyncAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  });
+  SyncSessionStatesCompanion.insert({
+    this.id = const Value.absent(),
+    this.isApplyingRemote = const Value.absent(),
+    required String deviceId,
+    this.boundUserId = const Value.absent(),
+    this.boundBusinessId = const Value.absent(),
+    this.activeRole = const Value.absent(),
+    this.activeBusinessName = const Value.absent(),
+    this.lastFullSyncAt = const Value.absent(),
+    required int updatedAt,
+  }) : deviceId = Value(deviceId),
+       updatedAt = Value(updatedAt);
+  static Insertable<SyncSessionStateRow> custom({
+    Expression<int>? id,
+    Expression<int>? isApplyingRemote,
+    Expression<String>? deviceId,
+    Expression<String>? boundUserId,
+    Expression<String>? boundBusinessId,
+    Expression<String>? activeRole,
+    Expression<String>? activeBusinessName,
+    Expression<int>? lastFullSyncAt,
+    Expression<int>? updatedAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (isApplyingRemote != null) 'is_applying_remote': isApplyingRemote,
+      if (deviceId != null) 'device_id': deviceId,
+      if (boundUserId != null) 'bound_user_id': boundUserId,
+      if (boundBusinessId != null) 'bound_business_id': boundBusinessId,
+      if (activeRole != null) 'active_role': activeRole,
+      if (activeBusinessName != null)
+        'active_business_name': activeBusinessName,
+      if (lastFullSyncAt != null) 'last_full_sync_at': lastFullSyncAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+    });
+  }
+
+  SyncSessionStatesCompanion copyWith({
+    Value<int>? id,
+    Value<int>? isApplyingRemote,
+    Value<String>? deviceId,
+    Value<String?>? boundUserId,
+    Value<String?>? boundBusinessId,
+    Value<String>? activeRole,
+    Value<String?>? activeBusinessName,
+    Value<int?>? lastFullSyncAt,
+    Value<int>? updatedAt,
+  }) {
+    return SyncSessionStatesCompanion(
+      id: id ?? this.id,
+      isApplyingRemote: isApplyingRemote ?? this.isApplyingRemote,
+      deviceId: deviceId ?? this.deviceId,
+      boundUserId: boundUserId ?? this.boundUserId,
+      boundBusinessId: boundBusinessId ?? this.boundBusinessId,
+      activeRole: activeRole ?? this.activeRole,
+      activeBusinessName: activeBusinessName ?? this.activeBusinessName,
+      lastFullSyncAt: lastFullSyncAt ?? this.lastFullSyncAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (isApplyingRemote.present) {
+      map['is_applying_remote'] = Variable<int>(isApplyingRemote.value);
+    }
+    if (deviceId.present) {
+      map['device_id'] = Variable<String>(deviceId.value);
+    }
+    if (boundUserId.present) {
+      map['bound_user_id'] = Variable<String>(boundUserId.value);
+    }
+    if (boundBusinessId.present) {
+      map['bound_business_id'] = Variable<String>(boundBusinessId.value);
+    }
+    if (activeRole.present) {
+      map['active_role'] = Variable<String>(activeRole.value);
+    }
+    if (activeBusinessName.present) {
+      map['active_business_name'] = Variable<String>(activeBusinessName.value);
+    }
+    if (lastFullSyncAt.present) {
+      map['last_full_sync_at'] = Variable<int>(lastFullSyncAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncSessionStatesCompanion(')
+          ..write('id: $id, ')
+          ..write('isApplyingRemote: $isApplyingRemote, ')
+          ..write('deviceId: $deviceId, ')
+          ..write('boundUserId: $boundUserId, ')
+          ..write('boundBusinessId: $boundBusinessId, ')
+          ..write('activeRole: $activeRole, ')
+          ..write('activeBusinessName: $activeBusinessName, ')
+          ..write('lastFullSyncAt: $lastFullSyncAt, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $SyncOutboxesTable extends SyncOutboxes
+    with TableInfo<$SyncOutboxesTable, SyncOutboxRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SyncOutboxesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _entryKeyMeta = const VerificationMeta(
+    'entryKey',
+  );
+  @override
+  late final GeneratedColumn<String> entryKey = GeneratedColumn<String>(
+    'entry_key',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _tableNameColMeta = const VerificationMeta(
+    'tableNameCol',
+  );
+  @override
+  late final GeneratedColumn<String> tableNameCol = GeneratedColumn<String>(
+    'table_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _rowIdMeta = const VerificationMeta('rowId');
+  @override
+  late final GeneratedColumn<String> rowId = GeneratedColumn<String>(
+    'row_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _operationMeta = const VerificationMeta(
+    'operation',
+  );
+  @override
+  late final GeneratedColumn<String> operation = GeneratedColumn<String>(
+    'operation',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('UPSERT'),
+  );
+  static const VerificationMeta _enqueuedAtMeta = const VerificationMeta(
+    'enqueuedAt',
+  );
+  @override
+  late final GeneratedColumn<int> enqueuedAt = GeneratedColumn<int>(
+    'enqueued_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('PENDING'),
+  );
+  static const VerificationMeta _retryCountMeta = const VerificationMeta(
+    'retryCount',
+  );
+  @override
+  late final GeneratedColumn<int> retryCount = GeneratedColumn<int>(
+    'retry_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _nextRetryAtMeta = const VerificationMeta(
+    'nextRetryAt',
+  );
+  @override
+  late final GeneratedColumn<int> nextRetryAt = GeneratedColumn<int>(
+    'next_retry_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lastErrorMeta = const VerificationMeta(
+    'lastError',
+  );
+  @override
+  late final GeneratedColumn<String> lastError = GeneratedColumn<String>(
+    'last_error',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    entryKey,
+    tableNameCol,
+    rowId,
+    operation,
+    enqueuedAt,
+    status,
+    retryCount,
+    nextRetryAt,
+    lastError,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sync_outbox';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SyncOutboxRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('entry_key')) {
+      context.handle(
+        _entryKeyMeta,
+        entryKey.isAcceptableOrUnknown(data['entry_key']!, _entryKeyMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_entryKeyMeta);
+    }
+    if (data.containsKey('table_name')) {
+      context.handle(
+        _tableNameColMeta,
+        tableNameCol.isAcceptableOrUnknown(
+          data['table_name']!,
+          _tableNameColMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_tableNameColMeta);
+    }
+    if (data.containsKey('row_id')) {
+      context.handle(
+        _rowIdMeta,
+        rowId.isAcceptableOrUnknown(data['row_id']!, _rowIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_rowIdMeta);
+    }
+    if (data.containsKey('operation')) {
+      context.handle(
+        _operationMeta,
+        operation.isAcceptableOrUnknown(data['operation']!, _operationMeta),
+      );
+    }
+    if (data.containsKey('enqueued_at')) {
+      context.handle(
+        _enqueuedAtMeta,
+        enqueuedAt.isAcceptableOrUnknown(data['enqueued_at']!, _enqueuedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_enqueuedAtMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('retry_count')) {
+      context.handle(
+        _retryCountMeta,
+        retryCount.isAcceptableOrUnknown(data['retry_count']!, _retryCountMeta),
+      );
+    }
+    if (data.containsKey('next_retry_at')) {
+      context.handle(
+        _nextRetryAtMeta,
+        nextRetryAt.isAcceptableOrUnknown(
+          data['next_retry_at']!,
+          _nextRetryAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_error')) {
+      context.handle(
+        _lastErrorMeta,
+        lastError.isAcceptableOrUnknown(data['last_error']!, _lastErrorMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {entryKey};
+  @override
+  SyncOutboxRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SyncOutboxRow(
+      entryKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}entry_key'],
+      )!,
+      tableNameCol: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}table_name'],
+      )!,
+      rowId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}row_id'],
+      )!,
+      operation: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}operation'],
+      )!,
+      enqueuedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}enqueued_at'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      retryCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}retry_count'],
+      )!,
+      nextRetryAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}next_retry_at'],
+      ),
+      lastError: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_error'],
+      ),
+    );
+  }
+
+  @override
+  $SyncOutboxesTable createAlias(String alias) {
+    return $SyncOutboxesTable(attachedDatabase, alias);
+  }
+}
+
+class SyncOutboxRow extends DataClass implements Insertable<SyncOutboxRow> {
+  final String entryKey;
+  final String tableNameCol;
+  final String rowId;
+  final String operation;
+  final int enqueuedAt;
+  final String status;
+  final int retryCount;
+  final int? nextRetryAt;
+  final String? lastError;
+  const SyncOutboxRow({
+    required this.entryKey,
+    required this.tableNameCol,
+    required this.rowId,
+    required this.operation,
+    required this.enqueuedAt,
+    required this.status,
+    required this.retryCount,
+    this.nextRetryAt,
+    this.lastError,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['entry_key'] = Variable<String>(entryKey);
+    map['table_name'] = Variable<String>(tableNameCol);
+    map['row_id'] = Variable<String>(rowId);
+    map['operation'] = Variable<String>(operation);
+    map['enqueued_at'] = Variable<int>(enqueuedAt);
+    map['status'] = Variable<String>(status);
+    map['retry_count'] = Variable<int>(retryCount);
+    if (!nullToAbsent || nextRetryAt != null) {
+      map['next_retry_at'] = Variable<int>(nextRetryAt);
+    }
+    if (!nullToAbsent || lastError != null) {
+      map['last_error'] = Variable<String>(lastError);
+    }
+    return map;
+  }
+
+  SyncOutboxesCompanion toCompanion(bool nullToAbsent) {
+    return SyncOutboxesCompanion(
+      entryKey: Value(entryKey),
+      tableNameCol: Value(tableNameCol),
+      rowId: Value(rowId),
+      operation: Value(operation),
+      enqueuedAt: Value(enqueuedAt),
+      status: Value(status),
+      retryCount: Value(retryCount),
+      nextRetryAt: nextRetryAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nextRetryAt),
+      lastError: lastError == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastError),
+    );
+  }
+
+  factory SyncOutboxRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SyncOutboxRow(
+      entryKey: serializer.fromJson<String>(json['entryKey']),
+      tableNameCol: serializer.fromJson<String>(json['tableNameCol']),
+      rowId: serializer.fromJson<String>(json['rowId']),
+      operation: serializer.fromJson<String>(json['operation']),
+      enqueuedAt: serializer.fromJson<int>(json['enqueuedAt']),
+      status: serializer.fromJson<String>(json['status']),
+      retryCount: serializer.fromJson<int>(json['retryCount']),
+      nextRetryAt: serializer.fromJson<int?>(json['nextRetryAt']),
+      lastError: serializer.fromJson<String?>(json['lastError']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'entryKey': serializer.toJson<String>(entryKey),
+      'tableNameCol': serializer.toJson<String>(tableNameCol),
+      'rowId': serializer.toJson<String>(rowId),
+      'operation': serializer.toJson<String>(operation),
+      'enqueuedAt': serializer.toJson<int>(enqueuedAt),
+      'status': serializer.toJson<String>(status),
+      'retryCount': serializer.toJson<int>(retryCount),
+      'nextRetryAt': serializer.toJson<int?>(nextRetryAt),
+      'lastError': serializer.toJson<String?>(lastError),
+    };
+  }
+
+  SyncOutboxRow copyWith({
+    String? entryKey,
+    String? tableNameCol,
+    String? rowId,
+    String? operation,
+    int? enqueuedAt,
+    String? status,
+    int? retryCount,
+    Value<int?> nextRetryAt = const Value.absent(),
+    Value<String?> lastError = const Value.absent(),
+  }) => SyncOutboxRow(
+    entryKey: entryKey ?? this.entryKey,
+    tableNameCol: tableNameCol ?? this.tableNameCol,
+    rowId: rowId ?? this.rowId,
+    operation: operation ?? this.operation,
+    enqueuedAt: enqueuedAt ?? this.enqueuedAt,
+    status: status ?? this.status,
+    retryCount: retryCount ?? this.retryCount,
+    nextRetryAt: nextRetryAt.present ? nextRetryAt.value : this.nextRetryAt,
+    lastError: lastError.present ? lastError.value : this.lastError,
+  );
+  SyncOutboxRow copyWithCompanion(SyncOutboxesCompanion data) {
+    return SyncOutboxRow(
+      entryKey: data.entryKey.present ? data.entryKey.value : this.entryKey,
+      tableNameCol: data.tableNameCol.present
+          ? data.tableNameCol.value
+          : this.tableNameCol,
+      rowId: data.rowId.present ? data.rowId.value : this.rowId,
+      operation: data.operation.present ? data.operation.value : this.operation,
+      enqueuedAt: data.enqueuedAt.present
+          ? data.enqueuedAt.value
+          : this.enqueuedAt,
+      status: data.status.present ? data.status.value : this.status,
+      retryCount: data.retryCount.present
+          ? data.retryCount.value
+          : this.retryCount,
+      nextRetryAt: data.nextRetryAt.present
+          ? data.nextRetryAt.value
+          : this.nextRetryAt,
+      lastError: data.lastError.present ? data.lastError.value : this.lastError,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncOutboxRow(')
+          ..write('entryKey: $entryKey, ')
+          ..write('tableNameCol: $tableNameCol, ')
+          ..write('rowId: $rowId, ')
+          ..write('operation: $operation, ')
+          ..write('enqueuedAt: $enqueuedAt, ')
+          ..write('status: $status, ')
+          ..write('retryCount: $retryCount, ')
+          ..write('nextRetryAt: $nextRetryAt, ')
+          ..write('lastError: $lastError')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    entryKey,
+    tableNameCol,
+    rowId,
+    operation,
+    enqueuedAt,
+    status,
+    retryCount,
+    nextRetryAt,
+    lastError,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SyncOutboxRow &&
+          other.entryKey == this.entryKey &&
+          other.tableNameCol == this.tableNameCol &&
+          other.rowId == this.rowId &&
+          other.operation == this.operation &&
+          other.enqueuedAt == this.enqueuedAt &&
+          other.status == this.status &&
+          other.retryCount == this.retryCount &&
+          other.nextRetryAt == this.nextRetryAt &&
+          other.lastError == this.lastError);
+}
+
+class SyncOutboxesCompanion extends UpdateCompanion<SyncOutboxRow> {
+  final Value<String> entryKey;
+  final Value<String> tableNameCol;
+  final Value<String> rowId;
+  final Value<String> operation;
+  final Value<int> enqueuedAt;
+  final Value<String> status;
+  final Value<int> retryCount;
+  final Value<int?> nextRetryAt;
+  final Value<String?> lastError;
+  final Value<int> rowid;
+  const SyncOutboxesCompanion({
+    this.entryKey = const Value.absent(),
+    this.tableNameCol = const Value.absent(),
+    this.rowId = const Value.absent(),
+    this.operation = const Value.absent(),
+    this.enqueuedAt = const Value.absent(),
+    this.status = const Value.absent(),
+    this.retryCount = const Value.absent(),
+    this.nextRetryAt = const Value.absent(),
+    this.lastError = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SyncOutboxesCompanion.insert({
+    required String entryKey,
+    required String tableNameCol,
+    required String rowId,
+    this.operation = const Value.absent(),
+    required int enqueuedAt,
+    this.status = const Value.absent(),
+    this.retryCount = const Value.absent(),
+    this.nextRetryAt = const Value.absent(),
+    this.lastError = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : entryKey = Value(entryKey),
+       tableNameCol = Value(tableNameCol),
+       rowId = Value(rowId),
+       enqueuedAt = Value(enqueuedAt);
+  static Insertable<SyncOutboxRow> custom({
+    Expression<String>? entryKey,
+    Expression<String>? tableNameCol,
+    Expression<String>? rowId,
+    Expression<String>? operation,
+    Expression<int>? enqueuedAt,
+    Expression<String>? status,
+    Expression<int>? retryCount,
+    Expression<int>? nextRetryAt,
+    Expression<String>? lastError,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (entryKey != null) 'entry_key': entryKey,
+      if (tableNameCol != null) 'table_name': tableNameCol,
+      if (rowId != null) 'row_id': rowId,
+      if (operation != null) 'operation': operation,
+      if (enqueuedAt != null) 'enqueued_at': enqueuedAt,
+      if (status != null) 'status': status,
+      if (retryCount != null) 'retry_count': retryCount,
+      if (nextRetryAt != null) 'next_retry_at': nextRetryAt,
+      if (lastError != null) 'last_error': lastError,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SyncOutboxesCompanion copyWith({
+    Value<String>? entryKey,
+    Value<String>? tableNameCol,
+    Value<String>? rowId,
+    Value<String>? operation,
+    Value<int>? enqueuedAt,
+    Value<String>? status,
+    Value<int>? retryCount,
+    Value<int?>? nextRetryAt,
+    Value<String?>? lastError,
+    Value<int>? rowid,
+  }) {
+    return SyncOutboxesCompanion(
+      entryKey: entryKey ?? this.entryKey,
+      tableNameCol: tableNameCol ?? this.tableNameCol,
+      rowId: rowId ?? this.rowId,
+      operation: operation ?? this.operation,
+      enqueuedAt: enqueuedAt ?? this.enqueuedAt,
+      status: status ?? this.status,
+      retryCount: retryCount ?? this.retryCount,
+      nextRetryAt: nextRetryAt ?? this.nextRetryAt,
+      lastError: lastError ?? this.lastError,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (entryKey.present) {
+      map['entry_key'] = Variable<String>(entryKey.value);
+    }
+    if (tableNameCol.present) {
+      map['table_name'] = Variable<String>(tableNameCol.value);
+    }
+    if (rowId.present) {
+      map['row_id'] = Variable<String>(rowId.value);
+    }
+    if (operation.present) {
+      map['operation'] = Variable<String>(operation.value);
+    }
+    if (enqueuedAt.present) {
+      map['enqueued_at'] = Variable<int>(enqueuedAt.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (retryCount.present) {
+      map['retry_count'] = Variable<int>(retryCount.value);
+    }
+    if (nextRetryAt.present) {
+      map['next_retry_at'] = Variable<int>(nextRetryAt.value);
+    }
+    if (lastError.present) {
+      map['last_error'] = Variable<String>(lastError.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncOutboxesCompanion(')
+          ..write('entryKey: $entryKey, ')
+          ..write('tableNameCol: $tableNameCol, ')
+          ..write('rowId: $rowId, ')
+          ..write('operation: $operation, ')
+          ..write('enqueuedAt: $enqueuedAt, ')
+          ..write('status: $status, ')
+          ..write('retryCount: $retryCount, ')
+          ..write('nextRetryAt: $nextRetryAt, ')
+          ..write('lastError: $lastError, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $SyncCursorsTable extends SyncCursors
+    with TableInfo<$SyncCursorsTable, SyncCursorRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SyncCursorsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _tableNameColMeta = const VerificationMeta(
+    'tableNameCol',
+  );
+  @override
+  late final GeneratedColumn<String> tableNameCol = GeneratedColumn<String>(
+    'table_name',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _lastServerUpdatedAtMeta =
+      const VerificationMeta('lastServerUpdatedAt');
+  @override
+  late final GeneratedColumn<String> lastServerUpdatedAt =
+      GeneratedColumn<String>(
+        'last_server_updated_at',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: true,
+      );
+  static const VerificationMeta _lastPulledAtMeta = const VerificationMeta(
+    'lastPulledAt',
+  );
+  @override
+  late final GeneratedColumn<int> lastPulledAt = GeneratedColumn<int>(
+    'last_pulled_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    tableNameCol,
+    lastServerUpdatedAt,
+    lastPulledAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sync_cursors';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SyncCursorRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('table_name')) {
+      context.handle(
+        _tableNameColMeta,
+        tableNameCol.isAcceptableOrUnknown(
+          data['table_name']!,
+          _tableNameColMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_tableNameColMeta);
+    }
+    if (data.containsKey('last_server_updated_at')) {
+      context.handle(
+        _lastServerUpdatedAtMeta,
+        lastServerUpdatedAt.isAcceptableOrUnknown(
+          data['last_server_updated_at']!,
+          _lastServerUpdatedAtMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_lastServerUpdatedAtMeta);
+    }
+    if (data.containsKey('last_pulled_at')) {
+      context.handle(
+        _lastPulledAtMeta,
+        lastPulledAt.isAcceptableOrUnknown(
+          data['last_pulled_at']!,
+          _lastPulledAtMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_lastPulledAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {tableNameCol};
+  @override
+  SyncCursorRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SyncCursorRow(
+      tableNameCol: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}table_name'],
+      )!,
+      lastServerUpdatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_server_updated_at'],
+      )!,
+      lastPulledAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}last_pulled_at'],
+      )!,
+    );
+  }
+
+  @override
+  $SyncCursorsTable createAlias(String alias) {
+    return $SyncCursorsTable(attachedDatabase, alias);
+  }
+}
+
+class SyncCursorRow extends DataClass implements Insertable<SyncCursorRow> {
+  final String tableNameCol;
+  final String lastServerUpdatedAt;
+  final int lastPulledAt;
+  const SyncCursorRow({
+    required this.tableNameCol,
+    required this.lastServerUpdatedAt,
+    required this.lastPulledAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['table_name'] = Variable<String>(tableNameCol);
+    map['last_server_updated_at'] = Variable<String>(lastServerUpdatedAt);
+    map['last_pulled_at'] = Variable<int>(lastPulledAt);
+    return map;
+  }
+
+  SyncCursorsCompanion toCompanion(bool nullToAbsent) {
+    return SyncCursorsCompanion(
+      tableNameCol: Value(tableNameCol),
+      lastServerUpdatedAt: Value(lastServerUpdatedAt),
+      lastPulledAt: Value(lastPulledAt),
+    );
+  }
+
+  factory SyncCursorRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SyncCursorRow(
+      tableNameCol: serializer.fromJson<String>(json['tableNameCol']),
+      lastServerUpdatedAt: serializer.fromJson<String>(
+        json['lastServerUpdatedAt'],
+      ),
+      lastPulledAt: serializer.fromJson<int>(json['lastPulledAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'tableNameCol': serializer.toJson<String>(tableNameCol),
+      'lastServerUpdatedAt': serializer.toJson<String>(lastServerUpdatedAt),
+      'lastPulledAt': serializer.toJson<int>(lastPulledAt),
+    };
+  }
+
+  SyncCursorRow copyWith({
+    String? tableNameCol,
+    String? lastServerUpdatedAt,
+    int? lastPulledAt,
+  }) => SyncCursorRow(
+    tableNameCol: tableNameCol ?? this.tableNameCol,
+    lastServerUpdatedAt: lastServerUpdatedAt ?? this.lastServerUpdatedAt,
+    lastPulledAt: lastPulledAt ?? this.lastPulledAt,
+  );
+  SyncCursorRow copyWithCompanion(SyncCursorsCompanion data) {
+    return SyncCursorRow(
+      tableNameCol: data.tableNameCol.present
+          ? data.tableNameCol.value
+          : this.tableNameCol,
+      lastServerUpdatedAt: data.lastServerUpdatedAt.present
+          ? data.lastServerUpdatedAt.value
+          : this.lastServerUpdatedAt,
+      lastPulledAt: data.lastPulledAt.present
+          ? data.lastPulledAt.value
+          : this.lastPulledAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncCursorRow(')
+          ..write('tableNameCol: $tableNameCol, ')
+          ..write('lastServerUpdatedAt: $lastServerUpdatedAt, ')
+          ..write('lastPulledAt: $lastPulledAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(tableNameCol, lastServerUpdatedAt, lastPulledAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SyncCursorRow &&
+          other.tableNameCol == this.tableNameCol &&
+          other.lastServerUpdatedAt == this.lastServerUpdatedAt &&
+          other.lastPulledAt == this.lastPulledAt);
+}
+
+class SyncCursorsCompanion extends UpdateCompanion<SyncCursorRow> {
+  final Value<String> tableNameCol;
+  final Value<String> lastServerUpdatedAt;
+  final Value<int> lastPulledAt;
+  final Value<int> rowid;
+  const SyncCursorsCompanion({
+    this.tableNameCol = const Value.absent(),
+    this.lastServerUpdatedAt = const Value.absent(),
+    this.lastPulledAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SyncCursorsCompanion.insert({
+    required String tableNameCol,
+    required String lastServerUpdatedAt,
+    required int lastPulledAt,
+    this.rowid = const Value.absent(),
+  }) : tableNameCol = Value(tableNameCol),
+       lastServerUpdatedAt = Value(lastServerUpdatedAt),
+       lastPulledAt = Value(lastPulledAt);
+  static Insertable<SyncCursorRow> custom({
+    Expression<String>? tableNameCol,
+    Expression<String>? lastServerUpdatedAt,
+    Expression<int>? lastPulledAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (tableNameCol != null) 'table_name': tableNameCol,
+      if (lastServerUpdatedAt != null)
+        'last_server_updated_at': lastServerUpdatedAt,
+      if (lastPulledAt != null) 'last_pulled_at': lastPulledAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SyncCursorsCompanion copyWith({
+    Value<String>? tableNameCol,
+    Value<String>? lastServerUpdatedAt,
+    Value<int>? lastPulledAt,
+    Value<int>? rowid,
+  }) {
+    return SyncCursorsCompanion(
+      tableNameCol: tableNameCol ?? this.tableNameCol,
+      lastServerUpdatedAt: lastServerUpdatedAt ?? this.lastServerUpdatedAt,
+      lastPulledAt: lastPulledAt ?? this.lastPulledAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (tableNameCol.present) {
+      map['table_name'] = Variable<String>(tableNameCol.value);
+    }
+    if (lastServerUpdatedAt.present) {
+      map['last_server_updated_at'] = Variable<String>(
+        lastServerUpdatedAt.value,
+      );
+    }
+    if (lastPulledAt.present) {
+      map['last_pulled_at'] = Variable<int>(lastPulledAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncCursorsCompanion(')
+          ..write('tableNameCol: $tableNameCol, ')
+          ..write('lastServerUpdatedAt: $lastServerUpdatedAt, ')
+          ..write('lastPulledAt: $lastPulledAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $SyncMediaQueuesTable extends SyncMediaQueues
+    with TableInfo<$SyncMediaQueuesTable, SyncMediaQueueRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SyncMediaQueuesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _attachmentIdMeta = const VerificationMeta(
+    'attachmentId',
+  );
+  @override
+  late final GeneratedColumn<String> attachmentId = GeneratedColumn<String>(
+    'attachment_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _directionMeta = const VerificationMeta(
+    'direction',
+  );
+  @override
+  late final GeneratedColumn<String> direction = GeneratedColumn<String>(
+    'direction',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _sha256Meta = const VerificationMeta('sha256');
+  @override
+  late final GeneratedColumn<String> sha256 = GeneratedColumn<String>(
+    'sha256',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _relativePathMeta = const VerificationMeta(
+    'relativePath',
+  );
+  @override
+  late final GeneratedColumn<String> relativePath = GeneratedColumn<String>(
+    'relative_path',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _remotePathMeta = const VerificationMeta(
+    'remotePath',
+  );
+  @override
+  late final GeneratedColumn<String> remotePath = GeneratedColumn<String>(
+    'remote_path',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('PENDING'),
+  );
+  static const VerificationMeta _retryCountMeta = const VerificationMeta(
+    'retryCount',
+  );
+  @override
+  late final GeneratedColumn<int> retryCount = GeneratedColumn<int>(
+    'retry_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _nextRetryAtMeta = const VerificationMeta(
+    'nextRetryAt',
+  );
+  @override
+  late final GeneratedColumn<int> nextRetryAt = GeneratedColumn<int>(
+    'next_retry_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _lastErrorMeta = const VerificationMeta(
+    'lastError',
+  );
+  @override
+  late final GeneratedColumn<String> lastError = GeneratedColumn<String>(
+    'last_error',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    attachmentId,
+    direction,
+    sha256,
+    relativePath,
+    remotePath,
+    status,
+    retryCount,
+    nextRetryAt,
+    lastError,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'sync_media_queue';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SyncMediaQueueRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('attachment_id')) {
+      context.handle(
+        _attachmentIdMeta,
+        attachmentId.isAcceptableOrUnknown(
+          data['attachment_id']!,
+          _attachmentIdMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_attachmentIdMeta);
+    }
+    if (data.containsKey('direction')) {
+      context.handle(
+        _directionMeta,
+        direction.isAcceptableOrUnknown(data['direction']!, _directionMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_directionMeta);
+    }
+    if (data.containsKey('sha256')) {
+      context.handle(
+        _sha256Meta,
+        sha256.isAcceptableOrUnknown(data['sha256']!, _sha256Meta),
+      );
+    } else if (isInserting) {
+      context.missing(_sha256Meta);
+    }
+    if (data.containsKey('relative_path')) {
+      context.handle(
+        _relativePathMeta,
+        relativePath.isAcceptableOrUnknown(
+          data['relative_path']!,
+          _relativePathMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_relativePathMeta);
+    }
+    if (data.containsKey('remote_path')) {
+      context.handle(
+        _remotePathMeta,
+        remotePath.isAcceptableOrUnknown(data['remote_path']!, _remotePathMeta),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('retry_count')) {
+      context.handle(
+        _retryCountMeta,
+        retryCount.isAcceptableOrUnknown(data['retry_count']!, _retryCountMeta),
+      );
+    }
+    if (data.containsKey('next_retry_at')) {
+      context.handle(
+        _nextRetryAtMeta,
+        nextRetryAt.isAcceptableOrUnknown(
+          data['next_retry_at']!,
+          _nextRetryAtMeta,
+        ),
+      );
+    }
+    if (data.containsKey('last_error')) {
+      context.handle(
+        _lastErrorMeta,
+        lastError.isAcceptableOrUnknown(data['last_error']!, _lastErrorMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {attachmentId};
+  @override
+  SyncMediaQueueRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SyncMediaQueueRow(
+      attachmentId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}attachment_id'],
+      )!,
+      direction: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}direction'],
+      )!,
+      sha256: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}sha256'],
+      )!,
+      relativePath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}relative_path'],
+      )!,
+      remotePath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}remote_path'],
+      ),
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      retryCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}retry_count'],
+      )!,
+      nextRetryAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}next_retry_at'],
+      ),
+      lastError: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}last_error'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $SyncMediaQueuesTable createAlias(String alias) {
+    return $SyncMediaQueuesTable(attachedDatabase, alias);
+  }
+}
+
+class SyncMediaQueueRow extends DataClass
+    implements Insertable<SyncMediaQueueRow> {
+  final String attachmentId;
+  final String direction;
+  final String sha256;
+  final String relativePath;
+  final String? remotePath;
+  final String status;
+  final int retryCount;
+  final int? nextRetryAt;
+  final String? lastError;
+  final int updatedAt;
+  const SyncMediaQueueRow({
+    required this.attachmentId,
+    required this.direction,
+    required this.sha256,
+    required this.relativePath,
+    this.remotePath,
+    required this.status,
+    required this.retryCount,
+    this.nextRetryAt,
+    this.lastError,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['attachment_id'] = Variable<String>(attachmentId);
+    map['direction'] = Variable<String>(direction);
+    map['sha256'] = Variable<String>(sha256);
+    map['relative_path'] = Variable<String>(relativePath);
+    if (!nullToAbsent || remotePath != null) {
+      map['remote_path'] = Variable<String>(remotePath);
+    }
+    map['status'] = Variable<String>(status);
+    map['retry_count'] = Variable<int>(retryCount);
+    if (!nullToAbsent || nextRetryAt != null) {
+      map['next_retry_at'] = Variable<int>(nextRetryAt);
+    }
+    if (!nullToAbsent || lastError != null) {
+      map['last_error'] = Variable<String>(lastError);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    return map;
+  }
+
+  SyncMediaQueuesCompanion toCompanion(bool nullToAbsent) {
+    return SyncMediaQueuesCompanion(
+      attachmentId: Value(attachmentId),
+      direction: Value(direction),
+      sha256: Value(sha256),
+      relativePath: Value(relativePath),
+      remotePath: remotePath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(remotePath),
+      status: Value(status),
+      retryCount: Value(retryCount),
+      nextRetryAt: nextRetryAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(nextRetryAt),
+      lastError: lastError == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastError),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory SyncMediaQueueRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SyncMediaQueueRow(
+      attachmentId: serializer.fromJson<String>(json['attachmentId']),
+      direction: serializer.fromJson<String>(json['direction']),
+      sha256: serializer.fromJson<String>(json['sha256']),
+      relativePath: serializer.fromJson<String>(json['relativePath']),
+      remotePath: serializer.fromJson<String?>(json['remotePath']),
+      status: serializer.fromJson<String>(json['status']),
+      retryCount: serializer.fromJson<int>(json['retryCount']),
+      nextRetryAt: serializer.fromJson<int?>(json['nextRetryAt']),
+      lastError: serializer.fromJson<String?>(json['lastError']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'attachmentId': serializer.toJson<String>(attachmentId),
+      'direction': serializer.toJson<String>(direction),
+      'sha256': serializer.toJson<String>(sha256),
+      'relativePath': serializer.toJson<String>(relativePath),
+      'remotePath': serializer.toJson<String?>(remotePath),
+      'status': serializer.toJson<String>(status),
+      'retryCount': serializer.toJson<int>(retryCount),
+      'nextRetryAt': serializer.toJson<int?>(nextRetryAt),
+      'lastError': serializer.toJson<String?>(lastError),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+    };
+  }
+
+  SyncMediaQueueRow copyWith({
+    String? attachmentId,
+    String? direction,
+    String? sha256,
+    String? relativePath,
+    Value<String?> remotePath = const Value.absent(),
+    String? status,
+    int? retryCount,
+    Value<int?> nextRetryAt = const Value.absent(),
+    Value<String?> lastError = const Value.absent(),
+    int? updatedAt,
+  }) => SyncMediaQueueRow(
+    attachmentId: attachmentId ?? this.attachmentId,
+    direction: direction ?? this.direction,
+    sha256: sha256 ?? this.sha256,
+    relativePath: relativePath ?? this.relativePath,
+    remotePath: remotePath.present ? remotePath.value : this.remotePath,
+    status: status ?? this.status,
+    retryCount: retryCount ?? this.retryCount,
+    nextRetryAt: nextRetryAt.present ? nextRetryAt.value : this.nextRetryAt,
+    lastError: lastError.present ? lastError.value : this.lastError,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  SyncMediaQueueRow copyWithCompanion(SyncMediaQueuesCompanion data) {
+    return SyncMediaQueueRow(
+      attachmentId: data.attachmentId.present
+          ? data.attachmentId.value
+          : this.attachmentId,
+      direction: data.direction.present ? data.direction.value : this.direction,
+      sha256: data.sha256.present ? data.sha256.value : this.sha256,
+      relativePath: data.relativePath.present
+          ? data.relativePath.value
+          : this.relativePath,
+      remotePath: data.remotePath.present
+          ? data.remotePath.value
+          : this.remotePath,
+      status: data.status.present ? data.status.value : this.status,
+      retryCount: data.retryCount.present
+          ? data.retryCount.value
+          : this.retryCount,
+      nextRetryAt: data.nextRetryAt.present
+          ? data.nextRetryAt.value
+          : this.nextRetryAt,
+      lastError: data.lastError.present ? data.lastError.value : this.lastError,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncMediaQueueRow(')
+          ..write('attachmentId: $attachmentId, ')
+          ..write('direction: $direction, ')
+          ..write('sha256: $sha256, ')
+          ..write('relativePath: $relativePath, ')
+          ..write('remotePath: $remotePath, ')
+          ..write('status: $status, ')
+          ..write('retryCount: $retryCount, ')
+          ..write('nextRetryAt: $nextRetryAt, ')
+          ..write('lastError: $lastError, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    attachmentId,
+    direction,
+    sha256,
+    relativePath,
+    remotePath,
+    status,
+    retryCount,
+    nextRetryAt,
+    lastError,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SyncMediaQueueRow &&
+          other.attachmentId == this.attachmentId &&
+          other.direction == this.direction &&
+          other.sha256 == this.sha256 &&
+          other.relativePath == this.relativePath &&
+          other.remotePath == this.remotePath &&
+          other.status == this.status &&
+          other.retryCount == this.retryCount &&
+          other.nextRetryAt == this.nextRetryAt &&
+          other.lastError == this.lastError &&
+          other.updatedAt == this.updatedAt);
+}
+
+class SyncMediaQueuesCompanion extends UpdateCompanion<SyncMediaQueueRow> {
+  final Value<String> attachmentId;
+  final Value<String> direction;
+  final Value<String> sha256;
+  final Value<String> relativePath;
+  final Value<String?> remotePath;
+  final Value<String> status;
+  final Value<int> retryCount;
+  final Value<int?> nextRetryAt;
+  final Value<String?> lastError;
+  final Value<int> updatedAt;
+  final Value<int> rowid;
+  const SyncMediaQueuesCompanion({
+    this.attachmentId = const Value.absent(),
+    this.direction = const Value.absent(),
+    this.sha256 = const Value.absent(),
+    this.relativePath = const Value.absent(),
+    this.remotePath = const Value.absent(),
+    this.status = const Value.absent(),
+    this.retryCount = const Value.absent(),
+    this.nextRetryAt = const Value.absent(),
+    this.lastError = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  SyncMediaQueuesCompanion.insert({
+    required String attachmentId,
+    required String direction,
+    required String sha256,
+    required String relativePath,
+    this.remotePath = const Value.absent(),
+    this.status = const Value.absent(),
+    this.retryCount = const Value.absent(),
+    this.nextRetryAt = const Value.absent(),
+    this.lastError = const Value.absent(),
+    required int updatedAt,
+    this.rowid = const Value.absent(),
+  }) : attachmentId = Value(attachmentId),
+       direction = Value(direction),
+       sha256 = Value(sha256),
+       relativePath = Value(relativePath),
+       updatedAt = Value(updatedAt);
+  static Insertable<SyncMediaQueueRow> custom({
+    Expression<String>? attachmentId,
+    Expression<String>? direction,
+    Expression<String>? sha256,
+    Expression<String>? relativePath,
+    Expression<String>? remotePath,
+    Expression<String>? status,
+    Expression<int>? retryCount,
+    Expression<int>? nextRetryAt,
+    Expression<String>? lastError,
+    Expression<int>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (attachmentId != null) 'attachment_id': attachmentId,
+      if (direction != null) 'direction': direction,
+      if (sha256 != null) 'sha256': sha256,
+      if (relativePath != null) 'relative_path': relativePath,
+      if (remotePath != null) 'remote_path': remotePath,
+      if (status != null) 'status': status,
+      if (retryCount != null) 'retry_count': retryCount,
+      if (nextRetryAt != null) 'next_retry_at': nextRetryAt,
+      if (lastError != null) 'last_error': lastError,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  SyncMediaQueuesCompanion copyWith({
+    Value<String>? attachmentId,
+    Value<String>? direction,
+    Value<String>? sha256,
+    Value<String>? relativePath,
+    Value<String?>? remotePath,
+    Value<String>? status,
+    Value<int>? retryCount,
+    Value<int?>? nextRetryAt,
+    Value<String?>? lastError,
+    Value<int>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return SyncMediaQueuesCompanion(
+      attachmentId: attachmentId ?? this.attachmentId,
+      direction: direction ?? this.direction,
+      sha256: sha256 ?? this.sha256,
+      relativePath: relativePath ?? this.relativePath,
+      remotePath: remotePath ?? this.remotePath,
+      status: status ?? this.status,
+      retryCount: retryCount ?? this.retryCount,
+      nextRetryAt: nextRetryAt ?? this.nextRetryAt,
+      lastError: lastError ?? this.lastError,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (attachmentId.present) {
+      map['attachment_id'] = Variable<String>(attachmentId.value);
+    }
+    if (direction.present) {
+      map['direction'] = Variable<String>(direction.value);
+    }
+    if (sha256.present) {
+      map['sha256'] = Variable<String>(sha256.value);
+    }
+    if (relativePath.present) {
+      map['relative_path'] = Variable<String>(relativePath.value);
+    }
+    if (remotePath.present) {
+      map['remote_path'] = Variable<String>(remotePath.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (retryCount.present) {
+      map['retry_count'] = Variable<int>(retryCount.value);
+    }
+    if (nextRetryAt.present) {
+      map['next_retry_at'] = Variable<int>(nextRetryAt.value);
+    }
+    if (lastError.present) {
+      map['last_error'] = Variable<String>(lastError.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SyncMediaQueuesCompanion(')
+          ..write('attachmentId: $attachmentId, ')
+          ..write('direction: $direction, ')
+          ..write('sha256: $sha256, ')
+          ..write('relativePath: $relativePath, ')
+          ..write('remotePath: $remotePath, ')
+          ..write('status: $status, ')
+          ..write('retryCount: $retryCount, ')
+          ..write('nextRetryAt: $nextRetryAt, ')
+          ..write('lastError: $lastError, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $CachedTeamMembersTable extends CachedTeamMembers
+    with TableInfo<$CachedTeamMembersTable, CachedTeamMemberRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CachedTeamMembersTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+    'user_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _businessIdMeta = const VerificationMeta(
+    'businessId',
+  );
+  @override
+  late final GeneratedColumn<String> businessId = GeneratedColumn<String>(
+    'business_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _roleMeta = const VerificationMeta('role');
+  @override
+  late final GeneratedColumn<String> role = GeneratedColumn<String>(
+    'role',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('OWNER'),
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('ACTIVE'),
+  );
+  static const VerificationMeta _displayNameMeta = const VerificationMeta(
+    'displayName',
+  );
+  @override
+  late final GeneratedColumn<String> displayName = GeneratedColumn<String>(
+    'display_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _emailMeta = const VerificationMeta('email');
+  @override
+  late final GeneratedColumn<String> email = GeneratedColumn<String>(
+    'email',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _phoneMeta = const VerificationMeta('phone');
+  @override
+  late final GeneratedColumn<String> phone = GeneratedColumn<String>(
+    'phone',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    userId,
+    businessId,
+    role,
+    status,
+    displayName,
+    email,
+    phone,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'cached_team_members';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CachedTeamMemberRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('user_id')) {
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_userIdMeta);
+    }
+    if (data.containsKey('business_id')) {
+      context.handle(
+        _businessIdMeta,
+        businessId.isAcceptableOrUnknown(data['business_id']!, _businessIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_businessIdMeta);
+    }
+    if (data.containsKey('role')) {
+      context.handle(
+        _roleMeta,
+        role.isAcceptableOrUnknown(data['role']!, _roleMeta),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('display_name')) {
+      context.handle(
+        _displayNameMeta,
+        displayName.isAcceptableOrUnknown(
+          data['display_name']!,
+          _displayNameMeta,
+        ),
+      );
+    }
+    if (data.containsKey('email')) {
+      context.handle(
+        _emailMeta,
+        email.isAcceptableOrUnknown(data['email']!, _emailMeta),
+      );
+    }
+    if (data.containsKey('phone')) {
+      context.handle(
+        _phoneMeta,
+        phone.isAcceptableOrUnknown(data['phone']!, _phoneMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {businessId, userId};
+  @override
+  CachedTeamMemberRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CachedTeamMemberRow(
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_id'],
+      )!,
+      businessId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}business_id'],
+      )!,
+      role: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}role'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      displayName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}display_name'],
+      ),
+      email: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}email'],
+      ),
+      phone: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}phone'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $CachedTeamMembersTable createAlias(String alias) {
+    return $CachedTeamMembersTable(attachedDatabase, alias);
+  }
+}
+
+class CachedTeamMemberRow extends DataClass
+    implements Insertable<CachedTeamMemberRow> {
+  final String userId;
+  final String businessId;
+  final String role;
+  final String status;
+  final String? displayName;
+  final String? email;
+  final String? phone;
+  final int updatedAt;
+  const CachedTeamMemberRow({
+    required this.userId,
+    required this.businessId,
+    required this.role,
+    required this.status,
+    this.displayName,
+    this.email,
+    this.phone,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['user_id'] = Variable<String>(userId);
+    map['business_id'] = Variable<String>(businessId);
+    map['role'] = Variable<String>(role);
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || displayName != null) {
+      map['display_name'] = Variable<String>(displayName);
+    }
+    if (!nullToAbsent || email != null) {
+      map['email'] = Variable<String>(email);
+    }
+    if (!nullToAbsent || phone != null) {
+      map['phone'] = Variable<String>(phone);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    return map;
+  }
+
+  CachedTeamMembersCompanion toCompanion(bool nullToAbsent) {
+    return CachedTeamMembersCompanion(
+      userId: Value(userId),
+      businessId: Value(businessId),
+      role: Value(role),
+      status: Value(status),
+      displayName: displayName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(displayName),
+      email: email == null && nullToAbsent
+          ? const Value.absent()
+          : Value(email),
+      phone: phone == null && nullToAbsent
+          ? const Value.absent()
+          : Value(phone),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory CachedTeamMemberRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CachedTeamMemberRow(
+      userId: serializer.fromJson<String>(json['userId']),
+      businessId: serializer.fromJson<String>(json['businessId']),
+      role: serializer.fromJson<String>(json['role']),
+      status: serializer.fromJson<String>(json['status']),
+      displayName: serializer.fromJson<String?>(json['displayName']),
+      email: serializer.fromJson<String?>(json['email']),
+      phone: serializer.fromJson<String?>(json['phone']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'userId': serializer.toJson<String>(userId),
+      'businessId': serializer.toJson<String>(businessId),
+      'role': serializer.toJson<String>(role),
+      'status': serializer.toJson<String>(status),
+      'displayName': serializer.toJson<String?>(displayName),
+      'email': serializer.toJson<String?>(email),
+      'phone': serializer.toJson<String?>(phone),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+    };
+  }
+
+  CachedTeamMemberRow copyWith({
+    String? userId,
+    String? businessId,
+    String? role,
+    String? status,
+    Value<String?> displayName = const Value.absent(),
+    Value<String?> email = const Value.absent(),
+    Value<String?> phone = const Value.absent(),
+    int? updatedAt,
+  }) => CachedTeamMemberRow(
+    userId: userId ?? this.userId,
+    businessId: businessId ?? this.businessId,
+    role: role ?? this.role,
+    status: status ?? this.status,
+    displayName: displayName.present ? displayName.value : this.displayName,
+    email: email.present ? email.value : this.email,
+    phone: phone.present ? phone.value : this.phone,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  CachedTeamMemberRow copyWithCompanion(CachedTeamMembersCompanion data) {
+    return CachedTeamMemberRow(
+      userId: data.userId.present ? data.userId.value : this.userId,
+      businessId: data.businessId.present
+          ? data.businessId.value
+          : this.businessId,
+      role: data.role.present ? data.role.value : this.role,
+      status: data.status.present ? data.status.value : this.status,
+      displayName: data.displayName.present
+          ? data.displayName.value
+          : this.displayName,
+      email: data.email.present ? data.email.value : this.email,
+      phone: data.phone.present ? data.phone.value : this.phone,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CachedTeamMemberRow(')
+          ..write('userId: $userId, ')
+          ..write('businessId: $businessId, ')
+          ..write('role: $role, ')
+          ..write('status: $status, ')
+          ..write('displayName: $displayName, ')
+          ..write('email: $email, ')
+          ..write('phone: $phone, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    userId,
+    businessId,
+    role,
+    status,
+    displayName,
+    email,
+    phone,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CachedTeamMemberRow &&
+          other.userId == this.userId &&
+          other.businessId == this.businessId &&
+          other.role == this.role &&
+          other.status == this.status &&
+          other.displayName == this.displayName &&
+          other.email == this.email &&
+          other.phone == this.phone &&
+          other.updatedAt == this.updatedAt);
+}
+
+class CachedTeamMembersCompanion extends UpdateCompanion<CachedTeamMemberRow> {
+  final Value<String> userId;
+  final Value<String> businessId;
+  final Value<String> role;
+  final Value<String> status;
+  final Value<String?> displayName;
+  final Value<String?> email;
+  final Value<String?> phone;
+  final Value<int> updatedAt;
+  final Value<int> rowid;
+  const CachedTeamMembersCompanion({
+    this.userId = const Value.absent(),
+    this.businessId = const Value.absent(),
+    this.role = const Value.absent(),
+    this.status = const Value.absent(),
+    this.displayName = const Value.absent(),
+    this.email = const Value.absent(),
+    this.phone = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CachedTeamMembersCompanion.insert({
+    required String userId,
+    required String businessId,
+    this.role = const Value.absent(),
+    this.status = const Value.absent(),
+    this.displayName = const Value.absent(),
+    this.email = const Value.absent(),
+    this.phone = const Value.absent(),
+    required int updatedAt,
+    this.rowid = const Value.absent(),
+  }) : userId = Value(userId),
+       businessId = Value(businessId),
+       updatedAt = Value(updatedAt);
+  static Insertable<CachedTeamMemberRow> custom({
+    Expression<String>? userId,
+    Expression<String>? businessId,
+    Expression<String>? role,
+    Expression<String>? status,
+    Expression<String>? displayName,
+    Expression<String>? email,
+    Expression<String>? phone,
+    Expression<int>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (userId != null) 'user_id': userId,
+      if (businessId != null) 'business_id': businessId,
+      if (role != null) 'role': role,
+      if (status != null) 'status': status,
+      if (displayName != null) 'display_name': displayName,
+      if (email != null) 'email': email,
+      if (phone != null) 'phone': phone,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CachedTeamMembersCompanion copyWith({
+    Value<String>? userId,
+    Value<String>? businessId,
+    Value<String>? role,
+    Value<String>? status,
+    Value<String?>? displayName,
+    Value<String?>? email,
+    Value<String?>? phone,
+    Value<int>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return CachedTeamMembersCompanion(
+      userId: userId ?? this.userId,
+      businessId: businessId ?? this.businessId,
+      role: role ?? this.role,
+      status: status ?? this.status,
+      displayName: displayName ?? this.displayName,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (businessId.present) {
+      map['business_id'] = Variable<String>(businessId.value);
+    }
+    if (role.present) {
+      map['role'] = Variable<String>(role.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (displayName.present) {
+      map['display_name'] = Variable<String>(displayName.value);
+    }
+    if (email.present) {
+      map['email'] = Variable<String>(email.value);
+    }
+    if (phone.present) {
+      map['phone'] = Variable<String>(phone.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CachedTeamMembersCompanion(')
+          ..write('userId: $userId, ')
+          ..write('businessId: $businessId, ')
+          ..write('role: $role, ')
+          ..write('status: $status, ')
+          ..write('displayName: $displayName, ')
+          ..write('email: $email, ')
+          ..write('phone: $phone, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -20930,6 +23521,15 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $RejectionRepairsTable rejectionRepairs = $RejectionRepairsTable(
     this,
   );
+  late final $SyncSessionStatesTable syncSessionStates =
+      $SyncSessionStatesTable(this);
+  late final $SyncOutboxesTable syncOutboxes = $SyncOutboxesTable(this);
+  late final $SyncCursorsTable syncCursors = $SyncCursorsTable(this);
+  late final $SyncMediaQueuesTable syncMediaQueues = $SyncMediaQueuesTable(
+    this,
+  );
+  late final $CachedTeamMembersTable cachedTeamMembers =
+      $CachedTeamMembersTable(this);
   late final BusinessProfileDao businessProfileDao = BusinessProfileDao(
     this as AppDatabase,
   );
@@ -20956,6 +23556,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   );
   late final ProductionTrackingDao productionTrackingDao =
       ProductionTrackingDao(this as AppDatabase);
+  late final SyncDao syncDao = SyncDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -20984,6 +23585,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     productionInspections,
     rejectionRecords,
     rejectionRepairs,
+    syncSessionStates,
+    syncOutboxes,
+    syncCursors,
+    syncMediaQueues,
+    cachedTeamMembers,
   ];
 }
 
@@ -44622,6 +47228,1387 @@ typedef $$RejectionRepairsTableProcessedTableManager =
         bool memberId,
       })
     >;
+typedef $$SyncSessionStatesTableCreateCompanionBuilder =
+    SyncSessionStatesCompanion Function({
+      Value<int> id,
+      Value<int> isApplyingRemote,
+      required String deviceId,
+      Value<String?> boundUserId,
+      Value<String?> boundBusinessId,
+      Value<String> activeRole,
+      Value<String?> activeBusinessName,
+      Value<int?> lastFullSyncAt,
+      required int updatedAt,
+    });
+typedef $$SyncSessionStatesTableUpdateCompanionBuilder =
+    SyncSessionStatesCompanion Function({
+      Value<int> id,
+      Value<int> isApplyingRemote,
+      Value<String> deviceId,
+      Value<String?> boundUserId,
+      Value<String?> boundBusinessId,
+      Value<String> activeRole,
+      Value<String?> activeBusinessName,
+      Value<int?> lastFullSyncAt,
+      Value<int> updatedAt,
+    });
+
+class $$SyncSessionStatesTableFilterComposer
+    extends Composer<_$AppDatabase, $SyncSessionStatesTable> {
+  $$SyncSessionStatesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get isApplyingRemote => $composableBuilder(
+    column: $table.isApplyingRemote,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get deviceId => $composableBuilder(
+    column: $table.deviceId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get boundUserId => $composableBuilder(
+    column: $table.boundUserId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get boundBusinessId => $composableBuilder(
+    column: $table.boundBusinessId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get activeRole => $composableBuilder(
+    column: $table.activeRole,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get activeBusinessName => $composableBuilder(
+    column: $table.activeBusinessName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get lastFullSyncAt => $composableBuilder(
+    column: $table.lastFullSyncAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$SyncSessionStatesTableOrderingComposer
+    extends Composer<_$AppDatabase, $SyncSessionStatesTable> {
+  $$SyncSessionStatesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get isApplyingRemote => $composableBuilder(
+    column: $table.isApplyingRemote,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get deviceId => $composableBuilder(
+    column: $table.deviceId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get boundUserId => $composableBuilder(
+    column: $table.boundUserId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get boundBusinessId => $composableBuilder(
+    column: $table.boundBusinessId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get activeRole => $composableBuilder(
+    column: $table.activeRole,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get activeBusinessName => $composableBuilder(
+    column: $table.activeBusinessName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get lastFullSyncAt => $composableBuilder(
+    column: $table.lastFullSyncAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SyncSessionStatesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SyncSessionStatesTable> {
+  $$SyncSessionStatesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<int> get isApplyingRemote => $composableBuilder(
+    column: $table.isApplyingRemote,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get deviceId =>
+      $composableBuilder(column: $table.deviceId, builder: (column) => column);
+
+  GeneratedColumn<String> get boundUserId => $composableBuilder(
+    column: $table.boundUserId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get boundBusinessId => $composableBuilder(
+    column: $table.boundBusinessId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get activeRole => $composableBuilder(
+    column: $table.activeRole,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get activeBusinessName => $composableBuilder(
+    column: $table.activeBusinessName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get lastFullSyncAt => $composableBuilder(
+    column: $table.lastFullSyncAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$SyncSessionStatesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SyncSessionStatesTable,
+          SyncSessionStateRow,
+          $$SyncSessionStatesTableFilterComposer,
+          $$SyncSessionStatesTableOrderingComposer,
+          $$SyncSessionStatesTableAnnotationComposer,
+          $$SyncSessionStatesTableCreateCompanionBuilder,
+          $$SyncSessionStatesTableUpdateCompanionBuilder,
+          (
+            SyncSessionStateRow,
+            BaseReferences<
+              _$AppDatabase,
+              $SyncSessionStatesTable,
+              SyncSessionStateRow
+            >,
+          ),
+          SyncSessionStateRow,
+          PrefetchHooks Function()
+        > {
+  $$SyncSessionStatesTableTableManager(
+    _$AppDatabase db,
+    $SyncSessionStatesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SyncSessionStatesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SyncSessionStatesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SyncSessionStatesTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> isApplyingRemote = const Value.absent(),
+                Value<String> deviceId = const Value.absent(),
+                Value<String?> boundUserId = const Value.absent(),
+                Value<String?> boundBusinessId = const Value.absent(),
+                Value<String> activeRole = const Value.absent(),
+                Value<String?> activeBusinessName = const Value.absent(),
+                Value<int?> lastFullSyncAt = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+              }) => SyncSessionStatesCompanion(
+                id: id,
+                isApplyingRemote: isApplyingRemote,
+                deviceId: deviceId,
+                boundUserId: boundUserId,
+                boundBusinessId: boundBusinessId,
+                activeRole: activeRole,
+                activeBusinessName: activeBusinessName,
+                lastFullSyncAt: lastFullSyncAt,
+                updatedAt: updatedAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int> isApplyingRemote = const Value.absent(),
+                required String deviceId,
+                Value<String?> boundUserId = const Value.absent(),
+                Value<String?> boundBusinessId = const Value.absent(),
+                Value<String> activeRole = const Value.absent(),
+                Value<String?> activeBusinessName = const Value.absent(),
+                Value<int?> lastFullSyncAt = const Value.absent(),
+                required int updatedAt,
+              }) => SyncSessionStatesCompanion.insert(
+                id: id,
+                isApplyingRemote: isApplyingRemote,
+                deviceId: deviceId,
+                boundUserId: boundUserId,
+                boundBusinessId: boundBusinessId,
+                activeRole: activeRole,
+                activeBusinessName: activeBusinessName,
+                lastFullSyncAt: lastFullSyncAt,
+                updatedAt: updatedAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$SyncSessionStatesTable, SyncSessionStateRow>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $SyncSessionStatesTable,
+                    SyncSessionStateRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SyncSessionStatesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SyncSessionStatesTable,
+      SyncSessionStateRow,
+      $$SyncSessionStatesTableFilterComposer,
+      $$SyncSessionStatesTableOrderingComposer,
+      $$SyncSessionStatesTableAnnotationComposer,
+      $$SyncSessionStatesTableCreateCompanionBuilder,
+      $$SyncSessionStatesTableUpdateCompanionBuilder,
+      (
+        SyncSessionStateRow,
+        BaseReferences<
+          _$AppDatabase,
+          $SyncSessionStatesTable,
+          SyncSessionStateRow
+        >,
+      ),
+      SyncSessionStateRow,
+      PrefetchHooks Function()
+    >;
+typedef $$SyncOutboxesTableCreateCompanionBuilder =
+    SyncOutboxesCompanion Function({
+      required String entryKey,
+      required String tableNameCol,
+      required String rowId,
+      Value<String> operation,
+      required int enqueuedAt,
+      Value<String> status,
+      Value<int> retryCount,
+      Value<int?> nextRetryAt,
+      Value<String?> lastError,
+      Value<int> rowid,
+    });
+typedef $$SyncOutboxesTableUpdateCompanionBuilder =
+    SyncOutboxesCompanion Function({
+      Value<String> entryKey,
+      Value<String> tableNameCol,
+      Value<String> rowId,
+      Value<String> operation,
+      Value<int> enqueuedAt,
+      Value<String> status,
+      Value<int> retryCount,
+      Value<int?> nextRetryAt,
+      Value<String?> lastError,
+      Value<int> rowid,
+    });
+
+class $$SyncOutboxesTableFilterComposer
+    extends Composer<_$AppDatabase, $SyncOutboxesTable> {
+  $$SyncOutboxesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get entryKey => $composableBuilder(
+    column: $table.entryKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get tableNameCol => $composableBuilder(
+    column: $table.tableNameCol,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get rowId => $composableBuilder(
+    column: $table.rowId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get operation => $composableBuilder(
+    column: $table.operation,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get enqueuedAt => $composableBuilder(
+    column: $table.enqueuedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get retryCount => $composableBuilder(
+    column: $table.retryCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get nextRetryAt => $composableBuilder(
+    column: $table.nextRetryAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastError => $composableBuilder(
+    column: $table.lastError,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$SyncOutboxesTableOrderingComposer
+    extends Composer<_$AppDatabase, $SyncOutboxesTable> {
+  $$SyncOutboxesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get entryKey => $composableBuilder(
+    column: $table.entryKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get tableNameCol => $composableBuilder(
+    column: $table.tableNameCol,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get rowId => $composableBuilder(
+    column: $table.rowId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get operation => $composableBuilder(
+    column: $table.operation,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get enqueuedAt => $composableBuilder(
+    column: $table.enqueuedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get retryCount => $composableBuilder(
+    column: $table.retryCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get nextRetryAt => $composableBuilder(
+    column: $table.nextRetryAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lastError => $composableBuilder(
+    column: $table.lastError,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SyncOutboxesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SyncOutboxesTable> {
+  $$SyncOutboxesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get entryKey =>
+      $composableBuilder(column: $table.entryKey, builder: (column) => column);
+
+  GeneratedColumn<String> get tableNameCol => $composableBuilder(
+    column: $table.tableNameCol,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get rowId =>
+      $composableBuilder(column: $table.rowId, builder: (column) => column);
+
+  GeneratedColumn<String> get operation =>
+      $composableBuilder(column: $table.operation, builder: (column) => column);
+
+  GeneratedColumn<int> get enqueuedAt => $composableBuilder(
+    column: $table.enqueuedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<int> get retryCount => $composableBuilder(
+    column: $table.retryCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get nextRetryAt => $composableBuilder(
+    column: $table.nextRetryAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get lastError =>
+      $composableBuilder(column: $table.lastError, builder: (column) => column);
+}
+
+class $$SyncOutboxesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SyncOutboxesTable,
+          SyncOutboxRow,
+          $$SyncOutboxesTableFilterComposer,
+          $$SyncOutboxesTableOrderingComposer,
+          $$SyncOutboxesTableAnnotationComposer,
+          $$SyncOutboxesTableCreateCompanionBuilder,
+          $$SyncOutboxesTableUpdateCompanionBuilder,
+          (
+            SyncOutboxRow,
+            BaseReferences<_$AppDatabase, $SyncOutboxesTable, SyncOutboxRow>,
+          ),
+          SyncOutboxRow,
+          PrefetchHooks Function()
+        > {
+  $$SyncOutboxesTableTableManager(_$AppDatabase db, $SyncOutboxesTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SyncOutboxesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SyncOutboxesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SyncOutboxesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> entryKey = const Value.absent(),
+                Value<String> tableNameCol = const Value.absent(),
+                Value<String> rowId = const Value.absent(),
+                Value<String> operation = const Value.absent(),
+                Value<int> enqueuedAt = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<int> retryCount = const Value.absent(),
+                Value<int?> nextRetryAt = const Value.absent(),
+                Value<String?> lastError = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SyncOutboxesCompanion(
+                entryKey: entryKey,
+                tableNameCol: tableNameCol,
+                rowId: rowId,
+                operation: operation,
+                enqueuedAt: enqueuedAt,
+                status: status,
+                retryCount: retryCount,
+                nextRetryAt: nextRetryAt,
+                lastError: lastError,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String entryKey,
+                required String tableNameCol,
+                required String rowId,
+                Value<String> operation = const Value.absent(),
+                required int enqueuedAt,
+                Value<String> status = const Value.absent(),
+                Value<int> retryCount = const Value.absent(),
+                Value<int?> nextRetryAt = const Value.absent(),
+                Value<String?> lastError = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SyncOutboxesCompanion.insert(
+                entryKey: entryKey,
+                tableNameCol: tableNameCol,
+                rowId: rowId,
+                operation: operation,
+                enqueuedAt: enqueuedAt,
+                status: status,
+                retryCount: retryCount,
+                nextRetryAt: nextRetryAt,
+                lastError: lastError,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$SyncOutboxesTable, SyncOutboxRow>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $SyncOutboxesTable,
+                    SyncOutboxRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SyncOutboxesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SyncOutboxesTable,
+      SyncOutboxRow,
+      $$SyncOutboxesTableFilterComposer,
+      $$SyncOutboxesTableOrderingComposer,
+      $$SyncOutboxesTableAnnotationComposer,
+      $$SyncOutboxesTableCreateCompanionBuilder,
+      $$SyncOutboxesTableUpdateCompanionBuilder,
+      (
+        SyncOutboxRow,
+        BaseReferences<_$AppDatabase, $SyncOutboxesTable, SyncOutboxRow>,
+      ),
+      SyncOutboxRow,
+      PrefetchHooks Function()
+    >;
+typedef $$SyncCursorsTableCreateCompanionBuilder =
+    SyncCursorsCompanion Function({
+      required String tableNameCol,
+      required String lastServerUpdatedAt,
+      required int lastPulledAt,
+      Value<int> rowid,
+    });
+typedef $$SyncCursorsTableUpdateCompanionBuilder =
+    SyncCursorsCompanion Function({
+      Value<String> tableNameCol,
+      Value<String> lastServerUpdatedAt,
+      Value<int> lastPulledAt,
+      Value<int> rowid,
+    });
+
+class $$SyncCursorsTableFilterComposer
+    extends Composer<_$AppDatabase, $SyncCursorsTable> {
+  $$SyncCursorsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get tableNameCol => $composableBuilder(
+    column: $table.tableNameCol,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastServerUpdatedAt => $composableBuilder(
+    column: $table.lastServerUpdatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get lastPulledAt => $composableBuilder(
+    column: $table.lastPulledAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$SyncCursorsTableOrderingComposer
+    extends Composer<_$AppDatabase, $SyncCursorsTable> {
+  $$SyncCursorsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get tableNameCol => $composableBuilder(
+    column: $table.tableNameCol,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lastServerUpdatedAt => $composableBuilder(
+    column: $table.lastServerUpdatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get lastPulledAt => $composableBuilder(
+    column: $table.lastPulledAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SyncCursorsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SyncCursorsTable> {
+  $$SyncCursorsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get tableNameCol => $composableBuilder(
+    column: $table.tableNameCol,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get lastServerUpdatedAt => $composableBuilder(
+    column: $table.lastServerUpdatedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get lastPulledAt => $composableBuilder(
+    column: $table.lastPulledAt,
+    builder: (column) => column,
+  );
+}
+
+class $$SyncCursorsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SyncCursorsTable,
+          SyncCursorRow,
+          $$SyncCursorsTableFilterComposer,
+          $$SyncCursorsTableOrderingComposer,
+          $$SyncCursorsTableAnnotationComposer,
+          $$SyncCursorsTableCreateCompanionBuilder,
+          $$SyncCursorsTableUpdateCompanionBuilder,
+          (
+            SyncCursorRow,
+            BaseReferences<_$AppDatabase, $SyncCursorsTable, SyncCursorRow>,
+          ),
+          SyncCursorRow,
+          PrefetchHooks Function()
+        > {
+  $$SyncCursorsTableTableManager(_$AppDatabase db, $SyncCursorsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SyncCursorsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SyncCursorsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SyncCursorsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> tableNameCol = const Value.absent(),
+                Value<String> lastServerUpdatedAt = const Value.absent(),
+                Value<int> lastPulledAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SyncCursorsCompanion(
+                tableNameCol: tableNameCol,
+                lastServerUpdatedAt: lastServerUpdatedAt,
+                lastPulledAt: lastPulledAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String tableNameCol,
+                required String lastServerUpdatedAt,
+                required int lastPulledAt,
+                Value<int> rowid = const Value.absent(),
+              }) => SyncCursorsCompanion.insert(
+                tableNameCol: tableNameCol,
+                lastServerUpdatedAt: lastServerUpdatedAt,
+                lastPulledAt: lastPulledAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$SyncCursorsTable, SyncCursorRow>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $SyncCursorsTable,
+                    SyncCursorRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SyncCursorsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SyncCursorsTable,
+      SyncCursorRow,
+      $$SyncCursorsTableFilterComposer,
+      $$SyncCursorsTableOrderingComposer,
+      $$SyncCursorsTableAnnotationComposer,
+      $$SyncCursorsTableCreateCompanionBuilder,
+      $$SyncCursorsTableUpdateCompanionBuilder,
+      (
+        SyncCursorRow,
+        BaseReferences<_$AppDatabase, $SyncCursorsTable, SyncCursorRow>,
+      ),
+      SyncCursorRow,
+      PrefetchHooks Function()
+    >;
+typedef $$SyncMediaQueuesTableCreateCompanionBuilder =
+    SyncMediaQueuesCompanion Function({
+      required String attachmentId,
+      required String direction,
+      required String sha256,
+      required String relativePath,
+      Value<String?> remotePath,
+      Value<String> status,
+      Value<int> retryCount,
+      Value<int?> nextRetryAt,
+      Value<String?> lastError,
+      required int updatedAt,
+      Value<int> rowid,
+    });
+typedef $$SyncMediaQueuesTableUpdateCompanionBuilder =
+    SyncMediaQueuesCompanion Function({
+      Value<String> attachmentId,
+      Value<String> direction,
+      Value<String> sha256,
+      Value<String> relativePath,
+      Value<String?> remotePath,
+      Value<String> status,
+      Value<int> retryCount,
+      Value<int?> nextRetryAt,
+      Value<String?> lastError,
+      Value<int> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$SyncMediaQueuesTableFilterComposer
+    extends Composer<_$AppDatabase, $SyncMediaQueuesTable> {
+  $$SyncMediaQueuesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get attachmentId => $composableBuilder(
+    column: $table.attachmentId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get direction => $composableBuilder(
+    column: $table.direction,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get sha256 => $composableBuilder(
+    column: $table.sha256,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get relativePath => $composableBuilder(
+    column: $table.relativePath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get remotePath => $composableBuilder(
+    column: $table.remotePath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get retryCount => $composableBuilder(
+    column: $table.retryCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get nextRetryAt => $composableBuilder(
+    column: $table.nextRetryAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get lastError => $composableBuilder(
+    column: $table.lastError,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$SyncMediaQueuesTableOrderingComposer
+    extends Composer<_$AppDatabase, $SyncMediaQueuesTable> {
+  $$SyncMediaQueuesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get attachmentId => $composableBuilder(
+    column: $table.attachmentId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get direction => $composableBuilder(
+    column: $table.direction,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get sha256 => $composableBuilder(
+    column: $table.sha256,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get relativePath => $composableBuilder(
+    column: $table.relativePath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get remotePath => $composableBuilder(
+    column: $table.remotePath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get retryCount => $composableBuilder(
+    column: $table.retryCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get nextRetryAt => $composableBuilder(
+    column: $table.nextRetryAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get lastError => $composableBuilder(
+    column: $table.lastError,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$SyncMediaQueuesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SyncMediaQueuesTable> {
+  $$SyncMediaQueuesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get attachmentId => $composableBuilder(
+    column: $table.attachmentId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get direction =>
+      $composableBuilder(column: $table.direction, builder: (column) => column);
+
+  GeneratedColumn<String> get sha256 =>
+      $composableBuilder(column: $table.sha256, builder: (column) => column);
+
+  GeneratedColumn<String> get relativePath => $composableBuilder(
+    column: $table.relativePath,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get remotePath => $composableBuilder(
+    column: $table.remotePath,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<int> get retryCount => $composableBuilder(
+    column: $table.retryCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get nextRetryAt => $composableBuilder(
+    column: $table.nextRetryAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get lastError =>
+      $composableBuilder(column: $table.lastError, builder: (column) => column);
+
+  GeneratedColumn<int> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$SyncMediaQueuesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SyncMediaQueuesTable,
+          SyncMediaQueueRow,
+          $$SyncMediaQueuesTableFilterComposer,
+          $$SyncMediaQueuesTableOrderingComposer,
+          $$SyncMediaQueuesTableAnnotationComposer,
+          $$SyncMediaQueuesTableCreateCompanionBuilder,
+          $$SyncMediaQueuesTableUpdateCompanionBuilder,
+          (
+            SyncMediaQueueRow,
+            BaseReferences<
+              _$AppDatabase,
+              $SyncMediaQueuesTable,
+              SyncMediaQueueRow
+            >,
+          ),
+          SyncMediaQueueRow,
+          PrefetchHooks Function()
+        > {
+  $$SyncMediaQueuesTableTableManager(
+    _$AppDatabase db,
+    $SyncMediaQueuesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SyncMediaQueuesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SyncMediaQueuesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SyncMediaQueuesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> attachmentId = const Value.absent(),
+                Value<String> direction = const Value.absent(),
+                Value<String> sha256 = const Value.absent(),
+                Value<String> relativePath = const Value.absent(),
+                Value<String?> remotePath = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<int> retryCount = const Value.absent(),
+                Value<int?> nextRetryAt = const Value.absent(),
+                Value<String?> lastError = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => SyncMediaQueuesCompanion(
+                attachmentId: attachmentId,
+                direction: direction,
+                sha256: sha256,
+                relativePath: relativePath,
+                remotePath: remotePath,
+                status: status,
+                retryCount: retryCount,
+                nextRetryAt: nextRetryAt,
+                lastError: lastError,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String attachmentId,
+                required String direction,
+                required String sha256,
+                required String relativePath,
+                Value<String?> remotePath = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<int> retryCount = const Value.absent(),
+                Value<int?> nextRetryAt = const Value.absent(),
+                Value<String?> lastError = const Value.absent(),
+                required int updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => SyncMediaQueuesCompanion.insert(
+                attachmentId: attachmentId,
+                direction: direction,
+                sha256: sha256,
+                relativePath: relativePath,
+                remotePath: remotePath,
+                status: status,
+                retryCount: retryCount,
+                nextRetryAt: nextRetryAt,
+                lastError: lastError,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$SyncMediaQueuesTable, SyncMediaQueueRow>(table),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $SyncMediaQueuesTable,
+                    SyncMediaQueueRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$SyncMediaQueuesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SyncMediaQueuesTable,
+      SyncMediaQueueRow,
+      $$SyncMediaQueuesTableFilterComposer,
+      $$SyncMediaQueuesTableOrderingComposer,
+      $$SyncMediaQueuesTableAnnotationComposer,
+      $$SyncMediaQueuesTableCreateCompanionBuilder,
+      $$SyncMediaQueuesTableUpdateCompanionBuilder,
+      (
+        SyncMediaQueueRow,
+        BaseReferences<_$AppDatabase, $SyncMediaQueuesTable, SyncMediaQueueRow>,
+      ),
+      SyncMediaQueueRow,
+      PrefetchHooks Function()
+    >;
+typedef $$CachedTeamMembersTableCreateCompanionBuilder =
+    CachedTeamMembersCompanion Function({
+      required String userId,
+      required String businessId,
+      Value<String> role,
+      Value<String> status,
+      Value<String?> displayName,
+      Value<String?> email,
+      Value<String?> phone,
+      required int updatedAt,
+      Value<int> rowid,
+    });
+typedef $$CachedTeamMembersTableUpdateCompanionBuilder =
+    CachedTeamMembersCompanion Function({
+      Value<String> userId,
+      Value<String> businessId,
+      Value<String> role,
+      Value<String> status,
+      Value<String?> displayName,
+      Value<String?> email,
+      Value<String?> phone,
+      Value<int> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$CachedTeamMembersTableFilterComposer
+    extends Composer<_$AppDatabase, $CachedTeamMembersTable> {
+  $$CachedTeamMembersTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get businessId => $composableBuilder(
+    column: $table.businessId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get role => $composableBuilder(
+    column: $table.role,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get displayName => $composableBuilder(
+    column: $table.displayName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get email => $composableBuilder(
+    column: $table.email,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get phone => $composableBuilder(
+    column: $table.phone,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CachedTeamMembersTableOrderingComposer
+    extends Composer<_$AppDatabase, $CachedTeamMembersTable> {
+  $$CachedTeamMembersTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get businessId => $composableBuilder(
+    column: $table.businessId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get role => $composableBuilder(
+    column: $table.role,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get displayName => $composableBuilder(
+    column: $table.displayName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get email => $composableBuilder(
+    column: $table.email,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get phone => $composableBuilder(
+    column: $table.phone,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CachedTeamMembersTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CachedTeamMembersTable> {
+  $$CachedTeamMembersTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<String> get businessId => $composableBuilder(
+    column: $table.businessId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get role =>
+      $composableBuilder(column: $table.role, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get displayName => $composableBuilder(
+    column: $table.displayName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get email =>
+      $composableBuilder(column: $table.email, builder: (column) => column);
+
+  GeneratedColumn<String> get phone =>
+      $composableBuilder(column: $table.phone, builder: (column) => column);
+
+  GeneratedColumn<int> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$CachedTeamMembersTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CachedTeamMembersTable,
+          CachedTeamMemberRow,
+          $$CachedTeamMembersTableFilterComposer,
+          $$CachedTeamMembersTableOrderingComposer,
+          $$CachedTeamMembersTableAnnotationComposer,
+          $$CachedTeamMembersTableCreateCompanionBuilder,
+          $$CachedTeamMembersTableUpdateCompanionBuilder,
+          (
+            CachedTeamMemberRow,
+            BaseReferences<
+              _$AppDatabase,
+              $CachedTeamMembersTable,
+              CachedTeamMemberRow
+            >,
+          ),
+          CachedTeamMemberRow,
+          PrefetchHooks Function()
+        > {
+  $$CachedTeamMembersTableTableManager(
+    _$AppDatabase db,
+    $CachedTeamMembersTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CachedTeamMembersTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CachedTeamMembersTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CachedTeamMembersTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> userId = const Value.absent(),
+                Value<String> businessId = const Value.absent(),
+                Value<String> role = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> displayName = const Value.absent(),
+                Value<String?> email = const Value.absent(),
+                Value<String?> phone = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CachedTeamMembersCompanion(
+                userId: userId,
+                businessId: businessId,
+                role: role,
+                status: status,
+                displayName: displayName,
+                email: email,
+                phone: phone,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String userId,
+                required String businessId,
+                Value<String> role = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> displayName = const Value.absent(),
+                Value<String?> email = const Value.absent(),
+                Value<String?> phone = const Value.absent(),
+                required int updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => CachedTeamMembersCompanion.insert(
+                userId: userId,
+                businessId: businessId,
+                role: role,
+                status: status,
+                displayName: displayName,
+                email: email,
+                phone: phone,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$CachedTeamMembersTable, CachedTeamMemberRow>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $CachedTeamMembersTable,
+                    CachedTeamMemberRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CachedTeamMembersTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CachedTeamMembersTable,
+      CachedTeamMemberRow,
+      $$CachedTeamMembersTableFilterComposer,
+      $$CachedTeamMembersTableOrderingComposer,
+      $$CachedTeamMembersTableAnnotationComposer,
+      $$CachedTeamMembersTableCreateCompanionBuilder,
+      $$CachedTeamMembersTableUpdateCompanionBuilder,
+      (
+        CachedTeamMemberRow,
+        BaseReferences<
+          _$AppDatabase,
+          $CachedTeamMembersTable,
+          CachedTeamMemberRow
+        >,
+      ),
+      CachedTeamMemberRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -44677,4 +48664,14 @@ class $AppDatabaseManager {
       $$RejectionRecordsTableTableManager(_db, _db.rejectionRecords);
   $$RejectionRepairsTableTableManager get rejectionRepairs =>
       $$RejectionRepairsTableTableManager(_db, _db.rejectionRepairs);
+  $$SyncSessionStatesTableTableManager get syncSessionStates =>
+      $$SyncSessionStatesTableTableManager(_db, _db.syncSessionStates);
+  $$SyncOutboxesTableTableManager get syncOutboxes =>
+      $$SyncOutboxesTableTableManager(_db, _db.syncOutboxes);
+  $$SyncCursorsTableTableManager get syncCursors =>
+      $$SyncCursorsTableTableManager(_db, _db.syncCursors);
+  $$SyncMediaQueuesTableTableManager get syncMediaQueues =>
+      $$SyncMediaQueuesTableTableManager(_db, _db.syncMediaQueues);
+  $$CachedTeamMembersTableTableManager get cachedTeamMembers =>
+      $$CachedTeamMembersTableTableManager(_db, _db.cachedTeamMembers);
 }

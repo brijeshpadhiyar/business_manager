@@ -73,7 +73,7 @@ final class JobRoutingCubit extends Cubit<JobRoutingState> {
         emit(
           state.copyWith(
             status: JobRoutingStatus.error,
-            errorMessage: 'Job / Lot not found.',
+            errorMessage: 'job_not_found',
           ),
         );
         return;
@@ -109,7 +109,7 @@ final class JobRoutingCubit extends Cubit<JobRoutingState> {
     String? notes,
   }) async {
     final lotId = _currentLotId;
-    if (lotId == null || state.isSubmitting) return 'Not ready';
+    if (lotId == null || state.isSubmitting) return 'not_ready';
     emit(state.copyWith(isSubmitting: true, clearError: true));
     try {
       await _repo.addJobProcess(
@@ -142,7 +142,7 @@ final class JobRoutingCubit extends Cubit<JobRoutingState> {
     String? notes,
   }) async {
     final lotId = _currentLotId;
-    if (lotId == null || state.isSubmitting) return 'Not ready';
+    if (lotId == null || state.isSubmitting) return 'not_ready';
     emit(state.copyWith(isSubmitting: true, clearError: true));
     try {
       await _repo.editJobProcess(
@@ -166,7 +166,7 @@ final class JobRoutingCubit extends Cubit<JobRoutingState> {
     String? notes,
   }) async {
     final lotId = _currentLotId;
-    if (lotId == null || state.isSubmitting) return 'Not ready';
+    if (lotId == null || state.isSubmitting) return 'not_ready';
     emit(state.copyWith(isSubmitting: true, clearError: true));
     try {
       await _repo.dispatchJobProcess(
@@ -190,7 +190,7 @@ final class JobRoutingCubit extends Cubit<JobRoutingState> {
     required int receivedQuantity,
   }) async {
     final lotId = _currentLotId;
-    if (lotId == null || state.isSubmitting) return 'Not ready';
+    if (lotId == null || state.isSubmitting) return 'not_ready';
     emit(state.copyWith(isSubmitting: true, clearError: true));
     try {
       await _repo.confirmHandoverReceipt(
@@ -219,7 +219,7 @@ final class JobRoutingCubit extends Cubit<JobRoutingState> {
     String? notes,
   }) async {
     final lotId = _currentLotId;
-    if (lotId == null || state.isSubmitting) return 'Not ready';
+    if (lotId == null || state.isSubmitting) return 'not_ready';
     emit(state.copyWith(isSubmitting: true, clearError: true));
     try {
       await _repo.directTransfer(
@@ -252,7 +252,7 @@ final class JobRoutingCubit extends Cubit<JobRoutingState> {
     String? notes,
   }) async {
     final lotId = _currentLotId;
-    if (lotId == null || state.isSubmitting) return 'Not ready';
+    if (lotId == null || state.isSubmitting) return 'not_ready';
     emit(state.copyWith(isSubmitting: true, clearError: true));
     try {
       await _repo.returnToFactory(
@@ -284,7 +284,7 @@ final class JobRoutingCubit extends Cubit<JobRoutingState> {
     String? notes,
   }) async {
     final lotId = _currentLotId;
-    if (lotId == null || state.isSubmitting) return 'Not ready';
+    if (lotId == null || state.isSubmitting) return 'not_ready';
     emit(state.copyWith(isSubmitting: true, clearError: true));
     try {
       await _repo.reassignFromFactory(
@@ -316,7 +316,7 @@ final class JobRoutingCubit extends Cubit<JobRoutingState> {
     required int amountPaise,
   }) async {
     final lotId = _currentLotId;
-    if (lotId == null || state.isSubmitting) return 'Not ready';
+    if (lotId == null || state.isSubmitting) return 'not_ready';
     emit(state.copyWith(isSubmitting: true, clearError: true));
     try {
       await _repo.addAdditionalCharge(
@@ -338,7 +338,7 @@ final class JobRoutingCubit extends Cubit<JobRoutingState> {
 
   Future<String?> markCompleted(String jobProcessId) async {
     final lotId = _currentLotId;
-    if (lotId == null || state.isSubmitting) return 'Not ready';
+    if (lotId == null || state.isSubmitting) return 'not_ready';
     emit(state.copyWith(isSubmitting: true, clearError: true));
     try {
       await _repo.markProcessCompleted(
@@ -359,7 +359,7 @@ final class JobRoutingCubit extends Cubit<JobRoutingState> {
     required String reason,
   }) async {
     final lotId = _currentLotId;
-    if (lotId == null || state.isSubmitting) return 'Not ready';
+    if (lotId == null || state.isSubmitting) return 'not_ready';
     emit(state.copyWith(isSubmitting: true, clearError: true));
     try {
       await _repo.cancelJobProcess(
@@ -377,35 +377,6 @@ final class JobRoutingCubit extends Cubit<JobRoutingState> {
   }
 
   String _friendlyError(Object e) {
-    final code = e is DomainValidationException ? e.code : e.toString();
-    return switch (code) {
-      'insufficient_good_stock' =>
-        'Quantity exceeds available in-house factory stock.',
-      'exceeds_dispatched_quantity' =>
-        'Received quantity cannot exceed dispatched quantity.',
-      'exceeds_held_quantity' =>
-        'Transfer quantity exceeds stock currently held by this worker.',
-      'exceeds_pending_quantity' =>
-        'Return quantity exceeds outstanding worker quantity.',
-      'unaccounted_quantity_remaining' =>
-        'Cannot complete process while pending quantity remains unaccounted.',
-      'cannot_cancel_with_pending_stock' =>
-        'Return or transfer all held pieces before cancelling this process.',
-      'same_worker_and_process' => 'Select a different destination worker or operation for direct transfer.',
-      'rate_override_reason_required' =>
-        'Please enter a reason when changing the agreed rate from the default.',
-      'exceeds_outstanding_payable' =>
-        'Payment amount cannot exceed remaining outstanding payable.',
-      'invalid_rate' => 'Enter a valid non-negative rate.',
-      'invalid_amount' => 'Enter a valid positive amount.',
-      'description_required' => 'Please enter a charge description.',
-      'reason_required' => 'Please enter a reason.',
-      'invalid_quantity' => 'Enter a valid positive quantity.',
-      'process_required' => 'Select an operation/process.',
-      'worker_required' => 'Select a worker.',
-      'sku_required' => 'Select a design & colour.',
-      'process_already_closed' => 'This operation is already closed.',
-      _ => code,
-    };
+    return e is DomainValidationException ? e.code : e.toString();
   }
 }

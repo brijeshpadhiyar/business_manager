@@ -19,6 +19,8 @@ import 'package:business_manager/features/processes/domain/repositories/process_
 import 'package:business_manager/features/production_history/domain/entities/production_history_entities.dart';
 import 'package:business_manager/features/production_history/domain/repositories/production_history_repository.dart';
 import 'package:business_manager/features/security/presentation/widgets/security_reauth_dialog.dart';
+import 'package:business_manager/features/slips/presentation/slip_builder_helper.dart';
+import 'package:business_manager/features/slips/presentation/widgets/slip_share_sheet.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 import 'package:business_manager/features/stock_movements/domain/repositories/stock_movement_repository.dart';
 import 'package:flutter/services.dart';
@@ -1118,6 +1120,34 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                   ),
                 ],
                 const SizedBox(height: AppSpacing.lg),
+                AppButton(
+                  label: l10n.slipShareReturnAction,
+                  icon: AppIcons.share,
+                  variant: AppButtonVariant.outlined,
+                  isExpanded: true,
+                  onPressed: () async {
+                    final slip = await SlipBuilderHelper.buildReturnQcSlip(
+                      referenceId:
+                          'RET-${widget.issueId.length > 6 ? widget.issueId.substring(0, 6).toUpperCase() : widget.issueId.toUpperCase()}',
+                      lotNumber: info.lotNumber,
+                      designName: info.designName,
+                      colourName: info.colourName,
+                      processName: info.processName,
+                      workerName: info.workerName,
+                      goodQty: info.goodQty,
+                      damagedQty: info.damagedQty,
+                      lostQty: info.lostQty,
+                      shortageQty: info.shortageQty,
+                      labourEarnedPaise: info.labourEarnedPaise,
+                      transactionAtUtcMillis: _transactionAtUtc,
+                      notes: _notesCtrl.text,
+                    );
+                    if (context.mounted) {
+                      await SlipShareSheet.show(context, slip);
+                    }
+                  },
+                ),
+                const SizedBox(height: AppSpacing.sm),
                 if (info.goodQty > 0) ...[
                   AppButton(
                     label: l10n.stockIssueNextProcessAction,
