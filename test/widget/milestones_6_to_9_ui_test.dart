@@ -102,9 +102,12 @@ void main() {
       await tester.tap(find.text('Settings').last);
       await tester.pumpAndSettle();
       await tester.scrollUntilVisible(
-        find.text('Backup & Data Safety').first,
+        find.text('Backup & Data Safety'),
         200,
-        scrollable: find.byType(Scrollable).last,
+        scrollable: find.descendant(
+          of: find.byType(ListView).last,
+          matching: find.byType(Scrollable),
+        ),
       );
       await tester.ensureVisible(find.text('Backup & Data Safety').first);
       await tester.pumpAndSettle();

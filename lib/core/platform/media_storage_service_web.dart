@@ -29,6 +29,12 @@ final class WebMediaStorageService implements MediaStorageService {
   Future<Uint8List?> readBytes(String relativePath) async => null;
 
   @override
+  Future<void> writeBytesAtRelativePath(
+    String relativePath,
+    Uint8List bytes,
+  ) async {}
+
+  @override
   Future<bool> exists(String relativePath) async => false;
 
   @override

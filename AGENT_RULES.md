@@ -6,11 +6,11 @@ Any AI coding agent or human engineer operating on this repository **MUST** obey
 
 ## 1. The 12 Non-Negotiable Architectural Constraints
 
-1. **NO Backend Implementation in V1:** Do not add REST clients, GraphQL, WebSockets, or sync servers.
+1. **Offline-First Architecture (v1.5+):** All reads and writes MUST hit local Drift SQLite first. Cloud sync with Supabase runs asynchronously via the local `sync_outbox` + delta pull engine and must NEVER block local workflows.
 2. **NO Firebase:** Do not add any `firebase_*` or `cloud_firestore` packages.
-3. **NO Supabase:** Do not add `supabase_flutter` or related packages.
-4. **NO Online Authentication Dependency:** The app must open and operate 100% offline with zero sign-in walls.
-5. **NO Cloud Database:** All persistence is local SQLite via Drift + local private app files.
+3. **Supabase Cloud Layer Isolation:** All `supabase_flutter` calls MUST live inside `lib/features/auth/data/` and `lib/features/sync/data/` (never inside UI widgets, BLoCs, or domain calculators).
+4. **NO Mandatory Online Sign-In Wall:** The app MUST open and operate 100% offline with zero mandatory sign-in walls. Users may continue offline or sign in with Google / Phone OTP anytime; once signed in, cached sessions work offline indefinitely.
+5. **Local SQLite as Primary Source of Truth:** All domain persistence is local SQLite via Drift + local private app files, with Supabase PostgreSQL & Storage acting as the optional cloud replica.
 6. **NO Hardcoded Production Processes:** Never hardcode enums, switch cases, or fixed sequences like `Cutting -> Stitching -> Press`. Processes are 100% dynamic rows in `processes`.
 7. **NO Hardcoded Member Rates:** All rates live in `member_process_rates` with effective date ranges.
 8. **NO Hardcoded User-Facing Strings:** Every UI string must be retrieved via `AppLocalizations` (`app_en.arb` + `app_gu.arb`).

@@ -5,6 +5,7 @@ import 'package:business_manager/core/design_system/app_typography.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
+import 'package:business_manager/features/auth/presentation/bloc/auth_cubit.dart';
 import 'package:business_manager/features/security/domain/services/pin_hasher.dart';
 import 'package:business_manager/features/security/presentation/bloc/app_lock_cubit.dart';
 import 'package:business_manager/features/security/presentation/widgets/pin_keypad.dart';
@@ -85,6 +86,36 @@ final class _PinRecoveryPageState extends State<PinRecoveryPage> {
                 '${_lockCubit.state.remainingLockoutSeconds}s',
               )
             : l10n.securityRecoveryKeyInvalidError;
+      });
+    }
+  }
+
+  Future<void> _verifyViaGoogleCloud() async {
+    final authCubit = context.read<AuthCubit?>();
+    if (authCubit == null || _working) return;
+    setState(() {
+      _working = true;
+      _errorText = null;
+    });
+    try {
+      final matched = await authCubit.reauthenticateViaGoogle();
+      if (!mounted) return;
+      if (matched) {
+        setState(() {
+          _working = false;
+          _step = _RecoveryStep.enterNewPin;
+        });
+      } else {
+        setState(() {
+          _working = false;
+          _errorText = context.l10n.securityCloudReauthFailed;
+        });
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _working = false;
+        _errorText = e.toString();
       });
     }
   }
@@ -230,6 +261,32 @@ final class _PinRecoveryPageState extends State<PinRecoveryPage> {
                     ),
                   ),
                 ),
+                if (context.read<AuthCubit?>()?.state.isAuthenticated == true &&
+                    context.read<AuthCubit?>()?.state.isCloudConfigured ==
+                        true) ...[
+                  const SizedBox(height: AppSpacing.md),
+                  AppCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        AppHeading(
+                          l10n.securityCloudRecoveryTitle,
+                          level: AppHeadingLevel.h3,
+                          subtitle: l10n.securityCloudRecoverySubtitle,
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        AppButton(
+                          label: l10n.securityVerifyWithGoogleAction,
+                          icon: AppIcons.google,
+                          variant: AppButtonVariant.secondary,
+                          isExpanded: true,
+                          isLoading: _working,
+                          onPressed: !_working ? _verifyViaGoogleCloud : null,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
                 const SizedBox(height: AppSpacing.md),
                 AppCard(
                   elevated: false,

@@ -113,6 +113,10 @@ void main() {
       'rejection_records',
       'rejection_repairs',
       'stock_movements',
+      'sync_cursors',
+      'sync_media_queue',
+      'sync_outbox',
+      'sync_session_state',
       'worker_ledger_adjustments',
     });
 

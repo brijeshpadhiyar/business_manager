@@ -140,7 +140,7 @@ void main() {
     final db = AppDatabase.forTesting(NativeDatabase(file));
     final ver = await db.customSelect('PRAGMA user_version;').getSingle();
     expect(ver.read<int>('user_version'), DatabaseMigrationManager.currentSchemaVersion);
-    expect(DatabaseMigrationManager.currentSchemaVersion, 9);
+    expect(DatabaseMigrationManager.currentSchemaVersion, 10);
 
     final adjustments = await db.workerAdjustmentDao.getAdjustmentsForMember('w-1');
     expect(

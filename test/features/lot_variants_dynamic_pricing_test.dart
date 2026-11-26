@@ -28,6 +28,12 @@ final class _NoopMediaStorage implements MediaStorageService {
   Future<Uint8List?> readBytes(String relativePath) async => null;
 
   @override
+  Future<void> writeBytesAtRelativePath(
+    String relativePath,
+    Uint8List bytes,
+  ) async {}
+
+  @override
   Future<SavedMediaFile> saveBytes({
     required Uint8List bytes,
     required MediaCategory category,

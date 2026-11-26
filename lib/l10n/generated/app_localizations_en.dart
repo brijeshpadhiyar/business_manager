@@ -2825,4 +2825,210 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get uxClearAll => 'Clear all';
+
+  @override
+  String get authSignInHeading => 'Sign In to Cloud Sync';
+
+  @override
+  String get authSignInSubtitle =>
+      'Sign in with Google or your mobile number to sync your workshop data across devices. Works 100% offline anytime.';
+
+  @override
+  String get authContinueWithGoogle => 'Continue with Google';
+
+  @override
+  String get authContinueWithPhone => 'Continue with Phone Number';
+
+  @override
+  String get authContinueOffline => 'Continue Offline (Local Only)';
+
+  @override
+  String get authPhoneLabel => 'Mobile Number';
+
+  @override
+  String get authPhoneHint => '+91 98765 43210';
+
+  @override
+  String get authSendOtpAction => 'Send OTP';
+
+  @override
+  String get authOtpLabel => '6-Digit OTP Code';
+
+  @override
+  String get authOtpHint => '123456';
+
+  @override
+  String authOtpSentMessage(String phone) {
+    return 'Verification code sent to $phone';
+  }
+
+  @override
+  String get authVerifyOtpAction => 'Verify & Sign In';
+
+  @override
+  String get authChangePhoneAction => 'Change Number';
+
+  @override
+  String get authInvalidPhoneError =>
+      'Enter a valid 10-digit mobile number or E.164 number.';
+
+  @override
+  String get authCloudNotConfiguredBanner =>
+      'Cloud sync keys are not configured in this build. You can continue using StitchFlow 100% offline.';
+
+  @override
+  String get authAccountTitle => 'Account & Cloud Sync';
+
+  @override
+  String get authAccountSubtitle =>
+      'Manage Google & Phone login, linked devices, and sign-out';
+
+  @override
+  String get authOfflineModeBadge => 'Offline Mode';
+
+  @override
+  String get authSignedInBadge => 'Signed In';
+
+  @override
+  String get authSignInPromptCardSubtitle =>
+      'Sign in with Google or Phone OTP to back up and sync across devices';
+
+  @override
+  String get authLinkedIdentitiesHeading => 'Linked Login Methods';
+
+  @override
+  String get authGoogleProvider => 'Google Account';
+
+  @override
+  String get authPhoneProvider => 'Phone Number';
+
+  @override
+  String get authLinkedStatus => 'Linked';
+
+  @override
+  String get authNotLinkedStatus => 'Not linked';
+
+  @override
+  String get authLinkAction => 'Link';
+
+  @override
+  String get authLinkedDevicesHeading => 'Synced Devices';
+
+  @override
+  String get authCurrentDeviceBadge => 'This device';
+
+  @override
+  String get authNoDevicesYet => 'No cloud devices registered yet.';
+
+  @override
+  String get authSignOutAction => 'Sign Out';
+
+  @override
+  String get authSignOutConfirmTitle => 'Sign out of Cloud Sync?';
+
+  @override
+  String get authSignOutConfirmBody =>
+      'Your local workshop data stays safely on this device, and cloud sync will pause until you sign in again.';
+
+  @override
+  String authSignOutUnsyncedWarning(int count) {
+    return 'You have $count unsynced local changes. Sync before signing out so nothing is left behind.';
+  }
+
+  @override
+  String get authSyncAndSignOutAction => 'Sync & Sign Out';
+
+  @override
+  String get authSignOutAnywayAction => 'Sign Out Anyway';
+
+  @override
+  String get syncCenterTitle => 'Cloud Sync Center';
+
+  @override
+  String get syncCenterSubtitle =>
+      'Offline-first bidirectional sync with Supabase';
+
+  @override
+  String get syncStatusLocalOnly => 'Local Only';
+
+  @override
+  String get syncStatusOffline => 'Offline';
+
+  @override
+  String get syncStatusSynced => 'Synced';
+
+  @override
+  String get syncStatusSyncing => 'Syncing…';
+
+  @override
+  String get syncStatusNeedsAttention => 'Needs Attention';
+
+  @override
+  String syncStatusPending(int count) {
+    return '$count pending';
+  }
+
+  @override
+  String get syncNowAction => 'Sync Now';
+
+  @override
+  String get syncRetryFailedAction => 'Retry Failed';
+
+  @override
+  String get syncLastSyncedLabel => 'Last synced';
+
+  @override
+  String get syncNeverSynced => 'Not synced yet';
+
+  @override
+  String get syncPendingRowsLabel => 'Pending data changes';
+
+  @override
+  String get syncPendingMediaLabel => 'Pending photo uploads/downloads';
+
+  @override
+  String get syncFailedItemsHeading => 'Items Needing Retry';
+
+  @override
+  String get syncMergeTitle => 'Data Found in Both Places';
+
+  @override
+  String syncMergeSubtitle(int localCount, int cloudCount) {
+    return 'This device has $localCount local records and your cloud account has $cloudCount records. How would you like to proceed?';
+  }
+
+  @override
+  String get syncMergeBothAction => 'Merge Local + Cloud (Recommended)';
+
+  @override
+  String get syncMergeBothDesc =>
+      'Combines all ledgers safely and keeps the newest edits for lots, workers, and processes.';
+
+  @override
+  String get syncKeepCloudAction => 'Keep Cloud Only';
+
+  @override
+  String get syncKeepCloudDesc =>
+      'Replaces this device\'s local records with your cloud account data.';
+
+  @override
+  String get syncKeepLocalAction => 'Keep Local & Push to Cloud';
+
+  @override
+  String get syncKeepLocalDesc =>
+      'Uploads all local records from this device to your cloud account.';
+
+  @override
+  String get securityCloudRecoveryTitle => 'Or Reset PIN via Cloud Account';
+
+  @override
+  String get securityCloudRecoverySubtitle =>
+      'Re-verify your signed-in Google account to reset your local App Lock PIN without losing data.';
+
+  @override
+  String get securityVerifyWithGoogleAction => 'Verify with Google';
+
+  @override
+  String get securityCloudReauthFailed =>
+      'Cloud account verification did not match the signed-in owner.';
 }

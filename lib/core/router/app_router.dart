@@ -9,6 +9,8 @@ import 'package:business_manager/features/accounting/presentation/pages/accounti
 import 'package:business_manager/features/accounting/presentation/pages/payment_form_page.dart';
 import 'package:business_manager/features/accounting/presentation/pages/worker_adjustment_form_page.dart';
 import 'package:business_manager/features/accounting/presentation/pages/worker_ledger_page.dart';
+import 'package:business_manager/features/auth/presentation/pages/account_settings_page.dart';
+import 'package:business_manager/features/auth/presentation/pages/login_page.dart';
 import 'package:business_manager/features/backup/presentation/pages/backup_restore_page.dart';
 import 'package:business_manager/features/business_profile/presentation/pages/business_profile_page.dart';
 import 'package:business_manager/features/dashboard/presentation/pages/dashboard_page.dart';
@@ -48,6 +50,8 @@ import 'package:business_manager/features/stock_movements/presentation/pages/rec
 import 'package:business_manager/features/stock_movements/presentation/pages/stock_issue_page.dart';
 import 'package:business_manager/features/stock_movements/presentation/pages/stock_movements_page.dart';
 import 'package:business_manager/features/stock_movements/presentation/pages/stock_settlement_page.dart';
+import 'package:business_manager/features/sync/presentation/pages/sync_center_page.dart';
+import 'package:business_manager/features/sync/presentation/widgets/sync_status_badge.dart';
 import 'package:business_manager/features/workers/presentation/pages/worker_assignments_page.dart';
 import 'package:business_manager/features/workers/presentation/pages/worker_detail_page.dart';
 import 'package:business_manager/features/workers/presentation/pages/worker_form_page.dart';
@@ -505,6 +509,26 @@ GoRouter createAppRouter(AppConfig config) {
               child: AboutStitchFlowPage(config: config),
             ),
           ),
+          // V1.5 — Cloud Auth & Sync Center
+          GoRoute(
+            path: RoutePaths.authLogin,
+            pageBuilder: (context, state) =>
+                AppMotion.buildPage(state: state, child: const LoginPage()),
+          ),
+          GoRoute(
+            path: RoutePaths.settingsAccount,
+            pageBuilder: (context, state) => AppMotion.buildPage(
+              state: state,
+              child: const AccountSettingsPage(),
+            ),
+          ),
+          GoRoute(
+            path: RoutePaths.settingsSync,
+            pageBuilder: (context, state) => AppMotion.buildPage(
+              state: state,
+              child: const SyncCenterPage(),
+            ),
+          ),
         ],
       ),
       GoRoute(
@@ -740,6 +764,10 @@ final class StitchFlowShellScaffold extends StatelessWidget {
         items.add(AppBreadcrumbItem(label: l10n.settingsStockLabourTitle));
       } else if (location == RoutePaths.settingsAppearance) {
         items.add(AppBreadcrumbItem(label: l10n.settingsAppearanceTitle));
+      } else if (location == RoutePaths.settingsAccount) {
+        items.add(AppBreadcrumbItem(label: l10n.authAccountTitle));
+      } else if (location == RoutePaths.settingsSync) {
+        items.add(AppBreadcrumbItem(label: l10n.syncCenterTitle));
       }
       return items;
     }
@@ -854,6 +882,7 @@ final class StitchFlowShellScaffold extends StatelessWidget {
         // Phones get Search plus one "More" menu instead of six icons, so the
         // toolbar never overflows at 320dp.
         compactActions: [
+          const SyncStatusBadge(compact: true),
           AppIconButton(
             icon: AppIcons.search,
             tooltip: l10n.uxSearchTooltip,
@@ -896,6 +925,10 @@ final class StitchFlowShellScaffold extends StatelessWidget {
           ),
         ],
         actions: [
+          const Padding(
+            padding: EdgeInsets.only(right: 8),
+            child: Center(child: SyncStatusBadge()),
+          ),
           AppIconButton(
             icon: AppIcons.search,
             tooltip: l10n.uxSearchTooltip,

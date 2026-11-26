@@ -41,6 +41,10 @@ abstract interface class MediaStorageService {
 
   Future<Uint8List?> readBytes(String relativePath);
 
+  /// Writes raw bytes directly to a validated relative path (used by cloud
+  /// media sync when caching downloaded attachments locally).
+  Future<void> writeBytesAtRelativePath(String relativePath, Uint8List bytes);
+
   Future<bool> exists(String relativePath);
 
   Future<bool> deleteIfExists(String relativePath);

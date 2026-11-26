@@ -2824,4 +2824,210 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get uxClearAll => 'બધું સાફ કરો';
+
+  @override
+  String get authSignInHeading => 'ક્લાઉડ સિંક માટે સાઇન ઇન કરો';
+
+  @override
+  String get authSignInSubtitle =>
+      'તમારા વર્કશોપનો ડેટા બધા ડિવાઇસ પર સિંક કરવા Google અથવા મોબાઇલ નંબરથી સાઇન ઇન કરો. ઓફલાઇન પણ ૧૦૦% કામ કરે છે.';
+
+  @override
+  String get authContinueWithGoogle => 'Google સાથે ચાલુ રાખો';
+
+  @override
+  String get authContinueWithPhone => 'મોબાઇલ નંબરથી ચાલુ રાખો';
+
+  @override
+  String get authContinueOffline => 'ઓફલાઇન ચાલુ રાખો (ફક્ત લોકલ)';
+
+  @override
+  String get authPhoneLabel => 'મોબાઇલ નંબર';
+
+  @override
+  String get authPhoneHint => '+91 98765 43210';
+
+  @override
+  String get authSendOtpAction => 'OTP મોકલો';
+
+  @override
+  String get authOtpLabel => '૬-અંકનો OTP કોડ';
+
+  @override
+  String get authOtpHint => '123456';
+
+  @override
+  String authOtpSentMessage(String phone) {
+    return '$phone પર વેરિફિકેશન કોડ મોકલવામાં આવ્યો છે';
+  }
+
+  @override
+  String get authVerifyOtpAction => 'વેરિફાય કરો અને સાઇન ઇન કરો';
+
+  @override
+  String get authChangePhoneAction => 'નંબર બદલો';
+
+  @override
+  String get authInvalidPhoneError =>
+      'માન્ય ૧૦-અંકનો મોબાઇલ નંબર અથવા +91 સાથે નંબર દાખલ કરો.';
+
+  @override
+  String get authCloudNotConfiguredBanner =>
+      'આ બિલ્ડમાં ક્લાઉડ સિંક કી સેટ નથી. તમે StitchFlow ૧૦૦% ઓફલાઇન વાપરી શકો છો.';
+
+  @override
+  String get authAccountTitle => 'એકાઉન્ટ અને ક્લાઉડ સિંક';
+
+  @override
+  String get authAccountSubtitle =>
+      'Google અને ફોન લોગિન, જોડાયેલા ડિવાઇસ અને સાઇન આઉટ મેનેજ કરો';
+
+  @override
+  String get authOfflineModeBadge => 'ઓફલાઇન મોડ';
+
+  @override
+  String get authSignedInBadge => 'સાઇન ઇન';
+
+  @override
+  String get authSignInPromptCardSubtitle =>
+      'બધા ડિવાઇસ પર ડેટા સિંક અને બેકઅપ માટે Google અથવા ફોન OTP થી સાઇન ઇન કરો';
+
+  @override
+  String get authLinkedIdentitiesHeading => 'જોડાયેલા લોગિન વિકલ્પો';
+
+  @override
+  String get authGoogleProvider => 'Google એકાઉન્ટ';
+
+  @override
+  String get authPhoneProvider => 'મોબાઇલ નંબર';
+
+  @override
+  String get authLinkedStatus => 'જોડાયેલ';
+
+  @override
+  String get authNotLinkedStatus => 'જોડાયેલ નથી';
+
+  @override
+  String get authLinkAction => 'જોડો';
+
+  @override
+  String get authLinkedDevicesHeading => 'સિંક થયેલા ડિવાઇસ';
+
+  @override
+  String get authCurrentDeviceBadge => 'આ ડિવાઇસ';
+
+  @override
+  String get authNoDevicesYet => 'હજુ સુધી કોઈ ક્લાઉડ ડિવાઇસ નોંધાયેલ નથી.';
+
+  @override
+  String get authSignOutAction => 'સાઇન આઉટ';
+
+  @override
+  String get authSignOutConfirmTitle => 'ક્લાઉડ સિંકમાંથી સાઇન આઉટ કરવું છે?';
+
+  @override
+  String get authSignOutConfirmBody =>
+      'તમારો લોકલ ડેટા આ ડિવાઇસ પર સુરક્ષિત રહેશે અને ફરી સાઇન ઇન કરો ત્યાં સુધી ક્લાઉડ સિંક થંભી જશે.';
+
+  @override
+  String authSignOutUnsyncedWarning(int count) {
+    return 'તમારા $count લોકલ ફેરફારો હજુ સિંક થયા નથી. સાઇન આઉટ કરતા પહેલા સિંક કરો.';
+  }
+
+  @override
+  String get authSyncAndSignOutAction => 'સિંક કરો અને સાઇન આઉટ કરો';
+
+  @override
+  String get authSignOutAnywayAction => 'છતાં સાઇન આઉટ કરો';
+
+  @override
+  String get syncCenterTitle => 'ક્લાઉડ સિંક સેન્ટર';
+
+  @override
+  String get syncCenterSubtitle => 'Supabase સાથે ઓફલાઇન-ફર્સ્ટ બંને બાજુ સિંક';
+
+  @override
+  String get syncStatusLocalOnly => 'ફક્ત લોકલ';
+
+  @override
+  String get syncStatusOffline => 'ઓફલાઇન';
+
+  @override
+  String get syncStatusSynced => 'સિંક થયેલ';
+
+  @override
+  String get syncStatusSyncing => 'સિંક થઈ રહ્યું છે…';
+
+  @override
+  String get syncStatusNeedsAttention => 'ધ્યાન જરૂરી';
+
+  @override
+  String syncStatusPending(int count) {
+    return '$count બાકી';
+  }
+
+  @override
+  String get syncNowAction => 'હવે સિંક કરો';
+
+  @override
+  String get syncRetryFailedAction => 'ફરી પ્રયાસ કરો';
+
+  @override
+  String get syncLastSyncedLabel => 'છેલ્લું સિંક';
+
+  @override
+  String get syncNeverSynced => 'હજુ સિંક થયું નથી';
+
+  @override
+  String get syncPendingRowsLabel => 'બાકી ડેટા ફેરફારો';
+
+  @override
+  String get syncPendingMediaLabel => 'બાકી ફોટો અપલોડ/ડાઉનલોડ';
+
+  @override
+  String get syncFailedItemsHeading => 'ફરી પ્રયાસ જરૂરી એન્ટ્રીઓ';
+
+  @override
+  String get syncMergeTitle => 'બંને જગ્યાએ ડેટા મળ્યો';
+
+  @override
+  String syncMergeSubtitle(int localCount, int cloudCount) {
+    return 'આ ડિવાઇસ પર $localCount લોકલ રેકોર્ડ અને ક્લાઉડ એકાઉન્ટમાં $cloudCount રેકોર્ડ છે. તમે કેવી રીતે આગળ વધવા માંગો છો?';
+  }
+
+  @override
+  String get syncMergeBothAction => 'લોકલ + ક્લાઉડ મર્જ કરો (ભલામણ કરેલ)';
+
+  @override
+  String get syncMergeBothDesc =>
+      'બધા લેજર સુરક્ષિત રીતે જોડે છે અને નવા સુધારા રાખે છે.';
+
+  @override
+  String get syncKeepCloudAction => 'ફક્ત ક્લાઉડ ડેટા રાખો';
+
+  @override
+  String get syncKeepCloudDesc =>
+      'આ ડિવાઇસનો લોકલ ડેટા બદલીને ક્લાઉડ એકાઉન્ટનો ડેટા લાવે છે.';
+
+  @override
+  String get syncKeepLocalAction => 'લોકલ રાખો અને ક્લાઉડ પર મોકલો';
+
+  @override
+  String get syncKeepLocalDesc =>
+      'આ ડિવાઇસના બધા લોકલ રેકોર્ડ ક્લાઉડ પર અપલોડ કરે છે.';
+
+  @override
+  String get securityCloudRecoveryTitle =>
+      'અથવા ક્લાઉડ એકાઉન્ટથી PIN રીસેટ કરો';
+
+  @override
+  String get securityCloudRecoverySubtitle =>
+      'ડેટા ગુમાવ્યા વગર લોકલ PIN રીસેટ કરવા તમારા સાઇન ઇન Google એકાઉન્ટને ફરી વેરિફાય કરો.';
+
+  @override
+  String get securityVerifyWithGoogleAction => 'Google થી વેરિફાય કરો';
+
+  @override
+  String get securityCloudReauthFailed =>
+      'ક્લાઉડ એકાઉન્ટ વેરિફિકેશન સાઇન ઇન માલિક સાથે મેળ ખાતું નથી.';
 }

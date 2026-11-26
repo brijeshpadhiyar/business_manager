@@ -4,6 +4,26 @@ All notable changes to the **Business Manager (`બિઝનેસ મેને�
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-11-26
+
+### Added
+- **Dual Cloud Authentication (Google Sign-In + Phone Number OTP) (`lib/features/auth/`)**:
+  - Offline-first optional sign-in: existing v1.4 users continue working offline immediately, new users can choose **Continue with Google**, **Continue with Phone Number (SMS OTP)**, or **Continue Offline (Local Only)**.
+  - Cached secure auth sessions (`flutter_secure_storage`) allow indefinite offline usage once signed in.
+  - Added **Account & Identity Linking** screen (`AccountSettingsPage`) to link both Google and Phone Number to the same StitchFlow account, view synced devices, and sign out safely with unsynced-changes warnings.
+- **Complete Supabase Backend & Storage (`supabase/migrations/`)**:
+  - Added full PostgreSQL migrations mirroring all 23 Drift SQLite tables with composite `(business_id, id)` primary keys, server-side `server_updated_at` triggers, strict owner-scoped Row-Level Security (RLS), Realtime `sync_notifications` wake-ups, and a private `stitchflow-media` Storage bucket for lot photos and business logo.
+  - Added `supabase/README.md` with isolated `dev`/`prod` project setup, Google OAuth, and Phone OTP (test OTPs in `dev`, MSG91/Twilio in `prod`) instructions.
+- **Offline-First Bidirectional Sync Engine (`lib/features/sync/`, Drift Schema v10)**:
+  - Additive SQLite schema migration `v9 -> v10` adding `sync_session_state`, `sync_outbox`, `sync_cursors`, and `sync_media_queue` plus guarded SQLite change-capture triggers across all 23 domain tables (zero echo loops during remote apply).
+  - Implemented `SyncEngine` with FK topological push order, self-referencing parent-first ordering, incremental delta pulls (`server_updated_at > cursor`), SHA-256 cloud media upload/lazy download, exponential backoff retries, Smart First-Login Merge Prompt, and Last-Write-Wins (LWW) conflict resolution with `audit_logs` diff recording.
+  - Added live **SyncStatusBadge** in the app shell and dedicated **Cloud Sync Center** (`SyncCenterPage`) in Settings.
+- **Account-Scoped App Lock & Cloud PIN Recovery (`lib/features/security/`)**:
+  - Namespaced local App Lock PIN storage by active user ID with seamless v1.4 legacy PIN migration and optional Google re-authentication recovery on `PinRecoveryPage`.
+- **Localization & Tests**:
+  - Added complete English and Gujarati (`app_en.arb` + `app_gu.arb`) translations for all v1.5 auth, sync, merge, and recovery flows.
+  - Added automated tests for Schema v10 migration & triggers, `SyncConflictResolver`, `SyncEngine`, and `AuthCubit`.
+
 ## [1.1.0] - 2026-11-23
 
 ### Added

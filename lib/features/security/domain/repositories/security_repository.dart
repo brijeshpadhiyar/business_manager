@@ -3,6 +3,10 @@ import 'package:business_manager/features/security/domain/entities/security_enti
 /// Abstraction for local Android Keystore-backed security persistence.
 /// Isolated from SQLite and `.zip` backups; 100% mockable in unit/widget tests.
 abstract interface class SecurityRepository {
+  /// Binds subsequent PIN storage reads/writes to [userId] (or local-only
+  /// scope when `null`), seamlessly migrating legacy v1.4 local PIN keys.
+  void setActiveAccountScope(String? userId);
+
   Future<SecuritySettings> loadSettings();
 
   /// Sets up a brand-new PIN and recovery key hash, enabling App Lock.

@@ -164,6 +164,21 @@ abstract final class AppIcons {
   static const IconData label = Icons.label_outline_rounded;
   static const IconData empty = Icons.inbox_rounded;
 
+  // ── Cloud, Auth & Sync (v1.5) ───────────────────────────────────────────
+  static const IconData account = Icons.account_circle_rounded;
+  static const IconData signIn = Icons.login_rounded;
+  static const IconData signOut = Icons.logout_rounded;
+  static const IconData google = Icons.g_mobiledata_rounded;
+  static const IconData sms = Icons.sms_rounded;
+  static const IconData cloudSync = Icons.cloud_sync_rounded;
+  static const IconData cloudDone = Icons.cloud_done_rounded;
+  static const IconData cloudOff = Icons.cloud_off_rounded;
+  static const IconData cloudUpload = Icons.cloud_upload_rounded;
+  static const IconData sync = Icons.sync_rounded;
+  static const IconData syncProblem = Icons.sync_problem_rounded;
+  static const IconData devices = Icons.devices_rounded;
+  static const IconData merge = Icons.merge_rounded;
+
   // ── Status ──────────────────────────────────────────────────────────────
   static const IconData success = Icons.check_circle_rounded;
   static const IconData successOutline = Icons.check_circle_outline_rounded;

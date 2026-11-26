@@ -1257,5 +1257,88 @@
   "uxClearAll": "Clear all",
   "@uxClearAll": {
     "description": "Button that clears all filters."
-  }
+  },
+  "authSignInHeading": "Sign In to Cloud Sync",
+  "authSignInSubtitle": "Sign in with Google or your mobile number to sync your workshop data across devices. Works 100% offline anytime.",
+  "authContinueWithGoogle": "Continue with Google",
+  "authContinueWithPhone": "Continue with Phone Number",
+  "authContinueOffline": "Continue Offline (Local Only)",
+  "authPhoneLabel": "Mobile Number",
+  "authPhoneHint": "+91 98765 43210",
+  "authSendOtpAction": "Send OTP",
+  "authOtpLabel": "6-Digit OTP Code",
+  "authOtpHint": "123456",
+  "authOtpSentMessage": "Verification code sent to {phone}",
+  "@authOtpSentMessage": {
+    "placeholders": {
+      "phone": { "type": "String" }
+    }
+  },
+  "authVerifyOtpAction": "Verify & Sign In",
+  "authChangePhoneAction": "Change Number",
+  "authInvalidPhoneError": "Enter a valid 10-digit mobile number or E.164 number.",
+  "authCloudNotConfiguredBanner": "Cloud sync keys are not configured in this build. You can continue using StitchFlow 100% offline.",
+  "authAccountTitle": "Account & Cloud Sync",
+  "authAccountSubtitle": "Manage Google & Phone login, linked devices, and sign-out",
+  "authOfflineModeBadge": "Offline Mode",
+  "authSignedInBadge": "Signed In",
+  "authSignInPromptCardSubtitle": "Sign in with Google or Phone OTP to back up and sync across devices",
+  "authLinkedIdentitiesHeading": "Linked Login Methods",
+  "authGoogleProvider": "Google Account",
+  "authPhoneProvider": "Phone Number",
+  "authLinkedStatus": "Linked",
+  "authNotLinkedStatus": "Not linked",
+  "authLinkAction": "Link",
+  "authLinkedDevicesHeading": "Synced Devices",
+  "authCurrentDeviceBadge": "This device",
+  "authNoDevicesYet": "No cloud devices registered yet.",
+  "authSignOutAction": "Sign Out",
+  "authSignOutConfirmTitle": "Sign out of Cloud Sync?",
+  "authSignOutConfirmBody": "Your local workshop data stays safely on this device, and cloud sync will pause until you sign in again.",
+  "authSignOutUnsyncedWarning": "You have {count} unsynced local changes. Sync before signing out so nothing is left behind.",
+  "@authSignOutUnsyncedWarning": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "authSyncAndSignOutAction": "Sync & Sign Out",
+  "authSignOutAnywayAction": "Sign Out Anyway",
+  "syncCenterTitle": "Cloud Sync Center",
+  "syncCenterSubtitle": "Offline-first bidirectional sync with Supabase",
+  "syncStatusLocalOnly": "Local Only",
+  "syncStatusOffline": "Offline",
+  "syncStatusSynced": "Synced",
+  "syncStatusSyncing": "Syncing…",
+  "syncStatusNeedsAttention": "Needs Attention",
+  "syncStatusPending": "{count} pending",
+  "@syncStatusPending": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "syncNowAction": "Sync Now",
+  "syncRetryFailedAction": "Retry Failed",
+  "syncLastSyncedLabel": "Last synced",
+  "syncNeverSynced": "Not synced yet",
+  "syncPendingRowsLabel": "Pending data changes",
+  "syncPendingMediaLabel": "Pending photo uploads/downloads",
+  "syncFailedItemsHeading": "Items Needing Retry",
+  "syncMergeTitle": "Data Found in Both Places",
+  "syncMergeSubtitle": "This device has {localCount} local records and your cloud account has {cloudCount} records. How would you like to proceed?",
+  "@syncMergeSubtitle": {
+    "placeholders": {
+      "localCount": { "type": "int" },
+      "cloudCount": { "type": "int" }
+    }
+  },
+  "syncMergeBothAction": "Merge Local + Cloud (Recommended)",
+  "syncMergeBothDesc": "Combines all ledgers safely and keeps the newest edits for lots, workers, and processes.",
+  "syncKeepCloudAction": "Keep Cloud Only",
+  "syncKeepCloudDesc": "Replaces this device's local records with your cloud account data.",
+  "syncKeepLocalAction": "Keep Local & Push to Cloud",
+  "syncKeepLocalDesc": "Uploads all local records from this device to your cloud account.",
+  "securityCloudRecoveryTitle": "Or Reset PIN via Cloud Account",
+  "securityCloudRecoverySubtitle": "Re-verify your signed-in Google account to reset your local App Lock PIN without losing data.",
+  "securityVerifyWithGoogleAction": "Verify with Google",
+  "securityCloudReauthFailed": "Cloud account verification did not match the signed-in owner."
 }

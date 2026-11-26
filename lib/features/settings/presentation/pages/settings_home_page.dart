@@ -12,7 +12,11 @@ import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/theme/theme_cubit.dart';
 import 'package:business_manager/core/theme/theme_state.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
+import 'package:business_manager/features/auth/domain/entities/auth_entities.dart';
+import 'package:business_manager/features/auth/presentation/bloc/auth_cubit.dart';
 import 'package:business_manager/features/security/presentation/bloc/app_lock_cubit.dart';
+import 'package:business_manager/features/sync/domain/entities/sync_entities.dart';
+import 'package:business_manager/features/sync/presentation/bloc/sync_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -72,6 +76,65 @@ final class SettingsHomePage extends StatelessWidget {
                 subtitle: l10n.settingsSubtitle,
               ),
               const SizedBox(height: AppSpacing.lg),
+            ],
+
+            // Section 0 (v1.5): Account & Cloud Sync
+            if (context.read<AuthCubit?>() != null &&
+                context.read<SyncCubit?>() != null) ...[
+              AppMotionEntrance(
+                index: 0,
+                slideOffsetY: 0,
+                child: _SettingsSectionCard(
+                  children: [
+                    BlocBuilder<AuthCubit, AuthState>(
+                      builder: (context, authState) => _SettingsTile(
+                        icon: authState.isAuthenticated
+                            ? AppIcons.account
+                            : AppIcons.signIn,
+                        iconBg: authState.isAuthenticated
+                            ? context.semanticColors.goodStockContainer
+                            : colorScheme.primaryContainer,
+                        iconColor: authState.isAuthenticated
+                            ? context.semanticColors.goodStock
+                            : colorScheme.onPrimaryContainer,
+                        title: l10n.authAccountTitle,
+                        subtitle: authState.isAuthenticated
+                            ? authState.user!.primaryLabel
+                            : l10n.authSignInPromptCardSubtitle,
+                        badgeText: authState.isAuthenticated
+                            ? l10n.authSignedInBadge
+                            : l10n.authOfflineModeBadge,
+                        onTap: () => context.push(
+                          authState.isAuthenticated
+                              ? RoutePaths.settingsAccount
+                              : RoutePaths.authLogin,
+                        ),
+                      ),
+                    ),
+                    const Divider(indent: 64),
+                    BlocBuilder<SyncCubit, SyncState>(
+                      builder: (context, syncState) => _SettingsTile(
+                        icon: AppIcons.cloudSync,
+                        iconBg: colorScheme.secondaryContainer,
+                        iconColor: colorScheme.onSecondaryContainer,
+                        title: l10n.syncCenterTitle,
+                        subtitle: l10n.syncCenterSubtitle,
+                        badgeText: switch (syncState.phase) {
+                          SyncPhase.synced => l10n.syncStatusSynced,
+                          SyncPhase.syncing => l10n.syncStatusSyncing,
+                          SyncPhase.offline => l10n.syncStatusOffline,
+                          SyncPhase.needsAttention =>
+                            l10n.syncStatusNeedsAttention,
+                          SyncPhase.awaitingMergeChoice => l10n.syncMergeTitle,
+                          SyncPhase.localOnly => l10n.syncStatusLocalOnly,
+                        },
+                        onTap: () => context.push(RoutePaths.settingsSync),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: AppSpacing.md),
             ],
 
             // Section 1: App & Workshop Setup

@@ -5281,6 +5281,378 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Clear all'**
   String get uxClearAll;
+
+  /// No description provided for @authSignInHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign In to Cloud Sync'**
+  String get authSignInHeading;
+
+  /// No description provided for @authSignInSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with Google or your mobile number to sync your workshop data across devices. Works 100% offline anytime.'**
+  String get authSignInSubtitle;
+
+  /// No description provided for @authContinueWithGoogle.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Google'**
+  String get authContinueWithGoogle;
+
+  /// No description provided for @authContinueWithPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Phone Number'**
+  String get authContinueWithPhone;
+
+  /// No description provided for @authContinueOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue Offline (Local Only)'**
+  String get authContinueOffline;
+
+  /// No description provided for @authPhoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Mobile Number'**
+  String get authPhoneLabel;
+
+  /// No description provided for @authPhoneHint.
+  ///
+  /// In en, this message translates to:
+  /// **'+91 98765 43210'**
+  String get authPhoneHint;
+
+  /// No description provided for @authSendOtpAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Send OTP'**
+  String get authSendOtpAction;
+
+  /// No description provided for @authOtpLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'6-Digit OTP Code'**
+  String get authOtpLabel;
+
+  /// No description provided for @authOtpHint.
+  ///
+  /// In en, this message translates to:
+  /// **'123456'**
+  String get authOtpHint;
+
+  /// No description provided for @authOtpSentMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification code sent to {phone}'**
+  String authOtpSentMessage(String phone);
+
+  /// No description provided for @authVerifyOtpAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify & Sign In'**
+  String get authVerifyOtpAction;
+
+  /// No description provided for @authChangePhoneAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Number'**
+  String get authChangePhoneAction;
+
+  /// No description provided for @authInvalidPhoneError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid 10-digit mobile number or E.164 number.'**
+  String get authInvalidPhoneError;
+
+  /// No description provided for @authCloudNotConfiguredBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud sync keys are not configured in this build. You can continue using StitchFlow 100% offline.'**
+  String get authCloudNotConfiguredBanner;
+
+  /// No description provided for @authAccountTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Account & Cloud Sync'**
+  String get authAccountTitle;
+
+  /// No description provided for @authAccountSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Google & Phone login, linked devices, and sign-out'**
+  String get authAccountSubtitle;
+
+  /// No description provided for @authOfflineModeBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline Mode'**
+  String get authOfflineModeBadge;
+
+  /// No description provided for @authSignedInBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Signed In'**
+  String get authSignedInBadge;
+
+  /// No description provided for @authSignInPromptCardSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in with Google or Phone OTP to back up and sync across devices'**
+  String get authSignInPromptCardSubtitle;
+
+  /// No description provided for @authLinkedIdentitiesHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked Login Methods'**
+  String get authLinkedIdentitiesHeading;
+
+  /// No description provided for @authGoogleProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Account'**
+  String get authGoogleProvider;
+
+  /// No description provided for @authPhoneProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get authPhoneProvider;
+
+  /// No description provided for @authLinkedStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked'**
+  String get authLinkedStatus;
+
+  /// No description provided for @authNotLinkedStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'Not linked'**
+  String get authNotLinkedStatus;
+
+  /// No description provided for @authLinkAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Link'**
+  String get authLinkAction;
+
+  /// No description provided for @authLinkedDevicesHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Synced Devices'**
+  String get authLinkedDevicesHeading;
+
+  /// No description provided for @authCurrentDeviceBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'This device'**
+  String get authCurrentDeviceBadge;
+
+  /// No description provided for @authNoDevicesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No cloud devices registered yet.'**
+  String get authNoDevicesYet;
+
+  /// No description provided for @authSignOutAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Out'**
+  String get authSignOutAction;
+
+  /// No description provided for @authSignOutConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out of Cloud Sync?'**
+  String get authSignOutConfirmTitle;
+
+  /// No description provided for @authSignOutConfirmBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your local workshop data stays safely on this device, and cloud sync will pause until you sign in again.'**
+  String get authSignOutConfirmBody;
+
+  /// No description provided for @authSignOutUnsyncedWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'You have {count} unsynced local changes. Sync before signing out so nothing is left behind.'**
+  String authSignOutUnsyncedWarning(int count);
+
+  /// No description provided for @authSyncAndSignOutAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync & Sign Out'**
+  String get authSyncAndSignOutAction;
+
+  /// No description provided for @authSignOutAnywayAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign Out Anyway'**
+  String get authSignOutAnywayAction;
+
+  /// No description provided for @syncCenterTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud Sync Center'**
+  String get syncCenterTitle;
+
+  /// No description provided for @syncCenterSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline-first bidirectional sync with Supabase'**
+  String get syncCenterSubtitle;
+
+  /// No description provided for @syncStatusLocalOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Local Only'**
+  String get syncStatusLocalOnly;
+
+  /// No description provided for @syncStatusOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline'**
+  String get syncStatusOffline;
+
+  /// No description provided for @syncStatusSynced.
+  ///
+  /// In en, this message translates to:
+  /// **'Synced'**
+  String get syncStatusSynced;
+
+  /// No description provided for @syncStatusSyncing.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing…'**
+  String get syncStatusSyncing;
+
+  /// No description provided for @syncStatusNeedsAttention.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs Attention'**
+  String get syncStatusNeedsAttention;
+
+  /// No description provided for @syncStatusPending.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} pending'**
+  String syncStatusPending(int count);
+
+  /// No description provided for @syncNowAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Now'**
+  String get syncNowAction;
+
+  /// No description provided for @syncRetryFailedAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry Failed'**
+  String get syncRetryFailedAction;
+
+  /// No description provided for @syncLastSyncedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Last synced'**
+  String get syncLastSyncedLabel;
+
+  /// No description provided for @syncNeverSynced.
+  ///
+  /// In en, this message translates to:
+  /// **'Not synced yet'**
+  String get syncNeverSynced;
+
+  /// No description provided for @syncPendingRowsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending data changes'**
+  String get syncPendingRowsLabel;
+
+  /// No description provided for @syncPendingMediaLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending photo uploads/downloads'**
+  String get syncPendingMediaLabel;
+
+  /// No description provided for @syncFailedItemsHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Items Needing Retry'**
+  String get syncFailedItemsHeading;
+
+  /// No description provided for @syncMergeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Found in Both Places'**
+  String get syncMergeTitle;
+
+  /// No description provided for @syncMergeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'This device has {localCount} local records and your cloud account has {cloudCount} records. How would you like to proceed?'**
+  String syncMergeSubtitle(int localCount, int cloudCount);
+
+  /// No description provided for @syncMergeBothAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Merge Local + Cloud (Recommended)'**
+  String get syncMergeBothAction;
+
+  /// No description provided for @syncMergeBothDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Combines all ledgers safely and keeps the newest edits for lots, workers, and processes.'**
+  String get syncMergeBothDesc;
+
+  /// No description provided for @syncKeepCloudAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Cloud Only'**
+  String get syncKeepCloudAction;
+
+  /// No description provided for @syncKeepCloudDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Replaces this device\'s local records with your cloud account data.'**
+  String get syncKeepCloudDesc;
+
+  /// No description provided for @syncKeepLocalAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Local & Push to Cloud'**
+  String get syncKeepLocalAction;
+
+  /// No description provided for @syncKeepLocalDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploads all local records from this device to your cloud account.'**
+  String get syncKeepLocalDesc;
+
+  /// No description provided for @securityCloudRecoveryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Or Reset PIN via Cloud Account'**
+  String get securityCloudRecoveryTitle;
+
+  /// No description provided for @securityCloudRecoverySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-verify your signed-in Google account to reset your local App Lock PIN without losing data.'**
+  String get securityCloudRecoverySubtitle;
+
+  /// No description provided for @securityVerifyWithGoogleAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify with Google'**
+  String get securityVerifyWithGoogleAction;
+
+  /// No description provided for @securityCloudReauthFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud account verification did not match the signed-in owner.'**
+  String get securityCloudReauthFailed;
 }
 
 class _AppLocalizationsDelegate

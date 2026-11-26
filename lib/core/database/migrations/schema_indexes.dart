@@ -196,6 +196,16 @@ abstract final class SchemaIndexes {
         'WHERE client_request_id IS NOT NULL;',
   ];
 
+  /// Additive indexes introduced in schema v10 (v1.5 Offline-First Cloud Sync).
+  static const List<String> v10IndexStatements = [
+    'CREATE INDEX IF NOT EXISTS idx_sync_outbox_due '
+        'ON sync_outbox(status, next_retry_at, enqueued_at);',
+    'CREATE INDEX IF NOT EXISTS idx_sync_outbox_table '
+        'ON sync_outbox(table_name, enqueued_at);',
+    'CREATE INDEX IF NOT EXISTS idx_sync_media_due '
+        'ON sync_media_queue(status, next_retry_at, updated_at);',
+  ];
+
   static const List<String> allIndexStatements = [
     ...v1IndexStatements,
     ...v2IndexStatements,
@@ -205,5 +215,6 @@ abstract final class SchemaIndexes {
     ...v6IndexStatements,
     ...v7IndexStatements,
     ...v8IndexStatements,
+    ...v10IndexStatements,
   ];
 }

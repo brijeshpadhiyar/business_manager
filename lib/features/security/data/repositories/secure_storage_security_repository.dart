@@ -77,7 +77,20 @@ final class SecureStorageSecurityRepository implements SecurityRepository {
     await _storage.delete(key: key);
   }
 
-  String get _prefix => 'sf_${_config.flavor.name}_';
+  String? _activeUserId;
+
+  @override
+  void setActiveAccountScope(String? userId) {
+    final normalized = userId?.trim();
+    _activeUserId = (normalized == null || normalized.isEmpty)
+        ? null
+        : normalized;
+  }
+
+  String get _legacyPrefix => 'sf_${_config.flavor.name}_';
+  String get _prefix => _activeUserId == null
+      ? _legacyPrefix
+      : 'sf_${_config.flavor.name}_${_activeUserId}_';
   String get _kPinEnabled => '${_prefix}pin_enabled';
   String get _kPinLength => '${_prefix}pin_length';
   String get _kPinVerifier => '${_prefix}pin_verifier';
@@ -118,8 +131,37 @@ final class SecureStorageSecurityRepository implements SecurityRepository {
   @override
   Future<SecuritySettings> loadSettings() async {
     try {
-      final pinEnabledStr = await _readKey(_kPinEnabled);
-      final pinVerifier = await _readKey(_kPinVerifier);
+      var pinEnabledStr = await _readKey(_kPinEnabled);
+      var pinVerifier = await _readKey(_kPinVerifier);
+
+      // Seamlessly migrate legacy v1.4 local PIN keys into the signed-in user's scope.
+      if (_activeUserId != null &&
+          (pinVerifier == null || pinVerifier.isEmpty)) {
+        final legacyEnabled = await _readKey('${_legacyPrefix}pin_enabled');
+        final legacyVerifier = await _readKey('${_legacyPrefix}pin_verifier');
+        if (legacyEnabled == 'true' &&
+            legacyVerifier != null &&
+            legacyVerifier.isNotEmpty) {
+          for (final suffix in const [
+            'pin_enabled',
+            'pin_length',
+            'pin_verifier',
+            'recovery_verifier',
+            'biometric_enabled',
+            'lock_timeout_sec',
+            'flag_secure_enabled',
+            'require_auth_approvals',
+          ]) {
+            final val = await _readKey('$_legacyPrefix$suffix');
+            if (val != null) {
+              await _writeKey('$_prefix$suffix', val);
+            }
+          }
+          pinEnabledStr = legacyEnabled;
+          pinVerifier = legacyVerifier;
+        }
+      }
+
       final pinEnabled =
           pinEnabledStr == 'true' &&
           pinVerifier != null &&

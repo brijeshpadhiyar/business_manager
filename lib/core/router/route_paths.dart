@@ -62,6 +62,11 @@ abstract final class RoutePaths {
   static const String settingsHelpTopicPattern = '/settings/help/:topicId';
   static const String settingsAbout = '/settings/about';
 
+  // V1.5 — Cloud Auth (Google + Phone OTP) & Offline-First Sync Center
+  static const String authLogin = '/auth/login';
+  static const String settingsAccount = '/settings/account';
+  static const String settingsSync = '/settings/sync';
+
   // V1.2 — Daily Production Summary
   static const String dailySummary = '/daily-summary';
 

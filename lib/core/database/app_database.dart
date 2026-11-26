@@ -10,6 +10,7 @@ import 'package:business_manager/core/database/daos/payment_dao.dart';
 import 'package:business_manager/core/database/daos/process_member_dao.dart';
 import 'package:business_manager/core/database/daos/production_tracking_dao.dart';
 import 'package:business_manager/core/database/daos/stock_movement_dao.dart';
+import 'package:business_manager/core/database/daos/sync_dao.dart';
 import 'package:business_manager/core/database/daos/worker_adjustment_dao.dart';
 import 'package:business_manager/core/database/database_pragma_status.dart';
 import 'package:business_manager/core/database/migrations/database_migration_manager.dart';
@@ -21,11 +22,12 @@ import 'package:business_manager/core/database/tables/ledger_tables.dart';
 import 'package:business_manager/core/database/tables/lot_tables.dart';
 import 'package:business_manager/core/database/tables/process_member_tables.dart';
 import 'package:business_manager/core/database/tables/production_tracking_tables.dart';
+import 'package:business_manager/core/database/tables/sync_tables.dart';
 import 'package:drift/drift.dart';
 
 part 'app_database.g.dart';
 
-/// Root offline-first Drift SQLite database (Schema v8: 23 tables, 11 DAOs).
+/// Root offline-first Drift SQLite database (Schema v10: 27 tables, 12 DAOs).
 @DriftDatabase(
   tables: [
     BusinessProfiles,
@@ -51,6 +53,10 @@ part 'app_database.g.dart';
     ProductionInspections,
     RejectionRecords,
     RejectionRepairs,
+    SyncSessionStates,
+    SyncOutboxes,
+    SyncCursors,
+    SyncMediaQueues,
   ],
   daos: [
     BusinessProfileDao,
@@ -64,6 +70,7 @@ part 'app_database.g.dart';
     ColourMasterDao,
     AttachmentAuditDao,
     ProductionTrackingDao,
+    SyncDao,
   ],
 )
 class AppDatabase extends _$AppDatabase {

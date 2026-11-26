@@ -1,13 +1,14 @@
 import 'package:business_manager/core/database/app_database.dart';
 import 'package:business_manager/core/database/migrations/schema_indexes.dart';
+import 'package:business_manager/core/database/migrations/schema_v10_cloud_sync.dart';
 import 'package:business_manager/core/database/migrations/schema_v9_ledger_unification.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:drift/drift.dart';
 
 /// Coordinates initial schema creation, default singleton seeding, and
-/// step-by-step schema upgrades (`v1 -> ... -> v8 -> v9`).
+/// step-by-step schema upgrades (`v1 -> ... -> v9 -> v10`).
 abstract final class DatabaseMigrationManager {
-  static const int currentSchemaVersion = 9;
+  static const int currentSchemaVersion = 10;
   static const String defaultBusinessProfileId = 'default';
 
   static Future<void> handleOnCreate(Migrator m, AppDatabase db) async {
@@ -15,8 +16,11 @@ abstract final class DatabaseMigrationManager {
     for (final statement in SchemaIndexes.allIndexStatements) {
       await db.customStatement(statement);
     }
+    final now = IstDateTimeHelper.nowUtcMillis();
+    await SchemaV10CloudSync.seedSessionState(db, nowUtcMillis: now);
     await seedDefaultBusinessProfile(db);
     await seedDefaultColourMaster(db);
+    await SchemaV10CloudSync.installTriggers(db);
   }
 
   /// Step-by-step upgrade entrypoint. Preserves 100% of existing user data
@@ -382,11 +386,19 @@ abstract final class DatabaseMigrationManager {
       );
     }
 
+    if (from < 10) {
+      await SchemaV10CloudSync.run(
+        db,
+        nowUtcMillis: IstDateTimeHelper.nowUtcMillis(),
+      );
+    }
+
     // Ensure all idempotent indexes exist after any upgrade.
     for (final statement in SchemaIndexes.allIndexStatements) {
       await db.customStatement(statement);
     }
     await seedDefaultColourMaster(db);
+    await SchemaV10CloudSync.installTriggers(db);
   }
 
   static Future<void> seedDefaultColourMaster(GeneratedDatabase db) async {

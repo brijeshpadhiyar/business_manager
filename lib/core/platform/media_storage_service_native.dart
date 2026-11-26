@@ -103,6 +103,24 @@ final class NativeMediaStorageService implements MediaStorageService {
   }
 
   @override
+  Future<void> writeBytesAtRelativePath(
+    String relativePath,
+    Uint8List bytes,
+  ) async {
+    try {
+      final file = await resolveSafeFile(relativePath);
+      if (!file.parent.existsSync()) {
+        await file.parent.create(recursive: true);
+      }
+      await file.writeAsBytes(bytes, flush: true);
+    } on LocalStorageException {
+      rethrow;
+    } catch (error) {
+      throw LocalStorageException('Failed to write private media file.', error);
+    }
+  }
+
+  @override
   Future<bool> exists(String relativePath) async {
     try {
       final file = await resolveSafeFile(relativePath);
