@@ -5,6 +5,8 @@ import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
+import 'package:business_manager/features/guidance/domain/entities/guide_entities.dart';
+import 'package:business_manager/features/guidance/presentation/widgets/screen_first_visit_hint.dart';
 import 'package:business_manager/features/processes/domain/entities/process_entities.dart';
 import 'package:business_manager/features/processes/presentation/bloc/process_list_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -255,6 +257,7 @@ final class _ProcessListViewState extends State<_ProcessListView> {
             icon: AppIcons.add,
             label: l10n.processCreateAction,
             onPressed: () => _openCreateProcess(context),
+            guideTargetId: GuideTargetId.processNewAction,
           ),
           scrollMode: AppScrollMode.collapsible,
           contentWidth: AppContentWidth.wide,
@@ -338,7 +341,20 @@ final class _ProcessListViewState extends State<_ProcessListView> {
               ),
             ],
           ),
-          slivers: slivers,
+          slivers: [
+            const SliverToBoxAdapter(
+              child: ScreenFirstVisitHint(
+                screenId: GuideScreenId.processes,
+                padding: EdgeInsets.fromLTRB(
+                  AppSpacing.lg,
+                  AppSpacing.sm,
+                  AppSpacing.lg,
+                  0,
+                ),
+              ),
+            ),
+            ...slivers,
+          ],
         );
       },
     );

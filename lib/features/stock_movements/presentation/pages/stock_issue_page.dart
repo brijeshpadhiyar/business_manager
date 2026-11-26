@@ -19,8 +19,11 @@ import 'package:business_manager/features/business_profile/domain/repositories/b
 import 'package:business_manager/features/processes/domain/entities/process_entities.dart';
 import 'package:business_manager/features/processes/domain/repositories/process_repository.dart';
 import 'package:business_manager/features/rates/domain/entities/rate_entities.dart';
+import 'package:business_manager/features/slips/presentation/slip_builder_helper.dart';
+import 'package:business_manager/features/slips/presentation/widgets/slip_share_sheet.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 import 'package:business_manager/features/stock_movements/domain/repositories/stock_movement_repository.dart';
+import 'package:business_manager/features/stock_movements/presentation/widgets/stock_issue_step_widgets.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -1404,8 +1407,32 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                 ),
                 const SizedBox(height: AppSpacing.lg),
                 AppButton(
+                  label: l10n.slipShareChallanAction,
+                  icon: AppIcons.share,
+                  isExpanded: true,
+                  onPressed: () async {
+                    final slip = await SlipBuilderHelper.buildStockIssueChallan(
+                      movementId: info.movement.id,
+                      lotNumber: info.lotNumber,
+                      designName: info.designName,
+                      colourName: info.colourName,
+                      processName: info.processName,
+                      workerName: info.workerName,
+                      quantity: info.movement.quantity,
+                      ratePaise: info.movement.appliedRatePaise,
+                      transactionAtUtcMillis: info.movement.transactionAt,
+                      notes: info.movement.notes,
+                    );
+                    if (context.mounted) {
+                      await SlipShareSheet.show(context, slip);
+                    }
+                  },
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                AppButton(
                   label: l10n.stockIssueMoreAction,
                   icon: AppIcons.addCircle,
+                  variant: AppButtonVariant.secondary,
                   isExpanded: true,
                   onPressed: _issueMore,
                 ),
@@ -1457,166 +1484,7 @@ final class _IssuedSuccessInfo {
   final BillingMode effectiveBillingMode;
 }
 
-final class _StepItem {
-  const _StepItem({
-    required this.number,
-    required this.label,
-    required this.completed,
-    required this.active,
-  });
-
-  final int number;
-  final String label;
-  final bool completed;
-  final bool active;
-}
-
-final class _StepProgressStrip extends StatelessWidget {
-  const _StepProgressStrip({required this.steps});
-
-  final List<_StepItem> steps;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final semantic = context.semanticColors;
-
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: [
-          for (int i = 0; i < steps.length; i++) ...[
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                color: steps[i].completed
-                    ? semantic.goodStockContainer
-                    : (steps[i].active
-                          ? colorScheme.secondary.withValues(alpha: 0.16)
-                          : colorScheme.surfaceContainer),
-                borderRadius: AppRadius.fullBorder,
-                border: Border.all(
-                  color: steps[i].completed
-                      ? semantic.goodStock.withValues(alpha: 0.4)
-                      : (steps[i].active
-                            ? colorScheme.secondary
-                            : colorScheme.outlineVariant),
-                ),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    steps[i].completed
-                        ? AppIcons.success
-                        : AppIcons.currentStep,
-                    size: 14,
-                    color: steps[i].completed
-                        ? semantic.goodStock
-                        : (steps[i].active
-                              ? colorScheme.secondary
-                              : colorScheme.onSurfaceVariant),
-                  ),
-                  const SizedBox(width: 6),
-                  Text(
-                    '${steps[i].number}. ${steps[i].label}',
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      fontWeight: steps[i].active || steps[i].completed
-                          ? FontWeight.w700
-                          : FontWeight.w500,
-                      color: steps[i].completed
-                          ? semantic.goodStock
-                          : (steps[i].active
-                                ? colorScheme.onSurface
-                                : colorScheme.onSurfaceVariant),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (i < steps.length - 1) const SizedBox(width: AppSpacing.xs),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-final class _StepBadge extends StatelessWidget {
-  const _StepBadge({required this.number, required this.completed});
-
-  final int number;
-  final bool completed;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final semantic = context.semanticColors;
-    return Container(
-      width: 26,
-      height: 26,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: completed ? semantic.goodStock : colorScheme.primary,
-        borderRadius: AppRadius.fullBorder,
-      ),
-      child: completed
-          ? const Icon(AppIcons.confirm, size: 16, color: Colors.white)
-          : Text(
-              '$number',
-              style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                color: colorScheme.onPrimary,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-    );
-  }
-}
-
-final class _SummaryRow extends StatelessWidget {
-  const _SummaryRow({
-    required this.label,
-    required this.value,
-    this.isNumeric = false,
-    this.highlight = false,
-  });
-
-  final String label;
-  final String value;
-  final bool isNumeric;
-  final bool highlight;
-
-  @override
-  Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            flex: 2,
-            child: AppText(
-              label,
-              variant: AppTextVariant.bodySmall,
-              color: colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(
-            flex: 3,
-            child: AppText(
-              value,
-              variant: isNumeric
-                  ? AppTextVariant.numeric
-                  : AppTextVariant.bodyMedium,
-              fontWeight: highlight ? FontWeight.w700 : FontWeight.w600,
-              color: highlight ? colorScheme.primary : null,
-              textAlign: TextAlign.end,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+typedef _StepItem = StockIssueStepItem;
+typedef _StepProgressStrip = StockIssueStepProgressStrip;
+typedef _StepBadge = StockIssueStepBadge;
+typedef _SummaryRow = StockIssueSummaryRow;

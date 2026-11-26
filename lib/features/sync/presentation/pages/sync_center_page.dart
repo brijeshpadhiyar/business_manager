@@ -179,6 +179,15 @@ final class SyncCenterPage extends StatelessWidget {
                                 ? () => context.read<SyncCubit>().syncNow()
                                 : null,
                           ),
+                          const SizedBox(height: AppSpacing.sm),
+                          AppButton(
+                            label: l10n.syncConflictsOpenAction,
+                            icon: AppIcons.conflict,
+                            variant: AppButtonVariant.outlined,
+                            isExpanded: true,
+                            onPressed: () =>
+                                context.push(RoutePaths.settingsSyncConflicts),
+                          ),
                           if (state.failedItems.isNotEmpty) ...[
                             const SizedBox(height: AppSpacing.sm),
                             AppButton(

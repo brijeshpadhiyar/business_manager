@@ -94,6 +94,7 @@ void main() {
       'attachments',
       'audit_logs',
       'business_profile',
+      'cached_team_members',
       'colour_master',
       'design_colours',
       'job_processes',

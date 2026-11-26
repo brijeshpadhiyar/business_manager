@@ -332,6 +332,22 @@ class SyncDao extends DatabaseAccessor<AppDatabase> with _$SyncDaoMixin {
         );
   }
 
+  Future<List<SyncMediaQueueRow>> getFailedMediaItems() {
+    return (select(syncMediaQueues)
+          ..where((t) => t.status.equals('FAILED'))
+          ..orderBy([(t) => OrderingTerm.desc(t.updatedAt)]))
+        .get();
+  }
+
+  Future<int> getPendingMediaCount() async {
+    final countExp = syncMediaQueues.attachmentId.count();
+    final query = selectOnly(syncMediaQueues)
+      ..addColumns([countExp])
+      ..where(syncMediaQueues.status.isNotValue('DONE'));
+    final row = await query.getSingle();
+    return row.read(countExp) ?? 0;
+  }
+
   Future<void> resetFailedMediaItems() async {
     await (update(syncMediaQueues)..where((t) => t.status.equals('FAILED')))
         .write(

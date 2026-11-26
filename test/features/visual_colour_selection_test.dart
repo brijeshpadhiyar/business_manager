@@ -546,14 +546,14 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        expect(find.text('All Colours (2)'), findsOneWidget);
-        expect(find.text('Operations (2)'), findsOneWidget);
+        expect(find.text('All (2)'), findsOneWidget);
+        expect(find.text('Operation / Process (2)'), findsOneWidget);
 
         // Tap Red colour filter chip
-        await tester.tap(find.text('Red (40p)'));
+        await tester.tap(find.text('Red (40)'));
         await tester.pumpAndSettle();
 
-        expect(find.text('Operations (1)'), findsOneWidget);
+        expect(find.text('Operation / Process (1)'), findsOneWidget);
       },
     );
   });

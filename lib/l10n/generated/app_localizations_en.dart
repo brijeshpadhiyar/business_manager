@@ -3031,4 +3031,721 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get securityCloudReauthFailed =>
       'Cloud account verification did not match the signed-in owner.';
+
+  @override
+  String get stockPendingQcLabel => 'Pending QC';
+
+  @override
+  String get settingsDataHealthTitle => 'Data Health & Diagnostics';
+
+  @override
+  String get settingsDataHealthSubtitle =>
+      'Verify SQLite integrity, stock equations, ledger parity & sync queue';
+
+  @override
+  String get dataHealthHeading => 'Data Health Center';
+
+  @override
+  String get dataHealthSubtitle =>
+      'Non-destructive integrity & reconciliation checks on your local StitchFlow database.';
+
+  @override
+  String get dataHealthRunCheckAction => 'Run Health Check';
+
+  @override
+  String get dataHealthShareReportAction => 'Share Diagnostic Report';
+
+  @override
+  String get dataHealthStatusHealthy => 'All Checks Healthy';
+
+  @override
+  String get dataHealthStatusWarning => 'Minor Attention Needed';
+
+  @override
+  String get dataHealthStatusCritical => 'Integrity Issues Found';
+
+  @override
+  String get dataHealthCheckedAtLabel => 'Last Checked';
+
+  @override
+  String get dataHealthSchemaVersionLabel => 'Schema Version';
+
+  @override
+  String get dataHealthDbSizeLabel => 'Database Size';
+
+  @override
+  String get dataHealthSqliteIntegrityLabel => 'SQLite Integrity';
+
+  @override
+  String get dataHealthSqliteOk => 'Verified OK';
+
+  @override
+  String get dataHealthSqliteFailed => 'Integrity Error';
+
+  @override
+  String get dataHealthForeignKeysLabel => 'Foreign Key Integrity';
+
+  @override
+  String get dataHealthZeroViolations => '0 Violations';
+
+  @override
+  String dataHealthViolationsCount(int count) {
+    return '$count Violations';
+  }
+
+  @override
+  String get dataHealthStockReconciliationLabel => 'Golden Stock Equation';
+
+  @override
+  String dataHealthStockAllReconciled(int count) {
+    return 'All $count colours reconciled';
+  }
+
+  @override
+  String dataHealthStockIssuesCount(int count) {
+    return '$count mismatches found';
+  }
+
+  @override
+  String get dataHealthLedgerParityLabel => 'Worker Ledger Parity';
+
+  @override
+  String get dataHealthLedgerParityOk => '0 Parity Issues';
+
+  @override
+  String get dataHealthSyncQueueLabel => 'Sync Outbox & Media Queue';
+
+  @override
+  String dataHealthSyncQueueSummary(int pending, int failed) {
+    return '$pending pending • $failed failed';
+  }
+
+  @override
+  String get dataHealthMediaParityLabel => 'Private Media Parity';
+
+  @override
+  String dataHealthMediaParitySummary(int orphans, int missing) {
+    return '$orphans orphan • $missing missing';
+  }
+
+  @override
+  String get dataHealthMaintenanceHeading => 'Safe Audited Maintenance';
+
+  @override
+  String get dataHealthWalCheckpointAction => 'Run WAL Checkpoint';
+
+  @override
+  String get dataHealthWalCheckpointDesc =>
+      'Flushes SQLite write-ahead log cleanly into the main database file.';
+
+  @override
+  String get dataHealthWalCheckpointSuccess =>
+      'WAL checkpoint completed and logged.';
+
+  @override
+  String get dataHealthCleanOrphansAction => 'Clean Orphan Media Files';
+
+  @override
+  String get dataHealthCleanOrphansDesc =>
+      'Removes unreferenced local photo files without touching active attachments.';
+
+  @override
+  String dataHealthCleanOrphansSuccess(int count) {
+    return 'Cleaned $count orphan media file(s).';
+  }
+
+  @override
+  String get dataHealthRetrySyncAction => 'Reset Failed Sync Entries';
+
+  @override
+  String get dataHealthRetrySyncDesc =>
+      'Re-queues failed sync outbox & media entries for immediate retry.';
+
+  @override
+  String dataHealthRetrySyncSuccess(int count) {
+    return 'Re-queued $count failed sync entry(ies).';
+  }
+
+  @override
+  String get routingTitle => 'Process Routing';
+
+  @override
+  String get routingRefreshTooltip => 'Refresh';
+
+  @override
+  String get routingLoadErrorTitle => 'Unable to load Job Routing';
+
+  @override
+  String get routingAddProcessAction => 'Add Process';
+
+  @override
+  String get routingReassignFromFactoryAction => 'Reassign from Factory';
+
+  @override
+  String get routingAddOperationTitle => 'Add Process Operation';
+
+  @override
+  String get routingVariantLabel => 'Variant (Design / Colour)';
+
+  @override
+  String get routingOperationLabel => 'Operation / Process';
+
+  @override
+  String get routingAssignWorkerLabel => 'Assign Worker / Department';
+
+  @override
+  String get routingPricingUnitLabel => 'Pricing Unit';
+
+  @override
+  String get routingRateOverrideReasonLabel =>
+      'Reason for Changing Default Rate (Required)';
+
+  @override
+  String get routingDispatchImmediatelyTitle =>
+      'Dispatch immediately from Factory';
+
+  @override
+  String get routingDispatchImmediatelySubtitle =>
+      'Turn off to save as Pending and dispatch later';
+
+  @override
+  String get routingNotesOptionalLabel => 'Notes (Optional)';
+
+  @override
+  String get routingConfirmReassignmentAction => 'Confirm Reassignment';
+
+  @override
+  String get routingAddDispatchAction => 'Add & Dispatch Process';
+
+  @override
+  String get routingSavePendingAction => 'Save Pending Process';
+
+  @override
+  String get routingAddColourFirstError =>
+      'Add at least one Colour or Design variant to this Lot first.';
+
+  @override
+  String get routingAddProcessWorkerFirstError =>
+      'Please create at least one active Process and Worker first.';
+
+  @override
+  String get routingInvalidQuantityError =>
+      'Enter a valid positive whole quantity.';
+
+  @override
+  String get routingInvalidRateError =>
+      'Enter a valid non-negative rate (max 2 decimals).';
+
+  @override
+  String get routingOperationAddedSuccess => 'Operation added successfully.';
+
+  @override
+  String get routingDirectTransferTitle => 'Direct Worker-to-Worker Transfer';
+
+  @override
+  String get routingNextOperationLabel => 'Next Operation / Process';
+
+  @override
+  String get routingDestinationWorkerLabel => 'Destination Worker / Department';
+
+  @override
+  String get routingMarkReceivedImmediatelyTitle => 'Mark received immediately';
+
+  @override
+  String get routingTransferNotesLabel => 'Transfer Notes (Optional)';
+
+  @override
+  String get routingConfirmDirectTransferAction => 'Confirm Direct Transfer';
+
+  @override
+  String get routingInvalidTransferQtyError =>
+      'Enter a valid positive transfer quantity.';
+
+  @override
+  String get routingInvalidDestRateError =>
+      'Enter a valid destination rate (max 2 decimals).';
+
+  @override
+  String get routingReturnToFactoryTitle => 'Return to Factory';
+
+  @override
+  String get routingGoodReturnedLabel => 'Good Quantity Returned to Factory';
+
+  @override
+  String get routingDamagedOptionalLabel => 'Damaged Quantity (Optional)';
+
+  @override
+  String get routingVerificationNotesLabel => 'Verification Notes (Optional)';
+
+  @override
+  String get routingConfirmFactoryReturnAction => 'Confirm Factory Return';
+
+  @override
+  String get routingAddChargeTitle => 'Add Extra Charge / Deduction';
+
+  @override
+  String get routingChargeTypeLabel => 'Type';
+
+  @override
+  String get routingChargeDescLabel =>
+      'Description (e.g. Urgent work, Special cutting)';
+
+  @override
+  String get routingInvalidAmountError =>
+      'Enter a valid positive amount (max 2 decimals).';
+
+  @override
+  String get routingConfirmReceiptTitle => 'Confirm Material Receipt';
+
+  @override
+  String get routingConfirmReceiptAction => 'Confirm Receipt';
+
+  @override
+  String get routingInvalidReceivedQtyError =>
+      'Enter a valid positive received quantity.';
+
+  @override
+  String get routingCancelReasonLabel => 'Cancellation Reason';
+
+  @override
+  String get routingKeepAction => 'Keep';
+
+  @override
+  String get routingCancelProcessAction => 'Cancel Process';
+
+  @override
+  String get routingFactoryReadyLabel => 'Factory Ready';
+
+  @override
+  String get routingWithWorkersLabel => 'With Workers';
+
+  @override
+  String get routingTotalProductionCostLabel => 'Total Production Cost';
+
+  @override
+  String get routingOutstandingPayableLabel => 'Outstanding Payable';
+
+  @override
+  String get routingWorkerPayableSummaryHeading => 'Worker Payable Summary';
+
+  @override
+  String get routingCurrentGoodsLocationHeading => 'Current Goods Location';
+
+  @override
+  String get routingNoOperationsTitle => 'No Operations Added Yet';
+
+  @override
+  String get routingNoOperationsForColourTitle =>
+      'No Operations for Selected Colour';
+
+  @override
+  String get routingNoOperationsSubtitle =>
+      'Assign Cutting, Stitching, Checking, Finishing, Ironing, or Packing at variant level with custom worker rates.';
+
+  @override
+  String get routingNoHandoversSubtitle =>
+      'Dispatches, direct transfers, returns, and reassignments will appear here chronologically.';
+
+  @override
+  String get routingUnassignedWorker => 'Unassigned';
+
+  @override
+  String get routingDirectTransferAction => 'Direct Transfer';
+
+  @override
+  String get routingReturnToFactoryAction => 'Return to Factory';
+
+  @override
+  String get routingPayAction => 'Pay';
+
+  @override
+  String get routingMarkCompletedAction => 'Mark Completed';
+
+  @override
+  String get routingCancelAction => 'Cancel';
+
+  @override
+  String get routingErrJobNotFound => 'Job / Lot not found.';
+
+  @override
+  String get routingErrNotReady => 'Not ready';
+
+  @override
+  String get routingErrExceedsFactoryStock =>
+      'Quantity exceeds available in-house factory stock.';
+
+  @override
+  String get routingErrExceedsDispatched =>
+      'Received quantity cannot exceed dispatched quantity.';
+
+  @override
+  String get routingErrExceedsWorkerStock =>
+      'Transfer quantity exceeds stock currently held by this worker.';
+
+  @override
+  String get routingErrExceedsReturnable =>
+      'Return quantity exceeds outstanding worker quantity.';
+
+  @override
+  String get routingErrPendingRemaining =>
+      'Cannot complete process while pending quantity remains unaccounted.';
+
+  @override
+  String get routingErrHeldPiecesCancel =>
+      'Return or transfer all held pieces before cancelling this process.';
+
+  @override
+  String get routingErrSameWorkerProcess =>
+      'Select a different destination worker or operation for direct transfer.';
+
+  @override
+  String get routingErrRateOverrideReason =>
+      'Please enter a reason when changing the agreed rate from the default.';
+
+  @override
+  String get routingErrPaymentExceedsPayable =>
+      'Payment amount cannot exceed remaining outstanding payable.';
+
+  @override
+  String get routingErrDescriptionRequired =>
+      'Please enter a charge description.';
+
+  @override
+  String get routingErrReasonRequired => 'Please enter a reason.';
+
+  @override
+  String get routingErrProcessRequired => 'Select an operation/process.';
+
+  @override
+  String get routingErrWorkerRequired => 'Select a worker.';
+
+  @override
+  String get routingErrSkuRequired => 'Select a design & colour.';
+
+  @override
+  String get routingErrAlreadyClosed => 'This operation is already closed.';
+
+  @override
+  String get slipShareSheetTitle => 'Share Karigar Slip';
+
+  @override
+  String get slipShareChallanAction => 'Share Issue Challan';
+
+  @override
+  String get slipShareReturnAction => 'Share Return / QC Slip';
+
+  @override
+  String get slipShareReceiptAction => 'Share Payment Receipt';
+
+  @override
+  String get slipShareKhataAction => 'Share Khata Statement';
+
+  @override
+  String get slipShareImageAction => 'Share Image (PNG)';
+
+  @override
+  String get slipShareTextAction => 'Share Text (WhatsApp)';
+
+  @override
+  String get slipCopyTextAction => 'Copy Text';
+
+  @override
+  String get slipPrintPdfAction => 'Print / Save PDF';
+
+  @override
+  String get slipLanguageLabel => 'Slip Language';
+
+  @override
+  String get slipCopiedMessage => 'Slip text copied to clipboard.';
+
+  @override
+  String get slipGeneratedSuccess => 'Slip ready to share.';
+
+  @override
+  String get slipRefLabel => 'Ref';
+
+  @override
+  String get slipBalancePayable => 'Outstanding Payable';
+
+  @override
+  String get slipBalanceAdvance => 'Advance Credit';
+
+  @override
+  String get slipBalanceSettled => 'Account Settled';
+
+  @override
+  String get slipFooterOffline => 'Generated offline via StitchFlow';
+
+  @override
+  String get undoAuditedSuccess => 'Reversal recorded in audit ledger.';
+
+  @override
+  String get draftRestoredBanner => 'Unfinished draft restored.';
+
+  @override
+  String get draftClearAction => 'Clear Draft';
+
+  @override
+  String get setupChecklistTitle => 'Workshop Setup Checklist';
+
+  @override
+  String get setupChecklistSubtitle =>
+      'Complete these 4 quick steps to start tracking production.';
+
+  @override
+  String get setupChecklistDismissAction => 'Dismiss';
+
+  @override
+  String get setupStepProfile => 'Customize Business Profile';
+
+  @override
+  String get setupStepProcesses => 'Create Production Processes';
+
+  @override
+  String get setupStepWorkers => 'Add Workers & Rates';
+
+  @override
+  String get setupStepFirstLot => 'Create Your First Lot';
+
+  @override
+  String get densitySectionTitle => 'Layout Density';
+
+  @override
+  String get densityComfortable => 'Comfortable (Default)';
+
+  @override
+  String get densityCompact => 'Compact (More Rows on Screen)';
+
+  @override
+  String get settingsTeamTitle => 'Team & Role Access';
+
+  @override
+  String get settingsTeamSubtitle =>
+      'Invite supervisors, QC inspectors & accountants with role permissions';
+
+  @override
+  String get teamHeading => 'Team Management';
+
+  @override
+  String get teamMembersSection => 'Workspace Members';
+
+  @override
+  String get teamInvitesSection => 'Invite Codes';
+
+  @override
+  String get teamCreateInviteAction => 'Create Invite Code';
+
+  @override
+  String get teamJoinWorkspaceAction => 'Join a Workshop via Code';
+
+  @override
+  String get teamInviteCodeLabel => '8-Character Invite Code';
+
+  @override
+  String get teamInviteCodeHint => 'e.g. SF7K-9M2P';
+
+  @override
+  String get teamInvitePhoneOptionalLabel => 'Restrict to Phone (Optional)';
+
+  @override
+  String get teamInviteEmailOptionalLabel => 'Restrict to Email (Optional)';
+
+  @override
+  String get teamShareInviteWhatsAppAction => 'Share Code on WhatsApp';
+
+  @override
+  String get teamRevokeAction => 'Revoke';
+
+  @override
+  String get teamRoleOwner => 'Owner';
+
+  @override
+  String get teamRoleManager => 'Manager / Supervisor';
+
+  @override
+  String get teamRoleQcInspector => 'QC Inspector';
+
+  @override
+  String get teamRoleAccountant => 'Accountant';
+
+  @override
+  String get teamSignInRequiredSubtitle =>
+      'Sign in to Cloud Sync to invite team members or join another workshop.';
+
+  @override
+  String get teamNoInvitesEmpty => 'No active invite codes yet.';
+
+  @override
+  String get teamJoinSuccess => 'Joined workshop successfully.';
+
+  @override
+  String get teamInviteCreatedSuccess =>
+      'Invite code created and ready to share.';
+
+  @override
+  String get syncConflictsTitle => 'Sync Conflict Inspector';
+
+  @override
+  String get syncConflictsSubtitle =>
+      'Review superseded local edits from multi-device/team sync and optionally restore them.';
+
+  @override
+  String get syncConflictsOpenAction => 'Review Conflicts';
+
+  @override
+  String get syncConflictsEmptyTitle => 'No Sync Conflicts';
+
+  @override
+  String get syncConflictsEmptySubtitle =>
+      'All devices and team edits have merged cleanly.';
+
+  @override
+  String get syncConflictLocalLabel => 'Your Superseded Edit';
+
+  @override
+  String get syncConflictCloudLabel => 'Applied Cloud Version';
+
+  @override
+  String get syncConflictKeepCloudAction => 'Keep Cloud';
+
+  @override
+  String get syncConflictRestoreLocalAction => 'Restore My Edit';
+
+  @override
+  String get syncConflictStatusUnresolved => 'Needs Review';
+
+  @override
+  String get syncConflictStatusAcknowledged => 'Kept Cloud';
+
+  @override
+  String get syncConflictStatusRestored => 'Restored';
+
+  @override
+  String get syncConflictRestoredSuccess =>
+      'Superseded edit restored as a new audited update.';
+
+  @override
+  String get syncConflictAcknowledgedSuccess => 'Conflict marked as resolved.';
+
+  @override
+  String get guideTitle => 'Interactive Guide';
+
+  @override
+  String get guideTooltip => 'Screen Guide & Training';
+
+  @override
+  String get guideWelcomeTitle => 'Welcome to Business Manager';
+
+  @override
+  String get guideWelcomeSubtitle =>
+      'Learn how your entire garment workshop works step by step — right inside the app, with voice guidance and zero videos.';
+
+  @override
+  String get guideStartFullTraining => 'Start Complete Training';
+
+  @override
+  String get guideResumeTraining => 'Resume Training';
+
+  @override
+  String get guideRestartTraining => 'Restart Full Training';
+
+  @override
+  String get guideTourThisScreen => 'Explain This Screen';
+
+  @override
+  String get guideOpenUserGuide => 'Open Complete User Guide';
+
+  @override
+  String get guideSkipForNow => 'Skip for now';
+
+  @override
+  String get guideVoiceOn => 'Voice ON';
+
+  @override
+  String get guideVoiceOff => 'Voice OFF';
+
+  @override
+  String get guideVoiceReplay => 'Replay';
+
+  @override
+  String get guideVoiceListen => 'Listen';
+
+  @override
+  String get guideVoiceStop => 'Stop';
+
+  @override
+  String get guideSpeedSlow => 'Slow';
+
+  @override
+  String get guideSpeedNormal => 'Normal';
+
+  @override
+  String get guideSpeedFast => 'Fast';
+
+  @override
+  String get guideVoicePackMissingHint =>
+      'Gujarati voice pack is not installed on this device. Visual guidance continues normally.';
+
+  @override
+  String guideStepCounter(int current, int total) {
+    return 'Step $current of $total';
+  }
+
+  @override
+  String get guideActionBack => 'Back';
+
+  @override
+  String get guideActionNext => 'Next';
+
+  @override
+  String get guideActionFinish => 'Finish';
+
+  @override
+  String get guideActionSkip => 'Skip';
+
+  @override
+  String get guideMinimizeCoach => 'Try Now';
+
+  @override
+  String get guideExpandSpotlight => 'Spotlight';
+
+  @override
+  String get guideFirstVisitHint =>
+      'First time on this screen? Tap to see what every button does.';
+
+  @override
+  String get guideFirstVisitAction => 'Show Guide';
+
+  @override
+  String get guideNewScreenHintsLabel => 'First-visit tips on new screens';
+
+  @override
+  String get guideTrainingTabLabel => 'Interactive Training';
+
+  @override
+  String get guideTopicsTabLabel => 'Complete Guide (19)';
+
+  @override
+  String guideProgressSummary(int completed, int total) {
+    return '$completed of $total chapters completed';
+  }
+
+  @override
+  String get guideShowMeLive => 'Show Me Live';
+
+  @override
+  String get guideShowMeOnScreen => 'Show Me on Screen';
+
+  @override
+  String get guideChapterCompleted => 'Done';
+
+  @override
+  String get guideNextTopicHeading => 'What To Do Next';
+
+  @override
+  String get guideResetProgressAction => 'Reset Training Progress';
+
+  @override
+  String get guideResetProgressDone =>
+      'Training progress reset. You can start fresh anytime.';
 }

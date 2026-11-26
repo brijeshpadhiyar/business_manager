@@ -9,6 +9,9 @@ import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
+import 'package:business_manager/features/guidance/domain/entities/guide_entities.dart';
+import 'package:business_manager/features/guidance/presentation/registry/guide_target_registry.dart';
+import 'package:business_manager/features/guidance/presentation/widgets/screen_first_visit_hint.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 import 'package:business_manager/features/stock_movements/domain/repositories/stock_movement_repository.dart';
 import 'package:business_manager/features/stock_movements/presentation/bloc/stock_movements_cubit.dart';
@@ -286,27 +289,40 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
                               const SizedBox(height: AppSpacing.md),
                             ],
 
+                            const ScreenFirstVisitHint(
+                              screenId: GuideScreenId.stock,
+                            ),
+
                             // Primary Daily Workshop Actions Bar
                             Wrap(
                               spacing: AppSpacing.sm,
                               runSpacing: AppSpacing.sm,
                               children: [
-                                AppButton(
-                                  label: l10n.stockIssueAction,
-                                  icon: AppIcons.stockIssue,
-                                  onPressed: _openIssue,
+                                GuideTarget(
+                                  id: GuideTargetId.stockIssueAction,
+                                  child: AppButton(
+                                    label: l10n.stockIssueAction,
+                                    icon: AppIcons.stockIssue,
+                                    onPressed: _openIssue,
+                                  ),
                                 ),
-                                AppButton(
-                                  label: l10n.stockReturnAction,
-                                  icon: AppIcons.receiveReturn,
-                                  variant: AppButtonVariant.secondary,
-                                  onPressed: _openReturnPicker,
+                                GuideTarget(
+                                  id: GuideTargetId.stockReceiveAction,
+                                  child: AppButton(
+                                    label: l10n.stockReturnAction,
+                                    icon: AppIcons.receiveReturn,
+                                    variant: AppButtonVariant.secondary,
+                                    onPressed: _openReturnPicker,
+                                  ),
                                 ),
-                                AppButton(
-                                  label: l10n.stockRepairAction,
-                                  icon: AppIcons.repair,
-                                  variant: AppButtonVariant.outlined,
-                                  onPressed: _openRepair,
+                                GuideTarget(
+                                  id: GuideTargetId.stockRepairAction,
+                                  child: AppButton(
+                                    label: l10n.stockRepairAction,
+                                    icon: AppIcons.repair,
+                                    variant: AppButtonVariant.outlined,
+                                    onPressed: _openRepair,
+                                  ),
                                 ),
                               ],
                             ),
@@ -383,33 +399,36 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
                             const SizedBox(height: AppSpacing.lg),
 
                             // Clean Prioritized Daily-Work Tabs
-                            Wrap(
-                              spacing: AppSpacing.sm,
-                              runSpacing: AppSpacing.sm,
-                              children: [
-                                ChoiceChip(
-                                  label: Text(
-                                    '${l10n.stockTabPendingReturns} (${state.openIssues.length})',
+                            GuideTarget(
+                              id: GuideTargetId.stockTabs,
+                              child: Wrap(
+                                spacing: AppSpacing.sm,
+                                runSpacing: AppSpacing.sm,
+                                children: [
+                                  ChoiceChip(
+                                    label: Text(
+                                      '${l10n.stockTabPendingReturns} (${state.openIssues.length})',
+                                    ),
+                                    selected: _tab == 0,
+                                    onSelected: (_) => setState(() => _tab = 0),
                                   ),
-                                  selected: _tab == 0,
-                                  onSelected: (_) => setState(() => _tab = 0),
-                                ),
-                                ChoiceChip(
-                                  label: Text(l10n.stockTabBalances),
-                                  selected: _tab == 1,
-                                  onSelected: (_) => setState(() => _tab = 1),
-                                ),
-                                ChoiceChip(
-                                  label: Text(l10n.stockTabMovementHistory),
-                                  selected: _tab == 2,
-                                  onSelected: (_) => setState(() => _tab = 2),
-                                ),
-                                ChoiceChip(
-                                  label: Text(l10n.stockTabSummary),
-                                  selected: _tab == 3,
-                                  onSelected: (_) => setState(() => _tab = 3),
-                                ),
-                              ],
+                                  ChoiceChip(
+                                    label: Text(l10n.stockTabBalances),
+                                    selected: _tab == 1,
+                                    onSelected: (_) => setState(() => _tab = 1),
+                                  ),
+                                  ChoiceChip(
+                                    label: Text(l10n.stockTabMovementHistory),
+                                    selected: _tab == 2,
+                                    onSelected: (_) => setState(() => _tab = 2),
+                                  ),
+                                  ChoiceChip(
+                                    label: Text(l10n.stockTabSummary),
+                                    selected: _tab == 3,
+                                    onSelected: (_) => setState(() => _tab = 3),
+                                  ),
+                                ],
+                              ),
                             ),
                           ],
                         ),

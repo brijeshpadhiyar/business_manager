@@ -2,6 +2,8 @@ import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
+import 'package:business_manager/features/guidance/domain/entities/guide_entities.dart';
+import 'package:business_manager/features/guidance/presentation/registry/guide_target_registry.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:business_manager/core/design_system/app_icons.dart';
@@ -76,6 +78,18 @@ final class QuickActionsPanel extends StatelessWidget {
   /// can refresh its numbers.
   final VoidCallback? onReturn;
 
+  String? _guideTargetFor(String id) {
+    return switch (id) {
+      'issue' => GuideTargetId.dashQuickIssue,
+      'receive' => GuideTargetId.dashQuickReceive,
+      'payment' => GuideTargetId.dashQuickPayment,
+      'lot' => GuideTargetId.dashQuickNewLot,
+      'inspect' => GuideTargetId.dashQuickInspect,
+      'worker' => GuideTargetId.dashQuickAddWorker,
+      _ => null,
+    };
+  }
+
   @override
   Widget build(BuildContext context) {
     final actions = buildQuickActions(context);
@@ -109,7 +123,16 @@ final class QuickActionsPanel extends StatelessWidget {
                 for (final a in actions)
                   SizedBox(
                     width: tileWidth,
-                    child: _QuickActionTile(action: a, onReturn: onReturn),
+                    child: () {
+                      final tile = _QuickActionTile(
+                        action: a,
+                        onReturn: onReturn,
+                      );
+                      final targetId = _guideTargetFor(a.id);
+                      return targetId == null
+                          ? tile
+                          : GuideTarget(id: targetId, child: tile);
+                    }(),
                   ),
               ],
             );

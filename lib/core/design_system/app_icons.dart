@@ -121,6 +121,14 @@ abstract final class AppIcons {
   static const IconData guide = Icons.menu_book_rounded;
   static const IconData tip = Icons.lightbulb_outline_rounded;
   static const IconData getStarted = Icons.rocket_launch_rounded;
+  static const IconData training = Icons.school_rounded;
+  static const IconData spotlight = Icons.auto_awesome_rounded;
+  static const IconData voiceOn = Icons.volume_up_rounded;
+  static const IconData voiceOff = Icons.volume_off_rounded;
+  static const IconData replay = Icons.replay_rounded;
+  static const IconData stop = Icons.stop_circle_outlined;
+  static const IconData speed = Icons.speed_rounded;
+  static const IconData nextStep = Icons.arrow_forward_rounded;
   static const IconData quick = Icons.bolt_rounded;
   static const IconData showcase = Icons.widgets_rounded;
   static const IconData brand = StitchIcons.process;
@@ -178,6 +186,18 @@ abstract final class AppIcons {
   static const IconData syncProblem = Icons.sync_problem_rounded;
   static const IconData devices = Icons.devices_rounded;
   static const IconData merge = Icons.merge_rounded;
+
+  // ── Data Health, Slips & Team RBAC (v1.5.1 – v1.7) ──────────────────────
+  static const IconData dataHealth = Icons.health_and_safety_rounded;
+  static const IconData maintenance = Icons.cleaning_services_rounded;
+  static const IconData team = Icons.groups_rounded;
+  static const IconData invite = Icons.person_add_rounded;
+  static const IconData roleBadge = Icons.badge_rounded;
+  static const IconData conflict = Icons.compare_arrows_rounded;
+  static const IconData copy = Icons.content_copy_rounded;
+  static const IconData image = Icons.image_rounded;
+  static const IconData density = Icons.density_medium_rounded;
+  static const IconData checklist = Icons.checklist_rounded;
 
   // ── Status ──────────────────────────────────────────────────────────────
   static const IconData success = Icons.check_circle_rounded;

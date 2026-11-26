@@ -7,6 +7,9 @@ import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
+import 'package:business_manager/features/guidance/domain/entities/guide_entities.dart';
+import 'package:business_manager/features/guidance/presentation/registry/guide_target_registry.dart';
+import 'package:business_manager/features/guidance/presentation/widgets/screen_first_visit_hint.dart';
 import 'package:business_manager/features/accounting/domain/repositories/accounting_repository.dart';
 import 'package:business_manager/features/accounting/presentation/bloc/accounting_overview_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -195,6 +198,9 @@ final class _AccountingOverviewViewState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    const ScreenFirstVisitHint(
+                      screenId: GuideScreenId.accounting,
+                    ),
                     if (totalAdvanceCredit > 0) ...[
                       AppMetricTile(
                         label: l10n.accountingAdvanceCreditLabel,
@@ -252,10 +258,13 @@ final class _AccountingOverviewViewState
           scrollMode: AppScrollMode.collapsible,
           contentWidth: AppContentWidth.wide,
           onRefresh: () => context.read<AccountingOverviewCubit>().load(),
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: _openRecordPayment,
-            icon: const Icon(AppIcons.payment),
-            label: Text(l10n.accountingRecordPaymentAction),
+          floatingActionButton: GuideTarget(
+            id: GuideTargetId.accountingRecordPaymentAction,
+            child: FloatingActionButton.extended(
+              onPressed: _openRecordPayment,
+              icon: const Icon(AppIcons.payment),
+              label: Text(l10n.accountingRecordPaymentAction),
+            ),
           ),
           header: AppCollapsibleHeader(
             title: l10n.accountingHeading,
@@ -292,28 +301,31 @@ final class _AccountingOverviewViewState
                 : null,
           ),
           pinnedHeaderHeight: 58,
-          pinnedHeader: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                ChoiceChip(
-                  label: Text(l10n.accountingTabWorkers),
-                  selected: _tab == 0,
-                  onSelected: (_) => setState(() => _tab = 0),
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                ChoiceChip(
-                  label: Text(l10n.accountingTabPayments),
-                  selected: _tab == 1,
-                  onSelected: (_) => setState(() => _tab = 1),
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                ChoiceChip(
-                  label: Text(l10n.accountingTabLabour),
-                  selected: _tab == 2,
-                  onSelected: (_) => setState(() => _tab = 2),
-                ),
-              ],
+          pinnedHeader: GuideTarget(
+            id: GuideTargetId.accountingTabs,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  ChoiceChip(
+                    label: Text(l10n.accountingTabWorkers),
+                    selected: _tab == 0,
+                    onSelected: (_) => setState(() => _tab = 0),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  ChoiceChip(
+                    label: Text(l10n.accountingTabPayments),
+                    selected: _tab == 1,
+                    onSelected: (_) => setState(() => _tab = 1),
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  ChoiceChip(
+                    label: Text(l10n.accountingTabLabour),
+                    selected: _tab == 2,
+                    onSelected: (_) => setState(() => _tab = 2),
+                  ),
+                ],
+              ),
             ),
           ),
           slivers: slivers,

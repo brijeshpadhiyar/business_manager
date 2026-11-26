@@ -39,6 +39,9 @@ final class WebMediaStorageService implements MediaStorageService {
 
   @override
   Future<bool> deleteIfExists(String relativePath) async => false;
+
+  @override
+  Future<List<String>> listAllRelativePaths() async => const [];
 }
 
 MediaStorageService createPlatformMediaStorageService(

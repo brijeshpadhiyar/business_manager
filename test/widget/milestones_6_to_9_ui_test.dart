@@ -73,7 +73,12 @@ void main() {
         scrollable: find.byType(Scrollable).last,
       );
       expect(find.text('Worker Accounting Summary'), findsOneWidget);
-      await tester.drag(find.byType(ListView).first, const Offset(0, 900));
+      await tester.scrollUntilVisible(
+        find.text('Stock Movements'),
+        -300,
+        scrollable: find.byType(Scrollable).last,
+      );
+      await tester.ensureVisible(find.text('Stock Movements').first);
       await tester.pumpAndSettle();
 
       // Open Stock Movements screen
@@ -85,6 +90,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // Open Labour & Payments screen
+      await tester.ensureVisible(find.text('Labour & Payments').first);
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Labour & Payments').first);
       await tester.pumpAndSettle();
       expect(find.text('Labour & Worker Accounts'), findsOneWidget);
@@ -92,6 +99,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // Open Business Reports screen & verify V1.2 report categories
+      await tester.ensureVisible(find.text('Reports').first);
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Reports').first);
       await tester.pumpAndSettle();
       expect(find.text('Business Reports'), findsOneWidget);

@@ -49,7 +49,7 @@ void main() {
           "AND name NOT LIKE 'sqlite_%';",
         )
         .get();
-    expect(tables.length, 27);
+    expect(tables.length, 28);
 
     final indexes = await db
         .customSelect("SELECT name FROM sqlite_master WHERE type = 'index';")
@@ -370,7 +370,7 @@ void main() {
         'getNextSequenceOrderForLot(100_rows)=${swNextSeq.elapsedMicroseconds}us',
       );
 
-      expect(DatabaseMigrationManager.currentSchemaVersion, 10);
+      expect(DatabaseMigrationManager.currentSchemaVersion, 11);
       await db.close();
     });
   });

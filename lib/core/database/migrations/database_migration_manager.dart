@@ -1,14 +1,15 @@
 import 'package:business_manager/core/database/app_database.dart';
 import 'package:business_manager/core/database/migrations/schema_indexes.dart';
 import 'package:business_manager/core/database/migrations/schema_v10_cloud_sync.dart';
+import 'package:business_manager/core/database/migrations/schema_v11_rbac_and_hardening.dart';
 import 'package:business_manager/core/database/migrations/schema_v9_ledger_unification.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:drift/drift.dart';
 
 /// Coordinates initial schema creation, default singleton seeding, and
-/// step-by-step schema upgrades (`v1 -> ... -> v9 -> v10`).
+/// step-by-step schema upgrades (`v1 -> ... -> v10 -> v11`).
 abstract final class DatabaseMigrationManager {
-  static const int currentSchemaVersion = 10;
+  static const int currentSchemaVersion = 11;
   static const String defaultBusinessProfileId = 'default';
 
   static Future<void> handleOnCreate(Migrator m, AppDatabase db) async {
@@ -21,6 +22,7 @@ abstract final class DatabaseMigrationManager {
     await seedDefaultBusinessProfile(db);
     await seedDefaultColourMaster(db);
     await SchemaV10CloudSync.installTriggers(db);
+    await SchemaV11RbacAndHardening.run(db, nowUtcMillis: now);
   }
 
   /// Step-by-step upgrade entrypoint. Preserves 100% of existing user data
@@ -388,6 +390,13 @@ abstract final class DatabaseMigrationManager {
 
     if (from < 10) {
       await SchemaV10CloudSync.run(
+        db,
+        nowUtcMillis: IstDateTimeHelper.nowUtcMillis(),
+      );
+    }
+
+    if (from < 11) {
+      await SchemaV11RbacAndHardening.run(
         db,
         nowUtcMillis: IstDateTimeHelper.nowUtcMillis(),
       );

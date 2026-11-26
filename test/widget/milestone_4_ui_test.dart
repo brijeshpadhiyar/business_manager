@@ -66,6 +66,8 @@ void main() {
       // Return to Dashboard -> open Inventory -> verify empty initial inventory state
       await tester.tap(find.text('Dashboard').last);
       await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Inventory').first);
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Inventory').first);
       await tester.pumpAndSettle();
       expect(find.text('Initial Inventory Overview'), findsOneWidget);

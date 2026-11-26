@@ -2,6 +2,7 @@ import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
+import 'package:business_manager/core/services/form_draft_service.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
@@ -57,17 +58,53 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
   bool _loading = true;
   bool _saving = false;
   bool _submittedOnce = false;
+  bool _draftRestored = false;
   String? _submitError;
+
+  static const String _draftKey = 'payment_form';
+
+  FormDraftService? get _drafts => getIt.isRegistered<FormDraftService>()
+      ? getIt<FormDraftService>()
+      : null;
 
   @override
   void initState() {
     super.initState();
     _dirty.watch([_amountCtrl, _refCtrl, _notesCtrl]);
+    _amountCtrl.addListener(_persistDraft);
+    _refCtrl.addListener(_persistDraft);
+    _notesCtrl.addListener(_persistDraft);
     _load();
+  }
+
+  void _persistDraft() {
+    if (_loading || _saving) return;
+    _drafts?.saveDraft(_draftKey, {
+      'workerId': _selectedWorkerId,
+      'amount': _amountCtrl.text,
+      'ref': _refCtrl.text,
+      'notes': _notesCtrl.text,
+      'paymentType': _paymentType.dbValue,
+      'paymentMode': _paymentMode.dbValue,
+    });
+  }
+
+  Future<void> _clearDraft() async {
+    await _drafts?.clearDraft(_draftKey);
+    if (!mounted) return;
+    setState(() {
+      _draftRestored = false;
+      _amountCtrl.clear();
+      _refCtrl.clear();
+      _notesCtrl.clear();
+    });
   }
 
   @override
   void dispose() {
+    _amountCtrl.removeListener(_persistDraft);
+    _refCtrl.removeListener(_persistDraft);
+    _notesCtrl.removeListener(_persistDraft);
     _dirty.dispose();
     _amountCtrl.dispose();
     _refCtrl.dispose();
@@ -81,11 +118,52 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
   Future<void> _load() async {
     final workers = await _repo.getAllWorkerSummaries();
     if (!mounted) return;
+    final drafts = _drafts;
+    final rememberedModeRaw = drafts?.lastPaymentMode;
+    PaymentMode initialMode = PaymentMode.cash;
+    if (rememberedModeRaw != null) {
+      initialMode = PaymentMode.values.firstWhere(
+        (m) => m.dbValue == rememberedModeRaw,
+        orElse: () => PaymentMode.cash,
+      );
+    }
+
+    final savedDraft = drafts?.readDraft(_draftKey);
+    var restored = false;
+    String? draftWorkerId;
+    if (savedDraft != null) {
+      final draftAmount = (savedDraft['amount'] as String?) ?? '';
+      final draftRef = (savedDraft['ref'] as String?) ?? '';
+      final draftNotes = (savedDraft['notes'] as String?) ?? '';
+      if (draftAmount.isNotEmpty ||
+          draftRef.isNotEmpty ||
+          draftNotes.isNotEmpty) {
+        _amountCtrl.text = draftAmount;
+        _refCtrl.text = draftRef;
+        _notesCtrl.text = draftNotes;
+        final savedMode = savedDraft['paymentMode'] as String?;
+        if (savedMode != null) {
+          initialMode = PaymentMode.values.firstWhere(
+            (m) => m.dbValue == savedMode,
+            orElse: () => initialMode,
+          );
+        }
+        draftWorkerId = savedDraft['workerId'] as String?;
+        restored = true;
+      }
+    }
+
     setState(() {
       _workers = workers;
-      _selectedWorkerId =
+      _paymentMode = initialMode;
+      _draftRestored = restored;
+      final candidateWorker =
           widget.initialWorkerId ??
-          (workers.isNotEmpty ? workers.first.workerId : null);
+          (draftWorkerId != null &&
+                  workers.any((w) => w.workerId == draftWorkerId)
+              ? draftWorkerId
+              : (workers.isNotEmpty ? workers.first.workerId : null));
+      _selectedWorkerId = candidateWorker;
       _loading = false;
     });
   }
@@ -122,7 +200,7 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
     });
 
     try {
-      await _repo.recordPayment(
+      final savedPayment = await _repo.recordPayment(
         workerId: _selectedWorkerId!,
         paymentType: _paymentType,
         amountPaise: paise,
@@ -132,8 +210,25 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
         notes: _notesCtrl.text,
         clientRequestId: _clientRequestId,
       );
+      await _drafts?.setLastPaymentMode(_paymentMode.dbValue);
+      await _drafts?.clearDraft(_draftKey);
       if (mounted) {
-        AppFeedback.showSuccess(context, l10n.accountingPaymentSaved);
+        final undoRepo = _repo;
+        AppFeedback.showSuccess(
+          context,
+          l10n.accountingPaymentSaved,
+          duration: const Duration(seconds: 6),
+          actionLabel: l10n.uxUndo,
+          onAction: () async {
+            try {
+              await undoRepo.reversePayment(
+                paymentId: savedPayment.id,
+                reason: 'UNDO_IMMEDIATE',
+                transactionAtUtcMillis: IstDateTimeHelper.nowUtcMillis(),
+              );
+            } catch (_) {}
+          },
+        );
         context.pop(true);
       }
     } on DomainValidationException catch (e) {
@@ -188,6 +283,28 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
           child: ListView(
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: [
+              if (_draftRestored) ...[
+                AppCard(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.md,
+                    vertical: AppSpacing.xs,
+                  ),
+                  child: AppActionRow(
+                    content: AppText(
+                      l10n.draftRestoredBanner,
+                      variant: AppTextVariant.bodySmall,
+                    ),
+                    actions: [
+                      AppButton(
+                        label: l10n.draftClearAction,
+                        variant: AppButtonVariant.text,
+                        onPressed: _clearDraft,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+              ],
               AppCard(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -20949,6 +20949,29 @@ class $SyncSessionStatesTable extends SyncSessionStates
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _activeRoleMeta = const VerificationMeta(
+    'activeRole',
+  );
+  @override
+  late final GeneratedColumn<String> activeRole = GeneratedColumn<String>(
+    'active_role',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('OWNER'),
+  );
+  static const VerificationMeta _activeBusinessNameMeta =
+      const VerificationMeta('activeBusinessName');
+  @override
+  late final GeneratedColumn<String> activeBusinessName =
+      GeneratedColumn<String>(
+        'active_business_name',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
   static const VerificationMeta _lastFullSyncAtMeta = const VerificationMeta(
     'lastFullSyncAt',
   );
@@ -20978,6 +21001,8 @@ class $SyncSessionStatesTable extends SyncSessionStates
     deviceId,
     boundUserId,
     boundBusinessId,
+    activeRole,
+    activeBusinessName,
     lastFullSyncAt,
     updatedAt,
   ];
@@ -21031,6 +21056,21 @@ class $SyncSessionStatesTable extends SyncSessionStates
         ),
       );
     }
+    if (data.containsKey('active_role')) {
+      context.handle(
+        _activeRoleMeta,
+        activeRole.isAcceptableOrUnknown(data['active_role']!, _activeRoleMeta),
+      );
+    }
+    if (data.containsKey('active_business_name')) {
+      context.handle(
+        _activeBusinessNameMeta,
+        activeBusinessName.isAcceptableOrUnknown(
+          data['active_business_name']!,
+          _activeBusinessNameMeta,
+        ),
+      );
+    }
     if (data.containsKey('last_full_sync_at')) {
       context.handle(
         _lastFullSyncAtMeta,
@@ -21077,6 +21117,14 @@ class $SyncSessionStatesTable extends SyncSessionStates
         DriftSqlType.string,
         data['${effectivePrefix}bound_business_id'],
       ),
+      activeRole: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}active_role'],
+      )!,
+      activeBusinessName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}active_business_name'],
+      ),
       lastFullSyncAt: attachedDatabase.typeMapping.read(
         DriftSqlType.int,
         data['${effectivePrefix}last_full_sync_at'],
@@ -21101,6 +21149,8 @@ class SyncSessionStateRow extends DataClass
   final String deviceId;
   final String? boundUserId;
   final String? boundBusinessId;
+  final String activeRole;
+  final String? activeBusinessName;
   final int? lastFullSyncAt;
   final int updatedAt;
   const SyncSessionStateRow({
@@ -21109,6 +21159,8 @@ class SyncSessionStateRow extends DataClass
     required this.deviceId,
     this.boundUserId,
     this.boundBusinessId,
+    required this.activeRole,
+    this.activeBusinessName,
     this.lastFullSyncAt,
     required this.updatedAt,
   });
@@ -21123,6 +21175,10 @@ class SyncSessionStateRow extends DataClass
     }
     if (!nullToAbsent || boundBusinessId != null) {
       map['bound_business_id'] = Variable<String>(boundBusinessId);
+    }
+    map['active_role'] = Variable<String>(activeRole);
+    if (!nullToAbsent || activeBusinessName != null) {
+      map['active_business_name'] = Variable<String>(activeBusinessName);
     }
     if (!nullToAbsent || lastFullSyncAt != null) {
       map['last_full_sync_at'] = Variable<int>(lastFullSyncAt);
@@ -21142,6 +21198,10 @@ class SyncSessionStateRow extends DataClass
       boundBusinessId: boundBusinessId == null && nullToAbsent
           ? const Value.absent()
           : Value(boundBusinessId),
+      activeRole: Value(activeRole),
+      activeBusinessName: activeBusinessName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(activeBusinessName),
       lastFullSyncAt: lastFullSyncAt == null && nullToAbsent
           ? const Value.absent()
           : Value(lastFullSyncAt),
@@ -21160,6 +21220,10 @@ class SyncSessionStateRow extends DataClass
       deviceId: serializer.fromJson<String>(json['deviceId']),
       boundUserId: serializer.fromJson<String?>(json['boundUserId']),
       boundBusinessId: serializer.fromJson<String?>(json['boundBusinessId']),
+      activeRole: serializer.fromJson<String>(json['activeRole']),
+      activeBusinessName: serializer.fromJson<String?>(
+        json['activeBusinessName'],
+      ),
       lastFullSyncAt: serializer.fromJson<int?>(json['lastFullSyncAt']),
       updatedAt: serializer.fromJson<int>(json['updatedAt']),
     );
@@ -21173,6 +21237,8 @@ class SyncSessionStateRow extends DataClass
       'deviceId': serializer.toJson<String>(deviceId),
       'boundUserId': serializer.toJson<String?>(boundUserId),
       'boundBusinessId': serializer.toJson<String?>(boundBusinessId),
+      'activeRole': serializer.toJson<String>(activeRole),
+      'activeBusinessName': serializer.toJson<String?>(activeBusinessName),
       'lastFullSyncAt': serializer.toJson<int?>(lastFullSyncAt),
       'updatedAt': serializer.toJson<int>(updatedAt),
     };
@@ -21184,6 +21250,8 @@ class SyncSessionStateRow extends DataClass
     String? deviceId,
     Value<String?> boundUserId = const Value.absent(),
     Value<String?> boundBusinessId = const Value.absent(),
+    String? activeRole,
+    Value<String?> activeBusinessName = const Value.absent(),
     Value<int?> lastFullSyncAt = const Value.absent(),
     int? updatedAt,
   }) => SyncSessionStateRow(
@@ -21194,6 +21262,10 @@ class SyncSessionStateRow extends DataClass
     boundBusinessId: boundBusinessId.present
         ? boundBusinessId.value
         : this.boundBusinessId,
+    activeRole: activeRole ?? this.activeRole,
+    activeBusinessName: activeBusinessName.present
+        ? activeBusinessName.value
+        : this.activeBusinessName,
     lastFullSyncAt: lastFullSyncAt.present
         ? lastFullSyncAt.value
         : this.lastFullSyncAt,
@@ -21212,6 +21284,12 @@ class SyncSessionStateRow extends DataClass
       boundBusinessId: data.boundBusinessId.present
           ? data.boundBusinessId.value
           : this.boundBusinessId,
+      activeRole: data.activeRole.present
+          ? data.activeRole.value
+          : this.activeRole,
+      activeBusinessName: data.activeBusinessName.present
+          ? data.activeBusinessName.value
+          : this.activeBusinessName,
       lastFullSyncAt: data.lastFullSyncAt.present
           ? data.lastFullSyncAt.value
           : this.lastFullSyncAt,
@@ -21227,6 +21305,8 @@ class SyncSessionStateRow extends DataClass
           ..write('deviceId: $deviceId, ')
           ..write('boundUserId: $boundUserId, ')
           ..write('boundBusinessId: $boundBusinessId, ')
+          ..write('activeRole: $activeRole, ')
+          ..write('activeBusinessName: $activeBusinessName, ')
           ..write('lastFullSyncAt: $lastFullSyncAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -21240,6 +21320,8 @@ class SyncSessionStateRow extends DataClass
     deviceId,
     boundUserId,
     boundBusinessId,
+    activeRole,
+    activeBusinessName,
     lastFullSyncAt,
     updatedAt,
   );
@@ -21252,6 +21334,8 @@ class SyncSessionStateRow extends DataClass
           other.deviceId == this.deviceId &&
           other.boundUserId == this.boundUserId &&
           other.boundBusinessId == this.boundBusinessId &&
+          other.activeRole == this.activeRole &&
+          other.activeBusinessName == this.activeBusinessName &&
           other.lastFullSyncAt == this.lastFullSyncAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -21262,6 +21346,8 @@ class SyncSessionStatesCompanion extends UpdateCompanion<SyncSessionStateRow> {
   final Value<String> deviceId;
   final Value<String?> boundUserId;
   final Value<String?> boundBusinessId;
+  final Value<String> activeRole;
+  final Value<String?> activeBusinessName;
   final Value<int?> lastFullSyncAt;
   final Value<int> updatedAt;
   const SyncSessionStatesCompanion({
@@ -21270,6 +21356,8 @@ class SyncSessionStatesCompanion extends UpdateCompanion<SyncSessionStateRow> {
     this.deviceId = const Value.absent(),
     this.boundUserId = const Value.absent(),
     this.boundBusinessId = const Value.absent(),
+    this.activeRole = const Value.absent(),
+    this.activeBusinessName = const Value.absent(),
     this.lastFullSyncAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
   });
@@ -21279,6 +21367,8 @@ class SyncSessionStatesCompanion extends UpdateCompanion<SyncSessionStateRow> {
     required String deviceId,
     this.boundUserId = const Value.absent(),
     this.boundBusinessId = const Value.absent(),
+    this.activeRole = const Value.absent(),
+    this.activeBusinessName = const Value.absent(),
     this.lastFullSyncAt = const Value.absent(),
     required int updatedAt,
   }) : deviceId = Value(deviceId),
@@ -21289,6 +21379,8 @@ class SyncSessionStatesCompanion extends UpdateCompanion<SyncSessionStateRow> {
     Expression<String>? deviceId,
     Expression<String>? boundUserId,
     Expression<String>? boundBusinessId,
+    Expression<String>? activeRole,
+    Expression<String>? activeBusinessName,
     Expression<int>? lastFullSyncAt,
     Expression<int>? updatedAt,
   }) {
@@ -21298,6 +21390,9 @@ class SyncSessionStatesCompanion extends UpdateCompanion<SyncSessionStateRow> {
       if (deviceId != null) 'device_id': deviceId,
       if (boundUserId != null) 'bound_user_id': boundUserId,
       if (boundBusinessId != null) 'bound_business_id': boundBusinessId,
+      if (activeRole != null) 'active_role': activeRole,
+      if (activeBusinessName != null)
+        'active_business_name': activeBusinessName,
       if (lastFullSyncAt != null) 'last_full_sync_at': lastFullSyncAt,
       if (updatedAt != null) 'updated_at': updatedAt,
     });
@@ -21309,6 +21404,8 @@ class SyncSessionStatesCompanion extends UpdateCompanion<SyncSessionStateRow> {
     Value<String>? deviceId,
     Value<String?>? boundUserId,
     Value<String?>? boundBusinessId,
+    Value<String>? activeRole,
+    Value<String?>? activeBusinessName,
     Value<int?>? lastFullSyncAt,
     Value<int>? updatedAt,
   }) {
@@ -21318,6 +21415,8 @@ class SyncSessionStatesCompanion extends UpdateCompanion<SyncSessionStateRow> {
       deviceId: deviceId ?? this.deviceId,
       boundUserId: boundUserId ?? this.boundUserId,
       boundBusinessId: boundBusinessId ?? this.boundBusinessId,
+      activeRole: activeRole ?? this.activeRole,
+      activeBusinessName: activeBusinessName ?? this.activeBusinessName,
       lastFullSyncAt: lastFullSyncAt ?? this.lastFullSyncAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -21341,6 +21440,12 @@ class SyncSessionStatesCompanion extends UpdateCompanion<SyncSessionStateRow> {
     if (boundBusinessId.present) {
       map['bound_business_id'] = Variable<String>(boundBusinessId.value);
     }
+    if (activeRole.present) {
+      map['active_role'] = Variable<String>(activeRole.value);
+    }
+    if (activeBusinessName.present) {
+      map['active_business_name'] = Variable<String>(activeBusinessName.value);
+    }
     if (lastFullSyncAt.present) {
       map['last_full_sync_at'] = Variable<int>(lastFullSyncAt.value);
     }
@@ -21358,6 +21463,8 @@ class SyncSessionStatesCompanion extends UpdateCompanion<SyncSessionStateRow> {
           ..write('deviceId: $deviceId, ')
           ..write('boundUserId: $boundUserId, ')
           ..write('boundBusinessId: $boundBusinessId, ')
+          ..write('activeRole: $activeRole, ')
+          ..write('activeBusinessName: $activeBusinessName, ')
           ..write('lastFullSyncAt: $lastFullSyncAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -22858,6 +22965,520 @@ class SyncMediaQueuesCompanion extends UpdateCompanion<SyncMediaQueueRow> {
   }
 }
 
+class $CachedTeamMembersTable extends CachedTeamMembers
+    with TableInfo<$CachedTeamMembersTable, CachedTeamMemberRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CachedTeamMembersTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _userIdMeta = const VerificationMeta('userId');
+  @override
+  late final GeneratedColumn<String> userId = GeneratedColumn<String>(
+    'user_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _businessIdMeta = const VerificationMeta(
+    'businessId',
+  );
+  @override
+  late final GeneratedColumn<String> businessId = GeneratedColumn<String>(
+    'business_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _roleMeta = const VerificationMeta('role');
+  @override
+  late final GeneratedColumn<String> role = GeneratedColumn<String>(
+    'role',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('OWNER'),
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('ACTIVE'),
+  );
+  static const VerificationMeta _displayNameMeta = const VerificationMeta(
+    'displayName',
+  );
+  @override
+  late final GeneratedColumn<String> displayName = GeneratedColumn<String>(
+    'display_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _emailMeta = const VerificationMeta('email');
+  @override
+  late final GeneratedColumn<String> email = GeneratedColumn<String>(
+    'email',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _phoneMeta = const VerificationMeta('phone');
+  @override
+  late final GeneratedColumn<String> phone = GeneratedColumn<String>(
+    'phone',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    userId,
+    businessId,
+    role,
+    status,
+    displayName,
+    email,
+    phone,
+    updatedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'cached_team_members';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CachedTeamMemberRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('user_id')) {
+      context.handle(
+        _userIdMeta,
+        userId.isAcceptableOrUnknown(data['user_id']!, _userIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_userIdMeta);
+    }
+    if (data.containsKey('business_id')) {
+      context.handle(
+        _businessIdMeta,
+        businessId.isAcceptableOrUnknown(data['business_id']!, _businessIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_businessIdMeta);
+    }
+    if (data.containsKey('role')) {
+      context.handle(
+        _roleMeta,
+        role.isAcceptableOrUnknown(data['role']!, _roleMeta),
+      );
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    }
+    if (data.containsKey('display_name')) {
+      context.handle(
+        _displayNameMeta,
+        displayName.isAcceptableOrUnknown(
+          data['display_name']!,
+          _displayNameMeta,
+        ),
+      );
+    }
+    if (data.containsKey('email')) {
+      context.handle(
+        _emailMeta,
+        email.isAcceptableOrUnknown(data['email']!, _emailMeta),
+      );
+    }
+    if (data.containsKey('phone')) {
+      context.handle(
+        _phoneMeta,
+        phone.isAcceptableOrUnknown(data['phone']!, _phoneMeta),
+      );
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {businessId, userId};
+  @override
+  CachedTeamMemberRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CachedTeamMemberRow(
+      userId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}user_id'],
+      )!,
+      businessId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}business_id'],
+      )!,
+      role: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}role'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      displayName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}display_name'],
+      ),
+      email: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}email'],
+      ),
+      phone: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}phone'],
+      ),
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+    );
+  }
+
+  @override
+  $CachedTeamMembersTable createAlias(String alias) {
+    return $CachedTeamMembersTable(attachedDatabase, alias);
+  }
+}
+
+class CachedTeamMemberRow extends DataClass
+    implements Insertable<CachedTeamMemberRow> {
+  final String userId;
+  final String businessId;
+  final String role;
+  final String status;
+  final String? displayName;
+  final String? email;
+  final String? phone;
+  final int updatedAt;
+  const CachedTeamMemberRow({
+    required this.userId,
+    required this.businessId,
+    required this.role,
+    required this.status,
+    this.displayName,
+    this.email,
+    this.phone,
+    required this.updatedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['user_id'] = Variable<String>(userId);
+    map['business_id'] = Variable<String>(businessId);
+    map['role'] = Variable<String>(role);
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || displayName != null) {
+      map['display_name'] = Variable<String>(displayName);
+    }
+    if (!nullToAbsent || email != null) {
+      map['email'] = Variable<String>(email);
+    }
+    if (!nullToAbsent || phone != null) {
+      map['phone'] = Variable<String>(phone);
+    }
+    map['updated_at'] = Variable<int>(updatedAt);
+    return map;
+  }
+
+  CachedTeamMembersCompanion toCompanion(bool nullToAbsent) {
+    return CachedTeamMembersCompanion(
+      userId: Value(userId),
+      businessId: Value(businessId),
+      role: Value(role),
+      status: Value(status),
+      displayName: displayName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(displayName),
+      email: email == null && nullToAbsent
+          ? const Value.absent()
+          : Value(email),
+      phone: phone == null && nullToAbsent
+          ? const Value.absent()
+          : Value(phone),
+      updatedAt: Value(updatedAt),
+    );
+  }
+
+  factory CachedTeamMemberRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CachedTeamMemberRow(
+      userId: serializer.fromJson<String>(json['userId']),
+      businessId: serializer.fromJson<String>(json['businessId']),
+      role: serializer.fromJson<String>(json['role']),
+      status: serializer.fromJson<String>(json['status']),
+      displayName: serializer.fromJson<String?>(json['displayName']),
+      email: serializer.fromJson<String?>(json['email']),
+      phone: serializer.fromJson<String?>(json['phone']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'userId': serializer.toJson<String>(userId),
+      'businessId': serializer.toJson<String>(businessId),
+      'role': serializer.toJson<String>(role),
+      'status': serializer.toJson<String>(status),
+      'displayName': serializer.toJson<String?>(displayName),
+      'email': serializer.toJson<String?>(email),
+      'phone': serializer.toJson<String?>(phone),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+    };
+  }
+
+  CachedTeamMemberRow copyWith({
+    String? userId,
+    String? businessId,
+    String? role,
+    String? status,
+    Value<String?> displayName = const Value.absent(),
+    Value<String?> email = const Value.absent(),
+    Value<String?> phone = const Value.absent(),
+    int? updatedAt,
+  }) => CachedTeamMemberRow(
+    userId: userId ?? this.userId,
+    businessId: businessId ?? this.businessId,
+    role: role ?? this.role,
+    status: status ?? this.status,
+    displayName: displayName.present ? displayName.value : this.displayName,
+    email: email.present ? email.value : this.email,
+    phone: phone.present ? phone.value : this.phone,
+    updatedAt: updatedAt ?? this.updatedAt,
+  );
+  CachedTeamMemberRow copyWithCompanion(CachedTeamMembersCompanion data) {
+    return CachedTeamMemberRow(
+      userId: data.userId.present ? data.userId.value : this.userId,
+      businessId: data.businessId.present
+          ? data.businessId.value
+          : this.businessId,
+      role: data.role.present ? data.role.value : this.role,
+      status: data.status.present ? data.status.value : this.status,
+      displayName: data.displayName.present
+          ? data.displayName.value
+          : this.displayName,
+      email: data.email.present ? data.email.value : this.email,
+      phone: data.phone.present ? data.phone.value : this.phone,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CachedTeamMemberRow(')
+          ..write('userId: $userId, ')
+          ..write('businessId: $businessId, ')
+          ..write('role: $role, ')
+          ..write('status: $status, ')
+          ..write('displayName: $displayName, ')
+          ..write('email: $email, ')
+          ..write('phone: $phone, ')
+          ..write('updatedAt: $updatedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    userId,
+    businessId,
+    role,
+    status,
+    displayName,
+    email,
+    phone,
+    updatedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CachedTeamMemberRow &&
+          other.userId == this.userId &&
+          other.businessId == this.businessId &&
+          other.role == this.role &&
+          other.status == this.status &&
+          other.displayName == this.displayName &&
+          other.email == this.email &&
+          other.phone == this.phone &&
+          other.updatedAt == this.updatedAt);
+}
+
+class CachedTeamMembersCompanion extends UpdateCompanion<CachedTeamMemberRow> {
+  final Value<String> userId;
+  final Value<String> businessId;
+  final Value<String> role;
+  final Value<String> status;
+  final Value<String?> displayName;
+  final Value<String?> email;
+  final Value<String?> phone;
+  final Value<int> updatedAt;
+  final Value<int> rowid;
+  const CachedTeamMembersCompanion({
+    this.userId = const Value.absent(),
+    this.businessId = const Value.absent(),
+    this.role = const Value.absent(),
+    this.status = const Value.absent(),
+    this.displayName = const Value.absent(),
+    this.email = const Value.absent(),
+    this.phone = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CachedTeamMembersCompanion.insert({
+    required String userId,
+    required String businessId,
+    this.role = const Value.absent(),
+    this.status = const Value.absent(),
+    this.displayName = const Value.absent(),
+    this.email = const Value.absent(),
+    this.phone = const Value.absent(),
+    required int updatedAt,
+    this.rowid = const Value.absent(),
+  }) : userId = Value(userId),
+       businessId = Value(businessId),
+       updatedAt = Value(updatedAt);
+  static Insertable<CachedTeamMemberRow> custom({
+    Expression<String>? userId,
+    Expression<String>? businessId,
+    Expression<String>? role,
+    Expression<String>? status,
+    Expression<String>? displayName,
+    Expression<String>? email,
+    Expression<String>? phone,
+    Expression<int>? updatedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (userId != null) 'user_id': userId,
+      if (businessId != null) 'business_id': businessId,
+      if (role != null) 'role': role,
+      if (status != null) 'status': status,
+      if (displayName != null) 'display_name': displayName,
+      if (email != null) 'email': email,
+      if (phone != null) 'phone': phone,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CachedTeamMembersCompanion copyWith({
+    Value<String>? userId,
+    Value<String>? businessId,
+    Value<String>? role,
+    Value<String>? status,
+    Value<String?>? displayName,
+    Value<String?>? email,
+    Value<String?>? phone,
+    Value<int>? updatedAt,
+    Value<int>? rowid,
+  }) {
+    return CachedTeamMembersCompanion(
+      userId: userId ?? this.userId,
+      businessId: businessId ?? this.businessId,
+      role: role ?? this.role,
+      status: status ?? this.status,
+      displayName: displayName ?? this.displayName,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+      updatedAt: updatedAt ?? this.updatedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (userId.present) {
+      map['user_id'] = Variable<String>(userId.value);
+    }
+    if (businessId.present) {
+      map['business_id'] = Variable<String>(businessId.value);
+    }
+    if (role.present) {
+      map['role'] = Variable<String>(role.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (displayName.present) {
+      map['display_name'] = Variable<String>(displayName.value);
+    }
+    if (email.present) {
+      map['email'] = Variable<String>(email.value);
+    }
+    if (phone.present) {
+      map['phone'] = Variable<String>(phone.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CachedTeamMembersCompanion(')
+          ..write('userId: $userId, ')
+          ..write('businessId: $businessId, ')
+          ..write('role: $role, ')
+          ..write('status: $status, ')
+          ..write('displayName: $displayName, ')
+          ..write('email: $email, ')
+          ..write('phone: $phone, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -22907,6 +23528,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $SyncMediaQueuesTable syncMediaQueues = $SyncMediaQueuesTable(
     this,
   );
+  late final $CachedTeamMembersTable cachedTeamMembers =
+      $CachedTeamMembersTable(this);
   late final BusinessProfileDao businessProfileDao = BusinessProfileDao(
     this as AppDatabase,
   );
@@ -22966,6 +23589,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     syncOutboxes,
     syncCursors,
     syncMediaQueues,
+    cachedTeamMembers,
   ];
 }
 
@@ -46611,6 +47235,8 @@ typedef $$SyncSessionStatesTableCreateCompanionBuilder =
       required String deviceId,
       Value<String?> boundUserId,
       Value<String?> boundBusinessId,
+      Value<String> activeRole,
+      Value<String?> activeBusinessName,
       Value<int?> lastFullSyncAt,
       required int updatedAt,
     });
@@ -46621,6 +47247,8 @@ typedef $$SyncSessionStatesTableUpdateCompanionBuilder =
       Value<String> deviceId,
       Value<String?> boundUserId,
       Value<String?> boundBusinessId,
+      Value<String> activeRole,
+      Value<String?> activeBusinessName,
       Value<int?> lastFullSyncAt,
       Value<int> updatedAt,
     });
@@ -46656,6 +47284,16 @@ class $$SyncSessionStatesTableFilterComposer
 
   ColumnFilters<String> get boundBusinessId => $composableBuilder(
     column: $table.boundBusinessId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get activeRole => $composableBuilder(
+    column: $table.activeRole,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get activeBusinessName => $composableBuilder(
+    column: $table.activeBusinessName,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -46704,6 +47342,16 @@ class $$SyncSessionStatesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get activeRole => $composableBuilder(
+    column: $table.activeRole,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get activeBusinessName => $composableBuilder(
+    column: $table.activeBusinessName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<int> get lastFullSyncAt => $composableBuilder(
     column: $table.lastFullSyncAt,
     builder: (column) => ColumnOrderings(column),
@@ -46742,6 +47390,16 @@ class $$SyncSessionStatesTableAnnotationComposer
 
   GeneratedColumn<String> get boundBusinessId => $composableBuilder(
     column: $table.boundBusinessId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get activeRole => $composableBuilder(
+    column: $table.activeRole,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get activeBusinessName => $composableBuilder(
+    column: $table.activeBusinessName,
     builder: (column) => column,
   );
 
@@ -46799,6 +47457,8 @@ class $$SyncSessionStatesTableTableManager
                 Value<String> deviceId = const Value.absent(),
                 Value<String?> boundUserId = const Value.absent(),
                 Value<String?> boundBusinessId = const Value.absent(),
+                Value<String> activeRole = const Value.absent(),
+                Value<String?> activeBusinessName = const Value.absent(),
                 Value<int?> lastFullSyncAt = const Value.absent(),
                 Value<int> updatedAt = const Value.absent(),
               }) => SyncSessionStatesCompanion(
@@ -46807,6 +47467,8 @@ class $$SyncSessionStatesTableTableManager
                 deviceId: deviceId,
                 boundUserId: boundUserId,
                 boundBusinessId: boundBusinessId,
+                activeRole: activeRole,
+                activeBusinessName: activeBusinessName,
                 lastFullSyncAt: lastFullSyncAt,
                 updatedAt: updatedAt,
               ),
@@ -46817,6 +47479,8 @@ class $$SyncSessionStatesTableTableManager
                 required String deviceId,
                 Value<String?> boundUserId = const Value.absent(),
                 Value<String?> boundBusinessId = const Value.absent(),
+                Value<String> activeRole = const Value.absent(),
+                Value<String?> activeBusinessName = const Value.absent(),
                 Value<int?> lastFullSyncAt = const Value.absent(),
                 required int updatedAt,
               }) => SyncSessionStatesCompanion.insert(
@@ -46825,6 +47489,8 @@ class $$SyncSessionStatesTableTableManager
                 deviceId: deviceId,
                 boundUserId: boundUserId,
                 boundBusinessId: boundBusinessId,
+                activeRole: activeRole,
+                activeBusinessName: activeBusinessName,
                 lastFullSyncAt: lastFullSyncAt,
                 updatedAt: updatedAt,
               ),
@@ -47658,6 +48324,291 @@ typedef $$SyncMediaQueuesTableProcessedTableManager =
       SyncMediaQueueRow,
       PrefetchHooks Function()
     >;
+typedef $$CachedTeamMembersTableCreateCompanionBuilder =
+    CachedTeamMembersCompanion Function({
+      required String userId,
+      required String businessId,
+      Value<String> role,
+      Value<String> status,
+      Value<String?> displayName,
+      Value<String?> email,
+      Value<String?> phone,
+      required int updatedAt,
+      Value<int> rowid,
+    });
+typedef $$CachedTeamMembersTableUpdateCompanionBuilder =
+    CachedTeamMembersCompanion Function({
+      Value<String> userId,
+      Value<String> businessId,
+      Value<String> role,
+      Value<String> status,
+      Value<String?> displayName,
+      Value<String?> email,
+      Value<String?> phone,
+      Value<int> updatedAt,
+      Value<int> rowid,
+    });
+
+class $$CachedTeamMembersTableFilterComposer
+    extends Composer<_$AppDatabase, $CachedTeamMembersTable> {
+  $$CachedTeamMembersTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get businessId => $composableBuilder(
+    column: $table.businessId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get role => $composableBuilder(
+    column: $table.role,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get displayName => $composableBuilder(
+    column: $table.displayName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get email => $composableBuilder(
+    column: $table.email,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get phone => $composableBuilder(
+    column: $table.phone,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$CachedTeamMembersTableOrderingComposer
+    extends Composer<_$AppDatabase, $CachedTeamMembersTable> {
+  $$CachedTeamMembersTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get userId => $composableBuilder(
+    column: $table.userId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get businessId => $composableBuilder(
+    column: $table.businessId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get role => $composableBuilder(
+    column: $table.role,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get displayName => $composableBuilder(
+    column: $table.displayName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get email => $composableBuilder(
+    column: $table.email,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get phone => $composableBuilder(
+    column: $table.phone,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$CachedTeamMembersTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CachedTeamMembersTable> {
+  $$CachedTeamMembersTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get userId =>
+      $composableBuilder(column: $table.userId, builder: (column) => column);
+
+  GeneratedColumn<String> get businessId => $composableBuilder(
+    column: $table.businessId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get role =>
+      $composableBuilder(column: $table.role, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<String> get displayName => $composableBuilder(
+    column: $table.displayName,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get email =>
+      $composableBuilder(column: $table.email, builder: (column) => column);
+
+  GeneratedColumn<String> get phone =>
+      $composableBuilder(column: $table.phone, builder: (column) => column);
+
+  GeneratedColumn<int> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+}
+
+class $$CachedTeamMembersTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CachedTeamMembersTable,
+          CachedTeamMemberRow,
+          $$CachedTeamMembersTableFilterComposer,
+          $$CachedTeamMembersTableOrderingComposer,
+          $$CachedTeamMembersTableAnnotationComposer,
+          $$CachedTeamMembersTableCreateCompanionBuilder,
+          $$CachedTeamMembersTableUpdateCompanionBuilder,
+          (
+            CachedTeamMemberRow,
+            BaseReferences<
+              _$AppDatabase,
+              $CachedTeamMembersTable,
+              CachedTeamMemberRow
+            >,
+          ),
+          CachedTeamMemberRow,
+          PrefetchHooks Function()
+        > {
+  $$CachedTeamMembersTableTableManager(
+    _$AppDatabase db,
+    $CachedTeamMembersTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CachedTeamMembersTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CachedTeamMembersTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CachedTeamMembersTableAnnotationComposer(
+                $db: db,
+                $table: table,
+              ),
+          updateCompanionCallback:
+              ({
+                Value<String> userId = const Value.absent(),
+                Value<String> businessId = const Value.absent(),
+                Value<String> role = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> displayName = const Value.absent(),
+                Value<String?> email = const Value.absent(),
+                Value<String?> phone = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CachedTeamMembersCompanion(
+                userId: userId,
+                businessId: businessId,
+                role: role,
+                status: status,
+                displayName: displayName,
+                email: email,
+                phone: phone,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String userId,
+                required String businessId,
+                Value<String> role = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<String?> displayName = const Value.absent(),
+                Value<String?> email = const Value.absent(),
+                Value<String?> phone = const Value.absent(),
+                required int updatedAt,
+                Value<int> rowid = const Value.absent(),
+              }) => CachedTeamMembersCompanion.insert(
+                userId: userId,
+                businessId: businessId,
+                role: role,
+                status: status,
+                displayName: displayName,
+                email: email,
+                phone: phone,
+                updatedAt: updatedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$CachedTeamMembersTable, CachedTeamMemberRow>(
+                    table,
+                  ),
+                  BaseReferences<
+                    _$AppDatabase,
+                    $CachedTeamMembersTable,
+                    CachedTeamMemberRow
+                  >(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$CachedTeamMembersTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CachedTeamMembersTable,
+      CachedTeamMemberRow,
+      $$CachedTeamMembersTableFilterComposer,
+      $$CachedTeamMembersTableOrderingComposer,
+      $$CachedTeamMembersTableAnnotationComposer,
+      $$CachedTeamMembersTableCreateCompanionBuilder,
+      $$CachedTeamMembersTableUpdateCompanionBuilder,
+      (
+        CachedTeamMemberRow,
+        BaseReferences<
+          _$AppDatabase,
+          $CachedTeamMembersTable,
+          CachedTeamMemberRow
+        >,
+      ),
+      CachedTeamMemberRow,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -47721,4 +48672,6 @@ class $AppDatabaseManager {
       $$SyncCursorsTableTableManager(_db, _db.syncCursors);
   $$SyncMediaQueuesTableTableManager get syncMediaQueues =>
       $$SyncMediaQueuesTableTableManager(_db, _db.syncMediaQueues);
+  $$CachedTeamMembersTableTableManager get cachedTeamMembers =>
+      $$CachedTeamMembersTableTableManager(_db, _db.cachedTeamMembers);
 }

@@ -9,8 +9,18 @@ abstract final class AppFeedback {
     BuildContext context,
     String message, {
     String? title,
+    Duration duration = const Duration(seconds: 3),
+    String? actionLabel,
+    VoidCallback? onAction,
   }) {
-    AppMessageService.success(context, message, title: title);
+    AppMessageService.success(
+      context,
+      message,
+      title: title,
+      duration: duration,
+      actionLabel: actionLabel,
+      onAction: onAction,
+    );
   }
 
   static void showError(

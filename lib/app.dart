@@ -7,10 +7,13 @@ import 'package:business_manager/core/localization/locale_cubit.dart';
 import 'package:business_manager/core/localization/locale_state.dart';
 import 'package:business_manager/core/router/app_router.dart';
 import 'package:business_manager/core/services/app_message_service.dart';
+import 'package:business_manager/core/theme/density_cubit.dart';
 import 'package:business_manager/core/theme/theme_cubit.dart';
 import 'package:business_manager/core/theme/theme_state.dart';
 import 'package:business_manager/features/auth/domain/entities/auth_entities.dart';
 import 'package:business_manager/features/auth/presentation/bloc/auth_cubit.dart';
+import 'package:business_manager/features/guidance/presentation/bloc/guide_cubit.dart';
+import 'package:business_manager/features/guidance/presentation/widgets/guide_spotlight_host.dart';
 import 'package:business_manager/features/security/domain/entities/security_entities.dart';
 import 'package:business_manager/features/security/presentation/bloc/app_lock_cubit.dart';
 import 'package:business_manager/features/security/presentation/widgets/app_lock_gate.dart';
@@ -46,6 +49,9 @@ final class _BusinessManagerAppState extends State<BusinessManagerApp>
     final lockCubit = getIt<AppLockCubit>();
     if (lockCubit.state.status == AppLockStatus.initializing) {
       lockCubit.initialize();
+    }
+    if (getIt.isRegistered<GuideCubit>()) {
+      getIt<GuideCubit>().initialize();
     }
   }
 
@@ -83,9 +89,12 @@ final class _BusinessManagerAppState extends State<BusinessManagerApp>
         providers: [
           BlocProvider<LocaleCubit>.value(value: getIt<LocaleCubit>()),
           BlocProvider<ThemeCubit>.value(value: getIt<ThemeCubit>()),
+          BlocProvider<DensityCubit>.value(value: getIt<DensityCubit>()),
           BlocProvider<AppLockCubit>.value(value: getIt<AppLockCubit>()),
           BlocProvider<AuthCubit>.value(value: getIt<AuthCubit>()),
           BlocProvider<SyncCubit>.value(value: getIt<SyncCubit>()),
+          if (getIt.isRegistered<GuideCubit>())
+            BlocProvider<GuideCubit>.value(value: getIt<GuideCubit>()),
         ],
         child: MultiBlocListener(
           listeners: [
@@ -126,39 +135,47 @@ final class _BusinessManagerAppState extends State<BusinessManagerApp>
             builder: (context, localeState) {
               return BlocBuilder<ThemeCubit, ThemeState>(
                 builder: (context, themeState) {
-                  return MaterialApp.router(
-                    debugShowCheckedModeBanner: widget.config.isDev,
-                    onGenerateTitle: (context) {
-                      final l10n = AppLocalizations.of(context)!;
-                      return widget.config.isDev
-                          ? l10n.appTitleDev
-                          : l10n.appTitle;
-                    },
-                    locale: localeState.preference.locale,
-                    supportedLocales: AppLocalizations.supportedLocales,
-                    localizationsDelegates: const [
-                      AppLocalizations.delegate,
-                      ...GlobalMaterialLocalizations.delegates,
-                    ],
-                    themeMode: themeState.preference.themeMode,
-                    theme: AppTheme.light(),
-                    darkTheme: AppTheme.dark(),
-                    routerConfig: _router,
-                    scrollBehavior: const AppScrollBehavior(),
-                    // Respect the phone's font-size setting, but cap it so very
-                    // large system fonts cannot break tables and forms.
-                    builder: (context, child) =>
-                        MediaQuery.withClampedTextScaling(
-                          minScaleFactor: 1.0,
-                          maxScaleFactor: 1.3,
-                          child: ToastificationWrapper(
-                            child: AppLockGate(
-                              onNavigateDeepLink: (routePath) =>
-                                  _router.push(routePath),
-                              child: child ?? const SizedBox.shrink(),
+                  return BlocBuilder<DensityCubit, DensityState>(
+                    builder: (context, densityState) {
+                      final vd = densityState.mode.visualDensity;
+                      return MaterialApp.router(
+                        debugShowCheckedModeBanner: widget.config.isDev,
+                        onGenerateTitle: (context) {
+                          final l10n = AppLocalizations.of(context)!;
+                          return widget.config.isDev
+                              ? l10n.appTitleDev
+                              : l10n.appTitle;
+                        },
+                        locale: localeState.preference.locale,
+                        supportedLocales: AppLocalizations.supportedLocales,
+                        localizationsDelegates: const [
+                          AppLocalizations.delegate,
+                          ...GlobalMaterialLocalizations.delegates,
+                        ],
+                        themeMode: themeState.preference.themeMode,
+                        theme: AppTheme.light(visualDensity: vd),
+                        darkTheme: AppTheme.dark(visualDensity: vd),
+                        routerConfig: _router,
+                        scrollBehavior: const AppScrollBehavior(),
+                        // Respect the phone's font-size setting, but cap it so very
+                        // large system fonts cannot break tables and forms.
+                        builder: (context, child) =>
+                            MediaQuery.withClampedTextScaling(
+                              minScaleFactor: 1.0,
+                              maxScaleFactor: 1.3,
+                              child: ToastificationWrapper(
+                                child: AppLockGate(
+                                  onNavigateDeepLink: (routePath) =>
+                                      _router.push(routePath),
+                                  child: GuideSpotlightHost(
+                                    router: _router,
+                                    child: child ?? const SizedBox.shrink(),
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
+                      );
+                    },
                   );
                 },
               );

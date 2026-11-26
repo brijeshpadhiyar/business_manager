@@ -5,7 +5,11 @@ import 'package:business_manager/core/design_system/app_shadows.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Elevation mode for [AppGlassSurface] and [AppCard].
+/// Indigo Thread semantic aliases for [AppGlassSurface] and [AppGlassStyle].
+typedef AppElevatedSurface = AppGlassSurface;
+typedef AppElevationStyle = AppGlassStyle;
+
+/// Elevation mode for [AppElevatedSurface] / [AppGlassSurface] and [AppCard].
 enum AppGlassStyle {
   /// Raised surface (`AppShadows.md`). Hero banners, KPI tiles, dialogs.
   full,

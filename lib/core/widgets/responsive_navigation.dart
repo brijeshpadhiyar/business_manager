@@ -45,11 +45,13 @@ final class ResponsiveNavDestination {
     required this.label,
     required this.icon,
     this.selectedIcon,
+    this.badgeCount,
   });
 
   final String label;
   final IconData icon;
   final IconData? selectedIcon;
+  final int? badgeCount;
 }
 
 final class ResponsiveNavActionItem {
@@ -58,12 +60,14 @@ final class ResponsiveNavActionItem {
     required this.icon,
     required this.onTap,
     this.id,
+    this.badgeCount,
   });
 
   final String? id;
   final String label;
   final IconData icon;
   final VoidCallback onTap;
+  final int? badgeCount;
 }
 
 /// Adaptive StitchFlow glassmorphism navigation shell with layered ambient
@@ -194,6 +198,7 @@ final class ResponsiveNavigation extends StatelessWidget {
     BuildContext context,
     IconData icon, {
     required bool selected,
+    int? badgeCount,
   }) {
     final colorScheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -201,11 +206,20 @@ final class ResponsiveNavigation extends StatelessWidget {
         ? (isDark ? colorScheme.secondary : colorScheme.primary)
         : colorScheme.onSurfaceVariant;
 
-    return AnimatedScale(
+    final iconWidget = AnimatedScale(
       scale: selected ? 1.12 : 1.0,
       duration: AppMotion.duration(context, AppMotion.fast),
       curve: AppMotion.standardCurve,
       child: Icon(icon, size: AppSizing.iconMd, color: iconColor),
+    );
+
+    if (badgeCount == null || badgeCount <= 0) {
+      return iconWidget;
+    }
+
+    return Badge(
+      label: Text(badgeCount > 99 ? '99+' : '$badgeCount'),
+      child: iconWidget,
     );
   }
 
@@ -307,12 +321,14 @@ final class ResponsiveNavigation extends StatelessWidget {
                                 context,
                                 destinations[i].icon,
                                 selected: false,
+                                badgeCount: destinations[i].badgeCount,
                               ),
                               selectedIcon: _animatedNavIcon(
                                 context,
                                 destinations[i].selectedIcon ??
                                     destinations[i].icon,
                                 selected: true,
+                                badgeCount: destinations[i].badgeCount,
                               ),
                               label: destinations[i].label,
                               tooltip: destinations[i].label,
@@ -425,6 +441,8 @@ final class ResponsiveNavigation extends StatelessWidget {
                                                         context,
                                                         d.icon,
                                                         selected: false,
+                                                        badgeCount:
+                                                            d.badgeCount,
                                                       ),
                                                       selectedIcon:
                                                           _animatedNavIcon(
@@ -432,6 +450,8 @@ final class ResponsiveNavigation extends StatelessWidget {
                                                             d.selectedIcon ??
                                                                 d.icon,
                                                             selected: true,
+                                                            badgeCount:
+                                                                d.badgeCount,
                                                           ),
                                                       label: Text(d.label),
                                                     ),
@@ -561,11 +581,13 @@ final class ResponsiveNavigation extends StatelessWidget {
                                       context,
                                       d.icon,
                                       selected: false,
+                                      badgeCount: d.badgeCount,
                                     ),
                                     selectedIcon: _animatedNavIcon(
                                       context,
                                       d.selectedIcon ?? d.icon,
                                       selected: true,
+                                      badgeCount: d.badgeCount,
                                     ),
                                     label: Flexible(
                                       child: Text(

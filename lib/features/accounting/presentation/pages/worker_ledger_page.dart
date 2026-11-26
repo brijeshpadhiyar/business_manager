@@ -12,6 +12,8 @@ import 'package:business_manager/features/accounting/domain/entities/accounting_
 import 'package:business_manager/features/accounting/domain/repositories/accounting_repository.dart';
 import 'package:business_manager/features/accounting/presentation/bloc/worker_ledger_cubit.dart';
 import 'package:business_manager/features/production_history/domain/entities/production_history_entities.dart';
+import 'package:business_manager/features/slips/presentation/slip_builder_helper.dart';
+import 'package:business_manager/features/slips/presentation/widgets/slip_share_sheet.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -198,6 +200,10 @@ final class _WorkerLedgerViewState extends State<_WorkerLedgerView> {
     final localeCode = Localizations.localeOf(context).languageCode;
 
     return BlocBuilder<WorkerLedgerCubit, WorkerLedgerState>(
+      buildWhen: (prev, curr) =>
+          prev.status != curr.status ||
+          prev.detail != curr.detail ||
+          prev.errorMessage != curr.errorMessage,
       builder: (context, state) {
         if (state.status == WorkerLedgerStatus.initial ||
             state.status == WorkerLedgerStatus.loading) {
@@ -225,6 +231,20 @@ final class _WorkerLedgerViewState extends State<_WorkerLedgerView> {
           contentWidth: AppContentWidth.wide,
           title: '${summary.workerName} — ${l10n.accountingLedgerHeading}',
           actions: [
+            AppIconButton(
+              icon: AppIcons.share,
+              tooltip: l10n.slipShareKhataAction,
+              onPressed: () async {
+                final slip = await SlipBuilderHelper.buildKhataStatement(
+                  detail: detail,
+                  visibleLines: _visibleLines(detail.lines),
+                  generatedAtUtcMillis: IstDateTimeHelper.nowUtcMillis(),
+                );
+                if (context.mounted) {
+                  await SlipShareSheet.show(context, slip);
+                }
+              },
+            ),
             AppIconButton(
               icon: AppIcons.refresh,
               tooltip: l10n.actionRetry,

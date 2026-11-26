@@ -12,8 +12,16 @@ import 'package:business_manager/features/accounting/presentation/pages/worker_l
 import 'package:business_manager/features/auth/presentation/pages/account_settings_page.dart';
 import 'package:business_manager/features/auth/presentation/pages/login_page.dart';
 import 'package:business_manager/features/backup/presentation/pages/backup_restore_page.dart';
+import 'package:business_manager/features/backup/presentation/pages/data_health_page.dart';
+import 'package:business_manager/features/sync/domain/entities/sync_entities.dart';
+import 'package:business_manager/features/sync/presentation/bloc/sync_cubit.dart';
+import 'package:business_manager/features/sync/presentation/pages/sync_conflict_inspector_page.dart';
+import 'package:business_manager/features/team/presentation/pages/team_management_page.dart';
 import 'package:business_manager/features/business_profile/presentation/pages/business_profile_page.dart';
 import 'package:business_manager/features/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:business_manager/features/guidance/domain/entities/guide_entities.dart';
+import 'package:business_manager/features/guidance/presentation/registry/guide_target_registry.dart';
+import 'package:business_manager/features/guidance/presentation/widgets/guide_quick_menu_sheet.dart';
 import 'package:business_manager/features/inventory/presentation/pages/inventory_overview_page.dart';
 import 'package:business_manager/features/lots/presentation/pages/designs_colours_page.dart';
 import 'package:business_manager/features/lots/presentation/pages/lot_colour_detail_page.dart';
@@ -593,6 +601,27 @@ GoRouter createAppRouter(AppConfig config) {
               child: const SyncCenterPage(),
             ),
           ),
+          GoRoute(
+            path: RoutePaths.settingsDataHealth,
+            pageBuilder: (context, state) => AppMotion.buildPage(
+              state: state,
+              child: const DataHealthPage(),
+            ),
+          ),
+          GoRoute(
+            path: RoutePaths.settingsTeam,
+            pageBuilder: (context, state) => AppMotion.buildPage(
+              state: state,
+              child: const TeamManagementPage(),
+            ),
+          ),
+          GoRoute(
+            path: RoutePaths.settingsSyncConflicts,
+            pageBuilder: (context, state) => AppMotion.buildPage(
+              state: state,
+              child: const SyncConflictInspectorPage(),
+            ),
+          ),
         ],
       ),
       GoRoute(
@@ -680,6 +709,20 @@ _buildExtraRoutes(BuildContext context) {
 
 List<ResponsiveNavDestination> _buildPrimaryDestinations(BuildContext context) {
   final l10n = context.l10n;
+  int? syncAttentionBadge;
+  final syncCubit = context.read<SyncCubit?>();
+  if (syncCubit != null) {
+    final syncState = context.watch<SyncCubit>().state;
+    final attentionCount =
+        syncState.failedItems.length +
+        (syncState.phase == SyncPhase.needsAttention &&
+                syncState.failedItems.isEmpty
+            ? 1
+            : 0);
+    if (attentionCount > 0) {
+      syncAttentionBadge = attentionCount;
+    }
+  }
   return [
     ResponsiveNavDestination(
       label: l10n.navDashboard,
@@ -705,6 +748,7 @@ List<ResponsiveNavDestination> _buildPrimaryDestinations(BuildContext context) {
       label: l10n.navSettings,
       icon: AppIcons.settings,
       selectedIcon: AppIcons.settingsSelected,
+      badgeCount: syncAttentionBadge,
     ),
   ];
 }
@@ -789,10 +833,21 @@ final class _PrimaryTabsViewport extends StatelessWidget {
       onDestinationSelected: _onSelectTab,
       compactActions: [
         const SyncStatusBadge(compact: true),
-        AppIconButton(
-          icon: AppIcons.search,
-          tooltip: l10n.uxSearchTooltip,
-          onPressed: () => showGlobalSearch(context),
+        GuideTarget(
+          id: GuideTargetId.appBarGuide,
+          child: AppIconButton(
+            icon: AppIcons.help,
+            tooltip: l10n.guideTooltip,
+            onPressed: () => GuideQuickMenuSheet.show(context),
+          ),
+        ),
+        GuideTarget(
+          id: GuideTargetId.appBarSearch,
+          child: AppIconButton(
+            icon: AppIcons.search,
+            tooltip: l10n.uxSearchTooltip,
+            onPressed: () => showGlobalSearch(context),
+          ),
         ),
         BlocBuilder<AppLockCubit, AppLockState>(
           builder: (context, lockState) {
@@ -1055,6 +1110,12 @@ final class StitchFlowShellScaffold extends StatelessWidget {
         items.add(AppBreadcrumbItem(label: l10n.authAccountTitle));
       } else if (location == RoutePaths.settingsSync) {
         items.add(AppBreadcrumbItem(label: l10n.syncCenterTitle));
+      } else if (location == RoutePaths.settingsDataHealth) {
+        items.add(AppBreadcrumbItem(label: l10n.dataHealthHeading));
+      } else if (location == RoutePaths.settingsTeam) {
+        items.add(AppBreadcrumbItem(label: l10n.teamHeading));
+      } else if (location == RoutePaths.settingsSyncConflicts) {
+        items.add(AppBreadcrumbItem(label: l10n.syncConflictsTitle));
       }
       return items;
     }
@@ -1137,10 +1198,13 @@ final class StitchFlowShellScaffold extends StatelessWidget {
             padding: EdgeInsets.only(right: 8),
             child: Center(child: SyncStatusBadge()),
           ),
-          AppIconButton(
-            icon: AppIcons.search,
-            tooltip: l10n.uxSearchTooltip,
-            onPressed: () => showGlobalSearch(context),
+          GuideTarget(
+            id: GuideTargetId.appBarSearch,
+            child: AppIconButton(
+              icon: AppIcons.search,
+              tooltip: l10n.uxSearchTooltip,
+              onPressed: () => showGlobalSearch(context),
+            ),
           ),
           BlocBuilder<AppLockCubit, AppLockState>(
             builder: (context, lockState) {
@@ -1167,10 +1231,13 @@ final class StitchFlowShellScaffold extends StatelessWidget {
             tooltip: l10n.navReports,
             onPressed: () => context.push(RoutePaths.reports),
           ),
-          AppIconButton(
-            icon: AppIcons.help,
-            tooltip: l10n.settingsHelpTitle,
-            onPressed: () => context.push(RoutePaths.settingsHelp),
+          GuideTarget(
+            id: GuideTargetId.appBarGuide,
+            child: AppIconButton(
+              icon: AppIcons.help,
+              tooltip: l10n.guideTooltip,
+              onPressed: () => GuideQuickMenuSheet.show(context),
+            ),
           ),
         ],
         sidebarExtraActions: extraActions,

@@ -5653,6 +5653,1320 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cloud account verification did not match the signed-in owner.'**
   String get securityCloudReauthFailed;
+
+  /// No description provided for @stockPendingQcLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending QC'**
+  String get stockPendingQcLabel;
+
+  /// No description provided for @settingsDataHealthTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Health & Diagnostics'**
+  String get settingsDataHealthTitle;
+
+  /// No description provided for @settingsDataHealthSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Verify SQLite integrity, stock equations, ledger parity & sync queue'**
+  String get settingsDataHealthSubtitle;
+
+  /// No description provided for @dataHealthHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Data Health Center'**
+  String get dataHealthHeading;
+
+  /// No description provided for @dataHealthSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Non-destructive integrity & reconciliation checks on your local StitchFlow database.'**
+  String get dataHealthSubtitle;
+
+  /// No description provided for @dataHealthRunCheckAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Run Health Check'**
+  String get dataHealthRunCheckAction;
+
+  /// No description provided for @dataHealthShareReportAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Diagnostic Report'**
+  String get dataHealthShareReportAction;
+
+  /// No description provided for @dataHealthStatusHealthy.
+  ///
+  /// In en, this message translates to:
+  /// **'All Checks Healthy'**
+  String get dataHealthStatusHealthy;
+
+  /// No description provided for @dataHealthStatusWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Minor Attention Needed'**
+  String get dataHealthStatusWarning;
+
+  /// No description provided for @dataHealthStatusCritical.
+  ///
+  /// In en, this message translates to:
+  /// **'Integrity Issues Found'**
+  String get dataHealthStatusCritical;
+
+  /// No description provided for @dataHealthCheckedAtLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Last Checked'**
+  String get dataHealthCheckedAtLabel;
+
+  /// No description provided for @dataHealthSchemaVersionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Schema Version'**
+  String get dataHealthSchemaVersionLabel;
+
+  /// No description provided for @dataHealthDbSizeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Database Size'**
+  String get dataHealthDbSizeLabel;
+
+  /// No description provided for @dataHealthSqliteIntegrityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'SQLite Integrity'**
+  String get dataHealthSqliteIntegrityLabel;
+
+  /// No description provided for @dataHealthSqliteOk.
+  ///
+  /// In en, this message translates to:
+  /// **'Verified OK'**
+  String get dataHealthSqliteOk;
+
+  /// No description provided for @dataHealthSqliteFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Integrity Error'**
+  String get dataHealthSqliteFailed;
+
+  /// No description provided for @dataHealthForeignKeysLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Foreign Key Integrity'**
+  String get dataHealthForeignKeysLabel;
+
+  /// No description provided for @dataHealthZeroViolations.
+  ///
+  /// In en, this message translates to:
+  /// **'0 Violations'**
+  String get dataHealthZeroViolations;
+
+  /// No description provided for @dataHealthViolationsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Violations'**
+  String dataHealthViolationsCount(int count);
+
+  /// No description provided for @dataHealthStockReconciliationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Golden Stock Equation'**
+  String get dataHealthStockReconciliationLabel;
+
+  /// No description provided for @dataHealthStockAllReconciled.
+  ///
+  /// In en, this message translates to:
+  /// **'All {count} colours reconciled'**
+  String dataHealthStockAllReconciled(int count);
+
+  /// No description provided for @dataHealthStockIssuesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} mismatches found'**
+  String dataHealthStockIssuesCount(int count);
+
+  /// No description provided for @dataHealthLedgerParityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker Ledger Parity'**
+  String get dataHealthLedgerParityLabel;
+
+  /// No description provided for @dataHealthLedgerParityOk.
+  ///
+  /// In en, this message translates to:
+  /// **'0 Parity Issues'**
+  String get dataHealthLedgerParityOk;
+
+  /// No description provided for @dataHealthSyncQueueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Outbox & Media Queue'**
+  String get dataHealthSyncQueueLabel;
+
+  /// No description provided for @dataHealthSyncQueueSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{pending} pending • {failed} failed'**
+  String dataHealthSyncQueueSummary(int pending, int failed);
+
+  /// No description provided for @dataHealthMediaParityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Private Media Parity'**
+  String get dataHealthMediaParityLabel;
+
+  /// No description provided for @dataHealthMediaParitySummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{orphans} orphan • {missing} missing'**
+  String dataHealthMediaParitySummary(int orphans, int missing);
+
+  /// No description provided for @dataHealthMaintenanceHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Safe Audited Maintenance'**
+  String get dataHealthMaintenanceHeading;
+
+  /// No description provided for @dataHealthWalCheckpointAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Run WAL Checkpoint'**
+  String get dataHealthWalCheckpointAction;
+
+  /// No description provided for @dataHealthWalCheckpointDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Flushes SQLite write-ahead log cleanly into the main database file.'**
+  String get dataHealthWalCheckpointDesc;
+
+  /// No description provided for @dataHealthWalCheckpointSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'WAL checkpoint completed and logged.'**
+  String get dataHealthWalCheckpointSuccess;
+
+  /// No description provided for @dataHealthCleanOrphansAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Clean Orphan Media Files'**
+  String get dataHealthCleanOrphansAction;
+
+  /// No description provided for @dataHealthCleanOrphansDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Removes unreferenced local photo files without touching active attachments.'**
+  String get dataHealthCleanOrphansDesc;
+
+  /// No description provided for @dataHealthCleanOrphansSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Cleaned {count} orphan media file(s).'**
+  String dataHealthCleanOrphansSuccess(int count);
+
+  /// No description provided for @dataHealthRetrySyncAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Failed Sync Entries'**
+  String get dataHealthRetrySyncAction;
+
+  /// No description provided for @dataHealthRetrySyncDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-queues failed sync outbox & media entries for immediate retry.'**
+  String get dataHealthRetrySyncDesc;
+
+  /// No description provided for @dataHealthRetrySyncSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-queued {count} failed sync entry(ies).'**
+  String dataHealthRetrySyncSuccess(int count);
+
+  /// No description provided for @routingTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Process Routing'**
+  String get routingTitle;
+
+  /// No description provided for @routingRefreshTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get routingRefreshTooltip;
+
+  /// No description provided for @routingLoadErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load Job Routing'**
+  String get routingLoadErrorTitle;
+
+  /// No description provided for @routingAddProcessAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Process'**
+  String get routingAddProcessAction;
+
+  /// No description provided for @routingReassignFromFactoryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Reassign from Factory'**
+  String get routingReassignFromFactoryAction;
+
+  /// No description provided for @routingAddOperationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Process Operation'**
+  String get routingAddOperationTitle;
+
+  /// No description provided for @routingVariantLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Variant (Design / Colour)'**
+  String get routingVariantLabel;
+
+  /// No description provided for @routingOperationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Operation / Process'**
+  String get routingOperationLabel;
+
+  /// No description provided for @routingAssignWorkerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign Worker / Department'**
+  String get routingAssignWorkerLabel;
+
+  /// No description provided for @routingPricingUnitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pricing Unit'**
+  String get routingPricingUnitLabel;
+
+  /// No description provided for @routingRateOverrideReasonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason for Changing Default Rate (Required)'**
+  String get routingRateOverrideReasonLabel;
+
+  /// No description provided for @routingDispatchImmediatelyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dispatch immediately from Factory'**
+  String get routingDispatchImmediatelyTitle;
+
+  /// No description provided for @routingDispatchImmediatelySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn off to save as Pending and dispatch later'**
+  String get routingDispatchImmediatelySubtitle;
+
+  /// No description provided for @routingNotesOptionalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes (Optional)'**
+  String get routingNotesOptionalLabel;
+
+  /// No description provided for @routingConfirmReassignmentAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Reassignment'**
+  String get routingConfirmReassignmentAction;
+
+  /// No description provided for @routingAddDispatchAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add & Dispatch Process'**
+  String get routingAddDispatchAction;
+
+  /// No description provided for @routingSavePendingAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Pending Process'**
+  String get routingSavePendingAction;
+
+  /// No description provided for @routingAddColourFirstError.
+  ///
+  /// In en, this message translates to:
+  /// **'Add at least one Colour or Design variant to this Lot first.'**
+  String get routingAddColourFirstError;
+
+  /// No description provided for @routingAddProcessWorkerFirstError.
+  ///
+  /// In en, this message translates to:
+  /// **'Please create at least one active Process and Worker first.'**
+  String get routingAddProcessWorkerFirstError;
+
+  /// No description provided for @routingInvalidQuantityError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid positive whole quantity.'**
+  String get routingInvalidQuantityError;
+
+  /// No description provided for @routingInvalidRateError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid non-negative rate (max 2 decimals).'**
+  String get routingInvalidRateError;
+
+  /// No description provided for @routingOperationAddedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Operation added successfully.'**
+  String get routingOperationAddedSuccess;
+
+  /// No description provided for @routingDirectTransferTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct Worker-to-Worker Transfer'**
+  String get routingDirectTransferTitle;
+
+  /// No description provided for @routingNextOperationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Next Operation / Process'**
+  String get routingNextOperationLabel;
+
+  /// No description provided for @routingDestinationWorkerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Destination Worker / Department'**
+  String get routingDestinationWorkerLabel;
+
+  /// No description provided for @routingMarkReceivedImmediatelyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark received immediately'**
+  String get routingMarkReceivedImmediatelyTitle;
+
+  /// No description provided for @routingTransferNotesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer Notes (Optional)'**
+  String get routingTransferNotesLabel;
+
+  /// No description provided for @routingConfirmDirectTransferAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Direct Transfer'**
+  String get routingConfirmDirectTransferAction;
+
+  /// No description provided for @routingInvalidTransferQtyError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid positive transfer quantity.'**
+  String get routingInvalidTransferQtyError;
+
+  /// No description provided for @routingInvalidDestRateError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid destination rate (max 2 decimals).'**
+  String get routingInvalidDestRateError;
+
+  /// No description provided for @routingReturnToFactoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Return to Factory'**
+  String get routingReturnToFactoryTitle;
+
+  /// No description provided for @routingGoodReturnedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Good Quantity Returned to Factory'**
+  String get routingGoodReturnedLabel;
+
+  /// No description provided for @routingDamagedOptionalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Damaged Quantity (Optional)'**
+  String get routingDamagedOptionalLabel;
+
+  /// No description provided for @routingVerificationNotesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Verification Notes (Optional)'**
+  String get routingVerificationNotesLabel;
+
+  /// No description provided for @routingConfirmFactoryReturnAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Factory Return'**
+  String get routingConfirmFactoryReturnAction;
+
+  /// No description provided for @routingAddChargeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Extra Charge / Deduction'**
+  String get routingAddChargeTitle;
+
+  /// No description provided for @routingChargeTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get routingChargeTypeLabel;
+
+  /// No description provided for @routingChargeDescLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description (e.g. Urgent work, Special cutting)'**
+  String get routingChargeDescLabel;
+
+  /// No description provided for @routingInvalidAmountError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid positive amount (max 2 decimals).'**
+  String get routingInvalidAmountError;
+
+  /// No description provided for @routingConfirmReceiptTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Material Receipt'**
+  String get routingConfirmReceiptTitle;
+
+  /// No description provided for @routingConfirmReceiptAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Receipt'**
+  String get routingConfirmReceiptAction;
+
+  /// No description provided for @routingInvalidReceivedQtyError.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid positive received quantity.'**
+  String get routingInvalidReceivedQtyError;
+
+  /// No description provided for @routingCancelReasonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation Reason'**
+  String get routingCancelReasonLabel;
+
+  /// No description provided for @routingKeepAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep'**
+  String get routingKeepAction;
+
+  /// No description provided for @routingCancelProcessAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Process'**
+  String get routingCancelProcessAction;
+
+  /// No description provided for @routingFactoryReadyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Factory Ready'**
+  String get routingFactoryReadyLabel;
+
+  /// No description provided for @routingWithWorkersLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'With Workers'**
+  String get routingWithWorkersLabel;
+
+  /// No description provided for @routingTotalProductionCostLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Production Cost'**
+  String get routingTotalProductionCostLabel;
+
+  /// No description provided for @routingOutstandingPayableLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Outstanding Payable'**
+  String get routingOutstandingPayableLabel;
+
+  /// No description provided for @routingWorkerPayableSummaryHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker Payable Summary'**
+  String get routingWorkerPayableSummaryHeading;
+
+  /// No description provided for @routingCurrentGoodsLocationHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Goods Location'**
+  String get routingCurrentGoodsLocationHeading;
+
+  /// No description provided for @routingNoOperationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Operations Added Yet'**
+  String get routingNoOperationsTitle;
+
+  /// No description provided for @routingNoOperationsForColourTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Operations for Selected Colour'**
+  String get routingNoOperationsForColourTitle;
+
+  /// No description provided for @routingNoOperationsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Assign Cutting, Stitching, Checking, Finishing, Ironing, or Packing at variant level with custom worker rates.'**
+  String get routingNoOperationsSubtitle;
+
+  /// No description provided for @routingNoHandoversSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dispatches, direct transfers, returns, and reassignments will appear here chronologically.'**
+  String get routingNoHandoversSubtitle;
+
+  /// No description provided for @routingUnassignedWorker.
+  ///
+  /// In en, this message translates to:
+  /// **'Unassigned'**
+  String get routingUnassignedWorker;
+
+  /// No description provided for @routingDirectTransferAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct Transfer'**
+  String get routingDirectTransferAction;
+
+  /// No description provided for @routingReturnToFactoryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Return to Factory'**
+  String get routingReturnToFactoryAction;
+
+  /// No description provided for @routingPayAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay'**
+  String get routingPayAction;
+
+  /// No description provided for @routingMarkCompletedAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark Completed'**
+  String get routingMarkCompletedAction;
+
+  /// No description provided for @routingCancelAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get routingCancelAction;
+
+  /// No description provided for @routingErrJobNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Job / Lot not found.'**
+  String get routingErrJobNotFound;
+
+  /// No description provided for @routingErrNotReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Not ready'**
+  String get routingErrNotReady;
+
+  /// No description provided for @routingErrExceedsFactoryStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity exceeds available in-house factory stock.'**
+  String get routingErrExceedsFactoryStock;
+
+  /// No description provided for @routingErrExceedsDispatched.
+  ///
+  /// In en, this message translates to:
+  /// **'Received quantity cannot exceed dispatched quantity.'**
+  String get routingErrExceedsDispatched;
+
+  /// No description provided for @routingErrExceedsWorkerStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer quantity exceeds stock currently held by this worker.'**
+  String get routingErrExceedsWorkerStock;
+
+  /// No description provided for @routingErrExceedsReturnable.
+  ///
+  /// In en, this message translates to:
+  /// **'Return quantity exceeds outstanding worker quantity.'**
+  String get routingErrExceedsReturnable;
+
+  /// No description provided for @routingErrPendingRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot complete process while pending quantity remains unaccounted.'**
+  String get routingErrPendingRemaining;
+
+  /// No description provided for @routingErrHeldPiecesCancel.
+  ///
+  /// In en, this message translates to:
+  /// **'Return or transfer all held pieces before cancelling this process.'**
+  String get routingErrHeldPiecesCancel;
+
+  /// No description provided for @routingErrSameWorkerProcess.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a different destination worker or operation for direct transfer.'**
+  String get routingErrSameWorkerProcess;
+
+  /// No description provided for @routingErrRateOverrideReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a reason when changing the agreed rate from the default.'**
+  String get routingErrRateOverrideReason;
+
+  /// No description provided for @routingErrPaymentExceedsPayable.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment amount cannot exceed remaining outstanding payable.'**
+  String get routingErrPaymentExceedsPayable;
+
+  /// No description provided for @routingErrDescriptionRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a charge description.'**
+  String get routingErrDescriptionRequired;
+
+  /// No description provided for @routingErrReasonRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a reason.'**
+  String get routingErrReasonRequired;
+
+  /// No description provided for @routingErrProcessRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select an operation/process.'**
+  String get routingErrProcessRequired;
+
+  /// No description provided for @routingErrWorkerRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a worker.'**
+  String get routingErrWorkerRequired;
+
+  /// No description provided for @routingErrSkuRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a design & colour.'**
+  String get routingErrSkuRequired;
+
+  /// No description provided for @routingErrAlreadyClosed.
+  ///
+  /// In en, this message translates to:
+  /// **'This operation is already closed.'**
+  String get routingErrAlreadyClosed;
+
+  /// No description provided for @slipShareSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Karigar Slip'**
+  String get slipShareSheetTitle;
+
+  /// No description provided for @slipShareChallanAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Issue Challan'**
+  String get slipShareChallanAction;
+
+  /// No description provided for @slipShareReturnAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Return / QC Slip'**
+  String get slipShareReturnAction;
+
+  /// No description provided for @slipShareReceiptAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Payment Receipt'**
+  String get slipShareReceiptAction;
+
+  /// No description provided for @slipShareKhataAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Khata Statement'**
+  String get slipShareKhataAction;
+
+  /// No description provided for @slipShareImageAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Image (PNG)'**
+  String get slipShareImageAction;
+
+  /// No description provided for @slipShareTextAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Text (WhatsApp)'**
+  String get slipShareTextAction;
+
+  /// No description provided for @slipCopyTextAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy Text'**
+  String get slipCopyTextAction;
+
+  /// No description provided for @slipPrintPdfAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Print / Save PDF'**
+  String get slipPrintPdfAction;
+
+  /// No description provided for @slipLanguageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Slip Language'**
+  String get slipLanguageLabel;
+
+  /// No description provided for @slipCopiedMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Slip text copied to clipboard.'**
+  String get slipCopiedMessage;
+
+  /// No description provided for @slipGeneratedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Slip ready to share.'**
+  String get slipGeneratedSuccess;
+
+  /// No description provided for @slipRefLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ref'**
+  String get slipRefLabel;
+
+  /// No description provided for @slipBalancePayable.
+  ///
+  /// In en, this message translates to:
+  /// **'Outstanding Payable'**
+  String get slipBalancePayable;
+
+  /// No description provided for @slipBalanceAdvance.
+  ///
+  /// In en, this message translates to:
+  /// **'Advance Credit'**
+  String get slipBalanceAdvance;
+
+  /// No description provided for @slipBalanceSettled.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Settled'**
+  String get slipBalanceSettled;
+
+  /// No description provided for @slipFooterOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Generated offline via StitchFlow'**
+  String get slipFooterOffline;
+
+  /// No description provided for @undoAuditedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Reversal recorded in audit ledger.'**
+  String get undoAuditedSuccess;
+
+  /// No description provided for @draftRestoredBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Unfinished draft restored.'**
+  String get draftRestoredBanner;
+
+  /// No description provided for @draftClearAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Draft'**
+  String get draftClearAction;
+
+  /// No description provided for @setupChecklistTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Workshop Setup Checklist'**
+  String get setupChecklistTitle;
+
+  /// No description provided for @setupChecklistSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete these 4 quick steps to start tracking production.'**
+  String get setupChecklistSubtitle;
+
+  /// No description provided for @setupChecklistDismissAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get setupChecklistDismissAction;
+
+  /// No description provided for @setupStepProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Customize Business Profile'**
+  String get setupStepProfile;
+
+  /// No description provided for @setupStepProcesses.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Production Processes'**
+  String get setupStepProcesses;
+
+  /// No description provided for @setupStepWorkers.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Workers & Rates'**
+  String get setupStepWorkers;
+
+  /// No description provided for @setupStepFirstLot.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Your First Lot'**
+  String get setupStepFirstLot;
+
+  /// No description provided for @densitySectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Layout Density'**
+  String get densitySectionTitle;
+
+  /// No description provided for @densityComfortable.
+  ///
+  /// In en, this message translates to:
+  /// **'Comfortable (Default)'**
+  String get densityComfortable;
+
+  /// No description provided for @densityCompact.
+  ///
+  /// In en, this message translates to:
+  /// **'Compact (More Rows on Screen)'**
+  String get densityCompact;
+
+  /// No description provided for @settingsTeamTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Team & Role Access'**
+  String get settingsTeamTitle;
+
+  /// No description provided for @settingsTeamSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite supervisors, QC inspectors & accountants with role permissions'**
+  String get settingsTeamSubtitle;
+
+  /// No description provided for @teamHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Team Management'**
+  String get teamHeading;
+
+  /// No description provided for @teamMembersSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Workspace Members'**
+  String get teamMembersSection;
+
+  /// No description provided for @teamInvitesSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite Codes'**
+  String get teamInvitesSection;
+
+  /// No description provided for @teamCreateInviteAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Invite Code'**
+  String get teamCreateInviteAction;
+
+  /// No description provided for @teamJoinWorkspaceAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Join a Workshop via Code'**
+  String get teamJoinWorkspaceAction;
+
+  /// No description provided for @teamInviteCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'8-Character Invite Code'**
+  String get teamInviteCodeLabel;
+
+  /// No description provided for @teamInviteCodeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. SF7K-9M2P'**
+  String get teamInviteCodeHint;
+
+  /// No description provided for @teamInvitePhoneOptionalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Restrict to Phone (Optional)'**
+  String get teamInvitePhoneOptionalLabel;
+
+  /// No description provided for @teamInviteEmailOptionalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Restrict to Email (Optional)'**
+  String get teamInviteEmailOptionalLabel;
+
+  /// No description provided for @teamShareInviteWhatsAppAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Code on WhatsApp'**
+  String get teamShareInviteWhatsAppAction;
+
+  /// No description provided for @teamRevokeAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Revoke'**
+  String get teamRevokeAction;
+
+  /// No description provided for @teamRoleOwner.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner'**
+  String get teamRoleOwner;
+
+  /// No description provided for @teamRoleManager.
+  ///
+  /// In en, this message translates to:
+  /// **'Manager / Supervisor'**
+  String get teamRoleManager;
+
+  /// No description provided for @teamRoleQcInspector.
+  ///
+  /// In en, this message translates to:
+  /// **'QC Inspector'**
+  String get teamRoleQcInspector;
+
+  /// No description provided for @teamRoleAccountant.
+  ///
+  /// In en, this message translates to:
+  /// **'Accountant'**
+  String get teamRoleAccountant;
+
+  /// No description provided for @teamSignInRequiredSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to Cloud Sync to invite team members or join another workshop.'**
+  String get teamSignInRequiredSubtitle;
+
+  /// No description provided for @teamNoInvitesEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No active invite codes yet.'**
+  String get teamNoInvitesEmpty;
+
+  /// No description provided for @teamJoinSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Joined workshop successfully.'**
+  String get teamJoinSuccess;
+
+  /// No description provided for @teamInviteCreatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite code created and ready to share.'**
+  String get teamInviteCreatedSuccess;
+
+  /// No description provided for @syncConflictsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync Conflict Inspector'**
+  String get syncConflictsTitle;
+
+  /// No description provided for @syncConflictsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review superseded local edits from multi-device/team sync and optionally restore them.'**
+  String get syncConflictsSubtitle;
+
+  /// No description provided for @syncConflictsOpenAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Conflicts'**
+  String get syncConflictsOpenAction;
+
+  /// No description provided for @syncConflictsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Sync Conflicts'**
+  String get syncConflictsEmptyTitle;
+
+  /// No description provided for @syncConflictsEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'All devices and team edits have merged cleanly.'**
+  String get syncConflictsEmptySubtitle;
+
+  /// No description provided for @syncConflictLocalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Your Superseded Edit'**
+  String get syncConflictLocalLabel;
+
+  /// No description provided for @syncConflictCloudLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Applied Cloud Version'**
+  String get syncConflictCloudLabel;
+
+  /// No description provided for @syncConflictKeepCloudAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Cloud'**
+  String get syncConflictKeepCloudAction;
+
+  /// No description provided for @syncConflictRestoreLocalAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore My Edit'**
+  String get syncConflictRestoreLocalAction;
+
+  /// No description provided for @syncConflictStatusUnresolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs Review'**
+  String get syncConflictStatusUnresolved;
+
+  /// No description provided for @syncConflictStatusAcknowledged.
+  ///
+  /// In en, this message translates to:
+  /// **'Kept Cloud'**
+  String get syncConflictStatusAcknowledged;
+
+  /// No description provided for @syncConflictStatusRestored.
+  ///
+  /// In en, this message translates to:
+  /// **'Restored'**
+  String get syncConflictStatusRestored;
+
+  /// No description provided for @syncConflictRestoredSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Superseded edit restored as a new audited update.'**
+  String get syncConflictRestoredSuccess;
+
+  /// No description provided for @syncConflictAcknowledgedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Conflict marked as resolved.'**
+  String get syncConflictAcknowledgedSuccess;
+
+  /// No description provided for @guideTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Interactive Guide'**
+  String get guideTitle;
+
+  /// No description provided for @guideTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Screen Guide & Training'**
+  String get guideTooltip;
+
+  /// No description provided for @guideWelcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to Business Manager'**
+  String get guideWelcomeTitle;
+
+  /// No description provided for @guideWelcomeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Learn how your entire garment workshop works step by step — right inside the app, with voice guidance and zero videos.'**
+  String get guideWelcomeSubtitle;
+
+  /// No description provided for @guideStartFullTraining.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Complete Training'**
+  String get guideStartFullTraining;
+
+  /// No description provided for @guideResumeTraining.
+  ///
+  /// In en, this message translates to:
+  /// **'Resume Training'**
+  String get guideResumeTraining;
+
+  /// No description provided for @guideRestartTraining.
+  ///
+  /// In en, this message translates to:
+  /// **'Restart Full Training'**
+  String get guideRestartTraining;
+
+  /// No description provided for @guideTourThisScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Explain This Screen'**
+  String get guideTourThisScreen;
+
+  /// No description provided for @guideOpenUserGuide.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Complete User Guide'**
+  String get guideOpenUserGuide;
+
+  /// No description provided for @guideSkipForNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip for now'**
+  String get guideSkipForNow;
+
+  /// No description provided for @guideVoiceOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice ON'**
+  String get guideVoiceOn;
+
+  /// No description provided for @guideVoiceOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice OFF'**
+  String get guideVoiceOff;
+
+  /// No description provided for @guideVoiceReplay.
+  ///
+  /// In en, this message translates to:
+  /// **'Replay'**
+  String get guideVoiceReplay;
+
+  /// No description provided for @guideVoiceListen.
+  ///
+  /// In en, this message translates to:
+  /// **'Listen'**
+  String get guideVoiceListen;
+
+  /// No description provided for @guideVoiceStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get guideVoiceStop;
+
+  /// No description provided for @guideSpeedSlow.
+  ///
+  /// In en, this message translates to:
+  /// **'Slow'**
+  String get guideSpeedSlow;
+
+  /// No description provided for @guideSpeedNormal.
+  ///
+  /// In en, this message translates to:
+  /// **'Normal'**
+  String get guideSpeedNormal;
+
+  /// No description provided for @guideSpeedFast.
+  ///
+  /// In en, this message translates to:
+  /// **'Fast'**
+  String get guideSpeedFast;
+
+  /// No description provided for @guideVoicePackMissingHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Gujarati voice pack is not installed on this device. Visual guidance continues normally.'**
+  String get guideVoicePackMissingHint;
+
+  /// No description provided for @guideStepCounter.
+  ///
+  /// In en, this message translates to:
+  /// **'Step {current} of {total}'**
+  String guideStepCounter(int current, int total);
+
+  /// No description provided for @guideActionBack.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get guideActionBack;
+
+  /// No description provided for @guideActionNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get guideActionNext;
+
+  /// No description provided for @guideActionFinish.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish'**
+  String get guideActionFinish;
+
+  /// No description provided for @guideActionSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get guideActionSkip;
+
+  /// No description provided for @guideMinimizeCoach.
+  ///
+  /// In en, this message translates to:
+  /// **'Try Now'**
+  String get guideMinimizeCoach;
+
+  /// No description provided for @guideExpandSpotlight.
+  ///
+  /// In en, this message translates to:
+  /// **'Spotlight'**
+  String get guideExpandSpotlight;
+
+  /// No description provided for @guideFirstVisitHint.
+  ///
+  /// In en, this message translates to:
+  /// **'First time on this screen? Tap to see what every button does.'**
+  String get guideFirstVisitHint;
+
+  /// No description provided for @guideFirstVisitAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Guide'**
+  String get guideFirstVisitAction;
+
+  /// No description provided for @guideNewScreenHintsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'First-visit tips on new screens'**
+  String get guideNewScreenHintsLabel;
+
+  /// No description provided for @guideTrainingTabLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Interactive Training'**
+  String get guideTrainingTabLabel;
+
+  /// No description provided for @guideTopicsTabLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete Guide (19)'**
+  String get guideTopicsTabLabel;
+
+  /// No description provided for @guideProgressSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{completed} of {total} chapters completed'**
+  String guideProgressSummary(int completed, int total);
+
+  /// No description provided for @guideShowMeLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Me Live'**
+  String get guideShowMeLive;
+
+  /// No description provided for @guideShowMeOnScreen.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Me on Screen'**
+  String get guideShowMeOnScreen;
+
+  /// No description provided for @guideChapterCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get guideChapterCompleted;
+
+  /// No description provided for @guideNextTopicHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'What To Do Next'**
+  String get guideNextTopicHeading;
+
+  /// No description provided for @guideResetProgressAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Training Progress'**
+  String get guideResetProgressAction;
+
+  /// No description provided for @guideResetProgressDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Training progress reset. You can start fresh anytime.'**
+  String get guideResetProgressDone;
 }
 
 class _AppLocalizationsDelegate

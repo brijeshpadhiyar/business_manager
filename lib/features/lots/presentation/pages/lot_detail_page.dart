@@ -8,6 +8,8 @@ import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
+import 'package:business_manager/features/guidance/domain/entities/guide_entities.dart';
+import 'package:business_manager/features/guidance/presentation/registry/guide_target_registry.dart';
 import 'package:business_manager/features/lots/domain/entities/colour_master_entity.dart';
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
 import 'package:business_manager/features/lots/domain/repositories/lot_repository.dart';
@@ -943,10 +945,13 @@ final class _LotDetailView extends StatelessWidget {
                         );
                       },
                     ),
-                    AppButton(
-                      label: l10n.designAddAction,
-                      icon: AppIcons.add,
-                      onPressed: () => _showDesignSheet(context),
+                    GuideTarget(
+                      id: GuideTargetId.lotDetailAddDesign,
+                      child: AppButton(
+                        label: l10n.designAddAction,
+                        icon: AppIcons.add,
+                        onPressed: () => _showDesignSheet(context),
+                      ),
                     ),
                   ],
                 ),

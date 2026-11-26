@@ -57,6 +57,7 @@ part 'app_database.g.dart';
     SyncOutboxes,
     SyncCursors,
     SyncMediaQueues,
+    CachedTeamMembers,
   ],
   daos: [
     BusinessProfileDao,

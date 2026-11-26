@@ -10,6 +10,7 @@ import 'package:business_manager/core/widgets/app_button.dart';
 import 'package:business_manager/core/widgets/app_collapsible_header.dart';
 import 'package:business_manager/core/widgets/app_glass_backdrop.dart';
 import 'package:business_manager/core/widgets/responsive_navigation.dart';
+import 'package:business_manager/features/guidance/presentation/registry/guide_target_registry.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:business_manager/core/design_system/app_icons.dart';
@@ -41,11 +42,13 @@ final class AppPrimaryAction {
     required this.icon,
     required this.label,
     required this.onPressed,
+    this.guideTargetId,
   });
 
   final IconData icon;
   final String label;
   final VoidCallback? onPressed;
+  final String? guideTargetId;
 }
 
 /// Centralized StitchFlow adaptive page scaffold supporting:
@@ -127,17 +130,19 @@ final class AppScaffold extends StatelessWidget {
   List<Widget>? actionsFor(BuildContext context, List<Widget>? base) {
     final action = primaryAction;
     if (action == null || _isCompact(context)) return base;
+    Widget toolbarBtn = AppButton(
+      label: action.label,
+      icon: action.icon,
+      onPressed: action.onPressed,
+    );
+    if (action.guideTargetId != null) {
+      toolbarBtn = GuideTarget(id: action.guideTargetId!, child: toolbarBtn);
+    }
     return [
       ...?base,
       Padding(
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
-        child: Center(
-          child: AppButton(
-            label: action.label,
-            icon: action.icon,
-            onPressed: action.onPressed,
-          ),
-        ),
+        child: Center(child: toolbarBtn),
       ),
     ];
   }
@@ -147,12 +152,16 @@ final class AppScaffold extends StatelessWidget {
     if (floatingActionButton != null) return floatingActionButton;
     final action = primaryAction;
     if (action == null || !_isCompact(context)) return null;
-    return FloatingActionButton.extended(
+    Widget fab = FloatingActionButton.extended(
       heroTag: null,
       onPressed: action.onPressed,
       icon: Icon(action.icon),
       label: Text(action.label),
     );
+    if (action.guideTargetId != null) {
+      fab = GuideTarget(id: action.guideTargetId!, child: fab);
+    }
+    return fab;
   }
 
   /// [bottomAction] as a pinned bar, else the plain bottom bar.

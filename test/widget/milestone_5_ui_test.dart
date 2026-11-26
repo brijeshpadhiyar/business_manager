@@ -62,6 +62,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // 1. Open Processes from Dashboard Quick Actions -> verify empty state
+      await tester.drag(find.byType(ListView).first, const Offset(0, -260));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Processes').first);
       await tester.pumpAndSettle();
       expect(find.text('No Processes Yet'), findsOneWidget);

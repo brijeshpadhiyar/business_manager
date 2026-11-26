@@ -21,6 +21,9 @@ import 'package:business_manager/core/di/register_module.dart' as _i453;
 import 'package:business_manager/core/localization/locale_cubit.dart' as _i588;
 import 'package:business_manager/core/platform/media_storage_service.dart'
     as _i586;
+import 'package:business_manager/core/services/form_draft_service.dart'
+    as _i1031;
+import 'package:business_manager/core/theme/density_cubit.dart' as _i520;
 import 'package:business_manager/core/theme/theme_cubit.dart' as _i772;
 import 'package:business_manager/core/utils/id_generator.dart' as _i656;
 import 'package:business_manager/features/accounting/data/repositories/accounting_repository_impl.dart'
@@ -33,14 +36,20 @@ import 'package:business_manager/features/accounting/presentation/bloc/worker_le
     as _i711;
 import 'package:business_manager/features/auth/data/repositories/supabase_auth_repository.dart'
     as _i475;
+import 'package:business_manager/features/auth/data/repositories/supabase_team_repository.dart'
+    as _i249;
 import 'package:business_manager/features/auth/domain/repositories/auth_repository.dart'
     as _i941;
 import 'package:business_manager/features/auth/presentation/bloc/auth_cubit.dart'
     as _i154;
+import 'package:business_manager/features/backup/data/services/data_health_service.dart'
+    as _i125;
 import 'package:business_manager/features/backup/domain/services/backup_restore_service.dart'
     as _i744;
 import 'package:business_manager/features/backup/presentation/bloc/backup_restore_cubit.dart'
     as _i74;
+import 'package:business_manager/features/backup/presentation/bloc/data_health_cubit.dart'
+    as _i478;
 import 'package:business_manager/features/business_profile/data/repositories/business_profile_repository_impl.dart'
     as _i930;
 import 'package:business_manager/features/business_profile/domain/repositories/business_profile_repository.dart'
@@ -49,6 +58,16 @@ import 'package:business_manager/features/business_profile/presentation/bloc/bus
     as _i1018;
 import 'package:business_manager/features/dashboard/presentation/bloc/dashboard_cubit.dart'
     as _i736;
+import 'package:business_manager/features/guidance/data/repositories/shared_prefs_guide_repository.dart'
+    as _i97;
+import 'package:business_manager/features/guidance/data/services/flutter_tts_guide_voice_service.dart'
+    as _i69;
+import 'package:business_manager/features/guidance/domain/repositories/guide_preferences_repository.dart'
+    as _i339;
+import 'package:business_manager/features/guidance/domain/services/guide_voice_service.dart'
+    as _i398;
+import 'package:business_manager/features/guidance/presentation/bloc/guide_cubit.dart'
+    as _i1048;
 import 'package:business_manager/features/inventory/presentation/bloc/inventory_overview_cubit.dart'
     as _i931;
 import 'package:business_manager/features/lots/data/repositories/colour_master_repository_impl.dart'
@@ -141,12 +160,16 @@ import 'package:business_manager/features/stock_movements/presentation/bloc/stoc
     as _i971;
 import 'package:business_manager/features/sync/data/services/supabase_cloud_sync_gateway.dart'
     as _i860;
+import 'package:business_manager/features/sync/data/services/sync_conflict_service.dart'
+    as _i649;
 import 'package:business_manager/features/sync/data/services/sync_engine.dart'
     as _i605;
 import 'package:business_manager/features/sync/domain/repositories/cloud_sync_gateway.dart'
     as _i1043;
 import 'package:business_manager/features/sync/presentation/bloc/sync_cubit.dart'
     as _i570;
+import 'package:business_manager/features/team/domain/repositories/team_repository.dart'
+    as _i1067;
 import 'package:business_manager/features/workers/data/repositories/worker_repository_impl.dart'
     as _i966;
 import 'package:business_manager/features/workers/domain/repositories/worker_repository.dart'
@@ -156,7 +179,7 @@ import 'package:business_manager/features/workers/presentation/bloc/worker_assig
 import 'package:business_manager/features/workers/presentation/bloc/worker_detail_cubit.dart'
     as _i506;
 import 'package:business_manager/features/workers/presentation/bloc/worker_list_cubit.dart'
-    as _i249;
+    as _i250;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
@@ -181,11 +204,20 @@ extension GetItInjectableX on _i174.GetIt {
       () => registerModule.appDatabase(gh<_i516.AppConfig>()),
       dispose: _i453.disposeAppDatabase,
     );
+    gh.lazySingleton<_i398.GuideVoiceService>(
+      () => _i69.FlutterTtsGuideVoiceService(),
+    );
     gh.lazySingleton<_i790.AppLogger>(
       () => _i790.AppLogger(gh<_i516.AppConfig>()),
     );
     gh.lazySingleton<_i837.NotificationSettingsRepository>(
       () => _i837.NotificationSettingsRepository(gh<_i516.AppConfig>()),
+    );
+    gh.lazySingleton<_i649.SyncConflictService>(
+      () => _i649.SyncConflictService(
+        gh<_i177.AppDatabase>(),
+        gh<_i656.IdGenerator>(),
+      ),
     );
     gh.lazySingleton<_i941.AuthRepository>(
       () => _i475.SupabaseAuthRepository(
@@ -209,8 +241,22 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i588.LocaleCubit>(
       () => _i588.LocaleCubit(gh<_i460.SharedPreferences>()),
     );
+    gh.lazySingleton<_i1031.FormDraftService>(
+      () => _i1031.FormDraftService(gh<_i460.SharedPreferences>()),
+    );
+    gh.lazySingleton<_i520.DensityCubit>(
+      () => _i520.DensityCubit(gh<_i460.SharedPreferences>()),
+    );
     gh.lazySingleton<_i772.ThemeCubit>(
       () => _i772.ThemeCubit(gh<_i460.SharedPreferences>()),
+    );
+    gh.lazySingleton<_i1067.TeamRepository>(
+      () => _i249.SupabaseTeamRepository(
+        gh<_i516.AppConfig>(),
+        gh<_i177.AppDatabase>(),
+        gh<_i656.IdGenerator>(),
+        gh<_i790.AppLogger>(),
+      ),
     );
     gh.lazySingleton<_i586.MediaStorageService>(
       () => registerModule.mediaStorageService(
@@ -227,6 +273,13 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i665.DatabaseTransactionRunner>(
       () => _i665.DatabaseTransactionRunner(gh<_i177.AppDatabase>()),
+    );
+    gh.lazySingleton<_i125.DataHealthService>(
+      () => _i125.DataHealthService(
+        gh<_i177.AppDatabase>(),
+        gh<_i586.MediaStorageService>(),
+        gh<_i656.IdGenerator>(),
+      ),
     );
     gh.lazySingleton<_i263.AppLockCubit>(
       () => _i263.AppLockCubit(
@@ -246,6 +299,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i925.FlutterLocalNotificationsAdapter(
         gh<_i837.NotificationSettingsRepository>(),
       ),
+    );
+    gh.lazySingleton<_i339.GuidePreferencesRepository>(
+      () => _i97.SharedPrefsGuideRepository(gh<_i460.SharedPreferences>()),
     );
     gh.lazySingleton<_i934.DatabaseInitializer>(
       () => _i934.DatabaseInitializer(
@@ -287,6 +343,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i586.MediaStorageService>(),
       ),
     );
+    gh.factory<_i478.DataHealthCubit>(
+      () => _i478.DataHealthCubit(gh<_i125.DataHealthService>()),
+    );
     gh.factory<_i548.LotListCubit>(
       () => _i548.LotListCubit(gh<_i932.LotRepository>()),
     );
@@ -308,6 +367,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i177.AppDatabase>(),
         gh<_i665.DatabaseTransactionRunner>(),
         gh<_i656.IdGenerator>(),
+      ),
+    );
+    gh.lazySingleton<_i1048.GuideCubit>(
+      () => _i1048.GuideCubit(
+        gh<_i339.GuidePreferencesRepository>(),
+        gh<_i398.GuideVoiceService>(),
       ),
     );
     gh.lazySingleton<_i995.ProductionHistoryRepository>(
@@ -370,8 +435,8 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i307.RateRepository>(),
       ),
     );
-    gh.factory<_i249.WorkerListCubit>(
-      () => _i249.WorkerListCubit(gh<_i291.WorkerRepository>()),
+    gh.factory<_i250.WorkerListCubit>(
+      () => _i250.WorkerListCubit(gh<_i291.WorkerRepository>()),
     );
     gh.factory<_i971.StockMovementsCubit>(
       () => _i971.StockMovementsCubit(gh<_i306.StockMovementRepository>()),

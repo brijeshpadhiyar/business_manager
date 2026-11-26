@@ -146,6 +146,25 @@ final class NativeMediaStorageService implements MediaStorageService {
       );
     }
   }
+
+  @override
+  Future<List<String>> listAllRelativePaths() async {
+    try {
+      final root = await _resolveMediaRoot();
+      if (!root.existsSync()) return const [];
+      final results = <String>[];
+      await for (final entity in root.list(recursive: true, followLinks: false)) {
+        if (entity is File) {
+          final rel = p.relative(entity.path, from: root.path);
+          results.add(p.posix.normalize(rel.replaceAll('\\', '/')));
+        }
+      }
+      results.sort();
+      return results;
+    } catch (_) {
+      return const [];
+    }
+  }
 }
 
 MediaStorageService createPlatformMediaStorageService(

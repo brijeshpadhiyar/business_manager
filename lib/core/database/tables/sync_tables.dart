@@ -14,6 +14,8 @@ class SyncSessionStates extends Table {
   TextColumn get deviceId => text()();
   TextColumn get boundUserId => text().nullable()();
   TextColumn get boundBusinessId => text().nullable()();
+  TextColumn get activeRole => text().withDefault(const Constant('OWNER'))();
+  TextColumn get activeBusinessName => text().nullable()();
   IntColumn get lastFullSyncAt => integer().nullable()();
   IntColumn get updatedAt => integer()();
 
@@ -97,5 +99,31 @@ class SyncMediaQueues extends Table {
     "CHECK(direction IN ('UPLOAD', 'DOWNLOAD'))",
     "CHECK(status IN ('PENDING', 'DONE', 'FAILED'))",
     'CHECK(retry_count >= 0)',
+  ];
+}
+
+/// 2.28 `cached_team_members` — Local-only offline cache of workspace team
+/// members and roles synced from Supabase `business_members` (Schema v11).
+@DataClassName('CachedTeamMemberRow')
+class CachedTeamMembers extends Table {
+  @override
+  String get tableName => 'cached_team_members';
+
+  TextColumn get userId => text()();
+  TextColumn get businessId => text()();
+  TextColumn get role => text().withDefault(const Constant('OWNER'))();
+  TextColumn get status => text().withDefault(const Constant('ACTIVE'))();
+  TextColumn get displayName => text().nullable()();
+  TextColumn get email => text().nullable()();
+  TextColumn get phone => text().nullable()();
+  IntColumn get updatedAt => integer()();
+
+  @override
+  Set<Column<Object>> get primaryKey => {businessId, userId};
+
+  @override
+  List<String> get customConstraints => const [
+    "CHECK(role IN ('OWNER', 'MANAGER', 'QC_INSPECTOR', 'ACCOUNTANT'))",
+    "CHECK(status IN ('ACTIVE', 'REVOKED'))",
   ];
 }

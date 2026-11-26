@@ -6,6 +6,8 @@ import 'package:business_manager/core/utils/app_date_time_formatter.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
+import 'package:business_manager/features/guidance/domain/entities/guide_entities.dart';
+import 'package:business_manager/features/guidance/presentation/registry/guide_target_registry.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:business_manager/features/production_history/domain/entities/production_history_entities.dart';
 import 'package:business_manager/features/production_history/presentation/bloc/worker_production_history_cubit.dart';
@@ -178,41 +180,50 @@ final class _WorkerDetailView extends StatelessWidget {
                       spacing: AppSpacing.sm,
                       runSpacing: AppSpacing.sm,
                       children: [
-                        AppButton(
-                          label: l10n.workerManageAssignmentsAction,
-                          icon: AppIcons.link,
-                          onPressed: () async {
-                            await context.push(
-                              RoutePaths.workerAssignments(worker.id),
-                            );
-                            if (context.mounted) {
-                              await context
-                                  .read<WorkerDetailCubit>()
-                                  .loadWorker(worker.id);
-                            }
-                          },
+                        GuideTarget(
+                          id: GuideTargetId.workerDetailAssignments,
+                          child: AppButton(
+                            label: l10n.workerManageAssignmentsAction,
+                            icon: AppIcons.link,
+                            onPressed: () async {
+                              await context.push(
+                                RoutePaths.workerAssignments(worker.id),
+                              );
+                              if (context.mounted) {
+                                await context
+                                    .read<WorkerDetailCubit>()
+                                    .loadWorker(worker.id);
+                              }
+                            },
+                          ),
                         ),
-                        AppButton(
-                          label: l10n.workerViewRateHistoryAction,
-                          icon: AppIcons.pieceRate,
-                          variant: AppButtonVariant.secondary,
-                          onPressed: () async {
-                            await context.push(
-                              RoutePaths.workerRates(worker.id),
-                            );
-                            if (context.mounted) {
-                              await context
-                                  .read<WorkerDetailCubit>()
-                                  .loadWorker(worker.id);
-                            }
-                          },
+                        GuideTarget(
+                          id: GuideTargetId.workerDetailRates,
+                          child: AppButton(
+                            label: l10n.workerViewRateHistoryAction,
+                            icon: AppIcons.pieceRate,
+                            variant: AppButtonVariant.secondary,
+                            onPressed: () async {
+                              await context.push(
+                                RoutePaths.workerRates(worker.id),
+                              );
+                              if (context.mounted) {
+                                await context
+                                    .read<WorkerDetailCubit>()
+                                    .loadWorker(worker.id);
+                              }
+                            },
+                          ),
                         ),
-                        AppButton(
-                          label: l10n.accountingOpenLedgerAction,
-                          icon: AppIcons.accounting,
-                          variant: AppButtonVariant.secondary,
-                          onPressed: () =>
-                              context.push(RoutePaths.workerLedger(worker.id)),
+                        GuideTarget(
+                          id: GuideTargetId.workerDetailLedger,
+                          child: AppButton(
+                            label: l10n.accountingOpenLedgerAction,
+                            icon: AppIcons.accounting,
+                            variant: AppButtonVariant.secondary,
+                            onPressed: () =>
+                                context.push(RoutePaths.workerLedger(worker.id)),
+                          ),
                         ),
                         AppButton(
                           label: l10n.accountingRecordPaymentAction,

@@ -1,3 +1,4 @@
+import 'package:business_manager/features/auth/domain/services/rbac_policy.dart';
 import 'package:flutter/foundation.dart';
 
 /// Supported authentication providers in StitchFlow v1.5.
@@ -40,6 +41,7 @@ final class AuthUser {
   const AuthUser({
     required this.id,
     required this.businessId,
+    this.role = BusinessRole.owner,
     this.displayName,
     this.email,
     this.phone,
@@ -48,6 +50,7 @@ final class AuthUser {
 
   final String id;
   final String businessId;
+  final BusinessRole role;
   final String? displayName;
   final String? email;
   final String? phone;
@@ -73,6 +76,7 @@ final class AuthUser {
   AuthUser copyWith({
     String? id,
     String? businessId,
+    BusinessRole? role,
     String? displayName,
     String? email,
     String? phone,
@@ -81,6 +85,7 @@ final class AuthUser {
     return AuthUser(
       id: id ?? this.id,
       businessId: businessId ?? this.businessId,
+      role: role ?? this.role,
       displayName: displayName ?? this.displayName,
       email: email ?? this.email,
       phone: phone ?? this.phone,
@@ -91,6 +96,7 @@ final class AuthUser {
   Map<String, Object?> toJson() => {
     'id': id,
     'businessId': businessId,
+    'role': role.dbValue,
     'displayName': displayName,
     'email': email,
     'phone': phone,
@@ -102,6 +108,7 @@ final class AuthUser {
     return AuthUser(
       id: json['id'] as String,
       businessId: json['businessId'] as String,
+      role: BusinessRole.fromDbValue(json['role'] as String?),
       displayName: json['displayName'] as String?,
       email: json['email'] as String?,
       phone: json['phone'] as String?,

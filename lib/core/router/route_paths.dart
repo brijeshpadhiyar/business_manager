@@ -66,6 +66,9 @@ abstract final class RoutePaths {
   static const String authLogin = '/auth/login';
   static const String settingsAccount = '/settings/account';
   static const String settingsSync = '/settings/sync';
+  static const String settingsDataHealth = '/settings/data-health';
+  static const String settingsTeam = '/settings/team';
+  static const String settingsSyncConflicts = '/settings/sync/conflicts';
 
   // V1.2 — Daily Production Summary
   static const String dailySummary = '/daily-summary';

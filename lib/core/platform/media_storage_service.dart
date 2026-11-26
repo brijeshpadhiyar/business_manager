@@ -49,6 +49,11 @@ abstract interface class MediaStorageService {
 
   Future<bool> deleteIfExists(String relativePath);
 
+  /// Lists all POSIX-normalized relative file paths currently stored inside the
+  /// private flavor media root (returns empty list on platforms without local
+  /// filesystem storage such as Web).
+  Future<List<String>> listAllRelativePaths();
+
   /// Computes SHA-256 checksum hex for any byte payload.
   String computeSha256(Uint8List bytes);
 }

@@ -340,6 +340,15 @@ final class AppSurfaceTokens extends ThemeExtension<AppSurfaceTokens> {
   final Color orbSecondary;
   final Color orbAccent;
 
+  // Clean Indigo Thread semantic aliases (retiring legacy "glass" terminology)
+  Color get surfaceFill => glassFill;
+  Color get surfaceFillStrong => glassFillStrong;
+  Color get surfaceBorder => glassBorder;
+  Color get navBarFill => navGlassFill;
+  Color get navBarBorder => navGlassBorder;
+  Color get inputFill => inputGlassFill;
+  Color get dialogFill => dialogGlassFill;
+
   /// Surface gradient (flat in v1.4: highlight stops equal the fill).
   LinearGradient get glassGradient => LinearGradient(
     begin: Alignment.topLeft,
