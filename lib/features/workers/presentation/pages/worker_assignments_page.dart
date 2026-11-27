@@ -138,9 +138,23 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
       final err = await context
           .read<WorkerAssignmentsCubit>()
           .deactivateAssignment(assignment.processId);
-      if (err != null && mounted) {
+      if (!mounted) return;
+      if (err != null) {
         setState(() => _actionError = _mapError(this.context, err));
+        return;
       }
+      // Removing is reversible: offer a quick undo instead of making the
+      // user find the Reactivate button further down.
+      final l10n = this.context.l10n;
+      AppFeedback.showSuccess(
+        this.context,
+        l10n.assignmentsRemovedToast(assignment.processName),
+        duration: const Duration(seconds: 6),
+        actionLabel: l10n.uxUndo,
+        onAction: () {
+          if (mounted) _reactivate(this.context, assignment.processId);
+        },
+      );
     }
   }
 
@@ -217,7 +231,8 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
                         variant: AppTextVariant.bodySmall,
                       )
                     else ...[
-                      AppDropdown<ProcessEntity>(
+                      AppSelect<ProcessEntity>(
+                        compareFn: (a, b) => a.id == b.id,
                         key: ValueKey(
                           'assign_${availableProcesses.map((e) => e.id).join(',')}',
                         ),
@@ -233,8 +248,14 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
                       const SizedBox(height: AppSpacing.md),
                       AppTextField(
                         controller: _customRateCtrl,
-                        validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeAmountValidator(v, isRequired: false)),
-                        label: 'Custom Worker Rate (₹ / pc, optional)',
+                        validator: ValidationLocalizer.wrap(
+                          context.l10n,
+                          (v) => AppValidators.nonNegativeAmountValidator(
+                            v,
+                            isRequired: false,
+                          ),
+                        ),
+                        label: l10n.workerCustomRateLabel,
                         hint:
                             (selectedProc != null &&
                                 selectedProc.defaultRatePaise > 0)
@@ -244,9 +265,7 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
                         keyboardType: const TextInputType.numberWithOptions(
                           decimal: true,
                         ),
-                        inputFormatters: [
-                          AppInputFormatters.currencyDecimal,
-                        ],
+                        inputFormatters: [AppInputFormatters.currencyDecimal],
                       ),
                       const SizedBox(height: AppSpacing.md),
                       AppButton(
@@ -325,10 +344,11 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
               if (state.inactiveAssignments.isNotEmpty) ...[
                 const SizedBox(height: AppSpacing.lg),
                 AppHeading(
-                  'Deactivated Assignments (${state.inactiveAssignments.length})',
+                  l10n.assignmentsDeactivatedHeading(
+                    state.inactiveAssignments.length,
+                  ),
                   level: AppHeadingLevel.h3,
-                  subtitle:
-                      'Historical labour transactions & rates remain preserved.',
+                  subtitle: l10n.assignmentsHistoryPreservedNote,
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 ...state.inactiveAssignments.map(
@@ -357,7 +377,7 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
                           ),
                           if (worker.isActive && a.processIsActive)
                             AppButton(
-                              label: 'Reactivate',
+                              label: l10n.assignmentsReactivateAction,
                               icon: AppIcons.resume,
                               variant: AppButtonVariant.outlined,
                               onPressed: _isAssigning

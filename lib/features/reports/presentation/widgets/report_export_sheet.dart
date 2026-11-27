@@ -185,7 +185,7 @@ final class _ExportOptionTile extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AppText(title, fontWeight: FontWeight.w700),
-                const SizedBox(height: 2),
+                const SizedBox(height: AppSpacing.xxs),
                 AppText(subtitle, variant: AppTextVariant.bodySmall),
               ],
             ),

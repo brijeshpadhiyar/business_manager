@@ -27,7 +27,7 @@ import 'package:drift/drift.dart';
 
 part 'app_database.g.dart';
 
-/// Root offline-first Drift SQLite database (Schema v10: 27 tables, 12 DAOs).
+/// Root offline-first Drift SQLite database (Schema v11: 28 tables, 12 DAOs).
 @DriftDatabase(
   tables: [
     BusinessProfiles,

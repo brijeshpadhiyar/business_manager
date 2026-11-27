@@ -235,7 +235,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
       if (!mounted) return;
       setState(() {
         _loading = false;
-        _loadError = e.toString();
+        _loadError = ValidationLocalizer.describeError(context.l10n, e);
       });
     }
   }
@@ -423,7 +423,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
       if (!mounted) return;
       setState(() {
         _saving = false;
-        _submitError = e.toString();
+        _submitError = ValidationLocalizer.describeError(context.l10n, e);
       });
     }
   }
@@ -681,11 +681,10 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                 for (final id in _recentSuggestions.inStockDesignColourIds)
                   for (final b in _allBalances)
                     if (b.designColourId == id)
-                      ActionChip(
-                        avatar: const Icon(AppIcons.productionHistory, size: 16),
-                        label: Text(
-                          '${b.lotNumber} • ${b.colourName} (${b.physicalAvailableInHouse})',
-                        ),
+                      AppChip.action(
+                        icon: AppIcons.productionHistory,
+                        label:
+                            '${b.lotNumber} • ${b.colourName} (${b.physicalAvailableInHouse})',
                         onPressed: () => _selectStock(b),
                       ),
               ],
@@ -702,8 +701,8 @@ final class _StockIssuePageState extends State<StockIssuePage> {
           Wrap(
             spacing: AppSpacing.sm,
             children: [
-              FilterChip(
-                label: Text(l10n.stockOnlyAvailableFilter),
+              AppChip.filter(
+                label: l10n.stockOnlyAvailableFilter,
                 selected: _onlyInStock,
                 onSelected: (v) => setState(() => _onlyInStock = v),
               ),
@@ -749,7 +748,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                             '${b.lotNumber} • ${b.designName}',
                             fontWeight: FontWeight.w700,
                           ),
-                          const SizedBox(height: 2),
+                          const SizedBox(height: AppSpacing.xxs),
                           AppText(
                             b.colourName,
                             variant: AppTextVariant.bodySmall,
@@ -814,9 +813,9 @@ final class _StockIssuePageState extends State<StockIssuePage> {
               runSpacing: AppSpacing.xs,
               children: [
                 for (final pair in _recentSuggestions.workPairs)
-                  ActionChip(
-                    avatar: const Icon(AppIcons.quick, size: 16),
-                    label: Text('${pair.processName} • ${pair.workerName}'),
+                  AppChip.action(
+                    icon: AppIcons.quick,
+                    label: '${pair.processName} • ${pair.workerName}',
                     onPressed: () async {
                       setState(() => _selectedProcessId = pair.processId);
                       await _loadWorkersForProcess(
@@ -847,8 +846,8 @@ final class _StockIssuePageState extends State<StockIssuePage> {
               runSpacing: AppSpacing.xs,
               children: [
                 for (final proc in _activeProcesses)
-                  ChoiceChip(
-                    label: Text(proc.name),
+                  AppChip(
+                    label: proc.name,
                     selected: _selectedProcessId == proc.id,
                     onSelected: (_) {
                       _dirty.markDirty();
@@ -877,8 +876,8 @@ final class _StockIssuePageState extends State<StockIssuePage> {
               runSpacing: AppSpacing.xs,
               children: [
                 for (final w in _eligibleWorkers)
-                  ChoiceChip(
-                    label: Text(w.workerName),
+                  AppChip(
+                    label: w.workerName,
                     selected: _selectedWorkerId == w.workerId,
                     onSelected: (_) {
                       _dirty.markDirty();
@@ -1012,8 +1011,8 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                   variant: AppTextVariant.numeric,
                   fontWeight: FontWeight.w700,
                 ),
-                const AppStatusBadge(
-                  label: 'Worker Rate',
+                AppStatusBadge(
+                  label: context.l10n.workerRateLabel,
                   tone: AppStatusTone.good,
                 ),
               ],
@@ -1044,14 +1043,20 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                     variant: AppTextVariant.numeric,
                     fontWeight: FontWeight.w700,
                   ),
-                  const AppStatusBadge(
-                    label: 'Process Default',
+                  AppStatusBadge(
+                    label: context.l10n.stockStageDefaultBadge,
                     tone: AppStatusTone.info,
                   ),
                 ],
               ),
               AppText(
-                'Inherited from $processName (${MoneyFormatter.formatRatePaise(rawDefaultRatePaise, pricingUnit: pricingUnit)})',
+                context.l10n.stockInheritedFrom(
+                  processName,
+                  MoneyFormatter.formatRatePaise(
+                    rawDefaultRatePaise,
+                    pricingUnit: pricingUnit,
+                  ),
+                ),
                 variant: AppTextVariant.bodySmall,
                 color: colorScheme.onSurfaceVariant,
               ),
@@ -1081,11 +1086,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
             const SizedBox(height: AppSpacing.xs),
           Row(
             children: [
-              Icon(
-                AppIcons.lock,
-                size: 16,
-                color: colorScheme.secondary,
-              ),
+              Icon(AppIcons.lock, size: 16, color: colorScheme.secondary),
               const SizedBox(width: AppSpacing.xs),
               Expanded(
                 child: AppText(
@@ -1148,8 +1149,8 @@ final class _StockIssuePageState extends State<StockIssuePage> {
             textInputAction: TextInputAction.done,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             style: AppTypography.tabular(
-              Theme.of(context).textTheme.headlineSmall!
-                  .copyWith(fontSize: 24, fontWeight: FontWeight.w700),
+              Theme.of(context).textTheme.headlineLarge!
+                  .copyWith(fontWeight: FontWeight.w700),
             ),
             errorText: qtyExceeds ? l10n.stockInsufficientGoodError : null,
             onChanged: (_) => setState(() => _submitError = null),
@@ -1174,23 +1175,23 @@ final class _StockIssuePageState extends State<StockIssuePage> {
               runSpacing: AppSpacing.xs,
               children: [
                 if (available >= 10)
-                  ActionChip(
-                    label: const Text('+10'),
+                  AppChip.action(
+                    label: '+10',
                     onPressed: () => _addQuickQty(10, available),
                   ),
                 if (available >= 25)
-                  ActionChip(
-                    label: const Text('+25'),
+                  AppChip.action(
+                    label: '+25',
                     onPressed: () => _addQuickQty(25, available),
                   ),
                 if (available >= 50)
-                  ActionChip(
-                    label: const Text('+50'),
+                  AppChip.action(
+                    label: '+50',
                     onPressed: () => _addQuickQty(50, available),
                   ),
-                ActionChip(
-                  avatar: const Icon(AppIcons.doneAll, size: 16),
-                  label: Text('${l10n.stockQuickAllAvailable} ($available)'),
+                AppChip.action(
+                  icon: AppIcons.doneAll,
+                  label: '${l10n.stockQuickAllAvailable} ($available)',
                   onPressed: () => _setExactQty(available),
                 ),
               ],
@@ -1278,7 +1279,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
           if (expectedLabourPaise != null) ...[
             const Padding(
               padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
-              child: Divider(),
+              child: AppDivider(),
             ),
             _SummaryRow(
               label: l10n.stockExpectedLabourLabel,
@@ -1286,7 +1287,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
               isNumeric: true,
               highlight: true,
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: AppSpacing.xxs),
             AppText(
               _effectiveBillingMode == BillingMode.givenQty
                   ? l10n.stockPayableOnIssueNote
@@ -1351,7 +1352,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
                 const SizedBox(height: AppSpacing.lg),
-                const Divider(),
+                const AppDivider(),
                 const SizedBox(height: AppSpacing.sm),
                 _SummaryRow(
                   label: l10n.lotLabelShort,
@@ -1385,10 +1386,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                   borderColor: semantic.goodStock.withValues(alpha: 0.35),
                   child: Row(
                     children: [
-                      Icon(
-                        AppIcons.lot,
-                        color: semantic.goodStock,
-                      ),
+                      Icon(AppIcons.lot, color: semantic.goodStock),
                       const SizedBox(width: AppSpacing.sm),
                       Expanded(
                         child: AppText(

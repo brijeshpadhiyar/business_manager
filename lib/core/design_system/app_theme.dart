@@ -53,7 +53,7 @@ abstract final class AppTheme {
             tertiary: AppColors.saffron400,
             onTertiary: AppColors.saffron900,
             error: AppColors.darkDamaged,
-            onError: const Color(0xFF450A0A),
+            onError: AppColors.darkOnError,
             errorContainer: AppColors.darkDamagedContainer,
             onErrorContainer: AppColors.lightDamagedContainer,
             surface: AppColors.darkSurface,
@@ -177,7 +177,7 @@ abstract final class AppTheme {
         ),
       ),
       navigationBarTheme: NavigationBarThemeData(
-        height: 70,
+        height: AppSizing.navBarHeight,
         backgroundColor: Colors.transparent,
         indicatorColor: colorScheme.primaryContainer,
         indicatorShape: const RoundedRectangleBorder(
@@ -219,7 +219,7 @@ abstract final class AppTheme {
         backgroundColor: surfaceTokens.glassFill,
         shape: const RoundedRectangleBorder(borderRadius: AppRadius.fullBorder),
         side: BorderSide(color: colorScheme.outlineVariant),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        padding: AppSpacing.chipPadding,
         selectedColor: colorScheme.primaryContainer,
         checkmarkColor: colorScheme.onPrimaryContainer,
         labelStyle: textTheme.labelMedium,
@@ -238,9 +238,7 @@ abstract final class AppTheme {
           side: WidgetStatePropertyAll(
             BorderSide(color: surfaceTokens.glassBorder),
           ),
-          padding: const WidgetStatePropertyAll(
-            EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-          ),
+          padding: const WidgetStatePropertyAll(AppSpacing.segmentPadding),
           textStyle: WidgetStatePropertyAll(textTheme.labelMedium),
         ),
       ),
@@ -248,8 +246,8 @@ abstract final class AppTheme {
         filled: true,
         fillColor: surfaceTokens.inputGlassFill,
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md + 2,
-          vertical: 14,
+          horizontal: AppSpacing.inputHorizontal,
+          vertical: AppSpacing.inputVertical,
         ),
         constraints: const BoxConstraints(minHeight: AppSizing.inputHeight),
         labelStyle: textTheme.bodyMedium?.copyWith(
@@ -289,7 +287,7 @@ abstract final class AppTheme {
           tapTargetSize: MaterialTapTargetSize.padded,
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.lg,
-            vertical: 10,
+            vertical: AppSpacing.buttonVertical,
           ),
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdBorder),
           textStyle: textTheme.labelLarge,
@@ -302,7 +300,7 @@ abstract final class AppTheme {
           backgroundColor: surfaceTokens.glassFill,
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.lg,
-            vertical: 10,
+            vertical: AppSpacing.buttonVertical,
           ),
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdBorder),
           side: BorderSide(color: colorScheme.outline),
@@ -315,7 +313,7 @@ abstract final class AppTheme {
           tapTargetSize: MaterialTapTargetSize.padded,
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.md,
-            vertical: 10,
+            vertical: AppSpacing.buttonVertical,
           ),
           shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdBorder),
           textStyle: textTheme.labelLarge,

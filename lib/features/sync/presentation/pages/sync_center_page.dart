@@ -43,7 +43,9 @@ final class SyncCenterPage extends StatelessWidget {
                   state.pendingMergeSummary!,
                 );
                 if (choice != null && context.mounted) {
-                  await context.read<SyncCubit>().resolveFirstLoginMerge(choice);
+                  await context.read<SyncCubit>().resolveFirstLoginMerge(
+                    choice,
+                  );
                 }
               }
             },
@@ -102,7 +104,8 @@ final class SyncCenterPage extends StatelessWidget {
                                   children: [
                                     AppText(
                                       switch (state.phase) {
-                                        SyncPhase.synced => l10n.syncStatusSynced,
+                                        SyncPhase.synced =>
+                                          l10n.syncStatusSynced,
                                         SyncPhase.syncing =>
                                           l10n.syncStatusSyncing,
                                         SyncPhase.offline =>
@@ -117,7 +120,7 @@ final class SyncCenterPage extends StatelessWidget {
                                       variant: AppTextVariant.bodyLarge,
                                       fontWeight: FontWeight.w600,
                                     ),
-                                    const SizedBox(height: 2),
+                                    const SizedBox(height: AppSpacing.xxs),
                                     AppText(
                                       '${l10n.syncLastSyncedLabel}: '
                                       '${state.lastSyncedAtUtcMillis != null ? IstDateTimeHelper.formatIstDateTime(state.lastSyncedAtUtcMillis!) : l10n.syncNeverSynced}',
@@ -129,7 +132,7 @@ final class SyncCenterPage extends StatelessWidget {
                               ),
                             ],
                           ),
-                          const Divider(height: AppSpacing.lg),
+                          const AppDivider(height: AppSpacing.lg),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -214,8 +217,13 @@ final class SyncCenterPage extends StatelessWidget {
                       AppCard(
                         child: Column(
                           children: [
-                            for (var i = 0; i < state.failedItems.length; i++) ...[
-                              if (i > 0) const Divider(height: AppSpacing.md),
+                            for (
+                              var i = 0;
+                              i < state.failedItems.length;
+                              i++
+                            ) ...[
+                              if (i > 0)
+                                const AppDivider(height: AppSpacing.md),
                               Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [

@@ -122,7 +122,10 @@ final class _WorkerDetailView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     AppActionRow(
-                      content: AppHeading(worker.name, level: AppHeadingLevel.h2),
+                      content: AppHeading(
+                        worker.name,
+                        level: AppHeadingLevel.h2,
+                      ),
                       actions: [
                         AppStatusBadge(
                           label: worker.isActive
@@ -221,8 +224,9 @@ final class _WorkerDetailView extends StatelessWidget {
                             label: l10n.accountingOpenLedgerAction,
                             icon: AppIcons.accounting,
                             variant: AppButtonVariant.secondary,
-                            onPressed: () =>
-                                context.push(RoutePaths.workerLedger(worker.id)),
+                            onPressed: () => context.push(
+                              RoutePaths.workerLedger(worker.id),
+                            ),
                           ),
                         ),
                         AppButton(
@@ -434,7 +438,7 @@ final class _WorkerDetailView extends StatelessWidget {
                                     },
                                   ),
                                   if (i < openIssues.take(3).length - 1)
-                                    const Divider(),
+                                    const AppDivider(),
                                 ],
                               ],
                             ),
@@ -468,7 +472,7 @@ final class _WorkerDetailView extends StatelessWidget {
                                         .take(3))
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
-                                      vertical: 4,
+                                      vertical: AppSpacing.xs,
                                     ),
                                     child: Row(
                                       children: [
@@ -682,12 +686,15 @@ final class _WorkerDetailView extends StatelessWidget {
                           runSpacing: 4,
                           children: [
                             AppStatusBadge(
-                              label: 'Lots: ${profile.totalLotsAssigned}',
+                              label: l10n.lotLotsValue(
+                                profile.totalLotsAssigned,
+                              ),
                               tone: AppStatusTone.info,
                             ),
                             AppStatusBadge(
-                              label:
-                                  'Completed: ${profile.totalProcessesCompleted}',
+                              label: l10n.lotCompletedValue(
+                                profile.totalProcessesCompleted,
+                              ),
                               tone: AppStatusTone.good,
                             ),
                             AppStatusBadge(
@@ -702,13 +709,16 @@ final class _WorkerDetailView extends StatelessWidget {
                             ),
                             if (profile.pendingInspectionQty > 0)
                               AppStatusBadge(
-                                label:
-                                    'Pending QC: ${profile.pendingInspectionQty}',
+                                label: l10n.lotPendingQcValue(
+                                  profile.pendingInspectionQty,
+                                ),
                                 tone: AppStatusTone.pending,
                               ),
                             if (profile.rejectedQty > 0)
                               AppStatusBadge(
-                                label: 'Rejected: ${profile.rejectedQty}',
+                                label: l10n.lotRejectedValue(
+                                  profile.rejectedQty,
+                                ),
                                 tone: AppStatusTone.damaged,
                               ),
                           ],
@@ -748,9 +758,21 @@ final class _WorkerDetailView extends StatelessWidget {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 4),
+                                  const SizedBox(height: AppSpacing.xs),
                                   AppText(
-                                    'Lots: ${ph.totalLots} • Earned: ${MoneyFormatter.formatPaise(ph.earnedAmountPaise)} • Pending Est: ${MoneyFormatter.formatPaise(ph.estimatedPendingPayablePaise)}',
+                                    [
+                                      l10n.lotLotsValue(ph.totalLots),
+                                      l10n.lotEarnedValue(
+                                        MoneyFormatter.formatPaise(
+                                          ph.earnedAmountPaise,
+                                        ),
+                                      ),
+                                      l10n.lotPendingEstimateValue(
+                                        MoneyFormatter.formatPaise(
+                                          ph.estimatedPendingPayablePaise,
+                                        ),
+                                      ),
+                                    ].join(' • '),
                                     variant: AppTextVariant.bodySmall,
                                   ),
                                 ],
@@ -802,7 +824,7 @@ final class _WorkerDetailView extends StatelessWidget {
                                     '${item.designName} • ${item.colourName} • ${AppDateTimeFormatter.formatDateTime(item.assignedAt, locale: localeCode)}',
                                     variant: AppTextVariant.bodySmall,
                                   ),
-                                  const SizedBox(height: 4),
+                                  const SizedBox(height: AppSpacing.xs),
                                   AppText(
                                     'Given: ${item.assignedQty} • Returned: ${item.returnedQty} • Acc: ${item.totalAcceptedQty} • Pending: ${item.outstandingQty} • Rej: ${item.netRejectedQty}',
                                     variant: AppTextVariant.bodySmall,

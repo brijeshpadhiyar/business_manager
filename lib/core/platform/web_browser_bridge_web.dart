@@ -49,11 +49,7 @@ extension type _JsWindow._(JSObject _) implements JSObject {
 }
 
 /// Triggers an immediate offline browser file download via an in-memory Blob.
-void downloadBytesInBrowser(
-  Uint8List bytes,
-  String fileName,
-  String mimeType,
-) {
+void downloadBytesInBrowser(Uint8List bytes, String fileName, String mimeType) {
   final blob = _JsBlob(
     <JSAny>[bytes.toJS].toJS,
     _JsBlobOptions(type: mimeType),

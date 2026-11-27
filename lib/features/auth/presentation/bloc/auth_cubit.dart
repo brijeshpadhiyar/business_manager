@@ -11,9 +11,7 @@ import 'package:injectable/injectable.dart';
 @lazySingleton
 final class AuthCubit extends Cubit<AuthState> {
   AuthCubit(this._authRepository, this._db)
-    : super(
-        AuthState(isCloudConfigured: _authRepository.isCloudConfigured),
-      );
+    : super(AuthState(isCloudConfigured: _authRepository.isCloudConfigured));
 
   final AuthRepository _authRepository;
   final AppDatabase _db;

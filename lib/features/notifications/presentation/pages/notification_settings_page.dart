@@ -40,13 +40,11 @@ final class _NotificationSettingsView extends StatelessWidget {
     required int initialMinute,
     required ValueChanged<({int hour, int minute})> onPicked,
   }) async {
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay(hour: initialHour, minute: initialMinute),
+    final picked = await AppDateTimeDialogs.pickTime(
+      context,
+      initial: (hour: initialHour, minute: initialMinute),
     );
-    if (picked != null) {
-      onPicked((hour: picked.hour, minute: picked.minute));
-    }
+    if (picked != null) onPicked(picked);
   }
 
   @override
@@ -185,14 +183,14 @@ final class _NotificationSettingsView extends StatelessWidget {
                           l10n.notificationsPendingDaysLabel,
                           variant: AppTextVariant.label,
                         ),
-                        const SizedBox(height: 6),
+                        const SizedBox(height: AppSpacing.xsm),
                         Wrap(
                           spacing: AppSpacing.xs,
                           runSpacing: AppSpacing.xs,
                           children: [
                             for (final d in const [1, 2, 3, 5, 7])
-                              ChoiceChip(
-                                label: Text('${d}d'),
+                              AppChip(
+                                label: '${d}d',
                                 selected: s.pendingWorkDaysThreshold == d,
                                 onSelected: (_) => cubit.updateSettings(
                                   s.copyWith(pendingWorkDaysThreshold: d),
@@ -244,7 +242,7 @@ final class _NotificationSettingsView extends StatelessWidget {
                           l10n.notificationsMinAmountLabel,
                           variant: AppTextVariant.label,
                         ),
-                        const SizedBox(height: 6),
+                        const SizedBox(height: AppSpacing.xsm),
                         Wrap(
                           spacing: AppSpacing.xs,
                           runSpacing: AppSpacing.xs,
@@ -255,8 +253,8 @@ final class _NotificationSettingsView extends StatelessWidget {
                               100000,
                               500000,
                             ])
-                              ChoiceChip(
-                                label: Text(MoneyFormatter.formatPaise(paise)),
+                              AppChip(
+                                label: MoneyFormatter.formatPaise(paise),
                                 selected: s.workerSettlementMinPaise == paise,
                                 onSelected: (_) => cubit.updateSettings(
                                   s.copyWith(workerSettlementMinPaise: paise),
@@ -354,14 +352,14 @@ final class _NotificationSettingsView extends StatelessWidget {
                           l10n.notificationsBackupIntervalLabel,
                           variant: AppTextVariant.label,
                         ),
-                        const SizedBox(height: 6),
+                        const SizedBox(height: AppSpacing.xsm),
                         Wrap(
                           spacing: AppSpacing.xs,
                           runSpacing: AppSpacing.xs,
                           children: [
                             for (final d in const [3, 7, 14, 30])
-                              ChoiceChip(
-                                label: Text('${d}d'),
+                              AppChip(
+                                label: '${d}d',
                                 selected: s.backupReminderIntervalDays == d,
                                 onSelected: (_) => cubit.updateSettings(
                                   s.copyWith(backupReminderIntervalDays: d),

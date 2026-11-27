@@ -1,11 +1,10 @@
+import 'package:business_manager/core/validation/validation_localizer.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
-import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
-import 'package:business_manager/features/business_profile/domain/repositories/business_profile_repository.dart';
 import 'package:business_manager/features/processes/domain/entities/process_entities.dart';
 import 'package:business_manager/features/processes/domain/repositories/process_repository.dart';
 import 'package:go_router/go_router.dart';
@@ -28,11 +27,9 @@ final class StockLabourSettingsPage extends StatefulWidget {
 
 final class _StockLabourSettingsPageState
     extends State<StockLabourSettingsPage> {
-  final _profileRepo = getIt<BusinessProfileRepository>();
   final _processRepo = getIt<ProcessRepository>();
 
   List<ProcessEntity> _processes = const [];
-  BillingMode _selectedBillingMode = BillingMode.receivedQty;
   bool _loading = true;
   String? _busyProcessId;
   String? _error;
@@ -51,15 +48,9 @@ final class _StockLabourSettingsPageState
       });
     }
     try {
-      final results = await Future.wait([
-        _profileRepo.getProfile(),
-        _processRepo.getProcesses(),
-      ]);
+      final processes = await _processRepo.getProcesses();
       if (!mounted) return;
-      final profile = results[0] as BusinessProfileEntity;
-      final processes = results[1] as List<ProcessEntity>;
       setState(() {
-        _selectedBillingMode = profile.defaultBillingMode;
         _processes = processes;
         _loading = false;
         _error = null;
@@ -68,17 +59,12 @@ final class _StockLabourSettingsPageState
       if (!mounted) return;
       setState(() {
         _loading = false;
-        _error = e.toString();
+        _error = ValidationLocalizer.describeError(context.l10n, e);
       });
     }
   }
 
-  Future<void> _openCreateProcess() async {
-    await context.push<bool>(RoutePaths.processCreate);
-    if (mounted) {
-      await _load(showSkeleton: false);
-    }
-  }
+  void _openWorkStages() => context.go(RoutePaths.processes);
 
   Future<void> _openEditProcess(ProcessEntity proc) async {
     await context.push<bool>(RoutePaths.processEdit(proc.id));
@@ -180,16 +166,6 @@ final class _StockLabourSettingsPageState
     return AppScaffold(
       title: l10n.settingsStockLabourTitle,
       contentWidth: AppContentWidth.narrow,
-      actions: [
-        Padding(
-          padding: const EdgeInsets.only(right: AppSpacing.xs),
-          child: AppIconButton(
-            icon: AppIcons.add,
-            tooltip: l10n.processCreateAction,
-            onPressed: _openCreateProcess,
-          ),
-        ),
-      ],
       body: ListView(
         children: [
           AppCard(
@@ -218,36 +194,6 @@ final class _StockLabourSettingsPageState
               ],
             ),
           ),
-          const SizedBox(height: AppSpacing.md),
-          AppCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppHeading(
-                  '${l10n.settingsGlobalBillingSectionTitle} (Legacy — Read Only)',
-                  level: AppHeadingLevel.h3,
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                AppRadio<BillingMode>(
-                  groupValue: _selectedBillingMode,
-                  enabled: false,
-                  onChanged: (_) {},
-                  options: [
-                    AppRadioOption(
-                      value: BillingMode.receivedQty,
-                      label: l10n.billingModeReceivedQty,
-                      subtitle: l10n.settingsGlobalBillingExplanationReceived,
-                    ),
-                    AppRadioOption(
-                      value: BillingMode.givenQty,
-                      label: '${l10n.billingModeGivenQty} (Retired for earnings)',
-                      subtitle: l10n.settingsGlobalBillingExplanationGiven,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
           const SizedBox(height: AppSpacing.lg),
           Wrap(
             spacing: AppSpacing.sm,
@@ -262,9 +208,10 @@ final class _StockLabourSettingsPageState
                     '${l10n.settingsProcessOverridesSubtitle} ($activeCount ${l10n.statusActive})',
               ),
               AppButton(
-                label: l10n.processCreateAction,
-                icon: AppIcons.add,
-                onPressed: _openCreateProcess,
+                label: l10n.settingsManageWorkStagesAction,
+                icon: AppIcons.process,
+                variant: AppButtonVariant.outlined,
+                onPressed: _openWorkStages,
               ),
             ],
           ),
@@ -281,10 +228,10 @@ final class _StockLabourSettingsPageState
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   AppButton(
-                    label: l10n.processCreateAction,
-                    icon: AppIcons.add,
+                    label: l10n.settingsManageWorkStagesAction,
+                    icon: AppIcons.process,
                     variant: AppButtonVariant.outlined,
-                    onPressed: _openCreateProcess,
+                    onPressed: _openWorkStages,
                   ),
                 ],
               ),
@@ -299,32 +246,37 @@ final class _StockLabourSettingsPageState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      AppActionRow(content: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                AppText(
-                                  proc.name,
-                                  variant: AppTextVariant.bodyLarge,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                                if (proc.description != null &&
-                                    proc.description!.trim().isNotEmpty)
-                                  AppText(
-                                    proc.description!,
-                                    variant: AppTextVariant.bodySmall,
-                                    color: colorScheme.onSurfaceVariant,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                              ],
-                            ), actions: [AppStatusBadge(
+                      AppActionRow(
+                        content: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppText(
+                              proc.name,
+                              variant: AppTextVariant.bodyLarge,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            if (proc.description != null &&
+                                proc.description!.trim().isNotEmpty)
+                              AppText(
+                                proc.description!,
+                                variant: AppTextVariant.bodySmall,
+                                color: colorScheme.onSurfaceVariant,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                          ],
+                        ),
+                        actions: [
+                          AppStatusBadge(
                             label: proc.isActive
                                 ? l10n.statusActive
                                 : l10n.statusInactive,
                             tone: proc.isActive
                                 ? AppStatusTone.good
                                 : AppStatusTone.neutral,
-                          ),],),
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: AppSpacing.sm),
                       Wrap(
                         spacing: AppSpacing.xs,

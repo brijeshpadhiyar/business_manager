@@ -151,7 +151,7 @@ final class _WorkerFormPageState extends State<WorkerFormPage> {
       if (!mounted) return;
       setState(() {
         _isLoading = false;
-        _loadError = e.toString();
+        _loadError = ValidationLocalizer.describeError(context.l10n, e);
       });
     }
   }
@@ -278,7 +278,7 @@ final class _WorkerFormPageState extends State<WorkerFormPage> {
       if (!mounted) return;
       setState(() {
         _isSaving = false;
-        _submitError = e.toString();
+        _submitError = ValidationLocalizer.describeError(context.l10n, e);
       });
     }
   }
@@ -550,7 +550,7 @@ final class _WorkerFormPageState extends State<WorkerFormPage> {
               },
               child: Row(
                 children: [
-                  Checkbox(
+                  AppCheckbox.bare(
                     value: isSelected,
                     onChanged: (checked) {
                       _dirty.markDirty();
@@ -603,10 +603,21 @@ final class _WorkerFormPageState extends State<WorkerFormPage> {
               const SizedBox(height: AppSpacing.sm),
               AppTextField(
                 controller: rateCtrl,
-                validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeAmountValidator(v, isRequired: false)),
-                label: 'Custom Worker Rate (₹ / pc, optional)',
+                validator: ValidationLocalizer.wrap(
+                  context.l10n,
+                  (v) => AppValidators.nonNegativeAmountValidator(
+                    v,
+                    isRequired: false,
+                  ),
+                ),
+                label: context.l10n.workerCustomRateLabel,
                 hint: proc.defaultRatePaise > 0
-                    ? 'Leave blank to inherit ${MoneyFormatter.formatRatePaise(proc.defaultRatePaise, pricingUnit: proc.defaultPricingUnit)}'
+                    ? context.l10n.workerRateInheritHint(
+                        MoneyFormatter.formatRatePaise(
+                          proc.defaultRatePaise,
+                          pricingUnit: proc.defaultPricingUnit,
+                        ),
+                      )
                     : 'e.g. 25.00',
                 prefixIcon: AppIcons.rupee,
                 keyboardType: const TextInputType.numberWithOptions(

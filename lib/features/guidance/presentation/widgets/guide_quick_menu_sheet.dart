@@ -110,27 +110,20 @@ final class _GuideQuickMenuBody extends StatelessWidget {
               spacing: AppSpacing.xs,
               runSpacing: AppSpacing.xs,
               children: [
-                FilterChip(
-                  avatar: Icon(
-                    state.progress.voiceEnabled
-                        ? AppIcons.voiceOn
-                        : AppIcons.voiceOff,
-                    size: 16,
-                  ),
-                  label: Text(
-                    state.progress.voiceEnabled
-                        ? l10n.guideVoiceOn
-                        : l10n.guideVoiceOff,
-                  ),
+                AppChip.filter(
+                  icon: state.progress.voiceEnabled
+                      ? AppIcons.voiceOn
+                      : AppIcons.voiceOff,
+                  label: state.progress.voiceEnabled
+                      ? l10n.guideVoiceOn
+                      : l10n.guideVoiceOff,
                   selected: state.progress.voiceEnabled,
                   onSelected: (_) =>
                       cubit.toggleVoice(currentLocaleCode: localeCode),
                 ),
-                ActionChip(
-                  avatar: const Icon(AppIcons.speed, size: 16),
-                  label: Text(
-                    _speedLabel(context, state.progress.speechRate),
-                  ),
+                AppChip.action(
+                  icon: AppIcons.speed,
+                  label: _speedLabel(context, state.progress.speechRate),
                   onPressed: () =>
                       cubit.cycleSpeechRate(currentLocaleCode: localeCode),
                 ),
@@ -187,7 +180,7 @@ final class _MenuActionCard extends StatelessWidget {
                   variant: AppTextVariant.bodyLarge,
                   fontWeight: FontWeight.w700,
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: AppSpacing.xxs),
                 AppText(
                   subtitle,
                   variant: AppTextVariant.bodySmall,

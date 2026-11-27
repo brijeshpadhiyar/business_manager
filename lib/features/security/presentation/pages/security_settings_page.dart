@@ -182,16 +182,14 @@ final class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
                       height: 48,
                       decoration: BoxDecoration(
                         color: enabled
-                            ? Colors.white.withValues(alpha: 0.16)
+                            ? AppColors.onHero.withValues(alpha: 0.16)
                             : colorScheme.surfaceContainerHighest,
                         borderRadius: AppRadius.mdBorder,
                       ),
                       child: Icon(
-                        enabled
-                            ? AppIcons.security
-                            : AppIcons.unlock,
+                        enabled ? AppIcons.security : AppIcons.unlock,
                         color: enabled
-                            ? Colors.white
+                            ? AppColors.onHero
                             : colorScheme.onSurfaceVariant,
                         size: 26,
                       ),
@@ -208,10 +206,10 @@ final class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
                             style: Theme.of(context).textTheme.titleMedium
                                 ?.copyWith(
                                   fontWeight: FontWeight.w700,
-                                  color: enabled ? Colors.white : null,
+                                  color: enabled ? AppColors.onHero : null,
                                 ),
                           ),
-                          const SizedBox(height: 2),
+                          const SizedBox(height: AppSpacing.xxs),
                           Text(
                             enabled
                                 ? l10n.securityStatusProtectedDesc(
@@ -222,7 +220,7 @@ final class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
                             style: Theme.of(context).textTheme.bodySmall
                                 ?.copyWith(
                                   color: enabled
-                                      ? Colors.white.withValues(alpha: 0.88)
+                                      ? AppColors.onHeroMuted
                                       : colorScheme.onSurfaceVariant,
                                 ),
                           ),
@@ -314,7 +312,7 @@ final class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
                                   .setBiometricEnabled(v)
                             : null,
                       ),
-                      const Divider(),
+                      const AppDivider(),
                       AppSwitch(
                         label: l10n.securityScreenshotProtectionLabel,
                         subtitle: l10n.securityScreenshotProtectionSubtitle,
@@ -323,7 +321,7 @@ final class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
                             .read<AppLockCubit>()
                             .setScreenshotProtectionEnabled(v),
                       ),
-                      const Divider(),
+                      const AppDivider(),
                       AppSwitch(
                         label: l10n.securityRequireApprovalAuthLabel,
                         subtitle: l10n.securityRequireApprovalAuthSubtitle,
@@ -353,8 +351,8 @@ final class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
                         runSpacing: AppSpacing.xs,
                         children: [
                           for (final opt in LockTimeoutOption.values)
-                            ChoiceChip(
-                              label: Text(_timeoutLabel(context, opt)),
+                            AppChip(
+                              label: _timeoutLabel(context, opt),
                               selected: settings.timeout == opt,
                               onSelected: (_) =>
                                   context.read<AppLockCubit>().setTimeout(opt),

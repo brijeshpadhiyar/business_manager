@@ -1,6 +1,8 @@
+import 'package:business_manager/core/config/app_config.dart';
 import 'package:business_manager/core/design_system/app_icons.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
+import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
@@ -30,6 +32,12 @@ final class _LoginPageState extends State<LoginPage> {
     _otpCtrl.dispose();
     super.dispose();
   }
+
+  /// Hides Google sign-in when the build has no Google client ID, instead of
+  /// showing a button that can only fail. (Widget tests run without config.)
+  bool get _googleSignInConfigured =>
+      !getIt.isRegistered<AppConfig>() ||
+      getIt<AppConfig>().isGoogleSignInConfigured;
 
   Future<void> _handleGoogle() async {
     final ok = await context.read<AuthCubit>().signInWithGoogle();
@@ -127,17 +135,18 @@ final class _LoginPageState extends State<LoginPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        AppButton(
-                          label: l10n.authContinueWithGoogle,
-                          icon: AppIcons.google,
-                          isExpanded: true,
-                          isLoading: state.isBusy && !_showPhoneForm,
-                          onPressed:
-                              state.isCloudConfigured && !state.isBusy
-                                  ? _handleGoogle
-                                  : null,
-                        ),
-                        const SizedBox(height: AppSpacing.md),
+                        if (_googleSignInConfigured) ...[
+                          AppButton(
+                            label: l10n.authContinueWithGoogle,
+                            icon: AppIcons.google,
+                            isExpanded: true,
+                            isLoading: state.isBusy && !_showPhoneForm,
+                            onPressed: state.isCloudConfigured && !state.isBusy
+                                ? _handleGoogle
+                                : null,
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+                        ],
                         if (!_showPhoneForm && !hasPendingOtp)
                           AppButton(
                             label: l10n.authContinueWithPhone,

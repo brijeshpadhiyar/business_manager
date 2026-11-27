@@ -56,9 +56,7 @@ void main() {
       expect(find.text('Row 5'), findsNothing);
     });
 
-    testWidgets('shows no footer when everything already fits', (
-      tester,
-    ) async {
+    testWidgets('shows no footer when everything already fits', (tester) async {
       await tester.pumpWidget(
         _app(
           Scaffold(
@@ -72,9 +70,7 @@ void main() {
       expect(find.byType(TextButton), findsNothing);
     });
 
-    testWidgets('sliver variant works inside CustomScrollView', (
-      tester,
-    ) async {
+    testWidgets('sliver variant works inside CustomScrollView', (tester) async {
       final items = List.generate(30, (i) => 'S$i');
       await tester.pumpWidget(
         _app(
@@ -175,31 +171,6 @@ void main() {
     testWidgets('full width on phones, capped on desktop', (tester) async {
       expect(await fieldWidth(tester, const Size(390, 800)), 390);
       expect(await fieldWidth(tester, const Size(1280, 800)), 220);
-    });
-  });
-
-  group('AppStateView', () {
-    testWidgets('switches between loading, empty and ready', (tester) async {
-      Widget view(AppViewPhase phase) => _app(
-        Scaffold(
-          body: AppStateView(
-            phase: phase,
-            emptyTitle: 'Nothing here',
-            builder: (_) => const Text('Loaded content'),
-          ),
-        ),
-      );
-
-      await tester.pumpWidget(view(AppViewPhase.loading));
-      expect(find.byType(AppSkeletonList), findsOneWidget);
-
-      await tester.pumpWidget(view(AppViewPhase.empty));
-      await tester.pumpAndSettle();
-      expect(find.text('Nothing here'), findsOneWidget);
-
-      await tester.pumpWidget(view(AppViewPhase.ready));
-      await tester.pumpAndSettle();
-      expect(find.text('Loaded content'), findsOneWidget);
     });
   });
 }

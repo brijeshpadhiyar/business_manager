@@ -114,7 +114,10 @@ final class ReportsCubit extends Cubit<ReportsState> {
     await loadReports(filterOverride: nextFilter);
   }
 
-  Future<void> setCustomDateRange({int? fromUtcMillis, int? toUtcMillis}) async {
+  Future<void> setCustomDateRange({
+    int? fromUtcMillis,
+    int? toUtcMillis,
+  }) async {
     final from = fromUtcMillis ?? state.filter.fromUtcMillis;
     final to = toUtcMillis ?? state.filter.toUtcMillis;
     final check = AppValidators.dateRangeValidator(
@@ -267,7 +270,7 @@ final class ReportsCubit extends Cubit<ReportsState> {
     if (bundle == null) {
       return const ReportExportResult(
         success: false,
-        message: 'No report data loaded.',
+        message: 'no_report_data',
       );
     }
     emit(state.copyWith(isExporting: true, clearExportFeedback: true));

@@ -5,7 +5,7 @@ Every build picks a **flavour** in two places:
 | What | dev | prod |
 | :--- | :--- | :--- |
 | Entry point (`-t`) | `lib/main_dev.dart` | `lib/main_prod.dart` |
-| Settings (`--dart-define-from-file`) | `config/dev.json` | `config/prod.json` |
+| Settings (`--dart-define-from-file`) | `config/dev.local.json` | `config/prod.local.json` |
 | Database file | `business_manager_dev.sqlite` | `business_manager_prod.sqlite` |
 | Photos folder | `media_dev/` | `media_prod/` |
 | Android app id | `com.brijesh.stitchflow.dev` | `com.brijesh.stitchflow` |
@@ -43,18 +43,18 @@ debug signing for local QA.
 
 ```bash
 # Run on a phone / emulator
-flutter run --flavor dev  -t lib/main_dev.dart  --dart-define-from-file=config/dev.json
-flutter run --flavor prod -t lib/main_prod.dart --dart-define-from-file=config/prod.json
+flutter run --flavor dev  -t lib/main_dev.dart  --dart-define-from-file=config/dev.local.json
+flutter run --flavor prod -t lib/main_prod.dart --dart-define-from-file=config/prod.local.json
 
 # APK (install directly / share on WhatsApp)
-flutter build apk --release --flavor dev  -t lib/main_dev.dart  --dart-define-from-file=config/dev.json
-flutter build apk --release --flavor prod -t lib/main_prod.dart --dart-define-from-file=config/prod.json
+flutter build apk --release --flavor dev  -t lib/main_dev.dart  --dart-define-from-file=config/dev.local.json
+flutter build apk --release --flavor prod -t lib/main_prod.dart --dart-define-from-file=config/prod.local.json
 
 # Smaller APKs, one per CPU type (arm64 is right for almost all phones)
-flutter build apk --release --split-per-abi --flavor prod -t lib/main_prod.dart --dart-define-from-file=config/prod.json
+flutter build apk --release --split-per-abi --flavor prod -t lib/main_prod.dart --dart-define-from-file=config/prod.local.json
 
 # App bundle for Google Play (prod only)
-flutter build appbundle --release --flavor prod -t lib/main_prod.dart --dart-define-from-file=config/prod.json
+flutter build appbundle --release --flavor prod -t lib/main_prod.dart --dart-define-from-file=config/prod.local.json
 ```
 
 Output:
@@ -74,11 +74,11 @@ Visual Studio).
 
 ```powershell
 # Run while developing
-flutter run -d windows -t lib/main_dev.dart --dart-define-from-file=config/dev.json
+flutter run -d windows -t lib/main_dev.dart --dart-define-from-file=config/dev.local.json
 
 # Release build
-flutter build windows --release -t lib/main_prod.dart --dart-define-from-file=config/prod.json
-flutter build windows --release -t lib/main_dev.dart  --dart-define-from-file=config/dev.json
+flutter build windows --release -t lib/main_prod.dart --dart-define-from-file=config/prod.local.json
+flutter build windows --release -t lib/main_dev.dart  --dart-define-from-file=config/dev.local.json
 ```
 
 Output: `build\windows\x64\runner\Release\` → `StitchFlow.exe` **plus** its
@@ -104,14 +104,14 @@ device / App Store builds. iOS cannot be built on Windows.
 
 ```bash
 # Run on simulator / iPhone
-flutter run -t lib/main_dev.dart  --dart-define-from-file=config/dev.json
-flutter run -t lib/main_prod.dart --dart-define-from-file=config/prod.json
+flutter run -t lib/main_dev.dart  --dart-define-from-file=config/dev.local.json
+flutter run -t lib/main_prod.dart --dart-define-from-file=config/prod.local.json
 
 # App Store / TestFlight archive (prod)
-flutter build ipa --release -t lib/main_prod.dart --dart-define-from-file=config/prod.json
+flutter build ipa --release -t lib/main_prod.dart --dart-define-from-file=config/prod.local.json
 
 # Unsigned build check (no Apple account needed)
-flutter build ios --release --no-codesign -t lib/main_prod.dart --dart-define-from-file=config/prod.json
+flutter build ios --release --no-codesign -t lib/main_prod.dart --dart-define-from-file=config/prod.local.json
 ```
 
 Output: `build/ios/ipa/*.ipa` (upload with Transporter or Xcode Organizer).
@@ -123,9 +123,9 @@ separate (different database files).
 ### 3.2 After flavours are wired (§3.3)
 
 ```bash
-flutter run --flavor dev  -t lib/main_dev.dart  --dart-define-from-file=config/dev.json
-flutter build ipa --release --flavor prod -t lib/main_prod.dart --dart-define-from-file=config/prod.json
-flutter build ipa --release --flavor dev  -t lib/main_dev.dart  --dart-define-from-file=config/dev.json
+flutter run --flavor dev  -t lib/main_dev.dart  --dart-define-from-file=config/dev.local.json
+flutter build ipa --release --flavor prod -t lib/main_prod.dart --dart-define-from-file=config/prod.local.json
+flutter build ipa --release --flavor dev  -t lib/main_dev.dart  --dart-define-from-file=config/dev.local.json
 ```
 
 ### 3.3 One-time Xcode setup for iOS flavours (on the Mac)
@@ -162,8 +162,8 @@ bundle ids and display names; Xcode just needs to use them.
 **Needs:** a Mac with Xcode.
 
 ```bash
-flutter run -d macos -t lib/main_dev.dart --dart-define-from-file=config/dev.json
-flutter build macos --release -t lib/main_prod.dart --dart-define-from-file=config/prod.json
+flutter run -d macos -t lib/main_dev.dart --dart-define-from-file=config/dev.local.json
+flutter build macos --release -t lib/main_prod.dart --dart-define-from-file=config/prod.local.json
 ```
 
 Output: `build/macos/Build/Products/Release/StitchFlow.app`. Sign and
@@ -177,8 +177,8 @@ notarize it before giving it to other Macs.
 (plus `libsecret-1-dev` for secure storage).
 
 ```bash
-flutter run -d linux -t lib/main_dev.dart --dart-define-from-file=config/dev.json
-flutter build linux --release -t lib/main_prod.dart --dart-define-from-file=config/prod.json
+flutter run -d linux -t lib/main_dev.dart --dart-define-from-file=config/dev.local.json
+flutter build linux --release -t lib/main_prod.dart --dart-define-from-file=config/prod.local.json
 ```
 
 Output: `build/linux/x64/release/bundle/` (ship the whole folder).
@@ -190,8 +190,8 @@ Output: `build/linux/x64/release/bundle/` (ship the whole folder).
 **Needs:** Chrome (any OS).
 
 ```bash
-flutter run -d chrome -t lib/main_dev.dart --dart-define-from-file=config/dev.json
-flutter build web --release -t lib/main_prod.dart --dart-define-from-file=config/prod.json
+flutter run -d chrome -t lib/main_dev.dart --dart-define-from-file=config/dev.local.json
+flutter build web --release -t lib/main_prod.dart --dart-define-from-file=config/prod.local.json
 ```
 
 Output: `build/web/` — upload the folder to any static host. Data is stored in
@@ -206,19 +206,19 @@ platform (Android versionName/versionCode, iOS/macOS short version/build,
 Windows file version). Override for one build:
 
 ```bash
-flutter build apk --release --flavor prod -t lib/main_prod.dart --dart-define-from-file=config/prod.json --build-name=1.4.0 --build-number=5
+flutter build apk --release --flavor prod -t lib/main_prod.dart --dart-define-from-file=config/prod.local.json --build-name=1.4.0 --build-number=5
 ```
 
 ## 8. Quick reference
 
 | Platform | prod release command |
 | :--- | :--- |
-| Android APK | `flutter build apk --release --flavor prod -t lib/main_prod.dart --dart-define-from-file=config/prod.json` |
-| Android Play | `flutter build appbundle --release --flavor prod -t lib/main_prod.dart --dart-define-from-file=config/prod.json` |
-| Windows | `flutter build windows --release -t lib/main_prod.dart --dart-define-from-file=config/prod.json` |
-| iOS | `flutter build ipa --release -t lib/main_prod.dart --dart-define-from-file=config/prod.json` |
-| macOS | `flutter build macos --release -t lib/main_prod.dart --dart-define-from-file=config/prod.json` |
-| Linux | `flutter build linux --release -t lib/main_prod.dart --dart-define-from-file=config/prod.json` |
-| Web | `flutter build web --release -t lib/main_prod.dart --dart-define-from-file=config/prod.json` |
+| Android APK | `flutter build apk --release --flavor prod -t lib/main_prod.dart --dart-define-from-file=config/prod.local.json` |
+| Android Play | `flutter build appbundle --release --flavor prod -t lib/main_prod.dart --dart-define-from-file=config/prod.local.json` |
+| Windows | `flutter build windows --release -t lib/main_prod.dart --dart-define-from-file=config/prod.local.json` |
+| iOS | `flutter build ipa --release -t lib/main_prod.dart --dart-define-from-file=config/prod.local.json` |
+| macOS | `flutter build macos --release -t lib/main_prod.dart --dart-define-from-file=config/prod.local.json` |
+| Linux | `flutter build linux --release -t lib/main_prod.dart --dart-define-from-file=config/prod.local.json` |
+| Web | `flutter build web --release -t lib/main_prod.dart --dart-define-from-file=config/prod.local.json` |
 
 For dev, swap `prod` → `dev` in the flavour, entry point and config file.

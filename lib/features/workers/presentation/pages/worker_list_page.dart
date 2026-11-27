@@ -184,37 +184,51 @@ final class _WorkerListViewState extends State<_WorkerListView> {
                         : AppStatusTone.neutral,
                   ),
                 ],
-                mobileCardBuilder: (ctx, worker) => AppActionRow(content: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          AppText(
-                            worker.name,
-                            variant: AppTextVariant.bodyLarge,
-                            fontWeight: FontWeight.w700,
-                          ),
-                          if (worker.phone != null) ...[
-                            const SizedBox(height: AppSpacing.xs),
+                mobileCardBuilder: (ctx, worker) => AppActionRow(
+                  content: Row(
+                    children: [
+                      AppAvatar(name: worker.name, dimmed: !worker.isActive),
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
                             AppText(
-                              worker.phone!,
-                              variant: AppTextVariant.bodySmall,
+                              worker.name,
+                              variant: AppTextVariant.bodyLarge,
+                              fontWeight: FontWeight.w700,
                             ),
+                            if (worker.phone != null) ...[
+                              const SizedBox(height: AppSpacing.xs),
+                              AppText(
+                                worker.phone!,
+                                variant: AppTextVariant.bodySmall,
+                              ),
+                            ],
+                            if (worker.address != null) ...[
+                              const SizedBox(height: AppSpacing.xs),
+                              AppText(
+                                worker.address!,
+                                variant: AppTextVariant.bodySmall,
+                              ),
+                            ],
                           ],
-                          if (worker.address != null) ...[
-                            const SizedBox(height: AppSpacing.xs),
-                            AppText(
-                              worker.address!,
-                              variant: AppTextVariant.bodySmall,
-                            ),
-                          ],
-                        ],
-                      ), actions: [AppStatusBadge(
+                        ),
+                      ),
+                    ],
+                  ),
+                  actions: [
+                    AppStatusBadge(
                       label: worker.isActive
                           ? l10n.statusActive
                           : l10n.statusInactive,
                       tone: worker.isActive
                           ? AppStatusTone.good
                           : AppStatusTone.neutral,
-                    ), const Icon(AppIcons.chevronRight),],),
+                    ),
+                    const Icon(AppIcons.chevronRight),
+                  ],
+                ),
               ),
             ),
           ];
@@ -236,8 +250,7 @@ final class _WorkerListViewState extends State<_WorkerListView> {
             title: l10n.workersHeading,
             automaticallyImplyLeading: false,
             expandedHeight: 164,
-            actions: [
-            ],
+            actions: [],
             summary: AppSummaryStrip(
               metrics: [
                 AppSummaryMetric(
@@ -275,24 +288,24 @@ final class _WorkerListViewState extends State<_WorkerListView> {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    FilterChip(
-                      label: Text(l10n.filterAll),
+                    AppChip.filter(
+                      label: l10n.filterAll,
                       selected: state.activeFilter == null,
                       onSelected: (_) => context
                           .read<WorkerListCubit>()
                           .loadWorkers(clearActiveFilter: true),
                     ),
                     const SizedBox(width: AppSpacing.sm),
-                    FilterChip(
-                      label: Text(l10n.filterActive),
+                    AppChip.filter(
+                      label: l10n.filterActive,
                       selected: state.activeFilter == true,
                       onSelected: (_) => context
                           .read<WorkerListCubit>()
                           .loadWorkers(activeFilter: true),
                     ),
                     const SizedBox(width: AppSpacing.sm),
-                    FilterChip(
-                      label: Text(l10n.filterInactive),
+                    AppChip.filter(
+                      label: l10n.filterInactive,
                       selected: state.activeFilter == false,
                       onSelected: (_) => context
                           .read<WorkerListCubit>()

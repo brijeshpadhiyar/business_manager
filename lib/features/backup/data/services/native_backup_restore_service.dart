@@ -470,6 +470,14 @@ final class NativeBackupRestoreService implements BackupRestoreService {
       );
     }
 
+    if (manifest.schemaVersion <
+        DatabaseMigrationManager.minimumSupportedSchemaVersion) {
+      errorCodes.add('schema_too_old');
+      errors.add(
+        'Backup schema v${manifest.schemaVersion} is from a pre-release version and cannot be restored. Only backups made with v${DatabaseMigrationManager.minimumSupportedSchemaVersion} or later are supported.',
+      );
+    }
+
     // 3. Cross-flavor protection: never allow dev backup into prod
     if (_config.isProd && manifest.flavor != 'prod') {
       errorCodes.add('cross_flavor_blocked');

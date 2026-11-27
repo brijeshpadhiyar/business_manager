@@ -1,6 +1,5 @@
 import 'package:business_manager/core/config/app_config.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
-import 'package:business_manager/core/design_system/design_system_showcase_page.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/services/app_message_service.dart';
@@ -77,6 +76,7 @@ const List<String> _primaryTabRoutes = [
   RoutePaths.lots,
   RoutePaths.stockMovements,
   RoutePaths.workers,
+  RoutePaths.processes,
   RoutePaths.settings,
 ];
 
@@ -123,15 +123,13 @@ GoRouter createAppRouter(AppConfig config) {
           child: child,
         ),
         routes: [
-          // 5 primary tabs kept alive in memory via StatefulShellRoute.
+          // 6 primary tabs kept alive in memory via StatefulShellRoute.
           // On mobile (< 600dp), _PrimaryTabsViewport owns the AppBar and
           // Bottom NavigationBar inside this page so pushed sibling routes
           // slide cleanly OVER it without ever unmounting/swapping shell chrome.
           StatefulShellRoute(
-            pageBuilder: (context, state, navigationShell) => MaterialPage<void>(
-              key: state.pageKey,
-              child: navigationShell,
-            ),
+            pageBuilder: (context, state, navigationShell) =>
+                MaterialPage<void>(key: state.pageKey, child: navigationShell),
             navigatorContainerBuilder: (context, navigationShell, children) {
               return _PrimaryTabsViewport(
                 config: config,
@@ -200,6 +198,19 @@ GoRouter createAppRouter(AppConfig config) {
               StatefulShellBranch(
                 routes: [
                   GoRoute(
+                    path: RoutePaths.processes,
+                    pageBuilder: (context, state) => NoTransitionPage<void>(
+                      key: state.pageKey,
+                      child: ProcessListPage(
+                        refreshSignal: tabRefreshBus.signalFor(4),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              StatefulShellBranch(
+                routes: [
+                  GoRoute(
                     path: RoutePaths.settings,
                     pageBuilder: (context, state) => NoTransitionPage<void>(
                       key: state.pageKey,
@@ -253,14 +264,7 @@ GoRouter createAppRouter(AppConfig config) {
               ),
             ),
           ),
-          // Processes & Inventory
-          GoRoute(
-            path: RoutePaths.processes,
-            pageBuilder: (context, state) => AppMotion.buildPage(
-              state: state,
-              child: const ProcessListPage(showAppBar: true),
-            ),
-          ),
+          // Inventory
           GoRoute(
             path: RoutePaths.inventory,
             pageBuilder: (context, state) => AppMotion.buildPage(
@@ -624,14 +628,6 @@ GoRouter createAppRouter(AppConfig config) {
           ),
         ],
       ),
-      GoRoute(
-        parentNavigatorKey: rootNavigatorKey,
-        path: RoutePaths.showcase,
-        pageBuilder: (context, state) => AppMotion.buildPage(
-          state: state,
-          child: DesignSystemShowcasePage(config: config),
-        ),
-      ),
     ],
   );
 }
@@ -673,12 +669,6 @@ _buildExtraRoutes(BuildContext context) {
       label: l10n.navDesignsColours,
       icon: AppIcons.designs,
       route: RoutePaths.designsColours,
-    ),
-    (
-      id: 'processes',
-      label: l10n.navProcesses,
-      icon: AppIcons.process,
-      route: RoutePaths.processes,
     ),
     (
       id: 'inventory',
@@ -745,6 +735,11 @@ List<ResponsiveNavDestination> _buildPrimaryDestinations(BuildContext context) {
       selectedIcon: AppIcons.workersSelected,
     ),
     ResponsiveNavDestination(
+      label: l10n.navWorkStagesShort,
+      icon: AppIcons.process,
+      selectedIcon: AppIcons.process,
+    ),
+    ResponsiveNavDestination(
       label: l10n.navSettings,
       icon: AppIcons.settings,
       selectedIcon: AppIcons.settingsSelected,
@@ -763,6 +758,7 @@ Map<ShortcutActivator, VoidCallback> _buildGlobalShortcuts(
     LogicalKeyboardKey.digit3,
     LogicalKeyboardKey.digit4,
     LogicalKeyboardKey.digit5,
+    LogicalKeyboardKey.digit6,
   ];
   return <ShortcutActivator, VoidCallback>{
     for (var i = 0; i < digitKeys.length; i++)
@@ -776,7 +772,7 @@ Map<ShortcutActivator, VoidCallback> _buildGlobalShortcuts(
   };
 }
 
-/// Hosts the 5 alive primary tabs inside [StatefulShellRoute] with a smooth
+/// Hosts the 6 alive primary tabs inside [StatefulShellRoute] with a smooth
 /// 150ms zero-blank cross-fade.
 ///
 /// - On Compact mobile (`< 600dp`), renders the Mobile AppBar and Bottom
@@ -859,7 +855,7 @@ final class _PrimaryTabsViewport extends StatelessWidget {
                 for (final item in extraRoutes)
                   PopupMenuItem<VoidCallback>(
                     value: () => router.push(item.route),
-                    child: ListTile(
+                    child: AppListTile(
                       contentPadding: EdgeInsets.zero,
                       leading: Icon(item.icon),
                       title: Text(item.label),
@@ -869,7 +865,7 @@ final class _PrimaryTabsViewport extends StatelessWidget {
                   const PopupMenuDivider(),
                   PopupMenuItem<VoidCallback>(
                     value: () => context.read<AppLockCubit>().lockNow(),
-                    child: ListTile(
+                    child: AppListTile(
                       contentPadding: EdgeInsets.zero,
                       leading: const Icon(AppIcons.lock),
                       title: Text(l10n.securityLockNowAction),
@@ -912,6 +908,7 @@ final class StitchFlowShellScaffold extends StatelessWidget {
       location == RoutePaths.lots ||
       location == RoutePaths.stockMovements ||
       location == RoutePaths.workers ||
+      location == RoutePaths.processes ||
       location == RoutePaths.settings;
 
   int get _selectedPrimaryIndex {
@@ -921,9 +918,10 @@ final class StitchFlowShellScaffold extends StatelessWidget {
       return 2;
     }
     if (location.startsWith(RoutePaths.workers)) return 3;
+    if (location.startsWith(RoutePaths.processes)) return 4;
     if (location.startsWith(RoutePaths.settings) &&
         !location.startsWith(RoutePaths.settingsHelp)) {
-      return 4;
+      return 5;
     }
     return 0;
   }
@@ -939,7 +937,6 @@ final class StitchFlowShellScaffold extends StatelessWidget {
     if (location.startsWith(RoutePaths.designsColours)) {
       return 'designsColours';
     }
-    if (location.startsWith(RoutePaths.processes)) return 'processes';
     if (location.startsWith(RoutePaths.inventory)) return 'inventory';
     if (location.startsWith(RoutePaths.accounting) ||
         location.startsWith(RoutePaths.paymentCreatePath)) {

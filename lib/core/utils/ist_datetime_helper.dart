@@ -56,6 +56,35 @@ abstract final class IstDateTimeHelper {
     return ist.toUtc().millisecondsSinceEpoch;
   }
 
+  /// UTC epoch ms of `00:00:00.000 IST` on the IST calendar day of [utcMillis].
+  static int startOfIstDayUtcMillis(int utcMillis) {
+    final ist = fromUtcMillisToIst(utcMillis);
+    return istDateTimeToUtcMillis(
+      year: ist.year,
+      month: ist.month,
+      day: ist.day,
+    );
+  }
+
+  /// UTC epoch ms of `23:59:59.999 IST` on the IST calendar day of [utcMillis].
+  static int endOfIstDayUtcMillis(int utcMillis) {
+    final ist = fromUtcMillisToIst(utcMillis);
+    final nextDayStart = istDateTimeToUtcMillis(
+      year: ist.year,
+      month: ist.month,
+      day: ist.day + 1,
+    );
+    return nextDayStart - 1;
+  }
+
+  /// UTC epoch ms of 12:00 IST on the given IST calendar date — the canonical
+  /// storage instant for date-only values (immune to DST/offset edge cases).
+  static int istNoonUtcMillis({
+    required int year,
+    required int month,
+    required int day,
+  }) => istDateTimeToUtcMillis(year: year, month: month, day: day, hour: 12);
+
   /// Extracts the `Asia/Kolkata` business date in strict ISO `YYYY-MM-DD` format.
   /// Used for effective-dated historical rate lookups (`member_process_rates`).
   static String toIstBusinessDate(int utcMillis) =>

@@ -1,3 +1,5 @@
+import 'package:business_manager/core/validation/validation_localizer.dart';
+
 import 'dart:ui' as ui;
 
 import 'package:business_manager/core/design_system/app_icons.dart';
@@ -38,8 +40,7 @@ final class SlipShareSheet extends StatefulWidget {
     return AppBottomSheet.show<void>(
       context,
       title: context.l10n.slipShareSheetTitle,
-      builder: (_) =>
-          SlipShareSheet(slip: slip, initialLocaleCode: localeCode),
+      builder: (_) => SlipShareSheet(slip: slip, initialLocaleCode: localeCode),
     );
   }
 
@@ -95,7 +96,10 @@ final class _SlipShareSheetState extends State<SlipShareSheet> {
       }
     } catch (e) {
       if (mounted) {
-        AppFeedback.showError(context, e.toString());
+        AppFeedback.showError(
+          context,
+          ValidationLocalizer.describeError(context.l10n, e),
+        );
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -124,7 +128,12 @@ final class _SlipShareSheetState extends State<SlipShareSheet> {
         ),
       );
     } catch (e) {
-      if (mounted) AppFeedback.showError(context, e.toString());
+      if (mounted) {
+        AppFeedback.showError(
+          context,
+          ValidationLocalizer.describeError(context.l10n, e),
+        );
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -142,10 +151,7 @@ final class _SlipShareSheetState extends State<SlipShareSheet> {
     if (_busy) return;
     setState(() => _busy = true);
     try {
-      final html = _htmlBuilder.buildHtml(
-        widget.slip,
-        localeCode: _slipLocale,
-      );
+      final html = _htmlBuilder.buildHtml(widget.slip, localeCode: _slipLocale);
       final stamp = IstDateTimeHelper.formatIstFileTimestamp(
         widget.slip.transactionAtUtcMillis,
       );
@@ -160,7 +166,12 @@ final class _SlipShareSheetState extends State<SlipShareSheet> {
         runWithPicker: (action) => _runWithPicker<bool>(action),
       );
     } catch (e) {
-      if (mounted) AppFeedback.showError(context, e.toString());
+      if (mounted) {
+        AppFeedback.showError(
+          context,
+          ValidationLocalizer.describeError(context.l10n, e),
+        );
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -205,10 +216,7 @@ final class _SlipShareSheetState extends State<SlipShareSheet> {
           // Live Branded Slip Preview (captured by RepaintBoundary for PNG)
           RepaintBoundary(
             key: _repaintKey,
-            child: SlipPreviewCard(
-              slip: widget.slip,
-              localeCode: _slipLocale,
-            ),
+            child: SlipPreviewCard(slip: widget.slip, localeCode: _slipLocale),
           ),
           const SizedBox(height: AppSpacing.md),
 

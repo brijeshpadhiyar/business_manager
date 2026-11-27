@@ -262,214 +262,210 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
             child: RefreshIndicator(
               onRefresh: _reload,
               child: CustomScrollView(
-                  keyboardDismissBehavior:
-                      ScrollViewKeyboardDismissBehavior.onDrag,
-                  slivers: [
-                    SliverPadding(
-                      padding: const EdgeInsets.fromLTRB(
-                        AppSpacing.lg,
-                        AppSpacing.lg,
-                        AppSpacing.lg,
-                        AppSpacing.md,
-                      ),
-                      sliver: SliverToBoxAdapter(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            if (isEmbeddedView) ...[
-                              AppHeading(
-                                l10n.stockHeading,
-                                level: AppHeadingLevel.h2,
-                                trailing: AppIconButton(
-                                  icon: AppIcons.refresh,
-                                  tooltip: l10n.actionRetry,
-                                  onPressed: _reload,
-                                ),
+                keyboardDismissBehavior:
+                    ScrollViewKeyboardDismissBehavior.onDrag,
+                slivers: [
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.lg,
+                      AppSpacing.lg,
+                      AppSpacing.lg,
+                      AppSpacing.md,
+                    ),
+                    sliver: SliverToBoxAdapter(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          if (isEmbeddedView) ...[
+                            AppHeading(
+                              l10n.stockHeading,
+                              level: AppHeadingLevel.h2,
+                              trailing: AppIconButton(
+                                icon: AppIcons.refresh,
+                                tooltip: l10n.actionRetry,
+                                onPressed: _reload,
                               ),
-                              const SizedBox(height: AppSpacing.md),
-                            ],
-
-                            const ScreenFirstVisitHint(
-                              screenId: GuideScreenId.stock,
-                            ),
-
-                            // Primary Daily Workshop Actions Bar
-                            Wrap(
-                              spacing: AppSpacing.sm,
-                              runSpacing: AppSpacing.sm,
-                              children: [
-                                GuideTarget(
-                                  id: GuideTargetId.stockIssueAction,
-                                  child: AppButton(
-                                    label: l10n.stockIssueAction,
-                                    icon: AppIcons.stockIssue,
-                                    onPressed: _openIssue,
-                                  ),
-                                ),
-                                GuideTarget(
-                                  id: GuideTargetId.stockReceiveAction,
-                                  child: AppButton(
-                                    label: l10n.stockReturnAction,
-                                    icon: AppIcons.receiveReturn,
-                                    variant: AppButtonVariant.secondary,
-                                    onPressed: _openReturnPicker,
-                                  ),
-                                ),
-                                GuideTarget(
-                                  id: GuideTargetId.stockRepairAction,
-                                  child: AppButton(
-                                    label: l10n.stockRepairAction,
-                                    icon: AppIcons.repair,
-                                    variant: AppButtonVariant.outlined,
-                                    onPressed: _openRepair,
-                                  ),
-                                ),
-                              ],
                             ),
                             const SizedBox(height: AppSpacing.md),
+                          ],
 
-                            // KPI Summary Row (full glass preserved, batched via BackdropGroup)
-                            LayoutBuilder(
-                              builder: (context, constraints) {
-                                final isWide = constraints.maxWidth >= 580;
-                                final tileWidth = isWide
-                                    ? (constraints.maxWidth -
-                                              AppSpacing.sm * 3) /
-                                          4
-                                    : (constraints.maxWidth - AppSpacing.sm) /
-                                          2;
-                                return Wrap(
-                                  spacing: AppSpacing.sm,
-                                  runSpacing: AppSpacing.sm,
-                                  children: [
-                                    SizedBox(
-                                      width: tileWidth,
-                                      child: AppMetricTile(
-                                        label: l10n.stockAvailableGoodLabel,
-                                        value: totalGood,
-                                        suffix: l10n.piecesUnit,
-                                        icon: AppIcons.lot,
-                                        tone: AppStatusTone.good,
-                                        onTap: () => setState(() => _tab = 1),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: tileWidth,
-                                      child: AppMetricTile(
-                                        label: l10n.stockPendingWorkerLabel,
-                                        value: totalPending,
-                                        suffix: l10n.piecesUnit,
-                                        icon: AppIcons.pending,
-                                        tone: totalPending > 0
-                                            ? AppStatusTone.pending
-                                            : AppStatusTone.good,
-                                        onTap: () => setState(() => _tab = 0),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: tileWidth,
-                                      child: AppMetricTile(
-                                        label: l10n.stockDamagedBucketLabel,
-                                        value: totalDamaged,
-                                        suffix: l10n.piecesUnit,
-                                        icon: AppIcons.damaged,
-                                        tone: totalDamaged > 0
-                                            ? AppStatusTone.damaged
-                                            : AppStatusTone.neutral,
-                                        onTap: totalDamaged > 0
-                                            ? _openRepair
-                                            : null,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: tileWidth,
-                                      child: AppMetricTile(
-                                        label: l10n.stockTabPendingReturns,
-                                        value: state.openIssues.length,
-                                        icon:
-                                            AppIcons.receiveReturn,
-                                        tone: AppStatusTone.info,
-                                        onTap: () => setState(() => _tab = 0),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
-                            ),
-                            const SizedBox(height: AppSpacing.lg),
+                          const ScreenFirstVisitHint(
+                            screenId: GuideScreenId.stock,
+                          ),
 
-                            // Clean Prioritized Daily-Work Tabs
-                            GuideTarget(
-                              id: GuideTargetId.stockTabs,
-                              child: Wrap(
+                          // Primary Daily Workshop Actions Bar
+                          Wrap(
+                            spacing: AppSpacing.sm,
+                            runSpacing: AppSpacing.sm,
+                            children: [
+                              GuideTarget(
+                                id: GuideTargetId.stockIssueAction,
+                                child: AppButton(
+                                  label: l10n.stockIssueAction,
+                                  icon: AppIcons.stockIssue,
+                                  onPressed: _openIssue,
+                                ),
+                              ),
+                              GuideTarget(
+                                id: GuideTargetId.stockReceiveAction,
+                                child: AppButton(
+                                  label: l10n.stockReturnAction,
+                                  icon: AppIcons.receiveReturn,
+                                  variant: AppButtonVariant.secondary,
+                                  onPressed: _openReturnPicker,
+                                ),
+                              ),
+                              GuideTarget(
+                                id: GuideTargetId.stockRepairAction,
+                                child: AppButton(
+                                  label: l10n.stockRepairAction,
+                                  icon: AppIcons.repair,
+                                  variant: AppButtonVariant.outlined,
+                                  onPressed: _openRepair,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: AppSpacing.md),
+
+                          // KPI Summary Row (full glass preserved, batched via BackdropGroup)
+                          LayoutBuilder(
+                            builder: (context, constraints) {
+                              final isWide = constraints.maxWidth >= 580;
+                              final tileWidth = isWide
+                                  ? (constraints.maxWidth - AppSpacing.sm * 3) /
+                                        4
+                                  : (constraints.maxWidth - AppSpacing.sm) / 2;
+                              return Wrap(
                                 spacing: AppSpacing.sm,
                                 runSpacing: AppSpacing.sm,
                                 children: [
-                                  ChoiceChip(
-                                    label: Text(
-                                      '${l10n.stockTabPendingReturns} (${state.openIssues.length})',
+                                  SizedBox(
+                                    width: tileWidth,
+                                    child: AppMetricTile(
+                                      label: l10n.stockAvailableGoodLabel,
+                                      value: totalGood,
+                                      suffix: l10n.piecesUnit,
+                                      icon: AppIcons.lot,
+                                      tone: AppStatusTone.good,
+                                      onTap: () => setState(() => _tab = 1),
                                     ),
-                                    selected: _tab == 0,
-                                    onSelected: (_) => setState(() => _tab = 0),
                                   ),
-                                  ChoiceChip(
-                                    label: Text(l10n.stockTabBalances),
-                                    selected: _tab == 1,
-                                    onSelected: (_) => setState(() => _tab = 1),
+                                  SizedBox(
+                                    width: tileWidth,
+                                    child: AppMetricTile(
+                                      label: l10n.stockPendingWorkerLabel,
+                                      value: totalPending,
+                                      suffix: l10n.piecesUnit,
+                                      icon: AppIcons.pending,
+                                      tone: totalPending > 0
+                                          ? AppStatusTone.pending
+                                          : AppStatusTone.good,
+                                      onTap: () => setState(() => _tab = 0),
+                                    ),
                                   ),
-                                  ChoiceChip(
-                                    label: Text(l10n.stockTabMovementHistory),
-                                    selected: _tab == 2,
-                                    onSelected: (_) => setState(() => _tab = 2),
+                                  SizedBox(
+                                    width: tileWidth,
+                                    child: AppMetricTile(
+                                      label: l10n.stockDamagedBucketLabel,
+                                      value: totalDamaged,
+                                      suffix: l10n.piecesUnit,
+                                      icon: AppIcons.damaged,
+                                      tone: totalDamaged > 0
+                                          ? AppStatusTone.damaged
+                                          : AppStatusTone.neutral,
+                                      onTap: totalDamaged > 0
+                                          ? _openRepair
+                                          : null,
+                                    ),
                                   ),
-                                  ChoiceChip(
-                                    label: Text(l10n.stockTabSummary),
-                                    selected: _tab == 3,
-                                    onSelected: (_) => setState(() => _tab = 3),
+                                  SizedBox(
+                                    width: tileWidth,
+                                    child: AppMetricTile(
+                                      label: l10n.stockTabPendingReturns,
+                                      value: state.openIssues.length,
+                                      icon: AppIcons.receiveReturn,
+                                      tone: AppStatusTone.info,
+                                      onTap: () => setState(() => _tab = 0),
+                                    ),
                                   ),
                                 ],
-                              ),
+                              );
+                            },
+                          ),
+                          const SizedBox(height: AppSpacing.lg),
+
+                          // Clean Prioritized Daily-Work Tabs
+                          GuideTarget(
+                            id: GuideTargetId.stockTabs,
+                            child: Wrap(
+                              spacing: AppSpacing.sm,
+                              runSpacing: AppSpacing.sm,
+                              children: [
+                                AppChip(
+                                  label:
+                                      '${l10n.stockTabPendingReturns} (${state.openIssues.length})',
+                                  selected: _tab == 0,
+                                  onSelected: (_) => setState(() => _tab = 0),
+                                ),
+                                AppChip(
+                                  label: l10n.stockTabBalances,
+                                  selected: _tab == 1,
+                                  onSelected: (_) => setState(() => _tab = 1),
+                                ),
+                                AppChip(
+                                  label: l10n.stockTabMovementHistory,
+                                  selected: _tab == 2,
+                                  onSelected: (_) => setState(() => _tab = 2),
+                                ),
+                                AppChip(
+                                  label: l10n.stockTabSummary,
+                                  selected: _tab == 3,
+                                  onSelected: (_) => setState(() => _tab = 3),
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                    ...switch (_tab) {
-                      0 => _buildOpenIssuesSlivers(
-                        context,
-                        state.openIssues,
-                        localeCode,
-                      ),
-                      1 => _buildLiveBalancesSlivers(
-                        context,
-                        state.colourBalances,
-                      ),
-                      2 => _buildHistorySlivers(
-                        context,
-                        state.history,
-                        localeCode,
-                      ),
-                      _ => [
-                        SliverPadding(
-                          padding: const EdgeInsets.fromLTRB(
-                            AppSpacing.lg,
-                            0,
-                            AppSpacing.lg,
-                            96,
-                          ),
-                          sliver: SliverToBoxAdapter(
-                            child: _buildSummaries(
-                              context,
-                              state.workerSummaries,
-                              state.processSummaries,
-                            ),
+                  ),
+                  ...switch (_tab) {
+                    0 => _buildOpenIssuesSlivers(
+                      context,
+                      state.openIssues,
+                      localeCode,
+                    ),
+                    1 => _buildLiveBalancesSlivers(
+                      context,
+                      state.colourBalances,
+                    ),
+                    2 => _buildHistorySlivers(
+                      context,
+                      state.history,
+                      localeCode,
+                    ),
+                    _ => [
+                      SliverPadding(
+                        padding: const EdgeInsets.fromLTRB(
+                          AppSpacing.lg,
+                          0,
+                          AppSpacing.lg,
+                          96,
+                        ),
+                        sliver: SliverToBoxAdapter(
+                          child: _buildSummaries(
+                            context,
+                            state.workerSummaries,
+                            state.processSummaries,
                           ),
                         ),
-                      ],
-                    },
-                  ],
-                ),
+                      ),
+                    ],
+                  },
+                ],
               ),
+            ),
           ),
         );
       },
@@ -611,26 +607,32 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          AppActionRow(crossAxisAlignment: CrossAxisAlignment.start, content: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AppText(
-                      '${view.workerName ?? '-'} • ${view.processName ?? '-'}',
-                      variant: AppTextVariant.bodyLarge,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    const SizedBox(height: 2),
-                    AppText(
-                      '${view.lotNumber} • ${view.designName} • ${view.colourName}',
-                      variant: AppTextVariant.bodySmall,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  ],
-                ), actions: [AppStatusBadge(
+          AppActionRow(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            content: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                AppText(
+                  '${view.workerName ?? '-'} • ${view.processName ?? '-'}',
+                  variant: AppTextVariant.bodyLarge,
+                  fontWeight: FontWeight.w700,
+                ),
+                const SizedBox(height: AppSpacing.xxs),
+                AppText(
+                  '${view.lotNumber} • ${view.designName} • ${view.colourName}',
+                  variant: AppTextVariant.bodySmall,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ],
+            ),
+            actions: [
+              AppStatusBadge(
                 label: '${view.remainingPendingQty} ${l10n.piecesUnit}',
                 tone: AppStatusTone.pending,
                 icon: AppIcons.pending,
-              ),],),
+              ),
+            ],
+          ),
           const SizedBox(height: AppSpacing.sm),
           Wrap(
             spacing: AppSpacing.md,
@@ -705,24 +707,40 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
 
     return [
       SliverPadding(
-        padding: const EdgeInsets.fromLTRB(
-          AppSpacing.lg,
-          0,
-          AppSpacing.lg,
-          96,
-        ),
+        padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, 96),
         sliver: AppDataTable.buildSliver<DesignColourStockBalance>(
           context,
           enablePagination: true,
           itemKeyBuilder: (b) => ValueKey<String>(b.designColourId),
           columns: [
-            AppDataColumn(label: l10n.lotNumberLabel),
-            AppDataColumn(label: l10n.designNameLabel),
-            AppDataColumn(label: l10n.colourNameLabel),
-            AppDataColumn(label: l10n.stockAvailableGoodLabel, numeric: true),
-            AppDataColumn(label: l10n.stockPendingWorkerLabel, numeric: true),
-            AppDataColumn(label: l10n.stockDamagedBucketLabel, numeric: true),
+            AppDataColumn(sortable: true, label: l10n.lotNumberLabel),
+            AppDataColumn(sortable: true, label: l10n.designNameLabel),
+            AppDataColumn(sortable: true, label: l10n.colourNameLabel),
+            AppDataColumn(
+              sortable: true,
+              label: l10n.stockAvailableGoodLabel,
+              numeric: true,
+            ),
+            AppDataColumn(
+              sortable: true,
+              label: l10n.stockPendingWorkerLabel,
+              numeric: true,
+            ),
+            AppDataColumn(
+              sortable: true,
+              label: l10n.stockDamagedBucketLabel,
+              numeric: true,
+            ),
           ],
+          sortValueBuilder: (b, i) => switch (i) {
+            0 => b.lotNumber,
+            1 => b.designName,
+            2 => b.colourName,
+            3 => b.physicalAvailableInHouse,
+            4 => b.totalPendingWithWorkers,
+            5 => b.damagedBucket,
+            _ => null,
+          },
           items: balances,
           onRowTap: (b) {
             if (b.physicalAvailableInHouse > 0) {
@@ -853,8 +871,8 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    FilterChip(
-                      label: Text(l10n.stockFilterAllTypes),
+                    AppChip.filter(
+                      label: l10n.stockFilterAllTypes,
                       selected: _typeFilter == null,
                       onSelected: (_) {
                         setState(() => _typeFilter = null);
@@ -863,10 +881,8 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
                     ),
                     const SizedBox(width: AppSpacing.xs),
                     for (final t in StockMovementType.values) ...[
-                      FilterChip(
-                        label: Text(
-                          DomainLabelLocalizer.movementType(l10n, t),
-                        ),
+                      AppChip.filter(
+                        label: DomainLabelLocalizer.movementType(l10n, t),
                         selected: _typeFilter == t,
                         onSelected: (_) {
                           setState(() => _typeFilter = t);
@@ -1021,15 +1037,36 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
           AppDataTable<WorkerStockSummary>(
             enablePagination: true,
             columns: [
-              AppDataColumn(label: l10n.workerNameLabel),
-              AppDataColumn(label: l10n.stockIssuedLabel, numeric: true),
-              AppDataColumn(label: l10n.stockGoodReturnedLabel, numeric: true),
-              AppDataColumn(label: l10n.stockDamagedBucketLabel, numeric: true),
+              AppDataColumn(sortable: true, label: l10n.workerNameLabel),
               AppDataColumn(
+                sortable: true,
+                label: l10n.stockIssuedLabel,
+                numeric: true,
+              ),
+              AppDataColumn(
+                sortable: true,
+                label: l10n.stockGoodReturnedLabel,
+                numeric: true,
+              ),
+              AppDataColumn(
+                sortable: true,
+                label: l10n.stockDamagedBucketLabel,
+                numeric: true,
+              ),
+              AppDataColumn(
+                sortable: true,
                 label: l10n.stockRemainingPendingLabel,
                 numeric: true,
               ),
             ],
+            sortValueBuilder: (w, i) => switch (i) {
+              0 => w.workerName,
+              1 => w.issued,
+              2 => w.goodReturned,
+              3 => w.damaged,
+              4 => w.pending,
+              _ => null,
+            },
             items: workers,
             cellsBuilder: (w) => [
               AppText(w.workerName, fontWeight: FontWeight.w600),
@@ -1043,21 +1080,26 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
                     : AppStatusTone.good,
               ),
             ],
-            mobileCardBuilder: (_, w) => AppActionRow(content: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AppText(w.workerName, fontWeight: FontWeight.w700),
-                      AppText(
-                        '${l10n.stockIssuedLabel}: ${w.issued} • ${l10n.stockGoodReturnedLabel}: ${w.goodReturned}',
-                        variant: AppTextVariant.bodySmall,
-                      ),
-                    ],
-                  ), actions: [AppStatusBadge(
+            mobileCardBuilder: (_, w) => AppActionRow(
+              content: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AppText(w.workerName, fontWeight: FontWeight.w700),
+                  AppText(
+                    '${l10n.stockIssuedLabel}: ${w.issued} • ${l10n.stockGoodReturnedLabel}: ${w.goodReturned}',
+                    variant: AppTextVariant.bodySmall,
+                  ),
+                ],
+              ),
+              actions: [
+                AppStatusBadge(
                   label: '${l10n.stockRemainingPendingLabel}: ${w.pending}',
                   tone: w.pending > 0
                       ? AppStatusTone.pending
                       : AppStatusTone.good,
-                ),],),
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: AppSpacing.lg),
         ],
@@ -1089,21 +1131,26 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
                     : AppStatusTone.good,
               ),
             ],
-            mobileCardBuilder: (_, p) => AppActionRow(content: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      AppText(p.processName, fontWeight: FontWeight.w700),
-                      AppText(
-                        '${l10n.stockIssuedLabel}: ${p.issued} • ${l10n.stockGoodReturnedLabel}: ${p.goodReturned}',
-                        variant: AppTextVariant.bodySmall,
-                      ),
-                    ],
-                  ), actions: [AppStatusBadge(
+            mobileCardBuilder: (_, p) => AppActionRow(
+              content: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AppText(p.processName, fontWeight: FontWeight.w700),
+                  AppText(
+                    '${l10n.stockIssuedLabel}: ${p.issued} • ${l10n.stockGoodReturnedLabel}: ${p.goodReturned}',
+                    variant: AppTextVariant.bodySmall,
+                  ),
+                ],
+              ),
+              actions: [
+                AppStatusBadge(
                   label: '${l10n.stockRemainingPendingLabel}: ${p.pending}',
                   tone: p.pending > 0
                       ? AppStatusTone.pending
                       : AppStatusTone.good,
-                ),],),
+                ),
+              ],
+            ),
           ),
         ],
       ],

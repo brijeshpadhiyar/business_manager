@@ -1,3 +1,4 @@
+import 'package:business_manager/core/validation/validation_localizer.dart';
 import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
@@ -125,7 +126,7 @@ final class _PinSetupPageState extends State<PinSetupPage> {
       if (!mounted) return;
       setState(() {
         _saving = false;
-        _errorText = e.toString();
+        _errorText = ValidationLocalizer.describeError(context.l10n, e);
       });
     }
   }
@@ -147,7 +148,7 @@ final class _PinSetupPageState extends State<PinSetupPage> {
       if (!mounted) return;
       setState(() {
         _saving = false;
-        _errorText = e.toString();
+        _errorText = ValidationLocalizer.describeError(context.l10n, e);
       });
     }
   }
@@ -171,8 +172,8 @@ final class _PinSetupPageState extends State<PinSetupPage> {
                 child: Wrap(
                   spacing: AppSpacing.sm,
                   children: [
-                    ChoiceChip(
-                      label: Text(l10n.securityPinLength4Label),
+                    AppChip(
+                      label: l10n.securityPinLength4Label,
                       selected: _pinLength == 4,
                       onSelected: (_) => setState(() {
                         _pinLength = 4;
@@ -181,8 +182,8 @@ final class _PinSetupPageState extends State<PinSetupPage> {
                         _errorText = null;
                       }),
                     ),
-                    ChoiceChip(
-                      label: Text(l10n.securityPinLength6Label),
+                    AppChip(
+                      label: l10n.securityPinLength6Label,
                       selected: _pinLength == 6,
                       onSelected: (_) => setState(() {
                         _pinLength = 6;

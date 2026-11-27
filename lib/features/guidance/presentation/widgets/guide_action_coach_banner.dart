@@ -26,7 +26,8 @@ final class GuideActionCoachBanner extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final cubit = context.read<GuideCubit>();
     final media = MediaQuery.of(context);
-    final bottomInset = media.padding.bottom + (media.size.width < 600 ? 78 : 16);
+    final bottomInset =
+        media.padding.bottom + (media.size.width < 600 ? 78 : 16);
 
     return Positioned(
       left: AppSpacing.md,
@@ -66,14 +67,13 @@ final class GuideActionCoachBanner extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                      IconButton(
+                      AppIconButton(
                         tooltip: l10n.guideVoiceReplay,
-                        visualDensity: VisualDensity.compact,
-                        icon: Icon(
-                          state.isSpeaking ? AppIcons.stop : AppIcons.voiceOn,
-                          size: 18,
-                          color: colorScheme.onPrimaryContainer,
-                        ),
+                        icon: state.isSpeaking
+                            ? AppIcons.stop
+                            : AppIcons.voiceOn,
+                        color: colorScheme.onPrimaryContainer,
+                        compact: true,
                         onPressed: () {
                           if (state.isSpeaking) {
                             cubit.stopVoice();
@@ -82,14 +82,11 @@ final class GuideActionCoachBanner extends StatelessWidget {
                           }
                         },
                       ),
-                      IconButton(
+                      AppIconButton(
                         tooltip: l10n.guideActionSkip,
-                        visualDensity: VisualDensity.compact,
-                        icon: Icon(
-                          AppIcons.close,
-                          size: 18,
-                          color: colorScheme.onPrimaryContainer,
-                        ),
+                        icon: AppIcons.close,
+                        color: colorScheme.onPrimaryContainer,
+                        compact: true,
                         onPressed: cubit.skipTour,
                       ),
                     ],
@@ -103,25 +100,21 @@ final class GuideActionCoachBanner extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      TextButton.icon(
+                      AppButton(
+                        label: l10n.guideExpandSpotlight,
+                        icon: AppIcons.spotlight,
+                        variant: AppButtonVariant.text,
                         onPressed: cubit.expandFromCoachBar,
-                        icon: const Icon(AppIcons.spotlight, size: 16),
-                        label: Text(l10n.guideExpandSpotlight),
                       ),
                       const SizedBox(width: AppSpacing.xs),
-                      FilledButton.icon(
+                      AppButton(
+                        label: state.isLastStep
+                            ? l10n.guideActionFinish
+                            : l10n.guideActionNext,
+                        icon: state.isLastStep
+                            ? AppIcons.confirm
+                            : AppIcons.nextStep,
                         onPressed: () => cubit.nextStep(localeCode: localeCode),
-                        icon: Icon(
-                          state.isLastStep
-                              ? AppIcons.confirm
-                              : AppIcons.nextStep,
-                          size: 16,
-                        ),
-                        label: Text(
-                          state.isLastStep
-                              ? l10n.guideActionFinish
-                              : l10n.guideActionNext,
-                        ),
                       ),
                     ],
                   ),

@@ -6,6 +6,7 @@ import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_shadows.dart';
+import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:material_ui/material_ui.dart';
@@ -424,9 +425,14 @@ final class _GlassToastCard extends StatelessWidget {
                                           horizontal: 8,
                                           vertical: 2,
                                         ),
-                                        minimumSize: const Size(0, 28),
+                                        minimumSize: const Size(
+                                          AppSizing.touchTargetMin,
+                                          32,
+                                        ),
+                                        // Padded keeps a 48dp hit area while
+                                        // the visible button stays small.
                                         tapTargetSize:
-                                            MaterialTapTargetSize.shrinkWrap,
+                                            MaterialTapTargetSize.padded,
                                       ),
                                       onPressed: onAction,
                                       child: Text(
@@ -455,7 +461,8 @@ final class _GlassToastCard extends StatelessWidget {
                                   size: 16,
                                   color: theme.colorScheme.onSurfaceVariant,
                                 ),
-                                tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
+                                tooltip: MaterialLocalizations.of(context)
+                                    .closeButtonTooltip,
                                 onPressed: onClose,
                               ),
                           ],

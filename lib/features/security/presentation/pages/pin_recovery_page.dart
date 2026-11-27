@@ -115,7 +115,7 @@ final class _PinRecoveryPageState extends State<PinRecoveryPage> {
       if (!mounted) return;
       setState(() {
         _working = false;
-        _errorText = e.toString();
+        _errorText = ValidationLocalizer.describeError(context.l10n, e);
       });
     }
   }
@@ -182,7 +182,7 @@ final class _PinRecoveryPageState extends State<PinRecoveryPage> {
       if (!mounted) return;
       setState(() {
         _working = false;
-        _errorText = e.toString();
+        _errorText = ValidationLocalizer.describeError(context.l10n, e);
       });
     }
   }
@@ -313,8 +313,8 @@ final class _PinRecoveryPageState extends State<PinRecoveryPage> {
                     child: Wrap(
                       spacing: AppSpacing.sm,
                       children: [
-                        ChoiceChip(
-                          label: Text(l10n.securityPinLength4Label),
+                        AppChip(
+                          label: l10n.securityPinLength4Label,
                           selected: _pinLength == 4,
                           onSelected: (_) => setState(() {
                             _pinLength = 4;
@@ -322,8 +322,8 @@ final class _PinRecoveryPageState extends State<PinRecoveryPage> {
                             _confirmPin = '';
                           }),
                         ),
-                        ChoiceChip(
-                          label: Text(l10n.securityPinLength6Label),
+                        AppChip(
+                          label: l10n.securityPinLength6Label,
                           selected: _pinLength == 6,
                           onSelected: (_) => setState(() {
                             _pinLength = 6;

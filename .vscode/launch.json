@@ -3,7 +3,7 @@
   "configurations": [
     
     {
-      "name": "StitchFlow — Android (Dev)",
+      "name": "Business Manager — Android (Dev)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_dev.dart",
@@ -11,11 +11,11 @@
       "args": [
         "--flavor",
         "dev",
-        "--dart-define-from-file=config/dev.json"
+        "--dart-define-from-file=config/dev.local.json"
       ]
     },
     {
-      "name": "StitchFlow — Android (Prod)",
+      "name": "Business Manager — Android (Prod)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_prod.dart",
@@ -23,11 +23,11 @@
       "args": [
         "--flavor",
         "prod",
-        "--dart-define-from-file=config/prod.json"
+        "--dart-define-from-file=config/prod.local.json"
       ]
     },
     {
-      "name": "StitchFlow — Android (Dev Profile)",
+      "name": "Business Manager — Android (Dev Profile)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_dev.dart",
@@ -35,11 +35,11 @@
       "args": [
         "--flavor",
         "dev",
-        "--dart-define-from-file=config/dev.json"
+        "--dart-define-from-file=config/dev.local.json"
       ]
     },
     {
-      "name": "StitchFlow — Android (Dev Release)",
+      "name": "Business Manager — Android (Dev Release)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_dev.dart",
@@ -47,74 +47,74 @@
       "args": [
         "--flavor",
         "dev",
-        "--dart-define-from-file=config/dev.json"
+        "--dart-define-from-file=config/dev.local.json"
       ]
     },
     {
-      "name": "StitchFlow — iOS (Dev)",
+      "name": "Business Manager — iOS (Dev)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_dev.dart",
       "flutterMode": "debug",
       "args": [
-        "--dart-define-from-file=config/dev.json"
+        "--dart-define-from-file=config/dev.local.json"
       ]
     },
     {
-      "name": "StitchFlow — iOS (Prod)",
+      "name": "Business Manager — iOS (Prod)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_prod.dart",
       "flutterMode": "debug",
       "args": [
-        "--dart-define-from-file=config/prod.json"
+        "--dart-define-from-file=config/prod.local.json"
       ]
     },
     {
-      "name": "StitchFlow — iOS (Prod Release)",
+      "name": "Business Manager — iOS (Prod Release)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_prod.dart",
       "flutterMode": "release",
       "args": [
-        "--dart-define-from-file=config/prod.json"
+        "--dart-define-from-file=config/prod.local.json"
       ]
     },
     {
-      "name": "StitchFlow — Web Chrome (Dev)",
+      "name": "Business Manager — Web Chrome (Dev)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_dev.dart",
       "flutterMode": "debug",
       "deviceId": "chrome",
       "args": [
-        "--dart-define-from-file=config/dev.json"
+        "--dart-define-from-file=config/dev.local.json"
       ]
     },
     {
-      "name": "StitchFlow — Web Chrome (Prod)",
+      "name": "Business Manager — Web Chrome (Prod)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_prod.dart",
       "flutterMode": "debug",
       "deviceId": "chrome",
       "args": [
-        "--dart-define-from-file=config/prod.json"
+        "--dart-define-from-file=config/prod.local.json"
       ]
     },
     {
-      "name": "StitchFlow — Web Edge (Dev)",
+      "name": "Business Manager — Web Edge (Dev)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_dev.dart",
       "flutterMode": "debug",
       "deviceId": "edge",
       "args": [
-        "--dart-define-from-file=config/dev.json"
+        "--dart-define-from-file=config/dev.local.json"
       ]
     },
     {
-      "name": "StitchFlow — Web Server (Dev)",
+      "name": "Business Manager — Web Server (Dev)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_dev.dart",
@@ -122,71 +122,71 @@
       "deviceId": "web-server",
       "args": [
         "--web-port=8080",
-        "--dart-define-from-file=config/dev.json"
+        "--dart-define-from-file=config/dev.local.json"
       ]
     },
     {
-      "name": "StitchFlow — Windows Desktop (Dev)",
+      "name": "Business Manager — Windows Desktop (Dev)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_dev.dart",
       "flutterMode": "debug",
       "deviceId": "windows",
       "args": [
-        "--dart-define-from-file=config/dev.json"
+        "--dart-define-from-file=config/dev.local.json"
       ]
     },
     {
-      "name": "StitchFlow — Windows Desktop (Prod)",
+      "name": "Business Manager — Windows Desktop (Prod)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_prod.dart",
       "flutterMode": "debug",
       "deviceId": "windows",
       "args": [
-        "--dart-define-from-file=config/prod.json"
+        "--dart-define-from-file=config/prod.local.json"
       ]
     },
     {
-      "name": "StitchFlow — macOS Desktop (Dev)",
+      "name": "Business Manager — macOS Desktop (Dev)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_dev.dart",
       "flutterMode": "debug",
       "deviceId": "macos",
       "args": [
-        "--dart-define-from-file=config/dev.json"
+        "--dart-define-from-file=config/dev.local.json"
       ]
     },
     {
-      "name": "StitchFlow — Linux Desktop (Dev)",
+      "name": "Business Manager — Linux Desktop (Dev)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_dev.dart",
       "flutterMode": "debug",
       "deviceId": "linux",
       "args": [
-        "--dart-define-from-file=config/dev.json"
+        "--dart-define-from-file=config/dev.local.json"
       ]
     },
     {
-      "name": "StitchFlow — Selected Device (Dev)",
+      "name": "Business Manager — Selected Device (Dev)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_dev.dart",
       "flutterMode": "debug",
       "args": [
-        "--dart-define-from-file=config/dev.json"
+        "--dart-define-from-file=config/dev.local.json"
       ]
     },
     {
-      "name": "StitchFlow — Selected Device (Prod)",
+      "name": "Business Manager — Selected Device (Prod)",
       "request": "launch",
       "type": "dart",
       "program": "lib/main_prod.dart",
       "flutterMode": "debug",
       "args": [
-        "--dart-define-from-file=config/prod.json"
+        "--dart-define-from-file=config/prod.local.json"
       ]
     }
   ],
@@ -194,22 +194,22 @@
     {
       "name": "All: Web Chrome + Android (Dev)",
       "configurations": [
-        "StitchFlow — Web Chrome (Dev)",
-        "StitchFlow — Android (Dev)"
+        "Business Manager — Web Chrome (Dev)",
+        "Business Manager — Android (Dev)"
       ]
     },
     {
       "name": "All: Web Chrome + iOS (Dev)",
       "configurations": [
-        "StitchFlow — Web Chrome (Dev)",
-        "StitchFlow — iOS (Dev)"
+        "Business Manager — Web Chrome (Dev)",
+        "Business Manager — iOS (Dev)"
       ]
     },
     {
       "name": "All: Web Chrome + Windows Desktop (Dev)",
       "configurations": [
-        "StitchFlow — Web Chrome (Dev)",
-        "StitchFlow — Windows Desktop (Dev)"
+        "Business Manager — Web Chrome (Dev)",
+        "Business Manager — Windows Desktop (Dev)"
       ]
     }
   ]

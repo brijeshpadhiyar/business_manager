@@ -113,7 +113,7 @@ final class SettingsHomePage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const Divider(indent: 64),
+                    const AppDivider(indent: 64),
                     BlocBuilder<SyncCubit, SyncState>(
                       builder: (context, syncState) => _SettingsTile(
                         icon: AppIcons.cloudSync,
@@ -144,61 +144,62 @@ final class SettingsHomePage extends StatelessWidget {
               index: 0,
               slideOffsetY: 0,
               child: _SettingsSectionCard(
-              children: [
-                GuideTarget(
-                  id: GuideTargetId.settingsAppearanceTile,
-                  child: BlocBuilder<ThemeCubit, ThemeState>(
-                    builder: (context, themeState) =>
-                        BlocBuilder<LocaleCubit, LocaleState>(
-                          builder: (context, localeState) => _SettingsTile(
-                            icon: AppIcons.appearance,
-                            iconBg: colorScheme.secondaryContainer,
-                            iconColor: colorScheme.onSecondaryContainer,
-                            title: l10n.settingsAppearanceTitle,
-                            subtitle: l10n.settingsAppearanceSubtitle,
-                            badgeText:
-                                '${_themeLabel(context, themeState.preference)} • ${_localeLabel(context, localeState.preference)}',
-                            onTap: () =>
-                                context.push(RoutePaths.settingsAppearance),
+                children: [
+                  GuideTarget(
+                    id: GuideTargetId.settingsAppearanceTile,
+                    child: BlocBuilder<ThemeCubit, ThemeState>(
+                      builder: (context, themeState) =>
+                          BlocBuilder<LocaleCubit, LocaleState>(
+                            builder: (context, localeState) => _SettingsTile(
+                              icon: AppIcons.appearance,
+                              iconBg: colorScheme.secondaryContainer,
+                              iconColor: colorScheme.onSecondaryContainer,
+                              title: l10n.settingsAppearanceTitle,
+                              subtitle: l10n.settingsAppearanceSubtitle,
+                              badgeText:
+                                  '${_themeLabel(context, themeState.preference)} • ${_localeLabel(context, localeState.preference)}',
+                              onTap: () =>
+                                  context.push(RoutePaths.settingsAppearance),
+                            ),
                           ),
-                        ),
+                    ),
                   ),
-                ),
-                const Divider(indent: 64),
-                GuideTarget(
-                  id: GuideTargetId.settingsBusinessProfileTile,
-                  child: _SettingsTile(
-                    icon: AppIcons.business,
-                    iconBg: colorScheme.primaryContainer,
-                    iconColor: colorScheme.onPrimaryContainer,
-                    title: l10n.settingsBusinessTitle,
-                    subtitle: l10n.settingsBusinessSubtitle,
-                    onTap: () => context.push(RoutePaths.settingsBusinessProfile),
+                  const AppDivider(indent: 64),
+                  GuideTarget(
+                    id: GuideTargetId.settingsBusinessProfileTile,
+                    child: _SettingsTile(
+                      icon: AppIcons.business,
+                      iconBg: colorScheme.primaryContainer,
+                      iconColor: colorScheme.onPrimaryContainer,
+                      title: l10n.settingsBusinessTitle,
+                      subtitle: l10n.settingsBusinessSubtitle,
+                      onTap: () =>
+                          context.push(RoutePaths.settingsBusinessProfile),
+                    ),
                   ),
-                ),
-                const Divider(indent: 64),
-                GuideTarget(
-                  id: GuideTargetId.settingsStockLabourTile,
-                  child: _SettingsTile(
-                    icon: AppIcons.stockLabourSettings,
-                    iconBg: context.semanticColors.pendingContainer,
-                    iconColor: context.semanticColors.pending,
-                    title: l10n.settingsStockLabourTitle,
-                    subtitle: l10n.settingsStockLabourSubtitle,
-                    onTap: () => context.push(RoutePaths.settingsStockLabour),
+                  const AppDivider(indent: 64),
+                  GuideTarget(
+                    id: GuideTargetId.settingsStockLabourTile,
+                    child: _SettingsTile(
+                      icon: AppIcons.stockLabourSettings,
+                      iconBg: context.semanticColors.pendingContainer,
+                      iconColor: context.semanticColors.pending,
+                      title: l10n.settingsStockLabourTitle,
+                      subtitle: l10n.settingsStockLabourSubtitle,
+                      onTap: () => context.push(RoutePaths.settingsStockLabour),
+                    ),
                   ),
-                ),
-                const Divider(indent: 64),
-                _SettingsTile(
-                  icon: AppIcons.designs,
-                  iconBg: colorScheme.secondaryContainer,
-                  iconColor: colorScheme.onSecondaryContainer,
-                  title: l10n.navDesignsColours,
-                  subtitle: l10n.designsColoursSubtitle,
-                  onTap: () => context.push(RoutePaths.designsColours),
-                ),
-              ],
-            ),
+                  const AppDivider(indent: 64),
+                  _SettingsTile(
+                    icon: AppIcons.designs,
+                    iconBg: colorScheme.secondaryContainer,
+                    iconColor: colorScheme.onSecondaryContainer,
+                    title: l10n.navDesignsColours,
+                    subtitle: l10n.designsColoursSubtitle,
+                    onTap: () => context.push(RoutePaths.designsColours),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: AppSpacing.md),
 
@@ -206,82 +207,82 @@ final class SettingsHomePage extends StatelessWidget {
             AppMotionEntrance(
               index: 1,
               child: _SettingsSectionCard(
-              children: [
-                GuideTarget(
-                  id: GuideTargetId.settingsSecurityTile,
-                  child: BlocBuilder<AppLockCubit, AppLockState>(
-                    builder: (context, lockState) => _SettingsTile(
-                      icon: lockState.isPinEnabled
-                          ? AppIcons.security
-                          : AppIcons.lock,
-                      iconBg: lockState.isPinEnabled
-                          ? context.semanticColors.goodStockContainer
-                          : colorScheme.surfaceContainerHighest,
-                      iconColor: lockState.isPinEnabled
-                          ? context.semanticColors.goodStock
-                          : colorScheme.onSurfaceVariant,
-                      title: l10n.settingsSecurityTitle,
-                      subtitle: l10n.settingsSecuritySubtitle,
-                      badgeText: lockState.isPinEnabled
-                          ? l10n.securityBadgeEnabled
-                          : l10n.securityBadgeOff,
-                      onTap: () => context.push(RoutePaths.settingsSecurity),
+                children: [
+                  GuideTarget(
+                    id: GuideTargetId.settingsSecurityTile,
+                    child: BlocBuilder<AppLockCubit, AppLockState>(
+                      builder: (context, lockState) => _SettingsTile(
+                        icon: lockState.isPinEnabled
+                            ? AppIcons.security
+                            : AppIcons.lock,
+                        iconBg: lockState.isPinEnabled
+                            ? context.semanticColors.goodStockContainer
+                            : colorScheme.surfaceContainerHighest,
+                        iconColor: lockState.isPinEnabled
+                            ? context.semanticColors.goodStock
+                            : colorScheme.onSurfaceVariant,
+                        title: l10n.settingsSecurityTitle,
+                        subtitle: l10n.settingsSecuritySubtitle,
+                        badgeText: lockState.isPinEnabled
+                            ? l10n.securityBadgeEnabled
+                            : l10n.securityBadgeOff,
+                        onTap: () => context.push(RoutePaths.settingsSecurity),
+                      ),
                     ),
                   ),
-                ),
-                const Divider(indent: 64),
-                _SettingsTile(
-                  icon: AppIcons.team,
-                  iconBg: colorScheme.primaryContainer,
-                  iconColor: colorScheme.onPrimaryContainer,
-                  title: l10n.settingsTeamTitle,
-                  subtitle: l10n.settingsTeamSubtitle,
-                  onTap: () => context.push(RoutePaths.settingsTeam),
-                ),
-                const Divider(indent: 64),
-                _SettingsTile(
-                  icon: AppIcons.notifications,
-                  iconBg: context.semanticColors.pendingContainer,
-                  iconColor: context.semanticColors.pending,
-                  title: l10n.settingsNotificationsTitle,
-                  subtitle: l10n.settingsNotificationsSubtitle,
-                  onTap: () => context.push(RoutePaths.settingsNotifications),
-                ),
-                const Divider(indent: 64),
-                GuideTarget(
-                  id: GuideTargetId.settingsBackupTile,
-                  child: _SettingsTile(
-                    icon: AppIcons.backup,
-                    iconBg: context.semanticColors.goodStockContainer,
-                    iconColor: context.semanticColors.goodStock,
-                    title: l10n.settingsBackupTitle,
-                    subtitle: l10n.settingsBackupSubtitle,
-                    onTap: () => context.push(RoutePaths.settingsBackup),
+                  const AppDivider(indent: 64),
+                  _SettingsTile(
+                    icon: AppIcons.team,
+                    iconBg: colorScheme.primaryContainer,
+                    iconColor: colorScheme.onPrimaryContainer,
+                    title: l10n.settingsTeamTitle,
+                    subtitle: l10n.settingsTeamSubtitle,
+                    onTap: () => context.push(RoutePaths.settingsTeam),
                   ),
-                ),
-                const Divider(indent: 64),
-                _SettingsTile(
-                  icon: AppIcons.dataHealth,
-                  iconBg: colorScheme.primaryContainer,
-                  iconColor: colorScheme.onPrimaryContainer,
-                  title: l10n.settingsDataHealthTitle,
-                  subtitle: l10n.settingsDataHealthSubtitle,
-                  onTap: () => context.push(RoutePaths.settingsDataHealth),
-                ),
-                const Divider(indent: 64),
-                GuideTarget(
-                  id: GuideTargetId.settingsHelpTile,
-                  child: _SettingsTile(
-                    icon: AppIcons.guide,
-                    iconBg: context.semanticColors.advanceCreditContainer,
-                    iconColor: context.semanticColors.advanceCredit,
-                    title: l10n.settingsHelpTitle,
-                    subtitle: l10n.settingsHelpSubtitle,
-                    onTap: () => context.push(RoutePaths.settingsHelp),
+                  const AppDivider(indent: 64),
+                  _SettingsTile(
+                    icon: AppIcons.notifications,
+                    iconBg: context.semanticColors.pendingContainer,
+                    iconColor: context.semanticColors.pending,
+                    title: l10n.settingsNotificationsTitle,
+                    subtitle: l10n.settingsNotificationsSubtitle,
+                    onTap: () => context.push(RoutePaths.settingsNotifications),
                   ),
-                ),
-              ],
-            ),
+                  const AppDivider(indent: 64),
+                  GuideTarget(
+                    id: GuideTargetId.settingsBackupTile,
+                    child: _SettingsTile(
+                      icon: AppIcons.backup,
+                      iconBg: context.semanticColors.goodStockContainer,
+                      iconColor: context.semanticColors.goodStock,
+                      title: l10n.settingsBackupTitle,
+                      subtitle: l10n.settingsBackupSubtitle,
+                      onTap: () => context.push(RoutePaths.settingsBackup),
+                    ),
+                  ),
+                  const AppDivider(indent: 64),
+                  _SettingsTile(
+                    icon: AppIcons.dataHealth,
+                    iconBg: colorScheme.primaryContainer,
+                    iconColor: colorScheme.onPrimaryContainer,
+                    title: l10n.settingsDataHealthTitle,
+                    subtitle: l10n.settingsDataHealthSubtitle,
+                    onTap: () => context.push(RoutePaths.settingsDataHealth),
+                  ),
+                  const AppDivider(indent: 64),
+                  GuideTarget(
+                    id: GuideTargetId.settingsHelpTile,
+                    child: _SettingsTile(
+                      icon: AppIcons.guide,
+                      iconBg: context.semanticColors.advanceCreditContainer,
+                      iconColor: context.semanticColors.advanceCredit,
+                      title: l10n.settingsHelpTitle,
+                      subtitle: l10n.settingsHelpSubtitle,
+                      onTap: () => context.push(RoutePaths.settingsHelp),
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: AppSpacing.md),
 
@@ -289,30 +290,20 @@ final class SettingsHomePage extends StatelessWidget {
             AppMotionEntrance(
               index: 2,
               child: _SettingsSectionCard(
-              children: [
-                _SettingsTile(
-                  icon: AppIcons.info,
-                  iconBg: colorScheme.surfaceContainerHighest,
-                  iconColor: colorScheme.onSurfaceVariant,
-                  title: l10n.settingsAboutTitle,
-                  subtitle: l10n.settingsAboutSubtitle,
-                  badgeText:
-                      'v${AppIdentity.appVersion} (${config.isDev ? l10n.environmentFlavorDev : l10n.environmentFlavorProd})',
-                  onTap: () => context.push(RoutePaths.settingsAbout),
-                ),
-                if (config.isDev) ...[
-                  const Divider(indent: 64),
+                children: [
                   _SettingsTile(
-                    icon: AppIcons.designs,
-                    iconBg: colorScheme.tertiaryContainer,
-                    iconColor: colorScheme.onTertiaryContainer,
-                    title: l10n.navDesignShowcase,
-                    subtitle: l10n.foundationSubtitle,
-                    onTap: () => context.push(RoutePaths.showcase),
+                    icon: AppIcons.info,
+                    iconBg: colorScheme.surfaceContainerHighest,
+                    iconColor: colorScheme.onSurfaceVariant,
+                    title: l10n.settingsAboutTitle,
+                    subtitle: l10n.settingsAboutSubtitle,
+                    badgeText: config.isDev
+                        ? 'v${AppIdentity.appVersion} (${l10n.environmentFlavorDev})'
+                        : 'v${AppIdentity.appVersion}',
+                    onTap: () => context.push(RoutePaths.settingsAbout),
                   ),
                 ],
-              ],
-            ),
+              ),
             ),
             const SizedBox(height: AppSpacing.xl),
           ],
@@ -401,7 +392,7 @@ final class _SettingsTile extends StatelessWidget {
                     variant: AppTextVariant.bodyLarge,
                     fontWeight: FontWeight.w600,
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: AppSpacing.xxs),
                   AppText(
                     subtitle,
                     variant: AppTextVariant.bodySmall,
@@ -418,10 +409,7 @@ final class _SettingsTile extends StatelessWidget {
               ),
             ),
             const SizedBox(width: AppSpacing.xs),
-            Icon(
-              AppIcons.chevronRight,
-              color: colorScheme.onSurfaceVariant,
-            ),
+            Icon(AppIcons.chevronRight, color: colorScheme.onSurfaceVariant),
           ],
         ),
       ),

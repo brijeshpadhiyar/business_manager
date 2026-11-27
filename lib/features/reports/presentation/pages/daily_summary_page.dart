@@ -98,15 +98,15 @@ final class _DailySummaryView extends StatelessWidget {
                               spacing: AppSpacing.sm,
                               runSpacing: AppSpacing.xs,
                               children: [
-                                ChoiceChip(
-                                  label: Text(l10n.reportPresetToday),
+                                AppChip(
+                                  label: l10n.reportPresetToday,
                                   selected: isToday,
                                   onSelected: (_) => context
                                       .read<DailySummaryCubit>()
                                       .loadToday(),
                                 ),
-                                ChoiceChip(
-                                  label: Text(l10n.reportPresetYesterday),
+                                AppChip(
+                                  label: l10n.reportPresetYesterday,
                                   selected: isYesterday,
                                   onSelected: (_) => context
                                       .read<DailySummaryCubit>()
@@ -184,7 +184,7 @@ final class _DailySummaryView extends StatelessWidget {
                                     ),
                                     if (i <
                                         summary.processActivities.length - 1)
-                                      const Divider(),
+                                      const AppDivider(),
                                   ],
                                 ],
                               ),

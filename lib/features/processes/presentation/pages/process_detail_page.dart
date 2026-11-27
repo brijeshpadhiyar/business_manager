@@ -230,36 +230,41 @@ final class _ProcessDetailViewState extends State<_ProcessDetailView> {
                               runSpacing: 4,
                               children: [
                                 AppStatusBadge(
-                                  label: 'Lots: ${ph.totalLots}',
+                                  label: l10n.lotLotsValue(ph.totalLots),
                                   tone: AppStatusTone.info,
                                 ),
                                 AppStatusBadge(
-                                  label: 'Workers: ${ph.totalWorkersInvolved}',
+                                  label: l10n.lotWorkersValue(
+                                    ph.totalWorkersInvolved,
+                                  ),
                                   tone: AppStatusTone.neutral,
                                 ),
                                 AppStatusBadge(
-                                  label: 'Assigned: ${ph.assignedQty}',
+                                  label: l10n.lotAssignedValue(ph.assignedQty),
                                   tone: AppStatusTone.info,
                                 ),
                                 AppStatusBadge(
-                                  label: 'Accepted: ${ph.acceptedQty}',
+                                  label: l10n.lotAcceptedValue(ph.acceptedQty),
                                   tone: AppStatusTone.good,
                                 ),
                                 AppStatusBadge(
-                                  label:
-                                      'Pending QC: ${ph.pendingInspectionQty}',
+                                  label: l10n.lotPendingQcValue(
+                                    ph.pendingInspectionQty,
+                                  ),
                                   tone: ph.pendingInspectionQty > 0
                                       ? AppStatusTone.pending
                                       : AppStatusTone.neutral,
                                 ),
                                 AppStatusBadge(
-                                  label: 'Outstanding: ${ph.outstandingQty}',
+                                  label: l10n.lotOutstandingValue(
+                                    ph.outstandingQty,
+                                  ),
                                   tone: ph.outstandingQty > 0
                                       ? AppStatusTone.pending
                                       : AppStatusTone.good,
                                 ),
                                 AppStatusBadge(
-                                  label: 'Rejected: ${ph.rejectedQty}',
+                                  label: l10n.lotRejectedValue(ph.rejectedQty),
                                   tone: ph.rejectedQty > 0
                                       ? AppStatusTone.damaged
                                       : AppStatusTone.neutral,
@@ -280,31 +285,27 @@ final class _ProcessDetailViewState extends State<_ProcessDetailView> {
                         spacing: AppSpacing.xs,
                         runSpacing: AppSpacing.xs,
                         children: [
-                          ChoiceChip(
-                            label: Text(
-                              '${l10n.prodHistoryTabLotWise} (${ph.lotHistory.length})',
-                            ),
+                          AppChip(
+                            label:
+                                '${l10n.prodHistoryTabLotWise} (${ph.lotHistory.length})',
                             selected: _historyTab == 0,
                             onSelected: (_) => setState(() => _historyTab = 0),
                           ),
-                          ChoiceChip(
-                            label: Text(
-                              '${l10n.prodHistoryTabWorkerWise} (${ph.workerHistory.length})',
-                            ),
+                          AppChip(
+                            label:
+                                '${l10n.prodHistoryTabWorkerWise} (${ph.workerHistory.length})',
                             selected: _historyTab == 1,
                             onSelected: (_) => setState(() => _historyTab = 1),
                           ),
-                          ChoiceChip(
-                            label: Text(
-                              '${l10n.prodHistoryTabDateWise} (${ph.dateHistory.length})',
-                            ),
+                          AppChip(
+                            label:
+                                '${l10n.prodHistoryTabDateWise} (${ph.dateHistory.length})',
                             selected: _historyTab == 2,
                             onSelected: (_) => setState(() => _historyTab = 2),
                           ),
-                          ChoiceChip(
-                            label: Text(
-                              '${l10n.prodHistoryTabPending} (${ph.pendingAssignments.length})',
-                            ),
+                          AppChip(
+                            label:
+                                '${l10n.prodHistoryTabPending} (${ph.pendingAssignments.length})',
                             selected: _historyTab == 3,
                             onSelected: (_) => setState(() => _historyTab = 3),
                           ),
@@ -317,7 +318,9 @@ final class _ProcessDetailViewState extends State<_ProcessDetailView> {
                           initialCount: 15,
                           items: ph.lotHistory,
                           itemBuilder: (context, r, _) => Padding(
-                            padding: const EdgeInsets.only(bottom: 6),
+                            padding: const EdgeInsets.only(
+                              bottom: AppSpacing.xsm,
+                            ),
                             child: AppCard.listItem(
                               onTap: () =>
                                   context.push(RoutePaths.lotHistory(r.lotId)),
@@ -357,7 +360,9 @@ final class _ProcessDetailViewState extends State<_ProcessDetailView> {
                           initialCount: 15,
                           items: ph.workerHistory,
                           itemBuilder: (context, w, _) => Padding(
-                            padding: const EdgeInsets.only(bottom: 6),
+                            padding: const EdgeInsets.only(
+                              bottom: AppSpacing.xsm,
+                            ),
                             child: AppCard.listItem(
                               onTap: () => context.push(
                                 RoutePaths.workerDetail(w.workerId),
@@ -374,7 +379,18 @@ final class _ProcessDetailViewState extends State<_ProcessDetailView> {
                                           fontWeight: FontWeight.w700,
                                         ),
                                         AppText(
-                                          'Lots: ${w.totalLots} • Assigned: ${w.assignedQty} • Acc: ${w.acceptedQty} • Rej: ${w.rejectedQty}',
+                                          [
+                                            l10n.lotLotsValue(w.totalLots),
+                                            l10n.lotAssignedValue(
+                                              w.assignedQty,
+                                            ),
+                                            l10n.lotAcceptedValue(
+                                              w.acceptedQty,
+                                            ),
+                                            l10n.lotRejectedValue(
+                                              w.rejectedQty,
+                                            ),
+                                          ].join(' • '),
                                           variant: AppTextVariant.bodySmall,
                                         ),
                                       ],
@@ -398,7 +414,9 @@ final class _ProcessDetailViewState extends State<_ProcessDetailView> {
                           initialCount: 15,
                           items: ph.dateHistory,
                           itemBuilder: (context, d, _) => Padding(
-                            padding: const EdgeInsets.only(bottom: 6),
+                            padding: const EdgeInsets.only(
+                              bottom: AppSpacing.xsm,
+                            ),
                             child: AppCard.listItem(
                               child: Row(
                                 children: [
@@ -434,7 +452,9 @@ final class _ProcessDetailViewState extends State<_ProcessDetailView> {
                           initialCount: 15,
                           items: ph.pendingAssignments,
                           itemBuilder: (context, p, _) => Padding(
-                            padding: const EdgeInsets.only(bottom: 6),
+                            padding: const EdgeInsets.only(
+                              bottom: AppSpacing.xsm,
+                            ),
                             child: AppCard.listItem(
                               onTap: () => context.push(
                                 RoutePaths.productionTransactionDetail(
@@ -541,7 +561,7 @@ final class _ProcessDetailViewState extends State<_ProcessDetailView> {
                   child: Column(
                     children: detail.auditHistory
                         .map(
-                          (entry) => ListTile(
+                          (entry) => AppListTile(
                             dense: true,
                             contentPadding: EdgeInsets.zero,
                             leading: const Icon(AppIcons.rateHistory),

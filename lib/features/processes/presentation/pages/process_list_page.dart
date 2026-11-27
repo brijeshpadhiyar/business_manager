@@ -9,6 +9,7 @@ import 'package:business_manager/features/guidance/domain/entities/guide_entitie
 import 'package:business_manager/features/guidance/presentation/widgets/screen_first_visit_hint.dart';
 import 'package:business_manager/features/processes/domain/entities/process_entities.dart';
 import 'package:business_manager/features/processes/presentation/bloc/process_list_cubit.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -16,23 +17,32 @@ import 'package:business_manager/core/design_system/app_icons.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
 
 final class ProcessListPage extends StatelessWidget {
-  const ProcessListPage({super.key, this.showAppBar = false});
+  const ProcessListPage({
+    super.key,
+    this.showAppBar = false,
+    this.refreshSignal,
+  });
 
   final bool showAppBar;
+  final ValueListenable<int>? refreshSignal;
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider<ProcessListCubit>(
       create: (_) => getIt<ProcessListCubit>()..loadProcesses(),
-      child: _ProcessListView(showAppBar: showAppBar),
+      child: _ProcessListView(
+        showAppBar: showAppBar,
+        refreshSignal: refreshSignal,
+      ),
     );
   }
 }
 
 final class _ProcessListView extends StatefulWidget {
-  const _ProcessListView({required this.showAppBar});
+  const _ProcessListView({required this.showAppBar, this.refreshSignal});
 
   final bool showAppBar;
+  final ValueListenable<int>? refreshSignal;
 
   @override
   State<_ProcessListView> createState() => _ProcessListViewState();
@@ -47,7 +57,29 @@ final class _ProcessListViewState extends State<_ProcessListView> {
   bool _sortAscending = true;
 
   @override
+  void initState() {
+    super.initState();
+    widget.refreshSignal?.addListener(_onSilentRefresh);
+  }
+
+  @override
+  void didUpdateWidget(covariant _ProcessListView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.refreshSignal != widget.refreshSignal) {
+      oldWidget.refreshSignal?.removeListener(_onSilentRefresh);
+      widget.refreshSignal?.addListener(_onSilentRefresh);
+    }
+  }
+
+  void _onSilentRefresh() {
+    if (mounted) {
+      context.read<ProcessListCubit>().loadProcesses();
+    }
+  }
+
+  @override
   void dispose() {
+    widget.refreshSignal?.removeListener(_onSilentRefresh);
     _searchController.dispose();
     super.dispose();
   }
@@ -156,8 +188,8 @@ final class _ProcessListViewState extends State<_ProcessListView> {
                     label: l10n.processDescriptionLabel,
                     minWidthClass: AppWindowSizeClass.expanded,
                   ),
-                  const AppDataColumn(
-                    label: 'Default Rate',
+                  AppDataColumn(
+                    label: l10n.processDefaultRateShort,
                     numeric: true,
                     sortable: true,
                   ),
@@ -313,24 +345,24 @@ final class _ProcessListViewState extends State<_ProcessListView> {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    FilterChip(
-                      label: Text(l10n.filterAll),
+                    AppChip.filter(
+                      label: l10n.filterAll,
                       selected: state.activeFilter == null,
                       onSelected: (_) => context
                           .read<ProcessListCubit>()
                           .loadProcesses(clearActiveFilter: true),
                     ),
                     const SizedBox(width: AppSpacing.sm),
-                    FilterChip(
-                      label: Text(l10n.filterActive),
+                    AppChip.filter(
+                      label: l10n.filterActive,
                       selected: state.activeFilter == true,
                       onSelected: (_) => context
                           .read<ProcessListCubit>()
                           .loadProcesses(activeFilter: true),
                     ),
                     const SizedBox(width: AppSpacing.sm),
-                    FilterChip(
-                      label: Text(l10n.filterInactive),
+                    AppChip.filter(
+                      label: l10n.filterInactive,
                       selected: state.activeFilter == false,
                       onSelected: (_) => context
                           .read<ProcessListCubit>()

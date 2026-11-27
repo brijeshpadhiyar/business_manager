@@ -1,4 +1,4 @@
-import 'package:business_manager/core/database/migrations/schema_v10_cloud_sync.dart';
+import 'package:business_manager/core/database/migrations/sync_schema.dart';
 
 /// Metadata for a single synced StitchFlow table.
 final class SyncTableSpec {
@@ -67,8 +67,8 @@ abstract final class SyncTableRegistry {
   };
 
   static final Map<String, int> _orderIndex = {
-    for (var i = 0; i < SchemaV10CloudSync.syncedTablesInPushOrder.length; i++)
-      SchemaV10CloudSync.syncedTablesInPushOrder[i]: i,
+    for (var i = 0; i < SyncSchema.syncedTablesInPushOrder.length; i++)
+      SyncSchema.syncedTablesInPushOrder[i]: i,
   };
 
   static SyncTableSpec? specFor(String tableName) => _byName[tableName];

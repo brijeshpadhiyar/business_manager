@@ -16,7 +16,6 @@ dependencies:
   # Official decoupled Flutter Material 3 library (flutter.dev)
   material_ui: ^1.11.1
   cupertino_ui: ^1.1.7
-  cupertino_icons: ^2.0.0
 
   # State management
   flutter_bloc: ^9.1.1
@@ -55,6 +54,7 @@ dependencies:
   crypto: ^3.0.6
   animations: 3.0.0
   flutter_animate: 4.5.2
+  lottie: ^3.8.2
   flutter_secure_storage: ^11.2.0
   local_auth: ^3.0.2
   excel_plus: ^2.29.3
@@ -65,6 +65,8 @@ dependencies:
   connectivity_plus: ^7.3.2
   device_info_plus: ^13.3.0
   flutter_tts: ^4.2.5
+  dropdown_search: ^8.1.0
+  calendar_date_picker2: ^4.0.0
 
 dev_dependencies:
   flutter_test:
@@ -89,6 +91,7 @@ flutter:
   assets:
     - assets/branding/logo/
     - assets/branding/splash/
+    - assets/animations/
 
   fonts:
     - family: NotoSansGujarati

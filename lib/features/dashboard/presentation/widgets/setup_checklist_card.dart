@@ -109,17 +109,18 @@ final class _SetupChecklistCardState extends State<SetupChecklistCard> {
               ],
             ),
             const SizedBox(height: AppSpacing.sm),
-            LinearProgressIndicator(value: _completedCount / 4),
+            AppProgressBar(value: _completedCount / 4),
             const SizedBox(height: AppSpacing.sm),
             _ChecklistStepTile(
               done: _profileCustomized,
               label: l10n.setupStepProfile,
-              onTap: () => widget.onNavigate(RoutePaths.settingsBusinessProfile),
+              onTap: () =>
+                  widget.onNavigate(RoutePaths.settingsBusinessProfile),
             ),
             _ChecklistStepTile(
               done: _hasProcesses,
               label: l10n.setupStepProcesses,
-              onTap: () => widget.onNavigate(RoutePaths.processes),
+              onTap: () => widget.onNavigate(RoutePaths.processCreate),
             ),
             _ChecklistStepTile(
               done: _hasWorkers,
@@ -152,7 +153,7 @@ final class _ChecklistStepTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return ListTile(
+    return AppListTile(
       dense: true,
       contentPadding: EdgeInsets.zero,
       leading: Icon(

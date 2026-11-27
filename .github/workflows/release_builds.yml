@@ -1,4 +1,4 @@
-name: StitchFlow Release Builds
+name: Business Manager Release Builds
 
 on:
   push:
@@ -45,17 +45,22 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Write ${{ matrix.flavor }} config from secrets
+        env:
+          APP_CONFIG_JSON: ${{ matrix.flavor == 'prod' && secrets.APP_CONFIG_PROD || secrets.APP_CONFIG_DEV }}
+        run: printf '%s' "$APP_CONFIG_JSON" > "config/${{ matrix.flavor }}.local.json"
+
       - name: Build Android ${{ matrix.flavor }} release APK
         run: |
           flutter build apk --release \
             --flavor ${{ matrix.flavor }} \
             -t lib/main_${{ matrix.flavor }}.dart \
-            --dart-define-from-file=config/${{ matrix.flavor }}.json
+            --dart-define-from-file=config/${{ matrix.flavor }}.local.json
 
       - name: Upload Android ${{ matrix.flavor }} APK
         uses: actions/upload-artifact@v4
         with:
-          name: stitchflow-android-${{ matrix.flavor }}-apk
+          name: business-manager-android-${{ matrix.flavor }}-apk
           path: build/app/outputs/flutter-apk/app-${{ matrix.flavor }}-release.apk
           retention-days: 30
 
@@ -76,15 +81,21 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Write prod config from secrets
+        shell: bash
+        env:
+          APP_CONFIG_JSON: ${{ secrets.APP_CONFIG_PROD }}
+        run: printf '%s' "$APP_CONFIG_JSON" > config/prod.local.json
+
       - name: Build Windows prod release
         run: |
           flutter build windows --release `
             -t lib/main_prod.dart `
-            --dart-define-from-file=config/prod.json
+            --dart-define-from-file=config/prod.local.json
 
       - name: Upload Windows release bundle
         uses: actions/upload-artifact@v4
         with:
-          name: stitchflow-windows-prod
+          name: business-manager-windows-prod
           path: build/windows/x64/runner/Release/
           retention-days: 30

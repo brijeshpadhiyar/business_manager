@@ -19,16 +19,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTagline => 'From Fabric to Finished.';
 
   @override
-  String get foundationTitle => 'Project Foundation Ready';
-
-  @override
-  String get foundationSubtitle =>
-      'Offline-first architecture, flavors, Material 3 design system, and bilingual localization are configured.';
-
-  @override
-  String get environmentSectionTitle => 'Environment';
-
-  @override
   String get environmentFlavorLabel => 'Flavor';
 
   @override
@@ -39,9 +29,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get environmentDatabaseLabel => 'Database File';
-
-  @override
-  String get environmentLoggingLabel => 'Debug Logging';
 
   @override
   String get statusEnabled => 'Enabled';
@@ -90,70 +77,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'An unexpected error occurred. Please try again.';
 
   @override
-  String get navOverview => 'Overview';
-
-  @override
-  String get navInputs => 'Inputs';
-
-  @override
-  String get navFeedback => 'Feedback';
-
-  @override
-  String get showcaseButtonsHeading => 'Buttons & Actions';
-
-  @override
-  String get showcasePrimaryAction => 'Primary Action';
-
-  @override
-  String get showcaseSecondaryAction => 'Secondary';
-
-  @override
-  String get showcaseOutlinedAction => 'Outlined';
-
-  @override
-  String get showcaseDestructiveAction => 'Delete';
-
-  @override
-  String get showcaseLoadingAction => 'Saving...';
-
-  @override
-  String get showcaseDisabledAction => 'Disabled';
-
-  @override
-  String get showcaseInputsHeading => 'Form Controls';
-
-  @override
-  String get showcaseSampleFieldLabel => 'Reference Name';
-
-  @override
-  String get showcaseSampleFieldHint => 'Enter a sample value';
+  String get errorLoadTitle => 'Couldn\'t load this page';
 
   @override
   String get validationRequired => 'This field is required.';
-
-  @override
-  String get showcaseDropdownLabel => 'Sample Category';
-
-  @override
-  String get showcaseOptionOne => 'Option One';
-
-  @override
-  String get showcaseOptionTwo => 'Option Two';
-
-  @override
-  String get showcaseDatePickerLabel => 'Business Date (IST)';
-
-  @override
-  String get showcaseCheckboxLabel => 'Mark as verified';
-
-  @override
-  String get showcaseSwitchLabel => 'Enable compact preview';
-
-  @override
-  String get showcaseValidateButton => 'Validate Form';
-
-  @override
-  String get showcaseBadgesHeading => 'Status Badges';
 
   @override
   String get statusGood => 'Good Stock';
@@ -165,53 +92,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statusDamaged => 'Damaged';
 
   @override
-  String get statusAdvanceCredit => 'Advance Credit';
-
-  @override
-  String get showcaseOpenDialog => 'Open Dialog';
-
-  @override
-  String get showcaseOpenSheet => 'Open Adaptive Sheet';
-
-  @override
-  String get showcaseDialogTitle => 'Confirm Action';
-
-  @override
-  String get showcaseDialogMessage =>
-      'This preview verifies consistent Material 3 spacing, typography, and bilingual wrapping.';
-
-  @override
-  String get showcaseLongTextHeading => 'Typography & Long Text Sample';
-
-  @override
-  String get showcaseLongTextSample =>
-      'All design tokens, typography weights, and bilingual labels wrap cleanly across compact Android phones, tablets, and desktop layouts without clipping or overflow.';
-
-  @override
-  String get showcaseTableHeading => 'Responsive Data Table';
-
-  @override
-  String get showcaseColName => 'Item';
-
-  @override
-  String get showcaseColQty => 'Quantity';
-
-  @override
-  String get showcaseColAmount => 'Amount';
-
-  @override
-  String get showcaseEmptyTitle => 'No Records Yet';
-
-  @override
-  String get showcaseEmptySubtitle => 'Items will appear here once added.';
-
-  @override
-  String get showcaseErrorTitle => 'Unable to Load Preview';
-
-  @override
-  String get showcaseLoadingMessage => 'Loading preview...';
-
-  @override
   String get navDashboard => 'Dashboard';
 
   @override
@@ -221,20 +101,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navInventory => 'Inventory';
 
   @override
-  String get navBusinessProfile => 'Business Profile';
-
-  @override
-  String get navDesignShowcase => 'Design System Showcase';
-
-  @override
-  String get dashboardWelcomeSubtitle =>
-      'Offline-first Garment & Production Management';
-
-  @override
   String get dashboardQuickActions => 'Quick Actions';
-
-  @override
-  String get dashboardPreferences => 'App Preferences';
 
   @override
   String get businessProfileHeading => 'Business Profile';
@@ -418,10 +285,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get inventoryHeading => 'Initial Inventory Overview';
 
   @override
-  String get inventoryNote =>
-      'Shows recorded Initial Quantities only. Stock movements and pending balances arrive in later milestones.';
-
-  @override
   String get inventoryTotalLots => 'Active Lots';
 
   @override
@@ -450,9 +313,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Add lots, designs, and colours to see initial quantity totals here.';
 
   @override
-  String get actionEdit => 'Edit';
-
-  @override
   String get actionDelete => 'Remove';
 
   @override
@@ -462,7 +322,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get piecesUnit => 'pcs';
 
   @override
-  String get navProcesses => 'Processes';
+  String get navProcesses => 'Work Stages';
+
+  @override
+  String get navWorkStagesShort => 'Stages';
+
+  @override
+  String get processQuickCreateAction => 'New Work Stage';
+
+  @override
+  String get settingsManageWorkStagesAction => 'Manage Work Stages';
 
   @override
   String get navWorkers => 'Workers';
@@ -483,29 +352,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filterInactive => 'Inactive';
 
   @override
-  String get processesHeading => 'Production Processes';
+  String get processesHeading => 'Work Stages';
 
   @override
-  String get processesSearchHint => 'Search processes by name or description';
+  String get processesSearchHint => 'Search work stages by name or description';
 
   @override
-  String get processesEmptyTitle => 'No Processes Yet';
+  String get processesEmptyTitle => 'No Work Stages Yet';
 
   @override
   String get processesEmptySubtitle =>
-      'Create your own production processes in any order your workshop uses.';
+      'Create your own work stages in any order your workshop uses.';
 
   @override
-  String get processCreateAction => 'New Process';
+  String get processCreateAction => 'New Work Stage';
 
   @override
-  String get processEditAction => 'Edit Process';
+  String get processEditAction => 'Edit Work Stage';
 
   @override
-  String get processDetailsHeading => 'Process Details';
+  String get processDetailsHeading => 'Work Stage Details';
 
   @override
-  String get processNameLabel => 'Process Name';
+  String get processNameLabel => 'Work Stage Name';
 
   @override
   String get processDescriptionLabel => 'Description (Optional)';
@@ -520,13 +389,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get processIncludeDamagedLabel => 'Include damaged pieces in labour';
 
   @override
-  String get processActivateAction => 'Activate Process';
+  String get processActivateAction => 'Activate Work Stage';
 
   @override
-  String get processDeactivateAction => 'Deactivate Process';
+  String get processDeactivateAction => 'Deactivate Work Stage';
 
   @override
-  String get processDeactivateConfirmTitle => 'Deactivate Process?';
+  String get processDeactivateConfirmTitle => 'Deactivate Work Stage?';
 
   @override
   String get processDeactivateConfirmMessage =>
@@ -534,14 +403,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get processDuplicateNameError =>
-      'A process with this name already exists.';
+      'A work stage with this name already exists.';
 
   @override
   String get processAssignedWorkersHeading => 'Assigned Workers';
 
   @override
   String get processNoAssignedWorkers =>
-      'No workers are currently assigned to this process.';
+      'No workers are currently assigned to this work stage.';
 
   @override
   String get processAuditHistoryHeading => 'Audit History';
@@ -566,7 +435,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workersEmptySubtitle =>
-      'Add your workshop workers to assign processes and configure per-piece rates.';
+      'Add your workshop workers to assign work stages and configure per-piece rates.';
 
   @override
   String get workerCreateAction => 'New Worker';
@@ -610,10 +479,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get workerAssignedProcessesHeading =>
-      'Assigned Processes & Current Rates';
+      'Assigned Work Stages & Current Rates';
 
   @override
-  String get workerNoAssignedProcesses => 'No processes assigned yet.';
+  String get workerNoAssignedProcesses => 'No work stages assigned yet.';
 
   @override
   String get workerManageAssignmentsAction => 'Manage Assignments';
@@ -625,17 +494,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get workerAddRateAction => 'Add Rate';
 
   @override
-  String get assignmentsHeading => 'Worker Process Assignments';
+  String get assignmentsHeading => 'Worker Stage Assignments';
 
   @override
   String get assignmentsSubtitle =>
-      'A worker can be assigned to multiple processes with no fixed sequence.';
+      'A worker can be assigned to multiple work stages with no fixed sequence.';
 
   @override
-  String get assignmentsAddLabel => 'Select Active Process';
+  String get assignmentsAddLabel => 'Select Active Work Stage';
 
   @override
-  String get assignmentsAddAction => 'Assign Process';
+  String get assignmentsAddAction => 'Assign Work Stage';
 
   @override
   String get assignmentsRemoveAction => 'Remove';
@@ -652,29 +521,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get assignmentsEmptySubtitle =>
-      'Assign one or more active processes to this worker.';
+      'Assign one or more active work stages to this worker.';
 
   @override
   String get assignmentsNoAvailableProcesses =>
-      'All active processes are already assigned or no active processes exist.';
+      'All active work stages are already assigned or no active work stages exist.';
 
   @override
   String get assignmentsDuplicateError =>
-      'This process is already assigned to the worker.';
+      'This work stage is already assigned to the worker.';
 
   @override
   String get assignmentsInactiveWorkerError =>
-      'Activate this worker before adding process assignments.';
+      'Activate this worker before adding work stage assignments.';
 
   @override
   String get assignmentsInactiveProcessError =>
-      'Only active processes can be assigned.';
+      'Only active work stages can be assigned.';
 
   @override
   String get ratesHistoryHeading => 'Per-Piece Rate History';
 
   @override
-  String get ratesFilterProcessLabel => 'Process';
+  String get ratesFilterProcessLabel => 'Work Stage';
 
   @override
   String get ratesCurrentRateLabel => 'Current Rate';
@@ -714,17 +583,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ratesEmptySubtitle =>
-      'Add an effective-dated per-piece rate for this worker and process.';
+      'Add an effective-dated per-piece rate for this worker and work stage.';
 
   @override
-  String get ratesSelectProcessHint => 'Select Process';
+  String get ratesSelectProcessHint => 'Select Work Stage';
 
   @override
   String get ratesAutoCloseTitle => 'Close Previous Ongoing Rate?';
 
   @override
   String get ratesAutoCloseMessage =>
-      'An ongoing rate exists for this process. Saving will close it on the previous day and start the new rate from your chosen date.';
+      'An ongoing rate exists for this work stage. Saving will close it on the previous day and start the new rate from your chosen date.';
 
   @override
   String get ratesOverlapError =>
@@ -732,7 +601,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get ratesMultipleOpenEndedError =>
-      'Another ongoing rate already exists for this worker and process.';
+      'Another ongoing rate already exists for this worker and work stage.';
 
   @override
   String get ratesToBeforeFromError =>
@@ -771,19 +640,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stockRepairAction => 'Repair Damaged';
 
   @override
-  String get stockTabOpenIssues => 'Pending Issues';
-
-  @override
   String get stockTabBalances => 'Live Stock';
-
-  @override
-  String get stockTabHistory => 'Timeline';
 
   @override
   String get stockTabWorkers => 'By Worker';
 
   @override
-  String get stockTabProcesses => 'By Process';
+  String get stockTabProcesses => 'By Work Stage';
 
   @override
   String get stockAvailableGoodLabel => 'Available Good';
@@ -810,19 +673,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stockRemainingPendingLabel => 'Remaining Pending';
 
   @override
-  String get stockSelectLotLabel => 'Select Lot';
-
-  @override
-  String get stockSelectDesignLabel => 'Select Design';
-
-  @override
   String get stockSelectColourLabel => 'Select Colour';
-
-  @override
-  String get stockSelectProcessLabel => 'Select Process';
-
-  @override
-  String get stockSelectWorkerLabel => 'Select Eligible Worker';
 
   @override
   String get stockIssueQuantityLabel => 'Issue Quantity (pcs)';
@@ -835,7 +686,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get stockRateMissingWarning =>
-      'No effective historical rate exists for this worker and process on the chosen IST date.';
+      'No effective historical rate exists for this worker and work stage on the chosen IST date.';
 
   @override
   String get stockRateConflictWarning =>
@@ -854,11 +705,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stockNotesLabel => 'Notes (Optional)';
 
   @override
-  String get stockIssueSuccess => 'Stock issued successfully.';
-
-  @override
   String get stockNoEligibleWorkers =>
-      'No active workers are assigned to this process.';
+      'No active workers are assigned to this work stage.';
 
   @override
   String get stockInsufficientGoodError =>
@@ -897,13 +745,6 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get stockSettlementReasonRequiredError =>
       'Reason is required for damaged, lost, or shortage settlements.';
-
-  @override
-  String get stockSettlementSuccess => 'Return / settlement recorded.';
-
-  @override
-  String get stockInheritedRateNotice =>
-      'Original locked issue rate and billing rule will be inherited automatically.';
 
   @override
   String get stockRepairHeading => 'Damaged-to-Good Repair Adjustment';
@@ -960,11 +801,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get stockEmptyHistorySubtitle =>
-      'Issue stock to a worker and process to start tracking movements.';
+      'Issue stock to a worker and work stage to start tracking movements.';
 
   @override
   String get stockSearchHint =>
-      'Search lot, design, colour, worker, process...';
+      'Search lot, design, colour, worker, work stage...';
 
   @override
   String get stockFilterAllTypes => 'All Types';
@@ -1009,19 +850,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountingEarnedLabourLabel => 'Earned Labour';
 
   @override
-  String get accountingIssuedLabourInfoLabel => 'Issued Labour (Info)';
-
-  @override
-  String get accountingReceivedLabourInfoLabel => 'Received Labour (Info)';
-
-  @override
   String get accountingRegularPaidLabel => 'Regular Payments';
 
   @override
   String get accountingAdvancePaidLabel => 'Advances Paid';
-
-  @override
-  String get accountingAdvanceRefundLabel => 'Advance Refunds';
 
   @override
   String get accountingAdjustmentsLabel => 'Adjustments';
@@ -1214,22 +1046,20 @@ class AppLocalizationsEn extends AppLocalizations {
       '• Backups are unencrypted in V1 so you can inspect .sqlite files directly.\n• Keep backup ZIP files in a safe personal folder or external drive.\n• Restoring a Dev backup into Production StitchFlow is blocked for safety.';
 
   @override
-  String get dashboardLiveOverview => 'Business Overview';
-
-  @override
   String get dashboardStockHealth => 'Inventory & Production Health';
 
   @override
   String get dashboardFinanceHealth => 'Worker Accounting Summary';
 
   @override
-  String get dashboardProcessPending => 'Process-Wise Pending Work';
+  String get dashboardProcessPending => 'Stage-Wise Pending Work';
 
   @override
   String get dashboardRecentActivity => 'Recent Audit Activity';
 
   @override
-  String get dashboardNoProcessPending => 'No pending stock across processes.';
+  String get dashboardNoProcessPending =>
+      'No pending stock across work stages.';
 
   @override
   String get dashboardNoRecentActivity => 'No activity logged yet.';
@@ -1242,30 +1072,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reportsHeading => 'Business Reports';
-
-  @override
-  String get reportsTabStockSummary => 'Stock Summary';
-
-  @override
-  String get reportsTabLots => 'Lot-Wise';
-
-  @override
-  String get reportsTabColours => 'Design / Colour';
-
-  @override
-  String get reportsTabWorkers => 'Worker Stock';
-
-  @override
-  String get reportsTabProcesses => 'Process Stock';
-
-  @override
-  String get reportsTabPending => 'Pending Stock';
-
-  @override
-  String get reportsTabDamagedLost => 'Damaged & Lost';
-
-  @override
-  String get reportsTabLabour => 'Labour';
 
   @override
   String get reportsTabWorkerLedger => 'Worker Accounts';
@@ -1351,32 +1157,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsStockLabourSubtitle =>
-      'Global billing rule and per-process labour override overview.';
-
-  @override
-  String get settingsGlobalBillingSectionTitle =>
-      'Global Default Labour Billing Mode';
+      'Global billing rule and per-stage labour override overview.';
 
   @override
   String get settingsGlobalBillingExplanationReceived =>
-      'Workers earn labour when returned good pieces are recorded. Damaged pieces are excluded unless enabled on a specific process.';
+      'Workers earn labour when returned good pieces are recorded. Damaged pieces are excluded unless enabled on a specific work stage.';
 
   @override
   String get settingsGlobalBillingExplanationGiven =>
       'Workers earn labour immediately when stock is issued to them. Return entries stay informational to prevent double-counting.';
 
   @override
-  String get settingsProcessOverridesTitle => 'Process-Level Rules';
+  String get settingsProcessOverridesTitle => 'Stage-Level Rules';
 
   @override
   String get settingsProcessOverridesSubtitle =>
-      'Each process inherits the global billing mode unless overridden. Tap any process to configure.';
+      'Each work stage inherits the global billing mode unless overridden. Tap any work stage to configure.';
 
   @override
   String get settingsProcessInheritsGlobal => 'Inherits Global Default';
 
   @override
-  String get settingsProcessOverridesGlobal => 'Process Override';
+  String get settingsProcessOverridesGlobal => 'Work Stage Override';
 
   @override
   String get settingsDamagedIncludedShort => 'Damaged Included';
@@ -1385,7 +1187,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsDamagedExcludedShort => 'Damaged Excluded';
 
   @override
-  String get settingsNoProcessesYet => 'No production processes created yet.';
+  String get settingsNoProcessesYet => 'No work stages created yet.';
 
   @override
   String get settingsBackupTitle => 'Backup & Data Safety';
@@ -1473,20 +1275,17 @@ class AppLocalizationsEn extends AppLocalizations {
       'Create a lot with designs and colours first, or receive returned stock to replenish in-house good stock.';
 
   @override
-  String get stockSelectedLabel => 'Selected';
-
-  @override
   String get stockChangeSelection => 'Change';
 
   @override
-  String get stockActiveProcessesLabel => 'Active Process';
+  String get stockActiveProcessesLabel => 'Active Work Stage';
 
   @override
   String get stockEligibleWorkersLabel => 'Eligible Assigned Worker';
 
   @override
   String get stockNoActiveProcessesWarning =>
-      'No active processes exist. Create a process before issuing stock.';
+      'No active work stages exist. Create a work stage before issuing stock.';
 
   @override
   String get stockBillingModePreviewLabel => 'Locked Billing Mode';
@@ -1545,7 +1344,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stockFilterAllWorkers => 'All Workers';
 
   @override
-  String get stockFilterAllProcesses => 'All Processes';
+  String get stockFilterAllProcesses => 'All Work Stages';
 
   @override
   String get stockPreviouslyReturnedLabel => 'Returned';
@@ -1612,7 +1411,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get stockIssueNextProcessAction =>
-      'Issue Returned Stock to Next Process';
+      'Issue Returned Stock to Next Work Stage';
 
   @override
   String get stockReceiveAnotherReturnAction => 'Receive Another Return';
@@ -1624,7 +1423,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get stockTabMovementHistory => 'Movement History';
 
   @override
-  String get stockTabSummary => 'Worker & Process';
+  String get stockTabSummary => 'Worker & Work Stage';
 
   @override
   String get auditActionDeactivate => 'Deactivated';
@@ -1956,7 +1755,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'No stock issues, returns, or payments were recorded for this IST date.';
 
   @override
-  String get dailySummaryProcessActivityHeading => 'Process-Wise Activity';
+  String get dailySummaryProcessActivityHeading => 'Stage-Wise Activity';
 
   @override
   String get dailySummaryWorkerActivityHeading => 'Worker-Wise Activity';
@@ -1980,7 +1779,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Recently Used In-Stock Colours';
 
   @override
-  String get stockRecentWorkPairsLabel => 'Recent Process & Worker';
+  String get stockRecentWorkPairsLabel => 'Recent Work Stage & Worker';
 
   @override
   String get stockUnusualConfirmTitle => 'Please Confirm Unusual Issue';
@@ -2048,7 +1847,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reportCategoryWorkers => 'Worker Performance';
 
   @override
-  String get reportCategoryProcesses => 'Process Performance';
+  String get reportCategoryProcesses => 'Work Stage Performance';
 
   @override
   String get reportCategoryInventory => 'Inventory';
@@ -2117,7 +1916,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reportDefectRateLabel => 'Defect / Loss Rate';
 
   @override
-  String get reportWorkerProcessBreakdown => 'Process-Wise Productivity';
+  String get reportWorkerProcessBreakdown => 'Stage-Wise Productivity';
 
   @override
   String get reportProcessWorkerContribution => 'Worker Contributions';
@@ -2141,11 +1940,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reportInsightsNoPriorData => 'No prior data';
 
   @override
-  String get reportInsightsBottlenecksTitle => 'Process Bottlenecks';
+  String get reportInsightsBottlenecksTitle => 'Work Stage Bottlenecks';
 
   @override
   String get reportInsightsNoBottlenecks =>
-      'All processes are clear — no pending bottlenecks.';
+      'All work stages are clear — no pending bottlenecks.';
 
   @override
   String get reportInsightsWorkerTrendsTitle => 'Top Worker Productivity';
@@ -2154,7 +1953,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get reportInsightsDefectReasonsTitle => 'Top Damaged / Lost Reasons';
 
   @override
-  String get reportInsightsLabourShareTitle => 'Labour Cost by Process';
+  String get reportInsightsLabourShareTitle => 'Labour Cost by Work Stage';
 
   @override
   String get reportExportAction => 'Export / Print';
@@ -2181,7 +1980,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reportExportFullWorkbookSubtitle =>
-      'All sheets: Daily, Workers, Processes, Inventory, Labour & Payments.';
+      'All sheets: Daily, Workers, Work Stages, Inventory, Labour & Payments.';
 
   @override
   String get reportExportCsvTitle => 'Export CSV (UTF-8)';
@@ -2420,7 +2219,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get validationWorkerNotAssigned =>
-      'Selected worker is not actively assigned to this process.';
+      'Selected worker is not actively assigned to this work stage.';
 
   @override
   String get validationRecordNotFound =>
@@ -2457,7 +2256,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get validationUnaccountedRemaining =>
-      'Process cannot be completed while pending quantity remains unaccounted.';
+      'Work Stage cannot be completed while pending quantity remains unaccounted.';
 
   @override
   String get validationOverpaymentNotAllowed =>
@@ -2491,18 +2290,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get navWorkerHistory => 'Worker Production';
 
   @override
-  String get navProcessHistory => 'Process History';
+  String get navProcessHistory => 'Work Stage History';
 
   @override
   String get prodHistoryDashboardTitle => 'Production History';
 
   @override
   String get prodHistoryDashboardSubtitle =>
-      'Permanent lot, worker, process & financial ledger tracking';
+      'Permanent lot, worker, work stage & financial ledger tracking';
 
   @override
   String get prodHistorySearchHint =>
-      'Search lot, worker, process, design, colour...';
+      'Search lot, worker, work stage, design, colour...';
 
   @override
   String get prodHistoryOnlyPending => 'Pending Only';
@@ -2512,9 +2311,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get prodHistoryTotalAssigned => 'Assigned';
-
-  @override
-  String get prodHistoryTotalReturned => 'Returned';
 
   @override
   String get prodHistoryTotalAccepted => 'Accepted';
@@ -2556,16 +2352,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get prodHistoryWorkerLotHistory => 'Worker Lot History';
 
   @override
-  String get prodHistoryWorkerProcessHistory => 'Process-Wise History';
+  String get prodHistoryWorkerProcessHistory => 'Stage-Wise History';
 
   @override
   String get prodHistoryIncludeInactive => 'Show Inactive';
 
   @override
-  String get prodHistoryProcessHistoryTitle => 'Process-Wise History';
+  String get prodHistoryProcessHistoryTitle => 'Stage-Wise History';
 
   @override
-  String get prodHistoryProcessDetailsTitle => 'Process Production Details';
+  String get prodHistoryProcessDetailsTitle => 'Work Stage Production Details';
 
   @override
   String get prodHistoryTabLotWise => 'Lot-Wise';
@@ -2623,7 +2419,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get prodHistoryOpenWorker => 'Open Worker';
 
   @override
-  String get prodHistoryOpenProcess => 'Open Process';
+  String get prodHistoryOpenProcess => 'Open Work Stage';
 
   @override
   String get prodHistoryLockedRateSnapshot => 'Locked Rate Snapshot';
@@ -2636,11 +2432,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get prodHistoryInitialAssignmentsTitle =>
-      '3. Initial Process Assignments (Optional)';
+      '3. Initial Work Stage Assignments (Optional)';
 
   @override
   String get prodHistoryInitialAssignmentsSubtitle =>
-      'Optionally assign processes, workers, quantities & locked rates while creating the lot.';
+      'Optionally assign work stages, workers, quantities & locked rates while creating the lot.';
 
   @override
   String get prodHistoryAddAssignmentAction => 'Add Assignment';
@@ -2719,24 +2515,6 @@ class AppLocalizationsEn extends AppLocalizations {
       'Historical lot prices stay locked to each lot and are never overwritten.';
 
   @override
-  String get webBackupExportAction => 'Download Web Backup (.json)';
-
-  @override
-  String get webBackupExportDesc =>
-      'Downloads a verified offline snapshot of all local workshop records from this browser.';
-
-  @override
-  String get webBackupRestoreAction => 'Restore Web Backup (.json)';
-
-  @override
-  String get webBackupRestoreDesc =>
-      'Validates checksum and schema before restoring all records into this browser\'s offline database.';
-
-  @override
-  String get webPrintFallbackNote =>
-      'Opened browser print dialog (use Save as PDF to download).';
-
-  @override
   String get uxUndo => 'Undo';
 
   @override
@@ -2764,7 +2542,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get uxSearchTooltip => 'Search (Ctrl+K)';
 
   @override
-  String get uxSearchHint => 'Search lots, workers, processes…';
+  String get uxSearchHint => 'Search lots, workers, work stages…';
 
   @override
   String get uxSearchLots => 'Lots';
@@ -2773,7 +2551,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get uxSearchWorkers => 'Workers';
 
   @override
-  String get uxSearchProcesses => 'Processes';
+  String get uxSearchProcesses => 'Work Stages';
 
   @override
   String uxSearchNoResults(String query) {
@@ -2816,15 +2594,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get uxMoreScreens => 'More screens';
-
-  @override
-  String get uxMoreActions => 'More actions';
-
-  @override
-  String get uxApply => 'Apply';
-
-  @override
-  String get uxClearAll => 'Clear all';
 
   @override
   String get authSignInHeading => 'Sign In to Cloud Sync';
@@ -2878,10 +2647,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authAccountTitle => 'Account & Cloud Sync';
-
-  @override
-  String get authAccountSubtitle =>
-      'Manage Google & Phone login, linked devices, and sign-out';
 
   @override
   String get authOfflineModeBadge => 'Offline Mode';
@@ -2964,11 +2729,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get syncStatusNeedsAttention => 'Needs Attention';
 
   @override
-  String syncStatusPending(int count) {
-    return '$count pending';
-  }
-
-  @override
   String get syncNowAction => 'Sync Now';
 
   @override
@@ -3002,7 +2762,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get syncMergeBothDesc =>
-      'Combines all ledgers safely and keeps the newest edits for lots, workers, and processes.';
+      'Combines all ledgers safely and keeps the newest edits for lots, workers, and work stages.';
 
   @override
   String get syncKeepCloudAction => 'Keep Cloud Only';
@@ -3066,9 +2826,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dataHealthCheckedAtLabel => 'Last Checked';
-
-  @override
-  String get dataHealthSchemaVersionLabel => 'Schema Version';
 
   @override
   String get dataHealthDbSizeLabel => 'Database Size';
@@ -3167,7 +2924,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get routingTitle => 'Process Routing';
+  String get routingTitle => 'Work Stage Routing';
 
   @override
   String get routingRefreshTooltip => 'Refresh';
@@ -3176,19 +2933,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get routingLoadErrorTitle => 'Unable to load Job Routing';
 
   @override
-  String get routingAddProcessAction => 'Add Process';
+  String get routingAddProcessAction => 'Add Work Stage';
 
   @override
   String get routingReassignFromFactoryAction => 'Reassign from Factory';
 
   @override
-  String get routingAddOperationTitle => 'Add Process Operation';
+  String get routingAddOperationTitle => 'Add Work Stage to Lot';
 
   @override
   String get routingVariantLabel => 'Variant (Design / Colour)';
 
   @override
-  String get routingOperationLabel => 'Operation / Process';
+  String get routingOperationLabel => 'Work Stage';
 
   @override
   String get routingAssignWorkerLabel => 'Assign Worker / Department';
@@ -3215,10 +2972,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get routingConfirmReassignmentAction => 'Confirm Reassignment';
 
   @override
-  String get routingAddDispatchAction => 'Add & Dispatch Process';
+  String get routingAddDispatchAction => 'Add & Dispatch Work Stage';
 
   @override
-  String get routingSavePendingAction => 'Save Pending Process';
+  String get routingSavePendingAction => 'Save Pending Work Stage';
 
   @override
   String get routingAddColourFirstError =>
@@ -3226,7 +2983,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get routingAddProcessWorkerFirstError =>
-      'Please create at least one active Process and Worker first.';
+      'Please create at least one active Work Stage and Worker first.';
 
   @override
   String get routingInvalidQuantityError =>
@@ -3243,7 +3000,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get routingDirectTransferTitle => 'Direct Worker-to-Worker Transfer';
 
   @override
-  String get routingNextOperationLabel => 'Next Operation / Process';
+  String get routingNextOperationLabel => 'Next Work Stage';
 
   @override
   String get routingDestinationWorkerLabel => 'Destination Worker / Department';
@@ -3311,7 +3068,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get routingKeepAction => 'Keep';
 
   @override
-  String get routingCancelProcessAction => 'Cancel Process';
+  String get routingCancelProcessAction => 'Cancel Work Stage';
 
   @override
   String get routingFactoryReadyLabel => 'Factory Ready';
@@ -3388,11 +3145,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get routingErrPendingRemaining =>
-      'Cannot complete process while pending quantity remains unaccounted.';
+      'Cannot complete work stage while pending quantity remains unaccounted.';
 
   @override
   String get routingErrHeldPiecesCancel =>
-      'Return or transfer all held pieces before cancelling this process.';
+      'Return or transfer all held pieces before cancelling this work stage.';
 
   @override
   String get routingErrSameWorkerProcess =>
@@ -3414,7 +3171,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get routingErrReasonRequired => 'Please enter a reason.';
 
   @override
-  String get routingErrProcessRequired => 'Select an operation/process.';
+  String get routingErrProcessRequired => 'Select a work stage.';
 
   @override
   String get routingErrWorkerRequired => 'Select a worker.';
@@ -3433,9 +3190,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get slipShareReturnAction => 'Share Return / QC Slip';
-
-  @override
-  String get slipShareReceiptAction => 'Share Payment Receipt';
 
   @override
   String get slipShareKhataAction => 'Share Khata Statement';
@@ -3462,24 +3216,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get slipGeneratedSuccess => 'Slip ready to share.';
 
   @override
-  String get slipRefLabel => 'Ref';
-
-  @override
-  String get slipBalancePayable => 'Outstanding Payable';
-
-  @override
-  String get slipBalanceAdvance => 'Advance Credit';
-
-  @override
-  String get slipBalanceSettled => 'Account Settled';
-
-  @override
-  String get slipFooterOffline => 'Generated offline via StitchFlow';
-
-  @override
-  String get undoAuditedSuccess => 'Reversal recorded in audit ledger.';
-
-  @override
   String get draftRestoredBanner => 'Unfinished draft restored.';
 
   @override
@@ -3499,7 +3235,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get setupStepProfile => 'Customize Business Profile';
 
   @override
-  String get setupStepProcesses => 'Create Production Processes';
+  String get setupStepProcesses => 'Create Work Stages';
 
   @override
   String get setupStepWorkers => 'Add Workers & Rates';
@@ -3584,10 +3320,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get syncConflictsTitle => 'Sync Conflict Inspector';
-
-  @override
-  String get syncConflictsSubtitle =>
-      'Review superseded local edits from multi-device/team sync and optionally restore them.';
 
   @override
   String get syncConflictsOpenAction => 'Review Conflicts';
@@ -3748,4 +3480,623 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get guideResetProgressDone =>
       'Training progress reset. You can start fresh anytime.';
+
+  @override
+  String lotDesignPriceHelper(String price) {
+    return 'Design price: $price';
+  }
+
+  @override
+  String lotStageDefaultRateHelper(String price) {
+    return 'Stage default rate: $price';
+  }
+
+  @override
+  String accountingPayFullAction(String amount) {
+    return 'Pay full $amount';
+  }
+
+  @override
+  String get accountingUndoFailed =>
+      'Could not undo the payment. Open the worker ledger to reverse it.';
+
+  @override
+  String get lotNeedVariantStageWorker =>
+      'Add at least one colour variant, active work stage, and active worker first.';
+
+  @override
+  String get lotDesignColourVariantLabel => 'Design / Colour Variant';
+
+  @override
+  String get lotQtyPcsLabel => 'Qty (pcs)';
+
+  @override
+  String get lotLockedRateLabel => 'Locked Rate (₹/pc)';
+
+  @override
+  String get lotEnterPositiveQty => 'Enter a positive quantity.';
+
+  @override
+  String get lotEnterValidRate => 'Enter a valid rate.';
+
+  @override
+  String lotDesignAlreadyAdded(Object a) {
+    return 'Design \"$a\" is already added to this lot.';
+  }
+
+  @override
+  String get lotEnterDesignName => 'Enter a design name.';
+
+  @override
+  String get lotDesignNameTooLong => 'Design name is too long.';
+
+  @override
+  String get lotEnterValidDefaultPrice =>
+      'Enter a valid non-negative default price.';
+
+  @override
+  String lotSelectColoursForDesign(Object a) {
+    return 'Select Colours — $a';
+  }
+
+  @override
+  String get lotSelectColoursColourOnly => 'Select Colours (Colour-Only Lot)';
+
+  @override
+  String lotEnterPositiveQtyFor(Object a) {
+    return 'Enter a positive quantity for $a.';
+  }
+
+  @override
+  String lotEnterPositiveQtyForVariant(Object a, Object b) {
+    return 'Enter a positive quantity for $a — $b.';
+  }
+
+  @override
+  String lotEnterValidPriceForVariant(Object a, Object b) {
+    return 'Enter a valid non-negative unit price for $a — $b.';
+  }
+
+  @override
+  String lotEnterValidPriceFor(Object a) {
+    return 'Enter a valid non-negative unit price for $a.';
+  }
+
+  @override
+  String lotQtyExceedsMaxFor(Object a) {
+    return 'Quantity for $a exceeds the maximum limit.';
+  }
+
+  @override
+  String lotCreatedSuccess(Object a) {
+    return 'Lot $a created successfully.';
+  }
+
+  @override
+  String get lotSummaryLive => 'Lot Summary (Live)';
+
+  @override
+  String get lotColoursLabel => 'Colours';
+
+  @override
+  String get lotTotalQtyLabel => 'Total Qty';
+
+  @override
+  String lotPiecesValue(Object a) {
+    return '$a pcs';
+  }
+
+  @override
+  String get lotSkuValueLabel => 'SKU Value';
+
+  @override
+  String get lotSectionInfo => '1. Lot Information';
+
+  @override
+  String get lotSectionDesigns => '2. Designs, Colours & SKU Pricing';
+
+  @override
+  String get lotSectionDesignsHelp =>
+      'Unit prices here are SKU reference prices (separate from worker labour rates). You can add designs, colours, quantities, and prices in one workflow.';
+
+  @override
+  String get lotModeWithDesigns => 'With Design(s)';
+
+  @override
+  String get lotModeColourOnly => 'Colour-Only (No Design)';
+
+  @override
+  String get lotSelectExistingDesign => 'Select Existing Design';
+
+  @override
+  String get lotAddNewDesign => 'Add New Design';
+
+  @override
+  String get lotNewDesignInline => 'New Design (Inline)';
+
+  @override
+  String get lotDefaultUnitPriceLabel =>
+      'Default Unit Price (₹ / pc, optional)';
+
+  @override
+  String get lotAddDesignToLot => 'Add Design to Lot';
+
+  @override
+  String get lotNoDesignsYet =>
+      'No designs added yet. Select an existing design or tap \"+ Add New Design\" above (or save an empty lot and add designs later).';
+
+  @override
+  String lotColourVariantsCount(Object a) {
+    return 'Colour Variants ($a)';
+  }
+
+  @override
+  String get lotAddColours => 'Add Colours';
+
+  @override
+  String get lotAddColoursHelp =>
+      'Tap \"Add Colours\" to pick colours from the palette or create custom colours with quantity & price.';
+
+  @override
+  String lotDefaultPriceValue(Object a) {
+    return 'Default: $a';
+  }
+
+  @override
+  String get lotRemoveDesign => 'Remove design';
+
+  @override
+  String get lotRemoveColour => 'Remove colour';
+
+  @override
+  String get lotUnitPriceLabel => 'Unit Price (₹)';
+
+  @override
+  String lotColourDetailsFor(Object a) {
+    return '$a Details';
+  }
+
+  @override
+  String get lotColourDetails => 'Colour Details';
+
+  @override
+  String get lotColourDetailsLoadError => 'Unable to load Colour Details';
+
+  @override
+  String get lotColourNotFound => 'Colour Variant Not Found';
+
+  @override
+  String get lotColourNotFoundHelp =>
+      'This colour variant may have been removed from the lot.';
+
+  @override
+  String lotHashDesign(Object a, Object b) {
+    return 'Lot #$a  •  Design: $b';
+  }
+
+  @override
+  String lotQtyPcsValue(Object a) {
+    return 'Lot Qty: $a pcs';
+  }
+
+  @override
+  String lotTotalAssignedPcs(Object a) {
+    return 'Total Assigned: $a pcs';
+  }
+
+  @override
+  String lotUnitValue(Object a) {
+    return 'Unit Value: $a';
+  }
+
+  @override
+  String lotDamagedPcs(Object a) {
+    return 'Damaged: $a pcs';
+  }
+
+  @override
+  String lotManageStagesFor(Object a) {
+    return 'Manage Work Stages for $a';
+  }
+
+  @override
+  String get lotAvailableFactory => 'Available (Factory)';
+
+  @override
+  String get lotPendingWorkers => 'Pending (Workers)';
+
+  @override
+  String get lotCompletedHandedOver => 'Completed / Handed Over';
+
+  @override
+  String get lotStageBreakdown => 'Stage-wise Breakdown';
+
+  @override
+  String lotStageSummaryLine(Object a, Object b, Object c) {
+    return 'Assigned: $a pcs • Completed: $b pcs • Pending: $c pcs';
+  }
+
+  @override
+  String get lotWorkerDistribution => 'Worker-wise Distribution & Pricing';
+
+  @override
+  String lotNoWorkersAssignedFor(Object a) {
+    return 'No workers have been assigned to $a yet.';
+  }
+
+  @override
+  String lotAssignedPendingLine(Object a, Object b) {
+    return 'Assigned: $a pcs • Pending: $b pcs';
+  }
+
+  @override
+  String lotRatePayableLine(Object a, Object b, Object c) {
+    return 'Rate: $a / $b • Payable: $c';
+  }
+
+  @override
+  String get lotColourCostSummary => 'Colour Cost Summary';
+
+  @override
+  String get lotBaseStageCost => 'Base Work Stage Cost';
+
+  @override
+  String get lotAdditionalCharges => 'Additional Charges';
+
+  @override
+  String get lotDeductions => 'Deductions';
+
+  @override
+  String get lotPaidToWorkers => 'Paid to Workers';
+
+  @override
+  String lotMovementHistoryCount(Object a) {
+    return 'Movement History ($a)';
+  }
+
+  @override
+  String lotMovementHistoryEmpty(Object a) {
+    return 'Dispatches, direct transfers, and returns for $a will appear here.';
+  }
+
+  @override
+  String lotReceivedOfLine(Object a, Object b, Object c) {
+    return 'Received: $a/$b • $c';
+  }
+
+  @override
+  String get lotStatusNotStarted => 'Not Started';
+
+  @override
+  String get lotStatusInProgress => 'In Progress';
+
+  @override
+  String lotStatusPendingCount(Object a) {
+    return 'Pending ($a)';
+  }
+
+  @override
+  String lotInitialColoursCount(Object a) {
+    return 'Initial Colours ($a)';
+  }
+
+  @override
+  String get lotSelectInitialColours => 'Select Initial Colours';
+
+  @override
+  String get lotSelectColoursNoDesign => 'Select Colours (No Design)';
+
+  @override
+  String get lotRoutingHandovers => 'Work Stage Routing & Handovers';
+
+  @override
+  String get lotAddColourNoDesign => 'Add Colour (No Design)';
+
+  @override
+  String lotDesignValue(Object a) {
+    return 'Design: $a';
+  }
+
+  @override
+  String get lotTotalLabel => 'Total';
+
+  @override
+  String get lotDoneLabel => 'Done';
+
+  @override
+  String get lotAddCustomColour => 'Add Custom Colour';
+
+  @override
+  String get lotEditColour => 'Edit Colour';
+
+  @override
+  String get lotHexCodeLabel => 'HEX Code (e.g. #DC2626)';
+
+  @override
+  String get lotSaveColour => 'Save Colour';
+
+  @override
+  String get lotSearchColourHint => 'Search colour name or HEX';
+
+  @override
+  String get lotCustomColour => 'Custom';
+
+  @override
+  String get lotRecentlyUsed => 'Recently Used';
+
+  @override
+  String get lotColourPaletteHelp =>
+      'Colour Palette (Tap to select, long-press to edit)';
+
+  @override
+  String lotSelectedColoursCount(Object a) {
+    return 'Selected Colours ($a)';
+  }
+
+  @override
+  String get lotSelectColoursAbove => 'Select Colours Above';
+
+  @override
+  String lotAddColoursSummary(Object a, Object b) {
+    return 'Add $a Colour(s) • $b pcs';
+  }
+
+  @override
+  String get lotInitialQtyLabel => 'Initial Qty';
+
+  @override
+  String get lotDesignsColoursBreakdown => 'Designs & Colours Breakdown';
+
+  @override
+  String lotInHouseValue(Object a) {
+    return 'In-House: $a';
+  }
+
+  @override
+  String lotWithWorkersValue(Object a) {
+    return 'With Workers: $a';
+  }
+
+  @override
+  String lotPendingQcValue(Object a) {
+    return 'Pending QC: $a';
+  }
+
+  @override
+  String lotDamagedValue(Object a) {
+    return 'Damaged: $a';
+  }
+
+  @override
+  String lotStageAssignmentsCount(Object a) {
+    return 'Work Stage Assignments & Worker Ledger ($a)';
+  }
+
+  @override
+  String get lotNoStageAssignments =>
+      'No work stage assignments recorded for this lot yet.';
+
+  @override
+  String lotRejectionRecordsCount(Object a) {
+    return 'Rejection & Repair Records ($a)';
+  }
+
+  @override
+  String lotRejectedLine(Object a, Object b, Object c) {
+    return 'Rejected: $a • Re-Approved: $b • Open: $c';
+  }
+
+  @override
+  String lotReasonValue(Object a) {
+    return 'Reason: $a';
+  }
+
+  @override
+  String lotAssignedValue(Object a) {
+    return 'Assigned: $a';
+  }
+
+  @override
+  String lotReturnedValue(Object a) {
+    return 'Returned: $a';
+  }
+
+  @override
+  String lotAcceptedValue(Object a) {
+    return 'Accepted: $a';
+  }
+
+  @override
+  String lotOutstandingValue(Object a) {
+    return 'Outstanding: $a';
+  }
+
+  @override
+  String lotRejectedValue(Object a) {
+    return 'Rejected: $a';
+  }
+
+  @override
+  String lotRateEarnedLine(Object a, Object b) {
+    return 'Rate: $a/pc • Earned: $b';
+  }
+
+  @override
+  String get lotCostLabel => 'Cost';
+
+  @override
+  String lotLotsValue(Object a) {
+    return 'Lots: $a';
+  }
+
+  @override
+  String lotWorkersValue(Object a) {
+    return 'Workers: $a';
+  }
+
+  @override
+  String lotCostPaidOutstandingLine(Object a, Object b, Object c) {
+    return 'Cost: $a • Paid (est): $b • Outstanding (est): $c';
+  }
+
+  @override
+  String get stockStageDefaultBadge => 'Stage Default';
+
+  @override
+  String stockInheritedFrom(Object a, Object b) {
+    return 'Inherited from $a ($b)';
+  }
+
+  @override
+  String get selectSearchHint => 'Search…';
+
+  @override
+  String get selectNoResults => 'No matching items';
+
+  @override
+  String get selectLoadError => 'Could not load items. Try again.';
+
+  @override
+  String get selectSelectAll => 'Select all';
+
+  @override
+  String get selectClearAll => 'Clear';
+
+  @override
+  String selectSelectedCount(int count) {
+    return '$count selected';
+  }
+
+  @override
+  String selectMaxReached(int max) {
+    return 'You can select up to $max';
+  }
+
+  @override
+  String get tableQtyHeader => 'Qty';
+
+  @override
+  String get tableHistoricalPriceHeader => 'Historical Price';
+
+  @override
+  String get tableHexHeader => 'Hex';
+
+  @override
+  String get tableLotUsesHeader => 'Lot Uses';
+
+  @override
+  String get processDefaultRateLabel => 'Default Labour Rate (₹)';
+
+  @override
+  String get processDefaultRateShort => 'Default Rate';
+
+  @override
+  String get inspectionStillDefectiveLabel =>
+      'Still Defective / Rejected Again';
+
+  @override
+  String get inspectionQueueEmptyTitle => 'No Pending QC Inspections';
+
+  @override
+  String get inspectionQueueEmptySubtitle =>
+      'All returned pieces have been inspected and reconciled.';
+
+  @override
+  String lotOpenValue(Object a) {
+    return 'Open: $a';
+  }
+
+  @override
+  String lotReapprovedValue(Object a) {
+    return 'Re-Approved: $a';
+  }
+
+  @override
+  String lotEarnedValue(Object a) {
+    return 'Earned: $a';
+  }
+
+  @override
+  String lotPendingEstimateValue(Object a) {
+    return 'Pending Est: $a';
+  }
+
+  @override
+  String backupMovementsValue(Object a) {
+    return 'Movements: $a';
+  }
+
+  @override
+  String backupPhotosValue(Object a) {
+    return 'Photos: $a';
+  }
+
+  @override
+  String get txnDesignColourLabel => 'Design / Colour';
+
+  @override
+  String get txnAmountLabel => 'Amount';
+
+  @override
+  String get txnReferenceLabel => 'Reference';
+
+  @override
+  String get txnReasonLabel => 'Reason';
+
+  @override
+  String get workerRateLabel => 'Worker Rate';
+
+  @override
+  String get workerCustomRateLabel => 'Custom Worker Rate (₹ / pc, optional)';
+
+  @override
+  String get assignmentsHistoryPreservedNote =>
+      'Historical labour transactions & rates remain preserved.';
+
+  @override
+  String get assignmentsReactivateAction => 'Reactivate';
+
+  @override
+  String get reportsNoDataLoaded => 'No report data loaded.';
+
+  @override
+  String lotCompletedValue(Object a) {
+    return 'Completed: $a';
+  }
+
+  @override
+  String assignmentsDeactivatedHeading(Object a) {
+    return 'Deactivated Assignments ($a)';
+  }
+
+  @override
+  String workerRateInheritHint(Object a) {
+    return 'Leave blank to inherit $a';
+  }
+
+  @override
+  String designVariantsSummary(Object a, Object b, Object c) {
+    return '$a variants • $b pcs • $c';
+  }
+
+  @override
+  String assignmentsRemovedToast(Object a) {
+    return '$a removed from this worker';
+  }
+
+  @override
+  String get paginationLoadMore => 'Load more';
+
+  @override
+  String paginationShowingAll(Object a) {
+    return 'Showing all $a';
+  }
+
+  @override
+  String get dashboardWeekTrendHeading => 'This Week\'s Production';
+
+  @override
+  String securityPinProgress(int a, int b) {
+    return '$a of $b digits entered';
+  }
 }

@@ -82,11 +82,10 @@ final class _HelpGuidancePageState extends State<HelpGuidancePage> {
             label: l10n.helpSearchHint,
             prefixIcon: AppIcons.search,
             suffixIcon: _query.isNotEmpty
-                ? IconButton(
-                    tooltip: MaterialLocalizations.of(
-                      context,
-                    ).deleteButtonTooltip,
-                    icon: const Icon(AppIcons.close, size: 18),
+                ? AppIconButton(
+                    tooltip: MaterialLocalizations.of(context)
+                        .deleteButtonTooltip,
+                    icon: AppIcons.close,
                     onPressed: () {
                       _searchCtrl.clear();
                       setState(() => _query = '');
@@ -197,7 +196,7 @@ final class _HelpGuidancePageState extends State<HelpGuidancePage> {
                             variant: AppTextVariant.bodyLarge,
                             fontWeight: FontWeight.w700,
                           ),
-                          const SizedBox(height: 2),
+                          const SizedBox(height: AppSpacing.xxs),
                           AppText(
                             l10n.guideProgressSummary(completed, total),
                             variant: AppTextVariant.bodySmall,
@@ -209,7 +208,7 @@ final class _HelpGuidancePageState extends State<HelpGuidancePage> {
                   ],
                 ),
                 const SizedBox(height: AppSpacing.sm),
-                LinearProgressIndicator(value: progressFraction),
+                AppProgressBar(value: progressFraction),
                 const SizedBox(height: AppSpacing.md),
                 Wrap(
                   spacing: AppSpacing.sm,
@@ -263,35 +262,31 @@ final class _HelpGuidancePageState extends State<HelpGuidancePage> {
                     spacing: AppSpacing.xs,
                     runSpacing: AppSpacing.xs,
                     children: [
-                      FilterChip(
-                        avatar: Icon(
-                          guideState.progress.voiceEnabled
-                              ? AppIcons.voiceOn
-                              : AppIcons.voiceOff,
-                          size: 16,
-                        ),
-                        label: Text(
-                          guideState.progress.voiceEnabled
-                              ? l10n.guideVoiceOn
-                              : l10n.guideVoiceOff,
-                        ),
+                      AppChip.filter(
+                        icon: guideState.progress.voiceEnabled
+                            ? AppIcons.voiceOn
+                            : AppIcons.voiceOff,
+                        label: guideState.progress.voiceEnabled
+                            ? l10n.guideVoiceOn
+                            : l10n.guideVoiceOff,
                         selected: guideState.progress.voiceEnabled,
                         onSelected: (_) => guideCubit.toggleVoice(
                           currentLocaleCode: localeCode,
                         ),
                       ),
-                      ActionChip(
-                        avatar: const Icon(AppIcons.speed, size: 16),
-                        label: Text(
-                          _speedLabel(context, guideState.progress.speechRate),
+                      AppChip.action(
+                        icon: AppIcons.speed,
+                        label: _speedLabel(
+                          context,
+                          guideState.progress.speechRate,
                         ),
                         onPressed: () => guideCubit.cycleSpeechRate(
                           currentLocaleCode: localeCode,
                         ),
                       ),
-                      FilterChip(
-                        avatar: const Icon(AppIcons.tip, size: 16),
-                        label: Text(l10n.guideNewScreenHintsLabel),
+                      AppChip.filter(
+                        icon: AppIcons.tip,
+                        label: l10n.guideNewScreenHintsLabel,
                         selected: guideState.progress.showNewScreenHints,
                         onSelected: (_) => guideCubit.toggleNewScreenHints(),
                       ),
@@ -422,7 +417,7 @@ final class _HelpGuidancePageState extends State<HelpGuidancePage> {
                       variant: AppTextVariant.bodyLarge,
                       fontWeight: FontWeight.w700,
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: AppSpacing.xxs),
                     AppText(
                       topic.summary(localeCode),
                       variant: AppTextVariant.bodySmall,
@@ -432,10 +427,7 @@ final class _HelpGuidancePageState extends State<HelpGuidancePage> {
                 ),
               ),
               const SizedBox(width: AppSpacing.xs),
-              Icon(
-                AppIcons.chevronRight,
-                color: colorScheme.onSurfaceVariant,
-              ),
+              Icon(AppIcons.chevronRight, color: colorScheme.onSurfaceVariant),
             ],
           ),
         );
@@ -517,7 +509,7 @@ final class _TrainingChapterCard extends StatelessWidget {
                           ),
                       ],
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: AppSpacing.xxs),
                     AppText(
                       chapter.summary(localeCode),
                       variant: AppTextVariant.bodySmall,
@@ -533,7 +525,7 @@ final class _TrainingChapterCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.sm,
-              vertical: 6,
+              vertical: AppSpacing.xsm,
             ),
             decoration: BoxDecoration(
               color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
@@ -686,10 +678,11 @@ final class HelpTopicDetailPage extends StatelessWidget {
                             );
                           },
                         ),
-                      ActionChip(
-                        avatar: const Icon(AppIcons.speed, size: 16),
-                        label: Text(
-                          _speedLabel(context, guideState.progress.speechRate),
+                      AppChip.action(
+                        icon: AppIcons.speed,
+                        label: _speedLabel(
+                          context,
+                          guideState.progress.speechRate,
                         ),
                         onPressed: () => guideCubit.cycleSpeechRate(
                           currentLocaleCode: localeCode,
@@ -878,7 +871,7 @@ final class HelpTopicDetailPage extends StatelessWidget {
                           color: colorScheme.primary,
                           fontWeight: FontWeight.w700,
                         ),
-                        const SizedBox(height: 2),
+                        const SizedBox(height: AppSpacing.xxs),
                         AppText(
                           '${nextTopic.order}. ${nextTopic.title(localeCode)}',
                           variant: AppTextVariant.bodyLarge,

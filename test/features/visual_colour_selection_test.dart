@@ -68,28 +68,34 @@ void main() {
       await db.close();
     });
 
-    test('seeds default colour_master palette and supports custom colours', () async {
-      final initial = await colourMasterRepo.getAllColours();
-      expect(initial.length, greaterThanOrEqualTo(20));
-      expect(initial.any((c) => c.name == 'Red' && c.hexCode == '#DC2626'), isTrue);
+    test(
+      'seeds default colour_master palette and supports custom colours',
+      () async {
+        final initial = await colourMasterRepo.getAllColours();
+        expect(initial.length, greaterThanOrEqualTo(20));
+        expect(
+          initial.any((c) => c.name == 'Red' && c.hexCode == '#DC2626'),
+          isTrue,
+        );
 
-      final created = await colourMasterRepo.createCustomColour(
-        name: 'Peacock Teal',
-        hexCode: '#0d7377',
-      );
-      expect(created.name, 'Peacock Teal');
-      expect(created.hexCode, '#0D7377');
-      expect(created.isCustom, isTrue);
+        final created = await colourMasterRepo.createCustomColour(
+          name: 'Peacock Teal',
+          hexCode: '#0d7377',
+        );
+        expect(created.name, 'Peacock Teal');
+        expect(created.hexCode, '#0D7377');
+        expect(created.isCustom, isTrue);
 
-      // Update custom colour
-      final updated = await colourMasterRepo.updateColour(
-        id: created.id,
-        name: 'Deep Peacock',
-        hexCode: '#095256',
-      );
-      expect(updated.name, 'Deep Peacock');
-      expect(updated.hexCode, '#095256');
-    });
+        // Update custom colour
+        final updated = await colourMasterRepo.updateColour(
+          id: created.id,
+          name: 'Deep Peacock',
+          hexCode: '#095256',
+        );
+        expect(updated.name, 'Deep Peacock');
+        expect(updated.hexCode, '#095256');
+      },
+    );
 
     test('prevents duplicate colour creation (case-insensitive)', () async {
       await expectLater(
@@ -121,7 +127,10 @@ void main() {
       );
       final lot1Detail = await lotRepo.getLotDetail(lot1.id);
       expect(lot1Detail!.designs.length, 1);
-      expect(lot1Detail.designs.first.design.designName, kColourOnlyDesignSentinel);
+      expect(
+        lot1Detail.designs.first.design.designName,
+        kColourOnlyDesignSentinel,
+      );
       expect(lot1Detail.designs.first.colours.length, 2);
       final lot1Total = lot1Detail.designs.first.colours.fold<int>(
         0,
@@ -135,8 +144,14 @@ void main() {
         title: 'Multi Design Batch',
         transactionAtUtcMillis: now,
       );
-      final d101 = await lotRepo.createDesign(lotId: lot2.id, designName: 'D-101');
-      final d102 = await lotRepo.createDesign(lotId: lot2.id, designName: 'D-102');
+      final d101 = await lotRepo.createDesign(
+        lotId: lot2.id,
+        designName: 'D-101',
+      );
+      final d102 = await lotRepo.createDesign(
+        lotId: lot2.id,
+        designName: 'D-102',
+      );
 
       await lotRepo.createDesignColour(
         lotDesignId: d101.id,
@@ -156,157 +171,155 @@ void main() {
       expect(lot2Detail!.designs.length, 2);
       final totalLot2 = lot2Detail.designs.fold<int>(
         0,
-        (sum, d) => sum + d.colours.fold<int>(0, (cs, c) => cs + c.initialQuantity),
+        (sum, d) =>
+            sum + d.colours.fold<int>(0, (cs, c) => cs + c.initialQuantity),
       );
       expect(totalLot2, 180);
     });
 
-    test(
-      'colour-wise assignments, direct transfers, factory returns & strict quantity reconciliation',
-      () async {
-        // Seed processes & workers
-        await db.processMemberDao.insertProcess(
-          const ProcessesCompanion(
-            id: Value('p-cut'),
-            name: Value('Cutting'),
-            defaultRatePaise: Value(500),
-            createdAt: Value(now),
-            updatedAt: Value(now),
-          ),
-        );
-        await db.processMemberDao.insertProcess(
-          const ProcessesCompanion(
-            id: Value('p-pack'),
-            name: Value('Packing'),
-            defaultRatePaise: Value(300),
-            createdAt: Value(now),
-            updatedAt: Value(now),
-          ),
-        );
-        await db.processMemberDao.insertMember(
-          const MembersCompanion(
-            id: Value('w-dharmesh'),
-            name: Value('Dharmesh Bhai'),
-            createdAt: Value(now),
-            updatedAt: Value(now),
-          ),
-        );
-        await db.processMemberDao.insertMember(
-          const MembersCompanion(
-            id: Value('w-packing'),
-            name: Value('Packing Dept'),
-            createdAt: Value(now),
-            updatedAt: Value(now),
-          ),
-        );
+    test('colour-wise assignments, direct transfers, factory returns & strict quantity reconciliation', () async {
+      // Seed processes & workers
+      await db.processMemberDao.insertProcess(
+        const ProcessesCompanion(
+          id: Value('p-cut'),
+          name: Value('Cutting'),
+          defaultRatePaise: Value(500),
+          createdAt: Value(now),
+          updatedAt: Value(now),
+        ),
+      );
+      await db.processMemberDao.insertProcess(
+        const ProcessesCompanion(
+          id: Value('p-pack'),
+          name: Value('Packing'),
+          defaultRatePaise: Value(300),
+          createdAt: Value(now),
+          updatedAt: Value(now),
+        ),
+      );
+      await db.processMemberDao.insertMember(
+        const MembersCompanion(
+          id: Value('w-dharmesh'),
+          name: Value('Dharmesh Bhai'),
+          createdAt: Value(now),
+          updatedAt: Value(now),
+        ),
+      );
+      await db.processMemberDao.insertMember(
+        const MembersCompanion(
+          id: Value('w-packing'),
+          name: Value('Packing Dept'),
+          createdAt: Value(now),
+          updatedAt: Value(now),
+        ),
+      );
 
-        final lot = await lotRepo.createLot(
-          lotNumber: 'LOT-REC-1',
-          transactionAtUtcMillis: now,
-        );
-        final red = await lotRepo.addColourDirectlyToLot(
-          lotId: lot.id,
-          colourName: 'Red',
-          colourHex: '#DC2626',
-          initialQuantity: 100,
-          unitPricePaise: 0,
-        );
-        final blue = await lotRepo.addColourDirectlyToLot(
-          lotId: lot.id,
-          colourName: 'Blue',
-          colourHex: '#2563EB',
-          initialQuantity: 80,
-          unitPricePaise: 0,
-        );
+      final lot = await lotRepo.createLot(
+        lotNumber: 'LOT-REC-1',
+        transactionAtUtcMillis: now,
+      );
+      final red = await lotRepo.addColourDirectlyToLot(
+        lotId: lot.id,
+        colourName: 'Red',
+        colourHex: '#DC2626',
+        initialQuantity: 100,
+        unitPricePaise: 0,
+      );
+      final blue = await lotRepo.addColourDirectlyToLot(
+        lotId: lot.id,
+        colourName: 'Blue',
+        colourHex: '#2563EB',
+        initialQuantity: 80,
+        unitPricePaise: 0,
+      );
 
-        // Assign 60 Red to Cutting -> Direct Transfer 40 Red to Packing -> Return 20 Red to Factory
-        final redCut = await routingRepo.addJobProcess(
-          lotId: lot.id,
-          designColourId: red.id,
-          processId: 'p-cut',
-          workerId: 'w-dharmesh',
-          quantity: 60,
-          transactionAtUtcMillis: now,
-          dispatchImmediately: true,
-          agreedRatePaise: 500,
-        );
-        await routingRepo.directTransfer(
-          sourceJobProcessId: redCut.id,
-          destinationProcessId: 'p-pack',
-          destinationWorkerId: 'w-packing',
-          quantity: 40,
-          transactionAtUtcMillis: now,
-          autoConfirmReceipt: true,
-        );
-        await routingRepo.returnToFactory(
-          sourceJobProcessId: redCut.id,
-          goodQuantity: 20,
-          damagedQuantity: 0,
-          transactionAtUtcMillis: now,
-        );
+      // Assign 60 Red to Cutting -> Direct Transfer 40 Red to Packing -> Return 20 Red to Factory
+      final redCut = await routingRepo.addJobProcess(
+        lotId: lot.id,
+        designColourId: red.id,
+        processId: 'p-cut',
+        workerId: 'w-dharmesh',
+        quantity: 60,
+        transactionAtUtcMillis: now,
+        dispatchImmediately: true,
+        agreedRatePaise: 500,
+      );
+      await routingRepo.directTransfer(
+        sourceJobProcessId: redCut.id,
+        destinationProcessId: 'p-pack',
+        destinationWorkerId: 'w-packing',
+        quantity: 40,
+        transactionAtUtcMillis: now,
+        autoConfirmReceipt: true,
+      );
+      await routingRepo.returnToFactory(
+        sourceJobProcessId: redCut.id,
+        goodQuantity: 20,
+        damagedQuantity: 0,
+        transactionAtUtcMillis: now,
+      );
 
-        // Assign 30 Blue to Cutting (must remain isolated from Red)
-        await routingRepo.addJobProcess(
-          lotId: lot.id,
-          designColourId: blue.id,
-          processId: 'p-cut',
-          workerId: 'w-dharmesh',
-          quantity: 30,
-          transactionAtUtcMillis: now,
-          dispatchImmediately: true,
-          agreedRatePaise: 500,
-        );
+      // Assign 30 Blue to Cutting (must remain isolated from Red)
+      await routingRepo.addJobProcess(
+        lotId: lot.id,
+        designColourId: blue.id,
+        processId: 'p-cut',
+        workerId: 'w-dharmesh',
+        quantity: 30,
+        transactionAtUtcMillis: now,
+        dispatchImmediately: true,
+        agreedRatePaise: 500,
+      );
 
-        final overview = (await routingRepo.getJobRoutingOverview(lot.id))!;
-        final redBal = overview.skuBalances.firstWhere(
-          (b) => b.designColourId == red.id,
-        );
-        final blueBal = overview.skuBalances.firstWhere(
-          (b) => b.designColourId == blue.id,
-        );
+      final overview = (await routingRepo.getJobRoutingOverview(lot.id))!;
+      final redBal = overview.skuBalances.firstWhere(
+        (b) => b.designColourId == red.id,
+      );
+      final blueBal = overview.skuBalances.firstWhere(
+        (b) => b.designColourId == blue.id,
+      );
 
-        // Red: 100 initial = 60 in factory (40 untouched + 20 returned) + 40 with Packing Dept
-        expect(redBal.physicalAvailableInHouse, 60);
-        expect(redBal.totalPendingWithWorkers, 40);
-        expect(
-          redBal.physicalAvailableInHouse +
-              redBal.totalPendingWithWorkers +
-              redBal.damagedBucket,
-          redBal.initialQuantity,
-        );
+      // Red: 100 initial = 60 in factory (40 untouched + 20 returned) + 40 with Packing Dept
+      expect(redBal.physicalAvailableInHouse, 60);
+      expect(redBal.totalPendingWithWorkers, 40);
+      expect(
+        redBal.physicalAvailableInHouse +
+            redBal.totalPendingWithWorkers +
+            redBal.damagedBucket,
+        redBal.initialQuantity,
+      );
 
-        // Blue: 80 initial = 50 in factory + 30 with Dharmesh
-        expect(blueBal.physicalAvailableInHouse, 50);
-        expect(blueBal.totalPendingWithWorkers, 30);
-        expect(
-          blueBal.physicalAvailableInHouse +
-              blueBal.totalPendingWithWorkers +
-              blueBal.damagedBucket,
-          blueBal.initialQuantity,
-        );
+      // Blue: 80 initial = 50 in factory + 30 with Dharmesh
+      expect(blueBal.physicalAvailableInHouse, 50);
+      expect(blueBal.totalPendingWithWorkers, 30);
+      expect(
+        blueBal.physicalAvailableInHouse +
+            blueBal.totalPendingWithWorkers +
+            blueBal.damagedBucket,
+        blueBal.initialQuantity,
+      );
 
-        // Handovers strictly preserve designColourId
-        final redHandovers = overview.handovers
-            .where((h) => h.designColourId == red.id)
-            .toList();
-        final blueHandovers = overview.handovers
-            .where((h) => h.designColourId == blue.id)
-            .toList();
-        expect(
-          redHandovers.any(
-            (h) => h.handoverType == ProcessHandoverType.directTransfer,
-          ),
-          isTrue,
-        );
-        expect(
-          redHandovers.any(
-            (h) => h.handoverType == ProcessHandoverType.factoryReturn,
-          ),
-          isTrue,
-        );
-        expect(blueHandovers.length, 1);
-      },
-    );
+      // Handovers strictly preserve designColourId
+      final redHandovers = overview.handovers
+          .where((h) => h.designColourId == red.id)
+          .toList();
+      final blueHandovers = overview.handovers
+          .where((h) => h.designColourId == blue.id)
+          .toList();
+      expect(
+        redHandovers.any(
+          (h) => h.handoverType == ProcessHandoverType.directTransfer,
+        ),
+        isTrue,
+      );
+      expect(
+        redHandovers.any(
+          (h) => h.handoverType == ProcessHandoverType.factoryReturn,
+        ),
+        isTrue,
+      );
+      expect(blueHandovers.length, 1);
+    });
 
     test('legacy null-HEX colours resolve cleanly with high contrast', () {
       final resolvedRed = AppColourUtils.resolveColor(
@@ -323,10 +336,7 @@ void main() {
         '#111827',
         fallbackName: 'Black',
       );
-      expect(
-        AppColourUtils.contrastForeground(whiteColor),
-        AppColors.slate900,
-      );
+      expect(AppColourUtils.contrastForeground(whiteColor), AppColors.slate900);
       expect(AppColourUtils.contrastForeground(blackColor), Colors.white);
     });
   });
@@ -457,14 +467,15 @@ void main() {
 
         expect(find.text('Royal Blue Details'), findsOneWidget);
         await tester.scrollUntilVisible(
-          find.text('Process-wise Stage Breakdown'),
+          find.text('Stage-wise Breakdown'),
           200,
           scrollable: find.byType(Scrollable).first,
         );
-        expect(find.text('Process-wise Stage Breakdown'), findsOneWidget);
-        expect(find.text('Cutting'), findsOneWidget);
-        expect(find.text('Stitching'), findsOneWidget);
-        expect(find.text('Packing'), findsOneWidget);
+        expect(find.text('Stage-wise Breakdown'), findsOneWidget);
+        // Only stages actually used on this colour are listed: no hardcoded
+        // Cutting / Stitching / Packing placeholders.
+        expect(find.text('No work stages assigned yet.'), findsOneWidget);
+        expect(find.text('Stitching'), findsNothing);
       },
     );
 
@@ -547,13 +558,13 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.text('All (2)'), findsOneWidget);
-        expect(find.text('Operation / Process (2)'), findsOneWidget);
+        expect(find.text('Work Stage (2)'), findsOneWidget);
 
         // Tap Red colour filter chip
         await tester.tap(find.text('Red (40)'));
         await tester.pumpAndSettle();
 
-        expect(find.text('Operation / Process (1)'), findsOneWidget);
+        expect(find.text('Work Stage (1)'), findsOneWidget);
       },
     );
   });

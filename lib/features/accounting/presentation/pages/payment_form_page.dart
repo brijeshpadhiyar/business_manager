@@ -1,3 +1,4 @@
+import 'package:business_manager/core/config/app_logger.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/error/exceptions.dart';
@@ -63,9 +64,8 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
 
   static const String _draftKey = 'payment_form';
 
-  FormDraftService? get _drafts => getIt.isRegistered<FormDraftService>()
-      ? getIt<FormDraftService>()
-      : null;
+  FormDraftService? get _drafts =>
+      getIt.isRegistered<FormDraftService>() ? getIt<FormDraftService>() : null;
 
   @override
   void initState() {
@@ -214,6 +214,11 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
       await _drafts?.clearDraft(_draftKey);
       if (mounted) {
         final undoRepo = _repo;
+        // The page pops below; report undo failures on the root navigator.
+        final feedbackContext = Navigator.of(
+          context,
+          rootNavigator: true,
+        ).context;
         AppFeedback.showSuccess(
           context,
           l10n.accountingPaymentSaved,
@@ -226,7 +231,15 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
                 reason: 'UNDO_IMMEDIATE',
                 transactionAtUtcMillis: IstDateTimeHelper.nowUtcMillis(),
               );
-            } catch (_) {}
+            } catch (e) {
+              getIt<AppLogger>().warning('Payment undo failed', error: e);
+              if (feedbackContext.mounted) {
+                AppFeedback.showError(
+                  feedbackContext,
+                  l10n.accountingUndoFailed,
+                );
+              }
+            }
           },
         );
         context.pop(true);
@@ -241,7 +254,7 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
       if (!mounted) return;
       setState(() {
         _saving = false;
-        _submitError = e.toString();
+        _submitError = ValidationLocalizer.describeError(context.l10n, e);
       });
     }
   }
@@ -385,6 +398,28 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
                         (v) => AppValidators.amountValidator(v),
                       ),
                     ),
+                    if (_paymentType == PaymentType.regular &&
+                        selectedWorker.outstandingPayablePaise > 0) ...[
+                      const SizedBox(height: AppSpacing.xs),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: AppChip.action(
+                          icon: AppIcons.rupee,
+                          label: l10n.accountingPayFullAction(
+                            MoneyFormatter.formatPaise(
+                              selectedWorker.outstandingPayablePaise,
+                            ),
+                          ),
+                          onPressed: () => _edit(() {
+                            _amountCtrl.text =
+                                MoneyFormatter.formatPaiseForInput(
+                                  selectedWorker.outstandingPayablePaise,
+                                );
+                            _submitError = null;
+                          }),
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: AppSpacing.md),
                     AppDropdown<PaymentMode>(
                       label: l10n.accountingPaymentModeLabel,

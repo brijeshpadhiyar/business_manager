@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:business_manager/core/database/app_database.dart';
 import 'package:business_manager/core/database/migrations/database_migration_manager.dart';
-import 'package:business_manager/core/database/migrations/schema_v11_rbac_and_hardening.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/features/sync/data/services/sync_conflict_service.dart';
 import 'package:drift/drift.dart' hide isNotNull;
@@ -23,26 +22,48 @@ void main() {
     await db.close();
   });
 
-  test('Schema v11 creates RBAC session columns, cached_team_members, and conflict index idempotently', () async {
-    expect(DatabaseMigrationManager.currentSchemaVersion, 11);
+  test(
+    'Fresh database is the v11 baseline with all tables, seeds and indexes',
+    () async {
+      expect(DatabaseMigrationManager.currentSchemaVersion, 11);
+      expect(DatabaseMigrationManager.minimumSupportedSchemaVersion, 11);
 
-    // Re-running migration helper must remain 100% idempotent.
-    await SchemaV11RbacAndHardening.run(
-      db,
-      nowUtcMillis: DateTime.now().millisecondsSinceEpoch,
-    );
+      final tables = await db
+          .customSelect(
+            "SELECT name FROM sqlite_master WHERE type = 'table' "
+            "AND name NOT LIKE 'sqlite_%'",
+          )
+          .get();
+      expect(tables, hasLength(28));
 
-    final session = await db.syncDao.getSessionState();
-    expect(session.activeRole, 'OWNER');
+      final session = await db.syncDao.getSessionState();
+      expect(session.activeRole, 'OWNER');
 
-    final integrity = await db.customSelect('PRAGMA integrity_check;').get();
-    expect(integrity.first.data.values.first, 'ok');
+      final profile = await db.businessProfileDao.getProfile();
+      expect(profile?.id, DatabaseMigrationManager.defaultBusinessProfileId);
 
-    final fkViolations = await db
-        .customSelect('PRAGMA foreign_key_check;')
-        .get();
-    expect(fkViolations, isEmpty);
-  });
+      final colours = await db
+          .customSelect('SELECT COUNT(*) AS c FROM colour_master')
+          .getSingle();
+      expect(colours.read<int>('c'), 21);
+
+      final reasonIndex = await db
+          .customSelect(
+            "SELECT name FROM sqlite_master WHERE type = 'index' "
+            "AND name = 'idx_audit_logs_reason_rec'",
+          )
+          .get();
+      expect(reasonIndex, hasLength(1));
+
+      final integrity = await db.customSelect('PRAGMA integrity_check;').get();
+      expect(integrity.first.data.values.first, 'ok');
+
+      final fkViolations = await db
+          .customSelect('PRAGMA foreign_key_check;')
+          .get();
+      expect(fkViolations, isEmpty);
+    },
+  );
 
   test('SyncConflictService surfaces LWW diffs and performs one-tap audited restore', () async {
     final now = DateTime.now().millisecondsSinceEpoch;

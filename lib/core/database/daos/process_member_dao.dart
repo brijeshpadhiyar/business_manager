@@ -1,5 +1,4 @@
 import 'package:business_manager/core/database/app_database.dart';
-import 'package:business_manager/core/database/pagination/page_query.dart';
 import 'package:business_manager/core/database/tables/process_member_tables.dart';
 import 'package:drift/drift.dart';
 
@@ -55,48 +54,6 @@ class ProcessMemberDao extends DatabaseAccessor<AppDatabase>
           ..where((t) => t.deletedAt.isNull())
           ..orderBy([(t) => OrderingTerm.asc(t.name)]))
         .get();
-  }
-
-  /// Indexed SQLite `LIMIT`/`OFFSET` pagination for worker directories.
-  Future<PagedResult<MemberRow>> getMembersPaged({
-    int limit = 50,
-    int offset = 0,
-    String? searchQuery,
-    bool? isActive,
-  }) async {
-    final trimmed = searchQuery?.trim().toLowerCase();
-    Expression<bool> predicate($MembersTable t) {
-      Expression<bool> expr = t.deletedAt.isNull();
-      if (isActive != null) {
-        expr = expr & t.isActive.equals(isActive ? 1 : 0);
-      }
-      if (trimmed != null && trimmed.isNotEmpty) {
-        final pattern = '%$trimmed%';
-        expr =
-            expr &
-            (t.name.lower().like(pattern) | t.phone.lower().like(pattern));
-      }
-      return expr;
-    }
-
-    final countExp = members.id.count();
-    final countRow = await (selectOnly(members)
-          ..addColumns([countExp])
-          ..where(predicate(members)))
-        .getSingle();
-    final total = countRow.read(countExp) ?? 0;
-
-    final rows = await (select(members)
-          ..where(predicate)
-          ..orderBy([(t) => OrderingTerm.asc(t.name)])
-          ..limit(limit, offset: offset))
-        .get();
-
-    return PagedResult<MemberRow>(
-      items: rows,
-      totalCount: total,
-      hasMore: offset + rows.length < total,
-    );
   }
 
   Future<int> updateMemberById(String id, MembersCompanion entry) {

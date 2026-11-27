@@ -155,7 +155,10 @@ final class _GuideSpotlightOverlayState extends State<GuideSpotlightOverlay>
     bool centeredFallback = inflatedTarget == null;
 
     if (inflatedTarget != null) {
-      final spaceAbove = math.max(0.0, inflatedTarget.top - safeTop - arrowSize);
+      final spaceAbove = math.max(
+        0.0,
+        inflatedTarget.top - safeTop - arrowSize,
+      );
       final spaceBelow = math.max(
         0.0,
         safeBottom - inflatedTarget.bottom - arrowSize,
@@ -191,7 +194,10 @@ final class _GuideSpotlightOverlayState extends State<GuideSpotlightOverlay>
 
     final double? arrowRelativeX = inflatedTarget == null
         ? null
-        : (inflatedTarget.center.dx - cardLeft).clamp(24.0, maxCardWidth - 24.0);
+        : (inflatedTarget.center.dx - cardLeft).clamp(
+            24.0,
+            maxCardWidth - 24.0,
+          );
 
     final cubit = context.read<GuideCubit>();
 
@@ -240,7 +246,7 @@ final class _GuideSpotlightOverlayState extends State<GuideSpotlightOverlay>
                             size: 14,
                             color: colorScheme.onPrimaryContainer,
                           ),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: AppSpacing.xs),
                           Text(
                             l10n.guideStepCounter(
                               widget.state.currentStepIndex + 1,
@@ -270,19 +276,20 @@ final class _GuideSpotlightOverlayState extends State<GuideSpotlightOverlay>
                     else
                       const Spacer(),
                     if (step.isInteractiveAction)
-                      TextButton.icon(
-                        onPressed: cubit.minimizeToCoachBar,
-                        icon: const Icon(AppIcons.quick, size: 16),
-                        label: Text(l10n.guideMinimizeCoach),
-                        style: TextButton.styleFrom(
-                          visualDensity: VisualDensity.compact,
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                      // Flexible: on narrow phones the label ellipsizes
+                      // instead of overflowing the header row.
+                      Flexible(
+                        child: AppButton(
+                          label: l10n.guideMinimizeCoach,
+                          icon: AppIcons.quick,
+                          variant: AppButtonVariant.text,
+                          onPressed: cubit.minimizeToCoachBar,
                         ),
                       ),
-                    IconButton(
+                    AppIconButton(
                       tooltip: l10n.guideActionSkip,
-                      visualDensity: VisualDensity.compact,
-                      icon: const Icon(AppIcons.close, size: 18),
+                      icon: AppIcons.close,
+                      compact: true,
                       onPressed: cubit.skipTour,
                     ),
                   ],
@@ -355,36 +362,26 @@ final class _GuideSpotlightOverlayState extends State<GuideSpotlightOverlay>
                           runSpacing: AppSpacing.xs,
                           crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
-                            ActionChip(
-                              avatar: Icon(
-                                widget.state.progress.voiceEnabled
-                                    ? AppIcons.voiceOn
-                                    : AppIcons.voiceOff,
-                                size: 16,
-                              ),
-                              label: Text(
-                                widget.state.progress.voiceEnabled
-                                    ? l10n.guideVoiceOn
-                                    : l10n.guideVoiceOff,
-                              ),
-                              visualDensity: VisualDensity.compact,
+                            AppChip.action(
+                              icon: widget.state.progress.voiceEnabled
+                                  ? AppIcons.voiceOn
+                                  : AppIcons.voiceOff,
+                              label: widget.state.progress.voiceEnabled
+                                  ? l10n.guideVoiceOn
+                                  : l10n.guideVoiceOff,
+                              dense: true,
                               onPressed: () => cubit.toggleVoice(
                                 currentLocaleCode: localeCode,
                               ),
                             ),
-                            ActionChip(
-                              avatar: Icon(
-                                widget.state.isSpeaking
-                                    ? AppIcons.stop
-                                    : AppIcons.replay,
-                                size: 16,
-                              ),
-                              label: Text(
-                                widget.state.isSpeaking
-                                    ? l10n.guideVoiceStop
-                                    : l10n.guideVoiceReplay,
-                              ),
-                              visualDensity: VisualDensity.compact,
+                            AppChip.action(
+                              icon: widget.state.isSpeaking
+                                  ? AppIcons.stop
+                                  : AppIcons.replay,
+                              label: widget.state.isSpeaking
+                                  ? l10n.guideVoiceStop
+                                  : l10n.guideVoiceReplay,
+                              dense: true,
                               onPressed: () {
                                 if (widget.state.isSpeaking) {
                                   cubit.stopVoice();
@@ -393,15 +390,13 @@ final class _GuideSpotlightOverlayState extends State<GuideSpotlightOverlay>
                                 }
                               },
                             ),
-                            ActionChip(
-                              avatar: const Icon(AppIcons.speed, size: 16),
-                              label: Text(
-                                _speedLabel(
-                                  context,
-                                  widget.state.progress.speechRate,
-                                ),
+                            AppChip.action(
+                              icon: AppIcons.speed,
+                              label: _speedLabel(
+                                context,
+                                widget.state.progress.speechRate,
                               ),
-                              visualDensity: VisualDensity.compact,
+                              dense: true,
                               onPressed: () => cubit.cycleSpeechRate(
                                 currentLocaleCode: localeCode,
                               ),
@@ -429,30 +424,27 @@ final class _GuideSpotlightOverlayState extends State<GuideSpotlightOverlay>
                 Row(
                   children: [
                     if (widget.state.canGoBack)
-                      OutlinedButton(
+                      AppButton(
+                        label: l10n.guideActionBack,
+                        variant: AppButtonVariant.outlined,
                         onPressed: () =>
                             cubit.previousStep(localeCode: localeCode),
-                        child: Text(l10n.guideActionBack),
                       )
                     else
-                      TextButton(
+                      AppButton(
+                        label: l10n.guideActionSkip,
+                        variant: AppButtonVariant.text,
                         onPressed: cubit.skipTour,
-                        child: Text(l10n.guideActionSkip),
                       ),
                     const Spacer(),
-                    FilledButton.icon(
+                    AppButton(
+                      label: widget.state.isLastStep
+                          ? l10n.guideActionFinish
+                          : l10n.guideActionNext,
+                      icon: widget.state.isLastStep
+                          ? AppIcons.confirm
+                          : AppIcons.nextStep,
                       onPressed: () => cubit.nextStep(localeCode: localeCode),
-                      icon: Icon(
-                        widget.state.isLastStep
-                            ? AppIcons.confirm
-                            : AppIcons.nextStep,
-                        size: 18,
-                      ),
-                      label: Text(
-                        widget.state.isLastStep
-                            ? l10n.guideActionFinish
-                            : l10n.guideActionNext,
-                      ),
                     ),
                   ],
                 ),

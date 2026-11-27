@@ -22,8 +22,7 @@ Future<File> resolvePrivateDatabaseFile(
   AppConfig config, {
   Directory? baseDirectoryOverride,
 }) async {
-  final baseDir =
-      baseDirectoryOverride ?? await resolveAppDataDirectory();
+  final baseDir = baseDirectoryOverride ?? await resolveAppDataDirectory();
   final dbDir = Directory(p.join(baseDir.path, 'db'));
   if (!dbDir.existsSync()) {
     await dbDir.create(recursive: true);

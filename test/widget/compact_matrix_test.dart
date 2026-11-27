@@ -182,9 +182,16 @@ void main() {
     (
       name: '360x800 large text dark',
       size: const Size(360, 800),
-      text: 1.3,
+      text: 1.5,
       gu: false,
       dark: true,
+    ),
+    (
+      name: '360x800 Gujarati large text',
+      size: const Size(360, 800),
+      text: 1.5,
+      gu: true,
+      dark: false,
     ),
     (
       name: '360x800 Gujarati',

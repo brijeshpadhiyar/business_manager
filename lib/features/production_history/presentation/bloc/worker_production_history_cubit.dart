@@ -49,7 +49,7 @@ final class WorkerProductionHistoryState {
 final class WorkerProductionHistoryCubit
     extends Cubit<WorkerProductionHistoryState> {
   WorkerProductionHistoryCubit(this._repo)
-      : super(const WorkerProductionHistoryState());
+    : super(const WorkerProductionHistoryState());
 
   final ProductionHistoryRepository _repo;
 

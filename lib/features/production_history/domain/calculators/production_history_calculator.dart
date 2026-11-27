@@ -39,8 +39,10 @@ final class ProductionHistoryCalculator {
         inspected += insp.acceptedQuantity + insp.rejectedQuantity;
       }
     }
-    return (productionReturn.returnedQuantity - inspected)
-        .clamp(0, productionReturn.returnedQuantity);
+    return (productionReturn.returnedQuantity - inspected).clamp(
+      0,
+      productionReturn.returnedQuantity,
+    );
   }
 
   /// Computes pending inspection quantity grouped by `design_colour_id`.
@@ -64,8 +66,10 @@ final class ProductionHistoryCalculator {
     for (final ret in returns) {
       if (reversedMovementIds.contains(ret.parentIssueId)) continue;
       final inspected = inspectedByReturn[ret.id] ?? 0;
-      final pending = (ret.returnedQuantity - inspected)
-          .clamp(0, ret.returnedQuantity);
+      final pending = (ret.returnedQuantity - inspected).clamp(
+        0,
+        ret.returnedQuantity,
+      );
       if (pending > 0) {
         byColour[ret.designColourId] =
             (byColour[ret.designColourId] ?? 0) + pending;
@@ -95,8 +99,10 @@ final class ProductionHistoryCalculator {
     for (final ret in returns) {
       if (reversedMovementIds.contains(ret.parentIssueId)) continue;
       final inspected = inspectedByReturn[ret.id] ?? 0;
-      final pending = (ret.returnedQuantity - inspected)
-          .clamp(0, ret.returnedQuantity);
+      final pending = (ret.returnedQuantity - inspected).clamp(
+        0,
+        ret.returnedQuantity,
+      );
       if (pending > 0) {
         byIssue[ret.parentIssueId] =
             (byIssue[ret.parentIssueId] ?? 0) + pending;
@@ -245,9 +251,7 @@ final class ProductionHistoryCalculator {
         continue;
       }
       if (m.parentIssueId != null) {
-        childMovementsByIssue
-            .putIfAbsent(m.parentIssueId!, () => [])
-            .add(m);
+        childMovementsByIssue.putIfAbsent(m.parentIssueId!, () => []).add(m);
       }
     }
 
@@ -353,7 +357,9 @@ final class ProductionHistoryCalculator {
       var earnedPaise = payableLabourByMovement[issue.id] ?? 0;
 
       for (final child in issueChildren) {
-        if (child.transactionAt > lastEventAt) lastEventAt = child.transactionAt;
+        if (child.transactionAt > lastEventAt) {
+          lastEventAt = child.transactionAt;
+        }
         earnedPaise += payableLabourByMovement[child.id] ?? 0;
 
         switch (child.movementType) {
@@ -380,11 +386,12 @@ final class ProductionHistoryCalculator {
       final totalAcceptedInitial = acceptedInitial + legacyGood;
       final totalRejectedInitial = rejectedInitial + legacyDamaged;
       final pendingInspection =
-          (returnedViaV8 - (acceptedInitial + rejectedInitial))
-              .clamp(0, returnedViaV8);
-      final outstanding =
-          (issue.quantity - totalReturned - lost - shortage)
-              .clamp(0, issue.quantity);
+          (returnedViaV8 - (acceptedInitial + rejectedInitial)).clamp(
+            0,
+            returnedViaV8,
+          );
+      final outstanding = (issue.quantity - totalReturned - lost - shortage)
+          .clamp(0, issue.quantity);
 
       // Pending reinspection across all repairs linked to this issue's rejections.
       var pendingReinspection = 0;
@@ -491,8 +498,10 @@ final class ProductionHistoryCalculator {
         accepted += i.acceptedQuantity;
         rejected += i.rejectedQuantity;
       }
-      final pending =
-          (ret.returnedQuantity - accepted - rejected).clamp(0, ret.returnedQuantity);
+      final pending = (ret.returnedQuantity - accepted - rejected).clamp(
+        0,
+        ret.returnedQuantity,
+      );
       if (pending <= 0) continue;
 
       final issue = issueById[ret.parentIssueId];
@@ -520,8 +529,9 @@ final class ProductionHistoryCalculator {
     }
 
     views.sort(
-      (a, b) => b.productionReturn.transactionAt
-          .compareTo(a.productionReturn.transactionAt),
+      (a, b) => b.productionReturn.transactionAt.compareTo(
+        a.productionReturn.transactionAt,
+      ),
     );
     return views;
   }
@@ -571,8 +581,10 @@ final class ProductionHistoryCalculator {
           repAcc += ins.acceptedQuantity;
           repRej += ins.rejectedQuantity;
         }
-        final repPending = (rep.repairedQuantity - repAcc - repRej)
-            .clamp(0, rep.repairedQuantity);
+        final repPending = (rep.repairedQuantity - repAcc - repRej).clamp(
+          0,
+          rep.repairedQuantity,
+        );
         totalReapproved += repAcc;
         totalRejectedAgain += repRej;
         pendingReinspection += repPending;
@@ -588,10 +600,11 @@ final class ProductionHistoryCalculator {
 
       // Failed reinspections return pieces to the open pool (still defective),
       // so openUnrepaired = rejectedQty - totalReapproved - pendingReinspection.
-      final openUnrepaired = (rej.rejectedQuantity -
-              totalReapproved -
-              pendingReinspection)
-          .clamp(0, rej.rejectedQuantity);
+      final openUnrepaired =
+          (rej.rejectedQuantity - totalReapproved - pendingReinspection).clamp(
+            0,
+            rej.rejectedQuantity,
+          );
       // Guard against over-submission while keeping exact remaining open count.
       final _ = totalRejectedAgain;
 
@@ -625,9 +638,7 @@ final class ProductionHistoryCalculator {
       );
     }
 
-    views.sort(
-      (a, b) => b.record.inspectedAt.compareTo(a.record.inspectedAt),
-    );
+    views.sort((a, b) => b.record.inspectedAt.compareTo(a.record.inspectedAt));
     return views;
   }
 
@@ -647,8 +658,7 @@ final class ProductionHistoryCalculator {
       reversedMovementIds: reversedMovIds,
     );
 
-    final lotMovements =
-        data.movements.where((m) => m.lotId == lotId).toList();
+    final lotMovements = data.movements.where((m) => m.lotId == lotId).toList();
     final movementsByColour = <String, List<StockMovementEntity>>{};
     for (final m in lotMovements) {
       movementsByColour.putIfAbsent(m.designColourId, () => []).add(m);
@@ -1228,8 +1238,9 @@ final class ProductionHistoryCalculator {
 
     final assignments = buildAssignments(
       data,
-      filter: (filter ?? const ProductionHistoryFilter())
-          .copyWith(workerId: workerId),
+      filter: (filter ?? const ProductionHistoryFilter()).copyWith(
+        workerId: workerId,
+      ),
     );
     final financialSummary = _ledgerCalc.calculateWorkerSummary(
       workerId: workerId,
@@ -1373,8 +1384,10 @@ final class ProductionHistoryCalculator {
       );
       if (fin.earnedLabourPaise > 0) {
         final paidRatio =
-            (fin.earnedLabourPaise - fin.outstandingPayablePaise)
-                .clamp(0, fin.earnedLabourPaise) /
+            (fin.earnedLabourPaise - fin.outstandingPayablePaise).clamp(
+              0,
+              fin.earnedLabourPaise,
+            ) /
             fin.earnedLabourPaise;
         workerRatio[wId] = paidRatio;
       } else {
@@ -1425,8 +1438,8 @@ final class ProductionHistoryCalculator {
         rejected += a.netRejectedQty;
         if (a.isCompleted) completedQty += a.totalAcceptedQty;
         costPaise += a.earnedAmountPaise;
-        estPaidPaise +=
-            (a.earnedAmountPaise * (workerRatio[a.workerId] ?? 0.0)).round();
+        estPaidPaise += (a.earnedAmountPaise * (workerRatio[a.workerId] ?? 0.0))
+            .round();
 
         byLot.putIfAbsent(a.lotId, () => []).add(a);
         byWorker.putIfAbsent(a.workerId, () => []).add(a);
@@ -1459,44 +1472,49 @@ final class ProductionHistoryCalculator {
           rejectedQty: items.fold(0, (s, x) => s + x.netRejectedQty),
           earnedAmountPaise: items.fold(0, (s, x) => s + x.earnedAmountPaise),
         );
-      }).toList()
-        ..sort((a, b) => b.assignedQty.compareTo(a.assignedQty));
+      }).toList()..sort((a, b) => b.assignedQty.compareTo(a.assignedQty));
 
-      final workerRows = byWorker.entries.map((e) {
-        final items = e.value;
-        final wLots = {for (final x in items) x.lotId};
-        return ProcessWorkerSummaryRow(
-          workerId: e.key,
-          workerName: items.first.workerName,
-          workerIsActive: items.first.workerIsActive,
-          totalLots: wLots.length,
-          assignedQty: items.fold(0, (s, x) => s + x.assignedQty),
-          returnedQty: items.fold(0, (s, x) => s + x.returnedQty),
-          acceptedQty: items.fold(0, (s, x) => s + x.totalAcceptedQty),
-          pendingInspectionQty: items.fold(
-            0,
-            (s, x) => s + x.pendingInspectionQty,
-          ),
-          outstandingQty: items.fold(0, (s, x) => s + x.outstandingQty),
-          rejectedQty: items.fold(0, (s, x) => s + x.netRejectedQty),
-          earnedAmountPaise: items.fold(0, (s, x) => s + x.earnedAmountPaise),
-        );
-      }).toList()
-        ..sort((a, b) => b.earnedAmountPaise.compareTo(a.earnedAmountPaise));
+      final workerRows =
+          byWorker.entries.map((e) {
+            final items = e.value;
+            final wLots = {for (final x in items) x.lotId};
+            return ProcessWorkerSummaryRow(
+              workerId: e.key,
+              workerName: items.first.workerName,
+              workerIsActive: items.first.workerIsActive,
+              totalLots: wLots.length,
+              assignedQty: items.fold(0, (s, x) => s + x.assignedQty),
+              returnedQty: items.fold(0, (s, x) => s + x.returnedQty),
+              acceptedQty: items.fold(0, (s, x) => s + x.totalAcceptedQty),
+              pendingInspectionQty: items.fold(
+                0,
+                (s, x) => s + x.pendingInspectionQty,
+              ),
+              outstandingQty: items.fold(0, (s, x) => s + x.outstandingQty),
+              rejectedQty: items.fold(0, (s, x) => s + x.netRejectedQty),
+              earnedAmountPaise: items.fold(
+                0,
+                (s, x) => s + x.earnedAmountPaise,
+              ),
+            );
+          }).toList()..sort(
+            (a, b) => b.earnedAmountPaise.compareTo(a.earnedAmountPaise),
+          );
 
-      final dateRows = byDate.entries
-          .map(
-            (e) => ProcessDateHistoryRow(
-              istDateIso: e.key,
-              assignedQty: e.value.assigned,
-              returnedQty: e.value.returned,
-              acceptedQty: e.value.accepted,
-              rejectedQty: e.value.rejected,
-              earnedPaise: e.value.earned,
-            ),
-          )
-          .toList()
-        ..sort((a, b) => b.istDateIso.compareTo(a.istDateIso));
+      final dateRows =
+          byDate.entries
+              .map(
+                (e) => ProcessDateHistoryRow(
+                  istDateIso: e.key,
+                  assignedQty: e.value.assigned,
+                  returnedQty: e.value.returned,
+                  acceptedQty: e.value.accepted,
+                  rejectedQty: e.value.rejected,
+                  earnedPaise: e.value.earned,
+                ),
+              )
+              .toList()
+            ..sort((a, b) => b.istDateIso.compareTo(a.istDateIso));
 
       final rejections = buildRejectionViews(data, processId: procId);
 
@@ -1633,9 +1651,14 @@ final class ProductionHistoryCalculator {
       final lotNum = data.lots[m.lotId]?.entity.lotNumber ?? m.lotId;
       final design = data.designs[m.lotDesignId]?.designName ?? '-';
       final colour = data.colours[m.designColourId]?.colourName ?? '-';
-      final proc = m.processId != null ? data.processes[m.processId!]?.name : null;
-      final worker = m.memberId != null ? data.workers[m.memberId!]?.name : null;
-      final hay = '$lotNum $design $colour ${proc ?? ''} ${worker ?? ''} ${m.notes ?? ''}';
+      final proc = m.processId != null
+          ? data.processes[m.processId!]?.name
+          : null;
+      final worker = m.memberId != null
+          ? data.workers[m.memberId!]?.name
+          : null;
+      final hay =
+          '$lotNum $design $colour ${proc ?? ''} ${worker ?? ''} ${m.notes ?? ''}';
       if (!matchesDims(
         lotId: m.lotId,
         workerId: m.memberId,
@@ -1682,7 +1705,8 @@ final class ProductionHistoryCalculator {
       final colour = data.colours[ret.designColourId]?.colourName ?? '-';
       final proc = data.processes[ret.processId]?.name;
       final worker = data.workers[ret.memberId]?.name;
-      final hay = '$lotNum $design $colour ${proc ?? ''} ${worker ?? ''} ${ret.notes ?? ''}';
+      final hay =
+          '$lotNum $design $colour ${proc ?? ''} ${worker ?? ''} ${ret.notes ?? ''}';
       if (!matchesDims(
         lotId: ret.lotId,
         workerId: ret.memberId,

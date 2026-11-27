@@ -6,6 +6,7 @@ import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/features/slips/domain/entities/slip_entities.dart';
 import 'package:business_manager/features/slips/domain/services/slip_text_formatter.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:business_manager/core/widgets/widgets.dart';
 
 /// Branded Indigo Thread receipt card rendered in Flutter (with bundled
 /// `NotoSansGujarati` shaping) and wrapped in a [RepaintBoundary] by
@@ -194,7 +195,7 @@ final class SlipPreviewCard extends StatelessWidget {
                   ),
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
-                    child: Divider(color: AppColors.slate200, height: 1),
+                    child: AppDivider(color: AppColors.slate200, height: 1),
                   ),
 
                   for (final item in slip.items.take(15)) ...[
@@ -268,7 +269,7 @@ final class SlipPreviewCard extends StatelessWidget {
 
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
-                    child: Divider(color: AppColors.slate200, height: 1),
+                    child: AppDivider(color: AppColors.slate200, height: 1),
                   ),
 
                   if (slip.primaryAmountPaise != null) ...[

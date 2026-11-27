@@ -19,7 +19,8 @@ final class AppDataColumn {
   final String label;
   final bool numeric;
 
-  /// Enables tap-to-sort header affordance when `onSort` is provided.
+  /// Enables tap-to-sort on this header, either through the table's own
+  /// `sortValueBuilder` or a page-managed `onSort`.
   final bool sortable;
 
   /// Minimum width class required for this column to display in tabular mode.
@@ -48,6 +49,7 @@ final class AppDataTable<T> extends StatefulWidget {
     this.sortColumnIndex,
     this.sortAscending = true,
     this.onSort,
+    this.sortValueBuilder,
     this.enablePagination = false,
     this.initialPageSize = 25,
     this.pageSizeOptions = const [10, 25, 50],
@@ -62,6 +64,12 @@ final class AppDataTable<T> extends StatefulWidget {
   final int? sortColumnIndex;
   final bool sortAscending;
   final void Function(int columnIndex, bool ascending)? onSort;
+
+  /// Built-in sorting: the value to sort [item] by for the sortable column at
+  /// [columnIndex] (numbers, strings, dates…; `null` sorts last). When given
+  /// and [onSort] is not, the table keeps its own sort state, so pages get
+  /// tap-to-sort headers without extra code.
+  final Comparable<Object>? Function(T item, int columnIndex)? sortValueBuilder;
   final bool enablePagination;
   final int initialPageSize;
   final List<int> pageSizeOptions;
@@ -81,6 +89,7 @@ final class AppDataTable<T> extends StatefulWidget {
     int? sortColumnIndex,
     bool sortAscending = true,
     void Function(int columnIndex, bool ascending)? onSort,
+    Comparable<Object>? Function(T item, int columnIndex)? sortValueBuilder,
     bool enablePagination = false,
     int initialPageSize = 25,
     List<int> pageSizeOptions = const [10, 25, 50],
@@ -114,6 +123,7 @@ final class AppDataTable<T> extends StatefulWidget {
             sortColumnIndex: sortColumnIndex,
             sortAscending: sortAscending,
             onSort: onSort,
+            sortValueBuilder: sortValueBuilder,
             enablePagination: enablePagination,
             initialPageSize: initialPageSize,
             pageSizeOptions: pageSizeOptions,
@@ -130,6 +140,49 @@ final class AppDataTable<T> extends StatefulWidget {
 final class _AppDataTableState<T> extends State<AppDataTable<T>> {
   int _pageIndex = 0;
   late int _pageSize;
+
+  // Built-in sort state (used only with `sortValueBuilder` and no `onSort`).
+  int? _sortIndex;
+  bool _sortAscending = true;
+
+  bool get _selfSorting =>
+      widget.onSort == null && widget.sortValueBuilder != null;
+
+  int? get _effectiveSortIndex =>
+      _selfSorting ? _sortIndex : widget.sortColumnIndex;
+
+  bool get _effectiveSortAscending =>
+      _selfSorting ? _sortAscending : widget.sortAscending;
+
+  List<T> get _sortedItems {
+    final index = _sortIndex;
+    if (!_selfSorting || index == null) return widget.items;
+    final valueOf = widget.sortValueBuilder!;
+    final sorted = [...widget.items];
+    sorted.sort((a, b) {
+      final va = valueOf(a, index);
+      final vb = valueOf(b, index);
+      if (va == null && vb == null) return 0;
+      if (va == null) return 1; // nulls last in both directions
+      if (vb == null) return -1;
+      final c = va is String && vb is String
+          ? va.toLowerCase().compareTo(vb.toLowerCase())
+          : va.compareTo(vb);
+      return _sortAscending ? c : -c;
+    });
+    return sorted;
+  }
+
+  void Function(int, bool)? _sortHandlerFor(int origIdx) {
+    if (!widget.columns[origIdx].sortable) return null;
+    if (widget.onSort != null) return (_, asc) => widget.onSort!(origIdx, asc);
+    if (!_selfSorting) return null;
+    return (_, asc) => setState(() {
+      _sortIndex = origIdx;
+      _sortAscending = asc;
+      _pageIndex = 0;
+    });
+  }
 
   @override
   void initState() {
@@ -152,12 +205,13 @@ final class _AppDataTableState<T> extends State<AppDataTable<T>> {
       widget.items.isEmpty ? 1 : ((widget.items.length - 1) ~/ _pageSize) + 1;
 
   List<T> get _visibleItems {
-    if (!widget.enablePagination || widget.items.length <= _pageSize) {
-      return widget.items;
+    final items = _sortedItems;
+    if (!widget.enablePagination || items.length <= _pageSize) {
+      return items;
     }
-    final start = (_pageIndex * _pageSize).clamp(0, widget.items.length);
-    final end = math.min(start + _pageSize, widget.items.length);
-    return widget.items.sublist(start, end);
+    final start = (_pageIndex * _pageSize).clamp(0, items.length);
+    final end = math.min(start + _pageSize, items.length);
+    return items.sublist(start, end);
   }
 
   bool _isColumnVisible(AppDataColumn col, AppWindowSizeClass sizeClass) {
@@ -211,9 +265,10 @@ final class _AppDataTableState<T> extends State<AppDataTable<T>> {
           );
         }
 
-        final mappedSortIndex = widget.sortColumnIndex == null
+        final sortIndex = _effectiveSortIndex;
+        final mappedSortIndex = sortIndex == null
             ? null
-            : visibleIndices.indexOf(widget.sortColumnIndex!);
+            : visibleIndices.indexOf(sortIndex);
 
         return AppCard(
           padding: EdgeInsets.zero,
@@ -238,7 +293,7 @@ final class _AppDataTableState<T> extends State<AppDataTable<T>> {
                         mappedSortIndex != null && mappedSortIndex >= 0
                         ? mappedSortIndex
                         : null,
-                    sortAscending: widget.sortAscending,
+                    sortAscending: _effectiveSortAscending,
                     headingRowColor: WidgetStatePropertyAll(
                       colorScheme.surfaceContainerHighest.withValues(
                         alpha: 0.55,
@@ -252,11 +307,7 @@ final class _AppDataTableState<T> extends State<AppDataTable<T>> {
                       for (final origIdx in visibleIndices)
                         DataColumn(
                           numeric: widget.columns[origIdx].numeric,
-                          onSort:
-                              widget.columns[origIdx].sortable &&
-                                  widget.onSort != null
-                              ? (_, asc) => widget.onSort!(origIdx, asc)
-                              : null,
+                          onSort: _sortHandlerFor(origIdx),
                           label: Text(widget.columns[origIdx].label),
                         ),
                     ],

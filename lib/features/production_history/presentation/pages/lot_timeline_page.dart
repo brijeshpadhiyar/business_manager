@@ -83,15 +83,16 @@ final class _LotTimelineView extends StatelessWidget {
           ],
           body: switch (state.status) {
             ProductionHistoryLoadStatus.initial ||
-            ProductionHistoryLoadStatus.loading =>
-              const AppSkeletonList(itemCount: 5),
-            ProductionHistoryLoadStatus.error || _ when history == null =>
-              AppErrorView(
-                title: l10n.errorUnexpected,
-                message: state.errorMessage,
-                retryLabel: l10n.actionRetry,
-                onRetry: () => context.read<LotHistoryCubit>().loadLot(lotId),
-              ),
+            ProductionHistoryLoadStatus.loading => const AppSkeletonList(
+              itemCount: 5,
+            ),
+            ProductionHistoryLoadStatus.error ||
+            _ when history == null => AppErrorView(
+              title: l10n.errorUnexpected,
+              message: state.errorMessage,
+              retryLabel: l10n.actionRetry,
+              onRetry: () => context.read<LotHistoryCubit>().loadLot(lotId),
+            ),
             _ => _buildTimeline(context, history, localeCode),
           },
         );
@@ -152,15 +153,16 @@ final class _LotTimelineView extends StatelessWidget {
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: AppSpacing.md),
                   child: AppCard.listItem(
-                    onTap: e.kind == LotTimelineEventKind.lotCreated ||
+                    onTap:
+                        e.kind == LotTimelineEventKind.lotCreated ||
                             e.kind == LotTimelineEventKind.lotCompleted
                         ? null
                         : () => context.push(
-                              RoutePaths.productionTransactionDetail(
-                                e.transactionKind.routeSegment,
-                                e.transactionId,
-                              ),
+                            RoutePaths.productionTransactionDetail(
+                              e.transactionKind.routeSegment,
+                              e.transactionId,
                             ),
+                          ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -181,20 +183,20 @@ final class _LotTimelineView extends StatelessWidget {
                           ],
                         ),
                         if (e.subtitle != null && e.subtitle!.isNotEmpty) ...[
-                          const SizedBox(height: 2),
+                          const SizedBox(height: AppSpacing.xxs),
                           AppText(
                             e.subtitle!,
                             variant: AppTextVariant.bodySmall,
                           ),
                         ],
                         if (e.reason != null && e.reason!.isNotEmpty) ...[
-                          const SizedBox(height: 2),
+                          const SizedBox(height: AppSpacing.xxs),
                           AppText(
                             'Reason: ${e.reason}',
                             variant: AppTextVariant.bodySmall,
                           ),
                         ],
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AppSpacing.xs),
                         Wrap(
                           spacing: AppSpacing.xs,
                           runSpacing: 4,
@@ -215,17 +217,17 @@ final class _LotTimelineView extends StatelessWidget {
                                 color: colorScheme.onSurfaceVariant,
                               ),
                             if (e.workerId != null)
-                              ActionChip(
-                                visualDensity: VisualDensity.compact,
-                                label: Text(e.workerName ?? 'Worker'),
+                              AppChip.action(
+                                dense: true,
+                                label: e.workerName ?? 'Worker',
                                 onPressed: () => context.push(
                                   RoutePaths.workerDetail(e.workerId!),
                                 ),
                               ),
                             if (e.processId != null)
-                              ActionChip(
-                                visualDensity: VisualDensity.compact,
-                                label: Text(e.processName ?? 'Process'),
+                              AppChip.action(
+                                dense: true,
+                                label: e.processName ?? 'Process',
                                 onPressed: () => context.push(
                                   RoutePaths.processDetail(e.processId!),
                                 ),

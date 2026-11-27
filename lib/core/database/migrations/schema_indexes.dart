@@ -206,6 +206,12 @@ abstract final class SchemaIndexes {
         'ON sync_media_queue(status, next_retry_at, updated_at);',
   ];
 
+  /// v11: conflict inspector lookup on audit reasons.
+  static const List<String> v11IndexStatements = [
+    'CREATE INDEX IF NOT EXISTS idx_audit_logs_reason_rec '
+        'ON audit_logs(reason, recorded_at DESC);',
+  ];
+
   static const List<String> allIndexStatements = [
     ...v1IndexStatements,
     ...v2IndexStatements,
@@ -216,5 +222,6 @@ abstract final class SchemaIndexes {
     ...v7IndexStatements,
     ...v8IndexStatements,
     ...v10IndexStatements,
+    ...v11IndexStatements,
   ];
 }

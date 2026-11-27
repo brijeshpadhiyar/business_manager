@@ -1,10 +1,10 @@
-import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/widgets/app_button.dart';
+import 'package:business_manager/core/widgets/app_empty_visual.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// Standardized empty state view with tonal icon halo, localized title,
-/// subtitle, and optional primary CTA.
+/// Standardized empty state view with animated Lottie / GIF / icon visual,
+/// localized title, subtitle, and optional primary CTA.
 final class AppEmptyState extends StatelessWidget {
   const AppEmptyState({
     super.key,
@@ -13,6 +13,10 @@ final class AppEmptyState extends StatelessWidget {
     this.subtitle,
     this.actionLabel,
     this.onAction,
+    this.animation,
+    this.lottieAsset,
+    this.gifAsset,
+    this.animateIcon = true,
   });
 
   final IconData icon;
@@ -20,6 +24,19 @@ final class AppEmptyState extends StatelessWidget {
   final String? subtitle;
   final String? actionLabel;
   final VoidCallback? onAction;
+
+  /// Optional explicit animation category override; defaults to auto-mapping
+  /// from [icon].
+  final AppEmptyAnimation? animation;
+
+  /// Optional custom Lottie JSON asset path overriding [animation].
+  final String? lottieAsset;
+
+  /// Optional GIF/raster asset path displayed instead of Lottie when provided.
+  final String? gifAsset;
+
+  /// Whether the fallback icon halo uses subtle motion when active.
+  final bool animateIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -35,19 +52,14 @@ final class AppEmptyState extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                width: 68,
-                height: 68,
-                decoration: BoxDecoration(
-                  color: colorScheme.secondary.withValues(alpha: 0.12),
-                  borderRadius: AppRadius.fullBorder,
-                  border: Border.all(
-                    color: colorScheme.secondary.withValues(alpha: 0.25),
-                  ),
-                ),
-                child: Icon(icon, size: 32, color: colorScheme.secondary),
+              AppEmptyVisual(
+                icon: icon,
+                animation: animation,
+                lottieAsset: lottieAsset,
+                gifAsset: gifAsset,
+                animateIcon: animateIcon,
               ),
-              const SizedBox(height: AppSpacing.lg),
+              const SizedBox(height: AppSpacing.md),
               Text(
                 title,
                 style: theme.textTheme.titleMedium?.copyWith(

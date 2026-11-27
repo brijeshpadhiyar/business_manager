@@ -942,6 +942,33 @@ final class ProductionHistoryDashboardData {
   final int pageSize;
   final bool hasMore;
   final List<AssignmentReconciliationSummary> assignments;
+
+  /// This data with [next]'s feed items added after the current ones, for
+  /// infinite scrolling. Totals come from [next], the freshest read.
+  ProductionHistoryDashboardData appendPage(
+    ProductionHistoryDashboardData next,
+  ) {
+    return ProductionHistoryDashboardData(
+      totalLots: next.totalLots,
+      totalAssignedQty: next.totalAssignedQty,
+      totalReturnedQty: next.totalReturnedQty,
+      totalAcceptedQty: next.totalAcceptedQty,
+      totalRejectedQty: next.totalRejectedQty,
+      totalPendingInspectionQty: next.totalPendingInspectionQty,
+      totalOutstandingQty: next.totalOutstandingQty,
+      totalEarnedPaise: next.totalEarnedPaise,
+      totalPaidPaise: next.totalPaidPaise,
+      totalOutstandingPayablePaise: next.totalOutstandingPayablePaise,
+      pendingReturnsCount: next.pendingReturnsCount,
+      openRejectionsCount: next.openRejectionsCount,
+      items: [...items, ...next.items],
+      totalItemsCount: next.totalItemsCount,
+      page: next.page,
+      pageSize: next.pageSize,
+      hasMore: next.hasMore,
+      assignments: next.assignments,
+    );
+  }
 }
 
 final class ProductionAuditEntryView {

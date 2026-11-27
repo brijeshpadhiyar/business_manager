@@ -255,7 +255,7 @@ final class _DataHealthView extends StatelessWidget {
                                 ? AppStatusTone.good
                                 : AppStatusTone.damaged,
                           ),
-                          const Divider(height: AppSpacing.lg),
+                          const AppDivider(height: AppSpacing.lg),
                           _CheckRow(
                             label: l10n.dataHealthForeignKeysLabel,
                             value: report.foreignKeyViolations.isEmpty
@@ -267,7 +267,7 @@ final class _DataHealthView extends StatelessWidget {
                                 ? AppStatusTone.good
                                 : AppStatusTone.damaged,
                           ),
-                          const Divider(height: AppSpacing.lg),
+                          const AppDivider(height: AppSpacing.lg),
                           _CheckRow(
                             label: l10n.dataHealthStockReconciliationLabel,
                             value: report.stockIssues.isEmpty
@@ -285,7 +285,9 @@ final class _DataHealthView extends StatelessWidget {
                             const SizedBox(height: AppSpacing.sm),
                             for (final issue in report.stockIssues.take(10))
                               Padding(
-                                padding: const EdgeInsets.only(bottom: 4),
+                                padding: const EdgeInsets.only(
+                                  bottom: AppSpacing.xs,
+                                ),
                                 child: AppText(
                                   '• ${issue.lotNumber} / ${issue.designName} / ${issue.colourName} '
                                   '(${issue.reasonCode}: ${issue.reconciledTotalQty} vs ${issue.initialQty})',
@@ -294,7 +296,7 @@ final class _DataHealthView extends StatelessWidget {
                                 ),
                               ),
                           ],
-                          const Divider(height: AppSpacing.lg),
+                          const AppDivider(height: AppSpacing.lg),
                           _CheckRow(
                             label: l10n.dataHealthLedgerParityLabel,
                             value: report.ledgerIssues.isEmpty
@@ -310,7 +312,9 @@ final class _DataHealthView extends StatelessWidget {
                             const SizedBox(height: AppSpacing.sm),
                             for (final li in report.ledgerIssues.take(10))
                               Padding(
-                                padding: const EdgeInsets.only(bottom: 4),
+                                padding: const EdgeInsets.only(
+                                  bottom: AppSpacing.xs,
+                                ),
                                 child: AppText(
                                   '• ${li.code}: ${li.details}',
                                   variant: AppTextVariant.bodySmall,
@@ -318,7 +322,7 @@ final class _DataHealthView extends StatelessWidget {
                                 ),
                               ),
                           ],
-                          const Divider(height: AppSpacing.lg),
+                          const AppDivider(height: AppSpacing.lg),
                           _CheckRow(
                             label: l10n.dataHealthSyncQueueLabel,
                             value: l10n.dataHealthSyncQueueSummary(
@@ -333,7 +337,7 @@ final class _DataHealthView extends StatelessWidget {
                                 ? AppStatusTone.pending
                                 : AppStatusTone.good,
                           ),
-                          const Divider(height: AppSpacing.lg),
+                          const AppDivider(height: AppSpacing.lg),
                           _CheckRow(
                             label: l10n.dataHealthMediaParityLabel,
                             value: l10n.dataHealthMediaParitySummary(
@@ -371,7 +375,7 @@ final class _DataHealthView extends StatelessWidget {
                                 .runWalCheckpoint(),
                           ),
                           if (!kIsWeb) ...[
-                            const Divider(height: AppSpacing.lg),
+                            const AppDivider(height: AppSpacing.lg),
                             _MaintenanceActionRow(
                               icon: AppIcons.maintenance,
                               title: l10n.dataHealthCleanOrphansAction,
@@ -383,7 +387,7 @@ final class _DataHealthView extends StatelessWidget {
                                   .cleanOrphanMedia(),
                             ),
                           ],
-                          const Divider(height: AppSpacing.lg),
+                          const AppDivider(height: AppSpacing.lg),
                           _MaintenanceActionRow(
                             icon: AppIcons.sync,
                             title: l10n.dataHealthRetrySyncAction,
@@ -462,7 +466,7 @@ final class _MaintenanceActionRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AppText(title, fontWeight: FontWeight.w600),
-                const SizedBox(height: 2),
+                const SizedBox(height: AppSpacing.xxs),
                 AppText(
                   description,
                   variant: AppTextVariant.bodySmall,

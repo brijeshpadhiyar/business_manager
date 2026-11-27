@@ -103,40 +103,34 @@ final class FirstTimeWelcomeCard extends StatelessWidget {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     if (localeCubit != null) ...[
-                      ChoiceChip(
-                        avatar: const Icon(AppIcons.language, size: 15),
-                        label: Text(l10n.languageEnglish),
-                        visualDensity: VisualDensity.compact,
+                      AppChip(
+                        icon: AppIcons.language,
+                        label: l10n.languageEnglish,
+                        dense: true,
                         selected: localeCode != 'gu',
                         onSelected: (_) =>
                             localeCubit.setPreference(AppLocalePreference.en),
                       ),
-                      ChoiceChip(
-                        avatar: const Icon(AppIcons.language, size: 15),
-                        label: Text(l10n.languageGujarati),
-                        visualDensity: VisualDensity.compact,
+                      AppChip(
+                        icon: AppIcons.language,
+                        label: l10n.languageGujarati,
+                        dense: true,
                         selected: localeCode == 'gu',
                         onSelected: (_) =>
                             localeCubit.setPreference(AppLocalePreference.gu),
                       ),
                     ],
-                    FilterChip(
-                      avatar: Icon(
-                        guideState.progress.voiceEnabled
-                            ? AppIcons.voiceOn
-                            : AppIcons.voiceOff,
-                        size: 15,
-                      ),
-                      label: Text(
-                        guideState.progress.voiceEnabled
-                            ? l10n.guideVoiceOn
-                            : l10n.guideVoiceOff,
-                      ),
-                      visualDensity: VisualDensity.compact,
+                    AppChip.filter(
+                      icon: guideState.progress.voiceEnabled
+                          ? AppIcons.voiceOn
+                          : AppIcons.voiceOff,
+                      label: guideState.progress.voiceEnabled
+                          ? l10n.guideVoiceOn
+                          : l10n.guideVoiceOff,
+                      dense: true,
                       selected: guideState.progress.voiceEnabled,
-                      onSelected: (_) => guideCubit.toggleVoice(
-                        currentLocaleCode: localeCode,
-                      ),
+                      onSelected: (_) =>
+                          guideCubit.toggleVoice(currentLocaleCode: localeCode),
                     ),
                   ],
                 ),

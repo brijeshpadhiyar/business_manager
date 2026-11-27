@@ -101,10 +101,7 @@ final class AppBottomSheet {
                                   tooltip: MaterialLocalizations.of(
                                     dialogContext,
                                   ).closeButtonTooltip,
-                                  icon: const Icon(
-                                    AppIcons.close,
-                                    size: 20,
-                                  ),
+                                  icon: const Icon(AppIcons.close, size: 20),
                                   onPressed: () =>
                                       Navigator.of(dialogContext).pop(),
                                 ),

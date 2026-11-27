@@ -47,7 +47,8 @@ final class BusinessProfileRepositoryImpl implements BusinessProfileRepository {
     }
     if (trimmedEn.length > ValidationLimits.maxPersonNameLength ||
         trimmedGu.length > ValidationLimits.maxPersonNameLength ||
-        (ownerName?.trim().length ?? 0) > ValidationLimits.maxPersonNameLength ||
+        (ownerName?.trim().length ?? 0) >
+            ValidationLimits.maxPersonNameLength ||
         (address?.trim().length ?? 0) > ValidationLimits.maxAddressLength) {
       throw const DomainValidationException(
         'text_too_long',

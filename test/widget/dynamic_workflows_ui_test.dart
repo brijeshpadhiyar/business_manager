@@ -75,7 +75,7 @@ void main() {
   }
 
   testWidgets(
-    'StockLabourSettingsPage shows New Process action even when Silay already exists and renders INR rates without overflow at 360dp',
+    'StockLabourSettingsPage links to Work Stages and renders INR rates without overflow at 360dp',
     (tester) async {
       tester.view.physicalSize = const Size(360, 844);
       tester.view.devicePixelRatio = 1.0;
@@ -98,13 +98,13 @@ void main() {
       await tester.pumpAndSettle();
 
       final listScrollable = find.byType(Scrollable).first;
-      // Prominent New Process action remains visible with existing processes
+      // Work stages are created from their own tab; settings links there.
       await tester.scrollUntilVisible(
-        find.text('New Process'),
+        find.text('Manage Work Stages'),
         200,
         scrollable: listScrollable,
       );
-      expect(find.text('New Process'), findsOneWidget);
+      expect(find.text('Manage Work Stages'), findsOneWidget);
 
       await tester.scrollUntilVisible(
         find.text('Silay'),

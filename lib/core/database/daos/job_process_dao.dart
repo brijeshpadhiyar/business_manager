@@ -27,44 +27,17 @@ class JobProcessDao extends DatabaseAccessor<AppDatabase>
   Future<JobProcessRow?> findJobProcessById(String id) =>
       (select(jobProcesses)..where((t) => t.id.equals(id))).getSingleOrNull();
 
-  Future<List<JobProcessRow>> getAllJobProcesses() {
-    return (select(jobProcesses)
-          ..where((t) => t.deletedAt.isNull())
-          ..orderBy([
-            (t) => OrderingTerm.asc(t.transactionAt),
-            (t) => OrderingTerm.asc(t.sequenceOrder),
-          ]))
-        .get();
-  }
-
   Future<List<ProcessHandoverRow>> getAllHandovers() {
-    return (select(processHandovers)
-          ..orderBy([
-            (t) => OrderingTerm.asc(t.transactionAt),
-            (t) => OrderingTerm.asc(t.recordedAt),
-          ]))
+    return (select(processHandovers)..orderBy([
+          (t) => OrderingTerm.asc(t.transactionAt),
+          (t) => OrderingTerm.asc(t.recordedAt),
+        ]))
         .get();
   }
 
   Future<List<JobProcessRow>> getJobProcessesForLot(String lotId) {
     return (select(jobProcesses)
           ..where((t) => t.lotId.equals(lotId) & t.deletedAt.isNull())
-          ..orderBy([
-            (t) => OrderingTerm.asc(t.sequenceOrder),
-            (t) => OrderingTerm.asc(t.createdAt),
-            (t) => OrderingTerm.asc(t.id),
-          ]))
-        .get();
-  }
-
-  Future<List<JobProcessRow>> getJobProcessesForDesignColour(
-    String designColourId,
-  ) {
-    return (select(jobProcesses)
-          ..where(
-            (t) =>
-                t.designColourId.equals(designColourId) & t.deletedAt.isNull(),
-          )
           ..orderBy([
             (t) => OrderingTerm.asc(t.sequenceOrder),
             (t) => OrderingTerm.asc(t.createdAt),
@@ -102,11 +75,6 @@ class JobProcessDao extends DatabaseAccessor<AppDatabase>
   ) => (select(
     processHandovers,
   )..where((t) => t.clientRequestId.equals(clientRequestId))).getSingleOrNull();
-
-  Future<ProcessHandoverRow?> findHandoverByReference(String reference) =>
-      (select(
-        processHandovers,
-      )..where((t) => t.transferReference.equals(reference))).getSingleOrNull();
 
   Future<List<ProcessHandoverRow>> getHandoversForLot(String lotId) {
     return (select(processHandovers)
@@ -185,15 +153,6 @@ class JobProcessDao extends DatabaseAccessor<AppDatabase>
   ) {
     return (select(processRateHistories)
           ..where((t) => t.processId.equals(processId))
-          ..orderBy([(t) => OrderingTerm.desc(t.changedAt)]))
-        .get();
-  }
-
-  Future<List<ProcessRateHistoryRow>> getRateHistoryForJobProcess(
-    String jobProcessId,
-  ) {
-    return (select(processRateHistories)
-          ..where((t) => t.jobProcessId.equals(jobProcessId))
           ..orderBy([(t) => OrderingTerm.desc(t.changedAt)]))
         .get();
   }

@@ -1,0 +1,9 @@
+{
+  "APP_FLAVOR": "prod",
+  "DATABASE_NAME": "business_manager_prod.sqlite",
+  "MEDIA_DIR_NAME": "media_prod",
+  "SUPABASE_URL": "https://<project-ref>.supabase.co",
+  "SUPABASE_ANON_KEY": "<supabase-publishable-key>",
+  "GOOGLE_WEB_CLIENT_ID": "",
+  "GOOGLE_IOS_CLIENT_ID": ""
+}

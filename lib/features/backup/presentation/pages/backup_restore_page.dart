@@ -1,3 +1,4 @@
+import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/platform/share_origin.dart';
 import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
@@ -176,19 +177,19 @@ final class _BackupRestoreView extends StatelessWidget {
                 gradient: isDark
                     ? AppColors.heroGradientDark
                     : AppColors.heroGradientLight,
-                borderColor: Colors.white.withValues(alpha: 0.14),
+                borderColor: AppColors.onHero.withValues(alpha: 0.14),
                 child: Row(
                   children: [
                     Container(
                       width: 44,
                       height: 44,
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.15),
-                        borderRadius: BorderRadius.circular(12),
+                        color: AppColors.onHero.withValues(alpha: 0.15),
+                        borderRadius: AppRadius.mdBorder,
                       ),
                       child: const Icon(
                         AppIcons.shield,
-                        color: Colors.white,
+                        color: AppColors.onHero,
                         size: 24,
                       ),
                     ),
@@ -201,7 +202,7 @@ final class _BackupRestoreView extends StatelessWidget {
                             l10n.backupHeading,
                             style: Theme.of(context).textTheme.titleMedium
                                 ?.copyWith(
-                                  color: Colors.white,
+                                  color: AppColors.onHero,
                                   fontWeight: FontWeight.w700,
                                 ),
                           ),
@@ -209,9 +210,7 @@ final class _BackupRestoreView extends StatelessWidget {
                           Text(
                             l10n.backupSubtitle,
                             style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(
-                                  color: Colors.white.withValues(alpha: 0.88),
-                                ),
+                                ?.copyWith(color: AppColors.onHeroMuted),
                           ),
                         ],
                       ),
@@ -230,7 +229,7 @@ final class _BackupRestoreView extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                       const SizedBox(height: AppSpacing.sm),
-                      LinearProgressIndicator(value: state.progress?.fraction),
+                      AppProgressBar(value: state.progress?.fraction),
                     ],
                   ),
                 ),
@@ -304,7 +303,7 @@ final class _BackupRestoreView extends StatelessWidget {
                     ),
                     if (validation != null) ...[
                       const SizedBox(height: AppSpacing.md),
-                      const Divider(),
+                      const AppDivider(),
                       const SizedBox(height: AppSpacing.sm),
                       AppStatusBadge(
                         label: validation.isValid
@@ -325,7 +324,20 @@ final class _BackupRestoreView extends StatelessWidget {
                           variant: AppTextVariant.bodySmall,
                         ),
                         AppText(
-                          'Lots: ${validation.manifest!.summaryCounts.lotsCount} • Workers: ${validation.manifest!.summaryCounts.workersCount} • Movements: ${validation.manifest!.summaryCounts.movementsCount} • Photos: ${validation.manifest!.attachmentsCount}',
+                          [
+                            l10n.lotLotsValue(
+                              validation.manifest!.summaryCounts.lotsCount,
+                            ),
+                            l10n.lotWorkersValue(
+                              validation.manifest!.summaryCounts.workersCount,
+                            ),
+                            l10n.backupMovementsValue(
+                              validation.manifest!.summaryCounts.movementsCount,
+                            ),
+                            l10n.backupPhotosValue(
+                              validation.manifest!.attachmentsCount,
+                            ),
+                          ].join(' • '),
                           variant: AppTextVariant.bodySmall,
                         ),
                         const SizedBox(height: AppSpacing.md),

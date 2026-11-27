@@ -37,10 +37,10 @@ final class AboutStitchFlowPage extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(AppSpacing.md),
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.14),
+                    color: AppColors.onHero.withValues(alpha: 0.14),
                     borderRadius: AppRadius.lgBorder,
                     border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.24),
+                      color: AppColors.onHero.withValues(alpha: 0.24),
                     ),
                   ),
                   child: Image.asset(
@@ -51,7 +51,7 @@ final class AboutStitchFlowPage extends StatelessWidget {
                     cacheHeight: 192,
                     errorBuilder: (_, _, _) => const Icon(
                       AppIcons.brand,
-                      color: Colors.white,
+                      color: AppColors.onHero,
                       size: 48,
                     ),
                   ),
@@ -60,7 +60,7 @@ final class AboutStitchFlowPage extends StatelessWidget {
                 Text(
                   config.isDev ? l10n.appTitleDev : l10n.appTitle,
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: Colors.white,
+                    color: AppColors.onHero,
                     fontWeight: FontWeight.w700,
                   ),
                   textAlign: TextAlign.center,
@@ -68,8 +68,9 @@ final class AboutStitchFlowPage extends StatelessWidget {
                 const SizedBox(height: AppSpacing.xs),
                 Text(
                   l10n.appTagline,
-                  style: Theme.of(context).textTheme.bodyMedium
-                      ?.copyWith(color: Colors.white.withValues(alpha: 0.9)),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: AppColors.onHero.withValues(alpha: 0.9),
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -82,7 +83,7 @@ final class AboutStitchFlowPage extends StatelessWidget {
               children: [
                 AppText(l10n.aboutDescriptionBody),
                 const SizedBox(height: AppSpacing.md),
-                const Divider(),
+                const AppDivider(),
                 const SizedBox(height: AppSpacing.sm),
                 _MetaRow(
                   label: l10n.aboutVersionLabel,

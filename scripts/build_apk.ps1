@@ -84,7 +84,7 @@ Push-Location $ProjectRoot
 try {
     $TargetFile = "lib/main_$FlavorNorm.dart"
     $LocalConfigFile = "config/$FlavorNorm.local.json"
-    $ConfigFile = if (Test-Path $LocalConfigFile) { $LocalConfigFile } else { "config/$FlavorNorm.json" }
+    $ConfigFile = $LocalConfigFile
     $FlavorLabel = if ($FlavorNorm -eq "dev") { "Dev" } else { "Prod" }
     $AppId = if ($FlavorNorm -eq "dev") { "com.brijesh.stitchflow.dev" } else { "com.brijesh.stitchflow" }
 

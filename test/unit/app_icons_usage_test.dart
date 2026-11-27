@@ -25,7 +25,8 @@ void main() {
     expect(
       offenders,
       isEmpty,
-      reason: 'Use AppIcons.<meaning> instead of Icons.* in:\n'
+      reason:
+          'Use AppIcons.<meaning> instead of Icons.* in:\n'
           '${offenders.join('\n')}',
     );
   });

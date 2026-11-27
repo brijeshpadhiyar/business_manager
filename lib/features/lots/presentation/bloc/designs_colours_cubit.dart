@@ -118,10 +118,7 @@ final class DesignsColoursCubit extends Cubit<DesignsColoursState> {
   Future<void> load({String? searchQuery}) async {
     final query = (searchQuery ?? state.searchQuery).trim();
     emit(
-      state.copyWith(
-        status: DesignsColoursStatus.loading,
-        searchQuery: query,
-      ),
+      state.copyWith(status: DesignsColoursStatus.loading, searchQuery: query),
     );
 
     try {
@@ -174,10 +171,12 @@ final class DesignsColoursCubit extends Cubit<DesignsColoursState> {
           final lot = lotById[d.lotId];
           if (lot == null) continue;
           uniqueLotIds.add(lot.id);
-          if (latestLot == null || lot.transactionAt > latestLot.transactionAt) {
+          if (latestLot == null ||
+              lot.transactionAt > latestLot.transactionAt) {
             latestLot = lot;
           }
-          for (final c in coloursByDesignId[d.id] ?? const <DesignColourEntity>[]) {
+          for (final c
+              in coloursByDesignId[d.id] ?? const <DesignColourEntity>[]) {
             uniqueColours.add(c.colourName);
             totalQty += c.initialQuantity;
             if (c.unitPricePaise > 0) {
@@ -201,7 +200,8 @@ final class DesignsColoursCubit extends Cubit<DesignsColoursState> {
         }
         if (latestLot == null) continue;
 
-        final matches = qLower.isEmpty ||
+        final matches =
+            qLower.isEmpty ||
             displayName.toLowerCase().contains(qLower) ||
             uniqueColours.any((c) => c.toLowerCase().contains(qLower)) ||
             lotRefs.any((r) => r.lotNumber.toLowerCase().contains(qLower));
@@ -249,7 +249,8 @@ final class DesignsColoursCubit extends Cubit<DesignsColoursState> {
             relatedDesigns.add(d.designName);
           }
         }
-        final matches = qLower.isEmpty ||
+        final matches =
+            qLower.isEmpty ||
             m.name.toLowerCase().contains(qLower) ||
             m.hexCode.toLowerCase().contains(qLower) ||
             relatedDesigns.any((d) => d.toLowerCase().contains(qLower));

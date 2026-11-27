@@ -199,7 +199,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  AppDropdown<String>(
+                  AppSelect<String>(
                     label: l10n.routingVariantLabel,
                     value: selectedSkuId,
                     items: overview.skuBalances
@@ -223,7 +223,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                     },
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  AppDropdown<String>(
+                  AppSelect<String>(
                     label: l10n.routingOperationLabel,
                     value: selectedProcessId,
                     items: overview.availableProcesses
@@ -245,7 +245,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                     },
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  AppDropdown<String>(
+                  AppSelect<String>(
                     label: l10n.routingAssignWorkerLabel,
                     value: selectedWorkerId,
                     items: overview.availableWorkers.map((w) => w.id).toList(),
@@ -259,7 +259,13 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                   const SizedBox(height: AppSpacing.md),
                   AppTextField(
                     controller: qtyCtrl,
-                    validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.quantityValidator(v, max: selectedSku.physicalAvailableInHouse)),
+                    validator: ValidationLocalizer.wrap(
+                      context.l10n,
+                      (v) => AppValidators.quantityValidator(
+                        v,
+                        max: selectedSku.physicalAvailableInHouse,
+                      ),
+                    ),
                     label:
                         '${l10n.routingFactoryReadyLabel}: ${selectedSku.physicalAvailableInHouse} ${l10n.piecesUnit}',
                     keyboardType: TextInputType.number,
@@ -273,7 +279,10 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                       Expanded(
                         child: AppTextField(
                           controller: rateCtrl,
-                          validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeAmountValidator(v)),
+                          validator: ValidationLocalizer.wrap(
+                            context.l10n,
+                            (v) => AppValidators.nonNegativeAmountValidator(v),
+                          ),
                           label:
                               '${l10n.ratesAmountLabel} (${MoneyFormatter.formatPaise(procDefault.defaultRatePaise)})',
                           keyboardType: const TextInputType.numberWithOptions(
@@ -315,17 +324,19 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                       padding: const EdgeInsets.only(top: AppSpacing.md),
                       child: AppTextField(
                         controller: overrideReasonCtrl,
-                        validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.requiredValidator(v)),
+                        validator: ValidationLocalizer.wrap(
+                          context.l10n,
+                          (v) => AppValidators.requiredValidator(v),
+                        ),
                         label: l10n.routingRateOverrideReasonLabel,
                       ),
                     ),
                   ),
                   if (!isReassign) ...[
                     const SizedBox(height: AppSpacing.sm),
-                    SwitchListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(l10n.routingDispatchImmediatelyTitle),
-                      subtitle: Text(l10n.routingDispatchImmediatelySubtitle),
+                    AppSwitch(
+                      label: l10n.routingDispatchImmediatelyTitle,
+                      subtitle: l10n.routingDispatchImmediatelySubtitle,
                       value: dispatchNow,
                       onChanged: (v) => setSheetState(() => dispatchNow = v),
                     ),
@@ -487,7 +498,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                           '${source.workerName ?? '-'} (${source.processName})',
                           fontWeight: FontWeight.w700,
                         ),
-                        const SizedBox(height: 2),
+                        const SizedBox(height: AppSpacing.xxs),
                         AppText(
                           '${source.variantLabel} • ${source.pendingQuantity} ${l10n.piecesUnit}',
                           variant: AppTextVariant.bodySmall,
@@ -496,7 +507,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                     ),
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  AppDropdown<String>(
+                  AppSelect<String>(
                     label: l10n.routingNextOperationLabel,
                     value: destProcessId,
                     items: overview.availableProcesses
@@ -517,7 +528,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                     },
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  AppDropdown<String>(
+                  AppSelect<String>(
                     label: l10n.routingDestinationWorkerLabel,
                     value: destWorkerId,
                     items: overview.availableWorkers.map((w) => w.id).toList(),
@@ -531,7 +542,13 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                   const SizedBox(height: AppSpacing.md),
                   AppTextField(
                     controller: qtyCtrl,
-                    validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.quantityValidator(v, max: source.pendingQuantity)),
+                    validator: ValidationLocalizer.wrap(
+                      context.l10n,
+                      (v) => AppValidators.quantityValidator(
+                        v,
+                        max: source.pendingQuantity,
+                      ),
+                    ),
                     label:
                         '${l10n.routingDirectTransferAction} (${source.pendingQuantity} ${l10n.piecesUnit})',
                     keyboardType: TextInputType.number,
@@ -540,7 +557,10 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                   const SizedBox(height: AppSpacing.md),
                   AppTextField(
                     controller: rateCtrl,
-                    validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeAmountValidator(v)),
+                    validator: ValidationLocalizer.wrap(
+                      context.l10n,
+                      (v) => AppValidators.nonNegativeAmountValidator(v),
+                    ),
                     label:
                         '${l10n.ratesAmountLabel} (${MoneyFormatter.formatPaise(defPaise)})',
                     keyboardType: const TextInputType.numberWithOptions(
@@ -554,15 +574,17 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                       padding: const EdgeInsets.only(top: AppSpacing.md),
                       child: AppTextField(
                         controller: reasonCtrl,
-                        validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.requiredValidator(v)),
+                        validator: ValidationLocalizer.wrap(
+                          context.l10n,
+                          (v) => AppValidators.requiredValidator(v),
+                        ),
                         label: l10n.routingRateOverrideReasonLabel,
                       ),
                     ),
                   ),
                   const SizedBox(height: AppSpacing.xs),
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(l10n.routingMarkReceivedImmediatelyTitle),
+                  AppSwitch(
+                    label: l10n.routingMarkReceivedImmediatelyTitle,
                     value: autoConfirm,
                     onChanged: (v) => setSheetState(() => autoConfirm = v),
                   ),
@@ -588,7 +610,8 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                             final paise = _parseRupeesToPaise(rateCtrl.text);
                             if (qty <= 0) {
                               setSheetState(
-                                () => error = l10n.routingInvalidTransferQtyError,
+                                () =>
+                                    error = l10n.routingInvalidTransferQtyError,
                               );
                               return;
                             }
@@ -677,7 +700,13 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                 const SizedBox(height: AppSpacing.md),
                 AppTextField(
                   controller: goodCtrl,
-                  validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeQuantityValidator(v, isRequired: true)),
+                  validator: ValidationLocalizer.wrap(
+                    context.l10n,
+                    (v) => AppValidators.nonNegativeQuantityValidator(
+                      v,
+                      isRequired: true,
+                    ),
+                  ),
                   label: l10n.routingGoodReturnedLabel,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -685,7 +714,10 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                 const SizedBox(height: AppSpacing.md),
                 AppTextField(
                   controller: damagedCtrl,
-                  validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeQuantityValidator(v)),
+                  validator: ValidationLocalizer.wrap(
+                    context.l10n,
+                    (v) => AppValidators.nonNegativeQuantityValidator(v),
+                  ),
                   label: l10n.routingDamagedOptionalLabel,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -693,7 +725,12 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                 const SizedBox(height: AppSpacing.md),
                 AppTextField(
                   controller: reasonCtrl,
-                  validator: ValidationLocalizer.wrap(context.l10n, (v) => (int.tryParse(damagedCtrl.text.trim()) ?? 0) > 0 ? AppValidators.requiredValidator(v) : const ValidationResult.valid()),
+                  validator: ValidationLocalizer.wrap(
+                    context.l10n,
+                    (v) => (int.tryParse(damagedCtrl.text.trim()) ?? 0) > 0
+                        ? AppValidators.requiredValidator(v)
+                        : const ValidationResult.valid(),
+                  ),
                   label: l10n.stockSettlementReasonLabel,
                 ),
                 const SizedBox(height: AppSpacing.md),
@@ -784,90 +821,96 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
             // Scrolls when the keyboard is open on a short phone.
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              AppText(
-                '${jp.workerName ?? '-'} • ${jp.processName} (${jp.variantLabel})',
-                fontWeight: FontWeight.w600,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              AppDropdown<ProcessChargeType>(
-                label: l10n.routingChargeTypeLabel,
-                value: chargeType,
-                items: ProcessChargeType.values,
-                itemLabelBuilder: (t) => t.label,
-                onChanged: (v) {
-                  if (v != null) setSheetState(() => chargeType = v);
-                },
-              ),
-              const SizedBox(height: AppSpacing.md),
-              AppTextField(
-                controller: descCtrl,
-                label: l10n.routingChargeDescLabel,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              AppTextField(
-                controller: amountCtrl,
-                validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.amountValidator(v)),
-                label: l10n.accountingAmountLabel,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                AppText(
+                  '${jp.workerName ?? '-'} • ${jp.processName} (${jp.variantLabel})',
+                  fontWeight: FontWeight.w600,
                 ),
-              ),
-              if (error != null) ...[
-                const SizedBox(height: AppSpacing.sm),
-                AppText(error!, color: Theme.of(ctx).colorScheme.error),
-              ],
-              const SizedBox(height: AppSpacing.lg),
-              AppButton(
-                label: l10n.actionSave,
-                icon: AppIcons.addCharge,
-                isExpanded: true,
-                isLoading: saving,
-                onPressed: saving
-                    ? null
-                    : () async {
-                        final paise = _parseRupeesToPaise(
-                          amountCtrl.text,
-                          allowZero: false,
-                        );
-                        if (paise <= 0) {
-                          setSheetState(
-                            () => error = l10n.routingInvalidAmountError,
+                const SizedBox(height: AppSpacing.md),
+                AppDropdown<ProcessChargeType>(
+                  label: l10n.routingChargeTypeLabel,
+                  value: chargeType,
+                  items: ProcessChargeType.values,
+                  itemLabelBuilder: (t) => t.label,
+                  onChanged: (v) {
+                    if (v != null) setSheetState(() => chargeType = v);
+                  },
+                ),
+                const SizedBox(height: AppSpacing.md),
+                AppTextField(
+                  controller: descCtrl,
+                  label: l10n.routingChargeDescLabel,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                AppTextField(
+                  controller: amountCtrl,
+                  validator: ValidationLocalizer.wrap(
+                    context.l10n,
+                    (v) => AppValidators.amountValidator(v),
+                  ),
+                  label: l10n.accountingAmountLabel,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                ),
+                if (error != null) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  AppText(error!, color: Theme.of(ctx).colorScheme.error),
+                ],
+                const SizedBox(height: AppSpacing.lg),
+                AppButton(
+                  label: l10n.actionSave,
+                  icon: AppIcons.addCharge,
+                  isExpanded: true,
+                  isLoading: saving,
+                  onPressed: saving
+                      ? null
+                      : () async {
+                          final paise = _parseRupeesToPaise(
+                            amountCtrl.text,
+                            allowZero: false,
                           );
-                          return;
-                        }
-                        setSheetState(() {
-                          saving = true;
-                          error = null;
-                        });
-                        final err = await cubit.addAdditionalCharge(
-                          jobProcessId: jp.id,
-                          chargeType: chargeType,
-                          description: descCtrl.text,
-                          amountPaise: paise,
-                        );
-                        if (err != null) {
-                          if (sheetCtx.mounted) {
-                            setSheetState(() {
-                              saving = false;
-                              error = RoutingErrorLocalizer.localize(l10n, err);
-                            });
-                          }
-                        } else if (sheetCtx.mounted) {
-                          Navigator.of(sheetCtx).pop();
-                          if (context.mounted) {
-                            AppFeedback.showSuccess(
-                              context,
-                              l10n.routingOperationAddedSuccess,
+                          if (paise <= 0) {
+                            setSheetState(
+                              () => error = l10n.routingInvalidAmountError,
                             );
+                            return;
                           }
-                        }
-                      },
-              ),
-            ],
-          ),
+                          setSheetState(() {
+                            saving = true;
+                            error = null;
+                          });
+                          final err = await cubit.addAdditionalCharge(
+                            jobProcessId: jp.id,
+                            chargeType: chargeType,
+                            description: descCtrl.text,
+                            amountPaise: paise,
+                          );
+                          if (err != null) {
+                            if (sheetCtx.mounted) {
+                              setSheetState(() {
+                                saving = false;
+                                error = RoutingErrorLocalizer.localize(
+                                  l10n,
+                                  err,
+                                );
+                              });
+                            }
+                          } else if (sheetCtx.mounted) {
+                            Navigator.of(sheetCtx).pop();
+                            if (context.mounted) {
+                              AppFeedback.showSuccess(
+                                context,
+                                l10n.routingOperationAddedSuccess,
+                              );
+                            }
+                          }
+                        },
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -909,75 +952,84 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
             // Scrolls when the keyboard is open on a short phone.
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              AppText(
-                '${handover.transferReference} • ${handover.fromLocationLabel} → ${handover.toLocationLabel}',
-                fontWeight: FontWeight.w700,
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              AppText(
-                '${handover.variantLabel} • ${handover.quantityReceived}/${handover.quantityDispatched} ${l10n.piecesUnit}',
-                variant: AppTextVariant.bodySmall,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              AppTextField(
-                controller: qtyCtrl,
-                validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.quantityValidator(v, max: handover.pendingReceiptQuantity)),
-                label:
-                    '${l10n.routingConfirmReceiptAction} (${handover.pendingReceiptQuantity} ${l10n.piecesUnit})',
-                keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              ),
-              if (error != null) ...[
-                const SizedBox(height: AppSpacing.sm),
-                AppText(error!, color: Theme.of(ctx).colorScheme.error),
-              ],
-              const SizedBox(height: AppSpacing.lg),
-              AppButton(
-                label: l10n.routingConfirmReceiptAction,
-                icon: AppIcons.successOutline,
-                isExpanded: true,
-                isLoading: saving,
-                onPressed: saving
-                    ? null
-                    : () async {
-                        final qty = _parseQuantity(qtyCtrl.text);
-                        if (qty <= 0) {
-                          setSheetState(
-                            () => error = l10n.routingInvalidReceivedQtyError,
-                          );
-                          return;
-                        }
-                        setSheetState(() {
-                          saving = true;
-                          error = null;
-                        });
-                        final err = await cubit.confirmReceipt(
-                          handoverId: handover.id,
-                          receivedQuantity: qty,
-                        );
-                        if (err != null) {
-                          if (sheetCtx.mounted) {
-                            setSheetState(() {
-                              saving = false;
-                              error = RoutingErrorLocalizer.localize(l10n, err);
-                            });
-                          }
-                        } else if (sheetCtx.mounted) {
-                          Navigator.of(sheetCtx).pop();
-                          if (context.mounted) {
-                            AppFeedback.showSuccess(
-                              context,
-                              l10n.routingOperationAddedSuccess,
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                AppText(
+                  '${handover.transferReference} • ${handover.fromLocationLabel} → ${handover.toLocationLabel}',
+                  fontWeight: FontWeight.w700,
+                ),
+                const SizedBox(height: AppSpacing.xs),
+                AppText(
+                  '${handover.variantLabel} • ${handover.quantityReceived}/${handover.quantityDispatched} ${l10n.piecesUnit}',
+                  variant: AppTextVariant.bodySmall,
+                ),
+                const SizedBox(height: AppSpacing.md),
+                AppTextField(
+                  controller: qtyCtrl,
+                  validator: ValidationLocalizer.wrap(
+                    context.l10n,
+                    (v) => AppValidators.quantityValidator(
+                      v,
+                      max: handover.pendingReceiptQuantity,
+                    ),
+                  ),
+                  label:
+                      '${l10n.routingConfirmReceiptAction} (${handover.pendingReceiptQuantity} ${l10n.piecesUnit})',
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                ),
+                if (error != null) ...[
+                  const SizedBox(height: AppSpacing.sm),
+                  AppText(error!, color: Theme.of(ctx).colorScheme.error),
+                ],
+                const SizedBox(height: AppSpacing.lg),
+                AppButton(
+                  label: l10n.routingConfirmReceiptAction,
+                  icon: AppIcons.successOutline,
+                  isExpanded: true,
+                  isLoading: saving,
+                  onPressed: saving
+                      ? null
+                      : () async {
+                          final qty = _parseQuantity(qtyCtrl.text);
+                          if (qty <= 0) {
+                            setSheetState(
+                              () => error = l10n.routingInvalidReceivedQtyError,
                             );
+                            return;
                           }
-                        }
-                      },
-              ),
-            ],
-          ),
+                          setSheetState(() {
+                            saving = true;
+                            error = null;
+                          });
+                          final err = await cubit.confirmReceipt(
+                            handoverId: handover.id,
+                            receivedQuantity: qty,
+                          );
+                          if (err != null) {
+                            if (sheetCtx.mounted) {
+                              setSheetState(() {
+                                saving = false;
+                                error = RoutingErrorLocalizer.localize(
+                                  l10n,
+                                  err,
+                                );
+                              });
+                            }
+                          } else if (sheetCtx.mounted) {
+                            Navigator.of(sheetCtx).pop();
+                            if (context.mounted) {
+                              AppFeedback.showSuccess(
+                                context,
+                                l10n.routingOperationAddedSuccess,
+                              );
+                            }
+                          }
+                        },
+                ),
+              ],
+            ),
           ),
         ),
       );
@@ -999,14 +1051,18 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
         context,
         builder: (dlgCtx) => StatefulBuilder(
           builder: (ctx, setDlgState) => AppDialog(
-            title: '${l10n.routingCancelProcessAction} (${process.processName})',
+            title:
+                '${l10n.routingCancelProcessAction} (${process.processName})',
             content: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 AppTextField(
                   controller: reasonCtrl,
-                  validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.requiredValidator(v)),
+                  validator: ValidationLocalizer.wrap(
+                    context.l10n,
+                    (v) => AppValidators.requiredValidator(v),
+                  ),
                   label: l10n.routingCancelReasonLabel,
                 ),
                 if (error != null) ...[
@@ -1161,7 +1217,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
               gradient: isDark
                   ? AppColors.heroGradientDark
                   : AppColors.heroGradientLight,
-              borderColor: Colors.white.withValues(alpha: 0.18),
+              borderColor: AppColors.onHero.withValues(alpha: 0.18),
               borderRadius: AppRadius.xlBorder,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1170,7 +1226,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                     content: Text(
                       '#${overview.lot.lotNumber}',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: Colors.white,
+                        color: AppColors.onHero,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -1183,12 +1239,11 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                   ),
                   if (overview.lot.title != null &&
                       overview.lot.title!.isNotEmpty) ...[
-                    const SizedBox(height: 2),
+                    const SizedBox(height: AppSpacing.xxs),
                     Text(
                       overview.lot.title!,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.white.withValues(alpha: 0.88),
-                      ),
+                      style: Theme.of(context).textTheme.bodySmall
+                          ?.copyWith(color: AppColors.onHeroMuted),
                     ),
                   ],
                   const SizedBox(height: AppSpacing.md),
@@ -1234,10 +1289,9 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(right: AppSpacing.xs),
-                    child: ChoiceChip(
-                      label: Text(
-                        '${l10n.filterAll} (${overview.skuBalances.length})',
-                      ),
+                    child: AppChip(
+                      label:
+                          '${l10n.filterAll} (${overview.skuBalances.length})',
                       selected: activeFilterId == null,
                       onSelected: (_) =>
                           setState(() => _selectedDesignColourId = null),
@@ -1246,18 +1300,17 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                   for (final sku in overview.skuBalances)
                     Padding(
                       padding: const EdgeInsets.only(right: AppSpacing.xs),
-                      child: ChoiceChip(
+                      child: AppChip(
                         avatar: AppColourSwatch(
                           color: AppColourUtils.resolveColor(
                             sku.colourHex,
                             fallbackName: sku.colourName,
                           ),
                           size: 16,
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: AppRadius.smBorder,
                         ),
-                        label: Text(
-                          '${formatVariantLabel(sku.designName, sku.colourName)} (${sku.totalPendingWithWorkers})',
-                        ),
+                        label:
+                            '${formatVariantLabel(sku.designName, sku.colourName)} (${sku.totalPendingWithWorkers})',
                         selected: activeFilterId == sku.designColourId,
                         onSelected: (_) => setState(
                           () => _selectedDesignColourId = sku.designColourId,
@@ -1370,8 +1423,10 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                       ),
                       if (i < costs.workerPayables.length - 1)
                         const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 6),
-                          child: Divider(),
+                          padding: EdgeInsets.symmetric(
+                            vertical: AppSpacing.xsm,
+                          ),
+                          child: AppDivider(),
                         ),
                     ],
                   ],
@@ -1480,7 +1535,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                     if (i < filteredHandovers.length - 1)
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
-                        child: Divider(),
+                        child: AppDivider(),
                       ),
                   ],
                 ],
@@ -1548,7 +1603,8 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
               ),
               if (jp.receivedQuantity > 0)
                 AppStatusBadge(
-                  label: '${l10n.stockGoodReturnedLabel}: ${jp.receivedQuantity}',
+                  label:
+                      '${l10n.stockGoodReturnedLabel}: ${jp.receivedQuantity}',
                   tone: AppStatusTone.info,
                 ),
               if (jp.transferredOutQuantity > 0)
@@ -1579,8 +1635,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
             children: [
               if (jp.canDispatch)
                 AppButton(
-                  label:
-                      '${l10n.stockIssueAction} (${jp.remainingToDispatch})',
+                  label: '${l10n.stockIssueAction} (${jp.remainingToDispatch})',
                   icon: AppIcons.dispatch,
                   onPressed: () async {
                     final err = await cubit.dispatchProcess(

@@ -1,3 +1,5 @@
+import 'package:business_manager/core/design_system/app_radius.dart';
+import 'package:business_manager/core/validation/validation_localizer.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
@@ -92,7 +94,9 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
                   : l10n.colourEditAction,
               icon: AppIcons.designs,
               cancelLabel: l10n.actionCancel,
-              confirmLabel: submitting ? l10n.backupProgressWorking : l10n.actionSave,
+              confirmLabel: submitting
+                  ? l10n.backupProgressWorking
+                  : l10n.actionSave,
               onConfirm: submitting
                   ? null
                   : () async {
@@ -110,7 +114,10 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
                       } catch (e) {
                         setDialogState(() => submitting = false);
                         if (context.mounted) {
-                          AppFeedback.showError(context, e.toString());
+                          AppFeedback.showError(
+                            context,
+                            ValidationLocalizer.describeError(context.l10n, e),
+                          );
                         }
                       }
                     },
@@ -158,7 +165,7 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
                       children: [
                         for (final hex in presetHexes)
                           InkWell(
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: AppRadius.lgBorder,
                             onTap: () {
                               hexController.text = hex;
                               setDialogState(() {});
@@ -323,9 +330,9 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
                       label: l10n.coloursTabLabel,
                       minWidthClass: AppWindowSizeClass.medium,
                     ),
-                    const AppDataColumn(label: 'Qty', numeric: true),
-                    const AppDataColumn(
-                      label: 'Historical Price',
+                    AppDataColumn(label: l10n.tableQtyHeader, numeric: true),
+                    AppDataColumn(
+                      label: l10n.tableHistoricalPriceHeader,
                       numeric: true,
                       minWidthClass: AppWindowSizeClass.expanded,
                     ),
@@ -335,8 +342,10 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
                     ),
                   ],
                   items: state.designs,
-                  itemKeyBuilder: (d) => ValueKey<String>('design_${d.designName}'),
-                  onRowTap: (item) => _openDesignRelationshipsSheet(context, item),
+                  itemKeyBuilder: (d) =>
+                      ValueKey<String>('design_${d.designName}'),
+                  onRowTap: (item) =>
+                      _openDesignRelationshipsSheet(context, item),
                   cellsBuilder: (d) => [
                     AppText(d.designName, fontWeight: FontWeight.w700),
                     AppText('${d.lotCount}'),
@@ -363,17 +372,29 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
                   mobileCardBuilder: (ctx, d) => Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      AppActionRow(content: AppText(
-                              d.designName,
-                              variant: AppTextVariant.bodyLarge,
-                              fontWeight: FontWeight.w700,
-                            ), actions: [AppStatusBadge(
+                      AppActionRow(
+                        content: AppText(
+                          d.designName,
+                          variant: AppTextVariant.bodyLarge,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        actions: [
+                          AppStatusBadge(
                             label: '${d.lotCount} ${l10n.lotsHeading}',
                             tone: AppStatusTone.info,
-                          ),],),
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: AppSpacing.xs),
                       AppText(
-                        '${d.colourVariantCount} variants • ${d.totalInitialQuantity} pcs • ${_formatPriceRange(d.minUnitPricePaise, d.maxUnitPricePaise)}',
+                        l10n.designVariantsSummary(
+                          d.colourVariantCount,
+                          d.totalInitialQuantity,
+                          _formatPriceRange(
+                            d.minUnitPricePaise,
+                            d.maxUnitPricePaise,
+                          ),
+                        ),
                         variant: AppTextVariant.bodySmall,
                       ),
                       if (d.colourNames.isNotEmpty) ...[
@@ -416,15 +437,18 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
                   enablePagination: true,
                   columns: [
                     AppDataColumn(label: l10n.colourNameLabel),
-                    const AppDataColumn(label: 'Hex'),
-                    const AppDataColumn(label: 'Lot Uses', numeric: true),
-                    const AppDataColumn(
-                      label: 'Total Qty',
+                    AppDataColumn(label: l10n.tableHexHeader),
+                    AppDataColumn(
+                      label: l10n.tableLotUsesHeader,
+                      numeric: true,
+                    ),
+                    AppDataColumn(
+                      label: l10n.lotTotalQtyLabel,
                       numeric: true,
                       minWidthClass: AppWindowSizeClass.expanded,
                     ),
-                    const AppDataColumn(
-                      label: 'Historical Price',
+                    AppDataColumn(
+                      label: l10n.tableHistoricalPriceHeader,
                       numeric: true,
                       minWidthClass: AppWindowSizeClass.medium,
                     ),
@@ -434,7 +458,8 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
                     ),
                   ],
                   items: state.colours,
-                  itemKeyBuilder: (c) => ValueKey<String>('colour_${c.master.id}'),
+                  itemKeyBuilder: (c) =>
+                      ValueKey<String>('colour_${c.master.id}'),
                   onRowTap: (item) =>
                       _openColourEditor(context, existing: item.master),
                   cellsBuilder: (c) => [
@@ -516,8 +541,7 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
             title: l10n.navDesignsColours,
             subtitle: l10n.designsColoursSubtitle,
             expandedHeight: 184,
-            actions: [
-            ],
+            actions: [],
             summary: AppSummaryStrip(
               metrics: [
                 AppSummaryMetric(
@@ -550,14 +574,14 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    FilterChip(
-                      label: Text(l10n.designsTabLabel),
+                    AppChip.filter(
+                      label: l10n.designsTabLabel,
                       selected: _tabIndex == 0,
                       onSelected: (_) => setState(() => _tabIndex = 0),
                     ),
                     const SizedBox(width: AppSpacing.sm),
-                    FilterChip(
-                      label: Text(l10n.coloursTabLabel),
+                    AppChip.filter(
+                      label: l10n.coloursTabLabel,
                       selected: _tabIndex == 1,
                       onSelected: (_) => setState(() => _tabIndex = 1),
                     ),

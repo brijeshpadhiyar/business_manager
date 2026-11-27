@@ -44,9 +44,7 @@ final class SupabaseCloudSyncGateway implements CloudSyncGateway {
       return copy;
     }).toList();
 
-    await _client
-        .from(tableName)
-        .upsert(payload, onConflict: 'business_id,id');
+    await _client.from(tableName).upsert(payload, onConflict: 'business_id,id');
   }
 
   @override
@@ -126,8 +124,7 @@ final class SupabaseCloudSyncGateway implements CloudSyncGateway {
           value: businessId,
         ),
         callback: (payload) {
-          final remoteDevice =
-              payload.newRecord['last_device_id']?.toString();
+          final remoteDevice = payload.newRecord['last_device_id']?.toString();
           if (remoteDevice != null && remoteDevice == currentDeviceId) {
             return; // Ignore our own push echo.
           }
@@ -158,13 +155,12 @@ final class SupabaseCloudSyncGateway implements CloudSyncGateway {
     required Uint8List bytes,
     required String contentType,
   }) async {
-    await _client.storage.from(_mediaBucket).uploadBinary(
+    await _client.storage
+        .from(_mediaBucket)
+        .uploadBinary(
           remotePath,
           bytes,
-          fileOptions: supa.FileOptions(
-            contentType: contentType,
-            upsert: true,
-          ),
+          fileOptions: supa.FileOptions(contentType: contentType, upsert: true),
         );
   }
 

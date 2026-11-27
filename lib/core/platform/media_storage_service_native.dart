@@ -23,8 +23,7 @@ final class NativeMediaStorageService implements MediaStorageService {
   final Directory? baseDirectoryOverride;
 
   Future<Directory> _resolveMediaRoot() async {
-    final baseDir =
-        baseDirectoryOverride ?? await resolveAppDataDirectory();
+    final baseDir = baseDirectoryOverride ?? await resolveAppDataDirectory();
     final mediaRoot = Directory(p.join(baseDir.path, config.mediaDirName));
     if (!mediaRoot.existsSync()) {
       await mediaRoot.create(recursive: true);
@@ -153,7 +152,10 @@ final class NativeMediaStorageService implements MediaStorageService {
       final root = await _resolveMediaRoot();
       if (!root.existsSync()) return const [];
       final results = <String>[];
-      await for (final entity in root.list(recursive: true, followLinks: false)) {
+      await for (final entity in root.list(
+        recursive: true,
+        followLinks: false,
+      )) {
         if (entity is File) {
           final rel = p.relative(entity.path, from: root.path);
           results.add(p.posix.normalize(rel.replaceAll('\\', '/')));

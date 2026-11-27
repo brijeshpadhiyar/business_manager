@@ -83,10 +83,6 @@ final class _VisualColourPickerContentState
   ColourMasterRepository get repo => widget.repo;
   Set<String> get existingColourNamesLower => widget.existingColourNamesLower;
 
-  String get _defaultPriceText => widget.defaultUnitPricePaise > 0
-      ? MoneyFormatter.formatPaiseForInput(widget.defaultUnitPricePaise)
-      : '';
-
   @override
   void initState() {
     super.initState();
@@ -148,14 +144,8 @@ final class _VisualColourPickerContentState
           selectedIds.remove(c.id);
         } else {
           selectedIds.add(c.id);
-          qtyControllers.putIfAbsent(
-            c.id,
-            () => TextEditingController(text: '100'),
-          );
-          priceControllers.putIfAbsent(
-            c.id,
-            () => TextEditingController(text: _defaultPriceText),
-          );
+          qtyControllers.putIfAbsent(c.id, TextEditingController.new);
+          priceControllers.putIfAbsent(c.id, TextEditingController.new);
         }
       });
     }
@@ -182,7 +172,9 @@ final class _VisualColourPickerContentState
             builder: (innerCtx, setDlgState) {
               final previewColor = Color.fromARGB(255, r, g, b);
               return AppDialog(
-                title: editTarget == null ? 'Add Custom Colour' : 'Edit Colour',
+                title: editTarget == null
+                    ? context.l10n.lotAddCustomColour
+                    : context.l10n.lotEditColour,
                 content: SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -199,8 +191,11 @@ final class _VisualColourPickerContentState
                           Expanded(
                             child: AppTextField(
                               controller: nameCtrl,
-                              validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.requiredValidator(v)),
-                              label: 'Colour Name',
+                              validator: ValidationLocalizer.wrap(
+                                context.l10n,
+                                (v) => AppValidators.requiredValidator(v),
+                              ),
+                              label: context.l10n.colourNameLabel,
                             ),
                           ),
                         ],
@@ -208,8 +203,11 @@ final class _VisualColourPickerContentState
                       const SizedBox(height: AppSpacing.md),
                       AppTextField(
                         controller: hexCtrl,
-                        validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.hexColorValidator(v)),
-                        label: 'HEX Code (e.g. #DC2626)',
+                        validator: ValidationLocalizer.wrap(
+                          context.l10n,
+                          (v) => AppValidators.hexColorValidator(v),
+                        ),
+                        label: context.l10n.lotHexCodeLabel,
                         onChanged: (val) {
                           final norm = AppColourUtils.normalizeHex(val);
                           if (norm != null) {
@@ -260,8 +258,8 @@ final class _VisualColourPickerContentState
                     ],
                   ),
                 ),
-                cancelLabel: 'Cancel',
-                confirmLabel: 'Save Colour',
+                cancelLabel: context.l10n.actionCancel,
+                confirmLabel: context.l10n.lotSaveColour,
                 onConfirm: () async {
                   try {
                     final result = editTarget == null
@@ -290,14 +288,8 @@ final class _VisualColourPickerContentState
           recentColours = await repo.getRecentColours();
           setSheetState(() {
             selectedIds.add(saved.id);
-            qtyControllers.putIfAbsent(
-              saved.id,
-              () => TextEditingController(text: '100'),
-            );
-            priceControllers.putIfAbsent(
-              saved.id,
-              () => TextEditingController(text: _defaultPriceText),
-            );
+            qtyControllers.putIfAbsent(saved.id, TextEditingController.new);
+            priceControllers.putIfAbsent(saved.id, TextEditingController.new);
           });
         }
       } finally {
@@ -315,21 +307,26 @@ final class _VisualColourPickerContentState
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            AppActionRow(content: AppTextField(
-                    controller: searchCtrl,
-                    label: 'Search colour name or HEX',
-                    prefixIcon: AppIcons.search,
-                    onChanged: (_) => setSheetState(() {}),
-                  ), actions: [AppButton(
-                  label: 'Custom',
+            AppActionRow(
+              content: AppTextField(
+                controller: searchCtrl,
+                label: context.l10n.lotSearchColourHint,
+                prefixIcon: AppIcons.search,
+                onChanged: (_) => setSheetState(() {}),
+              ),
+              actions: [
+                AppButton(
+                  label: context.l10n.lotCustomColour,
                   icon: AppIcons.add,
                   variant: AppButtonVariant.secondary,
                   onPressed: () => openCustomColourDialog(),
-                ),],),
+                ),
+              ],
+            ),
             if (recentColours.isNotEmpty && q.isEmpty) ...[
               const SizedBox(height: AppSpacing.md),
-              const AppText(
-                'Recently Used',
+              AppText(
+                context.l10n.lotRecentlyUsed,
                 variant: AppTextVariant.bodySmall,
                 fontWeight: FontWeight.w700,
               ),
@@ -350,7 +347,7 @@ final class _VisualColourPickerContentState
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 10,
-                          vertical: 6,
+                          vertical: AppSpacing.xsm,
                         ),
                         decoration: BoxDecoration(
                           borderRadius: AppRadius.fullBorder,
@@ -370,7 +367,7 @@ final class _VisualColourPickerContentState
                               borderRadius: AppRadius.fullBorder,
                               isSelected: isSel,
                             ),
-                            const SizedBox(width: 6),
+                            const SizedBox(width: AppSpacing.xsm),
                             AppText(c.name, variant: AppTextVariant.bodySmall),
                           ],
                         ),
@@ -381,8 +378,8 @@ final class _VisualColourPickerContentState
               ),
             ],
             const SizedBox(height: AppSpacing.md),
-            const AppText(
-              'Colour Palette (Tap to select, long-press to edit)',
+            AppText(
+              context.l10n.lotColourPaletteHelp,
               variant: AppTextVariant.bodySmall,
               fontWeight: FontWeight.w700,
             ),
@@ -412,14 +409,16 @@ final class _VisualColourPickerContentState
                 alignment: WrapAlignment.spaceBetween,
                 children: [
                   AppText(
-                    'Selected Colours (${selectedList.length})',
+                    context.l10n.lotSelectedColoursCount(selectedList.length),
                     fontWeight: FontWeight.w700,
                   ),
                   Wrap(
                     spacing: AppSpacing.xs,
                     children: [
                       AppStatusBadge(
-                        label: '${MoneyFormatter.formatQuantity(totalQty)} pcs',
+                        label: context.l10n.lotPiecesValue(
+                          MoneyFormatter.formatQuantity(totalQty),
+                        ),
                         tone: AppStatusTone.good,
                       ),
                       if (totalValuePaise > 0)
@@ -461,16 +460,16 @@ final class _VisualColourPickerContentState
                                   AppText(
                                     c.hexCode,
                                     variant: AppTextVariant.bodySmall,
-                                    color: Theme.of(
-                                      ctx,
-                                    ).colorScheme.onSurfaceVariant,
+                                    color: Theme.of(ctx)
+                                        .colorScheme
+                                        .onSurfaceVariant,
                                   ),
                                 ],
                               ),
                             ),
                             AppIconButton(
                               icon: AppIcons.close,
-                              tooltip: 'Remove',
+                              tooltip: context.l10n.actionDelete,
                               onPressed: () => toggleColour(c),
                             ),
                           ],
@@ -481,8 +480,11 @@ final class _VisualColourPickerContentState
                             Expanded(
                               child: AppTextField(
                                 controller: qtyControllers[c.id],
-                                validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.quantityValidator(v)),
-                                label: 'Qty (pcs)',
+                                validator: ValidationLocalizer.wrap(
+                                  context.l10n,
+                                  (v) => AppValidators.quantityValidator(v),
+                                ),
+                                label: context.l10n.lotQtyPcsLabel,
                                 keyboardType: TextInputType.number,
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly,
@@ -496,9 +498,23 @@ final class _VisualColourPickerContentState
                             Expanded(
                               child: AppTextField(
                                 controller: priceControllers[c.id],
-                                validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeAmountValidator(v, isRequired: false)),
-                                label: 'Unit Price (₹)',
+                                validator: ValidationLocalizer.wrap(
+                                  context.l10n,
+                                  (v) =>
+                                      AppValidators.nonNegativeAmountValidator(
+                                        v,
+                                        isRequired: false,
+                                      ),
+                                ),
+                                label: context.l10n.lotUnitPriceLabel,
                                 hint: '0.00',
+                                helperText: widget.defaultUnitPricePaise > 0
+                                    ? context.l10n.lotDesignPriceHelper(
+                                        MoneyFormatter.formatPaise(
+                                          widget.defaultUnitPricePaise,
+                                        ),
+                                      )
+                                    : null,
                                 keyboardType:
                                     const TextInputType.numberWithOptions(
                                       decimal: true,
@@ -526,8 +542,14 @@ final class _VisualColourPickerContentState
             const SizedBox(height: AppSpacing.md),
             AppButton(
               label: selectedList.isEmpty
-                  ? 'Select Colours Above'
-                  : 'Add ${selectedList.length} Colour(s) • ${MoneyFormatter.formatQuantity(totalQty)} pcs${totalValuePaise > 0 ? ' • ${MoneyFormatter.formatPaise(totalValuePaise)}' : ''}',
+                  ? context.l10n.lotSelectColoursAbove
+                  : context.l10n.lotAddColoursSummary(
+                          selectedList.length,
+                          MoneyFormatter.formatQuantity(totalQty),
+                        ) +
+                        (totalValuePaise > 0
+                            ? ' • ${MoneyFormatter.formatPaise(totalValuePaise)}'
+                            : ''),
               icon: AppIcons.confirm,
               isExpanded: true,
               onPressed: selectedList.isEmpty
@@ -542,15 +564,17 @@ final class _VisualColourPickerContentState
                             0;
                         if (qty <= 0) {
                           setSheetState(
-                            () => error =
-                                'Enter a positive quantity for ${c.name}.',
+                            () => error = context.l10n.lotEnterPositiveQtyFor(
+                              c.name,
+                            ),
                           );
                           return;
                         }
                         if (qty > ValidationLimits.maxQuantity) {
                           setSheetState(
-                            () => error =
-                                'Quantity for ${c.name} exceeds maximum limit.',
+                            () => error = context.l10n.lotQtyExceedsMaxFor(
+                              c.name,
+                            ),
                           );
                           return;
                         }
@@ -563,8 +587,9 @@ final class _VisualColourPickerContentState
                         if (!parsedPrice.validation.isValid ||
                             parsedPrice.paise == null) {
                           setSheetState(
-                            () => error =
-                                'Enter a valid non-negative price for ${c.name}.',
+                            () => error = context.l10n.lotEnterValidPriceFor(
+                              c.name,
+                            ),
                           );
                           return;
                         }
@@ -642,7 +667,7 @@ final class _PaletteSwatchChip extends StatelessWidget {
                 isSelected: isSelected,
                 semanticLabel: colour.name,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppSpacing.sm),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
