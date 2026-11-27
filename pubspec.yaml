@@ -54,6 +54,7 @@ dependencies:
   crypto: ^3.0.6
   animations: 3.0.0
   flutter_animate: 4.5.2
+  lottie: ^3.8.2
   flutter_secure_storage: ^11.2.0
   local_auth: ^3.0.2
   excel_plus: ^2.29.3
@@ -90,6 +91,7 @@ flutter:
   assets:
     - assets/branding/logo/
     - assets/branding/splash/
+    - assets/animations/
 
   fonts:
     - family: NotoSansGujarati

@@ -35,6 +35,7 @@ export 'app_dialog.dart';
 export 'app_divider.dart';
 export 'app_dropdown.dart';
 export 'app_empty_state.dart';
+export 'app_empty_visual.dart';
 export 'app_error_view.dart';
 export 'app_feedback.dart';
 export 'app_form_dirty_tracker.dart';

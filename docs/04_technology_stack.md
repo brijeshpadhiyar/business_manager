@@ -42,6 +42,7 @@ All SDK and package versions below were verified against official Flutter, Dart,
 | `uuid` | `^4.6.0` | Offline-safe UUIDv7/v4 primary keys | Yes | Yes | Yes | Yes | Yes | Yes | https://pub.dev/packages/uuid |
 | `crypto` | `^3.0.6` | SHA-256 checksums for backup `manifest.json` | Yes | Yes | Yes | Yes | Yes | Yes | https://pub.dev/packages/crypto |
 | `flutter_tts` | `^4.2.5` | Offline native Text-to-Speech narration (EN & GU) for interactive guidance & User Guide | Yes | Yes | Yes | Yes | Yes | No* | https://pub.dev/packages/flutter_tts |
+| `lottie` | `^3.8.2` | Lightweight Lottie (`.json`) vector animations for empty states | Yes | Yes | Yes | Yes | Yes | Yes | https://pub.dev/packages/lottie |
 
 *\*Web SQLite requires `sqlite3.wasm` and `drift_worker.js` static assets in `web/`.*
 *\*\*`path_provider` is guarded behind a `PlatformStorageService` abstraction; Web uses browser download/upload + OPFS/IndexedDB rather than filesystem paths.*

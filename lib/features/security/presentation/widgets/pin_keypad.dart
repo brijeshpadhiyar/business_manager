@@ -67,7 +67,12 @@ final class PinKeypad extends StatelessWidget {
           // the digits themselves.
           Semantics(
             liveRegion: true,
-            label: context.l10n.securityPinProgress(enteredLength, pinLength),
+            label:
+                context.l10nOrNull?.securityPinProgress(
+                  enteredLength,
+                  pinLength,
+                ) ??
+                '$enteredLength / $pinLength',
             child: ExcludeSemantics(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,

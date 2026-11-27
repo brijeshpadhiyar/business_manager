@@ -2,7 +2,7 @@ import 'dart:math' as math;
 
 import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_theme.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// WCAG 2.x contrast checks for the colour pairs the app draws text with, in
