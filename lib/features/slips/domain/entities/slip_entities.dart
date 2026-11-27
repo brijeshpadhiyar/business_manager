@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 /// Four worker-facing bilingual document types supported in StitchFlow v1.6.
 enum SlipDocumentType {
   stockIssueChallan,
@@ -9,7 +7,6 @@ enum SlipDocumentType {
 }
 
 /// Single tabular row inside a Karigar slip or Khata statement.
-@immutable
 final class SlipLineItem {
   const SlipLineItem({
     required this.title,
@@ -30,7 +27,6 @@ final class SlipLineItem {
 
 /// Immutable, pure-Dart payload for generating WhatsApp text, Indigo Thread
 /// HTML/PDF printouts, and branded PNG receipt images via `RepaintBoundary`.
-@immutable
 final class WorkerSlipData {
   const WorkerSlipData({
     required this.type,

@@ -1,3 +1,4 @@
+import 'package:business_manager/core/design_system/app_icons.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
@@ -8,6 +9,8 @@ import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/lots/domain/repositories/lot_repository.dart';
+import 'package:business_manager/features/lots/presentation/widgets/lot_create_form_models.dart';
+import 'package:business_manager/features/lots/presentation/widgets/lot_create_variant_cards.dart';
 import 'package:business_manager/features/lots/presentation/widgets/visual_colour_picker_sheet.dart';
 import 'package:business_manager/features/process_routing/domain/entities/process_routing_entities.dart';
 import 'package:business_manager/features/processes/domain/entities/process_entities.dart';
@@ -15,20 +18,10 @@ import 'package:business_manager/features/processes/domain/repositories/process_
 import 'package:business_manager/features/production_history/domain/entities/production_history_entities.dart';
 import 'package:business_manager/features/workers/domain/entities/worker_entities.dart';
 import 'package:business_manager/features/workers/domain/repositories/worker_repository.dart';
-import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:business_manager/core/design_system/app_icons.dart';
 
-/// Complete one-screen Lot Creation workflow:
-/// - Section A: Lot Information (Number, Title, Date, Notes)
-/// - Section B: Design Selection (With Designs or Colour-Only) with searchable
-///   previously used designs + inline `+ Add New Design` (no navigation away)
-/// - Section C: Multi-Colour Variants with per-colour Quantity & SKU Unit Price
-///   (pre-filled from design default price and independently overridable)
-/// - Live Summary Strip: Total Designs, Total Colours, Total Quantity, Total
-///   Estimated SKU Value (in Indian Rupees via `MoneyFormatter`)
-/// - Atomic transactional save via [LotRepository.createLotComplete]
+/// Complete one-screen Lot Creation workflow.
 final class LotCreatePage extends StatefulWidget {
   const LotCreatePage({super.key});
 
@@ -36,73 +29,9 @@ final class LotCreatePage extends StatefulWidget {
   State<LotCreatePage> createState() => _LotCreatePageState();
 }
 
-final class _ColourVariantRowState {
-  _ColourVariantRowState({
-    required this.id,
-    required this.colourName,
-    this.colourHex,
-    required int initialQuantity,
-    required int unitPricePaise,
-  }) : qtyCtrl = TextEditingController(text: '$initialQuantity'),
-       priceCtrl = TextEditingController(
-         text: unitPricePaise > 0
-             ? MoneyFormatter.formatPaiseForInput(unitPricePaise)
-             : '',
-       );
-
-  final String id;
-  final String colourName;
-  final String? colourHex;
-  final TextEditingController qtyCtrl;
-  final TextEditingController priceCtrl;
-
-  int get quantity => int.tryParse(qtyCtrl.text.trim()) ?? 0;
-
-  int get unitPricePaise {
-    final parsed = AppValidators.parseRupeesToPaiseExact(
-      priceCtrl.text,
-      isRequired: false,
-      allowZero: true,
-    );
-    return parsed.paise ?? 0;
-  }
-
-  void dispose() {
-    qtyCtrl.dispose();
-    priceCtrl.dispose();
-  }
-}
-
-final class _DesignBlockState {
-  _DesignBlockState({
-    required this.id,
-    required this.designName,
-    this.notes,
-    this.defaultUnitPricePaise = 0,
-  });
-
-  final String id;
-  final String designName;
-  final String? notes;
-  final int defaultUnitPricePaise;
-  final List<_ColourVariantRowState> colours = [];
-
-  int get totalQty => colours.fold(0, (acc, c) => acc + c.quantity);
-
-  int get totalValuePaise =>
-      colours.fold(0, (acc, c) => acc + (c.quantity * c.unitPricePaise));
-
-  void dispose() {
-    for (final c in colours) {
-      c.dispose();
-    }
-  }
-}
-
 final class _LotCreatePageState extends State<LotCreatePage> {
   final _dirty = AppFormDirtyTracker();
 
-  /// setState for a user edit: also marks the form as unsaved.
   void _edit(VoidCallback fn) {
     _dirty.markDirty();
     setState(fn);
@@ -123,25 +52,21 @@ final class _LotCreatePageState extends State<LotCreatePage> {
   final _titleFocus = FocusNode();
   final _notesFocus = FocusNode();
 
-  // Inline "+ Add New Design" controls
   bool _showInlineDesignForm = false;
   final _newDesignNameCtrl = TextEditingController();
   final _newDesignNotesCtrl = TextEditingController();
   final _newDesignPriceCtrl = TextEditingController();
   String? _inlineDesignError;
 
-  // Existing design selector
   List<String> _knownDesignNames = const [];
   String? _selectedKnownDesign;
 
-  // Mode: true = With Designs, false = Colour-Only (No Design)
   bool _useDesigns = true;
   int _txDateUtc = IstDateTimeHelper.nowUtcMillis();
 
-  final List<_DesignBlockState> _designs = [];
-  final List<_ColourVariantRowState> _colourOnlyVariants = [];
+  final List<DesignBlockState> _designs = [];
+  final List<ColourVariantRowState> _colourOnlyVariants = [];
 
-  // Optional Phase 5 Initial Process Assignments
   List<ProcessEntity> _activeProcesses = const [];
   List<WorkerEntity> _activeWorkers = const [];
   final List<InitialLotProcessAssignmentInput> _initialAssignments = [];
@@ -171,9 +96,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
         _activeProcesses = results[1] as List<ProcessEntity>;
         _activeWorkers = results[2] as List<WorkerEntity>;
       });
-    } catch (_) {
-      // Non-blocking suggestion load
-    }
+    } catch (_) {}
   }
 
   Future<void> _showAddInitialAssignmentSheet() async {
@@ -194,170 +117,14 @@ final class _LotCreatePageState extends State<LotCreatePage> {
             qty: c.quantity,
           ),
     ];
-    if (skuOptions.isEmpty ||
-        _activeProcesses.isEmpty ||
-        _activeWorkers.isEmpty) {
-      AppFeedback.showError(context, context.l10n.lotNeedVariantStageWorker);
-      return;
-    }
-
-    var selectedSkuIdx = 0;
-    var selectedProcId = _activeProcesses.first.id;
-    var selectedWorkerId = _activeWorkers.first.id;
-    // Quantity and rate start empty: the user types them for every entry.
-    final qtyCtrl = TextEditingController();
-    final rateCtrl = TextEditingController();
-    final notesCtrl = TextEditingController();
-    String? err;
-
-    try {
-      await AppBottomSheet.show<void>(
-        context,
-        title: context.l10n.prodHistoryAddAssignmentAction,
-        builder: (sheetCtx) => StatefulBuilder(
-          builder: (ctx, setSheetState) => SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                AppDropdown<int>(
-                  label: context.l10n.lotDesignColourVariantLabel,
-                  value: selectedSkuIdx,
-                  items: List<int>.generate(skuOptions.length, (i) => i),
-                  itemLabelBuilder: (i) {
-                    final s = skuOptions[i];
-                    return '${formatVariantLabel(s.designName, s.colourName)} (${s.qty} pcs)';
-                  },
-                  onChanged: (v) {
-                    if (v != null) {
-                      setSheetState(() => selectedSkuIdx = v);
-                    }
-                  },
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                AppSelect<String>(
-                  label: context.l10n.navProcesses,
-                  value: selectedProcId,
-                  items: _activeProcesses.map((p) => p.id).toList(),
-                  itemLabelBuilder: (id) =>
-                      _activeProcesses.firstWhere((p) => p.id == id).name,
-                  onChanged: (v) {
-                    if (v != null) setSheetState(() => selectedProcId = v);
-                  },
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                AppSelect<String>(
-                  label: context.l10n.navWorkers,
-                  value: selectedWorkerId,
-                  items: _activeWorkers.map((w) => w.id).toList(),
-                  itemLabelBuilder: (id) =>
-                      _activeWorkers.firstWhere((w) => w.id == id).name,
-                  onChanged: (v) {
-                    if (v != null) setSheetState(() => selectedWorkerId = v);
-                  },
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                Row(
-                  children: [
-                    Expanded(
-                      child: AppTextField(
-                        controller: qtyCtrl,
-                        validator: ValidationLocalizer.wrap(
-                          context.l10n,
-                          (v) => AppValidators.quantityValidator(v),
-                        ),
-                        label: context.l10n.lotQtyPcsLabel,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Expanded(
-                      child: AppTextField(
-                        controller: rateCtrl,
-                        validator: ValidationLocalizer.wrap(
-                          context.l10n,
-                          (v) => AppValidators.nonNegativeAmountValidator(v),
-                        ),
-                        label: context.l10n.lotLockedRateLabel,
-                        helperText: () {
-                          final rate = _activeProcesses
-                              .firstWhere((p) => p.id == selectedProcId)
-                              .defaultRatePaise;
-                          return rate > 0
-                              ? context.l10n.lotStageDefaultRateHelper(
-                                  MoneyFormatter.formatPaise(rate),
-                                )
-                              : null;
-                        }(),
-                        keyboardType: const TextInputType.numberWithOptions(
-                          decimal: true,
-                        ),
-                        inputFormatters: [AppInputFormatters.currencyDecimal],
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                AppTextField(
-                  controller: notesCtrl,
-                  label: context.l10n.stockNotesLabel,
-                ),
-                if (err != null) ...[
-                  const SizedBox(height: AppSpacing.xs),
-                  AppText(err!, color: Theme.of(ctx).colorScheme.error),
-                ],
-                const SizedBox(height: AppSpacing.md),
-                AppButton(
-                  label: context.l10n.prodHistoryAddAssignmentAction,
-                  icon: AppIcons.assignWorker,
-                  isExpanded: true,
-                  onPressed: () {
-                    final qty = int.tryParse(qtyCtrl.text.trim()) ?? 0;
-                    final parsedRate = AppValidators.parseRupeesToPaiseExact(
-                      rateCtrl.text,
-                      isRequired: true,
-                      allowZero: true,
-                    );
-                    if (qty <= 0) {
-                      setSheetState(
-                        () => err = context.l10n.lotEnterPositiveQty,
-                      );
-                      return;
-                    }
-                    if (!parsedRate.validation.isValid ||
-                        parsedRate.paise == null) {
-                      setSheetState(() => err = context.l10n.lotEnterValidRate);
-                      return;
-                    }
-                    final sku = skuOptions[selectedSkuIdx];
-                    setState(() {
-                      _initialAssignments.add(
-                        InitialLotProcessAssignmentInput(
-                          designName: sku.designName,
-                          colourName: sku.colourName,
-                          processId: selectedProcId,
-                          workerId: selectedWorkerId,
-                          quantity: qty,
-                          agreedRatePaise: parsedRate.paise!,
-                          notes: notesCtrl.text,
-                        ),
-                      );
-                    });
-                    Navigator.of(sheetCtx).pop();
-                  },
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    } finally {
-      qtyCtrl.dispose();
-      rateCtrl.dispose();
-      notesCtrl.dispose();
+    final created = await showAddInitialLotAssignmentSheet(
+      context,
+      skuOptions: skuOptions,
+      activeProcesses: _activeProcesses,
+      activeWorkers: _activeWorkers,
+    );
+    if (created != null && mounted) {
+      setState(() => _initialAssignments.add(created));
     }
   }
 
@@ -416,7 +183,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
       _inlineDesignError = null;
       _submitError = null;
       _designs.add(
-        _DesignBlockState(id: 'design_${++_seq}', designName: trimmed),
+        DesignBlockState(id: 'design_${++_seq}', designName: trimmed),
       );
       _selectedKnownDesign = null;
     });
@@ -453,7 +220,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
     final notes = _newDesignNotesCtrl.text.trim();
     setState(() {
       _designs.add(
-        _DesignBlockState(
+        DesignBlockState(
           id: 'design_${++_seq}',
           designName: cleanName,
           notes: notes.isEmpty ? null : notes,
@@ -475,7 +242,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
     });
   }
 
-  void _removeDesign(_DesignBlockState design) {
+  void _removeDesign(DesignBlockState design) {
     _dirty.markDirty();
     setState(() {
       _designs.remove(design);
@@ -483,7 +250,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
     });
   }
 
-  Future<void> _pickColoursForDesign(_DesignBlockState design) async {
+  Future<void> _pickColoursForDesign(DesignBlockState design) async {
     _dirty.markDirty();
     final existingLower = design.colours
         .map((c) => c.colourName.trim().toLowerCase())
@@ -506,7 +273,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
           continue;
         }
         design.colours.add(
-          _ColourVariantRowState(
+          ColourVariantRowState(
             id: 'col_${++_seq}',
             colourName: item.colourName,
             colourHex: item.hexCode,
@@ -540,7 +307,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
           continue;
         }
         _colourOnlyVariants.add(
-          _ColourVariantRowState(
+          ColourVariantRowState(
             id: 'col_${++_seq}',
             colourName: item.colourName,
             colourHex: item.hexCode,
@@ -572,7 +339,6 @@ final class _LotCreatePageState extends State<LotCreatePage> {
     );
     if (!valid) return;
 
-    // Validate all colour quantities & prices cleanly before calling repository.
     final designDrafts = <LotDesignDraftInput>[];
     if (_useDesigns) {
       for (final d in _designs) {
@@ -693,7 +459,6 @@ final class _LotCreatePageState extends State<LotCreatePage> {
       });
     } catch (e) {
       if (!mounted) return;
-      // A UNIQUE constraint hit means the lot number is already taken.
       final duplicate = '$e'.contains('UNIQUE');
       setState(() {
         _isSaving = false;
@@ -729,7 +494,6 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                   keyboardDismissBehavior:
                       ScrollViewKeyboardDismissBehavior.onDrag,
                   children: [
-                    // Live Summary Header (full glass hero)
                     AppCard(
                       isGlass: true,
                       blurSigma: 12,
@@ -780,7 +544,6 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                     ),
                     const SizedBox(height: AppSpacing.md),
 
-                    // Section A: Lot Information
                     AppCard(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -856,7 +619,6 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                     ),
                     const SizedBox(height: AppSpacing.md),
 
-                    // Section B & C: Designs, Colours & Direct SKU Pricing
                     AppCard(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -900,7 +662,6 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                           ),
                           const SizedBox(height: AppSpacing.md),
                           if (_useDesigns) ...[
-                            // Side by side when there is room, stacked on phones.
                             AppFormRow(
                               spacing: AppSpacing.sm,
                               children: [
@@ -1053,7 +814,18 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                               )
                             else
                               for (final design in _designs) ...[
-                                _buildDesignCard(context, design),
+                                LotCreateDesignCard(
+                                  key: ValueKey<String>(design.id),
+                                  design: design,
+                                  onPickColours: () =>
+                                      _pickColoursForDesign(design),
+                                  onRemoveDesign: () => _removeDesign(design),
+                                  onRemoveColour: (c) => setState(() {
+                                    design.colours.remove(c);
+                                    c.dispose();
+                                  }),
+                                  onValueChanged: () => _edit(() {}),
+                                ),
                                 const SizedBox(height: AppSpacing.sm),
                               ],
                           ] else ...[
@@ -1091,20 +863,20 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                               )
                             else
                               for (final c in _colourOnlyVariants)
-                                _buildColourRow(
-                                  context,
-                                  c,
+                                LotCreateColourRow(
+                                  key: ValueKey<String>(c.id),
+                                  colour: c,
                                   onRemove: () => setState(() {
                                     _colourOnlyVariants.remove(c);
                                     c.dispose();
                                   }),
+                                  onChanged: () => _edit(() {}),
                                 ),
                           ],
                         ],
                       ),
                     ),
 
-                    // Section 3: Optional Initial Process Assignments (Phase 5)
                     const SizedBox(height: AppSpacing.md),
                     AppCard(
                       child: Column(
@@ -1202,172 +974,6 @@ final class _LotCreatePageState extends State<LotCreatePage> {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildDesignCard(BuildContext context, _DesignBlockState design) {
-    final colorScheme = Theme.of(context).colorScheme;
-    return Container(
-      key: ValueKey<String>(design.id),
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: BoxDecoration(
-        borderRadius: AppRadius.mdBorder,
-        border: Border.all(color: colorScheme.outlineVariant),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          AppActionRow(
-            content: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppText(
-                  design.designName,
-                  variant: AppTextVariant.bodyLarge,
-                  fontWeight: FontWeight.w700,
-                ),
-                Wrap(
-                  spacing: AppSpacing.xs,
-                  runSpacing: AppSpacing.xs,
-                  children: [
-                    AppText(
-                      '${design.colours.length} colour(s) • ${MoneyFormatter.formatQuantity(design.totalQty)} pcs',
-                      variant: AppTextVariant.bodySmall,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                    if (design.defaultUnitPricePaise > 0)
-                      AppStatusBadge(
-                        label: context.l10n.lotDefaultPriceValue(
-                          MoneyFormatter.formatPaise(
-                            design.defaultUnitPricePaise,
-                          ),
-                        ),
-                        tone: AppStatusTone.info,
-                      ),
-                  ],
-                ),
-              ],
-            ),
-            actions: [
-              AppButton(
-                label: context.l10n.lotColoursLabel,
-                icon: AppIcons.colour,
-                variant: AppButtonVariant.outlined,
-                onPressed: () => _pickColoursForDesign(design),
-              ),
-              AppIconButton(
-                icon: AppIcons.delete,
-                tooltip: context.l10n.lotRemoveDesign,
-                onPressed: () => _removeDesign(design),
-              ),
-            ],
-          ),
-          if (design.colours.isNotEmpty) ...[
-            const SizedBox(height: AppSpacing.sm),
-            for (final c in design.colours)
-              _buildColourRow(
-                context,
-                c,
-                onRemove: () => setState(() {
-                  design.colours.remove(c);
-                  c.dispose();
-                }),
-              ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildColourRow(
-    BuildContext context,
-    _ColourVariantRowState colour, {
-    required VoidCallback onRemove,
-  }) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final lineTotalPaise = colour.quantity * colour.unitPricePaise;
-    return Padding(
-      key: ValueKey<String>(colour.id),
-      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-      child: Container(
-        padding: const EdgeInsets.all(AppSpacing.sm),
-        decoration: BoxDecoration(
-          borderRadius: AppRadius.smBorder,
-          color: colorScheme.surfaceContainerLowest.withValues(alpha: 0.45),
-          border: Border.all(
-            color: colorScheme.outlineVariant.withValues(alpha: 0.7),
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                AppColourSwatch(
-                  color: AppColourUtils.resolveColor(colour.colourHex),
-                  size: 26,
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: AppText(
-                    colour.colourName,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                if (lineTotalPaise > 0)
-                  AppText(
-                    MoneyFormatter.formatPaise(lineTotalPaise),
-                    variant: AppTextVariant.numeric,
-                    fontWeight: FontWeight.w600,
-                  ),
-                AppIconButton(
-                  icon: AppIcons.close,
-                  tooltip: context.l10n.lotRemoveColour,
-                  onPressed: onRemove,
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Row(
-              children: [
-                Expanded(
-                  child: AppTextField(
-                    controller: colour.qtyCtrl,
-                    validator: ValidationLocalizer.wrap(
-                      context.l10n,
-                      (v) => AppValidators.quantityValidator(v),
-                    ),
-                    label: context.l10n.lotQtyPcsLabel,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    onChanged: (_) => _edit(() {}),
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: AppTextField(
-                    controller: colour.priceCtrl,
-                    validator: ValidationLocalizer.wrap(
-                      context.l10n,
-                      (v) => AppValidators.nonNegativeAmountValidator(
-                        v,
-                        isRequired: false,
-                      ),
-                    ),
-                    label: context.l10n.lotUnitPriceLabel,
-                    hint: '0.00',
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    inputFormatters: [AppInputFormatters.currencyDecimal],
-                    onChanged: (_) => _edit(() {}),
-                  ),
-                ),
-              ],
-            ),
-          ],
         ),
       ),
     );

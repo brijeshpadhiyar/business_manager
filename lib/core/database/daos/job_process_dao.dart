@@ -87,6 +87,18 @@ class JobProcessDao extends DatabaseAccessor<AppDatabase>
         .get();
   }
 
+  Future<List<ProcessHandoverRow>> getHandoversForLots(List<String> lotIds) {
+    if (lotIds.isEmpty) return Future.value(const []);
+    return (select(processHandovers)
+          ..where((t) => t.lotId.isIn(lotIds))
+          ..orderBy([
+            (t) => OrderingTerm.asc(t.transactionAt),
+            (t) => OrderingTerm.asc(t.recordedAt),
+            (t) => OrderingTerm.asc(t.id),
+          ]))
+        .get();
+  }
+
   Future<List<ProcessHandoverRow>> getHandoversForMember(String memberId) {
     return (select(processHandovers)
           ..where(

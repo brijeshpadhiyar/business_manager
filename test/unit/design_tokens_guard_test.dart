@@ -30,7 +30,7 @@ void main() {
             'print preview of a paper slip',
         'lib/features/reports/presentation/widgets/report_trend_chart.dart':
             'chart axis labels drawn on a canvas',
-        'lib/features/lots/presentation/pages/lot_detail_page.dart':
+        'lib/features/lots/presentation/widgets/lot_design_section_card.dart':
             '10sp label inside a small colour swatch',
       },
     ),

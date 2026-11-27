@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:business_manager/core/database/app_database.dart';
 import 'package:business_manager/core/database/database_transaction_runner.dart';
+import 'package:business_manager/core/database/mappers/actor_resolver.dart';
+import 'package:business_manager/core/database/mappers/ledger_row_mappers.dart';
 import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
@@ -22,11 +24,6 @@ final class RateRepositoryImpl implements RateRepository {
   static const MemberProcessRateResolver _resolver =
       MemberProcessRateResolver();
 
-  Future<String?> _currentActor() async {
-    final profile = await _db.businessProfileDao.getProfile();
-    return profile?.ownerName;
-  }
-
   @override
   Future<List<MemberProcessRateEntity>> getRateHistory({
     required String workerId,
@@ -34,7 +31,7 @@ final class RateRepositoryImpl implements RateRepository {
   }) async {
     final rows = await _db.processMemberDao.getActiveRates(workerId, processId);
     // Return newest effective_from first for UI history display
-    final entities = rows.map(_toEntity).toList()
+    final entities = rows.map(LedgerRowMappers.memberProcessRate).toList()
       ..sort((a, b) => b.effectiveFrom.compareTo(a.effectiveFrom));
     return entities;
   }
@@ -46,14 +43,14 @@ final class RateRepositoryImpl implements RateRepository {
     final rows = await _db.processMemberDao.getAllActiveRatesForMember(
       workerId,
     );
-    return rows.map(_toEntity).toList();
+    return rows.map(LedgerRowMappers.memberProcessRate).toList();
   }
 
   @override
   Future<MemberProcessRateEntity?> getRateById(String rateId) async {
     final row = await _db.processMemberDao.findRateById(rateId);
     if (row == null || row.deletedAt != null) return null;
-    return _toEntity(row);
+    return LedgerRowMappers.memberProcessRate(row);
   }
 
   @override
@@ -70,7 +67,7 @@ final class RateRepositoryImpl implements RateRepository {
     final existing = (await _db.processMemberDao.getActiveRates(
       workerId,
       processId,
-    )).map(_toEntity).toList();
+    )).map(LedgerRowMappers.memberProcessRate).toList();
     return _resolver.findAutoClosableOpenRate(
       newEffectiveFrom: newEffectiveFrom,
       existingRates: existing,
@@ -116,7 +113,7 @@ final class RateRepositoryImpl implements RateRepository {
       final existing = (await _db.processMemberDao.getActiveRates(
         workerId,
         processId,
-      )).map(_toEntity).toList();
+      )).map(LedgerRowMappers.memberProcessRate).toList();
 
       final autoClosable = autoClosePreviousOpenRate
           ? _resolver.findAutoClosableOpenRate(
@@ -137,7 +134,7 @@ final class RateRepositoryImpl implements RateRepository {
       }
 
       final now = IstDateTimeHelper.nowUtcMillis();
-      final actor = await _currentActor();
+      final actor = await ActorResolver.resolveOptional(_db);
 
       // Auto-close previous open-ended rate atomically when confirmed
       if (autoClosable != null) {
@@ -220,7 +217,7 @@ final class RateRepositoryImpl implements RateRepository {
       );
 
       final created = await _db.processMemberDao.findRateById(rateId);
-      return _toEntity(created!);
+      return LedgerRowMappers.memberProcessRate(created!);
     });
   }
 
@@ -268,7 +265,7 @@ final class RateRepositoryImpl implements RateRepository {
       final allRates = (await _db.processMemberDao.getActiveRates(
         existingRow.memberId,
         existingRow.processId,
-      )).map(_toEntity).toList();
+      )).map(LedgerRowMappers.memberProcessRate).toList();
 
       final validation = _resolver.validateCandidateRate(
         ratePaise: ratePaise,
@@ -282,7 +279,7 @@ final class RateRepositoryImpl implements RateRepository {
       }
 
       final now = IstDateTimeHelper.nowUtcMillis();
-      final actor = await _currentActor();
+      final actor = await ActorResolver.resolveOptional(_db);
 
       await _db.processMemberDao.updateRateById(
         rateId,
@@ -325,7 +322,7 @@ final class RateRepositoryImpl implements RateRepository {
       );
 
       final updated = await _db.processMemberDao.findRateById(rateId);
-      return _toEntity(updated!);
+      return LedgerRowMappers.memberProcessRate(updated!);
     });
   }
 
@@ -336,7 +333,7 @@ final class RateRepositoryImpl implements RateRepository {
     required int transactionAtUtcMillis,
   }) async {
     final rows = await _db.processMemberDao.getActiveRates(workerId, processId);
-    final entities = rows.map(_toEntity).toList();
+    final entities = rows.map(LedgerRowMappers.memberProcessRate).toList();
     return _resolver.resolve(
       workerId: workerId,
       processId: processId,
@@ -383,17 +380,4 @@ final class RateRepositoryImpl implements RateRepository {
     final trimmed = value?.trim();
     return (trimmed == null || trimmed.isEmpty) ? null : trimmed;
   }
-
-  MemberProcessRateEntity _toEntity(MemberProcessRateRow row) =>
-      MemberProcessRateEntity(
-        id: row.id,
-        memberId: row.memberId,
-        processId: row.processId,
-        ratePaise: row.ratePaise,
-        effectiveFrom: row.effectiveFrom,
-        effectiveTo: row.effectiveTo,
-        notes: row.notes,
-        createdAt: row.createdAt,
-        updatedAt: row.updatedAt,
-      );
 }

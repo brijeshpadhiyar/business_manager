@@ -1,8 +1,7 @@
 import 'package:business_manager/core/database/app_database.dart';
+import 'package:business_manager/core/database/mappers/ledger_row_mappers.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
-import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:business_manager/features/accounting/domain/repositories/accounting_repository.dart';
-import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
 import 'package:business_manager/features/production_history/domain/calculators/production_history_calculator.dart';
 import 'package:business_manager/features/stock_movements/domain/calculators/stock_calculator.dart';
@@ -29,88 +28,6 @@ final class ReportsRepositoryImpl implements ReportsRepository {
   static const ReportsAnalyticsCalculator _analyticsCalc =
       ReportsAnalyticsCalculator();
 
-  StockMovementEntity _mapMovement(StockMovementRow row) => StockMovementEntity(
-    id: row.id,
-    lotId: row.lotId,
-    lotDesignId: row.lotDesignId,
-    designColourId: row.designColourId,
-    processId: row.processId,
-    memberId: row.memberId,
-    parentIssueId: row.parentIssueId,
-    reversesMovementId: row.reversesMovementId,
-    clientRequestId: row.clientRequestId,
-    movementType: StockMovementType.fromDbValue(row.movementType),
-    quantity: row.quantity,
-    sourceRateId: row.sourceRateId,
-    appliedRatePaise: row.appliedRatePaise,
-    isRateOverridden: row.isRateOverridden == 1,
-    overrideReason: row.overrideReason,
-    lockedBillingMode: row.lockedBillingMode != null
-        ? BillingMode.fromDbValue(row.lockedBillingMode!)
-        : null,
-    lockedIncludeDamaged: row.lockedIncludeDamaged == 1,
-    reason: row.reason,
-    notes: row.notes,
-    transactionAt: row.transactionAt,
-    recordedAt: row.recordedAt,
-    createdBy: row.createdBy,
-    createdAt: row.createdAt,
-    updatedAt: row.updatedAt,
-  );
-
-  LabourEntryEntity _mapLabour(LabourEntryRow r) => LabourEntryEntity(
-    id: r.id,
-    stockMovementId: r.stockMovementId,
-    reversesLabourEntryId: r.reversesLabourEntryId,
-    memberId: r.memberId,
-    processId: r.processId,
-    lotId: r.lotId,
-    basisType: LabourBasisType.fromDbValue(r.basisType),
-    quantity: r.quantity,
-    ratePaise: r.ratePaise,
-    amountPaise: r.amountPaise,
-    isPayable: r.isPayable == 1,
-    transactionAt: r.transactionAt,
-    recordedAt: r.recordedAt,
-    createdAt: r.createdAt,
-    updatedAt: r.updatedAt,
-  );
-
-  PaymentEntity _mapPayment(PaymentRow r) => PaymentEntity(
-    id: r.id,
-    memberId: r.memberId,
-    paymentType: PaymentType.fromDbValue(r.paymentType),
-    reversesPaymentId: r.reversesPaymentId,
-    clientRequestId: r.clientRequestId,
-    amountPaise: r.amountPaise,
-    paymentMode: PaymentMode.fromDbValue(r.paymentMode),
-    referenceNo: r.referenceNo,
-    reason: r.reason,
-    notes: r.notes,
-    transactionAt: r.transactionAt,
-    recordedAt: r.recordedAt,
-    createdBy: r.createdBy,
-    createdAt: r.createdAt,
-    updatedAt: r.updatedAt,
-  );
-
-  WorkerAdjustmentEntity _mapAdjustment(WorkerLedgerAdjustmentRow r) =>
-      WorkerAdjustmentEntity(
-        id: r.id,
-        memberId: r.memberId,
-        adjustmentType: WorkerAdjustmentType.fromDbValue(r.adjustmentType),
-        reversesAdjustmentId: r.reversesAdjustmentId,
-        clientRequestId: r.clientRequestId,
-        amountPaise: r.amountPaise,
-        reason: r.reason,
-        notes: r.notes,
-        transactionAt: r.transactionAt,
-        recordedAt: r.recordedAt,
-        createdBy: r.createdBy,
-        createdAt: r.createdAt,
-        updatedAt: r.updatedAt,
-      );
-
   @override
   Future<AdvancedReportsBundle> getAdvancedReports(ReportFilter filter) async {
     // Single-pass load: fetch each table ONCE (no redundant 5x full scans).
@@ -122,16 +39,16 @@ final class ReportsRepositoryImpl implements ReportsRepository {
     final workers = await _db.processMemberDao.getNonDeletedMembers();
 
     final allMovements = (await _db.stockMovementDao.getAllMovements())
-        .map(_mapMovement)
+        .map(LedgerRowMappers.stockMovement)
         .toList();
     final allLabour = (await _db.labourEntryDao.getAllEntries())
-        .map(_mapLabour)
+        .map(LedgerRowMappers.labourEntry)
         .toList();
     final allPayments = (await _db.paymentDao.getAllPayments())
-        .map(_mapPayment)
+        .map(LedgerRowMappers.payment)
         .toList();
     final allAdjustments = (await _db.workerAdjustmentDao.getAllAdjustments())
-        .map(_mapAdjustment)
+        .map(LedgerRowMappers.workerAdjustment)
         .toList();
 
     final activeLotIds = {for (final l in activeLots) l.id};
@@ -524,13 +441,13 @@ final class ReportsRepositoryImpl implements ReportsRepository {
     );
 
     final allMovements = (await _db.stockMovementDao.getAllMovements())
-        .map(_mapMovement)
+        .map(LedgerRowMappers.stockMovement)
         .toList();
     final allLabour = (await _db.labourEntryDao.getAllEntries())
-        .map(_mapLabour)
+        .map(LedgerRowMappers.labourEntry)
         .toList();
     final allPayments = (await _db.paymentDao.getAllPayments())
-        .map(_mapPayment)
+        .map(LedgerRowMappers.payment)
         .toList();
 
     final activeLotIds = {for (final l in activeLots) l.id};
@@ -648,13 +565,13 @@ final class ReportsRepositoryImpl implements ReportsRepository {
     final processes = await _db.select(_db.processes).get();
     final workers = await _db.select(_db.members).get();
     final allMovements = (await _db.stockMovementDao.getAllMovements())
-        .map(_mapMovement)
+        .map(LedgerRowMappers.stockMovement)
         .toList();
     final allLabour = (await _db.labourEntryDao.getAllEntries())
-        .map(_mapLabour)
+        .map(LedgerRowMappers.labourEntry)
         .toList();
     final allPayments = (await _db.paymentDao.getAllPayments())
-        .map(_mapPayment)
+        .map(LedgerRowMappers.payment)
         .toList();
     final colourBalances = await _stockRepo.getAllDesignColourBalances();
     final workerFinancials = await _accountingRepo.getAllWorkerSummaries();

@@ -56,4 +56,11 @@ class LabourEntryDao extends DatabaseAccessor<AppDatabase>
       labourEntries,
     )..where((t) => t.stockMovementId.equals(stockMovementId))).get();
   }
+
+  Future<List<LabourEntryRow>> getEntriesForLots(List<String> lotIds) {
+    if (lotIds.isEmpty) return Future.value(const []);
+    return (select(
+      labourEntries,
+    )..where((t) => t.lotId.isIn(lotIds))).get();
+  }
 }

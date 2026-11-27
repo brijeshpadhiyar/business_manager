@@ -1,13 +1,12 @@
 import 'dart:async';
 
 import 'package:business_manager/core/config/app_logger.dart';
-import 'package:business_manager/core/database/app_database.dart';
 import 'package:business_manager/core/platform/platform_env.dart';
 import 'package:business_manager/features/auth/domain/entities/auth_entities.dart';
 import 'package:business_manager/features/auth/presentation/bloc/auth_cubit.dart';
-import 'package:business_manager/features/sync/data/services/sync_engine.dart';
 import 'package:business_manager/features/sync/domain/entities/sync_entities.dart';
 import 'package:business_manager/features/sync/domain/repositories/cloud_sync_gateway.dart';
+import 'package:business_manager/features/sync/domain/repositories/sync_repository.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
@@ -20,15 +19,13 @@ import 'package:injectable/injectable.dart';
 @lazySingleton
 final class SyncCubit extends Cubit<SyncState> {
   SyncCubit(
-    this._db,
-    this._engine,
+    this._syncRepository,
     this._gateway,
     this._authCubit,
     this._logger,
   ) : super(const SyncState());
 
-  final AppDatabase _db;
-  final SyncEngine _engine;
+  final SyncRepository _syncRepository;
   final CloudSyncGateway _gateway;
   final AuthCubit _authCubit;
   final AppLogger _logger;
@@ -45,10 +42,10 @@ final class SyncCubit extends Cubit<SyncState> {
     if (_initialized) return;
     _initialized = true;
 
-    final session = await _db.syncDao.getSessionState();
+    final session = await _syncRepository.getSessionState();
     emit(state.copyWith(lastSyncedAtUtcMillis: session.lastFullSyncAt));
 
-    _outboxSub = _db.syncDao.watchPendingOutboxCount().listen((count) {
+    _outboxSub = _syncRepository.watchPendingOutboxCount().listen((count) {
       final wasHigher = count > state.pendingOutboxCount;
       emit(state.copyWith(pendingOutboxCount: count));
       if (wasHigher && _canAutoSync) {
@@ -56,7 +53,7 @@ final class SyncCubit extends Cubit<SyncState> {
       }
     });
 
-    _mediaSub = _db.syncDao.watchPendingMediaCount().listen((count) {
+    _mediaSub = _syncRepository.watchPendingMediaCount().listen((count) {
       emit(state.copyWith(pendingMediaCount: count));
     });
 
@@ -74,7 +71,7 @@ final class SyncCubit extends Cubit<SyncState> {
 
   bool get _canAutoSync =>
       _authCubit.state.isAuthenticated &&
-      _engine.isCloudConfigured &&
+      _syncRepository.isCloudConfigured &&
       state.isOnline &&
       state.phase != SyncPhase.awaitingMergeChoice;
 
@@ -120,12 +117,12 @@ final class SyncCubit extends Cubit<SyncState> {
       return;
     }
 
-    if (!_engine.isCloudConfigured) {
+    if (!_syncRepository.isCloudConfigured) {
       emit(state.copyWith(phase: SyncPhase.localOnly));
       return;
     }
 
-    final session = await _db.syncDao.getSessionState();
+    final session = await _syncRepository.getSessionState();
     await _gateway.subscribeToSyncNotifications(
       businessId: user.businessId,
       currentDeviceId: session.deviceId,
@@ -146,7 +143,7 @@ final class SyncCubit extends Cubit<SyncState> {
   Future<void> _checkFirstLoginMerge(AuthUser user) async {
     emit(state.copyWith(phase: SyncPhase.syncing, clearError: true));
     try {
-      final summary = await _engine.inspectFirstLoginMerge(user);
+      final summary = await _syncRepository.inspectFirstLoginMerge(user);
       if (summary.needsUserPrompt) {
         emit(
           state.copyWith(
@@ -157,7 +154,7 @@ final class SyncCubit extends Cubit<SyncState> {
         return;
       }
       // Automatic seamless path: only local or only cloud has data.
-      await _engine.executeFirstLoginMerge(
+      await _syncRepository.executeFirstLoginMerge(
         user,
         FirstLoginMergeChoice.mergeBoth,
       );
@@ -184,7 +181,10 @@ final class SyncCubit extends Cubit<SyncState> {
       ),
     );
     try {
-      final summary = await _engine.executeFirstLoginMerge(user, choice);
+      final summary = await _syncRepository.executeFirstLoginMerge(
+        user,
+        choice,
+      );
       await _refreshAfterSync(summary: summary);
     } catch (e) {
       emit(
@@ -205,7 +205,7 @@ final class SyncCubit extends Cubit<SyncState> {
   void _scheduleDebouncedSync({Duration delay = const Duration(seconds: 2)}) {
     _debounceTimer?.cancel();
     _debounceTimer = Timer(delay, () {
-      if (_canAutoSync && !_engine.isRunning) {
+      if (_canAutoSync && !_syncRepository.isSyncRunning) {
         unawaited(syncNow());
       }
     });
@@ -213,7 +213,7 @@ final class SyncCubit extends Cubit<SyncState> {
 
   Future<void> syncNow() async {
     final user = _authCubit.state.user;
-    if (user == null || !_engine.isCloudConfigured) {
+    if (user == null || !_syncRepository.isCloudConfigured) {
       emit(state.copyWith(phase: SyncPhase.localOnly));
       return;
     }
@@ -221,11 +221,11 @@ final class SyncCubit extends Cubit<SyncState> {
       emit(state.copyWith(phase: SyncPhase.offline));
       return;
     }
-    if (_engine.isRunning) return;
+    if (_syncRepository.isSyncRunning) return;
 
     emit(state.copyWith(phase: SyncPhase.syncing, clearError: true));
     try {
-      final summary = await _engine.runSyncCycle(user);
+      final summary = await _syncRepository.runSyncCycle(user);
       await _refreshAfterSync(summary: summary);
     } catch (e) {
       _logger.warning('Sync cycle failed: $e');
@@ -240,14 +240,13 @@ final class SyncCubit extends Cubit<SyncState> {
   }
 
   Future<void> retryFailed() async {
-    await _db.syncDao.resetFailedOutboxItems();
-    await _db.syncDao.resetFailedMediaItems();
+    await _syncRepository.resetFailedItems();
     await syncNow();
   }
 
   Future<void> _refreshAfterSync({SyncRunSummary? summary}) async {
     await _refreshFailedItems();
-    final session = await _db.syncDao.getSessionState();
+    final session = await _syncRepository.getSessionState();
     final hasFailures =
         state.failedItems.isNotEmpty || (summary?.failedCount ?? 0) > 0;
     emit(
@@ -262,18 +261,7 @@ final class SyncCubit extends Cubit<SyncState> {
   }
 
   Future<void> _refreshFailedItems() async {
-    final rows = await _db.syncDao.getFailedOutboxItems();
-    final mapped = rows
-        .map(
-          (r) => SyncFailedItem(
-            entryKey: r.entryKey,
-            tableName: r.tableNameCol,
-            rowId: r.rowId,
-            retryCount: r.retryCount,
-            lastError: r.lastError ?? 'Unknown sync error',
-          ),
-        )
-        .toList();
+    final mapped = await _syncRepository.getFailedOutboxItems();
     emit(state.copyWith(failedItems: mapped));
   }
 

@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 /// Current operational state of the offline-first cloud sync engine.
 enum SyncPhase {
   /// User has not signed in (local-only offline mode).
@@ -21,7 +19,6 @@ enum SyncPhase {
   awaitingMergeChoice,
 }
 
-@immutable
 final class SyncFailedItem {
   const SyncFailedItem({
     required this.entryKey,
@@ -38,7 +35,6 @@ final class SyncFailedItem {
   final String lastError;
 }
 
-@immutable
 final class FirstLoginMergeSummary {
   const FirstLoginMergeSummary({
     required this.localRowCount,
@@ -51,7 +47,6 @@ final class FirstLoginMergeSummary {
   bool get needsUserPrompt => localRowCount > 0 && cloudRowCount > 0;
 }
 
-@immutable
 final class SyncRunSummary {
   const SyncRunSummary({
     this.pushedCount = 0,
@@ -70,7 +65,6 @@ final class SyncRunSummary {
   final int? completedAtUtcMillis;
 }
 
-@immutable
 final class SyncState {
   const SyncState({
     this.phase = SyncPhase.localOnly,
@@ -124,4 +118,19 @@ final class SyncState {
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
     );
   }
+}
+
+/// Pure-Dart projection of `sync_session_state`.
+final class SyncSessionSummary {
+  const SyncSessionSummary({
+    required this.deviceId,
+    this.boundUserId,
+    this.boundBusinessId,
+    this.lastFullSyncAt,
+  });
+
+  final String deviceId;
+  final String? boundUserId;
+  final String? boundBusinessId;
+  final int? lastFullSyncAt;
 }

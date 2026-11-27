@@ -1,8 +1,6 @@
 import 'package:business_manager/features/auth/domain/services/rbac_policy.dart';
-import 'package:flutter/foundation.dart';
 
 /// Active or revoked member of a StitchFlow business workspace.
-@immutable
 final class TeamMemberInfo {
   const TeamMemberInfo({
     required this.userId,
@@ -37,7 +35,6 @@ final class TeamMemberInfo {
 }
 
 /// Shareable WhatsApp-friendly team invite code with expiry & optional lock.
-@immutable
 final class BusinessInviteInfo {
   const BusinessInviteInfo({
     required this.id,
@@ -65,7 +62,6 @@ final class BusinessInviteInfo {
 }
 
 /// Result returned when a staff user redeems an invite code.
-@immutable
 final class RedeemedInviteResult {
   const RedeemedInviteResult({
     required this.businessId,

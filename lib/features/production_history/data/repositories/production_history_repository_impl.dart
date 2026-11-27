@@ -2,16 +2,17 @@ import 'dart:convert';
 
 import 'package:business_manager/core/database/app_database.dart';
 import 'package:business_manager/core/database/database_transaction_runner.dart';
+import 'package:business_manager/core/database/mappers/actor_resolver.dart';
+import 'package:business_manager/core/database/mappers/ledger_row_mappers.dart';
 import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/features/accounting/domain/calculators/labour_calculator.dart';
-import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
-import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
 import 'package:business_manager/features/notifications/data/services/notification_refresh_coordinator.dart';
-import 'package:business_manager/features/process_routing/domain/entities/process_routing_entities.dart';
+import 'package:business_manager/features/production_history/data/repositories/production_history_dataset_loader.dart';
+import 'package:business_manager/features/production_history/data/repositories/production_history_query_delegate.dart';
 import 'package:business_manager/features/production_history/domain/calculators/production_history_calculator.dart';
 import 'package:business_manager/features/production_history/domain/entities/production_history_entities.dart';
 import 'package:business_manager/features/production_history/domain/repositories/production_history_repository.dart';
@@ -23,346 +24,18 @@ import 'package:injectable/injectable.dart';
 @LazySingleton(as: ProductionHistoryRepository)
 final class ProductionHistoryRepositoryImpl
     implements ProductionHistoryRepository {
-  ProductionHistoryRepositoryImpl(this._db, this._txRunner, this._idGenerator);
+  ProductionHistoryRepositoryImpl(this._db, this._txRunner, this._idGenerator)
+    : _queryDelegate = ProductionHistoryQueryDelegate(_db, _calc);
 
   final AppDatabase _db;
   final DatabaseTransactionRunner _txRunner;
   final IdGenerator _idGenerator;
+  final ProductionHistoryQueryDelegate _queryDelegate;
 
   static const ProductionHistoryCalculator _calc =
       ProductionHistoryCalculator();
   static const StockCalculator _stockCalc = StockCalculator();
   static const LabourCalculator _labourCalc = LabourCalculator();
-
-  Future<String> _resolveActor([String? explicit]) async {
-    final trimmed = explicit?.trim();
-    if (trimmed != null && trimmed.isNotEmpty) return trimmed;
-    final profile = await _db.businessProfileDao.getProfile();
-    final owner = profile?.ownerName?.trim();
-    return (owner != null && owner.isNotEmpty) ? owner : 'local_owner';
-  }
-
-  StockMovementEntity _mapMovement(StockMovementRow r) => StockMovementEntity(
-    id: r.id,
-    lotId: r.lotId,
-    lotDesignId: r.lotDesignId,
-    designColourId: r.designColourId,
-    processId: r.processId,
-    memberId: r.memberId,
-    parentIssueId: r.parentIssueId,
-    jobProcessId: r.jobProcessId,
-    reversesMovementId: r.reversesMovementId,
-    clientRequestId: r.clientRequestId,
-    movementType: StockMovementType.fromDbValue(r.movementType),
-    quantity: r.quantity,
-    sourceRateId: r.sourceRateId,
-    appliedRatePaise: r.appliedRatePaise,
-    isRateOverridden: r.isRateOverridden == 1,
-    overrideReason: r.overrideReason,
-    lockedBillingMode: r.lockedBillingMode != null
-        ? BillingMode.fromDbValue(r.lockedBillingMode!)
-        : null,
-    lockedIncludeDamaged: r.lockedIncludeDamaged == 1,
-    reason: r.reason,
-    notes: r.notes,
-    transactionAt: r.transactionAt,
-    recordedAt: r.recordedAt,
-    createdBy: r.createdBy,
-    createdAt: r.createdAt,
-    updatedAt: r.updatedAt,
-  );
-
-  ProductionReturnEntity _mapReturn(ProductionReturnRow r) =>
-      ProductionReturnEntity(
-        id: r.id,
-        clientRequestId: r.clientRequestId,
-        parentIssueId: r.parentIssueId,
-        jobProcessId: r.jobProcessId,
-        lotId: r.lotId,
-        lotDesignId: r.lotDesignId,
-        designColourId: r.designColourId,
-        processId: r.processId,
-        memberId: r.memberId,
-        returnedQuantity: r.returnedQuantity,
-        returnMode: ProductionReturnMode.fromDbValue(r.returnMode),
-        notes: r.notes,
-        transactionAt: r.transactionAt,
-        recordedAt: r.recordedAt,
-        createdBy: r.createdBy,
-        createdAt: r.createdAt,
-        updatedAt: r.updatedAt,
-      );
-
-  ProductionInspectionEntity _mapInspection(ProductionInspectionRow r) =>
-      ProductionInspectionEntity(
-        id: r.id,
-        clientRequestId: r.clientRequestId,
-        inspectionType: ProductionInspectionType.fromDbValue(r.inspectionType),
-        productionReturnId: r.productionReturnId,
-        rejectionRecordId: r.rejectionRecordId,
-        rejectionRepairId: r.rejectionRepairId,
-        parentIssueId: r.parentIssueId,
-        jobProcessId: r.jobProcessId,
-        lotId: r.lotId,
-        lotDesignId: r.lotDesignId,
-        designColourId: r.designColourId,
-        processId: r.processId,
-        memberId: r.memberId,
-        acceptedQuantity: r.acceptedQuantity,
-        rejectedQuantity: r.rejectedQuantity,
-        lockedRatePaise: r.lockedRatePaise,
-        earnedAmountPaise: r.earnedAmountPaise,
-        creditWorkerEarnings: r.creditWorkerEarnings == 1,
-        linkedGoodMovementId: r.linkedGoodMovementId,
-        linkedDamagedMovementId: r.linkedDamagedMovementId,
-        linkedLabourEntryId: r.linkedLabourEntryId,
-        rejectionReason: r.rejectionReason,
-        notes: r.notes,
-        inspectedBy: r.inspectedBy,
-        approvedBy: r.approvedBy,
-        authorizedViaPin: r.authorizedViaPin == 1,
-        transactionAt: r.transactionAt,
-        recordedAt: r.recordedAt,
-        createdAt: r.createdAt,
-      );
-
-  RejectionRecordEntity _mapRejection(RejectionRecordRow r) =>
-      RejectionRecordEntity(
-        id: r.id,
-        lotId: r.lotId,
-        lotDesignId: r.lotDesignId,
-        designColourId: r.designColourId,
-        processId: r.processId,
-        memberId: r.memberId,
-        parentIssueId: r.parentIssueId,
-        jobProcessId: r.jobProcessId,
-        productionReturnId: r.productionReturnId,
-        inspectionId: r.inspectionId,
-        stockMovementId: r.stockMovementId,
-        rejectedQuantity: r.rejectedQuantity,
-        rejectionReason: r.rejectionReason,
-        status: RejectionStatus.fromDbValue(r.status),
-        inspectedAt: r.inspectedAt,
-        recordedBy: r.recordedBy,
-        notes: r.notes,
-        createdAt: r.createdAt,
-        updatedAt: r.updatedAt,
-      );
-
-  RejectionRepairEntity _mapRepair(RejectionRepairRow r) =>
-      RejectionRepairEntity(
-        id: r.id,
-        clientRequestId: r.clientRequestId,
-        rejectionRecordId: r.rejectionRecordId,
-        lotId: r.lotId,
-        designColourId: r.designColourId,
-        processId: r.processId,
-        memberId: r.memberId,
-        repairedQuantity: r.repairedQuantity,
-        repairSource: RepairSource.fromDbValue(r.repairSource),
-        status: RepairStatus.fromDbValue(r.status),
-        repairedBy: r.repairedBy,
-        notes: r.notes,
-        transactionAt: r.transactionAt,
-        recordedAt: r.recordedAt,
-        createdAt: r.createdAt,
-        updatedAt: r.updatedAt,
-      );
-
-  LabourEntryEntity _mapLabour(LabourEntryRow r) => LabourEntryEntity(
-    id: r.id,
-    stockMovementId: r.stockMovementId,
-    reversesLabourEntryId: r.reversesLabourEntryId,
-    memberId: r.memberId,
-    processId: r.processId,
-    lotId: r.lotId,
-    basisType: LabourBasisType.fromDbValue(r.basisType),
-    quantity: r.quantity,
-    ratePaise: r.ratePaise,
-    amountPaise: r.amountPaise,
-    isPayable: r.isPayable == 1,
-    transactionAt: r.transactionAt,
-    recordedAt: r.recordedAt,
-    createdAt: r.createdAt,
-    updatedAt: r.updatedAt,
-  );
-
-  PaymentEntity _mapPayment(PaymentRow r) => PaymentEntity(
-    id: r.id,
-    memberId: r.memberId,
-    paymentType: PaymentType.fromDbValue(r.paymentType),
-    reversesPaymentId: r.reversesPaymentId,
-    clientRequestId: r.clientRequestId,
-    amountPaise: r.amountPaise,
-    paymentMode: PaymentMode.fromDbValue(r.paymentMode),
-    referenceNo: r.referenceNo,
-    reason: r.reason,
-    notes: r.notes,
-    transactionAt: r.transactionAt,
-    recordedAt: r.recordedAt,
-    createdBy: r.createdBy,
-    createdAt: r.createdAt,
-    updatedAt: r.updatedAt,
-  );
-
-  WorkerAdjustmentEntity _mapAdjustment(WorkerLedgerAdjustmentRow r) =>
-      WorkerAdjustmentEntity(
-        id: r.id,
-        memberId: r.memberId,
-        adjustmentType: WorkerAdjustmentType.fromDbValue(r.adjustmentType),
-        reversesAdjustmentId: r.reversesAdjustmentId,
-        clientRequestId: r.clientRequestId,
-        amountPaise: r.amountPaise,
-        reason: r.reason,
-        notes: r.notes,
-        transactionAt: r.transactionAt,
-        recordedAt: r.recordedAt,
-        createdBy: r.createdBy,
-        createdAt: r.createdAt,
-        updatedAt: r.updatedAt,
-      );
-
-  Future<ProductionHistoryDataset> _loadDataset() async {
-    final allLots = await _db.select(_db.lots).get();
-    final allDesigns = await _db.select(_db.lotDesigns).get();
-    final allColours = await _db.select(_db.designColours).get();
-    final allProcs = await _db.select(_db.processes).get();
-    final allWorkers = await _db.select(_db.members).get();
-    final allMovements = (await _db.stockMovementDao.getAllMovements())
-        .map(_mapMovement)
-        .toList();
-    final allReturns = (await _db.productionTrackingDao.getAllReturns())
-        .map(_mapReturn)
-        .toList();
-    final allInspections = (await _db.productionTrackingDao.getAllInspections())
-        .map(_mapInspection)
-        .toList();
-    final allRejections = (await _db.productionTrackingDao.getAllRejections())
-        .map(_mapRejection)
-        .toList();
-    final allRepairs = (await _db.productionTrackingDao.getAllRepairs())
-        .map(_mapRepair)
-        .toList();
-    final allLabour = (await _db.labourEntryDao.getAllEntries())
-        .map(_mapLabour)
-        .toList();
-    final allPayments = (await _db.paymentDao.getAllPayments())
-        .map(_mapPayment)
-        .toList();
-    final allAdjustments = (await _db.workerAdjustmentDao.getAllAdjustments())
-        .map(_mapAdjustment)
-        .toList();
-    final handoverRows = await _db.jobProcessDao.getAllHandovers();
-
-    final designMap = {
-      for (final d in allDesigns)
-        d.id: LotDesignEntity(
-          id: d.id,
-          lotId: d.lotId,
-          designName: d.designName,
-          notes: d.notes,
-          createdAt: d.createdAt,
-          updatedAt: d.updatedAt,
-        ),
-    };
-    final colourMap = {
-      for (final c in allColours)
-        c.id: DesignColourEntity(
-          id: c.id,
-          lotDesignId: c.lotDesignId,
-          colourName: c.colourName,
-          colourHex: c.colourHex,
-          initialQuantity: c.initialQuantity,
-          unitPricePaise: c.unitPricePaise,
-          notes: c.notes,
-          createdAt: c.createdAt,
-          updatedAt: c.updatedAt,
-        ),
-    };
-    final procMap = {
-      for (final p in allProcs)
-        p.id: (name: p.name, isActive: p.isActive == 1 && p.deletedAt == null),
-    };
-    final workerMap = {
-      for (final w in allWorkers)
-        w.id: (
-          name: w.name,
-          phone: w.phone,
-          address: w.address,
-          notes: w.notes,
-          isActive: w.isActive == 1 && w.deletedAt == null,
-          createdAt: w.createdAt,
-        ),
-    };
-    final handovers = handoverRows
-        .map(
-          (h) => ProcessHandoverEntity(
-            id: h.id,
-            transferReference: h.transferReference,
-            clientRequestId: h.clientRequestId,
-            lotId: h.lotId,
-            lotDesignId: h.lotDesignId,
-            designColourId: h.designColourId,
-            designName: designMap[h.lotDesignId]?.designName ?? '-',
-            colourName: colourMap[h.designColourId]?.colourName ?? '-',
-            handoverType: ProcessHandoverType.fromDbValue(h.handoverType),
-            fromJobProcessId: h.fromJobProcessId,
-            toJobProcessId: h.toJobProcessId,
-            fromMemberId: h.fromMemberId,
-            fromMemberName: h.fromMemberId != null
-                ? workerMap[h.fromMemberId!]?.name
-                : null,
-            toMemberId: h.toMemberId,
-            toMemberName: h.toMemberId != null
-                ? workerMap[h.toMemberId!]?.name
-                : null,
-            processId: h.processId,
-            processName: procMap[h.processId]?.name ?? '-',
-            quantityDispatched: h.quantityDispatched,
-            quantityReceived: h.quantityReceived,
-            status: ProcessHandoverStatus.fromDbValue(h.status),
-            linkedStockMovementId: h.linkedStockMovementId,
-            notes: h.notes,
-            transactionAt: h.transactionAt,
-            recordedAt: h.recordedAt,
-          ),
-        )
-        .toList();
-
-    return ProductionHistoryDataset(
-      lots: {
-        for (final l in allLots)
-          l.id: (
-            entity: LotEntity(
-              id: l.id,
-              lotNumber: l.lotNumber,
-              title: l.title,
-              notes: l.notes,
-              status: LotStatus.fromDbValue(l.status),
-              transactionAt: l.transactionAt,
-              recordedAt: l.recordedAt,
-              createdAt: l.createdAt,
-              updatedAt: l.updatedAt,
-            ),
-            createdBy: l.createdBy,
-            updatedBy: l.updatedBy,
-          ),
-      },
-      designs: designMap,
-      colours: colourMap,
-      processes: procMap,
-      workers: workerMap,
-      movements: allMovements,
-      returns: allReturns,
-      inspections: allInspections,
-      rejections: allRejections,
-      repairs: allRepairs,
-      labourEntries: allLabour,
-      payments: allPayments,
-      adjustments: allAdjustments,
-      handovers: handovers,
-    );
-  }
 
   Future<String?> _validateDamagedStockForRepair({
     required String designColourId,
@@ -373,7 +46,7 @@ final class ProductionHistoryRepositoryImpl
     if (colour == null) return 'colour_not_found';
     final movs = (await _db.stockMovementDao.getMovementsForDesignColour(
       designColourId,
-    )).map(_mapMovement).toList();
+    )).map(LedgerRowMappers.stockMovement).toList();
     return _stockCalc.validateDamagedToGoodAdjustment(
       initialQuantity: colour.initialQuantity,
       existingMovementsForColour: movs,
@@ -392,13 +65,13 @@ final class ProductionHistoryRepositoryImpl
   ) async {
     final colourMovs = (await _db.stockMovementDao.getMovementsForDesignColour(
       parentIssue.designColourId,
-    )).map(_mapMovement).toList();
+    )).map(LedgerRowMappers.stockMovement).toList();
     final issueReturns = (await _db.productionTrackingDao.getReturnsForIssue(
       parentIssue.id,
-    )).map(_mapReturn).toList();
+    )).map(ProductionHistoryDatasetLoader.mapReturn).toList();
     final issueInspections =
         (await _db.productionTrackingDao.getInspectionsForIssue(parentIssue.id))
-            .map(_mapInspection)
+            .map(ProductionHistoryDatasetLoader.mapInspection)
             .toList();
 
     final reversedIds = _stockCalc.reversedMovementIds(colourMovs);
@@ -415,9 +88,6 @@ final class ProductionHistoryRepositoryImpl
     return (settledRemaining - pendingInsp).clamp(0, parentIssue.quantity);
   }
 
-  /// Internal atomic helper executed inside an active DB transaction to record
-  /// an initial QC inspection, stock movements, payable labour (strictly for
-  /// accepted qty), rejection record, and audit trail.
   Future<InspectionApprovalResult> _executeInitialInspectionTx({
     required ProductionReturnRow retRow,
     required StockMovementEntity parentIssue,
@@ -434,7 +104,7 @@ final class ProductionHistoryRepositoryImpl
     final existingInsp = await _db.productionTrackingDao
         .findInspectionByClientRequestId(reqId);
     if (existingInsp != null) {
-      final mapped = _mapInspection(existingInsp);
+      final mapped = ProductionHistoryDatasetLoader.mapInspection(existingInsp);
       return InspectionApprovalResult(
         inspection: mapped,
         earnedAmountPaise: mapped.earnedAmountPaise,
@@ -444,7 +114,7 @@ final class ProductionHistoryRepositoryImpl
 
     final colourMovs = (await _db.stockMovementDao.getMovementsForDesignColour(
       parentIssue.designColourId,
-    )).map(_mapMovement).toList();
+    )).map(LedgerRowMappers.stockMovement).toList();
     if (_stockCalc.reversedMovementIds(colourMovs).contains(parentIssue.id)) {
       throw const DomainValidationException(
         'parent_issue_inactive',
@@ -454,10 +124,10 @@ final class ProductionHistoryRepositoryImpl
 
     final existingInsps =
         (await _db.productionTrackingDao.getInspectionsForReturn(retRow.id))
-            .map(_mapInspection)
+            .map(ProductionHistoryDatasetLoader.mapInspection)
             .toList();
     final remainingPending = _calc.remainingPendingInspectionForReturn(
-      productionReturn: _mapReturn(retRow),
+      productionReturn: ProductionHistoryDatasetLoader.mapReturn(retRow),
       inspections: existingInsps,
     );
     final err = _calc.validateInspectionApproval(
@@ -580,7 +250,6 @@ final class ProductionHistoryRepositoryImpl
           updatedAt: Value(now),
         ),
       );
-      // Rule 3: Rejected pieces NEVER generate labour_entries.
     }
 
     final inspId = _idGenerator.nextEntityId();
@@ -643,7 +312,7 @@ final class ProductionHistoryRepositoryImpl
         ),
       );
       final rejRow = await _db.productionTrackingDao.findRejectionById(rejId);
-      createdRejection = _mapRejection(rejRow!);
+      createdRejection = ProductionHistoryDatasetLoader.mapRejection(rejRow!);
     }
 
     await _db.attachmentAuditDao.insertAuditLog(
@@ -674,7 +343,7 @@ final class ProductionHistoryRepositoryImpl
 
     final inserted = await _db.productionTrackingDao.findInspectionById(inspId);
     return InspectionApprovalResult(
-      inspection: _mapInspection(inserted!),
+      inspection: ProductionHistoryDatasetLoader.mapInspection(inserted!),
       createdRejection: createdRejection,
       earnedAmountPaise: earnedPaise,
       wasIdempotentReplay: false,
@@ -718,14 +387,16 @@ final class ProductionHistoryRepositoryImpl
               'Original stock issue was not found.',
             );
           }
-          final parentIssue = _mapMovement(parentRow);
+          final parentIssue = LedgerRowMappers.stockMovement(parentRow);
 
           if (existing != null) {
-            final mappedRet = _mapReturn(existing);
+            final mappedRet = ProductionHistoryDatasetLoader.mapReturn(
+              existing,
+            );
             final insps =
                 (await _db.productionTrackingDao.getInspectionsForReturn(
                   existing.id,
-                )).map(_mapInspection).toList();
+                )).map(ProductionHistoryDatasetLoader.mapInspection).toList();
             final remOut = await _computeIssueOutstandingTx(parentIssue);
             final remInsp = _calc.remainingPendingInspectionForReturn(
               productionReturn: mappedRet,
@@ -750,7 +421,7 @@ final class ProductionHistoryRepositoryImpl
           final colourMovs =
               (await _db.stockMovementDao.getMovementsForDesignColour(
                 parentIssue.designColourId,
-              )).map(_mapMovement).toList();
+              )).map(LedgerRowMappers.stockMovement).toList();
           final reversedIds = _stockCalc.reversedMovementIds(colourMovs);
           final outstanding = await _computeIssueOutstandingTx(parentIssue);
 
@@ -769,7 +440,10 @@ final class ProductionHistoryRepositoryImpl
           }
 
           final now = IstDateTimeHelper.nowUtcMillis();
-          final actor = await _resolveActor(approvedBy ?? inspectedBy);
+          final actor = await ActorResolver.resolveRequired(
+            _db,
+            explicit: approvedBy ?? inspectedBy,
+          );
           final retId = _idGenerator.nextEntityId();
           final cleanedNotes = notes?.trim().isEmpty ?? true
               ? null
@@ -835,8 +509,14 @@ final class ProductionHistoryRepositoryImpl
               transactionAtUtcMillis: transactionAtUtcMillis,
               rejectionReason: rejectionReason,
               notes: cleanedNotes,
-              inspectedBy: await _resolveActor(inspectedBy),
-              approvedBy: await _resolveActor(approvedBy),
+              inspectedBy: await ActorResolver.resolveRequired(
+                _db,
+                explicit: inspectedBy,
+              ),
+              approvedBy: await ActorResolver.resolveRequired(
+                _db,
+                explicit: approvedBy,
+              ),
               authorizedViaPin: authorizedViaPin,
               reqId: '$reqId:IMM_INSP',
             );
@@ -852,7 +532,7 @@ final class ProductionHistoryRepositoryImpl
               : returnedQuantity;
 
           return ProductionReturnResult(
-            productionReturn: _mapReturn(retRow),
+            productionReturn: ProductionHistoryDatasetLoader.mapReturn(retRow),
             immediateInspection: immediateInsp,
             remainingOutstandingQty: remOut,
             remainingPendingInspectionQty: remInsp,
@@ -911,14 +591,20 @@ final class ProductionHistoryRepositoryImpl
           }
           return _executeInitialInspectionTx(
             retRow: retRow,
-            parentIssue: _mapMovement(parentRow),
+            parentIssue: LedgerRowMappers.stockMovement(parentRow),
             acceptedQuantity: acceptedQuantity,
             rejectedQuantity: rejectedQuantity,
             transactionAtUtcMillis: transactionAtUtcMillis,
             rejectionReason: rejectionReason,
             notes: notes,
-            inspectedBy: await _resolveActor(inspectedBy),
-            approvedBy: await _resolveActor(approvedBy),
+            inspectedBy: await ActorResolver.resolveRequired(
+              _db,
+              explicit: inspectedBy,
+            ),
+            approvedBy: await ActorResolver.resolveRequired(
+              _db,
+              explicit: approvedBy,
+            ),
             authorizedViaPin: authorizedViaPin,
             reqId: reqId,
           );
@@ -953,7 +639,9 @@ final class ProductionHistoryRepositoryImpl
     return _txRunner.runInTransaction(() async {
       final existing = await _db.productionTrackingDao
           .findRepairByClientRequestId(reqId);
-      if (existing != null) return _mapRepair(existing);
+      if (existing != null) {
+        return ProductionHistoryDatasetLoader.mapRepair(existing);
+      }
 
       final rejRow = await _db.productionTrackingDao.findRejectionById(
         rejectionRecordId,
@@ -965,7 +653,6 @@ final class ProductionHistoryRepositoryImpl
         );
       }
 
-      // Compute exact remaining open unrepaired quantity for this rejection
       final existingRepairs = await _db.productionTrackingDao
           .getRepairsForRejection(rejRow.id);
       var reapprovedTotal = 0;
@@ -998,8 +685,6 @@ final class ProductionHistoryRepositoryImpl
         throw DomainValidationException(err, 'Invalid repair ($err).');
       }
 
-      // One damaged bucket, two repair flows: the pieces must still be in the
-      // Damaged bucket and not already reserved by another open repair.
       final stockErr = await _validateDamagedStockForRepair(
         designColourId: rejRow.designColourId,
         quantity: repairedQuantity,
@@ -1013,7 +698,10 @@ final class ProductionHistoryRepositoryImpl
       }
 
       final now = IstDateTimeHelper.nowUtcMillis();
-      final actor = await _resolveActor(repairedBy);
+      final actor = await ActorResolver.resolveRequired(
+        _db,
+        explicit: repairedBy,
+      );
       final repairId = _idGenerator.nextEntityId();
       final cleanedNotes = notes?.trim().isEmpty ?? true ? null : notes!.trim();
 
@@ -1069,7 +757,7 @@ final class ProductionHistoryRepositoryImpl
       );
 
       final created = await _db.productionTrackingDao.findRepairById(repairId);
-      return _mapRepair(created!);
+      return ProductionHistoryDatasetLoader.mapRepair(created!);
     });
   }
 
@@ -1102,7 +790,9 @@ final class ProductionHistoryRepositoryImpl
           final existingInsp = await _db.productionTrackingDao
               .findInspectionByClientRequestId(reqId);
           if (existingInsp != null) {
-            final mapped = _mapInspection(existingInsp);
+            final mapped = ProductionHistoryDatasetLoader.mapInspection(
+              existingInsp,
+            );
             return InspectionApprovalResult(
               inspection: mapped,
               earnedAmountPaise: mapped.earnedAmountPaise,
@@ -1137,7 +827,7 @@ final class ProductionHistoryRepositoryImpl
               'Original assignment issue was not found.',
             );
           }
-          final parentIssue = _mapMovement(parentRow);
+          final parentIssue = LedgerRowMappers.stockMovement(parentRow);
 
           final prevInspsForRepair = await _db.productionTrackingDao
               .getInspectionsForRepair(repRow.id);
@@ -1163,8 +853,6 @@ final class ProductionHistoryRepositoryImpl
             );
           }
 
-          // Strict anti-duplicate guard: total reapproved across ALL repairs
-          // for this rejection record can NEVER exceed rejected_quantity.
           final allRepairs = await _db.productionTrackingDao
               .getRepairsForRejection(rejRow.id);
           var totalReapprovedSoFar = 0;
@@ -1184,8 +872,14 @@ final class ProductionHistoryRepositoryImpl
           }
 
           final now = IstDateTimeHelper.nowUtcMillis();
-          final inspectorActor = await _resolveActor(inspectedBy);
-          final approverActor = await _resolveActor(approvedBy);
+          final inspectorActor = await ActorResolver.resolveRequired(
+            _db,
+            explicit: inspectedBy,
+          );
+          final approverActor = await ActorResolver.resolveRequired(
+            _db,
+            explicit: approvedBy,
+          );
           final cleanedReason = rejectionReason?.trim().isEmpty ?? true
               ? null
               : rejectionReason!.trim();
@@ -1316,7 +1010,6 @@ final class ProductionHistoryRepositoryImpl
             ),
           );
 
-          // Update repair & rejection statuses cleanly
           final remainingOnRepair =
               pendingReinsp - (acceptedQuantity + rejectedAgainQuantity);
           await _db.productionTrackingDao.updateRepairStatus(
@@ -1374,7 +1067,7 @@ final class ProductionHistoryRepositoryImpl
             inspId,
           );
           return InspectionApprovalResult(
-            inspection: _mapInspection(inserted!),
+            inspection: ProductionHistoryDatasetLoader.mapInspection(inserted!),
             earnedAmountPaise: earnedPaise,
             wasIdempotentReplay: false,
           );
@@ -1388,101 +1081,48 @@ final class ProductionHistoryRepositoryImpl
   @override
   Future<ProductionHistoryDashboardData> getDashboard({
     ProductionHistoryFilter filter = const ProductionHistoryFilter(),
-  }) async {
-    final data = await _loadDataset();
-    return _calc.buildDashboard(data, filter: filter);
-  }
+  }) => _queryDelegate.getDashboard(filter: filter);
 
   @override
-  Future<LotCompleteHistory?> getLotCompleteHistory(String lotId) async {
-    final data = await _loadDataset();
-    return _calc.buildLotCompleteHistory(lotId, data);
-  }
+  Future<LotCompleteHistory?> getLotCompleteHistory(String lotId) =>
+      _queryDelegate.getLotCompleteHistory(lotId);
 
   @override
-  Future<List<LotTimelineEvent>> getLotTimeline(String lotId) async {
-    final data = await _loadDataset();
-    return _calc.buildLotTimeline(lotId, data);
-  }
+  Future<List<LotTimelineEvent>> getLotTimeline(String lotId) =>
+      _queryDelegate.getLotTimeline(lotId);
 
   @override
   Future<WorkerCompleteProfile?> getWorkerCompleteProfile(
     String workerId, {
     ProductionHistoryFilter? filter,
-  }) async {
-    final data = await _loadDataset();
-    return _calc.buildWorkerCompleteProfile(workerId, data, filter: filter);
-  }
+  }) => _queryDelegate.getWorkerCompleteProfile(workerId, filter: filter);
 
   @override
   Future<List<WorkerCompleteProfile>> getAllWorkerProfiles({
     ProductionHistoryFilter? filter,
-  }) async {
-    final data = await _loadDataset();
-    final profiles = <WorkerCompleteProfile>[];
-    for (final wId in data.workers.keys) {
-      if (filter?.workerId != null && wId != filter!.workerId) continue;
-      final profile = _calc.buildWorkerCompleteProfile(
-        wId,
-        data,
-        filter: filter,
-      );
-      if (profile != null) {
-        if (filter?.searchQuery != null &&
-            filter!.searchQuery!.trim().isNotEmpty) {
-          final q = filter.searchQuery!.trim().toLowerCase();
-          final hay = '${profile.workerName} ${profile.phone ?? ''}'
-              .toLowerCase();
-          if (!hay.contains(q) && profile.lotHistory.isEmpty) continue;
-        }
-        profiles.add(profile);
-      }
-    }
-    profiles.sort(
-      (a, b) => b.financialSummary.outstandingPayablePaise.compareTo(
-        a.financialSummary.outstandingPayablePaise,
-      ),
-    );
-    return profiles;
-  }
+  }) => _queryDelegate.getAllWorkerProfiles(filter: filter);
 
   @override
   Future<List<ProcessCompleteHistory>> getAllProcessHistories({
     ProductionHistoryFilter? filter,
-  }) async {
-    final data = await _loadDataset();
-    return _calc.buildAllProcessHistories(data, filter: filter);
-  }
+  }) => _queryDelegate.getAllProcessHistories(filter: filter);
 
   @override
   Future<ProcessCompleteHistory?> getProcessCompleteHistory(
     String processId, {
     ProductionHistoryFilter? filter,
-  }) async {
-    final data = await _loadDataset();
-    final list = _calc.buildAllProcessHistories(
-      data,
-      filter: (filter ?? const ProductionHistoryFilter()).copyWith(
-        processId: processId,
-      ),
-    );
-    return list.isNotEmpty ? list.first : null;
-  }
+  }) => _queryDelegate.getProcessCompleteHistory(processId, filter: filter);
 
   @override
   Future<List<PendingReturnView>> getPendingReturns({
     String? lotId,
     String? workerId,
     String? processId,
-  }) async {
-    final data = await _loadDataset();
-    return _calc.buildPendingReturns(
-      data,
-      lotId: lotId,
-      workerId: workerId,
-      processId: processId,
-    );
-  }
+  }) => _queryDelegate.getPendingReturns(
+    lotId: lotId,
+    workerId: workerId,
+    processId: processId,
+  );
 
   @override
   Future<List<RejectionRecordView>> getRejectionRecords({
@@ -1490,450 +1130,20 @@ final class ProductionHistoryRepositoryImpl
     String? workerId,
     String? processId,
     bool onlyOpen = false,
-  }) async {
-    final data = await _loadDataset();
-    return _calc.buildRejectionViews(
-      data,
-      lotId: lotId,
-      workerId: workerId,
-      processId: processId,
-      onlyOpen: onlyOpen,
-    );
-  }
+  }) => _queryDelegate.getRejectionRecords(
+    lotId: lotId,
+    workerId: workerId,
+    processId: processId,
+    onlyOpen: onlyOpen,
+  );
 
   @override
   Future<ProductionTransactionDetail?> getTransactionDetail({
     required ProductionTransactionKind kind,
     required String id,
-  }) async {
-    final data = await _loadDataset();
-
-    Future<List<ProductionAuditEntryView>> loadAudits(
-      String entityType,
-      String entityId,
-    ) async {
-      final rows = await _db.attachmentAuditDao.getAuditLogsForEntity(
-        entityType,
-        entityId,
-      );
-      return rows
-          .map(
-            (a) => ProductionAuditEntryView(
-              id: a.id,
-              actionType: a.actionType,
-              actor: a.actor,
-              reason: a.reason,
-              recordedAt: a.recordedAt,
-              newValueJson: a.newValueJson,
-            ),
-          )
-          .toList();
-    }
-
-    switch (kind) {
-      case ProductionTransactionKind.stockMovement:
-        final movRow = await _db.stockMovementDao.findById(id);
-        if (movRow == null) return null;
-        final m = _mapMovement(movRow);
-        final links =
-            <({String label, ProductionTransactionKind kind, String id})>[];
-        if (m.parentIssueId != null) {
-          links.add((
-            label: 'Parent Issue Assignment',
-            kind: ProductionTransactionKind.stockMovement,
-            id: m.parentIssueId!,
-          ));
-        }
-        final labRows = await _db.labourEntryDao.getEntriesForMovement(m.id);
-        for (final l in labRows) {
-          links.add((
-            label: 'Labour Entry (${l.basisType})',
-            kind: ProductionTransactionKind.labourEntry,
-            id: l.id,
-          ));
-        }
-        return ProductionTransactionDetail(
-          kind: kind,
-          id: m.id,
-          title: 'Stock Movement — ${m.movementType.dbValue}',
-          statusLabel: m.movementType.dbValue,
-          transactionAt: m.transactionAt,
-          recordedAt: m.recordedAt,
-          actor: m.createdBy,
-          lotId: m.lotId,
-          lotNumber: data.lots[m.lotId]?.entity.lotNumber ?? m.lotId,
-          designName: data.designs[m.lotDesignId]?.designName,
-          colourName: data.colours[m.designColourId]?.colourName,
-          processId: m.processId,
-          processName: m.processId != null
-              ? data.processes[m.processId!]?.name
-              : null,
-          workerId: m.memberId,
-          workerName: m.memberId != null
-              ? data.workers[m.memberId!]?.name
-              : null,
-          quantity: m.quantity,
-          lockedRatePaise: m.appliedRatePaise,
-          amountPaise: m.quantity * m.appliedRatePaise,
-          reason: m.reason ?? m.overrideReason,
-          notes: m.notes,
-          parentIssueId: m.parentIssueId,
-          relatedLinks: links,
-          auditTrail: await loadAudits('stock_movements', m.id),
-        );
-
-      case ProductionTransactionKind.productionReturn:
-        final retRow = await _db.productionTrackingDao.findReturnById(id);
-        if (retRow == null) return null;
-        final r = _mapReturn(retRow);
-        final insps = await _db.productionTrackingDao.getInspectionsForReturn(
-          r.id,
-        );
-        final links = <({String label, ProductionTransactionKind kind, String id})>[
-          (
-            label: 'Parent Assignment Issue',
-            kind: ProductionTransactionKind.stockMovement,
-            id: r.parentIssueId,
-          ),
-          for (final i in insps)
-            (
-              label:
-                  'Inspection (Acc ${i.acceptedQuantity}, Rej ${i.rejectedQuantity})',
-              kind: ProductionTransactionKind.inspection,
-              id: i.id,
-            ),
-        ];
-        return ProductionTransactionDetail(
-          kind: kind,
-          id: r.id,
-          title: 'Production Return Receipt',
-          statusLabel: r.returnMode.dbValue,
-          transactionAt: r.transactionAt,
-          recordedAt: r.recordedAt,
-          actor: r.createdBy,
-          lotId: r.lotId,
-          lotNumber: data.lots[r.lotId]?.entity.lotNumber ?? r.lotId,
-          designName: data.designs[r.lotDesignId]?.designName,
-          colourName: data.colours[r.designColourId]?.colourName,
-          processId: r.processId,
-          processName: data.processes[r.processId]?.name,
-          workerId: r.memberId,
-          workerName: data.workers[r.memberId]?.name,
-          quantity: r.returnedQuantity,
-          notes: r.notes,
-          parentIssueId: r.parentIssueId,
-          relatedLinks: links,
-          auditTrail: await loadAudits('production_returns', r.id),
-        );
-
-      case ProductionTransactionKind.inspection:
-        final inspRow = await _db.productionTrackingDao.findInspectionById(id);
-        if (inspRow == null) return null;
-        final i = _mapInspection(inspRow);
-        final links =
-            <({String label, ProductionTransactionKind kind, String id})>[
-              (
-                label: 'Parent Assignment Issue',
-                kind: ProductionTransactionKind.stockMovement,
-                id: i.parentIssueId,
-              ),
-              if (i.productionReturnId != null)
-                (
-                  label: 'Production Return Receipt',
-                  kind: ProductionTransactionKind.productionReturn,
-                  id: i.productionReturnId!,
-                ),
-              if (i.linkedLabourEntryId != null)
-                (
-                  label: 'Generated Worker Earning',
-                  kind: ProductionTransactionKind.labourEntry,
-                  id: i.linkedLabourEntryId!,
-                ),
-              if (i.rejectionRecordId != null)
-                (
-                  label: 'Original Rejection Record',
-                  kind: ProductionTransactionKind.rejection,
-                  id: i.rejectionRecordId!,
-                ),
-            ];
-        return ProductionTransactionDetail(
-          kind: kind,
-          id: i.id,
-          title: i.inspectionType == ProductionInspectionType.reinspection
-              ? 'Repair Re-Inspection & Approval'
-              : 'Quality Inspection & Approval',
-          statusLabel: i.inspectionType.dbValue,
-          transactionAt: i.transactionAt,
-          recordedAt: i.recordedAt,
-          actor: i.inspectedBy,
-          approvedBy: i.approvedBy,
-          authorizedViaPin: i.authorizedViaPin,
-          lotId: i.lotId,
-          lotNumber: data.lots[i.lotId]?.entity.lotNumber ?? i.lotId,
-          designName: data.designs[i.lotDesignId]?.designName,
-          colourName: data.colours[i.designColourId]?.colourName,
-          processId: i.processId,
-          processName: data.processes[i.processId]?.name,
-          workerId: i.memberId,
-          workerName: data.workers[i.memberId]?.name,
-          quantity: i.totalInspectedQuantity,
-          acceptedQuantity: i.acceptedQuantity,
-          rejectedQuantity: i.rejectedQuantity,
-          lockedRatePaise: i.lockedRatePaise,
-          amountPaise: i.earnedAmountPaise,
-          reason: i.rejectionReason,
-          notes: i.notes,
-          parentIssueId: i.parentIssueId,
-          relatedLinks: links,
-          auditTrail: await loadAudits('production_inspections', i.id),
-        );
-
-      case ProductionTransactionKind.rejection:
-        final rejRow = await _db.productionTrackingDao.findRejectionById(id);
-        if (rejRow == null) return null;
-        final r = _mapRejection(rejRow);
-        final repairs = await _db.productionTrackingDao.getRepairsForRejection(
-          r.id,
-        );
-        return ProductionTransactionDetail(
-          kind: kind,
-          id: r.id,
-          title: 'Rejection / Defect Record',
-          statusLabel: r.status.dbValue,
-          transactionAt: r.inspectedAt,
-          recordedAt: r.createdAt,
-          actor: r.recordedBy,
-          lotId: r.lotId,
-          lotNumber: data.lots[r.lotId]?.entity.lotNumber ?? r.lotId,
-          designName: data.designs[r.lotDesignId]?.designName,
-          colourName: data.colours[r.designColourId]?.colourName,
-          processId: r.processId,
-          processName: data.processes[r.processId]?.name,
-          workerId: r.memberId,
-          workerName: data.workers[r.memberId]?.name,
-          rejectedQuantity: r.rejectedQuantity,
-          quantity: r.rejectedQuantity,
-          amountPaise: 0,
-          reason: r.rejectionReason,
-          notes: r.notes,
-          parentIssueId: r.parentIssueId,
-          relatedLinks: [
-            (
-              label: 'Inspection Event',
-              kind: ProductionTransactionKind.inspection,
-              id: r.inspectionId,
-            ),
-            for (final rep in repairs)
-              (
-                label: 'Repair (${rep.repairedQuantity} pcs)',
-                kind: ProductionTransactionKind.repair,
-                id: rep.id,
-              ),
-          ],
-          auditTrail: await loadAudits(
-            'production_inspections',
-            r.inspectionId,
-          ),
-        );
-
-      case ProductionTransactionKind.repair:
-        final repRow = await _db.productionTrackingDao.findRepairById(id);
-        if (repRow == null) return null;
-        final rep = _mapRepair(repRow);
-        final insps = await _db.productionTrackingDao.getInspectionsForRepair(
-          rep.id,
-        );
-        return ProductionTransactionDetail(
-          kind: kind,
-          id: rep.id,
-          title: 'Rejection Repair Operation',
-          statusLabel: '${rep.repairSource.dbValue} • ${rep.status.dbValue}',
-          transactionAt: rep.transactionAt,
-          recordedAt: rep.recordedAt,
-          actor: rep.repairedBy,
-          lotId: rep.lotId,
-          lotNumber: data.lots[rep.lotId]?.entity.lotNumber ?? rep.lotId,
-          colourName: data.colours[rep.designColourId]?.colourName,
-          processId: rep.processId,
-          processName: data.processes[rep.processId]?.name,
-          workerId: rep.memberId,
-          workerName: data.workers[rep.memberId]?.name,
-          quantity: rep.repairedQuantity,
-          notes: rep.notes,
-          relatedLinks: [
-            (
-              label: 'Original Rejection Record',
-              kind: ProductionTransactionKind.rejection,
-              id: rep.rejectionRecordId,
-            ),
-            for (final ins in insps)
-              (
-                label: 'Re-Inspection (Acc ${ins.acceptedQuantity})',
-                kind: ProductionTransactionKind.inspection,
-                id: ins.id,
-              ),
-          ],
-          auditTrail: await loadAudits('rejection_repairs', rep.id),
-        );
-
-      case ProductionTransactionKind.handover:
-        final hoRow = await _db.jobProcessDao.findHandoverById(id);
-        if (hoRow == null) return null;
-        return ProductionTransactionDetail(
-          kind: kind,
-          id: hoRow.id,
-          title: 'Process Handover — ${hoRow.handoverType}',
-          statusLabel: hoRow.status,
-          transactionAt: hoRow.transactionAt,
-          recordedAt: hoRow.recordedAt,
-          actor: hoRow.createdBy,
-          lotId: hoRow.lotId,
-          lotNumber: data.lots[hoRow.lotId]?.entity.lotNumber ?? hoRow.lotId,
-          designName: data.designs[hoRow.lotDesignId]?.designName,
-          colourName: data.colours[hoRow.designColourId]?.colourName,
-          processId: hoRow.processId,
-          processName: data.processes[hoRow.processId]?.name,
-          workerId: hoRow.toMemberId ?? hoRow.fromMemberId,
-          workerName: (hoRow.toMemberId ?? hoRow.fromMemberId) != null
-              ? data.workers[(hoRow.toMemberId ?? hoRow.fromMemberId)!]?.name
-              : null,
-          quantity: hoRow.quantityDispatched,
-          referenceNo: hoRow.transferReference,
-          notes: hoRow.notes,
-          auditTrail: await loadAudits('PROCESS_HANDOVER', hoRow.id),
-        );
-
-      case ProductionTransactionKind.labourEntry:
-        final labRow = await _db.labourEntryDao.findById(id);
-        if (labRow == null) return null;
-        return ProductionTransactionDetail(
-          kind: kind,
-          id: labRow.id,
-          title: 'Worker Labour Earning (${labRow.basisType})',
-          statusLabel: labRow.isPayable == 1 ? 'PAYABLE' : 'INFORMATIONAL',
-          transactionAt: labRow.transactionAt,
-          recordedAt: labRow.recordedAt,
-          lotId: labRow.lotId,
-          lotNumber: data.lots[labRow.lotId]?.entity.lotNumber ?? labRow.lotId,
-          processId: labRow.processId,
-          processName: data.processes[labRow.processId]?.name,
-          workerId: labRow.memberId,
-          workerName: data.workers[labRow.memberId]?.name,
-          quantity: labRow.quantity,
-          lockedRatePaise: labRow.ratePaise,
-          amountPaise: labRow.amountPaise,
-          relatedLinks: [
-            (
-              label: 'Linked Stock Movement',
-              kind: ProductionTransactionKind.stockMovement,
-              id: labRow.stockMovementId,
-            ),
-          ],
-          auditTrail: await loadAudits(
-            'stock_movements',
-            labRow.stockMovementId,
-          ),
-        );
-
-      case ProductionTransactionKind.payment:
-        final payRow = await _db.paymentDao.findById(id);
-        if (payRow == null) return null;
-        return ProductionTransactionDetail(
-          kind: kind,
-          id: payRow.id,
-          title: 'Worker Payment — ${payRow.paymentType}',
-          statusLabel: payRow.paymentMode,
-          transactionAt: payRow.transactionAt,
-          recordedAt: payRow.recordedAt,
-          actor: payRow.createdBy,
-          workerId: payRow.memberId,
-          workerName: data.workers[payRow.memberId]?.name,
-          amountPaise: payRow.amountPaise,
-          referenceNo: payRow.referenceNo,
-          reason: payRow.reason,
-          notes: payRow.notes,
-          auditTrail: await loadAudits('payments', payRow.id),
-        );
-
-      case ProductionTransactionKind.adjustment:
-        final adjRow = await _db.workerAdjustmentDao.findById(id);
-        if (adjRow == null) return null;
-        return ProductionTransactionDetail(
-          kind: kind,
-          id: adjRow.id,
-          title: 'Worker Ledger Adjustment — ${adjRow.adjustmentType}',
-          statusLabel: adjRow.adjustmentType,
-          transactionAt: adjRow.transactionAt,
-          recordedAt: adjRow.recordedAt,
-          actor: adjRow.createdBy,
-          workerId: adjRow.memberId,
-          workerName: data.workers[adjRow.memberId]?.name,
-          amountPaise: adjRow.amountPaise,
-          reason: adjRow.reason,
-          notes: adjRow.notes,
-          auditTrail: await loadAudits('worker_ledger_adjustments', adjRow.id),
-        );
-    }
-  }
+  }) => _queryDelegate.getTransactionDetail(kind: kind, id: id);
 
   @override
-  Future<ProductionHistoryFilterOptions> getFilterOptions() async {
-    final allLots = await _db.select(_db.lots).get();
-    final allWorkers = await _db.select(_db.members).get();
-    final allProcs = await _db.select(_db.processes).get();
-    final allDesigns = await _db.select(_db.lotDesigns).get();
-    final allColours = await _db.select(_db.designColours).get();
-
-    final designNames = <String>{};
-    for (final d in allDesigns) {
-      if (d.designName.trim().isNotEmpty &&
-          d.designName != kColourOnlyDesignSentinel) {
-        designNames.add(d.designName.trim());
-      }
-    }
-    final colourNames = <String>{};
-    for (final c in allColours) {
-      if (c.colourName.trim().isNotEmpty) {
-        colourNames.add(c.colourName.trim());
-      }
-    }
-
-    return ProductionHistoryFilterOptions(
-      lots:
-          allLots
-              .map(
-                (l) => HistoryFilterOption(
-                  id: l.id,
-                  label: l.lotNumber,
-                  isActive: l.deletedAt == null && l.status != 'ARCHIVED',
-                ),
-              )
-              .toList()
-            ..sort((a, b) => a.label.compareTo(b.label)),
-      workers:
-          allWorkers
-              .map(
-                (w) => HistoryFilterOption(
-                  id: w.id,
-                  label: w.name,
-                  isActive: w.isActive == 1 && w.deletedAt == null,
-                ),
-              )
-              .toList()
-            ..sort((a, b) => a.label.compareTo(b.label)),
-      processes:
-          allProcs
-              .map(
-                (p) => HistoryFilterOption(
-                  id: p.id,
-                  label: p.name,
-                  isActive: p.isActive == 1 && p.deletedAt == null,
-                ),
-              )
-              .toList()
-            ..sort((a, b) => a.label.compareTo(b.label)),
-      designNames: designNames.toList()..sort(),
-      colourNames: colourNames.toList()..sort(),
-    );
-  }
+  Future<ProductionHistoryFilterOptions> getFilterOptions() =>
+      _queryDelegate.getFilterOptions();
 }

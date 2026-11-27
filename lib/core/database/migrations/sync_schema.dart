@@ -1,5 +1,6 @@
 import 'package:business_manager/core/database/app_database.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
+import 'package:business_manager/features/sync/domain/services/sync_table_registry.dart';
 import 'package:drift/drift.dart';
 
 /// Cloud-sync support for the local schema: the synced table order, the
@@ -8,31 +9,8 @@ import 'package:drift/drift.dart';
 /// domain tables.
 abstract final class SyncSchema {
   /// All 23 synced domain tables in strict Foreign-Key topological push order.
-  static const List<String> syncedTablesInPushOrder = [
-    'attachments',
-    'business_profile',
-    'colour_master',
-    'processes',
-    'members',
-    'member_processes',
-    'member_process_rates',
-    'lots',
-    'lot_designs',
-    'design_colours',
-    'stock_movements',
-    'job_processes',
-    'process_handovers',
-    'process_additional_charges',
-    'process_rate_history',
-    'labour_entries',
-    'payments',
-    'worker_ledger_adjustments',
-    'production_returns',
-    'production_inspections',
-    'rejection_records',
-    'rejection_repairs',
-    'audit_logs',
-  ];
+  static const List<String> syncedTablesInPushOrder =
+      SyncTableRegistry.syncedTablesInPushOrder;
 
   static Future<void> seedSessionState(
     GeneratedDatabase db, {

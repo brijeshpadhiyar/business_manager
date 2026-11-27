@@ -1,12 +1,12 @@
 import 'dart:convert';
 
 import 'package:business_manager/core/database/app_database.dart';
+import 'package:business_manager/core/database/mappers/ledger_row_mappers.dart';
 import 'package:business_manager/core/platform/media_storage_service.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/features/backup/domain/calculators/data_health_calculator.dart';
 import 'package:business_manager/features/backup/domain/entities/data_health_entities.dart';
-import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -89,7 +89,7 @@ final class DataHealthService {
     for (final m in allMovements) {
       movementsByColour
           .putIfAbsent(m.designColourId, () => <StockMovementEntity>[])
-          .add(_mapMovement(m));
+          .add(LedgerRowMappers.stockMovement(m));
     }
 
     final pendingQcByColour = await _loadPendingQcByColour();
@@ -307,34 +307,4 @@ final class DataHealthService {
       ),
     );
   }
-
-  StockMovementEntity _mapMovement(StockMovementRow row) => StockMovementEntity(
-    id: row.id,
-    lotId: row.lotId,
-    lotDesignId: row.lotDesignId,
-    designColourId: row.designColourId,
-    processId: row.processId,
-    memberId: row.memberId,
-    parentIssueId: row.parentIssueId,
-    jobProcessId: row.jobProcessId,
-    reversesMovementId: row.reversesMovementId,
-    clientRequestId: row.clientRequestId,
-    movementType: StockMovementType.fromDbValue(row.movementType),
-    quantity: row.quantity,
-    sourceRateId: row.sourceRateId,
-    appliedRatePaise: row.appliedRatePaise,
-    isRateOverridden: row.isRateOverridden == 1,
-    overrideReason: row.overrideReason,
-    lockedBillingMode: row.lockedBillingMode != null
-        ? BillingMode.fromDbValue(row.lockedBillingMode!)
-        : null,
-    lockedIncludeDamaged: row.lockedIncludeDamaged == 1,
-    reason: row.reason,
-    notes: row.notes,
-    transactionAt: row.transactionAt,
-    recordedAt: row.recordedAt,
-    createdBy: row.createdBy,
-    createdAt: row.createdAt,
-    updatedAt: row.updatedAt,
-  );
 }

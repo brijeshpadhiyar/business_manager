@@ -1,11 +1,9 @@
 import 'package:business_manager/features/auth/domain/services/rbac_policy.dart';
-import 'package:flutter/foundation.dart';
 
 /// Supported authentication providers in StitchFlow v1.5.
 enum AuthIdentityProvider { google, phone }
 
 /// Represents a linked login method on the user's StitchFlow account.
-@immutable
 final class LinkedIdentity {
   const LinkedIdentity({
     required this.provider,
@@ -36,7 +34,6 @@ final class LinkedIdentity {
 }
 
 /// Authenticated StitchFlow account (cached securely for offline cold starts).
-@immutable
 final class AuthUser {
   const AuthUser({
     required this.id,
@@ -121,7 +118,6 @@ final class AuthUser {
 }
 
 /// Device registered under the signed-in owner's StitchFlow account.
-@immutable
 final class UserDeviceInfo {
   const UserDeviceInfo({
     required this.id,
@@ -145,7 +141,6 @@ enum FirstLoginMergeChoice { mergeBoth, keepCloudOnly, overwriteCloudWithLocal }
 
 enum AuthStatus { initializing, offlineGuest, authenticated }
 
-@immutable
 final class AuthState {
   const AuthState({
     this.status = AuthStatus.initializing,

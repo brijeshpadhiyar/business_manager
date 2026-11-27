@@ -44,6 +44,20 @@ class StockMovementDao extends DatabaseAccessor<AppDatabase>
         .get();
   }
 
+  Future<List<StockMovementRow>> getMovementsForDesignColours(
+    List<String> designColourIds,
+  ) {
+    if (designColourIds.isEmpty) return Future.value(const []);
+    return (select(stockMovements)
+          ..where((t) => t.designColourId.isIn(designColourIds))
+          ..orderBy([
+            (t) => OrderingTerm.asc(t.transactionAt),
+            (t) => OrderingTerm.asc(t.recordedAt),
+            (t) => OrderingTerm.asc(t.id),
+          ]))
+        .get();
+  }
+
   Future<List<StockMovementRow>> getMovementsForLot(String lotId) {
     return (select(stockMovements)
           ..where((t) => t.lotId.equals(lotId))

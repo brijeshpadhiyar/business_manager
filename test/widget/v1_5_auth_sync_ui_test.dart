@@ -12,6 +12,7 @@ import 'package:business_manager/features/auth/domain/repositories/auth_reposito
 import 'package:business_manager/features/auth/presentation/bloc/auth_cubit.dart';
 import 'package:business_manager/features/auth/presentation/pages/account_settings_page.dart';
 import 'package:business_manager/features/auth/presentation/pages/login_page.dart';
+import 'package:business_manager/features/sync/data/repositories/sync_repository_impl.dart';
 import 'package:business_manager/features/sync/data/services/sync_engine.dart';
 import 'package:business_manager/features/sync/domain/entities/sync_entities.dart';
 import 'package:business_manager/features/sync/domain/repositories/cloud_sync_gateway.dart';
@@ -61,9 +62,6 @@ void main() {
       () => gateway.unsubscribeFromSyncNotifications(),
     ).thenAnswer((_) async {});
 
-    authCubit = AuthCubit(authRepo, db);
-    await authCubit.initialize();
-
     final engine = SyncEngine(
       db,
       gateway,
@@ -72,9 +70,12 @@ void main() {
       IdGenerator(),
       AppLogger(AppConfig.dev()),
     );
+    final syncRepo = SyncRepositoryImpl(db, engine);
+    authCubit = AuthCubit(authRepo, syncRepo);
+    await authCubit.initialize();
+
     syncCubit = SyncCubit(
-      db,
-      engine,
+      syncRepo,
       gateway,
       authCubit,
       AppLogger(AppConfig.dev()),

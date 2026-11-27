@@ -1,5 +1,3 @@
-import 'package:business_manager/core/database/migrations/sync_schema.dart';
-
 /// Metadata for a single synced StitchFlow table.
 final class SyncTableSpec {
   const SyncTableSpec({
@@ -62,13 +60,40 @@ abstract final class SyncTableRegistry {
     SyncTableSpec(tableName: 'audit_logs', appendOnly: true),
   ];
 
+  /// All 23 synced domain tables in strict Foreign-Key topological push order.
+  static const List<String> syncedTablesInPushOrder = [
+    'attachments',
+    'business_profile',
+    'colour_master',
+    'processes',
+    'members',
+    'member_processes',
+    'member_process_rates',
+    'lots',
+    'lot_designs',
+    'design_colours',
+    'stock_movements',
+    'job_processes',
+    'process_handovers',
+    'process_additional_charges',
+    'process_rate_history',
+    'labour_entries',
+    'payments',
+    'worker_ledger_adjustments',
+    'production_returns',
+    'production_inspections',
+    'rejection_records',
+    'rejection_repairs',
+    'audit_logs',
+  ];
+
   static final Map<String, SyncTableSpec> _byName = {
     for (final s in specs) s.tableName: s,
   };
 
   static final Map<String, int> _orderIndex = {
-    for (var i = 0; i < SyncSchema.syncedTablesInPushOrder.length; i++)
-      SyncSchema.syncedTablesInPushOrder[i]: i,
+    for (var i = 0; i < syncedTablesInPushOrder.length; i++)
+      syncedTablesInPushOrder[i]: i,
   };
 
   static SyncTableSpec? specFor(String tableName) => _byName[tableName];

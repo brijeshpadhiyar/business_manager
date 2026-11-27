@@ -2,7 +2,7 @@
 
 An **offline-first, multi-platform Flutter Garment & Production Management System**. Built with **Android as the primary target** and full cross-platform support for iOS, Web, Windows, macOS, and Linux from a single Flutter codebase.
 
-> **Project Phase:** **V1.1 UX, Branded Splash, Centralized Settings & Stock Workflow Release** — Verified & Tested (`77/77` tests passing, `0` analyzer issues).
+> **Project Phase:** **V1.8 Modular Architecture, Multi-User RBAC, Bilingual Slips & Cloud Sync v2** — Verified & Tested (`358/358` tests passing, `0` analyzer issues).
 
 ---
 

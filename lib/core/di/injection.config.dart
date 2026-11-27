@@ -158,6 +158,8 @@ import 'package:business_manager/features/stock_movements/domain/repositories/st
     as _i306;
 import 'package:business_manager/features/stock_movements/presentation/bloc/stock_movements_cubit.dart'
     as _i971;
+import 'package:business_manager/features/sync/data/repositories/sync_repository_impl.dart'
+    as _i1059;
 import 'package:business_manager/features/sync/data/services/supabase_cloud_sync_gateway.dart'
     as _i860;
 import 'package:business_manager/features/sync/data/services/sync_conflict_service.dart'
@@ -166,6 +168,8 @@ import 'package:business_manager/features/sync/data/services/sync_engine.dart'
     as _i605;
 import 'package:business_manager/features/sync/domain/repositories/cloud_sync_gateway.dart'
     as _i1043;
+import 'package:business_manager/features/sync/domain/repositories/sync_repository.dart'
+    as _i497;
 import 'package:business_manager/features/sync/presentation/bloc/sync_cubit.dart'
     as _i570;
 import 'package:business_manager/features/team/domain/repositories/team_repository.dart'
@@ -321,10 +325,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i516.AppConfig>(),
       ),
     );
-    gh.lazySingleton<_i154.AuthCubit>(
-      () =>
-          _i154.AuthCubit(gh<_i941.AuthRepository>(), gh<_i177.AppDatabase>()),
-    );
     gh.lazySingleton<_i605.SyncEngine>(
       () => _i605.SyncEngine(
         gh<_i177.AppDatabase>(),
@@ -412,6 +412,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i931.InventoryOverviewCubit>(
       () => _i931.InventoryOverviewCubit(gh<_i932.LotRepository>()),
     );
+    gh.lazySingleton<_i497.SyncRepository>(
+      () => _i1059.SyncRepositoryImpl(
+        gh<_i177.AppDatabase>(),
+        gh<_i605.SyncEngine>(),
+      ),
+    );
     gh.lazySingleton<_i306.StockMovementRepository>(
       () => _i945.StockMovementRepositoryImpl(
         gh<_i177.AppDatabase>(),
@@ -419,10 +425,15 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i656.IdGenerator>(),
       ),
     );
+    gh.lazySingleton<_i154.AuthCubit>(
+      () => _i154.AuthCubit(
+        gh<_i941.AuthRepository>(),
+        gh<_i497.SyncRepository>(),
+      ),
+    );
     gh.lazySingleton<_i570.SyncCubit>(
       () => _i570.SyncCubit(
-        gh<_i177.AppDatabase>(),
-        gh<_i605.SyncEngine>(),
+        gh<_i497.SyncRepository>(),
         gh<_i1043.CloudSyncGateway>(),
         gh<_i154.AuthCubit>(),
         gh<_i790.AppLogger>(),

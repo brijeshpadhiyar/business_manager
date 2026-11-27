@@ -1,10 +1,7 @@
-import 'package:flutter/foundation.dart';
-
 /// Overall health classification produced by [DataHealthCalculator].
 enum DataHealthStatus { healthy, warning, critical }
 
 /// Single SQLite `PRAGMA foreign_key_check` violation row.
-@immutable
 final class ForeignKeyViolation {
   const ForeignKeyViolation({
     required this.table,
@@ -29,7 +26,6 @@ final class ForeignKeyViolation {
 /// Discrepancy detected by the golden stock reconciliation equation:
 /// `initial == available + withWorkers + pendingQc + damaged + lost + shortage`
 /// or negative stock buckets.
-@immutable
 final class StockReconciliationIssue {
   const StockReconciliationIssue({
     required this.lotNumber,
@@ -82,7 +78,6 @@ final class StockReconciliationIssue {
 }
 
 /// Worker ledger or charge-unification discrepancy.
-@immutable
 final class LedgerParityIssue {
   const LedgerParityIssue({
     required this.code,
@@ -102,7 +97,6 @@ final class LedgerParityIssue {
 }
 
 /// Complete, exportable snapshot of local StitchFlow data health.
-@immutable
 final class DataHealthReport {
   const DataHealthReport({
     required this.checkedAtUtcMillis,

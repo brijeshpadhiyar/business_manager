@@ -1,9 +1,7 @@
 import 'package:business_manager/features/sync/domain/services/sync_table_registry.dart';
-import 'package:flutter/foundation.dart';
 
 enum ConflictWinner { remote, local }
 
-@immutable
 final class ConflictResolution {
   const ConflictResolution({
     required this.winner,

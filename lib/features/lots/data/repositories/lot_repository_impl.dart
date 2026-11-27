@@ -2,17 +2,21 @@ import 'dart:convert';
 
 import 'package:business_manager/core/database/app_database.dart';
 import 'package:business_manager/core/database/database_transaction_runner.dart';
+import 'package:business_manager/core/database/mappers/actor_resolver.dart';
+import 'package:business_manager/core/database/mappers/ledger_row_mappers.dart';
 import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/platform/media_storage_service.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
+import 'package:business_manager/features/lots/data/repositories/lot_media_and_variant_delegate.dart';
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
 import 'package:business_manager/features/lots/domain/repositories/lot_repository.dart';
 import 'package:business_manager/features/process_routing/domain/calculators/process_pricing_calculator.dart';
 import 'package:business_manager/features/process_routing/domain/calculators/process_routing_validator.dart';
 import 'package:business_manager/features/process_routing/domain/entities/process_routing_entities.dart';
+import 'package:business_manager/features/production_history/data/repositories/production_history_dataset_loader.dart';
 import 'package:business_manager/features/production_history/domain/calculators/production_history_calculator.dart';
 import 'package:business_manager/features/production_history/domain/entities/production_history_entities.dart';
 import 'package:business_manager/features/stock_movements/domain/calculators/stock_calculator.dart';
@@ -26,18 +30,18 @@ final class LotRepositoryImpl implements LotRepository {
     this._db,
     this._txRunner,
     this._idGenerator,
-    this._mediaStorage,
-  );
+    MediaStorageService mediaStorage,
+  ) : _delegate = LotMediaAndVariantDelegate(
+        _db,
+        _txRunner,
+        _idGenerator,
+        mediaStorage,
+      );
 
   final AppDatabase _db;
   final DatabaseTransactionRunner _txRunner;
   final IdGenerator _idGenerator;
-  final MediaStorageService _mediaStorage;
-
-  Future<String?> _currentActor() async {
-    final profile = await _db.businessProfileDao.getProfile();
-    return profile?.ownerName;
-  }
+  final LotMediaAndVariantDelegate _delegate;
 
   @override
   Future<List<LotEntity>> getLots({
@@ -54,7 +58,7 @@ final class LotRepositoryImpl implements LotRepository {
               (row.title?.toLowerCase().contains(q) ?? false) ||
               (row.notes?.toLowerCase().contains(q) ?? false);
         })
-        .map(_lotToEntity)
+        .map(LotMediaAndVariantDelegate.lotToEntity)
         .toList();
   }
 
@@ -70,12 +74,12 @@ final class LotRepositoryImpl implements LotRepository {
     for (final c in allColourRows) {
       coloursByDesign
           .putIfAbsent(c.lotDesignId, () => <DesignColourEntity>[])
-          .add(_colourToEntity(c));
+          .add(LotMediaAndVariantDelegate.colourToEntity(c));
     }
     final designsWithColours = designRows
         .map(
           (d) => DesignWithColours(
-            design: _designToEntity(d),
+            design: LotMediaAndVariantDelegate.designToEntity(d),
             colours: coloursByDesign[d.id] ?? const <DesignColourEntity>[],
           ),
         )
@@ -87,9 +91,11 @@ final class LotRepositoryImpl implements LotRepository {
     );
 
     return LotDetailAggregate(
-      lot: _lotToEntity(lotRow),
+      lot: LotMediaAndVariantDelegate.lotToEntity(lotRow),
       designs: designsWithColours,
-      photos: photoRows.map(_attachmentToEntity).toList(),
+      photos: photoRows
+          .map(LotMediaAndVariantDelegate.attachmentToEntity)
+          .toList(),
     );
   }
 
@@ -122,14 +128,14 @@ final class LotRepositoryImpl implements LotRepository {
     return _txRunner.runInTransaction(() async {
       final now = IstDateTimeHelper.nowUtcMillis();
       final id = _idGenerator.nextEntityId();
-      final actor = await _currentActor();
+      final actor = await ActorResolver.resolveOptional(_db);
 
       await _db.lotDao.insertLot(
         LotsCompanion(
           id: Value(id),
           lotNumber: Value(cleanNumber),
-          title: Value(_nullIfBlank(title)),
-          notes: Value(_nullIfBlank(notes)),
+          title: Value(LotMediaAndVariantDelegate.nullIfBlank(title)),
+          notes: Value(LotMediaAndVariantDelegate.nullIfBlank(notes)),
           status: const Value('ACTIVE'),
           transactionAt: Value(transactionAtUtcMillis),
           recordedAt: Value(now),
@@ -150,7 +156,7 @@ final class LotRepositoryImpl implements LotRepository {
           newValueJson: Value(
             jsonEncode({
               'lot_number': cleanNumber,
-              'title': _nullIfBlank(title),
+              'title': LotMediaAndVariantDelegate.nullIfBlank(title),
             }),
           ),
           transactionAt: Value(transactionAtUtcMillis),
@@ -159,55 +165,8 @@ final class LotRepositoryImpl implements LotRepository {
       );
 
       final created = await _db.lotDao.findLotById(id);
-      return _lotToEntity(created!);
+      return LotMediaAndVariantDelegate.lotToEntity(created!);
     });
-  }
-
-  void _validateColourDraft(LotColourDraftInput draft) {
-    final cleanName = draft.colourName.trim();
-    if (cleanName.isEmpty) {
-      throw const DomainValidationException(
-        'colour_name_required',
-        'Colour name cannot be empty.',
-      );
-    }
-    if (draft.initialQuantity <= 0) {
-      throw const DomainValidationException(
-        'invalid_quantity',
-        'Initial quantity must be greater than zero.',
-      );
-    }
-    if (draft.unitPricePaise < 0) {
-      throw const DomainValidationException(
-        'invalid_amount',
-        'Unit price cannot be negative.',
-      );
-    }
-    if (cleanName.length > ValidationLimits.maxShortNameLength ||
-        (draft.notes?.trim().length ?? 0) > ValidationLimits.maxNotesLength) {
-      throw const DomainValidationException(
-        'text_too_long',
-        'Colour name or notes exceed maximum allowed length.',
-      );
-    }
-    if (draft.initialQuantity > ValidationLimits.maxQuantity) {
-      throw const DomainValidationException(
-        'quantity_too_large',
-        'Initial quantity exceeds maximum allowed limit.',
-      );
-    }
-    if (draft.unitPricePaise > ValidationLimits.maxAmountPaise) {
-      throw const DomainValidationException(
-        'amount_too_large',
-        'Unit price exceeds maximum allowed limit.',
-      );
-    }
-    if (!AppValidators.hexColorValidator(draft.colourHex).isValid) {
-      throw const DomainValidationException(
-        'invalid_hex_color',
-        'Invalid hex colour code.',
-      );
-    }
   }
 
   @override
@@ -261,7 +220,6 @@ final class LotRepositoryImpl implements LotRepository {
       );
     }
 
-    // Validate all nested designs & colours up front before opening DB writes.
     final seenDesignNames = <String>{};
     for (final design in designs) {
       final cleanDesign = design.designName.trim();
@@ -287,7 +245,7 @@ final class LotRepositoryImpl implements LotRepository {
       }
       final seenColours = <String>{};
       for (final colour in design.colours) {
-        _validateColourDraft(colour);
+        LotMediaAndVariantDelegate.validateColourDraft(colour);
         if (!seenColours.add(colour.colourName.trim().toLowerCase())) {
           throw const DomainValidationException(
             'duplicate_colour_name',
@@ -300,14 +258,14 @@ final class LotRepositoryImpl implements LotRepository {
     return _txRunner.runInTransaction(() async {
       final now = IstDateTimeHelper.nowUtcMillis();
       final lotId = _idGenerator.nextEntityId();
-      final actor = await _currentActor();
+      final actor = await ActorResolver.resolveOptional(_db);
 
       await _db.lotDao.insertLot(
         LotsCompanion(
           id: Value(lotId),
           lotNumber: Value(cleanNumber),
-          title: Value(_nullIfBlank(title)),
-          notes: Value(_nullIfBlank(notes)),
+          title: Value(LotMediaAndVariantDelegate.nullIfBlank(title)),
+          notes: Value(LotMediaAndVariantDelegate.nullIfBlank(notes)),
           status: const Value('ACTIVE'),
           transactionAt: Value(transactionAtUtcMillis),
           recordedAt: Value(now),
@@ -328,7 +286,7 @@ final class LotRepositoryImpl implements LotRepository {
           newValueJson: Value(
             jsonEncode({
               'lot_number': cleanNumber,
-              'title': _nullIfBlank(title),
+              'title': LotMediaAndVariantDelegate.nullIfBlank(title),
               'designs_count': designs.length,
             }),
           ),
@@ -337,8 +295,6 @@ final class LotRepositoryImpl implements LotRepository {
         ),
       );
 
-      // Track created design & colour IDs and remaining in-house quantities for
-      // optional Phase 5 Initial Process Assignments in the same transaction.
       final createdSkuByKey =
           <String, ({String designId, String colourId, int available})>{};
 
@@ -350,7 +306,7 @@ final class LotRepositoryImpl implements LotRepository {
             id: Value(designId),
             lotId: Value(lotId),
             designName: Value(cleanDesign),
-            notes: Value(_nullIfBlank(design.notes)),
+            notes: Value(LotMediaAndVariantDelegate.nullIfBlank(design.notes)),
             createdBy: Value(actor),
             updatedBy: Value(actor),
             createdAt: Value(now),
@@ -380,10 +336,14 @@ final class LotRepositoryImpl implements LotRepository {
               id: Value(colourId),
               lotDesignId: Value(designId),
               colourName: Value(cleanColour),
-              colourHex: Value(_nullIfBlank(colour.colourHex)),
+              colourHex: Value(
+                LotMediaAndVariantDelegate.nullIfBlank(colour.colourHex),
+              ),
               initialQuantity: Value(colour.initialQuantity),
               unitPricePaise: Value(colour.unitPricePaise),
-              notes: Value(_nullIfBlank(colour.notes)),
+              notes: Value(
+                LotMediaAndVariantDelegate.nullIfBlank(colour.notes),
+              ),
               createdBy: Value(actor),
               updatedBy: Value(actor),
               createdAt: Value(now),
@@ -420,7 +380,6 @@ final class LotRepositoryImpl implements LotRepository {
         }
       }
 
-      // Optional Phase 5 Initial Process Assignments (multi-process / multi-worker)
       var seqOrder = 1;
       for (final assign in initialAssignments) {
         if (assign.quantity <= 0) {
@@ -472,7 +431,6 @@ final class LotRepositoryImpl implements LotRepository {
           );
         }
 
-        // Ensure active worker-process assignment link exists
         final link = await _db.processMemberDao.findMemberProcessLink(
           worker.id,
           proc.id,
@@ -500,13 +458,15 @@ final class LotRepositoryImpl implements LotRepository {
 
         final jpId = _idGenerator.nextEntityId();
         final movId = _idGenerator.nextEntityId();
-        final cleanedNotes = _nullIfBlank(assign.notes);
-        final cleanedOverride = _nullIfBlank(assign.rateOverrideReason);
+        final cleanedNotes = LotMediaAndVariantDelegate.nullIfBlank(
+          assign.notes,
+        );
+        final cleanedOverride = LotMediaAndVariantDelegate.nullIfBlank(
+          assign.rateOverrideReason,
+        );
         final pricingUnit = assign.pricingUnit.trim().isEmpty
             ? ProcessPricingCalculator.unitPerPiece
             : assign.pricingUnit.trim().toUpperCase();
-        // Earnings = accepted qty x per-piece rate, so the ISSUE always locks
-        // a per-piece rate (PER_DOZEN etc. converted here, never 12x).
         final perPieceRatePaise = const ProcessPricingCalculator()
             .effectivePerPieceRatePaise(
               quantity: assign.quantity,
@@ -540,7 +500,6 @@ final class LotRepositoryImpl implements LotRepository {
           ),
         );
 
-        // Informational-only labour entry (Rule 1: ISSUE is never payable)
         await _db.labourEntryDao.insertEntry(
           LabourEntriesCompanion(
             id: Value(_idGenerator.nextEntityId()),
@@ -590,8 +549,6 @@ final class LotRepositoryImpl implements LotRepository {
           ),
         );
 
-        // Same records as a Routing dispatch: handover timeline row and, for
-        // an agreed rate that differs from the default, a rate-history row.
         final handoverId = _idGenerator.nextEntityId();
         await _db.jobProcessDao.insertHandover(
           ProcessHandoversCompanion.insert(
@@ -648,7 +605,7 @@ final class LotRepositoryImpl implements LotRepository {
       }
 
       final created = await _db.lotDao.findLotById(lotId);
-      return _lotToEntity(created!);
+      return LotMediaAndVariantDelegate.lotToEntity(created!);
     });
   }
 
@@ -675,7 +632,7 @@ final class LotRepositoryImpl implements LotRepository {
     }
     final seenColours = <String>{};
     for (final c in colours) {
-      _validateColourDraft(c);
+      LotMediaAndVariantDelegate.validateColourDraft(c);
       if (!seenColours.add(c.colourName.trim().toLowerCase())) {
         throw const DomainValidationException(
           'duplicate_colour_name',
@@ -691,14 +648,14 @@ final class LotRepositoryImpl implements LotRepository {
       }
       final now = IstDateTimeHelper.nowUtcMillis();
       final designId = _idGenerator.nextEntityId();
-      final actor = await _currentActor();
+      final actor = await ActorResolver.resolveOptional(_db);
 
       await _db.lotDao.insertDesign(
         LotDesignsCompanion(
           id: Value(designId),
           lotId: Value(lotId),
           designName: Value(cleanName),
-          notes: Value(_nullIfBlank(notes)),
+          notes: Value(LotMediaAndVariantDelegate.nullIfBlank(notes)),
           createdBy: Value(actor),
           updatedBy: Value(actor),
           createdAt: Value(now),
@@ -732,10 +689,12 @@ final class LotRepositoryImpl implements LotRepository {
             id: Value(colourId),
             lotDesignId: Value(designId),
             colourName: Value(cleanColour),
-            colourHex: Value(_nullIfBlank(c.colourHex)),
+            colourHex: Value(
+              LotMediaAndVariantDelegate.nullIfBlank(c.colourHex),
+            ),
             initialQuantity: Value(c.initialQuantity),
             unitPricePaise: Value(c.unitPricePaise),
-            notes: Value(_nullIfBlank(c.notes)),
+            notes: Value(LotMediaAndVariantDelegate.nullIfBlank(c.notes)),
             createdBy: Value(actor),
             updatedBy: Value(actor),
             createdAt: Value(now),
@@ -764,7 +723,7 @@ final class LotRepositoryImpl implements LotRepository {
       }
 
       final created = await _db.lotDao.findDesignById(designId);
-      return _designToEntity(created!);
+      return LotMediaAndVariantDelegate.designToEntity(created!);
     });
   }
 
@@ -777,7 +736,7 @@ final class LotRepositoryImpl implements LotRepository {
     if (colours.isEmpty) return const [];
     final seenColours = <String>{};
     for (final c in colours) {
-      _validateColourDraft(c);
+      LotMediaAndVariantDelegate.validateColourDraft(c);
       if (!seenColours.add(c.colourName.trim().toLowerCase())) {
         throw const DomainValidationException(
           'duplicate_colour_name',
@@ -793,7 +752,7 @@ final class LotRepositoryImpl implements LotRepository {
       }
 
       final now = IstDateTimeHelper.nowUtcMillis();
-      final actor = await _currentActor();
+      final actor = await ActorResolver.resolveOptional(_db);
 
       String targetDesignId;
       if (lotDesignId != null) {
@@ -855,10 +814,12 @@ final class LotRepositoryImpl implements LotRepository {
             id: Value(colourId),
             lotDesignId: Value(targetDesignId),
             colourName: Value(cleanColour),
-            colourHex: Value(_nullIfBlank(c.colourHex)),
+            colourHex: Value(
+              LotMediaAndVariantDelegate.nullIfBlank(c.colourHex),
+            ),
             initialQuantity: Value(c.initialQuantity),
             unitPricePaise: Value(c.unitPricePaise),
-            notes: Value(_nullIfBlank(c.notes)),
+            notes: Value(LotMediaAndVariantDelegate.nullIfBlank(c.notes)),
             createdBy: Value(actor),
             updatedBy: Value(actor),
             createdAt: Value(now),
@@ -885,7 +846,7 @@ final class LotRepositoryImpl implements LotRepository {
           ),
         );
         final row = await _db.lotDao.findDesignColourById(colourId);
-        createdEntities.add(_colourToEntity(row!));
+        createdEntities.add(LotMediaAndVariantDelegate.colourToEntity(row!));
       }
       return createdEntities;
     });
@@ -925,43 +886,9 @@ final class LotRepositoryImpl implements LotRepository {
         throw const LocalStorageException('Lot not found.');
       }
 
-      // Phase 6 Completion Reconciliation Guard: do not mark lot COMPLETED
-      // while any assignment has outstanding or pending-inspection pieces.
       if (status == LotStatus.completed) {
         final lotMovRows = await _db.stockMovementDao.getMovementsForLot(lotId);
-        final lotMovs = lotMovRows
-            .map(
-              (r) => StockMovementEntity(
-                id: r.id,
-                lotId: r.lotId,
-                lotDesignId: r.lotDesignId,
-                designColourId: r.designColourId,
-                processId: r.processId,
-                memberId: r.memberId,
-                parentIssueId: r.parentIssueId,
-                jobProcessId: r.jobProcessId,
-                reversesMovementId: r.reversesMovementId,
-                clientRequestId: r.clientRequestId,
-                movementType: StockMovementType.fromDbValue(r.movementType),
-                quantity: r.quantity,
-                sourceRateId: r.sourceRateId,
-                appliedRatePaise: r.appliedRatePaise,
-                isRateOverridden: r.isRateOverridden == 1,
-                overrideReason: r.overrideReason,
-                lockedBillingMode: r.lockedBillingMode != null
-                    ? BillingMode.fromDbValue(r.lockedBillingMode!)
-                    : null,
-                lockedIncludeDamaged: r.lockedIncludeDamaged == 1,
-                reason: r.reason,
-                notes: r.notes,
-                transactionAt: r.transactionAt,
-                recordedAt: r.recordedAt,
-                createdBy: r.createdBy,
-                createdAt: r.createdAt,
-                updatedAt: r.updatedAt,
-              ),
-            )
-            .toList();
+        final lotMovs = lotMovRows.map(LedgerRowMappers.stockMovement).toList();
         const stockCalc = StockCalculator();
         const prodCalc = ProductionHistoryCalculator();
         final reversedIds = stockCalc.reversedMovementIds(lotMovs);
@@ -970,49 +897,10 @@ final class LotRepositoryImpl implements LotRepository {
           lotId,
         );
         final returns = retRows
-            .map(
-              (r) => ProductionReturnEntity(
-                id: r.id,
-                parentIssueId: r.parentIssueId,
-                lotId: r.lotId,
-                lotDesignId: r.lotDesignId,
-                designColourId: r.designColourId,
-                processId: r.processId,
-                memberId: r.memberId,
-                returnedQuantity: r.returnedQuantity,
-                returnMode: ProductionReturnMode.fromDbValue(r.returnMode),
-                transactionAt: r.transactionAt,
-                recordedAt: r.recordedAt,
-                createdAt: r.createdAt,
-                updatedAt: r.updatedAt,
-              ),
-            )
+            .map(ProductionHistoryDatasetLoader.mapReturn)
             .toList();
         final insps = inspRows
-            .map(
-              (r) => ProductionInspectionEntity(
-                id: r.id,
-                inspectionType: ProductionInspectionType.fromDbValue(
-                  r.inspectionType,
-                ),
-                productionReturnId: r.productionReturnId,
-                parentIssueId: r.parentIssueId,
-                lotId: r.lotId,
-                lotDesignId: r.lotDesignId,
-                designColourId: r.designColourId,
-                processId: r.processId,
-                memberId: r.memberId,
-                acceptedQuantity: r.acceptedQuantity,
-                rejectedQuantity: r.rejectedQuantity,
-                lockedRatePaise: r.lockedRatePaise,
-                earnedAmountPaise: r.earnedAmountPaise,
-                creditWorkerEarnings: r.creditWorkerEarnings == 1,
-                authorizedViaPin: r.authorizedViaPin == 1,
-                transactionAt: r.transactionAt,
-                recordedAt: r.recordedAt,
-                createdAt: r.createdAt,
-              ),
-            )
+            .map(ProductionHistoryDatasetLoader.mapInspection)
             .toList();
         final pendingInspMap = prodCalc.pendingInspectionByIssue(
           returns: returns,
@@ -1041,14 +929,14 @@ final class LotRepositoryImpl implements LotRepository {
       }
 
       final now = IstDateTimeHelper.nowUtcMillis();
-      final actor = await _currentActor();
+      final actor = await ActorResolver.resolveOptional(_db);
 
       await _db.lotDao.updateLotById(
         lotId,
         LotsCompanion(
           lotNumber: Value(cleanNumber),
-          title: Value(_nullIfBlank(title)),
-          notes: Value(_nullIfBlank(notes)),
+          title: Value(LotMediaAndVariantDelegate.nullIfBlank(title)),
+          notes: Value(LotMediaAndVariantDelegate.nullIfBlank(notes)),
           status: Value(status.dbValue),
           transactionAt: Value(transactionAtUtcMillis),
           updatedBy: Value(actor),
@@ -1073,7 +961,7 @@ final class LotRepositoryImpl implements LotRepository {
           newValueJson: Value(
             jsonEncode({
               'lot_number': cleanNumber,
-              'title': _nullIfBlank(title),
+              'title': LotMediaAndVariantDelegate.nullIfBlank(title),
               'status': status.dbValue,
             }),
           ),
@@ -1083,7 +971,7 @@ final class LotRepositoryImpl implements LotRepository {
       );
 
       final updated = await _db.lotDao.findLotById(lotId);
-      return _lotToEntity(updated!);
+      return LotMediaAndVariantDelegate.lotToEntity(updated!);
     });
   }
 
@@ -1093,7 +981,7 @@ final class LotRepositoryImpl implements LotRepository {
       final existing = await _db.lotDao.findLotById(lotId);
       if (existing == null || existing.deletedAt != null) return;
       final now = IstDateTimeHelper.nowUtcMillis();
-      final actor = await _currentActor();
+      final actor = await ActorResolver.resolveOptional(_db);
 
       await _db.lotDao.softDeleteLot(lotId, now, actor);
       await _db.attachmentAuditDao.insertAuditLog(
@@ -1124,143 +1012,26 @@ final class LotRepositoryImpl implements LotRepository {
     required String lotId,
     required String designName,
     String? notes,
-  }) async {
-    final cleanName = designName.trim();
-    if (cleanName.isEmpty) {
-      throw ArgumentError('Design name cannot be empty.');
-    }
-    if (cleanName.length > ValidationLimits.maxShortNameLength ||
-        (notes?.trim().length ?? 0) > ValidationLimits.maxNotesLength) {
-      throw const DomainValidationException(
-        'text_too_long',
-        'Design name or notes exceed maximum allowed length.',
-      );
-    }
-
-    return _txRunner.runInTransaction(() async {
-      final parentLot = await _db.lotDao.findLotById(lotId);
-      if (parentLot == null || parentLot.deletedAt != null) {
-        throw const LocalStorageException('Parent lot not found or archived.');
-      }
-      final now = IstDateTimeHelper.nowUtcMillis();
-      final id = _idGenerator.nextEntityId();
-      final actor = await _currentActor();
-
-      await _db.lotDao.insertDesign(
-        LotDesignsCompanion(
-          id: Value(id),
-          lotId: Value(lotId),
-          designName: Value(cleanName),
-          notes: Value(_nullIfBlank(notes)),
-          createdBy: Value(actor),
-          updatedBy: Value(actor),
-          createdAt: Value(now),
-          updatedAt: Value(now),
-        ),
-      );
-
-      await _db.attachmentAuditDao.insertAuditLog(
-        AuditLogsCompanion(
-          id: Value(_idGenerator.nextEntityId()),
-          entityType: const Value('lot_designs'),
-          entityId: Value(id),
-          actionType: const Value('CREATE'),
-          actor: Value(actor),
-          newValueJson: Value(
-            jsonEncode({'lot_id': lotId, 'design_name': cleanName}),
-          ),
-          transactionAt: Value(now),
-          recordedAt: Value(now),
-        ),
-      );
-
-      final created = await _db.lotDao.findDesignById(id);
-      return _designToEntity(created!);
-    });
-  }
+  }) => _delegate.createDesign(
+    lotId: lotId,
+    designName: designName,
+    notes: notes,
+  );
 
   @override
   Future<LotDesignEntity> updateDesign({
     required String designId,
     required String designName,
     String? notes,
-  }) async {
-    final cleanName = designName.trim();
-    if (cleanName.isEmpty) {
-      throw ArgumentError('Design name cannot be empty.');
-    }
-    if (cleanName.length > ValidationLimits.maxShortNameLength ||
-        (notes?.trim().length ?? 0) > ValidationLimits.maxNotesLength) {
-      throw const DomainValidationException(
-        'text_too_long',
-        'Design name or notes exceed maximum allowed length.',
-      );
-    }
-
-    return _txRunner.runInTransaction(() async {
-      final existing = await _db.lotDao.findDesignById(designId);
-      if (existing == null || existing.deletedAt != null) {
-        throw const LocalStorageException('Design not found.');
-      }
-      final now = IstDateTimeHelper.nowUtcMillis();
-      final actor = await _currentActor();
-
-      await _db.lotDao.updateDesignById(
-        designId,
-        LotDesignsCompanion(
-          designName: Value(cleanName),
-          notes: Value(_nullIfBlank(notes)),
-          updatedBy: Value(actor),
-          updatedAt: Value(now),
-        ),
-      );
-
-      await _db.attachmentAuditDao.insertAuditLog(
-        AuditLogsCompanion(
-          id: Value(_idGenerator.nextEntityId()),
-          entityType: const Value('lot_designs'),
-          entityId: Value(designId),
-          actionType: const Value('UPDATE'),
-          actor: Value(actor),
-          previousValueJson: Value(
-            jsonEncode({'design_name': existing.designName}),
-          ),
-          newValueJson: Value(jsonEncode({'design_name': cleanName})),
-          transactionAt: Value(now),
-          recordedAt: Value(now),
-        ),
-      );
-
-      final updated = await _db.lotDao.findDesignById(designId);
-      return _designToEntity(updated!);
-    });
-  }
+  }) => _delegate.updateDesign(
+    designId: designId,
+    designName: designName,
+    notes: notes,
+  );
 
   @override
-  Future<void> deleteDesign(String designId) async {
-    await _txRunner.runInTransaction(() async {
-      final existing = await _db.lotDao.findDesignById(designId);
-      if (existing == null || existing.deletedAt != null) return;
-      final now = IstDateTimeHelper.nowUtcMillis();
-      final actor = await _currentActor();
-
-      await _db.lotDao.softDeleteDesign(designId, now, actor);
-      await _db.attachmentAuditDao.insertAuditLog(
-        AuditLogsCompanion(
-          id: Value(_idGenerator.nextEntityId()),
-          entityType: const Value('lot_designs'),
-          entityId: Value(designId),
-          actionType: const Value('SOFT_DELETE'),
-          actor: Value(actor),
-          previousValueJson: Value(
-            jsonEncode({'design_name': existing.designName}),
-          ),
-          transactionAt: Value(now),
-          recordedAt: Value(now),
-        ),
-      );
-    });
-  }
+  Future<void> deleteDesign(String designId) =>
+      _delegate.deleteDesign(designId);
 
   @override
   Future<DesignColourEntity> addColourDirectlyToLot({
@@ -1270,32 +1041,14 @@ final class LotRepositoryImpl implements LotRepository {
     required int initialQuantity,
     required int unitPricePaise,
     String? notes,
-  }) async {
-    final designs = await _db.lotDao.getDesignsForLot(lotId);
-    String? sentinelDesignId;
-    for (final d in designs) {
-      if (d.designName == kColourOnlyDesignSentinel) {
-        sentinelDesignId = d.id;
-        break;
-      }
-    }
-    if (sentinelDesignId == null) {
-      final created = await createDesign(
-        lotId: lotId,
-        designName: kColourOnlyDesignSentinel,
-        notes: 'Colour-only lot variants',
-      );
-      sentinelDesignId = created.id;
-    }
-    return createDesignColour(
-      lotDesignId: sentinelDesignId,
-      colourName: colourName,
-      colourHex: colourHex,
-      initialQuantity: initialQuantity,
-      unitPricePaise: unitPricePaise,
-      notes: notes,
-    );
-  }
+  }) => _delegate.addColourDirectlyToLot(
+    lotId: lotId,
+    colourName: colourName,
+    colourHex: colourHex,
+    initialQuantity: initialQuantity,
+    unitPricePaise: unitPricePaise,
+    notes: notes,
+  );
 
   @override
   Future<DesignColourEntity> createDesignColour({
@@ -1305,92 +1058,14 @@ final class LotRepositoryImpl implements LotRepository {
     required int initialQuantity,
     required int unitPricePaise,
     String? notes,
-  }) async {
-    final cleanName = colourName.trim();
-    if (cleanName.isEmpty) {
-      throw ArgumentError('Colour name cannot be empty.');
-    }
-    if (initialQuantity <= 0) {
-      throw ArgumentError('Initial quantity must be greater than zero.');
-    }
-    if (unitPricePaise < 0) {
-      throw ArgumentError('Unit price cannot be negative.');
-    }
-    if (cleanName.length > ValidationLimits.maxShortNameLength ||
-        (notes?.trim().length ?? 0) > ValidationLimits.maxNotesLength) {
-      throw const DomainValidationException(
-        'text_too_long',
-        'Colour name or notes exceed maximum allowed length.',
-      );
-    }
-    if (initialQuantity > ValidationLimits.maxQuantity) {
-      throw const DomainValidationException(
-        'quantity_too_large',
-        'Initial quantity exceeds maximum allowed limit.',
-      );
-    }
-    if (unitPricePaise > ValidationLimits.maxAmountPaise) {
-      throw const DomainValidationException(
-        'amount_too_large',
-        'Unit price exceeds maximum allowed limit.',
-      );
-    }
-    if (!AppValidators.hexColorValidator(colourHex).isValid) {
-      throw const DomainValidationException(
-        'invalid_hex_color',
-        'Invalid hex colour code.',
-      );
-    }
-
-    return _txRunner.runInTransaction(() async {
-      final parentDesign = await _db.lotDao.findDesignById(lotDesignId);
-      if (parentDesign == null || parentDesign.deletedAt != null) {
-        throw const LocalStorageException('Parent design not found.');
-      }
-      final now = IstDateTimeHelper.nowUtcMillis();
-      final id = _idGenerator.nextEntityId();
-      final actor = await _currentActor();
-
-      await _db.lotDao.insertDesignColour(
-        DesignColoursCompanion(
-          id: Value(id),
-          lotDesignId: Value(lotDesignId),
-          colourName: Value(cleanName),
-          colourHex: Value(_nullIfBlank(colourHex)),
-          initialQuantity: Value(initialQuantity),
-          unitPricePaise: Value(unitPricePaise),
-          notes: Value(_nullIfBlank(notes)),
-          createdBy: Value(actor),
-          updatedBy: Value(actor),
-          createdAt: Value(now),
-          updatedAt: Value(now),
-        ),
-      );
-
-      await _db.attachmentAuditDao.insertAuditLog(
-        AuditLogsCompanion(
-          id: Value(_idGenerator.nextEntityId()),
-          entityType: const Value('design_colours'),
-          entityId: Value(id),
-          actionType: const Value('CREATE'),
-          actor: Value(actor),
-          newValueJson: Value(
-            jsonEncode({
-              'lot_design_id': lotDesignId,
-              'colour_name': cleanName,
-              'initial_quantity': initialQuantity,
-              'unit_price_paise': unitPricePaise,
-            }),
-          ),
-          transactionAt: Value(now),
-          recordedAt: Value(now),
-        ),
-      );
-
-      final created = await _db.lotDao.findDesignColourById(id);
-      return _colourToEntity(created!);
-    });
-  }
+  }) => _delegate.createDesignColour(
+    lotDesignId: lotDesignId,
+    colourName: colourName,
+    colourHex: colourHex,
+    initialQuantity: initialQuantity,
+    unitPricePaise: unitPricePaise,
+    notes: notes,
+  );
 
   @override
   Future<DesignColourEntity> updateDesignColour({
@@ -1400,152 +1075,18 @@ final class LotRepositoryImpl implements LotRepository {
     required int initialQuantity,
     required int unitPricePaise,
     String? notes,
-  }) async {
-    final cleanName = colourName.trim();
-    if (cleanName.isEmpty) {
-      throw ArgumentError('Colour name cannot be empty.');
-    }
-    if (initialQuantity <= 0) {
-      throw ArgumentError('Initial quantity must be greater than zero.');
-    }
-    if (unitPricePaise < 0) {
-      throw ArgumentError('Unit price cannot be negative.');
-    }
-    if (cleanName.length > ValidationLimits.maxShortNameLength ||
-        (notes?.trim().length ?? 0) > ValidationLimits.maxNotesLength) {
-      throw const DomainValidationException(
-        'text_too_long',
-        'Colour name or notes exceed maximum allowed length.',
-      );
-    }
-    if (initialQuantity > ValidationLimits.maxQuantity) {
-      throw const DomainValidationException(
-        'quantity_too_large',
-        'Initial quantity exceeds maximum allowed limit.',
-      );
-    }
-    if (unitPricePaise > ValidationLimits.maxAmountPaise) {
-      throw const DomainValidationException(
-        'amount_too_large',
-        'Unit price exceeds maximum allowed limit.',
-      );
-    }
-    if (!AppValidators.hexColorValidator(colourHex).isValid) {
-      throw const DomainValidationException(
-        'invalid_hex_color',
-        'Invalid hex colour code.',
-      );
-    }
-
-    return _txRunner.runInTransaction(() async {
-      final existing = await _db.lotDao.findDesignColourById(designColourId);
-      if (existing == null || existing.deletedAt != null) {
-        throw const LocalStorageException('Design colour not found.');
-      }
-
-      // Atomic stock integrity guard: never allow reducing initialQuantity below
-      // committed/damaged/settled stock (which would produce negative in-house stock).
-      if (initialQuantity < existing.initialQuantity) {
-        final movementRows = await _db.stockMovementDao
-            .getMovementsForDesignColour(designColourId);
-        if (movementRows.isNotEmpty) {
-          final movements = movementRows.map(_movementRowToEntity).toList();
-          final simulated = const StockCalculator()
-              .calculateDesignColourBalance(
-                designColourId: existing.id,
-                lotId: '',
-                lotNumber: '',
-                lotDesignId: existing.lotDesignId,
-                designName: '',
-                colourName: existing.colourName,
-                unitPricePaise: unitPricePaise,
-                initialQuantity: initialQuantity,
-                allMovementsForColour: movements,
-              );
-          if (simulated.physicalAvailableInHouse < 0 ||
-              simulated.totalGoodPhysicalStock < 0) {
-            throw const DomainValidationException(
-              'quantity_below_committed_stock',
-              'Initial quantity cannot be reduced below stock already issued, damaged, or settled.',
-            );
-          }
-        }
-      }
-      final now = IstDateTimeHelper.nowUtcMillis();
-      final actor = await _currentActor();
-
-      await _db.lotDao.updateDesignColourById(
-        designColourId,
-        DesignColoursCompanion(
-          colourName: Value(cleanName),
-          colourHex: Value(_nullIfBlank(colourHex)),
-          initialQuantity: Value(initialQuantity),
-          unitPricePaise: Value(unitPricePaise),
-          notes: Value(_nullIfBlank(notes)),
-          updatedBy: Value(actor),
-          updatedAt: Value(now),
-        ),
-      );
-
-      await _db.attachmentAuditDao.insertAuditLog(
-        AuditLogsCompanion(
-          id: Value(_idGenerator.nextEntityId()),
-          entityType: const Value('design_colours'),
-          entityId: Value(designColourId),
-          actionType: const Value('UPDATE'),
-          actor: Value(actor),
-          previousValueJson: Value(
-            jsonEncode({
-              'colour_name': existing.colourName,
-              'initial_quantity': existing.initialQuantity,
-              'unit_price_paise': existing.unitPricePaise,
-            }),
-          ),
-          newValueJson: Value(
-            jsonEncode({
-              'colour_name': cleanName,
-              'initial_quantity': initialQuantity,
-              'unit_price_paise': unitPricePaise,
-            }),
-          ),
-          transactionAt: Value(now),
-          recordedAt: Value(now),
-        ),
-      );
-
-      final updated = await _db.lotDao.findDesignColourById(designColourId);
-      return _colourToEntity(updated!);
-    });
-  }
+  }) => _delegate.updateDesignColour(
+    designColourId: designColourId,
+    colourName: colourName,
+    colourHex: colourHex,
+    initialQuantity: initialQuantity,
+    unitPricePaise: unitPricePaise,
+    notes: notes,
+  );
 
   @override
-  Future<void> deleteDesignColour(String designColourId) async {
-    await _txRunner.runInTransaction(() async {
-      final existing = await _db.lotDao.findDesignColourById(designColourId);
-      if (existing == null || existing.deletedAt != null) return;
-      final now = IstDateTimeHelper.nowUtcMillis();
-      final actor = await _currentActor();
-
-      await _db.lotDao.softDeleteDesignColour(designColourId, now, actor);
-      await _db.attachmentAuditDao.insertAuditLog(
-        AuditLogsCompanion(
-          id: Value(_idGenerator.nextEntityId()),
-          entityType: const Value('design_colours'),
-          entityId: Value(designColourId),
-          actionType: const Value('SOFT_DELETE'),
-          actor: Value(actor),
-          previousValueJson: Value(
-            jsonEncode({
-              'colour_name': existing.colourName,
-              'initial_quantity': existing.initialQuantity,
-            }),
-          ),
-          transactionAt: Value(now),
-          recordedAt: Value(now),
-        ),
-      );
-    });
-  }
+  Future<void> deleteDesignColour(String designColourId) =>
+      _delegate.deleteDesignColour(designColourId);
 
   @override
   Future<LotAttachmentEntity> addLotPhoto({
@@ -1554,203 +1095,33 @@ final class LotRepositoryImpl implements LotRepository {
     required String fileExtension,
     required String mimeType,
     String? caption,
-  }) async {
-    // 1. Write file to private media storage first
-    final saved = await _mediaStorage.saveBytes(
-      bytes: bytes,
-      category: MediaCategory.lots,
-      entityId: lotId,
-      fileExtension: fileExtension,
-      mimeType: mimeType,
-    );
-
-    // 2. Persist attachment metadata + audit atomically; clean up orphaned file on failure
-    try {
-      return await _txRunner.runInTransaction(() async {
-        final parentLot = await _db.lotDao.findLotById(lotId);
-        if (parentLot == null || parentLot.deletedAt != null) {
-          throw const LocalStorageException(
-            'Cannot attach photo: parent lot not found.',
-          );
-        }
-
-        final now = IstDateTimeHelper.nowUtcMillis();
-        final id = _idGenerator.nextEntityId();
-        final actor = await _currentActor();
-
-        await _db.attachmentAuditDao.insertAttachment(
-          AttachmentsCompanion(
-            id: Value(id),
-            entityType: const Value('LOT'),
-            entityId: Value(lotId),
-            relativePath: Value(saved.relativePath),
-            mimeType: Value(saved.mimeType),
-            fileSizeBytes: Value(saved.fileSizeBytes),
-            sha256: Value(saved.sha256Hex),
-            caption: Value(_nullIfBlank(caption)),
-            createdAt: Value(now),
-            updatedAt: Value(now),
-          ),
-        );
-
-        await _db.attachmentAuditDao.insertAuditLog(
-          AuditLogsCompanion(
-            id: Value(_idGenerator.nextEntityId()),
-            entityType: const Value('attachments'),
-            entityId: Value(id),
-            actionType: const Value('CREATE'),
-            actor: Value(actor),
-            newValueJson: Value(
-              jsonEncode({
-                'entity_type': 'LOT',
-                'entity_id': lotId,
-                'relative_path': saved.relativePath,
-                'sha256': saved.sha256Hex,
-              }),
-            ),
-            transactionAt: Value(now),
-            recordedAt: Value(now),
-          ),
-        );
-
-        return LotAttachmentEntity(
-          id: id,
-          lotId: lotId,
-          relativePath: saved.relativePath,
-          mimeType: saved.mimeType,
-          fileSizeBytes: saved.fileSizeBytes,
-          sha256: saved.sha256Hex,
-          caption: _nullIfBlank(caption),
-          createdAt: now,
-        );
-      });
-    } catch (_) {
-      // Orphan-file cleanup guarantee if DB write fails
-      await _mediaStorage.deleteIfExists(saved.relativePath);
-      rethrow;
-    }
-  }
+  }) => _delegate.addLotPhoto(
+    lotId: lotId,
+    bytes: bytes,
+    fileExtension: fileExtension,
+    mimeType: mimeType,
+    caption: caption,
+  );
 
   @override
-  Future<void> removeLotPhoto(String attachmentId) async {
-    await _txRunner.runInTransaction(() async {
-      final now = IstDateTimeHelper.nowUtcMillis();
-      final actor = await _currentActor();
-      await _db.attachmentAuditDao.softDeleteAttachment(attachmentId, now);
-      await _db.attachmentAuditDao.insertAuditLog(
-        AuditLogsCompanion(
-          id: Value(_idGenerator.nextEntityId()),
-          entityType: const Value('attachments'),
-          entityId: Value(attachmentId),
-          actionType: const Value('SOFT_DELETE'),
-          actor: Value(actor),
-          transactionAt: Value(now),
-          recordedAt: Value(now),
-        ),
-      );
-    });
-  }
+  Future<void> removeLotPhoto(String attachmentId) =>
+      _delegate.removeLotPhoto(attachmentId);
 
   @override
-  Future<Uint8List?> readPhotoBytes(String relativePath) {
-    return _mediaStorage.readBytes(relativePath);
-  }
+  Future<Uint8List?> readPhotoBytes(String relativePath) =>
+      _delegate.readPhotoBytes(relativePath);
 
   @override
   Future<List<LotEntity>> getAllActiveLots() async {
     final rows = await _db.lotDao.getActiveLots();
-    return rows.map(_lotToEntity).toList();
+    return rows.map(LotMediaAndVariantDelegate.lotToEntity).toList();
   }
 
   @override
-  Future<List<LotDesignEntity>> getAllActiveDesigns() async {
-    final rows = await _db.lotDao.getAllActiveDesigns();
-    return rows.map(_designToEntity).toList();
-  }
+  Future<List<LotDesignEntity>> getAllActiveDesigns() =>
+      _delegate.getAllActiveDesigns();
 
   @override
-  Future<List<DesignColourEntity>> getAllActiveDesignColours() async {
-    final rows = await _db.lotDao.getAllActiveDesignColours();
-    return rows.map(_colourToEntity).toList();
-  }
-
-  String? _nullIfBlank(String? value) {
-    final trimmed = value?.trim();
-    return (trimmed == null || trimmed.isEmpty) ? null : trimmed;
-  }
-
-  LotEntity _lotToEntity(LotRow row) => LotEntity(
-    id: row.id,
-    lotNumber: row.lotNumber,
-    title: row.title,
-    notes: row.notes,
-    status: LotStatus.fromDbValue(row.status),
-    transactionAt: row.transactionAt,
-    recordedAt: row.recordedAt,
-    createdAt: row.createdAt,
-    updatedAt: row.updatedAt,
-  );
-
-  LotDesignEntity _designToEntity(LotDesignRow row) => LotDesignEntity(
-    id: row.id,
-    lotId: row.lotId,
-    designName: row.designName,
-    notes: row.notes,
-    createdAt: row.createdAt,
-    updatedAt: row.updatedAt,
-  );
-
-  DesignColourEntity _colourToEntity(DesignColourRow row) => DesignColourEntity(
-    id: row.id,
-    lotDesignId: row.lotDesignId,
-    colourName: row.colourName,
-    colourHex: row.colourHex,
-    initialQuantity: row.initialQuantity,
-    unitPricePaise: row.unitPricePaise,
-    notes: row.notes,
-    createdAt: row.createdAt,
-    updatedAt: row.updatedAt,
-  );
-
-  LotAttachmentEntity _attachmentToEntity(AttachmentRow row) =>
-      LotAttachmentEntity(
-        id: row.id,
-        lotId: row.entityId,
-        relativePath: row.relativePath,
-        mimeType: row.mimeType,
-        fileSizeBytes: row.fileSizeBytes,
-        sha256: row.sha256,
-        caption: row.caption,
-        createdAt: row.createdAt,
-      );
-
-  StockMovementEntity _movementRowToEntity(StockMovementRow row) =>
-      StockMovementEntity(
-        id: row.id,
-        lotId: row.lotId,
-        lotDesignId: row.lotDesignId,
-        designColourId: row.designColourId,
-        processId: row.processId,
-        memberId: row.memberId,
-        parentIssueId: row.parentIssueId,
-        reversesMovementId: row.reversesMovementId,
-        clientRequestId: row.clientRequestId,
-        movementType: StockMovementType.fromDbValue(row.movementType),
-        quantity: row.quantity,
-        sourceRateId: row.sourceRateId,
-        appliedRatePaise: row.appliedRatePaise,
-        isRateOverridden: row.isRateOverridden == 1,
-        overrideReason: row.overrideReason,
-        lockedBillingMode: row.lockedBillingMode != null
-            ? BillingMode.fromDbValue(row.lockedBillingMode!)
-            : null,
-        lockedIncludeDamaged: row.lockedIncludeDamaged == 1,
-        reason: row.reason,
-        notes: row.notes,
-        transactionAt: row.transactionAt,
-        recordedAt: row.recordedAt,
-        createdBy: row.createdBy,
-        createdAt: row.createdAt,
-        updatedAt: row.updatedAt,
-      );
+  Future<List<DesignColourEntity>> getAllActiveDesignColours() =>
+      _delegate.getAllActiveDesignColours();
 }

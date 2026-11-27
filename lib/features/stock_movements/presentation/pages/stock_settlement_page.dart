@@ -1,15 +1,14 @@
 import 'package:business_manager/core/design_system/app_colors.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/design_system/app_typography.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/error/exceptions.dart';
-import 'package:business_manager/core/localization/domain_label_localizer.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
-import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/accounting/domain/calculators/labour_calculator.dart';
@@ -19,14 +18,12 @@ import 'package:business_manager/features/processes/domain/repositories/process_
 import 'package:business_manager/features/production_history/domain/entities/production_history_entities.dart';
 import 'package:business_manager/features/production_history/domain/repositories/production_history_repository.dart';
 import 'package:business_manager/features/security/presentation/widgets/security_reauth_dialog.dart';
-import 'package:business_manager/features/slips/presentation/slip_builder_helper.dart';
-import 'package:business_manager/features/slips/presentation/widgets/slip_share_sheet.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 import 'package:business_manager/features/stock_movements/domain/repositories/stock_movement_repository.dart';
+import 'package:business_manager/features/stock_movements/presentation/widgets/stock_settlement_sections.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Streamlined Receive Return & Settlement workflow (Steps 2–5) linked to an
 /// open ISSUE movement, preserving 100% of domain stock & labour rules.
@@ -42,7 +39,6 @@ final class StockSettlementPage extends StatefulWidget {
 final class _StockSettlementPageState extends State<StockSettlementPage> {
   final _dirty = AppFormDirtyTracker();
 
-  /// setState for a user edit: also marks the form as unsaved.
   void _edit(VoidCallback fn) {
     _dirty.markDirty();
     setState(fn);
@@ -62,7 +58,6 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
   final _shortageCtrl = TextEditingController();
   final _reasonCtrl = TextEditingController();
   final _notesCtrl = TextEditingController();
-
   final _reasonFocus = FocusNode();
 
   final _repo = getIt<StockMovementRepository>();
@@ -84,8 +79,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
   String? _submitError;
   int _transactionAtUtc = IstDateTimeHelper.nowUtcMillis();
 
-  // Step 5 Success state
-  _ReturnSuccessInfo? _successInfo;
+  ReturnSuccessInfo? _successInfo;
 
   @override
   void initState() {
@@ -272,7 +266,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
         setState(() {
           _saving = false;
           _detail = refreshed ?? _detail;
-          _successInfo = _ReturnSuccessInfo(
+          _successInfo = ReturnSuccessInfo(
             workerId: _detail!.issueView.movement.memberId,
             designColourId: _detail!.issueView.movement.designColourId,
             lotNumber: _detail!.issueView.lotNumber,
@@ -324,7 +318,6 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
       return;
     }
 
-    // Rule 6: Require PIN/Biometric authorization before approving accepted qty
     bool authorizedViaPin = false;
     if (good > 0 || damaged > 0) {
       final auth = await SecurityReauthDialog.verifyForApproval(
@@ -367,7 +360,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
       setState(() {
         _saving = false;
         _detail = refreshed ?? _detail;
-        _successInfo = _ReturnSuccessInfo(
+        _successInfo = ReturnSuccessInfo(
           workerId: _detail!.issueView.movement.memberId,
           designColourId: issue.designColourId,
           lotNumber: _detail!.issueView.lotNumber,
@@ -436,12 +429,19 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
     }
 
     if (_successInfo != null) {
-      return _buildSuccessView(context, _successInfo!);
+      return StockSettlementSuccessView(
+        issueId: widget.issueId,
+        info: _successInfo!,
+        otherActiveProcesses: _otherActiveProcesses,
+        transactionAtUtc: _transactionAtUtc,
+        notes: _notesCtrl.text,
+        onReceiveAnother: _receiveAnother,
+        onViewDetails: () => setState(() => _successInfo = null),
+      );
     }
 
     final detail = _detail!;
-    final view = detail.issueView;
-    final m = view.movement;
+    final m = detail.issueView.movement;
     final semantic = context.semanticColors;
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -460,17 +460,10 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
       damaged: damaged,
     );
 
-    final previouslySettled =
-        view.returnedGoodQty +
-        view.returnedDamagedQty +
-        view.lostQty +
-        view.shortageQty;
-
     return AppUnsavedChangesGuard.tracked(
       tracker: _dirty,
       child: AppScaffold(
         title: l10n.stockSettlementHeading,
-        // Save stays pinned at the bottom while entering quantities.
         bottomAction: detail.remainingPending > 0
             ? AppButton(
                 label: l10n.stockConfirmSaveReturnAction,
@@ -490,71 +483,16 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
           child: ListView(
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: [
-              // Parent Issue Summary Header Card
-              AppCard(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AppHeading(
-                      '${view.workerName ?? '-'} • ${view.processName ?? '-'}',
-                      level: AppHeadingLevel.h3,
-                    ),
-                    const SizedBox(height: AppSpacing.xxs),
-                    AppText(
-                      '${view.lotNumber} • ${view.designName} • ${view.colourName}',
-                      variant: AppTextVariant.bodySmall,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                    const SizedBox(height: AppSpacing.sm),
-                    Wrap(
-                      spacing: AppSpacing.xs,
-                      runSpacing: AppSpacing.xs,
-                      children: [
-                        AppStatusBadge(
-                          label: '${l10n.stockIssuedLabel}: ${m.quantity}',
-                          tone: AppStatusTone.info,
-                        ),
-                        AppStatusBadge(
-                          label:
-                              '${l10n.stockPreviouslyReturnedLabel}: $previouslySettled',
-                          tone: AppStatusTone.good,
-                        ),
-                        AppStatusBadge(
-                          label:
-                              '${l10n.stockRemainingPendingLabel}: ${detail.remainingPending}',
-                          tone: detail.remainingPending > 0
-                              ? AppStatusTone.pending
-                              : AppStatusTone.good,
-                          icon: AppIcons.pending,
-                        ),
-                        AppStatusBadge(
-                          label:
-                              '${MoneyFormatter.formatPaise(m.appliedRatePaise)} ${l10n.ratesPerPieceSuffix}',
-                          tone: AppStatusTone.neutral,
-                          icon: AppIcons.lock,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: AppSpacing.xs),
-                    AppText(
-                      '${DomainLabelLocalizer.billingMode(l10n, lockedMode)} • ${IstDateTimeHelper.formatIstDateTime(m.transactionAt, locale: localeCode)}',
-                      variant: AppTextVariant.bodySmall,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  ],
-                ),
-              ),
+              StockSettlementHeaderCard(detail: detail, localeCode: localeCode),
 
               if (detail.remainingPending > 0) ...[
                 const SizedBox(height: AppSpacing.md),
 
-                // STEP 2: ENTER RETURN QUANTITIES + LIVE REMAINING INDICATOR
                 AppCard(
                   borderColor: isOverReturn ? colorScheme.error : null,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // Live Remaining Pending Bar
                       Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: AppSpacing.md,
@@ -615,7 +553,6 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                         ),
                       ),
                       const SizedBox(height: AppSpacing.md),
-                      // Flexible 2-Stage Return Mode selector (Rule 2 & Rule 6)
                       AppRadio<ProductionReturnMode>(
                         groupValue: _returnMode,
                         onChanged: (mode) {
@@ -701,7 +638,6 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                         ],
                       ),
                       const SizedBox(height: AppSpacing.sm),
-                      // Good Returned (Primary Green)
                       AppTextField(
                         fieldKey: _goodFieldKey,
                         controller: _goodCtrl,
@@ -725,7 +661,6 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                         onChanged: (_) => setState(() => _submitError = null),
                       ),
                       const SizedBox(height: AppSpacing.md),
-                      // Damaged Returned (Red)
                       AppTextField(
                         fieldKey: _damagedFieldKey,
                         controller: _damagedCtrl,
@@ -749,7 +684,6 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                         onChanged: (_) => setState(() => _submitError = null),
                       ),
                       const SizedBox(height: AppSpacing.md),
-                      // Lost vs Shortage clearly separated with helper text
                       AppTextField(
                         fieldKey: _lostFieldKey,
                         controller: _lostCtrl,
@@ -814,8 +748,9 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                         onChanged: (_) => setState(() => _submitError = null),
                       ),
                       Theme(
-                        data: Theme.of(context)
-                            .copyWith(dividerColor: Colors.transparent),
+                        data: Theme.of(
+                          context,
+                        ).copyWith(dividerColor: Colors.transparent),
                         child: ExpansionTile(
                           tilePadding: EdgeInsets.zero,
                           initiallyExpanded: _showAdvanced,
@@ -859,435 +794,29 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                 ),
                 const SizedBox(height: AppSpacing.md),
 
-                // STEP 3: CONSEQUENCES & LABOUR IMPACT SUMMARY + STEP 4 SAVE
-                AppCard(
-                  color: colorScheme.surfaceContainer,
-                  elevated: false,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      AppHeading(
-                        l10n.stockConsequencesTitle,
-                        level: AppHeadingLevel.h3,
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      if (good > 0)
-                        _ImpactLine(
-                          icon: AppIcons.successOutline,
-                          color: semantic.goodStock,
-                          label: l10n.stockConsequenceGood,
-                          value: '+$good ${l10n.piecesUnit}',
-                        ),
-                      if (damaged > 0)
-                        _ImpactLine(
-                          icon: AppIcons.damaged,
-                          color: semantic.damaged,
-                          label: l10n.stockConsequenceDamaged,
-                          value: '+$damaged ${l10n.piecesUnit}',
-                        ),
-                      if (lost > 0)
-                        _ImpactLine(
-                          icon: AppIcons.help,
-                          color: semantic.advanceCredit,
-                          label: l10n.stockConsequenceLost,
-                          value: '$lost ${l10n.piecesUnit}',
-                        ),
-                      if (shortage > 0)
-                        _ImpactLine(
-                          icon: AppIcons.remove,
-                          color: semantic.advanceCredit,
-                          label: l10n.stockConsequenceShortage,
-                          value: '$shortage ${l10n.piecesUnit}',
-                        ),
-                      _ImpactLine(
-                        icon: AppIcons.pending,
-                        color: remainingAfter > 0
-                            ? semantic.pending
-                            : semantic.goodStock,
-                        label: l10n.stockConsequencePending,
-                        value:
-                            '${remainingAfter < 0 ? 0 : remainingAfter} ${l10n.piecesUnit}',
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
-                        child: AppDivider(),
-                      ),
-                      if (lockedMode == BillingMode.givenQty)
-                        AppText(
-                          l10n.stockConsequenceLabourAlreadyGiven,
-                          variant: AppTextVariant.bodySmall,
-                          color: colorScheme.onSurfaceVariant,
-                        )
-                      else if (labourEarned > 0)
-                        _ImpactLine(
-                          icon: AppIcons.accounting,
-                          color: semantic.goodStock,
-                          label: l10n.stockConsequenceLabourEarned,
-                          value: MoneyFormatter.formatPaise(labourEarned),
-                        )
-                      else
-                        AppText(
-                          l10n.stockConsequenceLabourNone,
-                          variant: AppTextVariant.bodySmall,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      if (_submitError != null) ...[
-                        const SizedBox(height: AppSpacing.sm),
-                        AppStatusBadge(
-                          label: _submitError!,
-                          tone: AppStatusTone.damaged,
-                          icon: AppIcons.error,
-                        ),
-                      ],
-                    ],
-                  ),
+                StockSettlementConsequencesCard(
+                  good: good,
+                  damaged: damaged,
+                  lost: lost,
+                  shortage: shortage,
+                  remainingAfter: remainingAfter,
+                  lockedMode: lockedMode,
+                  labourEarned: labourEarned,
+                  submitError: _submitError,
                 ),
               ],
 
-              // Existing child settlements history (with localized movement labels!)
               if (detail.childSettlements.isNotEmpty) ...[
                 const SizedBox(height: AppSpacing.lg),
-                AppHeading(l10n.stockDetailsHeading, level: AppHeadingLevel.h3),
-                const SizedBox(height: AppSpacing.sm),
-                for (final child in detail.childSettlements)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                    child: AppCard(
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                AppStatusBadge(
-                                  label: DomainLabelLocalizer.movementType(
-                                    l10n,
-                                    child.movement.movementType,
-                                  ),
-                                  tone: DomainLabelLocalizer.movementTone(
-                                    child.movement.movementType,
-                                  ),
-                                ),
-                                if (child.movement.reason != null) ...[
-                                  const SizedBox(height: AppSpacing.xs),
-                                  AppText(
-                                    child.movement.reason!,
-                                    variant: AppTextVariant.bodySmall,
-                                  ),
-                                ],
-                                const SizedBox(height: AppSpacing.xs),
-                                AppText(
-                                  IstDateTimeHelper.formatIstDateTime(
-                                    child.movement.transactionAt,
-                                    locale: localeCode,
-                                  ),
-                                  variant: AppTextVariant.bodySmall,
-                                  color: colorScheme.onSurfaceVariant,
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: AppSpacing.sm),
-                          if (child.isReversed)
-                            AppStatusBadge(
-                              label: l10n.stockReversedBadge,
-                              tone: AppStatusTone.neutral,
-                            )
-                          else
-                            AppText(
-                              '${child.movement.quantity} ${l10n.piecesUnit}',
-                              variant: AppTextVariant.numeric,
-                              fontWeight: FontWeight.w700,
-                            ),
-                        ],
-                      ),
-                    ),
-                  ),
+                StockSettlementChildHistory(
+                  settlements: detail.childSettlements,
+                  localeCode: localeCode,
+                ),
               ],
               const SizedBox(height: AppSpacing.xl),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildSuccessView(BuildContext context, _ReturnSuccessInfo info) {
-    final l10n = context.l10n;
-    final semantic = context.semanticColors;
-
-    return AppScaffold(
-      title: l10n.stockSettlementHeading,
-      body: ListView(
-        children: [
-          AppCard(
-            borderColor: semantic.goodStock.withValues(alpha: 0.45),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Center(
-                  child: Container(
-                    width: 64,
-                    height: 64,
-                    decoration: BoxDecoration(
-                      color: semantic.goodStockContainer,
-                      borderRadius: AppRadius.fullBorder,
-                    ),
-                    child: Icon(
-                      AppIcons.success,
-                      color: semantic.goodStock,
-                      size: 36,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                Text(
-                  l10n.stockReturnSuccessTitle,
-                  style: Theme.of(context).textTheme.titleLarge
-                      ?.copyWith(fontWeight: FontWeight.w700),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                AppText(
-                  '${info.workerName} • ${info.processName} • ${info.lotNumber} • ${info.designName} • ${info.colourName}',
-                  variant: AppTextVariant.bodySmall,
-                  textAlign: TextAlign.center,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-                const SizedBox(height: AppSpacing.md),
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  spacing: AppSpacing.xs,
-                  runSpacing: AppSpacing.xs,
-                  children: [
-                    if (info.goodQty > 0)
-                      AppStatusBadge(
-                        label:
-                            '${l10n.stockGoodReturnedLabel}: ${info.goodQty}',
-                        tone: AppStatusTone.good,
-                      ),
-                    if (info.damagedQty > 0)
-                      AppStatusBadge(
-                        label:
-                            '${l10n.stockDamagedBucketLabel}: ${info.damagedQty}',
-                        tone: AppStatusTone.damaged,
-                      ),
-                    if (info.lostQty > 0)
-                      AppStatusBadge(
-                        label: '${l10n.stockLostLabel}: ${info.lostQty}',
-                        tone: AppStatusTone.info,
-                      ),
-                    if (info.shortageQty > 0)
-                      AppStatusBadge(
-                        label:
-                            '${l10n.stockShortageLabel}: ${info.shortageQty}',
-                        tone: AppStatusTone.info,
-                      ),
-                  ],
-                ),
-                const SizedBox(height: AppSpacing.md),
-                AppCard(
-                  elevated: false,
-                  color: info.updatedPending == 0
-                      ? semantic.goodStockContainer.withValues(alpha: 0.55)
-                      : semantic.pendingContainer.withValues(alpha: 0.55),
-                  child: AppActionRow(
-                    content: AppText(
-                      l10n.stockReturnUpdatedPendingLabel,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    actions: [
-                      AppStatusBadge(
-                        label: info.updatedPending == 0
-                            ? l10n.stockReturnFullySettledBadge
-                            : '${info.updatedPending} ${l10n.piecesUnit}',
-                        tone: info.updatedPending == 0
-                            ? AppStatusTone.good
-                            : AppStatusTone.pending,
-                      ),
-                    ],
-                  ),
-                ),
-                if (info.labourEarnedPaise > 0) ...[
-                  const SizedBox(height: AppSpacing.sm),
-                  _ImpactLine(
-                    icon: AppIcons.accounting,
-                    color: semantic.goodStock,
-                    label: l10n.stockConsequenceLabourEarned,
-                    value: MoneyFormatter.formatPaise(info.labourEarnedPaise),
-                  ),
-                ],
-                const SizedBox(height: AppSpacing.lg),
-                AppButton(
-                  label: l10n.slipShareReturnAction,
-                  icon: AppIcons.share,
-                  variant: AppButtonVariant.outlined,
-                  isExpanded: true,
-                  onPressed: () async {
-                    final slip = await SlipBuilderHelper.buildReturnQcSlip(
-                      referenceId:
-                          'RET-${widget.issueId.length > 6 ? widget.issueId.substring(0, 6).toUpperCase() : widget.issueId.toUpperCase()}',
-                      lotNumber: info.lotNumber,
-                      designName: info.designName,
-                      colourName: info.colourName,
-                      processName: info.processName,
-                      workerName: info.workerName,
-                      goodQty: info.goodQty,
-                      damagedQty: info.damagedQty,
-                      lostQty: info.lostQty,
-                      shortageQty: info.shortageQty,
-                      labourEarnedPaise: info.labourEarnedPaise,
-                      transactionAtUtcMillis: _transactionAtUtc,
-                      notes: _notesCtrl.text,
-                    );
-                    if (context.mounted) {
-                      await SlipShareSheet.show(context, slip);
-                    }
-                  },
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                if (info.goodQty > 0) ...[
-                  AppButton(
-                    label: l10n.stockIssueNextProcessAction,
-                    icon: AppIcons.stockIssue,
-                    isExpanded: true,
-                    onPressed: () => context.pushReplacement(
-                      RoutePaths.stockIssue(
-                        designColourId: info.designColourId,
-                      ),
-                    ),
-                  ),
-                  if (_otherActiveProcesses.isNotEmpty) ...[
-                    const SizedBox(height: AppSpacing.sm),
-                    Wrap(
-                      alignment: WrapAlignment.center,
-                      spacing: AppSpacing.xs,
-                      runSpacing: AppSpacing.xs,
-                      children: [
-                        for (final proc in _otherActiveProcesses.take(4))
-                          AppChip.action(
-                            icon: AppIcons.stockIssue,
-                            label: proc.name,
-                            onPressed: () => context.pushReplacement(
-                              RoutePaths.stockIssue(
-                                designColourId: info.designColourId,
-                                processId: proc.id,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ],
-                  const SizedBox(height: AppSpacing.sm),
-                ],
-                if (info.workerId != null) ...[
-                  AppButton(
-                    label: l10n.uxActionRecordPayment,
-                    icon: AppIcons.payment,
-                    variant: AppButtonVariant.outlined,
-                    isExpanded: true,
-                    onPressed: () => context.pushReplacement(
-                      RoutePaths.paymentCreate(workerId: info.workerId),
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                ],
-                AppButton(
-                  label: l10n.stockReceiveAnotherReturnAction,
-                  icon: AppIcons.receiveReturn,
-                  variant: info.goodQty > 0
-                      ? AppButtonVariant.secondary
-                      : AppButtonVariant.primary,
-                  isExpanded: true,
-                  onPressed: _receiveAnother,
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                AppButton(
-                  label: l10n.stockDetailsHeading,
-                  variant: AppButtonVariant.outlined,
-                  isExpanded: true,
-                  onPressed: () => setState(() => _successInfo = null),
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                AppButton(
-                  label: l10n.actionDone,
-                  variant: AppButtonVariant.text,
-                  isExpanded: true,
-                  onPressed: () => context.pop(true),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-final class _ReturnSuccessInfo {
-  const _ReturnSuccessInfo({
-    required this.workerId,
-    required this.designColourId,
-    required this.lotNumber,
-    required this.designName,
-    required this.colourName,
-    required this.workerName,
-    required this.processName,
-    required this.goodQty,
-    required this.damagedQty,
-    required this.lostQty,
-    required this.shortageQty,
-    required this.updatedPending,
-    required this.labourEarnedPaise,
-  });
-
-  final String? workerId;
-  final String designColourId;
-  final String lotNumber;
-  final String designName;
-  final String colourName;
-  final String workerName;
-  final String processName;
-  final int goodQty;
-  final int damagedQty;
-  final int lostQty;
-  final int shortageQty;
-  final int updatedPending;
-  final int labourEarnedPaise;
-}
-
-final class _ImpactLine extends StatelessWidget {
-  const _ImpactLine({
-    required this.icon,
-    required this.color,
-    required this.label,
-    required this.value,
-  });
-
-  final IconData icon;
-  final Color color;
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, size: 18, color: color),
-          const SizedBox(width: AppSpacing.sm),
-          Expanded(child: AppText(label, variant: AppTextVariant.bodySmall)),
-          const SizedBox(width: AppSpacing.sm),
-          AppText(
-            value,
-            variant: AppTextVariant.numeric,
-            fontWeight: FontWeight.w700,
-            color: color,
-          ),
-        ],
       ),
     );
   }

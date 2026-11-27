@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:business_manager/core/database/app_database.dart';
 import 'package:business_manager/features/auth/domain/entities/auth_entities.dart';
 import 'package:business_manager/features/auth/domain/repositories/auth_repository.dart';
+import 'package:business_manager/features/sync/domain/repositories/sync_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 
@@ -10,17 +10,17 @@ import 'package:injectable/injectable.dart';
 /// Google + Phone OTP login, identity linking, and safe sign-out.
 @lazySingleton
 final class AuthCubit extends Cubit<AuthState> {
-  AuthCubit(this._authRepository, this._db)
+  AuthCubit(this._authRepository, this._syncRepository)
     : super(AuthState(isCloudConfigured: _authRepository.isCloudConfigured));
 
   final AuthRepository _authRepository;
-  final AppDatabase _db;
+  final SyncRepository _syncRepository;
   StreamSubscription<AuthUser?>? _sub;
 
   Future<void> initialize() async {
     final cached = await _authRepository.restoreCachedUser();
     if (cached != null) {
-      await _db.syncDao.updateSessionBinding(
+      await _syncRepository.updateSessionBinding(
         userId: cached.id,
         businessId: cached.businessId,
       );
@@ -45,7 +45,7 @@ final class AuthCubit extends Cubit<AuthState> {
 
     _sub ??= _authRepository.watchAuthUser().listen((user) async {
       if (user == null) {
-        await _db.syncDao.updateSessionBinding(userId: null, businessId: null);
+        await _syncRepository.updateSessionBinding(userId: null, businessId: null);
         emit(
           state.copyWith(
             status: AuthStatus.offlineGuest,
@@ -54,7 +54,7 @@ final class AuthCubit extends Cubit<AuthState> {
           ),
         );
       } else {
-        await _db.syncDao.updateSessionBinding(
+        await _syncRepository.updateSessionBinding(
           userId: user.id,
           businessId: user.businessId,
         );
@@ -85,7 +85,7 @@ final class AuthCubit extends Cubit<AuthState> {
     emit(state.copyWith(isBusy: true, clearError: true));
     try {
       final user = await _authRepository.signInWithGoogle();
-      await _db.syncDao.updateSessionBinding(
+      await _syncRepository.updateSessionBinding(
         userId: user.id,
         businessId: user.businessId,
       );
@@ -147,7 +147,7 @@ final class AuthCubit extends Cubit<AuthState> {
               e164Phone: phone,
               token: token.trim(),
             );
-      await _db.syncDao.updateSessionBinding(
+      await _syncRepository.updateSessionBinding(
         userId: user.id,
         businessId: user.businessId,
       );
@@ -193,7 +193,7 @@ final class AuthCubit extends Cubit<AuthState> {
   Future<void> refreshDevices() async {
     if (!state.isAuthenticated) return;
     try {
-      final session = await _db.syncDao.getSessionState();
+      final session = await _syncRepository.getSessionState();
       final devices = await _authRepository.fetchLinkedDevices(
         currentDeviceId: session.deviceId,
       );
@@ -203,7 +203,8 @@ final class AuthCubit extends Cubit<AuthState> {
     }
   }
 
-  Future<int> getUnsyncedChangesCount() => _db.syncDao.getPendingOutboxCount();
+  Future<int> getUnsyncedChangesCount() =>
+      _syncRepository.getPendingOutboxCount();
 
   Future<bool> reauthenticateViaGoogle() =>
       _authRepository.reauthenticateViaGoogle();
@@ -224,7 +225,7 @@ final class AuthCubit extends Cubit<AuthState> {
     emit(state.copyWith(isBusy: true, clearError: true));
     try {
       await _authRepository.signOut();
-      await _db.syncDao.updateSessionBinding(userId: null, businessId: null);
+      await _syncRepository.updateSessionBinding(userId: null, businessId: null);
       emit(
         state.copyWith(
           status: AuthStatus.offlineGuest,

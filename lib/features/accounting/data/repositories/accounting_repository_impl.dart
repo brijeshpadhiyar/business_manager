@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:business_manager/core/database/app_database.dart';
 import 'package:business_manager/core/database/database_transaction_runner.dart';
+import 'package:business_manager/core/database/mappers/actor_resolver.dart';
+import 'package:business_manager/core/database/mappers/ledger_row_mappers.dart';
 import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
@@ -9,7 +11,6 @@ import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/features/accounting/domain/calculators/ledger_calculator.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:business_manager/features/accounting/domain/repositories/accounting_repository.dart';
-import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
 import 'package:business_manager/features/notifications/data/services/notification_refresh_coordinator.dart';
 import 'package:business_manager/features/stock_movements/domain/calculators/stock_calculator.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
@@ -27,105 +28,17 @@ final class AccountingRepositoryImpl implements AccountingRepository {
   static const LedgerCalculator _ledgerCalc = LedgerCalculator();
   static const StockCalculator _stockCalc = StockCalculator();
 
-  LabourEntryEntity _mapLabour(LabourEntryRow r) => LabourEntryEntity(
-    id: r.id,
-    stockMovementId: r.stockMovementId,
-    reversesLabourEntryId: r.reversesLabourEntryId,
-    memberId: r.memberId,
-    processId: r.processId,
-    lotId: r.lotId,
-    basisType: LabourBasisType.fromDbValue(r.basisType),
-    quantity: r.quantity,
-    ratePaise: r.ratePaise,
-    amountPaise: r.amountPaise,
-    isPayable: r.isPayable == 1,
-    transactionAt: r.transactionAt,
-    recordedAt: r.recordedAt,
-    createdAt: r.createdAt,
-    updatedAt: r.updatedAt,
-  );
-
-  PaymentEntity _mapPayment(PaymentRow r) => PaymentEntity(
-    id: r.id,
-    memberId: r.memberId,
-    paymentType: PaymentType.fromDbValue(r.paymentType),
-    reversesPaymentId: r.reversesPaymentId,
-    clientRequestId: r.clientRequestId,
-    amountPaise: r.amountPaise,
-    paymentMode: PaymentMode.fromDbValue(r.paymentMode),
-    referenceNo: r.referenceNo,
-    reason: r.reason,
-    notes: r.notes,
-    transactionAt: r.transactionAt,
-    recordedAt: r.recordedAt,
-    createdBy: r.createdBy,
-    createdAt: r.createdAt,
-    updatedAt: r.updatedAt,
-  );
-
-  WorkerAdjustmentEntity _mapAdjustment(WorkerLedgerAdjustmentRow r) =>
-      WorkerAdjustmentEntity(
-        id: r.id,
-        memberId: r.memberId,
-        adjustmentType: WorkerAdjustmentType.fromDbValue(r.adjustmentType),
-        reversesAdjustmentId: r.reversesAdjustmentId,
-        clientRequestId: r.clientRequestId,
-        amountPaise: r.amountPaise,
-        reason: r.reason,
-        notes: r.notes,
-        transactionAt: r.transactionAt,
-        recordedAt: r.recordedAt,
-        createdBy: r.createdBy,
-        createdAt: r.createdAt,
-        updatedAt: r.updatedAt,
-      );
-
-  StockMovementEntity _mapMovement(StockMovementRow row) => StockMovementEntity(
-    id: row.id,
-    lotId: row.lotId,
-    lotDesignId: row.lotDesignId,
-    designColourId: row.designColourId,
-    processId: row.processId,
-    memberId: row.memberId,
-    parentIssueId: row.parentIssueId,
-    reversesMovementId: row.reversesMovementId,
-    clientRequestId: row.clientRequestId,
-    movementType: StockMovementType.fromDbValue(row.movementType),
-    quantity: row.quantity,
-    sourceRateId: row.sourceRateId,
-    appliedRatePaise: row.appliedRatePaise,
-    isRateOverridden: row.isRateOverridden == 1,
-    overrideReason: row.overrideReason,
-    lockedBillingMode: row.lockedBillingMode != null
-        ? BillingMode.fromDbValue(row.lockedBillingMode!)
-        : null,
-    lockedIncludeDamaged: row.lockedIncludeDamaged == 1,
-    reason: row.reason,
-    notes: row.notes,
-    transactionAt: row.transactionAt,
-    recordedAt: row.recordedAt,
-    createdBy: row.createdBy,
-    createdAt: row.createdAt,
-    updatedAt: row.updatedAt,
-  );
-
-  Future<String?> _resolveActor() async {
-    final profile = await _db.businessProfileDao.getProfile();
-    final owner = profile?.ownerName?.trim();
-    return (owner != null && owner.isNotEmpty) ? owner : 'local_owner';
-  }
-
   @override
   Future<List<WorkerFinancialSummary>> getAllWorkerSummaries() async {
     final workers = await _db.processMemberDao.getNonDeletedMembers();
     final allLabour = (await _db.labourEntryDao.getAllEntries())
-        .map(_mapLabour)
+        .map(LedgerRowMappers.labourEntry)
         .toList();
     final allPayments = (await _db.paymentDao.getAllPayments())
-        .map(_mapPayment)
+        .map(LedgerRowMappers.payment)
         .toList();
     final allAdjustments = (await _db.workerAdjustmentDao.getAllAdjustments())
-        .map(_mapAdjustment)
+        .map(LedgerRowMappers.workerAdjustment)
         .toList();
 
     final labourByWorker = <String, List<LabourEntryEntity>>{};
@@ -176,17 +89,17 @@ final class AccountingRepositoryImpl implements AccountingRepository {
 
     final labourEntries = (await _db.labourEntryDao.getEntriesForMember(
       workerId,
-    )).map(_mapLabour).toList();
+    )).map(LedgerRowMappers.labourEntry).toList();
     final paymentList = (await _db.paymentDao.getPaymentsForMember(workerId))
-        .map(_mapPayment)
+        .map(LedgerRowMappers.payment)
         .toList();
     final adjustmentList =
         (await _db.workerAdjustmentDao.getAdjustmentsForMember(workerId))
-            .map(_mapAdjustment)
+            .map(LedgerRowMappers.workerAdjustment)
             .toList();
     final movementList = (await _db.stockMovementDao.getMovementsForMember(
       workerId,
-    )).map(_mapMovement).toList();
+    )).map(LedgerRowMappers.stockMovement).toList();
 
     final procs = await _db.select(_db.processes).get();
     final lots = await _db.select(_db.lots).get();
@@ -269,7 +182,7 @@ final class AccountingRepositoryImpl implements AccountingRepository {
     bool payableOnly = false,
   }) async {
     final all = (await _db.labourEntryDao.getAllEntries())
-        .map(_mapLabour)
+        .map(LedgerRowMappers.labourEntry)
         .toList();
     final revIds = _ledgerCalc.reversedLabourIds(all);
 
@@ -315,7 +228,7 @@ final class AccountingRepositoryImpl implements AccountingRepository {
     int? toUtcMillis,
   }) async {
     final all = (await _db.paymentDao.getAllPayments())
-        .map(_mapPayment)
+        .map(LedgerRowMappers.payment)
         .toList();
     final revIds = _ledgerCalc.reversedPaymentIds(all);
     final workers = await _db.select(_db.members).get();
@@ -392,7 +305,7 @@ final class AccountingRepositoryImpl implements AccountingRepository {
             reqId,
           );
           if (existingByReq != null) {
-            return _mapPayment(existingByReq);
+            return LedgerRowMappers.payment(existingByReq);
           }
 
           final worker = await _db.processMemberDao.findMemberById(workerId);
@@ -404,7 +317,7 @@ final class AccountingRepositoryImpl implements AccountingRepository {
           }
 
           final now = IstDateTimeHelper.nowUtcMillis();
-          final actor = await _resolveActor();
+          final actor = await ActorResolver.resolveRequired(_db);
           final paymentId = _idGenerator.nextEntityId();
           final cleanedRef = referenceNo?.trim().isEmpty ?? true
               ? null
@@ -454,7 +367,7 @@ final class AccountingRepositoryImpl implements AccountingRepository {
           );
 
           final inserted = await _db.paymentDao.findById(paymentId);
-          return _mapPayment(inserted!);
+          return LedgerRowMappers.payment(inserted!);
         })
         .then((result) {
           NotificationRefreshCoordinator.requestBackgroundRefreshIfRegistered();
@@ -501,7 +414,7 @@ final class AccountingRepositoryImpl implements AccountingRepository {
       }
 
       final now = IstDateTimeHelper.nowUtcMillis();
-      final actor = await _resolveActor();
+      final actor = await ActorResolver.resolveRequired(_db);
       final revId = _idGenerator.nextEntityId();
       final cleanedReason = reason.trim();
       final cleanedNotes = notes?.trim().isEmpty ?? true ? null : notes!.trim();
@@ -550,7 +463,7 @@ final class AccountingRepositoryImpl implements AccountingRepository {
       );
 
       final inserted = await _db.paymentDao.findById(revId);
-      return _mapPayment(inserted!);
+      return LedgerRowMappers.payment(inserted!);
     });
   }
 
@@ -611,7 +524,7 @@ final class AccountingRepositoryImpl implements AccountingRepository {
           final existingByReq = await _db.workerAdjustmentDao
               .findByClientRequestId(reqId);
           if (existingByReq != null) {
-            return _mapAdjustment(existingByReq);
+            return LedgerRowMappers.workerAdjustment(existingByReq);
           }
 
           final worker = await _db.processMemberDao.findMemberById(workerId);
@@ -623,7 +536,7 @@ final class AccountingRepositoryImpl implements AccountingRepository {
           }
 
           final now = IstDateTimeHelper.nowUtcMillis();
-          final actor = await _resolveActor();
+          final actor = await ActorResolver.resolveRequired(_db);
           final adjId = _idGenerator.nextEntityId();
           final cleanedReason = reason.trim();
           final cleanedNotes = notes?.trim().isEmpty ?? true
@@ -670,7 +583,7 @@ final class AccountingRepositoryImpl implements AccountingRepository {
           );
 
           final inserted = await _db.workerAdjustmentDao.findById(adjId);
-          return _mapAdjustment(inserted!);
+          return LedgerRowMappers.workerAdjustment(inserted!);
         })
         .then((result) {
           NotificationRefreshCoordinator.requestBackgroundRefreshIfRegistered();
@@ -716,7 +629,7 @@ final class AccountingRepositoryImpl implements AccountingRepository {
       }
 
       final now = IstDateTimeHelper.nowUtcMillis();
-      final actor = await _resolveActor();
+      final actor = await ActorResolver.resolveRequired(_db);
       final revId = _idGenerator.nextEntityId();
       final cleanedReason = reason.trim();
       final cleanedNotes = notes?.trim().isEmpty ?? true ? null : notes!.trim();
@@ -763,7 +676,7 @@ final class AccountingRepositoryImpl implements AccountingRepository {
       );
 
       final inserted = await _db.workerAdjustmentDao.findById(revId);
-      return _mapAdjustment(inserted!);
+      return LedgerRowMappers.workerAdjustment(inserted!);
     });
   }
 }

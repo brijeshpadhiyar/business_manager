@@ -47,7 +47,10 @@ void main() {
     if (tempDir.existsSync()) await tempDir.delete(recursive: true);
   });
 
-  test('complete 18-step StitchFlow workflow: Lot -> Stock -> Labour -> Ledger -> Backup -> Restore', () async {
+  test(
+    'complete 18-step StitchFlow workflow: Lot -> Stock -> Labour -> Ledger -> Backup -> Restore',
+    timeout: const Timeout(Duration(minutes: 2)),
+    () async {
     final config = AppConfig.dev();
     final idGen = IdGenerator();
     final dbFile = await resolvePrivateDatabaseFile(

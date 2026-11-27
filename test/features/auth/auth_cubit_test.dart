@@ -5,15 +5,27 @@ import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/features/auth/domain/entities/auth_entities.dart';
 import 'package:business_manager/features/auth/domain/repositories/auth_repository.dart';
 import 'package:business_manager/features/auth/presentation/bloc/auth_cubit.dart';
+import 'package:business_manager/features/sync/data/repositories/sync_repository_impl.dart';
+import 'package:business_manager/features/sync/data/services/sync_engine.dart';
+import 'package:business_manager/features/sync/domain/repositories/cloud_sync_gateway.dart';
+import 'package:business_manager/core/config/app_config.dart';
+import 'package:business_manager/core/config/app_logger.dart';
+import 'package:business_manager/core/platform/media_storage_service.dart';
+import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 
 class _MockAuthRepository extends Mock implements AuthRepository {}
 
+class _MockGateway extends Mock implements CloudSyncGateway {}
+
+class _MockMediaStorage extends Mock implements MediaStorageService {}
+
 void main() {
   late AppDatabase db;
   late _MockAuthRepository authRepo;
+  late SyncRepositoryImpl syncRepo;
   late StreamController<AuthUser?> authStream;
   late AuthCubit cubit;
 
@@ -40,7 +52,18 @@ void main() {
     when(() => authRepo.watchAuthUser()).thenAnswer((_) => authStream.stream);
     when(() => authRepo.restoreCachedUser()).thenAnswer((_) async => null);
 
-    cubit = AuthCubit(authRepo, db);
+    final gateway = _MockGateway();
+    when(() => gateway.isConfigured).thenReturn(true);
+    final engine = SyncEngine(
+      db,
+      gateway,
+      _MockMediaStorage(),
+      authRepo,
+      IdGenerator(),
+      AppLogger(AppConfig.dev()),
+    );
+    syncRepo = SyncRepositoryImpl(db, engine);
+    cubit = AuthCubit(authRepo, syncRepo);
   });
 
   tearDown(() async {

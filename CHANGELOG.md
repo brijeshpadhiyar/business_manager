@@ -30,28 +30,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   - Added true SQLite `LIMIT`/`OFFSET` and O(log N) keyset/cursor pagination (`PageRequest`, `CursorPageRequest`, `PagedResult<T>`) across `LotDao`, `ProcessMemberDao`, `StockMovementDao`, `PaymentDao`, and `AttachmentAuditDao`, plus `buildWhen` scoping on heavy pages.
   - Extracted modular UI widgets (`stock_issue_step_widgets.dart`, `routing_handover_row.dart`) and added Indigo Thread semantic surface aliases (`AppElevatedSurface`, `surfaceFill`, `navBarFill`).
   - Added **5,000-movement SQLite scale & index benchmark** (`scale_5000_movements_benchmark_test.dart`) and **Android tap-target/contrast accessibility + 300px keyboard-open sheet** tests (`accessibility_and_keyboard_sheets_test.dart`).
-
-## [Unreleased] - System Improvements (Phases 1–4)
-
-### Added
-- **Phase 1 — CI/CD Safety Net & Data Trust (`v1.5.1`)**:
-  - Added GitHub Actions CI workflows (`.github/workflows/ci.yml` for PR `gen-l10n`, `analyze`, `test`, and Web release build; `.github/workflows/release_builds.yml` for tag/manual Android `dev`/`prod` APK & Windows release bundles).
-  - Built **Data Health & Reconciliation Center** (`Settings → Data Health & Diagnostics`) verifying `PRAGMA integrity_check`, `PRAGMA foreign_key_check`, golden stock equation across every design/colour, worker ledger parity, sync queue counts, and media parity, plus safe audited maintenance actions (WAL checkpoint, orphan media cleanup, failed sync retry) and shareable diagnostic export.
-  - Surfaced `Pending QC` (`pendingInspectionStock` / `pendingInspection`) KPIs & columns across Dashboard and Reports (Inventory KPI strip, Lot Stock table, Colour Stock table).
-  - Localized all 53 remaining hardcoded English strings in Process Routing (`job_process_routing_page.dart`, `job_routing_cubit.dart`, `RoutingErrorLocalizer`) with a regression guard test (`hardcoded_ui_strings_guard_test.dart`).
-  - Updated `ReportHtmlBuilder` print/PDF styling to the Indigo Thread palette (`#4F46E5`, `#059669`, `#F59E0B`) and added Material 3 `Badge` support to `ResponsiveNavigation` with live Sync attention badges.
-- **Phase 2 — Bilingual Karigar Slips & Daily Speed (`v1.6.0`)**:
-  - Built unified bilingual **Karigar Slips** (`lib/features/slips/`) supporting Stock Issue Challan, Return/QC Slip, Payment Receipt, and Worker Khata Statement with 3 zero-dependency sharing modes: **Branded PNG Receipt Image (`RepaintBoundary`)**, **WhatsApp/SMS Bilingual Text (+ Copy)**, and **Offline Printable HTML/PDF**, plus an in-sheet EN/GU language toggle.
-  - Added **Audited Undo Snackbars** (6-second Undo triggering standard audited reversal rows), **Form Draft Autosave & Remembered Defaults** (`FormDraftService`), **First-Run Workshop Setup Checklist** (`SetupChecklistCard` on Dashboard), and **Compact/Comfortable Layout Density Toggle** (`DensityCubit` wired into `AppTheme` & `AppearanceSettingsPage`).
-- **Phase 3 — Multi-User Team RBAC & Cloud Sync v2 (`v1.7.0`, Drift Schema v11)**:
-  - Added Supabase Migration 4 (`supabase/migrations/20261127000004_v1_7_team_rbac.sql`) introducing `business_members`, `business_invites`, `stitchflow_user_role()`, `stitchflow_redeem_invite()`, and role-aware RLS across all 23 domain tables and private storage.
-  - Added pure-Dart 4-role `RbacPolicy` (`OWNER`, `MANAGER`, `QC_INSPECTOR`, `ACCOUNTANT`) + `PermissionGate` widget, `SupabaseTeamRepository`, and `TeamManagementPage` (`Settings → Team & Role Access`) with WhatsApp-shareable 8-char invite codes (`XXXX-XXXX`).
-  - Executed additive Drift SQLite **Schema v10 → v11** migration (`active_role`, `active_business_name`, `cached_team_members`, `idx_audit_logs_reason_rec`).
-  - Built **Sync Conflict Inspector** (`SyncConflictInspectorPage` + `SyncConflictService`) with side-by-side field diffs (`Your Superseded Edit` vs `Applied Cloud Version`) and non-blocking Acknowledge / One-Tap Audited Restore.
-- **Phase 4 — SQLite DB Pagination, Modular Cleanup & Portable QA Gates (`v1.8.0`)**:
-  - Added true SQLite `LIMIT`/`OFFSET` and O(log N) keyset/cursor pagination (`PageRequest`, `CursorPageRequest`, `PagedResult<T>`) across `LotDao`, `ProcessMemberDao`, `StockMovementDao`, `PaymentDao`, and `AttachmentAuditDao`, plus `buildWhen` scoping on heavy pages.
-  - Extracted modular UI widgets (`stock_issue_step_widgets.dart`, `routing_handover_row.dart`) and added Indigo Thread semantic surface aliases (`AppElevatedSurface`, `surfaceFill`, `navBarFill`).
-  - Added **5,000-movement SQLite scale & index benchmark** (`scale_5000_movements_benchmark_test.dart`) and **Android tap-target/contrast accessibility + 300px keyboard-open sheet** tests (`accessibility_and_keyboard_sheets_test.dart`).
+- **Phase 5 — Maintainability, Clean Architecture Modularization & Query Optimization**:
+  - Consolidated duplicate Drift row mapping and actor resolution logic into shared helpers (`LedgerRowMappers` and `ActorResolver`).
+  - Enforced pure-Dart domain isolation (removed Flutter/Drift imports from `domain/`), moved push-order table metadata to `SyncTableRegistry`, and decoupled `AuthCubit` and `SyncCubit` from `AppDatabase` and `SyncEngine` via `SyncRepository`.
+  - Replaced sequential N+1 DAO calls in `ProcessRoutingRepositoryImpl` with batched `IN (...)` queries and modularized all 50 KB+ repositories, domain calculators, large UI pages, and `StitchFlowShellScaffold`.
+  - Added `clean_architecture_guard_test.dart` and expanded `hardcoded_ui_strings_guard_test.dart` across all `lib/features/*/presentation/` directories.
 
 ## [1.5.0] - 2026-11-26
 

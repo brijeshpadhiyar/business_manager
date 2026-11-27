@@ -1,16 +1,10 @@
-import 'package:business_manager/core/design_system/app_colors.dart';
-import 'package:business_manager/core/design_system/app_radius.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
-import 'package:business_manager/core/design_system/app_typography.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/error/exceptions.dart';
-import 'package:business_manager/core/localization/domain_label_localizer.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
-import 'package:business_manager/core/router/route_paths.dart';
-import 'package:business_manager/core/utils/app_date_time_formatter.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
-import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/accounting/domain/calculators/labour_calculator.dart';
@@ -19,22 +13,13 @@ import 'package:business_manager/features/business_profile/domain/repositories/b
 import 'package:business_manager/features/processes/domain/entities/process_entities.dart';
 import 'package:business_manager/features/processes/domain/repositories/process_repository.dart';
 import 'package:business_manager/features/rates/domain/entities/rate_entities.dart';
-import 'package:business_manager/features/slips/presentation/slip_builder_helper.dart';
-import 'package:business_manager/features/slips/presentation/widgets/slip_share_sheet.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 import 'package:business_manager/features/stock_movements/domain/repositories/stock_movement_repository.dart';
+import 'package:business_manager/features/stock_movements/presentation/widgets/stock_issue_step_views.dart';
 import 'package:business_manager/features/stock_movements/presentation/widgets/stock_issue_step_widgets.dart';
-import 'package:flutter/services.dart';
-import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:business_manager/core/design_system/app_icons.dart';
 
-/// Streamlined 4-step Stock Issue workflow (+ Step 5 Success Summary):
-/// 1. Select Stock (Lot / Design / Colour + Available Good)
-/// 2. Select Work (Active Process, Eligible Worker, Locked Rate & Billing Mode)
-/// 3. Enter Quantity (Large clear input, instant available-stock validation)
-/// 4. Confirm Issue (Compact summary + expected labour + atomic submit)
-/// 5. Success (Updated available stock + Issue More / View Details)
+/// Streamlined 4-step Stock Issue workflow (+ Step 5 Success Summary).
 final class StockIssuePage extends StatefulWidget {
   const StockIssuePage({
     super.key,
@@ -54,7 +39,6 @@ final class StockIssuePage extends StatefulWidget {
 final class _StockIssuePageState extends State<StockIssuePage> {
   final _dirty = AppFormDirtyTracker();
 
-  /// setState for a user edit: also marks the form as unsaved.
   void _edit(VoidCallback fn) {
     _dirty.markDirty();
     setState(fn);
@@ -97,9 +81,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
 
   RateResolutionResult? _ratePreview;
   bool _overrideRate = false;
-
-  // Step 5 Success state
-  _IssuedSuccessInfo? _successInfo;
+  IssuedSuccessInfo? _successInfo;
 
   @override
   void initState() {
@@ -347,7 +329,6 @@ final class _StockIssuePageState extends State<StockIssuePage> {
       }
     }
 
-    // Unusual-action confirmation guard (never interrupts routine issues)
     final warnings = <String>[];
     if (qty == balance.physicalAvailableInHouse &&
         balance.physicalAvailableInHouse >= 50) {
@@ -399,7 +380,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
       if (!mounted) return;
       setState(() {
         _saving = false;
-        _successInfo = _IssuedSuccessInfo(
+        _successInfo = IssuedSuccessInfo(
           movement: movement,
           lotNumber: balance.lotNumber,
           designName: balance.designName,
@@ -467,7 +448,10 @@ final class _StockIssuePageState extends State<StockIssuePage> {
     }
 
     if (_successInfo != null) {
-      return _buildSuccessView(context, _successInfo!);
+      return StockIssueSuccessView(
+        info: _successInfo!,
+        onIssueMore: _issueMore,
+      );
     }
 
     if (_allBalances.isEmpty) {
@@ -497,8 +481,6 @@ final class _StockIssuePageState extends State<StockIssuePage> {
       tracker: _dirty,
       child: AppScaffold(
         title: l10n.stockIssueAction,
-        // Confirm stays pinned at the bottom: no scrolling past three steps
-        // to find it on a phone.
         bottomAction: AppButton(
           label: l10n.stockConfirmIssueAction,
           icon: AppIcons.stockIssue,
@@ -511,27 +493,27 @@ final class _StockIssuePageState extends State<StockIssuePage> {
           child: ListView(
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: [
-              _StepProgressStrip(
+              StockIssueStepProgressStrip(
                 steps: [
-                  _StepItem(
+                  StockIssueStepItem(
                     number: 1,
                     label: l10n.stockStepSelectStock,
                     completed: step1Done,
                     active: !step1Done || _pickingStock,
                   ),
-                  _StepItem(
+                  StockIssueStepItem(
                     number: 2,
                     label: l10n.stockStepSelectWork,
                     completed: step2Done,
                     active: step1Done && !step2Done,
                   ),
-                  _StepItem(
+                  StockIssueStepItem(
                     number: 3,
                     label: l10n.stockStepEnterQty,
                     completed: step3Done,
                     active: step1Done && step2Done && !step3Done,
                   ),
-                  _StepItem(
+                  StockIssueStepItem(
                     number: 4,
                     label: l10n.stockStepConfirm,
                     completed: false,
@@ -541,28 +523,89 @@ final class _StockIssuePageState extends State<StockIssuePage> {
               ),
               const SizedBox(height: AppSpacing.md),
 
-              // STEP 1: SELECT STOCK
-              _buildStep1SelectStock(context, balance),
+              StockIssueStep1Card(
+                selected: balance,
+                pickingStock: _pickingStock,
+                allBalances: _allBalances,
+                recentSuggestions: _recentSuggestions,
+                searchController: _stockSearchCtrl,
+                onlyInStock: _onlyInStock,
+                selectedColourId: _selectedColourId,
+                onRequestChangeSelection: () =>
+                    setState(() => _pickingStock = true),
+                onSearchChanged: () => setState(() {}),
+                onOnlyInStockChanged: (v) => setState(() => _onlyInStock = v),
+                onSelectStock: _selectStock,
+              ),
               const SizedBox(height: AppSpacing.md),
 
-              // STEP 2: SELECT WORK (Process, Eligible Worker, Rate & Billing)
               if (balance != null) ...[
-                _buildStep2SelectWork(context),
+                StockIssueStep2Card(
+                  workDone: step2Done,
+                  recentSuggestions: _recentSuggestions,
+                  activeProcesses: _activeProcesses,
+                  eligibleWorkers: _eligibleWorkers,
+                  selectedProcessId: _selectedProcessId,
+                  selectedWorkerId: _selectedWorkerId,
+                  ratePreview: _ratePreview,
+                  effectiveBillingMode: _effectiveBillingMode,
+                  overrideRate: _overrideRate,
+                  overrideRateController: _overrideRateCtrl,
+                  overrideReasonController: _overrideReasonCtrl,
+                  notesController: _notesCtrl,
+                  transactionAtUtc: _transactionAtUtc,
+                  showAdvanced: _showAdvanced,
+                  onSelectRecentPair: (pair) async {
+                    setState(() => _selectedProcessId = pair.processId);
+                    await _loadWorkersForProcess(
+                      pair.processId,
+                      preferredWorkerId: pair.workerId,
+                    );
+                  },
+                  onSelectProcess: (id) {
+                    _dirty.markDirty();
+                    setState(() => _selectedProcessId = id);
+                    _loadWorkersForProcess(id);
+                  },
+                  onSelectWorker: (id) {
+                    _dirty.markDirty();
+                    setState(() => _selectedWorkerId = id);
+                    _refreshRatePreview();
+                  },
+                  onExpansionChanged: (v) => setState(() => _showAdvanced = v),
+                  onDateChanged: (utc) {
+                    _dirty.markDirty();
+                    setState(() => _transactionAtUtc = utc);
+                    _refreshRatePreview();
+                  },
+                  onOverrideRateChanged: (v) => _edit(() => _overrideRate = v),
+                  onClearSubmitError: () => setState(() => _submitError = null),
+                ),
                 const SizedBox(height: AppSpacing.md),
 
-                // STEP 3: ENTER QUANTITY
-                _buildStep3EnterQuantity(context, balance, qtyExceeds),
+                StockIssueStep3Card(
+                  balance: balance,
+                  qtyExceeds: qtyExceeds,
+                  parsedQty: qty,
+                  qtyController: _qtyCtrl,
+                  qtyFocusNode: _qtyFocus,
+                  onChanged: () => setState(() => _submitError = null),
+                  onAddQuickQty: (delta) =>
+                      _addQuickQty(delta, balance.physicalAvailableInHouse),
+                  onSetExactQty: _setExactQty,
+                ),
                 const SizedBox(height: AppSpacing.md),
 
-                // STEP 4: COMPACT CONFIRMATION SUMMARY & SUBMIT
-                _buildStep4ConfirmCard(
-                  context,
+                StockIssueStep4Card(
                   balance: balance,
                   proc: proc,
                   worker: worker,
                   ratePaise: ratePaise,
                   qty: qty,
                   canSubmit: canSubmit,
+                  effectiveBillingMode: _effectiveBillingMode,
+                  transactionAtUtc: _transactionAtUtc,
+                  submitError: _submitError,
                 ),
                 const SizedBox(height: AppSpacing.xl),
               ],
@@ -572,917 +615,4 @@ final class _StockIssuePageState extends State<StockIssuePage> {
       ),
     );
   }
-
-  Widget _buildStep1SelectStock(
-    BuildContext context,
-    DesignColourStockBalance? selected,
-  ) {
-    final l10n = context.l10n;
-    final colorScheme = Theme.of(context).colorScheme;
-
-    if (selected != null && !_pickingStock) {
-      return AppCard(
-        borderColor: context.semanticColors.goodStock.withValues(alpha: 0.45),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                const _StepBadge(number: 1, completed: true),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: AppText(
-                    l10n.stockStepSelectStock,
-                    variant: AppTextVariant.label,
-                    color: colorScheme.onSurfaceVariant,
-                  ),
-                ),
-                AppButton(
-                  label: l10n.stockChangeSelection,
-                  variant: AppButtonVariant.text,
-                  onPressed: () => setState(() => _pickingStock = true),
-                ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            AppText(
-              '${selected.lotNumber} • ${selected.designName} • ${selected.colourName}',
-              variant: AppTextVariant.bodyLarge,
-              fontWeight: FontWeight.w700,
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            Wrap(
-              spacing: AppSpacing.xs,
-              runSpacing: AppSpacing.xs,
-              children: [
-                AppStatusBadge(
-                  label:
-                      '${l10n.stockAvailableGoodLabel}: ${selected.physicalAvailableInHouse} ${l10n.piecesUnit}',
-                  tone: selected.physicalAvailableInHouse > 0
-                      ? AppStatusTone.good
-                      : AppStatusTone.damaged,
-                  icon: AppIcons.successOutline,
-                ),
-                if (selected.totalPendingWithWorkers > 0)
-                  AppStatusBadge(
-                    label:
-                        '${l10n.stockPendingWorkerLabel}: ${selected.totalPendingWithWorkers} ${l10n.piecesUnit}',
-                    tone: AppStatusTone.pending,
-                  ),
-              ],
-            ),
-          ],
-        ),
-      );
-    }
-
-    final query = _stockSearchCtrl.text.trim().toLowerCase();
-    final filtered =
-        _allBalances.where((b) {
-          if (_onlyInStock && b.physicalAvailableInHouse <= 0) return false;
-          if (query.isEmpty) return true;
-          return '${b.lotNumber} ${b.designName} ${b.colourName}'
-              .toLowerCase()
-              .contains(query);
-        }).toList()..sort(
-          (a, b) =>
-              b.physicalAvailableInHouse.compareTo(a.physicalAvailableInHouse),
-        );
-
-    return AppCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              const _StepBadge(number: 1, completed: false),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: AppHeading(
-                  l10n.stockStepSelectStock,
-                  level: AppHeadingLevel.h3,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          if (_recentSuggestions.inStockDesignColourIds.isNotEmpty &&
-              query.isEmpty) ...[
-            AppText(
-              l10n.stockRecentStockSuggestionsLabel,
-              variant: AppTextVariant.label,
-              color: colorScheme.onSurfaceVariant,
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Wrap(
-              spacing: AppSpacing.xs,
-              runSpacing: AppSpacing.xs,
-              children: [
-                for (final id in _recentSuggestions.inStockDesignColourIds)
-                  for (final b in _allBalances)
-                    if (b.designColourId == id)
-                      AppChip.action(
-                        icon: AppIcons.productionHistory,
-                        label:
-                            '${b.lotNumber} • ${b.colourName} (${b.physicalAvailableInHouse})',
-                        onPressed: () => _selectStock(b),
-                      ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.sm),
-          ],
-          AppTextField(
-            controller: _stockSearchCtrl,
-            label: l10n.stockSearchStockHint,
-            prefixIcon: AppIcons.search,
-            onChanged: (_) => setState(() {}),
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          Wrap(
-            spacing: AppSpacing.sm,
-            children: [
-              AppChip.filter(
-                label: l10n.stockOnlyAvailableFilter,
-                selected: _onlyInStock,
-                onSelected: (v) => setState(() => _onlyInStock = v),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          if (filtered.isEmpty)
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-              child: AppText(
-                l10n.stockNoStockItemsSubtitle,
-                variant: AppTextVariant.bodySmall,
-                color: colorScheme.onSurfaceVariant,
-              ),
-            )
-          else
-            ConstrainedBox(
-              constraints: const BoxConstraints(maxHeight: 280),
-              child: ListView.separated(
-                shrinkWrap: true,
-                itemCount: filtered.length,
-                separatorBuilder: (_, _) =>
-                    const SizedBox(height: AppSpacing.xs),
-                itemBuilder: (context, idx) {
-                  final b = filtered[idx];
-                  final isSelected = b.designColourId == _selectedColourId;
-                  final hasStock = b.physicalAvailableInHouse > 0;
-                  return AppCard(
-                    elevated: false,
-                    padding: const EdgeInsets.all(AppSpacing.md),
-                    color: isSelected
-                        ? colorScheme.secondary.withValues(alpha: 0.10)
-                        : colorScheme.surfaceContainer,
-                    borderColor: isSelected
-                        ? colorScheme.secondary
-                        : colorScheme.outlineVariant,
-                    onTap: () => _selectStock(b),
-                    child: AppActionRow(
-                      content: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          AppText(
-                            '${b.lotNumber} • ${b.designName}',
-                            fontWeight: FontWeight.w700,
-                          ),
-                          const SizedBox(height: AppSpacing.xxs),
-                          AppText(
-                            b.colourName,
-                            variant: AppTextVariant.bodySmall,
-                            color: colorScheme.onSurfaceVariant,
-                          ),
-                        ],
-                      ),
-                      actions: [
-                        AppStatusBadge(
-                          label: hasStock
-                              ? '${b.physicalAvailableInHouse} ${l10n.piecesUnit}'
-                              : l10n.stockOutOfStockBadge,
-                          tone: hasStock
-                              ? AppStatusTone.good
-                              : AppStatusTone.neutral,
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStep2SelectWork(BuildContext context) {
-    final l10n = context.l10n;
-    final colorScheme = Theme.of(context).colorScheme;
-    final workDone =
-        _selectedProcess != null &&
-        _selectedWorker != null &&
-        _effectiveRatePaise != null;
-
-    return AppCard(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              _StepBadge(number: 2, completed: workDone),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: AppHeading(
-                  l10n.stockStepSelectWork,
-                  level: AppHeadingLevel.h3,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.md),
-          if (_recentSuggestions.workPairs.isNotEmpty) ...[
-            AppText(
-              l10n.stockRecentWorkPairsLabel,
-              variant: AppTextVariant.label,
-              color: colorScheme.onSurfaceVariant,
-            ),
-            const SizedBox(height: AppSpacing.xs),
-            Wrap(
-              spacing: AppSpacing.xs,
-              runSpacing: AppSpacing.xs,
-              children: [
-                for (final pair in _recentSuggestions.workPairs)
-                  AppChip.action(
-                    icon: AppIcons.quick,
-                    label: '${pair.processName} • ${pair.workerName}',
-                    onPressed: () async {
-                      setState(() => _selectedProcessId = pair.processId);
-                      await _loadWorkersForProcess(
-                        pair.processId,
-                        preferredWorkerId: pair.workerId,
-                      );
-                    },
-                  ),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.md),
-          ],
-          AppText(
-            l10n.stockActiveProcessesLabel,
-            variant: AppTextVariant.label,
-            color: colorScheme.onSurfaceVariant,
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          if (_activeProcesses.isEmpty)
-            AppStatusBadge(
-              label: l10n.stockNoActiveProcessesWarning,
-              tone: AppStatusTone.pending,
-              icon: AppIcons.warning,
-            )
-          else
-            Wrap(
-              spacing: AppSpacing.sm,
-              runSpacing: AppSpacing.xs,
-              children: [
-                for (final proc in _activeProcesses)
-                  AppChip(
-                    label: proc.name,
-                    selected: _selectedProcessId == proc.id,
-                    onSelected: (_) {
-                      _dirty.markDirty();
-                      setState(() => _selectedProcessId = proc.id);
-                      _loadWorkersForProcess(proc.id);
-                    },
-                  ),
-              ],
-            ),
-          const SizedBox(height: AppSpacing.md),
-          AppText(
-            l10n.stockEligibleWorkersLabel,
-            variant: AppTextVariant.label,
-            color: colorScheme.onSurfaceVariant,
-          ),
-          const SizedBox(height: AppSpacing.xs),
-          if (_eligibleWorkers.isEmpty)
-            AppStatusBadge(
-              label: l10n.stockNoEligibleWorkers,
-              tone: AppStatusTone.pending,
-              icon: AppIcons.warning,
-            )
-          else
-            Wrap(
-              spacing: AppSpacing.sm,
-              runSpacing: AppSpacing.xs,
-              children: [
-                for (final w in _eligibleWorkers)
-                  AppChip(
-                    label: w.workerName,
-                    selected: _selectedWorkerId == w.workerId,
-                    onSelected: (_) {
-                      _dirty.markDirty();
-                      setState(() => _selectedWorkerId = w.workerId);
-                      _refreshRatePreview();
-                    },
-                  ),
-              ],
-            ),
-          const SizedBox(height: AppSpacing.md),
-          _buildRateAndBillingPreview(context),
-          const SizedBox(height: AppSpacing.xs),
-          Theme(
-            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-            child: ExpansionTile(
-              tilePadding: EdgeInsets.zero,
-              initiallyExpanded: _showAdvanced,
-              onExpansionChanged: (v) => setState(() => _showAdvanced = v),
-              leading: const Icon(AppIcons.filter, size: 18),
-              title: AppText(
-                l10n.stockAdvancedOptionsTitle,
-                variant: AppTextVariant.label,
-              ),
-              children: [
-                const SizedBox(height: AppSpacing.sm),
-                AppDatePicker(
-                  label: l10n.stockTransactionDateTimeLabel,
-                  selectedUtcMillis: _transactionAtUtc,
-                  includeTime: true,
-                  onDateSelectedUtcMillis: (utc) {
-                    _dirty.markDirty();
-                    setState(() => _transactionAtUtc = utc);
-                    _refreshRatePreview();
-                  },
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                AppSwitch(
-                  label: l10n.stockRateOverrideToggle,
-                  value: _overrideRate,
-                  onChanged: (v) => _edit(() => _overrideRate = v),
-                ),
-                if (_overrideRate) ...[
-                  const SizedBox(height: AppSpacing.sm),
-                  AppTextField(
-                    controller: _overrideRateCtrl,
-                    label: l10n.stockOverrideRateLabel,
-                    prefixIcon: AppIcons.rupee,
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    onChanged: (_) => setState(() => _submitError = null),
-                    validator: (v) => _overrideRate
-                        ? ValidationLocalizer.localize(
-                            l10n,
-                            AppValidators.nonNegativeAmountValidator(v),
-                          )
-                        : null,
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  AppTextField(
-                    controller: _overrideReasonCtrl,
-                    label: l10n.stockOverrideReasonLabel,
-                    maxLines: 2,
-                    maxLength: ValidationLimits.maxNotesLength,
-                    validator: (v) => _overrideRate
-                        ? ValidationLocalizer.localize(
-                            l10n,
-                            AppValidators.nameValidator(
-                              v,
-                              maxLength: ValidationLimits.maxNotesLength,
-                            ),
-                          )
-                        : null,
-                  ),
-                ],
-                const SizedBox(height: AppSpacing.sm),
-                AppTextField(
-                  controller: _notesCtrl,
-                  label: l10n.stockNotesLabel,
-                  maxLines: 2,
-                  maxLength: ValidationLimits.maxNotesLength,
-                  validator: ValidationLocalizer.wrap(
-                    l10n,
-                    (v) => AppValidators.maxLengthValidator(
-                      v,
-                      maxLength: ValidationLimits.maxNotesLength,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.sm),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildRateAndBillingPreview(BuildContext context) {
-    final l10n = context.l10n;
-    final preview = _ratePreview;
-    final colorScheme = Theme.of(context).colorScheme;
-    final billingLabel = DomainLabelLocalizer.billingMode(
-      l10n,
-      _effectiveBillingMode,
-    );
-
-    final localeCode = Localizations.localeOf(context).languageCode;
-    Widget rateRow;
-    if (_overrideRate) {
-      final overridePaise = _parseRupeesToPaise(_overrideRateCtrl.text);
-      rateRow = AppText(
-        '${l10n.stockOverrideRateLabel}: ${overridePaise != null ? MoneyFormatter.formatPaise(overridePaise) : '-'} ${l10n.ratesPerPieceSuffix}',
-        variant: AppTextVariant.numeric,
-        fontWeight: FontWeight.w700,
-      );
-    } else if (preview == null) {
-      rateRow = const SizedBox.shrink();
-    } else {
-      rateRow = switch (preview) {
-        RateResolutionFound(:final rate, :final businessDateIst) => Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Wrap(
-              spacing: AppSpacing.xs,
-              runSpacing: AppSpacing.xs,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                AppText(
-                  '${l10n.stockResolvedRateLabel}: ${MoneyFormatter.formatPaise(rate.ratePaise)} ${l10n.ratesPerPieceSuffix}',
-                  variant: AppTextVariant.numeric,
-                  fontWeight: FontWeight.w700,
-                ),
-                AppStatusBadge(
-                  label: context.l10n.workerRateLabel,
-                  tone: AppStatusTone.good,
-                ),
-              ],
-            ),
-            AppText(
-              '${AppDateTimeFormatter.formatIsoBusinessDateForDisplay(businessDateIst, locale: localeCode)} (${AppDateTimeFormatter.formatIsoDateRange(fromIso: rate.effectiveFrom, toIso: rate.effectiveTo, ongoingLabel: l10n.ratesOngoingLabel, locale: localeCode)})',
-              variant: AppTextVariant.bodySmall,
-              color: colorScheme.onSurfaceVariant,
-            ),
-          ],
-        ),
-        RateResolutionProcessDefault(
-          :final ratePaise,
-          :final rawDefaultRatePaise,
-          :final pricingUnit,
-          :final processName,
-        ) =>
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Wrap(
-                spacing: AppSpacing.xs,
-                runSpacing: AppSpacing.xs,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  AppText(
-                    '${l10n.stockResolvedRateLabel}: ${MoneyFormatter.formatPaise(ratePaise)} ${l10n.ratesPerPieceSuffix}',
-                    variant: AppTextVariant.numeric,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  AppStatusBadge(
-                    label: context.l10n.stockStageDefaultBadge,
-                    tone: AppStatusTone.info,
-                  ),
-                ],
-              ),
-              AppText(
-                context.l10n.stockInheritedFrom(
-                  processName,
-                  MoneyFormatter.formatRatePaise(
-                    rawDefaultRatePaise,
-                    pricingUnit: pricingUnit,
-                  ),
-                ),
-                variant: AppTextVariant.bodySmall,
-                color: colorScheme.onSurfaceVariant,
-              ),
-            ],
-          ),
-        RateResolutionMissing() => AppStatusBadge(
-          label: l10n.stockRateMissingWarning,
-          tone: AppStatusTone.damaged,
-          icon: AppIcons.error,
-        ),
-        RateResolutionConflict() => AppStatusBadge(
-          label: l10n.stockRateConflictWarning,
-          tone: AppStatusTone.damaged,
-          icon: AppIcons.error,
-        ),
-      };
-    }
-
-    return AppCard(
-      elevated: false,
-      color: colorScheme.surfaceContainer,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          rateRow,
-          if (preview != null || _overrideRate)
-            const SizedBox(height: AppSpacing.xs),
-          Row(
-            children: [
-              Icon(AppIcons.lock, size: 16, color: colorScheme.secondary),
-              const SizedBox(width: AppSpacing.xs),
-              Expanded(
-                child: AppText(
-                  '${l10n.stockBillingModePreviewLabel}: $billingLabel',
-                  variant: AppTextVariant.bodySmall,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStep3EnterQuantity(
-    BuildContext context,
-    DesignColourStockBalance balance,
-    bool qtyExceeds,
-  ) {
-    final l10n = context.l10n;
-    final available = balance.physicalAvailableInHouse;
-    final qtyValid = _parsedQty > 0 && !qtyExceeds;
-
-    return AppCard(
-      borderColor: qtyExceeds
-          ? Theme.of(context).colorScheme.error
-          : (qtyValid
-                ? context.semanticColors.goodStock.withValues(alpha: 0.45)
-                : null),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              _StepBadge(number: 3, completed: qtyValid),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: AppHeading(
-                  l10n.stockStepEnterQty,
-                  level: AppHeadingLevel.h3,
-                ),
-              ),
-              AppStatusBadge(
-                label: '${l10n.stockAvailableGoodLabel}: $available',
-                tone: available > 0
-                    ? AppStatusTone.good
-                    : AppStatusTone.damaged,
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.md),
-          AppTextField(
-            controller: _qtyCtrl,
-            focusNode: _qtyFocus,
-            label: l10n.stockIssueQuantityLabel,
-            prefixIcon: AppIcons.number,
-            suffixText: l10n.piecesUnit,
-            keyboardType: TextInputType.number,
-            textInputAction: TextInputAction.done,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            style: AppTypography.tabular(
-              Theme.of(context).textTheme.headlineLarge!
-                  .copyWith(fontWeight: FontWeight.w700),
-            ),
-            errorText: qtyExceeds ? l10n.stockInsufficientGoodError : null,
-            onChanged: (_) => setState(() => _submitError = null),
-            validator: (v) {
-              final parsed = AppValidators.parseQuantityExact(v);
-              if (!parsed.validation.isValid) {
-                return parsed.validation.code ==
-                        ValidationErrorCode.valueTooLarge
-                    ? l10n.validationValueTooLarge
-                    : l10n.stockInvalidQtyError;
-              }
-              if (parsed.value! > available) {
-                return l10n.stockInsufficientGoodError;
-              }
-              return null;
-            },
-          ),
-          if (available > 0) ...[
-            const SizedBox(height: AppSpacing.sm),
-            Wrap(
-              spacing: AppSpacing.xs,
-              runSpacing: AppSpacing.xs,
-              children: [
-                if (available >= 10)
-                  AppChip.action(
-                    label: '+10',
-                    onPressed: () => _addQuickQty(10, available),
-                  ),
-                if (available >= 25)
-                  AppChip.action(
-                    label: '+25',
-                    onPressed: () => _addQuickQty(25, available),
-                  ),
-                if (available >= 50)
-                  AppChip.action(
-                    label: '+50',
-                    onPressed: () => _addQuickQty(50, available),
-                  ),
-                AppChip.action(
-                  icon: AppIcons.doneAll,
-                  label: '${l10n.stockQuickAllAvailable} ($available)',
-                  onPressed: () => _setExactQty(available),
-                ),
-              ],
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStep4ConfirmCard(
-    BuildContext context, {
-    required DesignColourStockBalance balance,
-    required ProcessEntity? proc,
-    required ProcessAssignedWorkerSummary? worker,
-    required int? ratePaise,
-    required int qty,
-    required bool canSubmit,
-  }) {
-    final l10n = context.l10n;
-    final localeCode = Localizations.localeOf(context).languageCode;
-    final colorScheme = Theme.of(context).colorScheme;
-    final expectedLabourPaise = (ratePaise != null && qty > 0)
-        ? qty * ratePaise
-        : null;
-
-    return AppCard(
-      color: colorScheme.surfaceContainerLow,
-      borderColor: canSubmit
-          ? colorScheme.secondary.withValues(alpha: 0.55)
-          : colorScheme.outlineVariant,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              const _StepBadge(number: 4, completed: false),
-              const SizedBox(width: AppSpacing.sm),
-              Expanded(
-                child: AppHeading(
-                  l10n.stockConfirmSummaryTitle,
-                  level: AppHeadingLevel.h3,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.md),
-          _SummaryRow(
-            label:
-                '${l10n.lotLabelShort} / ${l10n.designNameLabel} / ${l10n.colourNameLabel}',
-            value:
-                '${balance.lotNumber} • ${balance.designName} • ${balance.colourName}',
-          ),
-          _SummaryRow(label: l10n.processNameLabel, value: proc?.name ?? '-'),
-          _SummaryRow(
-            label: l10n.workerNameLabel,
-            value: worker?.workerName ?? '-',
-          ),
-          _SummaryRow(
-            label: l10n.stockIssueQuantityLabel,
-            value: qty > 0 ? '$qty ${l10n.piecesUnit}' : '-',
-            isNumeric: true,
-          ),
-          _SummaryRow(
-            label: l10n.stockResolvedRateLabel,
-            value: ratePaise != null
-                ? '${MoneyFormatter.formatPaise(ratePaise)} ${l10n.ratesPerPieceSuffix}'
-                : '-',
-            isNumeric: true,
-          ),
-          _SummaryRow(
-            label: l10n.stockBillingModePreviewLabel,
-            value: DomainLabelLocalizer.billingMode(
-              l10n,
-              _effectiveBillingMode,
-            ),
-          ),
-          _SummaryRow(
-            label: l10n.stockTransactionDateTimeLabel,
-            value: IstDateTimeHelper.formatIstDateTime(
-              _transactionAtUtc,
-              locale: localeCode,
-            ),
-          ),
-          if (expectedLabourPaise != null) ...[
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
-              child: AppDivider(),
-            ),
-            _SummaryRow(
-              label: l10n.stockExpectedLabourLabel,
-              value: MoneyFormatter.formatPaise(expectedLabourPaise),
-              isNumeric: true,
-              highlight: true,
-            ),
-            const SizedBox(height: AppSpacing.xxs),
-            AppText(
-              _effectiveBillingMode == BillingMode.givenQty
-                  ? l10n.stockPayableOnIssueNote
-                  : l10n.stockPayableOnReturnNote,
-              variant: AppTextVariant.bodySmall,
-              color: colorScheme.onSurfaceVariant,
-            ),
-          ],
-          if (_submitError != null) ...[
-            const SizedBox(height: AppSpacing.sm),
-            AppStatusBadge(
-              label: _submitError!,
-              tone: AppStatusTone.damaged,
-              icon: AppIcons.error,
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSuccessView(BuildContext context, _IssuedSuccessInfo info) {
-    final l10n = context.l10n;
-    final semantic = context.semanticColors;
-
-    return AppScaffold(
-      title: l10n.stockIssueAction,
-      body: ListView(
-        children: [
-          AppCard(
-            borderColor: semantic.goodStock.withValues(alpha: 0.45),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Center(
-                  child: Container(
-                    width: 64,
-                    height: 64,
-                    decoration: BoxDecoration(
-                      color: semantic.goodStockContainer,
-                      borderRadius: AppRadius.fullBorder,
-                    ),
-                    child: Icon(
-                      AppIcons.success,
-                      color: semantic.goodStock,
-                      size: 36,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.md),
-                Text(
-                  l10n.stockIssueSuccessTitle,
-                  style: Theme.of(context).textTheme.titleLarge
-                      ?.copyWith(fontWeight: FontWeight.w700),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: AppSpacing.xs),
-                AppText(
-                  l10n.stockIssueSuccessSubtitle,
-                  variant: AppTextVariant.bodySmall,
-                  textAlign: TextAlign.center,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                const AppDivider(),
-                const SizedBox(height: AppSpacing.sm),
-                _SummaryRow(
-                  label: l10n.lotLabelShort,
-                  value:
-                      '${info.lotNumber} • ${info.designName} • ${info.colourName}',
-                ),
-                _SummaryRow(
-                  label: l10n.processNameLabel,
-                  value: info.processName,
-                ),
-                _SummaryRow(
-                  label: l10n.workerNameLabel,
-                  value: info.workerName,
-                ),
-                _SummaryRow(
-                  label: l10n.stockIssuedLabel,
-                  value: '${info.movement.quantity} ${l10n.piecesUnit}',
-                  isNumeric: true,
-                  highlight: true,
-                ),
-                _SummaryRow(
-                  label: l10n.stockResolvedRateLabel,
-                  value:
-                      '${MoneyFormatter.formatPaise(info.movement.appliedRatePaise)} ${l10n.ratesPerPieceSuffix}',
-                  isNumeric: true,
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                AppCard(
-                  elevated: false,
-                  color: semantic.goodStockContainer.withValues(alpha: 0.55),
-                  borderColor: semantic.goodStock.withValues(alpha: 0.35),
-                  child: Row(
-                    children: [
-                      Icon(AppIcons.lot, color: semantic.goodStock),
-                      const SizedBox(width: AppSpacing.sm),
-                      Expanded(
-                        child: AppText(
-                          l10n.stockUpdatedAvailableLabel,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      AppText(
-                        '${info.updatedAvailableGood} ${l10n.piecesUnit}',
-                        variant: AppTextVariant.numeric,
-                        fontWeight: FontWeight.w700,
-                        color: semantic.goodStock,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.lg),
-                AppButton(
-                  label: l10n.slipShareChallanAction,
-                  icon: AppIcons.share,
-                  isExpanded: true,
-                  onPressed: () async {
-                    final slip = await SlipBuilderHelper.buildStockIssueChallan(
-                      movementId: info.movement.id,
-                      lotNumber: info.lotNumber,
-                      designName: info.designName,
-                      colourName: info.colourName,
-                      processName: info.processName,
-                      workerName: info.workerName,
-                      quantity: info.movement.quantity,
-                      ratePaise: info.movement.appliedRatePaise,
-                      transactionAtUtcMillis: info.movement.transactionAt,
-                      notes: info.movement.notes,
-                    );
-                    if (context.mounted) {
-                      await SlipShareSheet.show(context, slip);
-                    }
-                  },
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                AppButton(
-                  label: l10n.stockIssueMoreAction,
-                  icon: AppIcons.addCircle,
-                  variant: AppButtonVariant.secondary,
-                  isExpanded: true,
-                  onPressed: _issueMore,
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                AppButton(
-                  label: l10n.stockViewIssueDetailsAction,
-                  icon: AppIcons.receiveReturn,
-                  variant: AppButtonVariant.secondary,
-                  isExpanded: true,
-                  onPressed: () => context.pushReplacement(
-                    RoutePaths.stockReturn(info.movement.id),
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.sm),
-                AppButton(
-                  label: l10n.actionDone,
-                  variant: AppButtonVariant.outlined,
-                  isExpanded: true,
-                  onPressed: () => context.pop(true),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 }
-
-final class _IssuedSuccessInfo {
-  const _IssuedSuccessInfo({
-    required this.movement,
-    required this.lotNumber,
-    required this.designName,
-    required this.colourName,
-    required this.processName,
-    required this.workerName,
-    required this.updatedAvailableGood,
-    required this.effectiveBillingMode,
-  });
-
-  final StockMovementEntity movement;
-  final String lotNumber;
-  final String designName;
-  final String colourName;
-  final String processName;
-  final String workerName;
-  final int updatedAvailableGood;
-  final BillingMode effectiveBillingMode;
-}
-
-typedef _StepItem = StockIssueStepItem;
-typedef _StepProgressStrip = StockIssueStepProgressStrip;
-typedef _StepBadge = StockIssueStepBadge;
-typedef _SummaryRow = StockIssueSummaryRow;

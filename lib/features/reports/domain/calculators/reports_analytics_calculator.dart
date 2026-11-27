@@ -1,111 +1,37 @@
-import 'dart:math' as math;
-
-import 'package:business_manager/core/utils/app_date_time_formatter.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/features/accounting/domain/calculators/ledger_calculator.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
-import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
+import 'package:business_manager/features/reports/domain/calculators/reports_analytics_accumulators.dart';
+import 'package:business_manager/features/reports/domain/calculators/reports_insights_calculator.dart';
 import 'package:business_manager/features/reports/domain/calculators/workshop_daily_calculator.dart';
 import 'package:business_manager/features/reports/domain/entities/advanced_report_entities.dart';
 import 'package:business_manager/features/reports/domain/entities/dashboard_report_entities.dart';
 import 'package:business_manager/features/reports/domain/entities/report_filter.dart';
 import 'package:business_manager/features/stock_movements/domain/calculators/stock_calculator.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
-import 'package:timezone/timezone.dart' as tz;
 
-/// Pure-Dart input records so [ReportsAnalyticsCalculator] has zero Drift/Flutter imports.
-final class ReportLotInput {
-  const ReportLotInput({
-    required this.id,
-    required this.lotNumber,
-    this.title,
-    required this.status,
-  });
-
-  final String id;
-  final String lotNumber;
-  final String? title;
-  final LotStatus status;
-}
-
-final class ReportDesignInput {
-  const ReportDesignInput({
-    required this.id,
-    required this.lotId,
-    required this.designName,
-  });
-
-  final String id;
-  final String lotId;
-  final String designName;
-}
-
-final class ReportColourInput {
-  const ReportColourInput({
-    required this.id,
-    required this.lotId,
-    required this.lotDesignId,
-    required this.colourName,
-    this.colourHex,
-    required this.initialQuantity,
-    required this.unitPricePaise,
-  });
-
-  final String id;
-  final String lotId;
-  final String lotDesignId;
-  final String colourName;
-  final String? colourHex;
-  final int initialQuantity;
-  final int unitPricePaise;
-}
-
-final class ReportProcessInput {
-  const ReportProcessInput({
-    required this.id,
-    required this.name,
-    required this.isActive,
-  });
-
-  final String id;
-  final String name;
-  final bool isActive;
-}
-
-final class ReportWorkerInput {
-  const ReportWorkerInput({
-    required this.id,
-    required this.name,
-    this.phone,
-    required this.isActive,
-  });
-
-  final String id;
-  final String name;
-  final String? phone;
-  final bool isActive;
-}
+export 'reports_analytics_accumulators.dart'
+    show
+        ReportColourInput,
+        ReportDesignInput,
+        ReportLotInput,
+        ReportProcessInput,
+        ReportWorkerInput;
 
 /// Single-pass pure Dart analytics & business-insights calculator for StitchFlow V1.2.
-///
-/// Guarantees:
-/// - Reuses [StockCalculator] and [LedgerCalculator] for 100% invariant parity.
-/// - Excludes reversed rows and `REVERSAL` rows across all metrics.
-/// - Uses `transactionAt` in `Asia/Kolkata` (IST) — never `recordedAt`.
-/// - Zero fabricated profit/revenue/sales metrics.
-/// - Zero-division safe (`null` percentages when denominator is 0).
-/// - O(N) single-pass indexing suitable for 5,000+ movements in <100 ms.
 final class ReportsAnalyticsCalculator {
   const ReportsAnalyticsCalculator({
     StockCalculator stockCalculator = const StockCalculator(),
     LedgerCalculator ledgerCalculator = const LedgerCalculator(),
+    ReportsInsightsCalculator insightsCalculator =
+        const ReportsInsightsCalculator(),
   }) : _stockCalc = stockCalculator,
-       _ledgerCalc = ledgerCalculator;
+       _ledgerCalc = ledgerCalculator,
+       _insightsCalc = insightsCalculator;
 
   final StockCalculator _stockCalc;
   final LedgerCalculator _ledgerCalc;
-
-  static const int _millisPerDay = 86400000;
+  final ReportsInsightsCalculator _insightsCalc;
 
   AdvancedReportsBundle compute({
     required ReportFilter filter,
@@ -126,7 +52,6 @@ final class ReportsAnalyticsCalculator {
     final nowUtc = nowUtcMillis ?? IstDateTimeHelper.nowUtcMillis();
     final query = filter.searchQuery.trim().toLowerCase();
 
-    // 1. Lookup maps (O(M))
     final lotById = {for (final l in lots) l.id: l};
     final designById = {for (final d in designs) d.id: d};
     final colourById = {for (final c in colours) c.id: c};
@@ -193,13 +118,12 @@ final class ReportsAnalyticsCalculator {
             ..sort((a, b) => a.label.compareTo(b.label)),
     );
 
-    // 2. Reversal sets & active grouping (O(N))
     final revMovementIds = _stockCalc.reversedMovementIds(allMovements);
     final revLabourIds = _ledgerCalc.reversedLabourIds(allLabourEntries);
     final revPaymentIds = _ledgerCalc.reversedPaymentIds(allPayments);
 
     final movementsByColour = <String, List<StockMovementEntity>>{};
-    final issueSettlementMap = <String, _IssueSettlementAcc>{};
+    final issueSettlementMap = <String, IssueSettlementAcc>{};
     final activeMovements = <StockMovementEntity>[];
 
     for (final m in allMovements) {
@@ -212,7 +136,7 @@ final class ReportsAnalyticsCalculator {
       if (m.parentIssueId != null && m.movementType.isSettlement) {
         final acc = issueSettlementMap.putIfAbsent(
           m.parentIssueId!,
-          () => _IssueSettlementAcc(),
+          () => IssueSettlementAcc(),
         );
         switch (m.movementType) {
           case StockMovementType.returnGood:
@@ -234,7 +158,6 @@ final class ReportsAnalyticsCalculator {
       }
     }
 
-    // 3. Dimension match helpers
     bool matchesStockDimensions(StockMovementEntity m) {
       if (filter.workerId != null && m.memberId != filter.workerId) {
         return false;
@@ -321,8 +244,6 @@ final class ReportsAnalyticsCalculator {
       return true;
     }
 
-    // Pieces returned and waiting for QC, per colour. They are neither with
-    // the worker nor in available stock (counted once, in pendingInspection).
     final pendingInspectionByColour = <String, int>{};
     for (final m in allMovements) {
       if (m.movementType != StockMovementType.issue) continue;
@@ -332,7 +253,6 @@ final class ReportsAnalyticsCalculator {
           (pendingInspectionByColour[m.designColourId] ?? 0) + q;
     }
 
-    // 4. Current Inventory Balances (reusing StockCalculator verbatim)
     final colourBalances = <DesignColourStockBalance>[];
     for (final c in colours) {
       if (!lotById.containsKey(c.lotId)) continue;
@@ -447,7 +367,6 @@ final class ReportsAnalyticsCalculator {
       );
     }
 
-    // 5. Open Issues + Live Pending by Worker & Process + Verified Turnaround Time
     final openIssues = <OpenIssueSummary>[];
     final currentPendingByWorker = <String, int>{};
     final currentOpenCountByWorker = <String, int>{};
@@ -487,7 +406,6 @@ final class ReportsAnalyticsCalculator {
       final lost = acc?.lost ?? 0;
       final shortage = acc?.shortage ?? 0;
       final remaining = m.quantity - (good + damaged + lost + shortage);
-      // Pieces in the QC queue are no longer with the worker.
       final withWorker = (remaining - (pendingInspectionByIssue[m.id] ?? 0))
           .clamp(0, remaining);
 
@@ -519,8 +437,6 @@ final class ReportsAnalyticsCalculator {
           }
         }
       } else if (remaining == 0 && acc != null && acc.maxSettlementTxAt > 0) {
-        // Verified Turnaround Formula: 100%-settled issue whose final settlement
-        // falls in the selected date window AND t_complete >= t_issue.
         if (m.processId != null &&
             filter.matchesTimestamp(acc.maxSettlementTxAt) &&
             acc.maxSettlementTxAt >= m.transactionAt) {
@@ -538,7 +454,6 @@ final class ReportsAnalyticsCalculator {
       ),
     );
 
-    // 6. Current Worker Financial Standings (O(N) grouping + LedgerCalculator)
     final labourByWorker = <String, List<LabourEntryEntity>>{};
     final paymentsByWorker = <String, List<PaymentEntity>>{};
     final adjustmentsByWorker = <String, List<WorkerAdjustmentEntity>>{};
@@ -573,11 +488,10 @@ final class ReportsAnalyticsCalculator {
       (a, b) => b.outstandingPayablePaise.compareTo(a.outstandingPayablePaise),
     );
 
-    // 7. Single-Pass Period Flow Aggregations (Movements, Labour, Payments)
-    final dailyAcc = <String, _DailyAcc>{};
-    final workerPeriodAcc = <String, _WorkerPeriodAcc>{};
-    final processPeriodAcc = <String, _ProcessPeriodAcc>{};
-    final defectReasonAcc = <String, _ReasonAcc>{};
+    final dailyAcc = <String, DailyAcc>{};
+    final workerPeriodAcc = <String, WorkerPeriodAcc>{};
+    final processPeriodAcc = <String, ProcessPeriodAcc>{};
+    final defectReasonAcc = <String, ReasonAcc>{};
     final movementHistory = <StockMovementView>[];
     final damagedLostMovements = <StockMovementView>[];
 
@@ -585,7 +499,6 @@ final class ReportsAnalyticsCalculator {
     var totalPeriodDamaged = 0;
     var totalPeriodLostShortage = 0;
 
-    // Movement History (supports optional includeReversedInHistory)
     for (final m in allMovements) {
       if (!filter.matchesTimestamp(m.transactionAt)) continue;
       if (!matchesStockDimensions(m)) continue;
@@ -615,29 +528,28 @@ final class ReportsAnalyticsCalculator {
       return b.movement.recordedAt.compareTo(a.movement.recordedAt);
     });
 
-    // Active period movements -> Daily, Worker, Process, Defect Reasons
     for (final m in activeMovements) {
       if (!filter.matchesTimestamp(m.transactionAt)) continue;
       if (!matchesStockDimensions(m)) continue;
 
       final dayIso = IstDateTimeHelper.toIstBusinessDate(m.transactionAt);
       final dayStart = IstDateRangePresets.startOfIstDay(m.transactionAt);
-      final dAcc = dailyAcc.putIfAbsent(dayIso, () => _DailyAcc(dayStart));
+      final dAcc = dailyAcc.putIfAbsent(dayIso, () => DailyAcc(dayStart));
 
       final wAcc = m.memberId != null
-          ? workerPeriodAcc.putIfAbsent(m.memberId!, () => _WorkerPeriodAcc())
+          ? workerPeriodAcc.putIfAbsent(m.memberId!, () => WorkerPeriodAcc())
           : null;
       final wpAcc = (wAcc != null && m.processId != null)
-          ? wAcc.byProcess.putIfAbsent(m.processId!, () => _WorkerProcessAcc())
+          ? wAcc.byProcess.putIfAbsent(m.processId!, () => WorkerProcessAcc())
           : null;
       final pAcc = m.processId != null
           ? processPeriodAcc.putIfAbsent(
               m.processId!,
-              () => _ProcessPeriodAcc(),
+              () => ProcessPeriodAcc(),
             )
           : null;
       final pwAcc = (pAcc != null && m.memberId != null)
-          ? pAcc.byWorker.putIfAbsent(m.memberId!, () => _ProcessWorkerAcc())
+          ? pAcc.byWorker.putIfAbsent(m.memberId!, () => ProcessWorkerAcc())
           : null;
 
       switch (m.movementType) {
@@ -682,7 +594,6 @@ final class ReportsAnalyticsCalculator {
       }
     }
 
-    // Active period payable labour
     final periodLabourViews = <LabourEntryView>[];
     var periodTotalLabourPaise = 0;
     for (final e in allLabourEntries) {
@@ -698,21 +609,21 @@ final class ReportsAnalyticsCalculator {
 
       final dayIso = IstDateTimeHelper.toIstBusinessDate(e.transactionAt);
       final dayStart = IstDateRangePresets.startOfIstDay(e.transactionAt);
-      dailyAcc.putIfAbsent(dayIso, () => _DailyAcc(dayStart)).labourPaise +=
+      dailyAcc.putIfAbsent(dayIso, () => DailyAcc(dayStart)).labourPaise +=
           e.amountPaise;
 
       final wAcc = workerPeriodAcc.putIfAbsent(
         e.memberId,
-        () => _WorkerPeriodAcc(),
+        () => WorkerPeriodAcc(),
       );
       wAcc.labourPaise += e.amountPaise;
       wAcc.byProcess
-              .putIfAbsent(e.processId, () => _WorkerProcessAcc())
+              .putIfAbsent(e.processId, () => WorkerProcessAcc())
               .labourPaise +=
           e.amountPaise;
 
       processPeriodAcc
-              .putIfAbsent(e.processId, () => _ProcessPeriodAcc())
+              .putIfAbsent(e.processId, () => ProcessPeriodAcc())
               .labourPaise +=
           e.amountPaise;
 
@@ -732,7 +643,6 @@ final class ReportsAnalyticsCalculator {
       return b.entry.recordedAt.compareTo(a.entry.recordedAt);
     });
 
-    // Active period payments (Note: payments are worker-level, not process/lot-level)
     final periodPaymentViews = <PaymentView>[];
     var periodRegularPayPaise = 0;
     var periodAdvancePayPaise = 0;
@@ -747,10 +657,10 @@ final class ReportsAnalyticsCalculator {
 
       final dayIso = IstDateTimeHelper.toIstBusinessDate(p.transactionAt);
       final dayStart = IstDateRangePresets.startOfIstDay(p.transactionAt);
-      final dAcc = dailyAcc.putIfAbsent(dayIso, () => _DailyAcc(dayStart));
+      final dAcc = dailyAcc.putIfAbsent(dayIso, () => DailyAcc(dayStart));
       final wAcc = workerPeriodAcc.putIfAbsent(
         p.memberId,
-        () => _WorkerPeriodAcc(),
+        () => WorkerPeriodAcc(),
       );
 
       switch (p.paymentType) {
@@ -786,7 +696,6 @@ final class ReportsAnalyticsCalculator {
     final periodNetPaymentsPaise =
         periodRegularPayPaise + periodAdvancePayPaise - periodAdvanceRefPaise;
 
-    // 8. Assemble Category 1: Daily Rows (newest IST date first)
     final dailyRows = dailyAcc.entries.map((entry) {
       final a = entry.value;
       return DailyReportRow(
@@ -821,7 +730,6 @@ final class ReportsAnalyticsCalculator {
       (s, r) => s + r.lostAndShortageQty,
     );
 
-    // 9. Assemble Category 2: Worker Performance Rows
     final workerIdsToInclude = <String>{
       ...workerPeriodAcc.keys,
       ...currentPendingByWorker.keys,
@@ -856,7 +764,6 @@ final class ReportsAnalyticsCalculator {
       final outstanding = fin?.outstandingPayablePaise ?? 0;
       final advCredit = fin?.advanceCreditBalancePaise ?? 0;
 
-      // Skip totally idle workers when no activity & no balance
       if (issued == 0 &&
           good == 0 &&
           damaged == 0 &&
@@ -884,7 +791,7 @@ final class ReportsAnalyticsCalculator {
               damagedQty: pa.damaged,
               lostShortageQty: pa.lostShortage,
               labourEarnedPaise: pa.labourPaise,
-              defectRatePercent: _defectRate(
+              defectRatePercent: computeReportDefectRate(
                 good: pa.good,
                 damaged: pa.damaged,
                 lostShortage: pa.lostShortage,
@@ -915,7 +822,7 @@ final class ReportsAnalyticsCalculator {
           currentOpenIssuesCount: openCount,
           currentOutstandingPayablePaise: outstanding,
           currentAdvanceCreditPaise: advCredit,
-          defectRatePercent: _defectRate(
+          defectRatePercent: computeReportDefectRate(
             good: good,
             damaged: damaged,
             lostShortage: lostShortage,
@@ -936,7 +843,6 @@ final class ReportsAnalyticsCalculator {
       );
     });
 
-    // 10. Assemble Category 3: Process Performance Rows
     final processIdsToInclude = <String>{
       ...processPeriodAcc.keys,
       ...currentPendingByProcess.keys,
@@ -1011,7 +917,7 @@ final class ReportsAnalyticsCalculator {
           oldestOpenIssueAgeDays: oldestAge,
           averageTurnaroundHours: avgTurnaround,
           settledIssuesCount: turnSamples.length,
-          defectRatePercent: _defectRate(
+          defectRatePercent: computeReportDefectRate(
             good: good,
             damaged: damaged,
             lostShortage: lostShortage,
@@ -1026,7 +932,6 @@ final class ReportsAnalyticsCalculator {
       return b.periodGoodReturnedQty.compareTo(a.periodGoodReturnedQty);
     });
 
-    // 11. Assemble Category 4 & 5 Sections
     final inventorySection = InventoryReportSection(
       initialStock: totalInitialStock,
       availableGoodStock: totalAvailableGood,
@@ -1065,188 +970,23 @@ final class ReportsAnalyticsCalculator {
       payments: periodPaymentViews,
     );
 
-    // 12. Assemble Category 6: Business Insights
-    final overallDefectRate = _defectRate(
-      good: totalPeriodGood,
-      damaged: totalPeriodDamaged,
-      lostShortage: totalPeriodLostShortage,
-    );
-
-    final trendResult = _buildTrendPoints(
-      dailyRowsNewestFirst: dailyRows,
-      fromUtcMillis: filter.fromUtcMillis,
-      toUtcMillis: filter.toUtcMillis,
-    );
-
-    // Period-over-period comparison (if date-bounded)
-    final prevWindow = IstDateRangePresets.previousWindow(
-      preset: filter.preset,
-      fromUtcMillis: filter.fromUtcMillis,
-      toUtcMillis: filter.toUtcMillis,
-    );
-    PeriodComparisonSummary? periodComparison;
-    final prevGoodByWorker = <String, int>{};
-
-    if (prevWindow != null) {
-      var prevIssued = 0;
-      var prevGood = 0;
-      var prevDamaged = 0;
-      var prevLostShortage = 0;
-      var prevLabourPaise = 0;
-
-      for (final m in activeMovements) {
-        if (m.transactionAt < prevWindow.fromUtcMillis ||
-            m.transactionAt > prevWindow.toUtcMillis) {
-          continue;
-        }
-        if (!matchesStockDimensions(m)) continue;
-        switch (m.movementType) {
-          case StockMovementType.issue:
-            prevIssued += m.quantity;
-          case StockMovementType.returnGood:
-            prevGood += m.quantity;
-            if (m.memberId != null) {
-              prevGoodByWorker[m.memberId!] =
-                  (prevGoodByWorker[m.memberId!] ?? 0) + m.quantity;
-            }
-          case StockMovementType.returnDamaged:
-            prevDamaged += m.quantity;
-          case StockMovementType.settlementLost:
-          case StockMovementType.settlementShortage:
-            prevLostShortage += m.quantity;
-          case StockMovementType.adjustmentDamagedToGood:
-          case StockMovementType.reversal:
-            break;
-        }
-      }
-
-      for (final e in allLabourEntries) {
-        if (e.basisType == LabourBasisType.reversal ||
-            revLabourIds.contains(e.id) ||
-            !e.isPayable) {
-          continue;
-        }
-        if (e.transactionAt < prevWindow.fromUtcMillis ||
-            e.transactionAt > prevWindow.toUtcMillis) {
-          continue;
-        }
-        if (!matchesLabourDimensions(e)) continue;
-        prevLabourPaise += e.amountPaise;
-      }
-
-      periodComparison = PeriodComparisonSummary(
-        previousFromUtcMillis: prevWindow.fromUtcMillis,
-        previousToUtcMillis: prevWindow.toUtcMillis,
-        issuedQty: _compareMetric(dailyTotalIssued, prevIssued),
-        goodReturnedQty: _compareMetric(dailyTotalGood, prevGood),
-        labourCostPaise: _compareMetric(
-          periodTotalLabourPaise,
-          prevLabourPaise,
-        ),
-        currentDefectRatePercent: overallDefectRate,
-        previousDefectRatePercent: _defectRate(
-          good: prevGood,
-          damaged: prevDamaged,
-          lostShortage: prevLostShortage,
-        ),
-      );
-    }
-
-    // Bottlenecks (processes with currentPendingQty > 0)
-    final bottlenecks = <ProcessBottleneckItem>[];
-    for (final pr in processPerfRows) {
-      if (pr.currentPendingQty <= 0) continue;
-      final ratio = pr.periodGoodReturnedQty > 0
-          ? pr.currentPendingQty / pr.periodGoodReturnedQty
-          : null;
-      bottlenecks.add(
-        ProcessBottleneckItem(
-          processId: pr.processId,
-          processName: pr.processName,
-          currentPendingQty: pr.currentPendingQty,
-          openIssuesCount: pr.currentOpenIssuesCount,
-          oldestOpenIssueAgeDays: pr.oldestOpenIssueAgeDays ?? 0,
-          periodCompletedQty: pr.periodGoodReturnedQty,
-          pendingToCompletedRatio: ratio,
-        ),
-      );
-    }
-    bottlenecks.sort((a, b) {
-      final ageCmp = b.oldestOpenIssueAgeDays.compareTo(
-        a.oldestOpenIssueAgeDays,
-      );
-      if (ageCmp != 0) return ageCmp;
-      final ratioA = a.pendingToCompletedRatio ?? double.infinity;
-      final ratioB = b.pendingToCompletedRatio ?? double.infinity;
-      final ratioCmp = ratioB.compareTo(ratioA);
-      if (ratioCmp != 0) return ratioCmp;
-      return b.currentPendingQty.compareTo(a.currentPendingQty);
-    });
-
-    // Worker Productivity Trends (top contributors in period)
-    final workerTrends = workerPerfRows
-        .where((w) => w.periodGoodReturnedQty > 0)
-        .take(8)
-        .map((w) {
-          final prevGood = prevGoodByWorker[w.workerId] ?? 0;
-          final pct = prevWindow == null || prevGood == 0
-              ? null
-              : ((w.periodGoodReturnedQty - prevGood) * 100.0) / prevGood;
-          return WorkerProductivityTrendItem(
-            workerId: w.workerId,
-            workerName: w.workerName,
-            currentGoodReturnedQty: w.periodGoodReturnedQty,
-            previousGoodReturnedQty: prevGood,
-            percentChange: pct,
-            defectRatePercent: w.defectRatePercent,
-          );
-        })
-        .toList();
-
-    // Top defect/loss reasons
-    final topDefectReasons =
-        defectReasonAcc.entries
-            .map(
-              (e) => DefectReasonStat(
-                reason: e.key,
-                quantity: e.value.quantity,
-                occurrences: e.value.occurrences,
-              ),
-            )
-            .toList()
-          ..sort((a, b) => b.quantity.compareTo(a.quantity));
-
-    // Labour cost share by process
-    final labourCostShares = <ProcessLabourCostShare>[];
-    if (periodTotalLabourPaise > 0) {
-      for (final pr in processPerfRows) {
-        if (pr.periodLabourCostPaise <= 0) continue;
-        labourCostShares.add(
-          ProcessLabourCostShare(
-            processId: pr.processId,
-            processName: pr.processName,
-            labourCostPaise: pr.periodLabourCostPaise,
-            sharePercent:
-                (pr.periodLabourCostPaise * 100.0) / periodTotalLabourPaise,
-          ),
-        );
-      }
-      labourCostShares.sort(
-        (a, b) => b.labourCostPaise.compareTo(a.labourCostPaise),
-      );
-    }
-
-    final insights = BusinessInsightsBundle(
-      trendPoints: trendResult.points,
-      isWeeklyBuckets: trendResult.isWeekly,
-      periodComparison: periodComparison,
-      bottlenecks: bottlenecks,
-      workerTrends: workerTrends,
-      overallDefectRatePercent: overallDefectRate,
-      totalPeriodDefectsQty: totalPeriodDamaged + totalPeriodLostShortage,
-      topDefectReasons: topDefectReasons.take(6).toList(),
-      processLabourCostShares: labourCostShares,
-      totalPeriodLabourCostPaise: periodTotalLabourPaise,
+    final insights = _insightsCalc.buildInsights(
+      filter: filter,
+      dailyRows: dailyRows,
+      workerPerfRows: workerPerfRows,
+      processPerfRows: processPerfRows,
+      activeMovements: activeMovements,
+      allLabourEntries: allLabourEntries,
+      revLabourIds: revLabourIds,
+      defectReasonAcc: defectReasonAcc,
+      totalPeriodGood: totalPeriodGood,
+      totalPeriodDamaged: totalPeriodDamaged,
+      totalPeriodLostShortage: totalPeriodLostShortage,
+      dailyTotalIssued: dailyTotalIssued,
+      dailyTotalGood: dailyTotalGood,
+      periodTotalLabourPaise: periodTotalLabourPaise,
+      matchesStockDimensions: matchesStockDimensions,
+      matchesLabourDimensions: matchesLabourDimensions,
     );
 
     return AdvancedReportsBundle(
@@ -1271,176 +1011,15 @@ final class ReportsAnalyticsCalculator {
     );
   }
 
-  static double? _defectRate({
-    required int good,
-    required int damaged,
-    required int lostShortage,
-  }) {
-    final total = good + damaged + lostShortage;
-    if (total <= 0) return null;
-    return ((damaged + lostShortage) * 100.0) / total;
-  }
-
-  static PeriodComparisonMetric _compareMetric(int current, int previous) {
-    final delta = current - previous;
-    final pct = previous == 0 ? null : (delta * 100.0) / previous;
-    return PeriodComparisonMetric(
-      currentValue: current,
-      previousValue: previous,
-      delta: delta,
-      percentChange: pct,
-    );
-  }
-
   static void _recordReason(
-    Map<String, _ReasonAcc> map,
+    Map<String, ReasonAcc> map,
     String? rawReason,
     int qty,
   ) {
     final cleaned = rawReason?.trim();
     if (cleaned == null || cleaned.isEmpty) return;
-    final acc = map.putIfAbsent(cleaned, () => _ReasonAcc());
+    final acc = map.putIfAbsent(cleaned, () => ReasonAcc());
     acc.quantity += qty;
     acc.occurrences += 1;
   }
-
-  ({List<ProductionTrendPoint> points, bool isWeekly}) _buildTrendPoints({
-    required List<DailyReportRow> dailyRowsNewestFirst,
-    required int? fromUtcMillis,
-    required int? toUtcMillis,
-  }) {
-    if (dailyRowsNewestFirst.isEmpty) {
-      return (points: const [], isWeekly: false);
-    }
-    final chronological = dailyRowsNewestFirst.reversed.toList();
-    final spanDays = (fromUtcMillis != null && toUtcMillis != null)
-        ? ((toUtcMillis - fromUtcMillis) ~/ _millisPerDay) + 1
-        : chronological.length;
-    final useWeekly = spanDays > 31 || chronological.length > 31;
-
-    if (!useWeekly) {
-      final points = chronological.map((r) {
-        final parts = r.istDateIso.split('-');
-        final shortLabel = parts.length == 3
-            ? '${parts[2]}/${parts[1]}'
-            : r.istDateIso;
-        return ProductionTrendPoint(
-          bucketKey: r.istDateIso,
-          label: shortLabel,
-          issuedQty: r.issuedQty,
-          goodReturnedQty: r.goodReturnedQty,
-          damagedLostQty: r.damagedQty + r.lostAndShortageQty,
-          labourCostPaise: r.labourEarnedPaise,
-        );
-      }).toList();
-      return (points: points, isWeekly: false);
-    }
-
-    // Group into IST Monday-start weekly buckets
-    final weeklyMap = <String, _TrendBucketAcc>{};
-    for (final r in chronological) {
-      final ist = IstDateTimeHelper.fromUtcMillisToIst(r.dayStartUtcMillis);
-      final daysFromMon = ist.weekday - DateTime.monday;
-      final mon = tz.TZDateTime(
-        IstDateTimeHelper.istLocation,
-        ist.year,
-        ist.month,
-        ist.day - daysFromMon,
-      );
-      final key = AppDateTimeFormatter.toIsoDate(mon);
-      final label = AppDateTimeFormatter.formatShortDayMonth(mon);
-      final acc = weeklyMap.putIfAbsent(key, () => _TrendBucketAcc(label));
-      acc.issued += r.issuedQty;
-      acc.good += r.goodReturnedQty;
-      acc.defects += r.damagedQty + r.lostAndShortageQty;
-      acc.labour += r.labourEarnedPaise;
-    }
-
-    final sortedKeys = weeklyMap.keys.toList()..sort();
-    // Keep at most the most recent 16 weekly bars for clean mobile legibility
-    final startIdx = math.max(0, sortedKeys.length - 16);
-    final points = [
-      for (int i = startIdx; i < sortedKeys.length; i++)
-        ProductionTrendPoint(
-          bucketKey: sortedKeys[i],
-          label: weeklyMap[sortedKeys[i]]!.label,
-          issuedQty: weeklyMap[sortedKeys[i]]!.issued,
-          goodReturnedQty: weeklyMap[sortedKeys[i]]!.good,
-          damagedLostQty: weeklyMap[sortedKeys[i]]!.defects,
-          labourCostPaise: weeklyMap[sortedKeys[i]]!.labour,
-        ),
-    ];
-    return (points: points, isWeekly: true);
-  }
-}
-
-final class _IssueSettlementAcc {
-  int good = 0;
-  int damaged = 0;
-  int lost = 0;
-  int shortage = 0;
-  int maxSettlementTxAt = 0;
-}
-
-final class _DailyAcc {
-  _DailyAcc(this.dayStartUtcMillis);
-  final int dayStartUtcMillis;
-  int issued = 0;
-  int good = 0;
-  int damaged = 0;
-  int lost = 0;
-  int shortage = 0;
-  int repaired = 0;
-  int labourPaise = 0;
-  int regularPayPaise = 0;
-  int advancePayPaise = 0;
-  int advanceRefPaise = 0;
-}
-
-final class _WorkerProcessAcc {
-  int issued = 0;
-  int good = 0;
-  int damaged = 0;
-  int lostShortage = 0;
-  int labourPaise = 0;
-}
-
-final class _WorkerPeriodAcc {
-  int issued = 0;
-  int good = 0;
-  int damaged = 0;
-  int lostShortage = 0;
-  int labourPaise = 0;
-  int regularPayPaise = 0;
-  int advancePayPaise = 0;
-  int advanceRefPaise = 0;
-  final Map<String, _WorkerProcessAcc> byProcess = {};
-}
-
-final class _ProcessWorkerAcc {
-  int issued = 0;
-  int good = 0;
-}
-
-final class _ProcessPeriodAcc {
-  int issued = 0;
-  int good = 0;
-  int damaged = 0;
-  int lostShortage = 0;
-  int labourPaise = 0;
-  final Map<String, _ProcessWorkerAcc> byWorker = {};
-}
-
-final class _ReasonAcc {
-  int quantity = 0;
-  int occurrences = 0;
-}
-
-final class _TrendBucketAcc {
-  _TrendBucketAcc(this.label);
-  final String label;
-  int issued = 0;
-  int good = 0;
-  int defects = 0;
-  int labour = 0;
 }
