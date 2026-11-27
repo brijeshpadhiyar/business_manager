@@ -1337,30 +1337,20 @@ final class _PremiumLotColourCard extends StatelessWidget {
                     const Spacer(),
                     // 44dp touch targets (were ~24dp) so edit/delete are
                     // easy to hit on a phone.
-                    IconButton(
+                    AppIconButton(
                       onPressed: onEdit,
                       tooltip: context.l10n.colourEditAction,
-                      constraints: const BoxConstraints.tightFor(
-                        width: 40,
-                        height: 44,
-                      ),
-                      padding: EdgeInsets.zero,
-                      iconSize: 18,
+                      compact: true,
                       color: onSwatch,
-                      icon: const Icon(AppIcons.edit),
+                      icon: AppIcons.edit,
                     ),
-                    IconButton(
+                    AppIconButton(
                       onPressed: onDelete,
                       tooltip: MaterialLocalizations.of(context)
                           .deleteButtonTooltip,
-                      constraints: const BoxConstraints.tightFor(
-                        width: 40,
-                        height: 44,
-                      ),
-                      padding: EdgeInsets.zero,
-                      iconSize: 18,
+                      compact: true,
                       color: onSwatch,
-                      icon: const Icon(AppIcons.delete),
+                      icon: AppIcons.delete,
                     ),
                   ],
                 ),
@@ -1611,10 +1601,11 @@ final class _LotPhotoTileState extends State<_LotPhotoTile> {
               Positioned(
                 top: 2,
                 right: 2,
-                child: IconButton.filledTonal(
-                  visualDensity: VisualDensity.compact,
+                child: AppIconButton(
+                  isFilled: true,
+                  compact: true,
                   tooltip: l10n.actionDelete,
-                  icon: const Icon(AppIcons.close, size: 16),
+                  icon: AppIcons.close,
                   onPressed: widget.onRemove,
                 ),
               ),

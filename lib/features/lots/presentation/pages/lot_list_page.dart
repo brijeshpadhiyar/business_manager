@@ -314,24 +314,24 @@ final class _LotListViewState extends State<_LotListView> {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    FilterChip(
-                      label: Text(l10n.lotsFilterAll),
+                    AppChip.filter(
+                      label: l10n.lotsFilterAll,
                       selected: state.statusFilter == null,
                       onSelected: (_) => context.read<LotListCubit>().loadLots(
                         clearStatusFilter: true,
                       ),
                     ),
                     const SizedBox(width: AppSpacing.sm),
-                    FilterChip(
-                      label: Text(l10n.lotsStatusActive),
+                    AppChip.filter(
+                      label: l10n.lotsStatusActive,
                       selected: state.statusFilter == LotStatus.active,
                       onSelected: (_) => context.read<LotListCubit>().loadLots(
                         statusFilter: LotStatus.active,
                       ),
                     ),
                     const SizedBox(width: AppSpacing.sm),
-                    FilterChip(
-                      label: Text(l10n.lotsStatusCompleted),
+                    AppChip.filter(
+                      label: l10n.lotsStatusCompleted,
                       selected: state.statusFilter == LotStatus.completed,
                       onSelected: (_) => context.read<LotListCubit>().loadLots(
                         statusFilter: LotStatus.completed,

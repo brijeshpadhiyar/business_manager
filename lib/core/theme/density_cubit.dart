@@ -30,8 +30,7 @@ final class DensityState {
 
   @override
   bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is DensityState && other.mode == mode;
+      identical(this, other) || other is DensityState && other.mode == mode;
 
   @override
   int get hashCode => mode.hashCode;

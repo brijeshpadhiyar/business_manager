@@ -84,7 +84,9 @@ final class ProcessHistoryCubit extends Cubit<ProcessHistoryState> {
     String processId, {
     ProductionHistoryFilter? filter,
   }) async {
-    final activeFilter = (filter ?? state.filter).copyWith(processId: processId);
+    final activeFilter = (filter ?? state.filter).copyWith(
+      processId: processId,
+    );
     emit(
       state.copyWith(
         status: ProductionHistoryLoadStatus.loading,

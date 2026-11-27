@@ -32,8 +32,8 @@ final class ProductionTransactionDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final kind = ProductionTransactionKind.fromRouteSegment(kindSegment);
     return BlocProvider<TransactionDetailCubit>(
-      create: (_) => getIt<TransactionDetailCubit>()
-        ..load(kind: kind, id: transactionId),
+      create: (_) =>
+          getIt<TransactionDetailCubit>()..load(kind: kind, id: transactionId),
       child: _TransactionDetailView(kind: kind, transactionId: transactionId),
     );
   }
@@ -60,18 +60,19 @@ final class _TransactionDetailView extends StatelessWidget {
           title: l10n.prodHistoryTxDetailTitle,
           body: switch (state.status) {
             ProductionHistoryLoadStatus.initial ||
-            ProductionHistoryLoadStatus.loading =>
-              const AppSkeletonList(itemCount: 3),
-            ProductionHistoryLoadStatus.error || _ when detail == null =>
-              AppErrorView(
-                title: l10n.errorUnexpected,
-                message: state.errorMessage,
-                retryLabel: l10n.actionRetry,
-                onRetry: () => context.read<TransactionDetailCubit>().load(
-                  kind: kind,
-                  id: transactionId,
-                ),
+            ProductionHistoryLoadStatus.loading => const AppSkeletonList(
+              itemCount: 3,
+            ),
+            ProductionHistoryLoadStatus.error ||
+            _ when detail == null => AppErrorView(
+              title: l10n.errorUnexpected,
+              message: state.errorMessage,
+              retryLabel: l10n.actionRetry,
+              onRetry: () => context.read<TransactionDetailCubit>().load(
+                kind: kind,
+                id: transactionId,
               ),
+            ),
             _ => _buildDetail(context, detail, localeCode),
           },
         );
@@ -92,9 +93,20 @@ final class _TransactionDetailView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AppActionRow(content: AppHeading(d.title, level: AppHeadingLevel.h3), actions: [AppStatusBadge(label: d.statusLabel, tone: AppStatusTone.info),],),
+              AppActionRow(
+                content: AppHeading(d.title, level: AppHeadingLevel.h3),
+                actions: [
+                  AppStatusBadge(
+                    label: d.statusLabel,
+                    tone: AppStatusTone.info,
+                  ),
+                ],
+              ),
               const SizedBox(height: AppSpacing.xs),
-              AppText('Transaction ID: ${d.id}', variant: AppTextVariant.bodySmall),
+              AppText(
+                'Transaction ID: ${d.id}',
+                variant: AppTextVariant.bodySmall,
+              ),
               AppText(
                 'Transaction Time: ${AppDateTimeFormatter.formatDateTime(d.transactionAt, locale: localeCode)}',
                 variant: AppTextVariant.bodySmall,
@@ -104,7 +116,10 @@ final class _TransactionDetailView extends StatelessWidget {
                 variant: AppTextVariant.bodySmall,
               ),
               if (d.actor != null)
-                AppText('Recorded By: ${d.actor}', variant: AppTextVariant.bodySmall),
+                AppText(
+                  'Recorded By: ${d.actor}',
+                  variant: AppTextVariant.bodySmall,
+                ),
               if (d.approvedBy != null)
                 AppText(
                   'Approved By: ${d.approvedBy}${d.authorizedViaPin ? ' (PIN Verified)' : ''}',
@@ -118,7 +133,8 @@ final class _TransactionDetailView extends StatelessWidget {
                 children: [
                   if (d.lotId != null)
                     AppButton(
-                      label: '${l10n.prodHistoryOpenLot}: ${d.lotNumber ?? d.lotId}',
+                      label:
+                          '${l10n.prodHistoryOpenLot}: ${d.lotNumber ?? d.lotId}',
                       icon: AppIcons.lot,
                       variant: AppButtonVariant.secondary,
                       onPressed: () =>
@@ -167,7 +183,8 @@ final class _TransactionDetailView extends StatelessWidget {
               if (d.quantity != null)
                 _InfoRow(
                   label: 'Quantity',
-                  value: '${MoneyFormatter.formatQuantity(d.quantity!)} ${l10n.piecesUnit}',
+                  value:
+                      '${MoneyFormatter.formatQuantity(d.quantity!)} ${l10n.piecesUnit}',
                 ),
               if (d.acceptedQuantity != null)
                 _InfoRow(
@@ -184,7 +201,8 @@ final class _TransactionDetailView extends StatelessWidget {
               if (d.lockedRatePaise != null)
                 _InfoRow(
                   label: l10n.prodHistoryLockedRateSnapshot,
-                  value: '${MoneyFormatter.formatPaise(d.lockedRatePaise!)} / pc',
+                  value:
+                      '${MoneyFormatter.formatPaise(d.lockedRatePaise!)} / pc',
                 ),
               if (d.amountPaise != null)
                 _InfoRow(
@@ -213,7 +231,7 @@ final class _TransactionDetailView extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 for (final link in d.relatedLinks)
-                  ListTile(
+                  AppListTile(
                     dense: true,
                     contentPadding: EdgeInsets.zero,
                     leading: const Icon(AppIcons.link),
@@ -244,7 +262,7 @@ final class _TransactionDetailView extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.xs),
                 for (final a in d.auditTrail)
-                  ListTile(
+                  AppListTile(
                     dense: true,
                     contentPadding: EdgeInsets.zero,
                     leading: const Icon(AppIcons.productionHistory),

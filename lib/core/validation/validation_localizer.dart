@@ -42,12 +42,10 @@ abstract final class ValidationLocalizer {
       ValidationErrorCode.valueTooLarge => l10n.validationValueTooLarge,
       ValidationErrorCode.valueOutOfRange => l10n.validationInvalidNumber,
       ValidationErrorCode.quantityMustBePositive => l10n.validationPositiveInt,
-      ValidationErrorCode.quantityNonNegative =>
-        l10n.validationNonNegativeInt,
+      ValidationErrorCode.quantityNonNegative => l10n.validationNonNegativeInt,
       ValidationErrorCode.quantityExceedsMax =>
         l10n.validationQuantityExceedsMax(result.intParam ?? 0),
-      ValidationErrorCode.amountMustBePositive =>
-        l10n.validationPositiveAmount,
+      ValidationErrorCode.amountMustBePositive => l10n.validationPositiveAmount,
       ValidationErrorCode.amountNonNegative => l10n.validationValidPrice,
       ValidationErrorCode.invalidPercentage => l10n.validationInvalidPercentage,
       ValidationErrorCode.invalidDate => l10n.validationInvalidDate,

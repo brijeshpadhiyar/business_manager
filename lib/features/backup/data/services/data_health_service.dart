@@ -215,17 +215,19 @@ final class DataHealthService {
   }
 
   Future<Map<String, int>> _loadPendingQcByColour() async {
-    final rows = await _db.customSelect(
-      'SELECT r.design_colour_id AS colour_id, '
-      'COALESCE(SUM(MAX(r.returned_quantity - COALESCE(('
-      '  SELECT SUM(i.accepted_quantity + i.rejected_quantity) '
-      '  FROM production_inspections i '
-      '  WHERE i.production_return_id = r.id'
-      '), 0), 0)), 0) AS pending_qc '
-      'FROM production_returns r '
-      'WHERE r.deleted_at IS NULL '
-      'GROUP BY r.design_colour_id',
-    ).get();
+    final rows = await _db
+        .customSelect(
+          'SELECT r.design_colour_id AS colour_id, '
+          'COALESCE(SUM(MAX(r.returned_quantity - COALESCE(('
+          '  SELECT SUM(i.accepted_quantity + i.rejected_quantity) '
+          '  FROM production_inspections i '
+          '  WHERE i.production_return_id = r.id'
+          '), 0), 0)), 0) AS pending_qc '
+          'FROM production_returns r '
+          'WHERE r.deleted_at IS NULL '
+          'GROUP BY r.design_colour_id',
+        )
+        .get();
     return {
       for (final r in rows)
         r.read<String>('colour_id'): r.read<int>('pending_qc'),
@@ -236,11 +238,13 @@ final class DataHealthService {
     final issues = <LedgerParityIssue>[];
 
     // Check A: process_additional_charges without linked worker_ledger_adjustments
-    final unlinkedCharges = await _db.customSelect(
-      'SELECT id, job_process_id, amount_paise '
-      'FROM process_additional_charges '
-      'WHERE ledger_adjustment_id IS NULL',
-    ).get();
+    final unlinkedCharges = await _db
+        .customSelect(
+          'SELECT id, job_process_id, amount_paise '
+          'FROM process_additional_charges '
+          'WHERE ledger_adjustment_id IS NULL',
+        )
+        .get();
     for (final r in unlinkedCharges) {
       issues.add(
         LedgerParityIssue(
@@ -253,21 +257,23 @@ final class DataHealthService {
     }
 
     // Check B: active payable labour linked to a reversed stock movement
-    final orphanLabour = await _db.customSelect(
-      'SELECT l.id, l.stock_movement_id, l.amount_paise '
-      'FROM labour_entries l '
-      'WHERE l.reverses_labour_entry_id IS NULL '
-      '  AND l.is_payable = 1 '
-      '  AND NOT EXISTS ('
-      '    SELECT 1 FROM labour_entries lr '
-      '    WHERE lr.reverses_labour_entry_id = l.id'
-      '  ) '
-      '  AND EXISTS ('
-      '    SELECT 1 FROM stock_movements rev '
-      "    WHERE rev.movement_type = 'REVERSAL' "
-      '      AND rev.reverses_movement_id = l.stock_movement_id'
-      '  )',
-    ).get();
+    final orphanLabour = await _db
+        .customSelect(
+          'SELECT l.id, l.stock_movement_id, l.amount_paise '
+          'FROM labour_entries l '
+          'WHERE l.reverses_labour_entry_id IS NULL '
+          '  AND l.is_payable = 1 '
+          '  AND NOT EXISTS ('
+          '    SELECT 1 FROM labour_entries lr '
+          '    WHERE lr.reverses_labour_entry_id = l.id'
+          '  ) '
+          '  AND EXISTS ('
+          '    SELECT 1 FROM stock_movements rev '
+          "    WHERE rev.movement_type = 'REVERSAL' "
+          '      AND rev.reverses_movement_id = l.stock_movement_id'
+          '  )',
+        )
+        .get();
     for (final r in orphanLabour) {
       issues.add(
         LedgerParityIssue(

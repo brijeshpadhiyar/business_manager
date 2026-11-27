@@ -1559,5 +1559,14 @@
   "@lotCostPaidOutstandingLine": {"placeholders": {"a": {"type": "Object"}, "b": {"type": "Object"}, "c": {"type": "Object"}}},
   "stockStageDefaultBadge": "Stage Default",
   "stockInheritedFrom": "Inherited from {a} ({b})",
-  "@stockInheritedFrom": {"placeholders": {"a": {"type": "Object"}, "b": {"type": "Object"}}}
+  "@stockInheritedFrom": {"placeholders": {"a": {"type": "Object"}, "b": {"type": "Object"}}},
+  "selectSearchHint": "Search…",
+  "selectNoResults": "No matching items",
+  "selectLoadError": "Could not load items. Try again.",
+  "selectSelectAll": "Select all",
+  "selectClearAll": "Clear",
+  "selectSelectedCount": "{count} selected",
+  "@selectSelectedCount": {"placeholders": {"count": {"type": "int"}}},
+  "selectMaxReached": "You can select up to {max}",
+  "@selectMaxReached": {"placeholders": {"max": {"type": "int"}}}
 }

@@ -14,6 +14,7 @@ final class AppIconButton extends StatelessWidget {
     required this.onPressed,
     this.color,
     this.isFilled = false,
+    this.compact = false,
   });
 
   final IconData icon;
@@ -22,22 +23,33 @@ final class AppIconButton extends StatelessWidget {
   final Color? color;
   final bool isFilled;
 
+  /// Smaller 16dp icon and 40dp target for dense rows (e.g. on swatches).
+  final bool compact;
+
   @override
   Widget build(BuildContext context) {
     final tokens = context.surfaceTokens;
-    const constraints = BoxConstraints(
-      minWidth: AppSizing.touchTargetMin,
-      minHeight: AppSizing.touchTargetMin,
-    );
+    final constraints = compact
+        ? const BoxConstraints.tightFor(width: 40, height: 44)
+        : const BoxConstraints(
+            minWidth: AppSizing.touchTargetMin,
+            minHeight: AppSizing.touchTargetMin,
+          );
     final iconWidget = AppIconPop(
-      child: Icon(icon, size: AppSizing.iconMd, color: color),
+      child: Icon(
+        icon,
+        size: compact ? AppSizing.iconSm + 2 : AppSizing.iconMd,
+        color: color,
+      ),
     );
+    final padding = compact ? EdgeInsets.zero : null;
 
     final button = isFilled
         ? IconButton.filledTonal(
             onPressed: onPressed,
             tooltip: tooltip,
             constraints: constraints,
+            padding: padding,
             style: IconButton.styleFrom(
               backgroundColor: tokens.glassFill,
               side: BorderSide(color: tokens.glassBorder, width: 0.9),
@@ -48,19 +60,24 @@ final class AppIconButton extends StatelessWidget {
             onPressed: onPressed,
             tooltip: tooltip,
             constraints: constraints,
+            padding: padding,
             icon: iconWidget,
           );
 
-    return Semantics(
-      button: true,
-      enabled: onPressed != null,
-      label: tooltip,
-      child: AppIconPopHost(
+    // MergeSemantics: one node for screen readers (label + the IconButton's
+    // button/focus flags) instead of two nested buttons.
+    return MergeSemantics(
+      child: Semantics(
+        button: true,
         enabled: onPressed != null,
-        child: AppPressable(
+        label: tooltip,
+        child: AppIconPopHost(
           enabled: onPressed != null,
-          pressedScale: 0.92,
-          child: button,
+          child: AppPressable(
+            enabled: onPressed != null,
+            pressedScale: 0.92,
+            child: button,
+          ),
         ),
       ),
     );

@@ -455,7 +455,8 @@ final class _GlassToastCard extends StatelessWidget {
                                   size: 16,
                                   color: theme.colorScheme.onSurfaceVariant,
                                 ),
-                                tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
+                                tooltip: MaterialLocalizations.of(context)
+                                    .closeButtonTooltip,
                                 onPressed: onClose,
                               ),
                           ],

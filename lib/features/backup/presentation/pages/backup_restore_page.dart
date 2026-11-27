@@ -230,7 +230,7 @@ final class _BackupRestoreView extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                       const SizedBox(height: AppSpacing.sm),
-                      LinearProgressIndicator(value: state.progress?.fraction),
+                      AppProgressBar(value: state.progress?.fraction),
                     ],
                   ),
                 ),
@@ -304,7 +304,7 @@ final class _BackupRestoreView extends StatelessWidget {
                     ),
                     if (validation != null) ...[
                       const SizedBox(height: AppSpacing.md),
-                      const Divider(),
+                      const AppDivider(),
                       const SizedBox(height: AppSpacing.sm),
                       AppStatusBadge(
                         label: validation.isValid

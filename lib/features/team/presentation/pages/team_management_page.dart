@@ -393,8 +393,8 @@ final class _TeamManagementPageState extends State<TeamManagementPage> {
                                               BusinessRole.owner &&
                                           _members[i].isActive)
                                         PermissionGate(
-                                          permission:
-                                              AppPermission.manageTeamAndInvites,
+                                          permission: AppPermission
+                                              .manageTeamAndInvites,
                                           child: AppButton(
                                             label: l10n.teamRevokeAction,
                                             variant: AppButtonVariant.text,
@@ -417,7 +417,8 @@ final class _TeamManagementPageState extends State<TeamManagementPage> {
                                         ),
                                     ],
                                   ),
-                                  if (i < _members.length - 1) const Divider(),
+                                  if (i < _members.length - 1)
+                                    const AppDivider(),
                                 ],
                               ],
                             ),
@@ -476,7 +477,8 @@ final class _TeamManagementPageState extends State<TeamManagementPage> {
                                             if (_invites[i].isPending) ...[
                                               AppIconButton(
                                                 icon: AppIcons.copy,
-                                                tooltip: l10n.slipCopyTextAction,
+                                                tooltip:
+                                                    l10n.slipCopyTextAction,
                                                 onPressed: () async {
                                                   await Clipboard.setData(
                                                     ClipboardData(
@@ -515,7 +517,7 @@ final class _TeamManagementPageState extends State<TeamManagementPage> {
                                           ],
                                         ),
                                         if (i < _invites.length - 1)
-                                          const Divider(),
+                                          const AppDivider(),
                                       ],
                                     ],
                                   ),

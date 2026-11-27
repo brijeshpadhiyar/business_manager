@@ -75,18 +75,20 @@ final class SupabaseTeamRepository implements TeamRepository {
                   IstDateTimeHelper.nowUtcMillis(),
             );
             parsed.add(info);
-            await _db.into(_db.cachedTeamMembers).insertOnConflictUpdate(
-              CachedTeamMembersCompanion(
-                userId: Value(info.userId),
-                businessId: Value(info.businessId),
-                role: Value(info.role.dbValue),
-                status: Value(info.status),
-                displayName: Value(info.displayName),
-                email: Value(info.email),
-                phone: Value(info.phone),
-                updatedAt: Value(info.updatedAtUtcMillis),
-              ),
-            );
+            await _db
+                .into(_db.cachedTeamMembers)
+                .insertOnConflictUpdate(
+                  CachedTeamMembersCompanion(
+                    userId: Value(info.userId),
+                    businessId: Value(info.businessId),
+                    role: Value(info.role.dbValue),
+                    status: Value(info.status),
+                    displayName: Value(info.displayName),
+                    email: Value(info.email),
+                    phone: Value(info.phone),
+                    updatedAt: Value(info.updatedAtUtcMillis),
+                  ),
+                );
           }
         });
         return parsed;
@@ -95,9 +97,9 @@ final class SupabaseTeamRepository implements TeamRepository {
       }
     }
 
-    final cached = await (_db.select(_db.cachedTeamMembers)
-          ..where((t) => t.businessId.equals(businessId)))
-        .get();
+    final cached = await (_db.select(
+      _db.cachedTeamMembers,
+    )..where((t) => t.businessId.equals(businessId))).get();
     return cached
         .map(
           (r) => TeamMemberInfo(
@@ -218,10 +220,9 @@ final class SupabaseTeamRepository implements TeamRepository {
           .eq('business_id', businessId)
           .eq('user_id', userId);
     }
-    await (_db.update(_db.cachedTeamMembers)
-          ..where(
-            (t) => t.businessId.equals(businessId) & t.userId.equals(userId),
-          ))
+    await (_db.update(_db.cachedTeamMembers)..where(
+          (t) => t.businessId.equals(businessId) & t.userId.equals(userId),
+        ))
         .write(
           CachedTeamMembersCompanion(
             role: Value(role.dbValue),
@@ -243,10 +244,9 @@ final class SupabaseTeamRepository implements TeamRepository {
           .eq('business_id', businessId)
           .eq('user_id', userId);
     }
-    await (_db.update(_db.cachedTeamMembers)
-          ..where(
-            (t) => t.businessId.equals(businessId) & t.userId.equals(userId),
-          ))
+    await (_db.update(_db.cachedTeamMembers)..where(
+          (t) => t.businessId.equals(businessId) & t.userId.equals(userId),
+        ))
         .write(
           CachedTeamMembersCompanion(
             status: const Value('REVOKED'),
@@ -288,15 +288,16 @@ final class SupabaseTeamRepository implements TeamRepository {
     String? businessName,
   }) async {
     await _db.syncDao.getSessionState();
-    await (_db.update(_db.syncSessionStates)..where((t) => t.id.equals(1)))
-        .write(
-          SyncSessionStatesCompanion(
-            activeRole: Value(role.dbValue),
-            activeBusinessName: businessName != null
-                ? Value(businessName)
-                : const Value.absent(),
-            updatedAt: Value(IstDateTimeHelper.nowUtcMillis()),
-          ),
-        );
+    await (_db.update(
+      _db.syncSessionStates,
+    )..where((t) => t.id.equals(1))).write(
+      SyncSessionStatesCompanion(
+        activeRole: Value(role.dbValue),
+        activeBusinessName: businessName != null
+            ? Value(businessName)
+            : const Value.absent(),
+        updatedAt: Value(IstDateTimeHelper.nowUtcMillis()),
+      ),
+    );
   }
 }

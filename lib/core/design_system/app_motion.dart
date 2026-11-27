@@ -199,7 +199,9 @@ final class _AppCrossFadeIndexedStackState
       children: [
         for (int i = 0; i < widget.children.length; i++)
           Offstage(
-            offstage: i != _currentIndex && (!_isTransitioning || i != _previousIndex),
+            offstage:
+                i != _currentIndex &&
+                (!_isTransitioning || i != _previousIndex),
             child: TickerMode(
               enabled: i == _currentIndex,
               child: ExcludeFocus(

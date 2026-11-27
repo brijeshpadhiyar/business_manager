@@ -248,8 +248,8 @@ final class SyncCubit extends Cubit<SyncState> {
   Future<void> _refreshAfterSync({SyncRunSummary? summary}) async {
     await _refreshFailedItems();
     final session = await _db.syncDao.getSessionState();
-    final hasFailures = state.failedItems.isNotEmpty ||
-        (summary?.failedCount ?? 0) > 0;
+    final hasFailures =
+        state.failedItems.isNotEmpty || (summary?.failedCount ?? 0) > 0;
     emit(
       state.copyWith(
         phase: hasFailures ? SyncPhase.needsAttention : SyncPhase.synced,

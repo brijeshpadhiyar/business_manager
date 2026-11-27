@@ -280,31 +280,27 @@ final class _ProcessDetailViewState extends State<_ProcessDetailView> {
                         spacing: AppSpacing.xs,
                         runSpacing: AppSpacing.xs,
                         children: [
-                          ChoiceChip(
-                            label: Text(
-                              '${l10n.prodHistoryTabLotWise} (${ph.lotHistory.length})',
-                            ),
+                          AppChip(
+                            label:
+                                '${l10n.prodHistoryTabLotWise} (${ph.lotHistory.length})',
                             selected: _historyTab == 0,
                             onSelected: (_) => setState(() => _historyTab = 0),
                           ),
-                          ChoiceChip(
-                            label: Text(
-                              '${l10n.prodHistoryTabWorkerWise} (${ph.workerHistory.length})',
-                            ),
+                          AppChip(
+                            label:
+                                '${l10n.prodHistoryTabWorkerWise} (${ph.workerHistory.length})',
                             selected: _historyTab == 1,
                             onSelected: (_) => setState(() => _historyTab = 1),
                           ),
-                          ChoiceChip(
-                            label: Text(
-                              '${l10n.prodHistoryTabDateWise} (${ph.dateHistory.length})',
-                            ),
+                          AppChip(
+                            label:
+                                '${l10n.prodHistoryTabDateWise} (${ph.dateHistory.length})',
                             selected: _historyTab == 2,
                             onSelected: (_) => setState(() => _historyTab = 2),
                           ),
-                          ChoiceChip(
-                            label: Text(
-                              '${l10n.prodHistoryTabPending} (${ph.pendingAssignments.length})',
-                            ),
+                          AppChip(
+                            label:
+                                '${l10n.prodHistoryTabPending} (${ph.pendingAssignments.length})',
                             selected: _historyTab == 3,
                             onSelected: (_) => setState(() => _historyTab = 3),
                           ),
@@ -541,7 +537,7 @@ final class _ProcessDetailViewState extends State<_ProcessDetailView> {
                   child: Column(
                     children: detail.auditHistory
                         .map(
-                          (entry) => ListTile(
+                          (entry) => AppListTile(
                             dense: true,
                             contentPadding: EdgeInsets.zero,
                             leading: const Icon(AppIcons.rateHistory),

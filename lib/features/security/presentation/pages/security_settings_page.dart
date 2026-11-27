@@ -187,9 +187,7 @@ final class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
                         borderRadius: AppRadius.mdBorder,
                       ),
                       child: Icon(
-                        enabled
-                            ? AppIcons.security
-                            : AppIcons.unlock,
+                        enabled ? AppIcons.security : AppIcons.unlock,
                         color: enabled
                             ? Colors.white
                             : colorScheme.onSurfaceVariant,
@@ -314,7 +312,7 @@ final class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
                                   .setBiometricEnabled(v)
                             : null,
                       ),
-                      const Divider(),
+                      const AppDivider(),
                       AppSwitch(
                         label: l10n.securityScreenshotProtectionLabel,
                         subtitle: l10n.securityScreenshotProtectionSubtitle,
@@ -323,7 +321,7 @@ final class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
                             .read<AppLockCubit>()
                             .setScreenshotProtectionEnabled(v),
                       ),
-                      const Divider(),
+                      const AppDivider(),
                       AppSwitch(
                         label: l10n.securityRequireApprovalAuthLabel,
                         subtitle: l10n.securityRequireApprovalAuthSubtitle,
@@ -353,8 +351,8 @@ final class _SecuritySettingsPageState extends State<SecuritySettingsPage> {
                         runSpacing: AppSpacing.xs,
                         children: [
                           for (final opt in LockTimeoutOption.values)
-                            ChoiceChip(
-                              label: Text(_timeoutLabel(context, opt)),
+                            AppChip(
+                              label: _timeoutLabel(context, opt),
                               selected: settings.timeout == opt,
                               onSelected: (_) =>
                                   context.read<AppLockCubit>().setTimeout(opt),

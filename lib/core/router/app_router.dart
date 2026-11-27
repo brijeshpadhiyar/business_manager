@@ -855,7 +855,7 @@ final class _PrimaryTabsViewport extends StatelessWidget {
                 for (final item in extraRoutes)
                   PopupMenuItem<VoidCallback>(
                     value: () => router.push(item.route),
-                    child: ListTile(
+                    child: AppListTile(
                       contentPadding: EdgeInsets.zero,
                       leading: Icon(item.icon),
                       title: Text(item.label),
@@ -865,7 +865,7 @@ final class _PrimaryTabsViewport extends StatelessWidget {
                   const PopupMenuDivider(),
                   PopupMenuItem<VoidCallback>(
                     value: () => context.read<AppLockCubit>().lockNow(),
-                    child: ListTile(
+                    child: AppListTile(
                       contentPadding: EdgeInsets.zero,
                       leading: const Icon(AppIcons.lock),
                       title: Text(l10n.securityLockNowAction),

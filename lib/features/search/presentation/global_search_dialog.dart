@@ -1,12 +1,10 @@
 import 'dart:async';
 
-import 'package:business_manager/core/design_system/app_breakpoints.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
-import 'package:business_manager/core/widgets/app_dialog.dart';
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
 import 'package:business_manager/features/lots/domain/repositories/lot_repository.dart';
 import 'package:business_manager/features/processes/domain/entities/process_entities.dart';
@@ -16,7 +14,7 @@ import 'package:business_manager/features/workers/domain/entities/worker_entitie
 import 'package:business_manager/features/workers/domain/repositories/worker_repository.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:business_manager/core/widgets/app_loader.dart';
+import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/core/design_system/app_icons.dart';
 
 /// Opens the global search: one box that finds a lot, worker or process and
@@ -147,9 +145,9 @@ final class _GlobalSearchDialogState extends State<GlobalSearchDialog> {
               )
             : query.isEmpty
             ? null
-            : IconButton(
+            : AppIconButton(
                 tooltip: MaterialLocalizations.of(context).deleteButtonTooltip,
-                icon: const Icon(AppIcons.close),
+                icon: AppIcons.close,
                 onPressed: () {
                   _controller.clear();
                   _onChanged('');
@@ -163,7 +161,7 @@ final class _GlobalSearchDialogState extends State<GlobalSearchDialog> {
       body = [
         _SectionTitle(l10n.uxQuickActions),
         for (final a in buildQuickActions(context))
-          ListTile(
+          AppListTile(
             leading: Icon(a.icon),
             title: Text(a.label),
             onTap: () => _open(a.route),
@@ -185,7 +183,7 @@ final class _GlobalSearchDialogState extends State<GlobalSearchDialog> {
         if (_results.lots.isNotEmpty) ...[
           _SectionTitle(l10n.uxSearchLots),
           for (final lot in _results.lots)
-            ListTile(
+            AppListTile(
               leading: const Icon(AppIcons.lot),
               title: Text(lot.lotNumber),
               subtitle: lot.title == null || lot.title!.isEmpty
@@ -197,7 +195,7 @@ final class _GlobalSearchDialogState extends State<GlobalSearchDialog> {
         if (_results.workers.isNotEmpty) ...[
           _SectionTitle(l10n.uxSearchWorkers),
           for (final w in _results.workers)
-            ListTile(
+            AppListTile(
               leading: const Icon(AppIcons.worker),
               title: Text(w.name),
               subtitle: w.phone == null || w.phone!.isEmpty
@@ -209,7 +207,7 @@ final class _GlobalSearchDialogState extends State<GlobalSearchDialog> {
         if (_results.processes.isNotEmpty) ...[
           _SectionTitle(l10n.uxSearchProcesses),
           for (final p in _results.processes)
-            ListTile(
+            AppListTile(
               leading: const Icon(AppIcons.routeTransfer),
               title: Text(p.name),
               onTap: () => _open(RoutePaths.processDetail(p.id)),
@@ -223,7 +221,7 @@ final class _GlobalSearchDialogState extends State<GlobalSearchDialog> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Padding(padding: const EdgeInsets.all(AppSpacing.md), child: field),
-        const Divider(height: 1),
+        const AppDivider(height: 1),
         Flexible(
           child: ListView(
             shrinkWrap: true,
@@ -241,9 +239,9 @@ final class _GlobalSearchDialogState extends State<GlobalSearchDialog> {
             children: [
               Align(
                 alignment: Alignment.centerLeft,
-                child: IconButton(
+                child: AppIconButton(
                   tooltip: MaterialLocalizations.of(context).closeButtonTooltip,
-                  icon: const Icon(AppIcons.back),
+                  icon: AppIcons.back,
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ),

@@ -70,10 +70,7 @@ final class _WorkerProductionHistoryView extends StatelessWidget {
     );
   }
 
-  Widget _buildList(
-    BuildContext context,
-    WorkerProductionHistoryState state,
-  ) {
+  Widget _buildList(BuildContext context, WorkerProductionHistoryState state) {
     final l10n = context.l10n;
     final cubit = context.read<WorkerProductionHistoryCubit>();
     final filter = state.filter;
@@ -86,9 +83,8 @@ final class _WorkerProductionHistoryView extends StatelessWidget {
             children: [
               AppSearchField(
                 label: l10n.prodHistorySearchHint,
-                onChanged: (q) => cubit.loadAll(
-                  filter: filter.copyWith(searchQuery: q),
-                ),
+                onChanged: (q) =>
+                    cubit.loadAll(filter: filter.copyWith(searchQuery: q)),
               ),
               const SizedBox(height: AppSpacing.sm),
               Wrap(
@@ -108,8 +104,8 @@ final class _WorkerProductionHistoryView extends StatelessWidget {
                       itemLabelBuilder: (id) => id == '__ALL__'
                           ? l10n.prodHistoryAllEntries
                           : state.options.processes
-                              .firstWhere((p) => p.id == id)
-                              .label,
+                                .firstWhere((p) => p.id == id)
+                                .label,
                       onChanged: (v) => cubit.loadAll(
                         filter: v == null || v == '__ALL__'
                             ? filter.copyWith(clearProcess: true)
@@ -117,8 +113,8 @@ final class _WorkerProductionHistoryView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  FilterChip(
-                    label: Text(l10n.prodHistoryIncludeInactive),
+                  AppChip.filter(
+                    label: l10n.prodHistoryIncludeInactive,
                     selected: state.includeInactive,
                     onSelected: (v) => cubit.loadAll(includeInactive: v),
                   ),
@@ -139,8 +135,14 @@ final class _WorkerProductionHistoryView extends StatelessWidget {
             columns: [
               AppDataColumn(label: l10n.workerNameLabel),
               const AppDataColumn(label: 'Lots', numeric: true),
-              AppDataColumn(label: l10n.prodHistoryTotalAssigned, numeric: true),
-              AppDataColumn(label: l10n.prodHistoryTotalAccepted, numeric: true),
+              AppDataColumn(
+                label: l10n.prodHistoryTotalAssigned,
+                numeric: true,
+              ),
+              AppDataColumn(
+                label: l10n.prodHistoryTotalAccepted,
+                numeric: true,
+              ),
               const AppDataColumn(
                 label: 'Pending QC',
                 numeric: true,
@@ -159,8 +161,7 @@ final class _WorkerProductionHistoryView extends StatelessWidget {
             ],
             items: state.profiles,
             itemKeyBuilder: (p) => ValueKey<String>(p.workerId),
-            onRowTap: (p) =>
-                context.push(RoutePaths.workerDetail(p.workerId)),
+            onRowTap: (p) => context.push(RoutePaths.workerDetail(p.workerId)),
             cellsBuilder: (p) => [
               AppText(p.workerName, fontWeight: FontWeight.w700),
               AppText('${p.totalLotsAssigned}'),
@@ -169,7 +170,9 @@ final class _WorkerProductionHistoryView extends StatelessWidget {
               AppText('${p.pendingInspectionQty}'),
               AppText('${p.rejectedQty}'),
               AppText(
-                MoneyFormatter.formatPaise(p.financialSummary.earnedLabourPaise),
+                MoneyFormatter.formatPaise(
+                  p.financialSummary.earnedLabourPaise,
+                ),
               ),
               AppText(
                 MoneyFormatter.formatPaise(
@@ -198,73 +201,81 @@ final class _WorkerSummaryCard extends StatelessWidget {
 
     // The table already wraps each row in a tappable card.
     return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AppActionRow(content: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AppText(
-                      profile.workerName,
-                      variant: AppTextVariant.bodyLarge,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    if (profile.phone != null)
-                      AppText(profile.phone!, variant: AppTextVariant.bodySmall),
-                  ],
-                ), actions: [AppStatusBadge(
-                label: profile.isActive
-                    ? l10n.statusActive
-                    : l10n.statusInactive,
-                tone: profile.isActive
-                    ? AppStatusTone.good
-                    : AppStatusTone.neutral,
-              ),],),
-          const SizedBox(height: AppSpacing.xs),
-          Wrap(
-            spacing: AppSpacing.xs,
-            runSpacing: 4,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AppActionRow(
+          content: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              AppStatusBadge(
-                label: 'Lots: ${profile.totalLotsAssigned}',
-                tone: AppStatusTone.info,
+              AppText(
+                profile.workerName,
+                variant: AppTextVariant.bodyLarge,
+                fontWeight: FontWeight.w700,
               ),
-              AppStatusBadge(
-                label: '${l10n.prodHistoryTotalAssigned}: ${profile.assignedQty}',
-                tone: AppStatusTone.neutral,
-              ),
-              AppStatusBadge(
-                label: '${l10n.prodHistoryTotalAccepted}: ${profile.acceptedQty}',
-                tone: AppStatusTone.good,
-              ),
-              if (profile.pendingInspectionQty > 0)
-                AppStatusBadge(
-                  label: 'Pending QC: ${profile.pendingInspectionQty}',
-                  tone: AppStatusTone.pending,
-                ),
-              if (profile.outstandingQty > 0)
-                AppStatusBadge(
-                  label: 'Outstanding: ${profile.outstandingQty}',
-                  tone: AppStatusTone.pending,
-                ),
-              if (profile.rejectedQty > 0)
-                AppStatusBadge(
-                  label: 'Rejected: ${profile.rejectedQty}',
-                  tone: AppStatusTone.damaged,
-                ),
+              if (profile.phone != null)
+                AppText(profile.phone!, variant: AppTextVariant.bodySmall),
             ],
           ),
-          const SizedBox(height: AppSpacing.xs),
-          AppActionRow(content: AppText(
-                  'Earned: ${MoneyFormatter.formatPaise(fin.earnedLabourPaise)} • Paid: ${MoneyFormatter.formatPaise(fin.netPaidToWorkerPaise)} • Due: ${MoneyFormatter.formatPaise(fin.outstandingPayablePaise)}',
-                  variant: AppTextVariant.numeric,
-                  fontWeight: FontWeight.w600,
-                ), actions: [AppButton(
-                label: l10n.accountingOpenLedgerAction,
-                variant: AppButtonVariant.text,
-                onPressed: () =>
-                    context.push(RoutePaths.workerLedger(profile.workerId)),
-              ),],),
-        ],
-      );
+          actions: [
+            AppStatusBadge(
+              label: profile.isActive ? l10n.statusActive : l10n.statusInactive,
+              tone: profile.isActive
+                  ? AppStatusTone.good
+                  : AppStatusTone.neutral,
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Wrap(
+          spacing: AppSpacing.xs,
+          runSpacing: 4,
+          children: [
+            AppStatusBadge(
+              label: 'Lots: ${profile.totalLotsAssigned}',
+              tone: AppStatusTone.info,
+            ),
+            AppStatusBadge(
+              label: '${l10n.prodHistoryTotalAssigned}: ${profile.assignedQty}',
+              tone: AppStatusTone.neutral,
+            ),
+            AppStatusBadge(
+              label: '${l10n.prodHistoryTotalAccepted}: ${profile.acceptedQty}',
+              tone: AppStatusTone.good,
+            ),
+            if (profile.pendingInspectionQty > 0)
+              AppStatusBadge(
+                label: 'Pending QC: ${profile.pendingInspectionQty}',
+                tone: AppStatusTone.pending,
+              ),
+            if (profile.outstandingQty > 0)
+              AppStatusBadge(
+                label: 'Outstanding: ${profile.outstandingQty}',
+                tone: AppStatusTone.pending,
+              ),
+            if (profile.rejectedQty > 0)
+              AppStatusBadge(
+                label: 'Rejected: ${profile.rejectedQty}',
+                tone: AppStatusTone.damaged,
+              ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        AppActionRow(
+          content: AppText(
+            'Earned: ${MoneyFormatter.formatPaise(fin.earnedLabourPaise)} • Paid: ${MoneyFormatter.formatPaise(fin.netPaidToWorkerPaise)} • Due: ${MoneyFormatter.formatPaise(fin.outstandingPayablePaise)}',
+            variant: AppTextVariant.numeric,
+            fontWeight: FontWeight.w600,
+          ),
+          actions: [
+            AppButton(
+              label: l10n.accountingOpenLedgerAction,
+              variant: AppButtonVariant.text,
+              onPressed: () =>
+                  context.push(RoutePaths.workerLedger(profile.workerId)),
+            ),
+          ],
+        ),
+      ],
+    );
   }
 }

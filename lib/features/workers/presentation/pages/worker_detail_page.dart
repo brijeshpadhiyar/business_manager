@@ -122,7 +122,10 @@ final class _WorkerDetailView extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     AppActionRow(
-                      content: AppHeading(worker.name, level: AppHeadingLevel.h2),
+                      content: AppHeading(
+                        worker.name,
+                        level: AppHeadingLevel.h2,
+                      ),
                       actions: [
                         AppStatusBadge(
                           label: worker.isActive
@@ -221,8 +224,9 @@ final class _WorkerDetailView extends StatelessWidget {
                             label: l10n.accountingOpenLedgerAction,
                             icon: AppIcons.accounting,
                             variant: AppButtonVariant.secondary,
-                            onPressed: () =>
-                                context.push(RoutePaths.workerLedger(worker.id)),
+                            onPressed: () => context.push(
+                              RoutePaths.workerLedger(worker.id),
+                            ),
                           ),
                         ),
                         AppButton(
@@ -434,7 +438,7 @@ final class _WorkerDetailView extends StatelessWidget {
                                     },
                                   ),
                                   if (i < openIssues.take(3).length - 1)
-                                    const Divider(),
+                                    const AppDivider(),
                                 ],
                               ],
                             ),

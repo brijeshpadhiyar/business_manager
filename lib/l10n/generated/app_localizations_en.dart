@@ -3943,4 +3943,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String stockInheritedFrom(Object a, Object b) {
     return 'Inherited from $a ($b)';
   }
+
+  @override
+  String get selectSearchHint => 'Search…';
+
+  @override
+  String get selectNoResults => 'No matching items';
+
+  @override
+  String get selectLoadError => 'Could not load items. Try again.';
+
+  @override
+  String get selectSelectAll => 'Select all';
+
+  @override
+  String get selectClearAll => 'Clear';
+
+  @override
+  String selectSelectedCount(int count) {
+    return '$count selected';
+  }
+
+  @override
+  String selectMaxReached(int max) {
+    return 'You can select up to $max';
+  }
 }

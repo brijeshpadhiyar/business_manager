@@ -175,11 +175,7 @@ final class AppColourSwatch extends StatelessWidget {
           ),
           child: isSelected
               ? Center(
-                  child: Icon(
-                    AppIcons.confirm,
-                    size: size * 0.52,
-                    color: fg,
-                  ),
+                  child: Icon(AppIcons.confirm, size: size * 0.52, color: fg),
                 )
               : null,
         ),

@@ -67,7 +67,9 @@ final class WebBackupRestoreService implements BackupRestoreService {
     final tablesData = <String, List<Map<String, Object?>>>{};
     for (final table in _orderedTables) {
       final rows = await _db.customSelect('SELECT * FROM $table').get();
-      tablesData[table] = rows.map((r) => Map<String, Object?>.of(r.data)).toList();
+      tablesData[table] = rows
+          .map((r) => Map<String, Object?>.of(r.data))
+          .toList();
     }
 
     onProgress?.call(
@@ -117,8 +119,7 @@ final class WebBackupRestoreService implements BackupRestoreService {
     final (bytes, manifest) = await buildSnapshotBytes(onProgress: onProgress);
     final nowUtc = IstDateTimeHelper.nowUtcMillis();
     final stamp = IstDateTimeHelper.formatIstFileTimestamp(nowUtc);
-    final fileName =
-        'stitchflow_web_backup_${_config.flavor.name}_$stamp.json';
+    final fileName = 'stitchflow_web_backup_${_config.flavor.name}_$stamp.json';
 
     downloadBytesInBrowser(bytes, fileName, 'application/json');
     await _recordAudit('BACKUP_EXPORT', {

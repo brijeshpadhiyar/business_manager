@@ -114,7 +114,10 @@ final class ReportsCubit extends Cubit<ReportsState> {
     await loadReports(filterOverride: nextFilter);
   }
 
-  Future<void> setCustomDateRange({int? fromUtcMillis, int? toUtcMillis}) async {
+  Future<void> setCustomDateRange({
+    int? fromUtcMillis,
+    int? toUtcMillis,
+  }) async {
     final from = fromUtcMillis ?? state.filter.fromUtcMillis;
     final to = toUtcMillis ?? state.filter.toUtcMillis;
     final check = AppValidators.dateRangeValidator(

@@ -214,7 +214,11 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
       await _drafts?.clearDraft(_draftKey);
       if (mounted) {
         final undoRepo = _repo;
-        final messenger = ScaffoldMessenger.of(context);
+        // The page pops below; report undo failures on the root navigator.
+        final feedbackContext = Navigator.of(
+          context,
+          rootNavigator: true,
+        ).context;
         AppFeedback.showSuccess(
           context,
           l10n.accountingPaymentSaved,
@@ -229,9 +233,12 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
               );
             } catch (e) {
               getIt<AppLogger>().warning('Payment undo failed', error: e);
-              messenger.showSnackBar(
-                SnackBar(content: Text(l10n.accountingUndoFailed)),
-              );
+              if (feedbackContext.mounted) {
+                AppFeedback.showError(
+                  feedbackContext,
+                  l10n.accountingUndoFailed,
+                );
+              }
             }
           },
         );
@@ -396,13 +403,11 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
                       const SizedBox(height: AppSpacing.xs),
                       Align(
                         alignment: Alignment.centerLeft,
-                        child: ActionChip(
-                          avatar: const Icon(AppIcons.rupee, size: 16),
-                          label: Text(
-                            l10n.accountingPayFullAction(
-                              MoneyFormatter.formatPaise(
-                                selectedWorker.outstandingPayablePaise,
-                              ),
+                        child: AppChip.action(
+                          icon: AppIcons.rupee,
+                          label: l10n.accountingPayFullAction(
+                            MoneyFormatter.formatPaise(
+                              selectedWorker.outstandingPayablePaise,
                             ),
                           ),
                           onPressed: () => _edit(() {

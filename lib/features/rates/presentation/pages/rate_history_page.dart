@@ -101,7 +101,9 @@ final class _RateHistoryView extends StatelessWidget {
                         children: [
                           if (state.processes.isNotEmpty)
                             AppDropdown<ProcessEntity>(
-                              key: ValueKey('rate_proc_${state.selectedProcessId}'),
+                              key: ValueKey(
+                                'rate_proc_${state.selectedProcessId}',
+                              ),
                               label: l10n.ratesFilterProcessLabel,
                               value: selectedProcess,
                               items: state.processes,
@@ -116,27 +118,34 @@ final class _RateHistoryView extends StatelessWidget {
                               },
                             ),
                           const SizedBox(height: AppSpacing.md),
-                          AppActionRow(content: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    AppText(
-                                      l10n.ratesCurrentRateLabel,
-                                      variant: AppTextVariant.label,
-                                    ),
-                                    const SizedBox(height: AppSpacing.xs),
-                                    AppHeading(
-                                      state.currentRate != null
-                                          ? '${MoneyFormatter.formatPaise(state.currentRate!.ratePaise)} ${l10n.ratesPerPieceSuffix}'
-                                          : l10n.ratesNoCurrentRate,
-                                      level: AppHeadingLevel.h2,
-                                    ),
-                                  ],
-                                ), actions: [AppButton(
+                          AppActionRow(
+                            content: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                AppText(
+                                  l10n.ratesCurrentRateLabel,
+                                  variant: AppTextVariant.label,
+                                ),
+                                const SizedBox(height: AppSpacing.xs),
+                                AppHeading(
+                                  state.currentRate != null
+                                      ? '${MoneyFormatter.formatPaise(state.currentRate!.ratePaise)} ${l10n.ratesPerPieceSuffix}'
+                                      : l10n.ratesNoCurrentRate,
+                                  level: AppHeadingLevel.h2,
+                                ),
+                              ],
+                            ),
+                            actions: [
+                              AppButton(
                                 label: l10n.workerAddRateAction,
                                 icon: AppIcons.add,
-                                onPressed: () =>
-                                    _openAddRate(context, state.selectedProcessId),
-                              ),],),
+                                onPressed: () => _openAddRate(
+                                  context,
+                                  state.selectedProcessId,
+                                ),
+                              ),
+                            ],
+                          ),
                           const SizedBox(height: AppSpacing.sm),
                           AppText(
                             l10n.ratesHistoricalNotice,
@@ -199,9 +208,8 @@ final class _RateHistoryView extends StatelessWidget {
                                     fromIso: rate.effectiveFrom,
                                     toIso: rate.effectiveTo,
                                     ongoingLabel: l10n.ratesOngoingLabel,
-                                    locale: Localizations.localeOf(
-                                      ctx,
-                                    ).languageCode,
+                                    locale: Localizations.localeOf(ctx)
+                                        .languageCode,
                                   ),
                                   variant: AppTextVariant.bodySmall,
                                 ),

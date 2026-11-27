@@ -109,7 +109,7 @@ final class _SetupChecklistCardState extends State<SetupChecklistCard> {
               ],
             ),
             const SizedBox(height: AppSpacing.sm),
-            LinearProgressIndicator(value: _completedCount / 4),
+            AppProgressBar(value: _completedCount / 4),
             const SizedBox(height: AppSpacing.sm),
             _ChecklistStepTile(
               done: _profileCustomized,
@@ -153,7 +153,7 @@ final class _ChecklistStepTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return ListTile(
+    return AppListTile(
       dense: true,
       contentPadding: EdgeInsets.zero,
       leading: Icon(

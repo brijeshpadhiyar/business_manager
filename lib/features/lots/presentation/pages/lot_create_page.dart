@@ -873,8 +873,8 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                             spacing: AppSpacing.sm,
                             runSpacing: AppSpacing.xs,
                             children: [
-                              ChoiceChip(
-                                label: Text(context.l10n.lotModeWithDesigns),
+                              AppChip(
+                                label: context.l10n.lotModeWithDesigns,
                                 selected: _useDesigns,
                                 onSelected: (selected) {
                                   _dirty.markDirty();
@@ -883,8 +883,8 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                                   }
                                 },
                               ),
-                              ChoiceChip(
-                                label: Text(context.l10n.lotModeColourOnly),
+                              AppChip(
+                                label: context.l10n.lotModeColourOnly,
                                 selected: !_useDesigns,
                                 onSelected: (selected) {
                                   _dirty.markDirty();
@@ -1151,7 +1151,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                                           .firstOrNull
                                           ?.name ??
                                       a.workerId;
-                                  return ListTile(
+                                  return AppListTile(
                                     dense: true,
                                     contentPadding: EdgeInsets.zero,
                                     leading: Icon(AppIcons.processIcon(pName)),

@@ -49,35 +49,30 @@ final class _AccountSettingsPageState extends State<AccountSettingsPage> {
     final unsynced = await authCubit.getUnsyncedChangesCount();
     if (!mounted) return;
 
-    final action = await showDialog<String>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.authSignOutConfirmTitle),
-        content: Text(
-          unsynced > 0
-              ? l10n.authSignOutUnsyncedWarning(unsynced)
-              : l10n.authSignOutConfirmBody,
+    final action = await AppDialog.showChoices<String>(
+      context,
+      title: l10n.authSignOutConfirmTitle,
+      message: unsynced > 0
+          ? l10n.authSignOutUnsyncedWarning(unsynced)
+          : l10n.authSignOutConfirmBody,
+      choices: [
+        AppDialogAction(label: l10n.actionCancel, value: 'cancel'),
+        if (unsynced > 0)
+          AppDialogAction(
+            label: l10n.authSyncAndSignOutAction,
+            value: 'sync_then_out',
+            variant: AppButtonVariant.primary,
+          ),
+        AppDialogAction(
+          label: unsynced > 0
+              ? l10n.authSignOutAnywayAction
+              : l10n.authSignOutAction,
+          value: 'sign_out',
+          variant: unsynced > 0
+              ? AppButtonVariant.text
+              : AppButtonVariant.destructive,
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop('cancel'),
-            child: Text(l10n.actionCancel),
-          ),
-          if (unsynced > 0)
-            FilledButton(
-              onPressed: () => Navigator.of(ctx).pop('sync_then_out'),
-              child: Text(l10n.authSyncAndSignOutAction),
-            ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop('sign_out'),
-            child: Text(
-              unsynced > 0
-                  ? l10n.authSignOutAnywayAction
-                  : l10n.authSignOutAction,
-            ),
-          ),
-        ],
-      ),
+      ],
     );
 
     if (action == 'sync_then_out') {
@@ -271,7 +266,7 @@ final class _AccountSettingsPageState extends State<AccountSettingsPage> {
                               ),
                           ],
                         ),
-                        const Divider(height: AppSpacing.lg),
+                        const AppDivider(height: AppSpacing.lg),
                         Row(
                           children: [
                             const Icon(AppIcons.phone),
@@ -329,9 +324,8 @@ final class _AccountSettingsPageState extends State<AccountSettingsPage> {
                               isExpanded: true,
                               isLoading: state.isBusy,
                               onPressed: !state.isBusy
-                                  ? () => context
-                                        .read<AuthCubit>()
-                                        .sendPhoneOtp(
+                                  ? () =>
+                                        context.read<AuthCubit>().sendPhoneOtp(
                                           _linkPhoneCtrl.text.trim(),
                                           isLinking: true,
                                         )
@@ -386,8 +380,13 @@ final class _AccountSettingsPageState extends State<AccountSettingsPage> {
                           )
                         : Column(
                             children: [
-                              for (var i = 0; i < state.devices.length; i++) ...[
-                                if (i > 0) const Divider(height: AppSpacing.md),
+                              for (
+                                var i = 0;
+                                i < state.devices.length;
+                                i++
+                              ) ...[
+                                if (i > 0)
+                                  const AppDivider(height: AppSpacing.md),
                                 Row(
                                   children: [
                                     const Icon(AppIcons.devices),

@@ -67,20 +67,24 @@ final class SyncConflictService {
   };
 
   Future<List<SyncConflictRecord>> loadConflicts({int limit = 100}) async {
-    final conflictRows = await _db.customSelect(
-      'SELECT * FROM audit_logs '
-      "WHERE reason = 'sync_conflict_lww' "
-      'ORDER BY recorded_at DESC LIMIT ?',
-      variables: [Variable<int>(limit)],
-    ).get();
+    final conflictRows = await _db
+        .customSelect(
+          'SELECT * FROM audit_logs '
+          "WHERE reason = 'sync_conflict_lww' "
+          'ORDER BY recorded_at DESC LIMIT ?',
+          variables: [Variable<int>(limit)],
+        )
+        .get();
 
     if (conflictRows.isEmpty) return const [];
 
-    final resolutionRows = await _db.customSelect(
-      'SELECT previous_value_json, reason FROM audit_logs '
-      "WHERE reason IN ('sync_conflict_acknowledged', 'sync_conflict_restored') "
-      'ORDER BY recorded_at DESC',
-    ).get();
+    final resolutionRows = await _db
+        .customSelect(
+          'SELECT previous_value_json, reason FROM audit_logs '
+          "WHERE reason IN ('sync_conflict_acknowledged', 'sync_conflict_restored') "
+          'ORDER BY recorded_at DESC',
+        )
+        .get();
 
     final statusByConflictId = <String, SyncConflictStatus>{};
     for (final r in resolutionRows) {
@@ -110,9 +114,7 @@ final class SyncConflictService {
       final prevMap = _decodeJsonMap(
         row.readNullable<String>('previous_value_json'),
       );
-      final newMap = _decodeJsonMap(
-        row.readNullable<String>('new_value_json'),
-      );
+      final newMap = _decodeJsonMap(row.readNullable<String>('new_value_json'));
 
       final diffs = computeFieldDiffs(prevMap, newMap);
       results.add(

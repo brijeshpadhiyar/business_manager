@@ -1214,5 +1214,12 @@
   "lotWorkersValue": "કારીગર: {a}",
   "lotCostPaidOutstandingLine": "ખર્ચ: {a} • ચૂકવેલ (અંદાજ): {b} • બાકી (અંદાજ): {c}",
   "stockStageDefaultBadge": "તબક્કાનો ડિફોલ્ટ",
-  "stockInheritedFrom": "{a} પરથી લીધેલ ({b})"
+  "stockInheritedFrom": "{a} પરથી લીધેલ ({b})",
+  "selectSearchHint": "શોધો…",
+  "selectNoResults": "કોઈ મેળ ખાતી આઇટમ નથી",
+  "selectLoadError": "આઇટમ લોડ થઈ શકી નહીં. ફરી પ્રયાસ કરો.",
+  "selectSelectAll": "બધું પસંદ કરો",
+  "selectClearAll": "સાફ કરો",
+  "selectSelectedCount": "{count} પસંદ કર્યા",
+  "selectMaxReached": "તમે વધુમાં વધુ {max} પસંદ કરી શકો છો"
 }

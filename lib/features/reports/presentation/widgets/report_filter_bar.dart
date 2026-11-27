@@ -70,16 +70,16 @@ final class _ReportFilterBarState extends State<ReportFilterBar> {
             child: Row(
               children: [
                 for (final (preset, label) in presets) ...[
-                  ChoiceChip(
-                    label: Text(label),
+                  AppChip(
+                    label: label,
                     selected: filter.preset == preset,
                     onSelected: (_) => cubit.applyPreset(preset),
                   ),
                   const SizedBox(width: AppSpacing.xs),
                 ],
                 if (filter.preset == ReportDatePreset.custom)
-                  ChoiceChip(
-                    label: Text(l10n.reportPresetCustom),
+                  AppChip(
+                    label: l10n.reportPresetCustom,
                     selected: true,
                     onSelected: (_) => setState(() => _expanded = true),
                   ),
@@ -101,14 +101,9 @@ final class _ReportFilterBarState extends State<ReportFilterBar> {
                 ),
               ),
               const SizedBox(width: AppSpacing.xs),
-              FilterChip(
-                avatar: Icon(
-                  _expanded
-                      ? AppIcons.clearFilter
-                      : AppIcons.filter,
-                  size: 18,
-                ),
-                label: Text(l10n.reportFiltersButton),
+              AppChip.filter(
+                icon: _expanded ? AppIcons.clearFilter : AppIcons.filter,
+                label: l10n.reportFiltersButton,
                 selected: _expanded || filter.hasDimensionFilters,
                 onSelected: (_) => setState(() => _expanded = !_expanded),
               ),

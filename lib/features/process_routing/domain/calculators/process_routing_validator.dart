@@ -204,9 +204,8 @@ final class ProcessRoutingValidator {
       ProcessHandoverType.reassignment => 'RAS',
       ProcessHandoverType.cancellation => 'CNL',
     };
-    final datePart = IstDateTimeHelper.toIstBusinessDate(
-      transactionAtUtcMillis,
-    ).replaceAll('-', '');
+    final datePart = IstDateTimeHelper.toIstBusinessDate(transactionAtUtcMillis)
+        .replaceAll('-', '');
     final cleaned = uniqueId.replaceAll('-', '').toUpperCase();
     final suffix = cleaned.length >= 8
         ? cleaned.substring(cleaned.length - 8)

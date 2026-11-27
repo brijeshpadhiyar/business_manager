@@ -11,6 +11,19 @@ import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/widgets/app_button.dart';
 import 'package:material_ui/material_ui.dart';
 
+/// One button of [AppDialog.showChoices]; tapping it pops [value].
+final class AppDialogAction<T> {
+  const AppDialogAction({
+    required this.label,
+    required this.value,
+    this.variant = AppButtonVariant.text,
+  });
+
+  final String label;
+  final T value;
+  final AppButtonVariant variant;
+}
+
 /// Adaptive Material 3 frosted-glass dialog helper with BackdropFilter blur,
 /// specular highlight, smooth fade-scale entrance, max-width constraint, and
 /// consistent actions.
@@ -25,6 +38,7 @@ final class AppDialog extends StatelessWidget {
     this.cancelLabel,
     this.onConfirm,
     this.isDestructive = false,
+    this.actions,
   });
 
   final String title;
@@ -35,6 +49,38 @@ final class AppDialog extends StatelessWidget {
   final String? cancelLabel;
   final VoidCallback? onConfirm;
   final bool isDestructive;
+
+  /// Custom action buttons; replaces the cancel/confirm pair when set.
+  final List<Widget>? actions;
+
+  /// Dialog with any number of outcomes. Returns the tapped action's value,
+  /// or `null` when dismissed.
+  static Future<T?> showChoices<T>(
+    BuildContext context, {
+    required String title,
+    required String message,
+    required List<AppDialogAction<T>> choices,
+    IconData? icon,
+    bool barrierDismissible = true,
+  }) {
+    return showCustom<T>(
+      context,
+      barrierDismissible: barrierDismissible,
+      builder: (dialogContext) => AppDialog(
+        title: title,
+        icon: icon,
+        content: Text(message),
+        actions: [
+          for (final c in choices)
+            AppButton(
+              label: c.label,
+              variant: c.variant,
+              onPressed: () => Navigator.of(dialogContext).pop(c.value),
+            ),
+        ],
+      ),
+    );
+  }
 
   static Future<bool?> showConfirmation(
     BuildContext context, {
@@ -192,14 +238,15 @@ final class AppDialog extends StatelessWidget {
                           spacing: AppSpacing.sm,
                           runSpacing: AppSpacing.sm,
                           children: [
-                            if (cancelLabel != null)
+                            ...?actions,
+                            if (actions == null && cancelLabel != null)
                               AppButton(
                                 label: cancelLabel!,
                                 variant: AppButtonVariant.text,
                                 onPressed: () =>
                                     Navigator.of(context).pop(false),
                               ),
-                            if (confirmLabel != null)
+                            if (actions == null && confirmLabel != null)
                               AppButton(
                                 label: confirmLabel!,
                                 variant: isDestructive

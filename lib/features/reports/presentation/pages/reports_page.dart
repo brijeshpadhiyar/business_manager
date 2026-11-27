@@ -128,8 +128,8 @@ final class _ReportsViewState extends State<_ReportsView> {
                   child: Row(
                     children: [
                       for (final (cat, label) in categories) ...[
-                        ChoiceChip(
-                          label: Text(label),
+                        AppChip(
+                          label: label,
                           selected: state.category == cat,
                           onSelected: (_) => cubit.selectCategory(cat),
                         ),
@@ -142,16 +142,18 @@ final class _ReportsViewState extends State<_ReportsView> {
               const SizedBox(height: AppSpacing.md),
 
               if (state.isExporting) ...[
-                const LinearProgressIndicator(),
+                const AppProgressBar(),
                 const SizedBox(height: AppSpacing.sm),
               ],
 
               // 3. Active Category Body (instant swap without full-list fade/slide)
               KeyedSubtree(
-                key: ValueKey<(ReportsStatus, ReportCategory)>(
-                  (state.status, state.category),
-                ),
-                child: state.status == ReportsStatus.initial ||
+                key: ValueKey<(ReportsStatus, ReportCategory)>((
+                  state.status,
+                  state.category,
+                )),
+                child:
+                    state.status == ReportsStatus.initial ||
                         state.status == ReportsStatus.loading
                     ? const AppSkeletonList(itemCount: 4)
                     : state.status == ReportsStatus.error ||
@@ -661,8 +663,8 @@ final class _ReportsViewState extends State<_ReportsView> {
           child: Row(
             children: [
               for (var i = 0; i < subTabs.length; i++) ...[
-                FilterChip(
-                  label: Text(subTabs[i]),
+                AppChip.filter(
+                  label: subTabs[i],
                   selected: state.inventorySubTab == i,
                   onSelected: (_) => cubit.selectInventorySubTab(i),
                 ),
@@ -874,10 +876,7 @@ final class _ReportsViewState extends State<_ReportsView> {
           '${r.totalPendingWithWorkers}',
           variant: AppTextVariant.numeric,
         ),
-        AppText(
-          '${r.totalPendingInspection}',
-          variant: AppTextVariant.numeric,
-        ),
+        AppText('${r.totalPendingInspection}', variant: AppTextVariant.numeric),
         AppText('${r.damagedBucket}', variant: AppTextVariant.numeric),
       ],
       mobileCardBuilder: (_, r) => Column(
@@ -1044,8 +1043,8 @@ final class _ReportsViewState extends State<_ReportsView> {
           child: Row(
             children: [
               for (var i = 0; i < subTabs.length; i++) ...[
-                FilterChip(
-                  label: Text(subTabs[i]),
+                AppChip.filter(
+                  label: subTabs[i],
                   selected: state.financialSubTab == i,
                   onSelected: (_) => cubit.selectFinancialSubTab(i),
                 ),
@@ -1065,17 +1064,15 @@ final class _ReportsViewState extends State<_ReportsView> {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    ChoiceChip(
-                      label: Text(l10n.reportAllOption),
+                    AppChip(
+                      label: l10n.reportAllOption,
                       selected: state.filter.paymentMode == null,
                       onSelected: (_) => cubit.setPaymentModeFilter(null),
                     ),
                     const SizedBox(width: AppSpacing.xs),
                     for (final mode in PaymentMode.values) ...[
-                      ChoiceChip(
-                        label: Text(
-                          DomainLabelLocalizer.paymentMode(l10n, mode),
-                        ),
+                      AppChip(
+                        label: DomainLabelLocalizer.paymentMode(l10n, mode),
                         selected: state.filter.paymentMode == mode,
                         onSelected: (_) => cubit.setPaymentModeFilter(mode),
                       ),
@@ -1187,23 +1184,28 @@ final class _ReportsViewState extends State<_ReportsView> {
                     : AppStatusTone.good),
         ),
       ],
-      mobileCardBuilder: (_, w) => AppActionRow(content: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AppText(w.workerName, fontWeight: FontWeight.w700),
-                AppText(
-                  '${l10n.accountingEarnedLabourLabel}: ${MoneyFormatter.formatPaise(w.earnedLabourPaise)}',
-                  variant: AppTextVariant.bodySmall,
-                ),
-              ],
-            ), actions: [AppStatusBadge(
+      mobileCardBuilder: (_, w) => AppActionRow(
+        content: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            AppText(w.workerName, fontWeight: FontWeight.w700),
+            AppText(
+              '${l10n.accountingEarnedLabourLabel}: ${MoneyFormatter.formatPaise(w.earnedLabourPaise)}',
+              variant: AppTextVariant.bodySmall,
+            ),
+          ],
+        ),
+        actions: [
+          AppStatusBadge(
             label: MoneyFormatter.formatPaise(w.netBalancePaise),
             tone: w.netBalancePaise > 0
                 ? AppStatusTone.pending
                 : (w.netBalancePaise < 0
                       ? AppStatusTone.info
                       : AppStatusTone.good),
-          ),],),
+          ),
+        ],
+      ),
     );
   }
 
@@ -1321,7 +1323,7 @@ final class _ReportsViewState extends State<_ReportsView> {
                   percentChange: cmp.issuedQty.percentChange,
                   noPriorLabel: l10n.reportInsightsNoPriorData,
                 ),
-                const Divider(),
+                const AppDivider(),
                 _ComparisonRow(
                   label: l10n.stockGoodReturnedLabel,
                   currentText:
@@ -1329,7 +1331,7 @@ final class _ReportsViewState extends State<_ReportsView> {
                   percentChange: cmp.goodReturnedQty.percentChange,
                   noPriorLabel: l10n.reportInsightsNoPriorData,
                 ),
-                const Divider(),
+                const AppDivider(),
                 _ComparisonRow(
                   label: l10n.reportLabourCostLabel,
                   currentText: MoneyFormatter.formatPaise(
@@ -1338,7 +1340,7 @@ final class _ReportsViewState extends State<_ReportsView> {
                   percentChange: cmp.labourCostPaise.percentChange,
                   noPriorLabel: l10n.reportInsightsNoPriorData,
                 ),
-                const Divider(),
+                const AppDivider(),
                 Row(
                   children: [
                     Expanded(
@@ -1388,26 +1390,31 @@ final class _ReportsViewState extends State<_ReportsView> {
                       padding: const EdgeInsets.symmetric(
                         vertical: AppSpacing.xs,
                       ),
-                      child: AppActionRow(content: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                AppText(
-                                  bn.processName,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                                AppText(
-                                  '${bn.currentPendingQty} ${l10n.piecesUnit} • ${bn.openIssuesCount} ${l10n.workerOpenIssuesCountLabel}',
-                                  variant: AppTextVariant.bodySmall,
-                                ),
-                              ],
-                            ), actions: [AppStatusBadge(
+                      child: AppActionRow(
+                        content: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppText(
+                              bn.processName,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            AppText(
+                              '${bn.currentPendingQty} ${l10n.piecesUnit} • ${bn.openIssuesCount} ${l10n.workerOpenIssuesCountLabel}',
+                              variant: AppTextVariant.bodySmall,
+                            ),
+                          ],
+                        ),
+                        actions: [
+                          AppStatusBadge(
                             label: l10n.pendingAgeDaysBadge(
                               bn.oldestOpenIssueAgeDays,
                             ),
                             tone: bn.oldestOpenIssueAgeDays >= 3
                                 ? AppStatusTone.damaged
                                 : AppStatusTone.pending,
-                          ),],),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -1490,11 +1497,7 @@ final class _ReportsViewState extends State<_ReportsView> {
                     ],
                   ),
                   const SizedBox(height: 4),
-                  LinearProgressIndicator(
-                    value: (sh.sharePercent / 100.0).clamp(0.0, 1.0),
-                    minHeight: 6,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
+                  AppProgressBar(value: sh.sharePercent / 100.0, minHeight: 6),
                   const SizedBox(height: AppSpacing.sm),
                 ],
               ],
@@ -1518,10 +1521,15 @@ final class _ReportsViewState extends State<_ReportsView> {
                 for (final dr in ins.topDefectReasons)
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4),
-                    child: AppActionRow(content: AppText(dr.reason), actions: [AppStatusBadge(
+                    child: AppActionRow(
+                      content: AppText(dr.reason),
+                      actions: [
+                        AppStatusBadge(
                           label: '${dr.quantity} ${l10n.piecesUnit}',
                           tone: AppStatusTone.damaged,
-                        ),],),
+                        ),
+                      ],
+                    ),
                   ),
               ],
             ),

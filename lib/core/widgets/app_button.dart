@@ -21,6 +21,7 @@ final class AppButton extends StatelessWidget {
     this.icon,
     this.isLoading = false,
     this.isExpanded = false,
+    this.foregroundColor,
   });
 
   final String label;
@@ -29,6 +30,11 @@ final class AppButton extends StatelessWidget {
   final IconData? icon;
   final bool isLoading;
   final bool isExpanded;
+
+  /// Overrides the label and icon colour of the [AppButtonVariant.text] and
+  /// [AppButtonVariant.outlined] variants, for buttons drawn on a fixed dark
+  /// or coloured surface (such as the lock screen).
+  final Color? foregroundColor;
 
   @override
   Widget build(BuildContext context) {
@@ -134,6 +140,7 @@ final class AppButton extends StatelessWidget {
           backgroundColor: tokens.glassFill,
           shape: shape,
           side: BorderSide(color: Theme.of(context).colorScheme.outline),
+          foregroundColor: foregroundColor,
           tapTargetSize: MaterialTapTargetSize.padded,
         ),
         child: content,
@@ -156,6 +163,7 @@ final class AppButton extends StatelessWidget {
           minimumSize: minSize,
           padding: padding,
           shape: shape,
+          foregroundColor: foregroundColor,
           tapTargetSize: MaterialTapTargetSize.padded,
         ),
         child: content,

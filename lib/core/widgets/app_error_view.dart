@@ -40,11 +40,7 @@ final class AppErrorView extends StatelessWidget {
                   color: colorScheme.errorContainer.withValues(alpha: 0.7),
                   borderRadius: AppRadius.fullBorder,
                 ),
-                child: Icon(
-                  AppIcons.error,
-                  size: 32,
-                  color: colorScheme.error,
-                ),
+                child: Icon(AppIcons.error, size: 32, color: colorScheme.error),
               ),
               const SizedBox(height: AppSpacing.md),
               Text(

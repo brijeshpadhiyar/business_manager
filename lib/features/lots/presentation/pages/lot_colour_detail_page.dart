@@ -440,7 +440,7 @@ final class _LotColourDetailView extends StatelessWidget {
                     if (i < stageSummaries.length - 1)
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 6),
-                        child: Divider(),
+                        child: AppDivider(),
                       ),
                   ],
                 ],
@@ -530,7 +530,7 @@ final class _LotColourDetailView extends StatelessWidget {
                       if (i < activeOps.length - 1)
                         const Padding(
                           padding: EdgeInsets.symmetric(vertical: 6),
-                          child: Divider(),
+                          child: AppDivider(),
                         ),
                     ],
                 ],
@@ -569,7 +569,7 @@ final class _LotColourDetailView extends StatelessWidget {
                       value:
                           '- ${MoneyFormatter.formatPaise(costSummary.totalDeductionsPaise)}',
                     ),
-                  const Divider(),
+                  const AppDivider(),
                   _CostLine(
                     label: context.l10n.routingTotalProductionCostLabel,
                     value: MoneyFormatter.formatPaise(
@@ -676,7 +676,7 @@ final class _LotColourDetailView extends StatelessWidget {
                     if (i < handovers.length - 1)
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
-                        child: Divider(),
+                        child: AppDivider(),
                       ),
                   ],
                 ],

@@ -90,7 +90,13 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                   const SizedBox(height: AppSpacing.md),
                   AppTextField(
                     controller: accCtrl,
-                    validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeQuantityValidator(v, isRequired: true)),
+                    validator: ValidationLocalizer.wrap(
+                      context.l10n,
+                      (v) => AppValidators.nonNegativeQuantityValidator(
+                        v,
+                        isRequired: true,
+                      ),
+                    ),
                     label: l10n.prodHistoryTotalAccepted,
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -99,7 +105,10 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                   const SizedBox(height: AppSpacing.sm),
                   AppTextField(
                     controller: rejCtrl,
-                    validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeQuantityValidator(v)),
+                    validator: ValidationLocalizer.wrap(
+                      context.l10n,
+                      (v) => AppValidators.nonNegativeQuantityValidator(v),
+                    ),
                     label: l10n.prodHistoryTotalRejected,
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -109,7 +118,10 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                     const SizedBox(height: AppSpacing.sm),
                     AppTextField(
                       controller: reasonCtrl,
-                      validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.requiredValidator(v)),
+                      validator: ValidationLocalizer.wrap(
+                        context.l10n,
+                        (v) => AppValidators.requiredValidator(v),
+                      ),
                       label: l10n.stockSettlementReasonLabel,
                       maxLines: 2,
                       onChanged: (_) => setSheetState(() => error = null),
@@ -252,7 +264,10 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                 const SizedBox(height: AppSpacing.md),
                 AppTextField(
                   controller: qtyCtrl,
-                  validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.quantityValidator(v)),
+                  validator: ValidationLocalizer.wrap(
+                    context.l10n,
+                    (v) => AppValidators.quantityValidator(v),
+                  ),
                   label: l10n.stockRepairQuantityLabel,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -385,7 +400,13 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                   const SizedBox(height: AppSpacing.md),
                   AppTextField(
                     controller: accCtrl,
-                    validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeQuantityValidator(v, isRequired: true)),
+                    validator: ValidationLocalizer.wrap(
+                      context.l10n,
+                      (v) => AppValidators.nonNegativeQuantityValidator(
+                        v,
+                        isRequired: true,
+                      ),
+                    ),
                     label: l10n.prodHistoryTotalAccepted,
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -394,7 +415,10 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                   const SizedBox(height: AppSpacing.sm),
                   AppTextField(
                     controller: rejAgainCtrl,
-                    validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeQuantityValidator(v)),
+                    validator: ValidationLocalizer.wrap(
+                      context.l10n,
+                      (v) => AppValidators.nonNegativeQuantityValidator(v),
+                    ),
                     label: 'Still Defective / Rejected Again',
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -404,7 +428,10 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                     const SizedBox(height: AppSpacing.sm),
                     AppTextField(
                       controller: reasonCtrl,
-                      validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.requiredValidator(v)),
+                      validator: ValidationLocalizer.wrap(
+                        context.l10n,
+                        (v) => AppValidators.requiredValidator(v),
+                      ),
                       label: l10n.stockSettlementReasonLabel,
                       maxLines: 2,
                     ),
@@ -553,17 +580,15 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                   spacing: AppSpacing.sm,
                   runSpacing: AppSpacing.xs,
                   children: [
-                    ChoiceChip(
-                      label: Text(
-                        '${l10n.prodHistoryTabPendingInspection} (${state.pendingReturns.length})',
-                      ),
+                    AppChip(
+                      label:
+                          '${l10n.prodHistoryTabPendingInspection} (${state.pendingReturns.length})',
                       selected: _tabIndex == 0,
                       onSelected: (_) => setState(() => _tabIndex = 0),
                     ),
-                    ChoiceChip(
-                      label: Text(
-                        '${l10n.prodHistoryTabRejections} (${state.rejections.length})',
-                      ),
+                    AppChip(
+                      label:
+                          '${l10n.prodHistoryTabRejections} (${state.rejections.length})',
                       selected: _tabIndex == 1,
                       onSelected: (_) => setState(() => _tabIndex = 1),
                     ),
@@ -675,8 +700,8 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
       children: [
         Align(
           alignment: Alignment.centerLeft,
-          child: FilterChip(
-            label: Text(l10n.prodHistoryOnlyPending),
+          child: AppChip.filter(
+            label: l10n.prodHistoryOnlyPending,
             selected: state.showOnlyOpenRejections,
             onSelected: (v) => cubit.load(onlyOpenRejections: v),
           ),

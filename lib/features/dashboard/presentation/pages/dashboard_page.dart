@@ -214,25 +214,21 @@ final class _DashboardViewState extends State<_DashboardView> {
                               if (!isPinEnabled) {
                                 return const SizedBox.shrink();
                               }
-                              return IconButton(
+                              return AppIconButton(
                                 tooltip: l10n.securityLockNowAction,
                                 onPressed: () =>
                                     context.read<AppLockCubit>().lockNow(),
-                                icon: const Icon(
-                                  AppIcons.lock,
-                                  color: Colors.white,
-                                ),
+                                icon: AppIcons.lock,
+                                color: Colors.white,
                               );
                             },
                           ),
-                          IconButton(
+                          AppIconButton(
                             tooltip: l10n.actionRetry,
                             onPressed: () =>
                                 context.read<DashboardCubit>().loadDashboard(),
-                            icon: const Icon(
-                              AppIcons.refresh,
-                              color: Colors.white,
-                            ),
+                            icon: AppIcons.refresh,
+                            color: Colors.white,
                           ),
                         ],
                       ),
@@ -568,7 +564,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                                     ),
                                     if (i <
                                         snap.importantPendingIssues.length - 1)
-                                      const Divider(),
+                                      const AppDivider(),
                                   ],
                                 ],
                               ),
@@ -891,7 +887,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                                         padding: EdgeInsets.symmetric(
                                           vertical: AppSpacing.sm,
                                         ),
-                                        child: Divider(),
+                                        child: AppDivider(),
                                       ),
                                   ],
                                 ],
@@ -977,7 +973,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                                         padding: EdgeInsets.symmetric(
                                           vertical: AppSpacing.xs + 2,
                                         ),
-                                        child: Divider(),
+                                        child: AppDivider(),
                                       ),
                                   ],
                                 ],

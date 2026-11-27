@@ -7,16 +7,17 @@ import 'package:business_manager/features/slips/domain/entities/slip_entities.da
 final class SlipTextFormatter {
   const SlipTextFormatter();
 
-  String titleFor(SlipDocumentType type, {required bool isGu}) => switch (type) {
-    SlipDocumentType.stockIssueChallan =>
-      isGu ? 'માલ ઇશ્યુ ચલણ' : 'STOCK ISSUE CHALLAN',
-    SlipDocumentType.returnQcSlip =>
-      isGu ? 'માલ પરત / QC સ્લિપ' : 'RETURN / QC SLIP',
-    SlipDocumentType.paymentReceipt =>
-      isGu ? 'ચુકવણી રસીદ' : 'PAYMENT RECEIPT',
-    SlipDocumentType.workerKhataStatement =>
-      isGu ? 'કારીગર ખાતાવહી સ્ટેટમેન્ટ' : 'WORKER KHATA STATEMENT',
-  };
+  String titleFor(SlipDocumentType type, {required bool isGu}) =>
+      switch (type) {
+        SlipDocumentType.stockIssueChallan =>
+          isGu ? 'માલ ઇશ્યુ ચલણ' : 'STOCK ISSUE CHALLAN',
+        SlipDocumentType.returnQcSlip =>
+          isGu ? 'માલ પરત / QC સ્લિપ' : 'RETURN / QC SLIP',
+        SlipDocumentType.paymentReceipt =>
+          isGu ? 'ચુકવણી રસીદ' : 'PAYMENT RECEIPT',
+        SlipDocumentType.workerKhataStatement =>
+          isGu ? 'કારીગર ખાતાવહી સ્ટેટમેન્ટ' : 'WORKER KHATA STATEMENT',
+      };
 
   String format(WorkerSlipData slip, {required String localeCode}) {
     final isGu = localeCode == 'gu';
@@ -64,10 +65,8 @@ final class SlipTextFormatter {
 
     if (slip.primaryAmountPaise != null) {
       final amtLabel = switch (slip.type) {
-        SlipDocumentType.paymentReceipt =>
-          isGu ? 'ચૂકવેલ રકમ' : 'Amount Paid',
-        SlipDocumentType.returnQcSlip =>
-          isGu ? 'મજૂરી કમાણી' : 'Labour Earned',
+        SlipDocumentType.paymentReceipt => isGu ? 'ચૂકવેલ રકમ' : 'Amount Paid',
+        SlipDocumentType.returnQcSlip => isGu ? 'મજૂરી કમાણી' : 'Labour Earned',
         _ => isGu ? 'કુલ રકમ' : 'Total Amount',
       };
       buf.writeln(

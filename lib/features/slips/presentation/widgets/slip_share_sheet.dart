@@ -38,8 +38,7 @@ final class SlipShareSheet extends StatefulWidget {
     return AppBottomSheet.show<void>(
       context,
       title: context.l10n.slipShareSheetTitle,
-      builder: (_) =>
-          SlipShareSheet(slip: slip, initialLocaleCode: localeCode),
+      builder: (_) => SlipShareSheet(slip: slip, initialLocaleCode: localeCode),
     );
   }
 
@@ -142,10 +141,7 @@ final class _SlipShareSheetState extends State<SlipShareSheet> {
     if (_busy) return;
     setState(() => _busy = true);
     try {
-      final html = _htmlBuilder.buildHtml(
-        widget.slip,
-        localeCode: _slipLocale,
-      );
+      final html = _htmlBuilder.buildHtml(widget.slip, localeCode: _slipLocale);
       final stamp = IstDateTimeHelper.formatIstFileTimestamp(
         widget.slip.transactionAtUtcMillis,
       );
@@ -205,10 +201,7 @@ final class _SlipShareSheetState extends State<SlipShareSheet> {
           // Live Branded Slip Preview (captured by RepaintBoundary for PNG)
           RepaintBoundary(
             key: _repaintKey,
-            child: SlipPreviewCard(
-              slip: widget.slip,
-              localeCode: _slipLocale,
-            ),
+            child: SlipPreviewCard(slip: widget.slip, localeCode: _slipLocale),
           ),
           const SizedBox(height: AppSpacing.md),
 

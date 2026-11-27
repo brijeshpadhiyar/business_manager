@@ -173,7 +173,7 @@ final class _SyncConflictInspectorPageState
                               ),
                             ],
                           ),
-                          const Divider(height: AppSpacing.lg),
+                          const AppDivider(height: AppSpacing.lg),
                           for (final diff in record.fieldDiffs) ...[
                             Padding(
                               padding: const EdgeInsets.only(bottom: 6),

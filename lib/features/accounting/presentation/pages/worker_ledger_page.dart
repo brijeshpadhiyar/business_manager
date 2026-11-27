@@ -313,8 +313,7 @@ final class _WorkerLedgerViewState extends State<_WorkerLedgerView> {
                                           .accountingOutstandingPayableLabel,
                                       value: summary.outstandingPayablePaise,
                                       isCurrencyPaise: true,
-                                      icon:
-                                          AppIcons.accounting,
+                                      icon: AppIcons.accounting,
                                       tone: summary.outstandingPayablePaise > 0
                                           ? AppStatusTone.pending
                                           : AppStatusTone.good,
@@ -494,36 +493,36 @@ final class _WorkerLedgerViewState extends State<_WorkerLedgerView> {
                       spacing: AppSpacing.xs,
                       runSpacing: AppSpacing.xs,
                       children: [
-                        ChoiceChip(
-                          label: Text(l10n.prodHistoryAllEntries),
+                        AppChip(
+                          label: l10n.prodHistoryAllEntries,
                           selected: _typeFilter == _LedgerTypeFilter.all,
                           onSelected: (_) => setState(
                             () => _typeFilter = _LedgerTypeFilter.all,
                           ),
                         ),
-                        ChoiceChip(
-                          label: Text(l10n.accountingEarnedLabourLabel),
+                        AppChip(
+                          label: l10n.accountingEarnedLabourLabel,
                           selected: _typeFilter == _LedgerTypeFilter.earnings,
                           onSelected: (_) => setState(
                             () => _typeFilter = _LedgerTypeFilter.earnings,
                           ),
                         ),
-                        ChoiceChip(
-                          label: Text(l10n.accountingPaymentTypeRegular),
+                        AppChip(
+                          label: l10n.accountingPaymentTypeRegular,
                           selected: _typeFilter == _LedgerTypeFilter.payments,
                           onSelected: (_) => setState(
                             () => _typeFilter = _LedgerTypeFilter.payments,
                           ),
                         ),
-                        ChoiceChip(
-                          label: Text(l10n.accountingPaymentTypeAdvance),
+                        AppChip(
+                          label: l10n.accountingPaymentTypeAdvance,
                           selected: _typeFilter == _LedgerTypeFilter.advances,
                           onSelected: (_) => setState(
                             () => _typeFilter = _LedgerTypeFilter.advances,
                           ),
                         ),
-                        ChoiceChip(
-                          label: Text(l10n.accountingAdjustmentsLabel),
+                        AppChip(
+                          label: l10n.accountingAdjustmentsLabel,
                           selected:
                               _typeFilter == _LedgerTypeFilter.adjustments,
                           onSelected: (_) => setState(

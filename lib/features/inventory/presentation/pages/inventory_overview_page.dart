@@ -186,20 +186,20 @@ final class _InventoryOverviewViewState extends State<_InventoryOverviewView> {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                ChoiceChip(
-                  label: Text(l10n.inventoryTabLots),
+                AppChip(
+                  label: l10n.inventoryTabLots,
                   selected: _tab == 0,
                   onSelected: (_) => setState(() => _tab = 0),
                 ),
                 const SizedBox(width: AppSpacing.sm),
-                ChoiceChip(
-                  label: Text(l10n.inventoryTabDesigns),
+                AppChip(
+                  label: l10n.inventoryTabDesigns,
                   selected: _tab == 1,
                   onSelected: (_) => setState(() => _tab = 1),
                 ),
                 const SizedBox(width: AppSpacing.sm),
-                ChoiceChip(
-                  label: Text(l10n.inventoryTabColours),
+                AppChip(
+                  label: l10n.inventoryTabColours,
                   selected: _tab == 2,
                   onSelected: (_) => setState(() => _tab = 2),
                 ),

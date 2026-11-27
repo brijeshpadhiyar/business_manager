@@ -68,11 +68,7 @@ final class SyncStatusBadge extends StatelessWidget {
         }
 
         if (compact) {
-          return AppIconButton(
-            icon: icon,
-            tooltip: label,
-            onPressed: onTap,
-          );
+          return AppIconButton(icon: icon, tooltip: label, onPressed: onTap);
         }
 
         return InkWell(

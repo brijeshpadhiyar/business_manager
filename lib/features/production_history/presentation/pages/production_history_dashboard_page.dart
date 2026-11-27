@@ -249,23 +249,23 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
               children: [
                 AppSearchField(
                   label: l10n.prodHistorySearchHint,
-                  onChanged: (q) => cubit.updateFilter(
-                    filter.copyWith(searchQuery: q),
-                  ),
+                  onChanged: (q) =>
+                      cubit.updateFilter(filter.copyWith(searchQuery: q)),
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 // Phones: filters fold behind one toggle so the feed starts
                 // near the top of the screen.
                 AppCollapsibleFilters(
-                  activeCount: [
-                    filter.fromUtcMillis,
-                    filter.toUtcMillis,
-                    filter.lotId,
-                    filter.workerId,
-                    filter.processId,
-                    filter.designName,
-                    filter.colourName,
-                  ].where((v) => v != null).length +
+                  activeCount:
+                      [
+                        filter.fromUtcMillis,
+                        filter.toUtcMillis,
+                        filter.lotId,
+                        filter.workerId,
+                        filter.processId,
+                        filter.designName,
+                        filter.colourName,
+                      ].where((v) => v != null).length +
                       (filter.onlyPending ? 1 : 0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -284,8 +284,12 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
                                 ...options.lots.map((o) => o.id),
                               ],
                               itemLabelBuilder: (id) {
-                                if (id == '__ALL__') return l10n.prodHistoryAllEntries;
-                                final item = options.lots.firstWhere((o) => o.id == id);
+                                if (id == '__ALL__') {
+                                  return l10n.prodHistoryAllEntries;
+                                }
+                                final item = options.lots.firstWhere(
+                                  (o) => o.id == id,
+                                );
                                 return item.isActive
                                     ? item.label
                                     : '${item.label} (${l10n.statusInactive})';
@@ -307,9 +311,12 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
                                 ...options.workers.map((o) => o.id),
                               ],
                               itemLabelBuilder: (id) {
-                                if (id == '__ALL__') return l10n.prodHistoryAllEntries;
-                                final item =
-                                    options.workers.firstWhere((o) => o.id == id);
+                                if (id == '__ALL__') {
+                                  return l10n.prodHistoryAllEntries;
+                                }
+                                final item = options.workers.firstWhere(
+                                  (o) => o.id == id,
+                                );
                                 return item.isActive
                                     ? item.label
                                     : '${item.label} (${l10n.statusInactive})';
@@ -331,9 +338,12 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
                                 ...options.processes.map((o) => o.id),
                               ],
                               itemLabelBuilder: (id) {
-                                if (id == '__ALL__') return l10n.prodHistoryAllEntries;
-                                final item =
-                                    options.processes.firstWhere((o) => o.id == id);
+                                if (id == '__ALL__') {
+                                  return l10n.prodHistoryAllEntries;
+                                }
+                                final item = options.processes.firstWhere(
+                                  (o) => o.id == id,
+                                );
                                 return item.isActive
                                     ? item.label
                                     : '${item.label} (${l10n.statusInactive})';
@@ -355,12 +365,15 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
                             label: l10n.accountingFromDateLabel,
                             selectedUtcMillis: filter.fromUtcMillis,
                             onDateSelectedUtcMillis: (utc) {
-                              final ist = IstDateTimeHelper.fromUtcMillisToIst(utc);
-                              final start = IstDateTimeHelper.istDateTimeToUtcMillis(
-                                year: ist.year,
-                                month: ist.month,
-                                day: ist.day,
+                              final ist = IstDateTimeHelper.fromUtcMillisToIst(
+                                utc,
                               );
+                              final start =
+                                  IstDateTimeHelper.istDateTimeToUtcMillis(
+                                    year: ist.year,
+                                    month: ist.month,
+                                    day: ist.day,
+                                  );
                               cubit.updateFilter(
                                 filter.copyWith(fromUtcMillis: start),
                               );
@@ -370,15 +383,18 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
                             label: l10n.accountingToDateLabel,
                             selectedUtcMillis: filter.toUtcMillis,
                             onDateSelectedUtcMillis: (utc) {
-                              final ist = IstDateTimeHelper.fromUtcMillisToIst(utc);
-                              final end = IstDateTimeHelper.istDateTimeToUtcMillis(
-                                year: ist.year,
-                                month: ist.month,
-                                day: ist.day,
-                                hour: 23,
-                                minute: 59,
-                                second: 59,
+                              final ist = IstDateTimeHelper.fromUtcMillisToIst(
+                                utc,
                               );
+                              final end =
+                                  IstDateTimeHelper.istDateTimeToUtcMillis(
+                                    year: ist.year,
+                                    month: ist.month,
+                                    day: ist.day,
+                                    hour: 23,
+                                    minute: 59,
+                                    second: 59,
+                                  );
                               cubit.updateFilter(
                                 filter.copyWith(toUtcMillis: end),
                               );
@@ -393,11 +409,12 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
                         alignment: WrapAlignment.spaceBetween,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          FilterChip(
-                            label: Text(l10n.prodHistoryOnlyPending),
+                          AppChip.filter(
+                            label: l10n.prodHistoryOnlyPending,
                             selected: filter.onlyPending,
-                            onSelected: (v) =>
-                                cubit.updateFilter(filter.copyWith(onlyPending: v)),
+                            onSelected: (v) => cubit.updateFilter(
+                              filter.copyWith(onlyPending: v),
+                            ),
                           ),
                           AppButton(
                             label: l10n.accountingClearFilters,
@@ -529,23 +546,23 @@ final class _HistoryFeedCard extends StatelessWidget {
                 variant: AppTextVariant.bodySmall,
               ),
               if (item.lotId != null)
-                ActionChip(
-                  visualDensity: VisualDensity.compact,
-                  label: Text('${l10n.prodHistoryOpenLot}: ${item.lotNumber ?? ''}'),
+                AppChip.action(
+                  dense: true,
+                  label: '${l10n.prodHistoryOpenLot}: ${item.lotNumber ?? ''}',
                   onPressed: () =>
                       context.push(RoutePaths.lotHistory(item.lotId!)),
                 ),
               if (item.workerId != null)
-                ActionChip(
-                  visualDensity: VisualDensity.compact,
-                  label: Text(item.workerName ?? l10n.prodHistoryOpenWorker),
+                AppChip.action(
+                  dense: true,
+                  label: item.workerName ?? l10n.prodHistoryOpenWorker,
                   onPressed: () =>
                       context.push(RoutePaths.workerDetail(item.workerId!)),
                 ),
               if (item.processId != null)
-                ActionChip(
-                  visualDensity: VisualDensity.compact,
-                  label: Text(item.processName ?? l10n.prodHistoryOpenProcess),
+                AppChip.action(
+                  dense: true,
+                  label: item.processName ?? l10n.prodHistoryOpenProcess,
                   onPressed: () =>
                       context.push(RoutePaths.processDetail(item.processId!)),
                 ),

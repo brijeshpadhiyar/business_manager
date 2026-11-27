@@ -99,8 +99,7 @@ final class _GuideSpotlightHostState extends State<GuideSpotlightHost> {
           fit: StackFit.expand,
           children: [
             widget.child,
-            if (state.showSpotlightOverlay)
-              GuideSpotlightOverlay(state: state),
+            if (state.showSpotlightOverlay) GuideSpotlightOverlay(state: state),
             if (state.showActionCoachBanner)
               GuideActionCoachBanner(state: state),
           ],

@@ -2,6 +2,7 @@ import 'package:business_manager/core/design_system/app_icons.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
+import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/guidance/presentation/bloc/guide_cubit.dart';
 import 'package:business_manager/features/guidance/presentation/bloc/guide_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -64,24 +65,17 @@ final class ScreenFirstVisitHint extends StatelessWidget {
                     ),
                   ),
                 ),
-                TextButton(
-                  onPressed: () => cubit.startScreenTour(
-                    screenId,
-                    localeCode: localeCode,
-                  ),
-                  style: TextButton.styleFrom(
-                    visualDensity: VisualDensity.compact,
-                  ),
-                  child: Text(l10n.guideFirstVisitAction),
+                AppButton(
+                  label: l10n.guideFirstVisitAction,
+                  variant: AppButtonVariant.text,
+                  onPressed: () =>
+                      cubit.startScreenTour(screenId, localeCode: localeCode),
                 ),
-                IconButton(
+                AppIconButton(
                   tooltip: l10n.guideActionSkip,
-                  visualDensity: VisualDensity.compact,
-                  icon: Icon(
-                    AppIcons.close,
-                    size: 16,
-                    color: colorScheme.onSecondaryContainer,
-                  ),
+                  icon: AppIcons.close,
+                  color: colorScheme.onSecondaryContainer,
+                  compact: true,
                   onPressed: () => cubit.markScreenHintDismissed(screenId),
                 ),
               ],

@@ -233,7 +233,13 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
                       const SizedBox(height: AppSpacing.md),
                       AppTextField(
                         controller: _customRateCtrl,
-                        validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeAmountValidator(v, isRequired: false)),
+                        validator: ValidationLocalizer.wrap(
+                          context.l10n,
+                          (v) => AppValidators.nonNegativeAmountValidator(
+                            v,
+                            isRequired: false,
+                          ),
+                        ),
                         label: 'Custom Worker Rate (₹ / pc, optional)',
                         hint:
                             (selectedProc != null &&
@@ -244,9 +250,7 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
                         keyboardType: const TextInputType.numberWithOptions(
                           decimal: true,
                         ),
-                        inputFormatters: [
-                          AppInputFormatters.currencyDecimal,
-                        ],
+                        inputFormatters: [AppInputFormatters.currencyDecimal],
                       ),
                       const SizedBox(height: AppSpacing.md),
                       AppButton(
@@ -327,8 +331,7 @@ final class _WorkerAssignmentsViewState extends State<_WorkerAssignmentsView> {
                 AppHeading(
                   'Deactivated Assignments (${state.inactiveAssignments.length})',
                   level: AppHeadingLevel.h3,
-                  subtitle:
-                      'Historical labour transactions & rates remain preserved.',
+                  subtitle: 'Historical labour transactions & rates remain preserved.',
                 ),
                 const SizedBox(height: AppSpacing.sm),
                 ...state.inactiveAssignments.map(

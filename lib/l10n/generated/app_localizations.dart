@@ -7159,6 +7159,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Inherited from {a} ({b})'**
   String stockInheritedFrom(Object a, Object b);
+
+  /// No description provided for @selectSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search…'**
+  String get selectSearchHint;
+
+  /// No description provided for @selectNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No matching items'**
+  String get selectNoResults;
+
+  /// No description provided for @selectLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not load items. Try again.'**
+  String get selectLoadError;
+
+  /// No description provided for @selectSelectAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Select all'**
+  String get selectSelectAll;
+
+  /// No description provided for @selectClearAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get selectClearAll;
+
+  /// No description provided for @selectSelectedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} selected'**
+  String selectSelectedCount(int count);
+
+  /// No description provided for @selectMaxReached.
+  ///
+  /// In en, this message translates to:
+  /// **'You can select up to {max}'**
+  String selectMaxReached(int max);
 }
 
 class _AppLocalizationsDelegate

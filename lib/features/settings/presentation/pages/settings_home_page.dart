@@ -113,7 +113,7 @@ final class SettingsHomePage extends StatelessWidget {
                         ),
                       ),
                     ),
-                    const Divider(indent: 64),
+                    const AppDivider(indent: 64),
                     BlocBuilder<SyncCubit, SyncState>(
                       builder: (context, syncState) => _SettingsTile(
                         icon: AppIcons.cloudSync,
@@ -164,7 +164,7 @@ final class SettingsHomePage extends StatelessWidget {
                           ),
                     ),
                   ),
-                  const Divider(indent: 64),
+                  const AppDivider(indent: 64),
                   GuideTarget(
                     id: GuideTargetId.settingsBusinessProfileTile,
                     child: _SettingsTile(
@@ -177,7 +177,7 @@ final class SettingsHomePage extends StatelessWidget {
                           context.push(RoutePaths.settingsBusinessProfile),
                     ),
                   ),
-                  const Divider(indent: 64),
+                  const AppDivider(indent: 64),
                   GuideTarget(
                     id: GuideTargetId.settingsStockLabourTile,
                     child: _SettingsTile(
@@ -189,7 +189,7 @@ final class SettingsHomePage extends StatelessWidget {
                       onTap: () => context.push(RoutePaths.settingsStockLabour),
                     ),
                   ),
-                  const Divider(indent: 64),
+                  const AppDivider(indent: 64),
                   _SettingsTile(
                     icon: AppIcons.designs,
                     iconBg: colorScheme.secondaryContainer,
@@ -230,7 +230,7 @@ final class SettingsHomePage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const Divider(indent: 64),
+                  const AppDivider(indent: 64),
                   _SettingsTile(
                     icon: AppIcons.team,
                     iconBg: colorScheme.primaryContainer,
@@ -239,7 +239,7 @@ final class SettingsHomePage extends StatelessWidget {
                     subtitle: l10n.settingsTeamSubtitle,
                     onTap: () => context.push(RoutePaths.settingsTeam),
                   ),
-                  const Divider(indent: 64),
+                  const AppDivider(indent: 64),
                   _SettingsTile(
                     icon: AppIcons.notifications,
                     iconBg: context.semanticColors.pendingContainer,
@@ -248,7 +248,7 @@ final class SettingsHomePage extends StatelessWidget {
                     subtitle: l10n.settingsNotificationsSubtitle,
                     onTap: () => context.push(RoutePaths.settingsNotifications),
                   ),
-                  const Divider(indent: 64),
+                  const AppDivider(indent: 64),
                   GuideTarget(
                     id: GuideTargetId.settingsBackupTile,
                     child: _SettingsTile(
@@ -260,7 +260,7 @@ final class SettingsHomePage extends StatelessWidget {
                       onTap: () => context.push(RoutePaths.settingsBackup),
                     ),
                   ),
-                  const Divider(indent: 64),
+                  const AppDivider(indent: 64),
                   _SettingsTile(
                     icon: AppIcons.dataHealth,
                     iconBg: colorScheme.primaryContainer,
@@ -269,7 +269,7 @@ final class SettingsHomePage extends StatelessWidget {
                     subtitle: l10n.settingsDataHealthSubtitle,
                     onTap: () => context.push(RoutePaths.settingsDataHealth),
                   ),
-                  const Divider(indent: 64),
+                  const AppDivider(indent: 64),
                   GuideTarget(
                     id: GuideTargetId.settingsHelpTile,
                     child: _SettingsTile(

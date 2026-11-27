@@ -94,14 +94,16 @@ final class LotDetailCubit extends Cubit<LotDetailState> {
           status: LotDetailStatus.loaded,
           detail: detail,
           routingOverview: routing,
-          balancesByColourId: Map<String, DesignColourStockBalance>.unmodifiable(
-            balancesByColourId,
-          ),
-          operationsByColourId: Map<String, List<JobProcessEntity>>.unmodifiable(
-            operationsByColourId.map(
-              (k, v) => MapEntry(k, List<JobProcessEntity>.unmodifiable(v)),
-            ),
-          ),
+          balancesByColourId:
+              Map<String, DesignColourStockBalance>.unmodifiable(
+                balancesByColourId,
+              ),
+          operationsByColourId:
+              Map<String, List<JobProcessEntity>>.unmodifiable(
+                operationsByColourId.map(
+                  (k, v) => MapEntry(k, List<JobProcessEntity>.unmodifiable(v)),
+                ),
+              ),
         ),
       );
     } catch (e) {

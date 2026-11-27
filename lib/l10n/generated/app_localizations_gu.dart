@@ -3934,4 +3934,29 @@ class AppLocalizationsGu extends AppLocalizations {
   String stockInheritedFrom(Object a, Object b) {
     return '$a પરથી લીધેલ ($b)';
   }
+
+  @override
+  String get selectSearchHint => 'શોધો…';
+
+  @override
+  String get selectNoResults => 'કોઈ મેળ ખાતી આઇટમ નથી';
+
+  @override
+  String get selectLoadError => 'આઇટમ લોડ થઈ શકી નહીં. ફરી પ્રયાસ કરો.';
+
+  @override
+  String get selectSelectAll => 'બધું પસંદ કરો';
+
+  @override
+  String get selectClearAll => 'સાફ કરો';
+
+  @override
+  String selectSelectedCount(int count) {
+    return '$count પસંદ કર્યા';
+  }
+
+  @override
+  String selectMaxReached(int max) {
+    return 'તમે વધુમાં વધુ $max પસંદ કરી શકો છો';
+  }
 }

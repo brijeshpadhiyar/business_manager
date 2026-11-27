@@ -307,20 +307,20 @@ final class _AccountingOverviewViewState
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: [
-                  ChoiceChip(
-                    label: Text(l10n.accountingTabWorkers),
+                  AppChip(
+                    label: l10n.accountingTabWorkers,
                     selected: _tab == 0,
                     onSelected: (_) => setState(() => _tab = 0),
                   ),
                   const SizedBox(width: AppSpacing.sm),
-                  ChoiceChip(
-                    label: Text(l10n.accountingTabPayments),
+                  AppChip(
+                    label: l10n.accountingTabPayments,
                     selected: _tab == 1,
                     onSelected: (_) => setState(() => _tab = 1),
                   ),
                   const SizedBox(width: AppSpacing.sm),
-                  ChoiceChip(
-                    label: Text(l10n.accountingTabLabour),
+                  AppChip(
+                    label: l10n.accountingTabLabour,
                     selected: _tab == 2,
                     onSelected: (_) => setState(() => _tab = 2),
                   ),
@@ -512,7 +512,10 @@ final class _AccountingOverviewViewState
                   variant: AppTextVariant.bodySmall,
                 ),
               if (view.payment.reason != null)
-                AppText(view.payment.reason!, variant: AppTextVariant.bodySmall),
+                AppText(
+                  view.payment.reason!,
+                  variant: AppTextVariant.bodySmall,
+                ),
               Row(
                 children: [
                   Expanded(

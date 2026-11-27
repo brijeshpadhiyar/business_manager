@@ -33,12 +33,8 @@ final class SlipHtmlBuilder {
         '${item.subtitle != null && item.subtitle!.isNotEmpty ? '<div class="sub">${_e(item.subtitle!)}</div>' : ''}'
         '</td>',
       );
-      rowsHtml.writeln(
-        '<td class="num">${_e(item.quantityText ?? '—')}</td>',
-      );
-      rowsHtml.writeln(
-        '<td class="num">${_e(item.rateText ?? '—')}</td>',
-      );
+      rowsHtml.writeln('<td class="num">${_e(item.quantityText ?? '—')}</td>');
+      rowsHtml.writeln('<td class="num">${_e(item.rateText ?? '—')}</td>');
       rowsHtml.writeln(
         '<td class="num">${item.amountPaise != null ? _e(MoneyFormatter.formatPaise(item.amountPaise!)) : '—'}</td>',
       );

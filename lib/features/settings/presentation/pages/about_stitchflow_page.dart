@@ -82,7 +82,7 @@ final class AboutStitchFlowPage extends StatelessWidget {
               children: [
                 AppText(l10n.aboutDescriptionBody),
                 const SizedBox(height: AppSpacing.md),
-                const Divider(),
+                const AppDivider(),
                 const SizedBox(height: AppSpacing.sm),
                 _MetaRow(
                   label: l10n.aboutVersionLabel,

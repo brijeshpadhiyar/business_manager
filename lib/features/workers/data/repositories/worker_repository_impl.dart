@@ -625,7 +625,9 @@ final class WorkerRepositoryImpl implements WorkerRepository {
         activeOnly: false,
       );
       final linkByProcessId = {for (final l in existingLinks) l.processId: l};
-      final desiredProcessIds = {for (final cfg in processConfigs) cfg.processId};
+      final desiredProcessIds = {
+        for (final cfg in processConfigs) cfg.processId,
+      };
 
       for (final link in existingLinks) {
         if (link.isActive == 1 && !desiredProcessIds.contains(link.processId)) {

@@ -234,33 +234,25 @@ final class _AppLockScreenState extends State<AppLockScreen> {
                           const SizedBox(height: AppSpacing.lg),
 
                           if (state.canUseBiometrics) ...[
-                            TextButton.icon(
+                            AppButton(
+                              label: l10n.securityUseBiometricAction,
+                              icon: AppIcons.biometric,
+                              variant: AppButtonVariant.text,
+                              foregroundColor: Colors.white,
                               onPressed: canEnterPin ? _triggerBiometric : null,
-                              icon: const Icon(
-                                AppIcons.biometric,
-                                color: Colors.white,
-                              ),
-                              label: Text(
-                                l10n.securityUseBiometricAction,
-                                style: const TextStyle(color: Colors.white),
-                              ),
                             ),
                           ],
 
-                          TextButton(
+                          AppButton(
+                            label: l10n.securityForgotPinAction,
+                            variant: AppButtonVariant.text,
+                            foregroundColor: AppColors.saffron400,
                             onPressed: () {
                               setState(() {
                                 _pin = '';
                                 _showingRecovery = true;
                               });
                             },
-                            child: Text(
-                              l10n.securityForgotPinAction,
-                              style: const TextStyle(
-                                color: AppColors.saffron400,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
                           ),
                         ],
                       ),

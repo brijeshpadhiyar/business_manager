@@ -141,17 +141,9 @@ final class UserDeviceInfo {
 }
 
 /// Choice presented when both local offline data and cloud data exist on first login.
-enum FirstLoginMergeChoice {
-  mergeBoth,
-  keepCloudOnly,
-  overwriteCloudWithLocal,
-}
+enum FirstLoginMergeChoice { mergeBoth, keepCloudOnly, overwriteCloudWithLocal }
 
-enum AuthStatus {
-  initializing,
-  offlineGuest,
-  authenticated,
-}
+enum AuthStatus { initializing, offlineGuest, authenticated }
 
 @immutable
 final class AuthState {
@@ -175,7 +167,8 @@ final class AuthState {
   final List<UserDeviceInfo> devices;
   final String? errorMessage;
 
-  bool get isAuthenticated => status == AuthStatus.authenticated && user != null;
+  bool get isAuthenticated =>
+      status == AuthStatus.authenticated && user != null;
   bool get isOfflineGuest => status == AuthStatus.offlineGuest;
 
   AuthState copyWith({

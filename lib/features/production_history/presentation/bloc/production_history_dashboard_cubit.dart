@@ -42,7 +42,7 @@ final class ProductionHistoryDashboardState {
 final class ProductionHistoryDashboardCubit
     extends Cubit<ProductionHistoryDashboardState> {
   ProductionHistoryDashboardCubit(this._repo)
-      : super(const ProductionHistoryDashboardState());
+    : super(const ProductionHistoryDashboardState());
 
   final ProductionHistoryRepository _repo;
 

@@ -681,14 +681,10 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                 for (final id in _recentSuggestions.inStockDesignColourIds)
                   for (final b in _allBalances)
                     if (b.designColourId == id)
-                      ActionChip(
-                        avatar: const Icon(
-                          AppIcons.productionHistory,
-                          size: 16,
-                        ),
-                        label: Text(
-                          '${b.lotNumber} • ${b.colourName} (${b.physicalAvailableInHouse})',
-                        ),
+                      AppChip.action(
+                        icon: AppIcons.productionHistory,
+                        label:
+                            '${b.lotNumber} • ${b.colourName} (${b.physicalAvailableInHouse})',
                         onPressed: () => _selectStock(b),
                       ),
               ],
@@ -705,8 +701,8 @@ final class _StockIssuePageState extends State<StockIssuePage> {
           Wrap(
             spacing: AppSpacing.sm,
             children: [
-              FilterChip(
-                label: Text(l10n.stockOnlyAvailableFilter),
+              AppChip.filter(
+                label: l10n.stockOnlyAvailableFilter,
                 selected: _onlyInStock,
                 onSelected: (v) => setState(() => _onlyInStock = v),
               ),
@@ -817,9 +813,9 @@ final class _StockIssuePageState extends State<StockIssuePage> {
               runSpacing: AppSpacing.xs,
               children: [
                 for (final pair in _recentSuggestions.workPairs)
-                  ActionChip(
-                    avatar: const Icon(AppIcons.quick, size: 16),
-                    label: Text('${pair.processName} • ${pair.workerName}'),
+                  AppChip.action(
+                    icon: AppIcons.quick,
+                    label: '${pair.processName} • ${pair.workerName}',
                     onPressed: () async {
                       setState(() => _selectedProcessId = pair.processId);
                       await _loadWorkersForProcess(
@@ -850,8 +846,8 @@ final class _StockIssuePageState extends State<StockIssuePage> {
               runSpacing: AppSpacing.xs,
               children: [
                 for (final proc in _activeProcesses)
-                  ChoiceChip(
-                    label: Text(proc.name),
+                  AppChip(
+                    label: proc.name,
                     selected: _selectedProcessId == proc.id,
                     onSelected: (_) {
                       _dirty.markDirty();
@@ -880,8 +876,8 @@ final class _StockIssuePageState extends State<StockIssuePage> {
               runSpacing: AppSpacing.xs,
               children: [
                 for (final w in _eligibleWorkers)
-                  ChoiceChip(
-                    label: Text(w.workerName),
+                  AppChip(
+                    label: w.workerName,
                     selected: _selectedWorkerId == w.workerId,
                     onSelected: (_) {
                       _dirty.markDirty();
@@ -1179,23 +1175,23 @@ final class _StockIssuePageState extends State<StockIssuePage> {
               runSpacing: AppSpacing.xs,
               children: [
                 if (available >= 10)
-                  ActionChip(
-                    label: const Text('+10'),
+                  AppChip.action(
+                    label: '+10',
                     onPressed: () => _addQuickQty(10, available),
                   ),
                 if (available >= 25)
-                  ActionChip(
-                    label: const Text('+25'),
+                  AppChip.action(
+                    label: '+25',
                     onPressed: () => _addQuickQty(25, available),
                   ),
                 if (available >= 50)
-                  ActionChip(
-                    label: const Text('+50'),
+                  AppChip.action(
+                    label: '+50',
                     onPressed: () => _addQuickQty(50, available),
                   ),
-                ActionChip(
-                  avatar: const Icon(AppIcons.doneAll, size: 16),
-                  label: Text('${l10n.stockQuickAllAvailable} ($available)'),
+                AppChip.action(
+                  icon: AppIcons.doneAll,
+                  label: '${l10n.stockQuickAllAvailable} ($available)',
                   onPressed: () => _setExactQty(available),
                 ),
               ],
@@ -1283,7 +1279,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
           if (expectedLabourPaise != null) ...[
             const Padding(
               padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
-              child: Divider(),
+              child: AppDivider(),
             ),
             _SummaryRow(
               label: l10n.stockExpectedLabourLabel,
@@ -1356,7 +1352,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
                 const SizedBox(height: AppSpacing.lg),
-                const Divider(),
+                const AppDivider(),
                 const SizedBox(height: AppSpacing.sm),
                 _SummaryRow(
                   label: l10n.lotLabelShort,

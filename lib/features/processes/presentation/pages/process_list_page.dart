@@ -345,24 +345,24 @@ final class _ProcessListViewState extends State<_ProcessListView> {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    FilterChip(
-                      label: Text(l10n.filterAll),
+                    AppChip.filter(
+                      label: l10n.filterAll,
                       selected: state.activeFilter == null,
                       onSelected: (_) => context
                           .read<ProcessListCubit>()
                           .loadProcesses(clearActiveFilter: true),
                     ),
                     const SizedBox(width: AppSpacing.sm),
-                    FilterChip(
-                      label: Text(l10n.filterActive),
+                    AppChip.filter(
+                      label: l10n.filterActive,
                       selected: state.activeFilter == true,
                       onSelected: (_) => context
                           .read<ProcessListCubit>()
                           .loadProcesses(activeFilter: true),
                     ),
                     const SizedBox(width: AppSpacing.sm),
-                    FilterChip(
-                      label: Text(l10n.filterInactive),
+                    AppChip.filter(
+                      label: l10n.filterInactive,
                       selected: state.activeFilter == false,
                       onSelected: (_) => context
                           .read<ProcessListCubit>()

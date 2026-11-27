@@ -92,7 +92,9 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
                   : l10n.colourEditAction,
               icon: AppIcons.designs,
               cancelLabel: l10n.actionCancel,
-              confirmLabel: submitting ? l10n.backupProgressWorking : l10n.actionSave,
+              confirmLabel: submitting
+                  ? l10n.backupProgressWorking
+                  : l10n.actionSave,
               onConfirm: submitting
                   ? null
                   : () async {
@@ -335,8 +337,10 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
                     ),
                   ],
                   items: state.designs,
-                  itemKeyBuilder: (d) => ValueKey<String>('design_${d.designName}'),
-                  onRowTap: (item) => _openDesignRelationshipsSheet(context, item),
+                  itemKeyBuilder: (d) =>
+                      ValueKey<String>('design_${d.designName}'),
+                  onRowTap: (item) =>
+                      _openDesignRelationshipsSheet(context, item),
                   cellsBuilder: (d) => [
                     AppText(d.designName, fontWeight: FontWeight.w700),
                     AppText('${d.lotCount}'),
@@ -363,14 +367,19 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
                   mobileCardBuilder: (ctx, d) => Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      AppActionRow(content: AppText(
-                              d.designName,
-                              variant: AppTextVariant.bodyLarge,
-                              fontWeight: FontWeight.w700,
-                            ), actions: [AppStatusBadge(
+                      AppActionRow(
+                        content: AppText(
+                          d.designName,
+                          variant: AppTextVariant.bodyLarge,
+                          fontWeight: FontWeight.w700,
+                        ),
+                        actions: [
+                          AppStatusBadge(
                             label: '${d.lotCount} ${l10n.lotsHeading}',
                             tone: AppStatusTone.info,
-                          ),],),
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: AppSpacing.xs),
                       AppText(
                         '${d.colourVariantCount} variants • ${d.totalInitialQuantity} pcs • ${_formatPriceRange(d.minUnitPricePaise, d.maxUnitPricePaise)}',
@@ -434,7 +443,8 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
                     ),
                   ],
                   items: state.colours,
-                  itemKeyBuilder: (c) => ValueKey<String>('colour_${c.master.id}'),
+                  itemKeyBuilder: (c) =>
+                      ValueKey<String>('colour_${c.master.id}'),
                   onRowTap: (item) =>
                       _openColourEditor(context, existing: item.master),
                   cellsBuilder: (c) => [
@@ -516,8 +526,7 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
             title: l10n.navDesignsColours,
             subtitle: l10n.designsColoursSubtitle,
             expandedHeight: 184,
-            actions: [
-            ],
+            actions: [],
             summary: AppSummaryStrip(
               metrics: [
                 AppSummaryMetric(
@@ -550,14 +559,14 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
                 scrollDirection: Axis.horizontal,
                 child: Row(
                   children: [
-                    FilterChip(
-                      label: Text(l10n.designsTabLabel),
+                    AppChip.filter(
+                      label: l10n.designsTabLabel,
                       selected: _tabIndex == 0,
                       onSelected: (_) => setState(() => _tabIndex = 0),
                     ),
                     const SizedBox(width: AppSpacing.sm),
-                    FilterChip(
-                      label: Text(l10n.coloursTabLabel),
+                    AppChip.filter(
+                      label: l10n.coloursTabLabel,
                       selected: _tabIndex == 1,
                       onSelected: (_) => setState(() => _tabIndex = 1),
                     ),

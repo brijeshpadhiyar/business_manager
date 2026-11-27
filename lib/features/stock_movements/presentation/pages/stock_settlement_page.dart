@@ -643,23 +643,21 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                         spacing: AppSpacing.xs,
                         runSpacing: AppSpacing.xs,
                         children: [
-                          ActionChip(
+                          AppChip.action(
                             avatar: Icon(
                               AppIcons.doneAll,
                               size: 16,
                               color: semantic.goodStock,
                             ),
-                            label: Text(
-                              '${l10n.stockFillAllRemaining} (${detail.remainingPending})',
-                            ),
+                            label:
+                                '${l10n.stockFillAllRemaining} (${detail.remainingPending})',
                             onPressed: () =>
                                 _fillAllGood(detail.remainingPending),
                           ),
                           if (detail.remainingPending >= 4)
-                            ActionChip(
-                              label: Text(
-                                '${l10n.stockShortcutHalf} (${detail.remainingPending ~/ 2})',
-                              ),
+                            AppChip.action(
+                              label:
+                                  '${l10n.stockShortcutHalf} (${detail.remainingPending ~/ 2})',
                               onPressed: () => _setGoodQtyClamped(
                                 detail.remainingPending ~/ 2,
                                 detail.remainingPending -
@@ -667,8 +665,8 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                               ),
                             ),
                           if (detail.remainingPending >= 10)
-                            ActionChip(
-                              label: const Text('+10'),
+                            AppChip.action(
+                              label: '+10',
                               onPressed: () => _setGoodQtyClamped(
                                 good + 10,
                                 detail.remainingPending -
@@ -676,8 +674,8 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                               ),
                             ),
                           if (detail.remainingPending >= 25)
-                            ActionChip(
-                              label: const Text('+25'),
+                            AppChip.action(
+                              label: '+25',
                               onPressed: () => _setGoodQtyClamped(
                                 good + 25,
                                 detail.remainingPending -
@@ -686,15 +684,14 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                             ),
                           if ((damaged + lost + shortage) > 0 &&
                               remainingAfter > 0)
-                            ActionChip(
+                            AppChip.action(
                               avatar: Icon(
                                 AppIcons.autoFill,
                                 size: 16,
                                 color: semantic.goodStock,
                               ),
-                              label: Text(
-                                '${l10n.stockFillRemainingGood} (${detail.remainingPending - (damaged + lost + shortage)})',
-                              ),
+                              label:
+                                  '${l10n.stockFillRemainingGood} (${detail.remainingPending - (damaged + lost + shortage)})',
                               onPressed: () => _setGoodQtyClamped(
                                 detail.remainingPending -
                                     (damaged + lost + shortage),
@@ -913,7 +910,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                       ),
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: AppSpacing.sm),
-                        child: Divider(),
+                        child: AppDivider(),
                       ),
                       if (lockedMode == BillingMode.givenQty)
                         AppText(
@@ -1169,9 +1166,9 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                       runSpacing: AppSpacing.xs,
                       children: [
                         for (final proc in _otherActiveProcesses.take(4))
-                          ActionChip(
-                            avatar: const Icon(AppIcons.stockIssue, size: 16),
-                            label: Text(proc.name),
+                          AppChip.action(
+                            icon: AppIcons.stockIssue,
+                            label: proc.name,
                             onPressed: () => context.pushReplacement(
                               RoutePaths.stockIssue(
                                 designColourId: info.designColourId,

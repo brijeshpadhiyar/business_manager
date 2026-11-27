@@ -255,7 +255,7 @@ final class _DataHealthView extends StatelessWidget {
                                 ? AppStatusTone.good
                                 : AppStatusTone.damaged,
                           ),
-                          const Divider(height: AppSpacing.lg),
+                          const AppDivider(height: AppSpacing.lg),
                           _CheckRow(
                             label: l10n.dataHealthForeignKeysLabel,
                             value: report.foreignKeyViolations.isEmpty
@@ -267,7 +267,7 @@ final class _DataHealthView extends StatelessWidget {
                                 ? AppStatusTone.good
                                 : AppStatusTone.damaged,
                           ),
-                          const Divider(height: AppSpacing.lg),
+                          const AppDivider(height: AppSpacing.lg),
                           _CheckRow(
                             label: l10n.dataHealthStockReconciliationLabel,
                             value: report.stockIssues.isEmpty
@@ -294,7 +294,7 @@ final class _DataHealthView extends StatelessWidget {
                                 ),
                               ),
                           ],
-                          const Divider(height: AppSpacing.lg),
+                          const AppDivider(height: AppSpacing.lg),
                           _CheckRow(
                             label: l10n.dataHealthLedgerParityLabel,
                             value: report.ledgerIssues.isEmpty
@@ -318,7 +318,7 @@ final class _DataHealthView extends StatelessWidget {
                                 ),
                               ),
                           ],
-                          const Divider(height: AppSpacing.lg),
+                          const AppDivider(height: AppSpacing.lg),
                           _CheckRow(
                             label: l10n.dataHealthSyncQueueLabel,
                             value: l10n.dataHealthSyncQueueSummary(
@@ -333,7 +333,7 @@ final class _DataHealthView extends StatelessWidget {
                                 ? AppStatusTone.pending
                                 : AppStatusTone.good,
                           ),
-                          const Divider(height: AppSpacing.lg),
+                          const AppDivider(height: AppSpacing.lg),
                           _CheckRow(
                             label: l10n.dataHealthMediaParityLabel,
                             value: l10n.dataHealthMediaParitySummary(
@@ -371,7 +371,7 @@ final class _DataHealthView extends StatelessWidget {
                                 .runWalCheckpoint(),
                           ),
                           if (!kIsWeb) ...[
-                            const Divider(height: AppSpacing.lg),
+                            const AppDivider(height: AppSpacing.lg),
                             _MaintenanceActionRow(
                               icon: AppIcons.maintenance,
                               title: l10n.dataHealthCleanOrphansAction,
@@ -383,7 +383,7 @@ final class _DataHealthView extends StatelessWidget {
                                   .cleanOrphanMedia(),
                             ),
                           ],
-                          const Divider(height: AppSpacing.lg),
+                          const AppDivider(height: AppSpacing.lg),
                           _MaintenanceActionRow(
                             icon: AppIcons.sync,
                             title: l10n.dataHealthRetrySyncAction,

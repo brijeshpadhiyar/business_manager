@@ -44,8 +44,9 @@ final class SupabaseAuthRepository implements AuthRepository {
   StreamSubscription<supa.AuthState>? _supaSub;
   bool _googleInitialized = false;
 
-  final Map<String, String>? _testMemoryStore =
-      isFlutterTestEnv ? <String, String>{} : null;
+  final Map<String, String>? _testMemoryStore = isFlutterTestEnv
+      ? <String, String>{}
+      : null;
 
   static const String _oauthRedirectUrl =
       '${AppIdentity.urlScheme}://login-callback';
