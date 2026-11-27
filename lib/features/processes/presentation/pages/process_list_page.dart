@@ -188,8 +188,8 @@ final class _ProcessListViewState extends State<_ProcessListView> {
                     label: l10n.processDescriptionLabel,
                     minWidthClass: AppWindowSizeClass.expanded,
                   ),
-                  const AppDataColumn(
-                    label: 'Default Rate',
+                  AppDataColumn(
+                    label: l10n.processDefaultRateShort,
                     numeric: true,
                     sortable: true,
                   ),

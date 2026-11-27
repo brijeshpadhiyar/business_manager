@@ -270,7 +270,7 @@ final class ReportsCubit extends Cubit<ReportsState> {
     if (bundle == null) {
       return const ReportExportResult(
         success: false,
-        message: 'No report data loaded.',
+        message: 'no_report_data',
       );
     }
     emit(state.copyWith(isExporting: true, clearExportFeedback: true));

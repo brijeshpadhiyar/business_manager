@@ -183,7 +183,7 @@ final class _NotificationSettingsView extends StatelessWidget {
                           l10n.notificationsPendingDaysLabel,
                           variant: AppTextVariant.label,
                         ),
-                        const SizedBox(height: 6),
+                        const SizedBox(height: AppSpacing.xsm),
                         Wrap(
                           spacing: AppSpacing.xs,
                           runSpacing: AppSpacing.xs,
@@ -242,7 +242,7 @@ final class _NotificationSettingsView extends StatelessWidget {
                           l10n.notificationsMinAmountLabel,
                           variant: AppTextVariant.label,
                         ),
-                        const SizedBox(height: 6),
+                        const SizedBox(height: AppSpacing.xsm),
                         Wrap(
                           spacing: AppSpacing.xs,
                           runSpacing: AppSpacing.xs,
@@ -352,7 +352,7 @@ final class _NotificationSettingsView extends StatelessWidget {
                           l10n.notificationsBackupIntervalLabel,
                           variant: AppTextVariant.label,
                         ),
-                        const SizedBox(height: 6),
+                        const SizedBox(height: AppSpacing.xsm),
                         Wrap(
                           spacing: AppSpacing.xs,
                           runSpacing: AppSpacing.xs,

@@ -77,6 +77,9 @@ class AppLocalizationsGu extends AppLocalizations {
       'અનપેક્ષિત ભૂલ આવી છે. કૃપા કરીને ફરી પ્રયાસ કરો.';
 
   @override
+  String get errorLoadTitle => 'આ પેજ લોડ થઈ શક્યું નહીં';
+
+  @override
   String get validationRequired => 'આ વિગત ભરવી ફરજિયાત છે.';
 
   @override
@@ -3958,5 +3961,132 @@ class AppLocalizationsGu extends AppLocalizations {
   @override
   String selectMaxReached(int max) {
     return 'તમે વધુમાં વધુ $max પસંદ કરી શકો છો';
+  }
+
+  @override
+  String get tableQtyHeader => 'જથ્થો';
+
+  @override
+  String get tableHistoricalPriceHeader => 'જૂનો ભાવ';
+
+  @override
+  String get tableHexHeader => 'હેક્સ';
+
+  @override
+  String get tableLotUsesHeader => 'લોટમાં વપરાશ';
+
+  @override
+  String get processDefaultRateLabel => 'મૂળ મજૂરી ભાવ (₹)';
+
+  @override
+  String get processDefaultRateShort => 'મૂળ ભાવ';
+
+  @override
+  String get inspectionStillDefectiveLabel => 'હજુ ખામીવાળું / ફરી નામંજૂર';
+
+  @override
+  String get inspectionQueueEmptyTitle => 'કોઈ QC તપાસ બાકી નથી';
+
+  @override
+  String get inspectionQueueEmptySubtitle =>
+      'પરત આવેલા બધા પીસની તપાસ અને મેળવણી થઈ ગઈ છે.';
+
+  @override
+  String lotOpenValue(Object a) {
+    return 'ખુલ્લા: $a';
+  }
+
+  @override
+  String lotReapprovedValue(Object a) {
+    return 'ફરી મંજૂર: $a';
+  }
+
+  @override
+  String lotEarnedValue(Object a) {
+    return 'કમાણી: $a';
+  }
+
+  @override
+  String lotPendingEstimateValue(Object a) {
+    return 'અંદાજિત બાકી: $a';
+  }
+
+  @override
+  String backupMovementsValue(Object a) {
+    return 'હિલચાલ: $a';
+  }
+
+  @override
+  String backupPhotosValue(Object a) {
+    return 'ફોટા: $a';
+  }
+
+  @override
+  String get txnDesignColourLabel => 'ડિઝાઇન / કલર';
+
+  @override
+  String get txnAmountLabel => 'રકમ';
+
+  @override
+  String get txnReferenceLabel => 'સંદર્ભ';
+
+  @override
+  String get txnReasonLabel => 'કારણ';
+
+  @override
+  String get workerRateLabel => 'કારીગર ભાવ';
+
+  @override
+  String get workerCustomRateLabel => 'કારીગરનો ખાસ ભાવ (₹ / પીસ, વૈકલ્પિક)';
+
+  @override
+  String get assignmentsHistoryPreservedNote =>
+      'જૂના મજૂરી વ્યવહારો અને ભાવ સુરક્ષિત રહે છે.';
+
+  @override
+  String get assignmentsReactivateAction => 'ફરી સક્રિય કરો';
+
+  @override
+  String get reportsNoDataLoaded => 'રિપોર્ટનો ડેટા લોડ થયો નથી.';
+
+  @override
+  String lotCompletedValue(Object a) {
+    return 'પૂર્ણ: $a';
+  }
+
+  @override
+  String assignmentsDeactivatedHeading(Object a) {
+    return 'બંધ કરેલી સોંપણીઓ ($a)';
+  }
+
+  @override
+  String workerRateInheritHint(Object a) {
+    return 'ખાલી રાખશો તો $a લાગુ થશે';
+  }
+
+  @override
+  String designVariantsSummary(Object a, Object b, Object c) {
+    return '$a વેરિઅન્ટ • $b પીસ • $c';
+  }
+
+  @override
+  String assignmentsRemovedToast(Object a) {
+    return '$a આ કારીગર પાસેથી દૂર કર્યું';
+  }
+
+  @override
+  String get paginationLoadMore => 'વધુ બતાવો';
+
+  @override
+  String paginationShowingAll(Object a) {
+    return 'બધા $a બતાવ્યા';
+  }
+
+  @override
+  String get dashboardWeekTrendHeading => 'આ અઠવાડિયાનું ઉત્પાદન';
+
+  @override
+  String securityPinProgress(int a, int b) {
+    return '$b માંથી $a અંક દાખલ કર્યા';
   }
 }

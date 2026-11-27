@@ -96,7 +96,7 @@ final class _ProcessFormPageState extends State<ProcessFormPage> {
       if (!mounted) return;
       setState(() {
         _isLoading = false;
-        _loadError = e.toString();
+        _loadError = ValidationLocalizer.describeError(context.l10n, e);
       });
     }
   }
@@ -195,7 +195,7 @@ final class _ProcessFormPageState extends State<ProcessFormPage> {
       if (!mounted) return;
       setState(() {
         _isSaving = false;
-        _submitError = e.toString();
+        _submitError = ValidationLocalizer.describeError(context.l10n, e);
       });
     }
   }
@@ -343,7 +343,7 @@ final class _ProcessFormPageState extends State<ProcessFormPage> {
                             fieldKey: _rateFieldKey,
                             controller: _rateCtrl,
                             focusNode: _rateFocus,
-                            label: 'Default Labour Rate (₹)',
+                            label: l10n.processDefaultRateLabel,
                             hint: '0.00',
                             prefixIcon: AppIcons.rupee,
                             keyboardType: const TextInputType.numberWithOptions(
@@ -362,7 +362,7 @@ final class _ProcessFormPageState extends State<ProcessFormPage> {
                           ),
                           const SizedBox(height: AppSpacing.md),
                           AppDropdown<String>(
-                            label: 'Pricing Unit',
+                            label: l10n.routingPricingUnitLabel,
                             value: _pricingUnit,
                             items: const [
                               'PER_PIECE',

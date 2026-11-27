@@ -235,7 +235,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
       if (!mounted) return;
       setState(() {
         _loading = false;
-        _loadError = e.toString();
+        _loadError = ValidationLocalizer.describeError(context.l10n, e);
       });
     }
   }
@@ -423,7 +423,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
       if (!mounted) return;
       setState(() {
         _saving = false;
-        _submitError = e.toString();
+        _submitError = ValidationLocalizer.describeError(context.l10n, e);
       });
     }
   }
@@ -748,7 +748,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                             '${b.lotNumber} • ${b.designName}',
                             fontWeight: FontWeight.w700,
                           ),
-                          const SizedBox(height: 2),
+                          const SizedBox(height: AppSpacing.xxs),
                           AppText(
                             b.colourName,
                             variant: AppTextVariant.bodySmall,
@@ -1011,8 +1011,8 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                   variant: AppTextVariant.numeric,
                   fontWeight: FontWeight.w700,
                 ),
-                const AppStatusBadge(
-                  label: 'Worker Rate',
+                AppStatusBadge(
+                  label: context.l10n.workerRateLabel,
                   tone: AppStatusTone.good,
                 ),
               ],
@@ -1149,8 +1149,8 @@ final class _StockIssuePageState extends State<StockIssuePage> {
             textInputAction: TextInputAction.done,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
             style: AppTypography.tabular(
-              Theme.of(context).textTheme.headlineSmall!
-                  .copyWith(fontSize: 24, fontWeight: FontWeight.w700),
+              Theme.of(context).textTheme.headlineLarge!
+                  .copyWith(fontWeight: FontWeight.w700),
             ),
             errorText: qtyExceeds ? l10n.stockInsufficientGoodError : null,
             onChanged: (_) => setState(() => _submitError = null),
@@ -1287,7 +1287,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
               isNumeric: true,
               highlight: true,
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: AppSpacing.xxs),
             AppText(
               _effectiveBillingMode == BillingMode.givenQty
                   ? l10n.stockPayableOnIssueNote

@@ -1,3 +1,4 @@
+import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_icons.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
@@ -72,7 +73,7 @@ final class SyncStatusBadge extends StatelessWidget {
         }
 
         return InkWell(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: AppRadius.fullBorder,
           onTap: onTap,
           child: AppStatusBadge(label: label, tone: tone, icon: icon),
         );

@@ -41,9 +41,9 @@ final class RoutingHandoverRow extends StatelessWidget {
                 fallbackName: h.colourName,
               ),
               size: 16,
-              borderRadius: BorderRadius.circular(5),
+              borderRadius: AppRadius.smBorder,
             ),
-            const SizedBox(width: 6),
+            const SizedBox(width: AppSpacing.xsm),
             AppStatusBadge(label: h.handoverType.label, tone: tone),
             const SizedBox(width: AppSpacing.xs),
             Expanded(
@@ -80,7 +80,7 @@ final class RoutingHandoverRow extends StatelessWidget {
               ),
           ],
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: AppSpacing.xxs),
         Row(
           children: [
             Expanded(
@@ -100,7 +100,7 @@ final class RoutingHandoverRow extends StatelessWidget {
           ],
         ),
         if (h.notes != null && h.notes!.isNotEmpty) ...[
-          const SizedBox(height: 2),
+          const SizedBox(height: AppSpacing.xxs),
           AppText(
             h.notes!,
             variant: AppTextVariant.bodySmall,
@@ -141,7 +141,10 @@ final class RoutingOperationHeader extends StatelessWidget {
         ),
         const SizedBox(width: AppSpacing.xs),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sm,
+            vertical: AppSpacing.xs,
+          ),
           decoration: BoxDecoration(
             color: colorScheme.secondary.withValues(alpha: 0.16),
             borderRadius: AppRadius.smBorder,

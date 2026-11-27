@@ -115,7 +115,7 @@ final class _PinRecoveryPageState extends State<PinRecoveryPage> {
       if (!mounted) return;
       setState(() {
         _working = false;
-        _errorText = e.toString();
+        _errorText = ValidationLocalizer.describeError(context.l10n, e);
       });
     }
   }
@@ -182,7 +182,7 @@ final class _PinRecoveryPageState extends State<PinRecoveryPage> {
       if (!mounted) return;
       setState(() {
         _working = false;
-        _errorText = e.toString();
+        _errorText = ValidationLocalizer.describeError(context.l10n, e);
       });
     }
   }

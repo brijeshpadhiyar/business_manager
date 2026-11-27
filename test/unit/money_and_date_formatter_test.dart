@@ -84,10 +84,7 @@ void main() {
         ),
         '08:00 PM IST',
       );
-      expect(
-        AppDateTimeFormatter.toIstBusinessDate(utcMillis),
-        '2026-11-24',
-      );
+      expect(AppDateTimeFormatter.toIstBusinessDate(utcMillis), '2026-11-24');
       // IstDateTimeHelper delegates cleanly to AppDateTimeFormatter
       expect(
         IstDateTimeHelper.formatIstDateTime(utcMillis),

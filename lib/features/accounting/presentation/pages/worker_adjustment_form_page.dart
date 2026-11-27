@@ -129,7 +129,7 @@ final class _WorkerAdjustmentFormPageState
       if (!mounted) return;
       setState(() {
         _saving = false;
-        _submitError = e.toString();
+        _submitError = ValidationLocalizer.describeError(context.l10n, e);
       });
     }
   }

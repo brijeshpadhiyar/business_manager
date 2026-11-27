@@ -93,389 +93,392 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
 
     return RefreshIndicator(
       onRefresh: () => cubit.load(),
-      child: ListView(
-        children: [
-          // Quick Navigation Strip to Worker History, Process History, Inspection Queue
-          Wrap(
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
-            children: [
-              AppButton(
-                label:
-                    '${l10n.navInspectionQueue} (${data.pendingReturnsCount + data.openRejectionsCount})',
-                icon: AppIcons.qcInspect,
-                onPressed: () async {
-                  await context.push(RoutePaths.inspectionQueue);
-                  if (context.mounted) await cubit.load();
-                },
-              ),
-              AppButton(
-                label: l10n.navWorkerHistory,
-                icon: AppIcons.worker,
-                variant: AppButtonVariant.secondary,
-                onPressed: () =>
-                    context.push(RoutePaths.workerProductionHistory),
-              ),
-              AppButton(
-                label: l10n.navProcessHistory,
-                icon: AppIcons.process,
-                variant: AppButtonVariant.secondary,
-                onPressed: () =>
-                    context.push(RoutePaths.processProductionHistory),
-              ),
-              AppButton(
-                label: l10n.navReports,
-                icon: AppIcons.reports,
-                variant: AppButtonVariant.outlined,
-                onPressed: () => context.push(RoutePaths.reports),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.md),
+      // Infinite scroll: fetch the next page shortly before the end.
+      child: NotificationListener<ScrollNotification>(
+        onNotification: (n) {
+          if (n.metrics.axis == Axis.vertical && n.metrics.extentAfter < 600) {
+            cubit.loadMore();
+          }
+          return false;
+        },
+        child: ListView(
+          children: [
+            // Quick Navigation Strip to Worker History, Process History, Inspection Queue
+            Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.sm,
+              children: [
+                AppButton(
+                  label:
+                      '${l10n.navInspectionQueue} (${data.pendingReturnsCount + data.openRejectionsCount})',
+                  icon: AppIcons.qcInspect,
+                  onPressed: () async {
+                    await context.push(RoutePaths.inspectionQueue);
+                    if (context.mounted) await cubit.load();
+                  },
+                ),
+                AppButton(
+                  label: l10n.navWorkerHistory,
+                  icon: AppIcons.worker,
+                  variant: AppButtonVariant.secondary,
+                  onPressed: () =>
+                      context.push(RoutePaths.workerProductionHistory),
+                ),
+                AppButton(
+                  label: l10n.navProcessHistory,
+                  icon: AppIcons.process,
+                  variant: AppButtonVariant.secondary,
+                  onPressed: () =>
+                      context.push(RoutePaths.processProductionHistory),
+                ),
+                AppButton(
+                  label: l10n.navReports,
+                  icon: AppIcons.reports,
+                  variant: AppButtonVariant.outlined,
+                  onPressed: () => context.push(RoutePaths.reports),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.md),
 
-          // Reconciled KPI Grid
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final cols = constraints.maxWidth >= 900
-                  ? 4
-                  : (constraints.maxWidth >= 560 ? 3 : 2);
-              final tileW =
-                  (constraints.maxWidth - (AppSpacing.sm * (cols - 1))) / cols;
-              return Wrap(
-                spacing: AppSpacing.sm,
-                runSpacing: AppSpacing.sm,
+            // Reconciled KPI Grid
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final cols = constraints.maxWidth >= 900
+                    ? 4
+                    : (constraints.maxWidth >= 560 ? 3 : 2);
+                final tileW =
+                    (constraints.maxWidth - (AppSpacing.sm * (cols - 1))) /
+                    cols;
+                return Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
+                  children: [
+                    SizedBox(
+                      width: tileW,
+                      child: AppMetricTile(
+                        label: l10n.prodHistoryTotalAssigned,
+                        value: data.totalAssignedQty,
+                        suffix: l10n.piecesUnit,
+                        icon: AppIcons.stockIssue,
+                        tone: AppStatusTone.info,
+                      ),
+                    ),
+                    SizedBox(
+                      width: tileW,
+                      child: AppMetricTile(
+                        label: l10n.prodHistoryTotalAccepted,
+                        value: data.totalAcceptedQty,
+                        suffix: l10n.piecesUnit,
+                        icon: AppIcons.qcPassed,
+                        tone: AppStatusTone.good,
+                      ),
+                    ),
+                    SizedBox(
+                      width: tileW,
+                      child: AppMetricTile(
+                        label: l10n.prodHistoryPendingInspection,
+                        value: data.totalPendingInspectionQty,
+                        suffix: l10n.piecesUnit,
+                        icon: AppIcons.qcInspect,
+                        tone: data.totalPendingInspectionQty > 0
+                            ? AppStatusTone.pending
+                            : AppStatusTone.neutral,
+                        onTap: () => context.push(RoutePaths.inspectionQueue),
+                      ),
+                    ),
+                    SizedBox(
+                      width: tileW,
+                      child: AppMetricTile(
+                        label: l10n.prodHistoryOutstandingWork,
+                        value: data.totalOutstandingQty,
+                        suffix: l10n.piecesUnit,
+                        icon: AppIcons.pending,
+                        tone: data.totalOutstandingQty > 0
+                            ? AppStatusTone.pending
+                            : AppStatusTone.good,
+                      ),
+                    ),
+                    SizedBox(
+                      width: tileW,
+                      child: AppMetricTile(
+                        label: l10n.prodHistoryTotalRejected,
+                        value: data.totalRejectedQty,
+                        suffix: l10n.piecesUnit,
+                        icon: AppIcons.damaged,
+                        tone: data.totalRejectedQty > 0
+                            ? AppStatusTone.damaged
+                            : AppStatusTone.neutral,
+                        onTap: () => context.push(RoutePaths.inspectionQueue),
+                      ),
+                    ),
+                    SizedBox(
+                      width: tileW,
+                      child: AppMetricTile(
+                        label: l10n.prodHistoryTotalEarned,
+                        value: data.totalEarnedPaise,
+                        isCurrencyPaise: true,
+                        icon: AppIcons.work,
+                        tone: AppStatusTone.good,
+                      ),
+                    ),
+                    SizedBox(
+                      width: tileW,
+                      child: AppMetricTile(
+                        label: l10n.prodHistoryTotalPaid,
+                        value: data.totalPaidPaise,
+                        isCurrencyPaise: true,
+                        icon: AppIcons.payment,
+                        tone: AppStatusTone.info,
+                      ),
+                    ),
+                    SizedBox(
+                      width: tileW,
+                      child: AppMetricTile(
+                        label: l10n.prodHistoryOutstandingPayable,
+                        value: data.totalOutstandingPayablePaise,
+                        isCurrencyPaise: true,
+                        icon: AppIcons.accounting,
+                        tone: data.totalOutstandingPayablePaise > 0
+                            ? AppStatusTone.pending
+                            : AppStatusTone.good,
+                        onTap: () => context.push(RoutePaths.accounting),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            ),
+            const SizedBox(height: AppSpacing.md),
+
+            // Search & Multi-Dimension Filters Card
+            AppCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SizedBox(
-                    width: tileW,
-                    child: AppMetricTile(
-                      label: l10n.prodHistoryTotalAssigned,
-                      value: data.totalAssignedQty,
-                      suffix: l10n.piecesUnit,
-                      icon: AppIcons.stockIssue,
-                      tone: AppStatusTone.info,
-                    ),
+                  AppSearchField(
+                    label: l10n.prodHistorySearchHint,
+                    onChanged: (q) =>
+                        cubit.updateFilter(filter.copyWith(searchQuery: q)),
                   ),
-                  SizedBox(
-                    width: tileW,
-                    child: AppMetricTile(
-                      label: l10n.prodHistoryTotalAccepted,
-                      value: data.totalAcceptedQty,
-                      suffix: l10n.piecesUnit,
-                      icon: AppIcons.qcPassed,
-                      tone: AppStatusTone.good,
-                    ),
-                  ),
-                  SizedBox(
-                    width: tileW,
-                    child: AppMetricTile(
-                      label: l10n.prodHistoryPendingInspection,
-                      value: data.totalPendingInspectionQty,
-                      suffix: l10n.piecesUnit,
-                      icon: AppIcons.qcInspect,
-                      tone: data.totalPendingInspectionQty > 0
-                          ? AppStatusTone.pending
-                          : AppStatusTone.neutral,
-                      onTap: () => context.push(RoutePaths.inspectionQueue),
-                    ),
-                  ),
-                  SizedBox(
-                    width: tileW,
-                    child: AppMetricTile(
-                      label: l10n.prodHistoryOutstandingWork,
-                      value: data.totalOutstandingQty,
-                      suffix: l10n.piecesUnit,
-                      icon: AppIcons.pending,
-                      tone: data.totalOutstandingQty > 0
-                          ? AppStatusTone.pending
-                          : AppStatusTone.good,
-                    ),
-                  ),
-                  SizedBox(
-                    width: tileW,
-                    child: AppMetricTile(
-                      label: l10n.prodHistoryTotalRejected,
-                      value: data.totalRejectedQty,
-                      suffix: l10n.piecesUnit,
-                      icon: AppIcons.damaged,
-                      tone: data.totalRejectedQty > 0
-                          ? AppStatusTone.damaged
-                          : AppStatusTone.neutral,
-                      onTap: () => context.push(RoutePaths.inspectionQueue),
-                    ),
-                  ),
-                  SizedBox(
-                    width: tileW,
-                    child: AppMetricTile(
-                      label: l10n.prodHistoryTotalEarned,
-                      value: data.totalEarnedPaise,
-                      isCurrencyPaise: true,
-                      icon: AppIcons.work,
-                      tone: AppStatusTone.good,
-                    ),
-                  ),
-                  SizedBox(
-                    width: tileW,
-                    child: AppMetricTile(
-                      label: l10n.prodHistoryTotalPaid,
-                      value: data.totalPaidPaise,
-                      isCurrencyPaise: true,
-                      icon: AppIcons.payment,
-                      tone: AppStatusTone.info,
-                    ),
-                  ),
-                  SizedBox(
-                    width: tileW,
-                    child: AppMetricTile(
-                      label: l10n.prodHistoryOutstandingPayable,
-                      value: data.totalOutstandingPayablePaise,
-                      isCurrencyPaise: true,
-                      icon: AppIcons.accounting,
-                      tone: data.totalOutstandingPayablePaise > 0
-                          ? AppStatusTone.pending
-                          : AppStatusTone.good,
-                      onTap: () => context.push(RoutePaths.accounting),
+                  const SizedBox(height: AppSpacing.sm),
+                  // Phones: filters fold behind one toggle so the feed starts
+                  // near the top of the screen.
+                  AppCollapsibleFilters(
+                    activeCount:
+                        [
+                          filter.fromUtcMillis,
+                          filter.toUtcMillis,
+                          filter.lotId,
+                          filter.workerId,
+                          filter.processId,
+                          filter.designName,
+                          filter.colourName,
+                        ].where((v) => v != null).length +
+                        (filter.onlyPending ? 1 : 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Wrap(
+                          spacing: AppSpacing.sm,
+                          runSpacing: AppSpacing.sm,
+                          children: [
+                            AppAdaptiveField(
+                              maxWidth: 210,
+                              child: AppSelect<String>(
+                                label: l10n.lotsHeading,
+                                value: filter.lotId ?? '__ALL__',
+                                items: [
+                                  '__ALL__',
+                                  ...options.lots.map((o) => o.id),
+                                ],
+                                itemLabelBuilder: (id) {
+                                  if (id == '__ALL__') {
+                                    return l10n.prodHistoryAllEntries;
+                                  }
+                                  final item = options.lots.firstWhere(
+                                    (o) => o.id == id,
+                                  );
+                                  return item.isActive
+                                      ? item.label
+                                      : '${item.label} (${l10n.statusInactive})';
+                                },
+                                onChanged: (v) => cubit.updateFilter(
+                                  v == null || v == '__ALL__'
+                                      ? filter.copyWith(clearLot: true)
+                                      : filter.copyWith(lotId: v),
+                                ),
+                              ),
+                            ),
+                            AppAdaptiveField(
+                              maxWidth: 210,
+                              child: AppSelect<String>(
+                                label: l10n.navWorkers,
+                                value: filter.workerId ?? '__ALL__',
+                                items: [
+                                  '__ALL__',
+                                  ...options.workers.map((o) => o.id),
+                                ],
+                                itemLabelBuilder: (id) {
+                                  if (id == '__ALL__') {
+                                    return l10n.prodHistoryAllEntries;
+                                  }
+                                  final item = options.workers.firstWhere(
+                                    (o) => o.id == id,
+                                  );
+                                  return item.isActive
+                                      ? item.label
+                                      : '${item.label} (${l10n.statusInactive})';
+                                },
+                                onChanged: (v) => cubit.updateFilter(
+                                  v == null || v == '__ALL__'
+                                      ? filter.copyWith(clearWorker: true)
+                                      : filter.copyWith(workerId: v),
+                                ),
+                              ),
+                            ),
+                            AppAdaptiveField(
+                              maxWidth: 210,
+                              child: AppSelect<String>(
+                                label: l10n.navProcesses,
+                                value: filter.processId ?? '__ALL__',
+                                items: [
+                                  '__ALL__',
+                                  ...options.processes.map((o) => o.id),
+                                ],
+                                itemLabelBuilder: (id) {
+                                  if (id == '__ALL__') {
+                                    return l10n.prodHistoryAllEntries;
+                                  }
+                                  final item = options.processes.firstWhere(
+                                    (o) => o.id == id,
+                                  );
+                                  return item.isActive
+                                      ? item.label
+                                      : '${item.label} (${l10n.statusInactive})';
+                                },
+                                onChanged: (v) => cubit.updateFilter(
+                                  v == null || v == '__ALL__'
+                                      ? filter.copyWith(clearProcess: true)
+                                      : filter.copyWith(processId: v),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppSpacing.sm),
+                        AppFormRow(
+                          spacing: AppSpacing.sm,
+                          children: [
+                            AppDatePicker(
+                              label: l10n.accountingFromDateLabel,
+                              selectedUtcMillis: filter.fromUtcMillis,
+                              onDateSelectedUtcMillis: (utc) {
+                                final ist =
+                                    IstDateTimeHelper.fromUtcMillisToIst(utc);
+                                final start =
+                                    IstDateTimeHelper.istDateTimeToUtcMillis(
+                                      year: ist.year,
+                                      month: ist.month,
+                                      day: ist.day,
+                                    );
+                                cubit.updateFilter(
+                                  filter.copyWith(fromUtcMillis: start),
+                                );
+                              },
+                            ),
+                            AppDatePicker(
+                              label: l10n.accountingToDateLabel,
+                              selectedUtcMillis: filter.toUtcMillis,
+                              onDateSelectedUtcMillis: (utc) {
+                                final ist =
+                                    IstDateTimeHelper.fromUtcMillisToIst(utc);
+                                final end =
+                                    IstDateTimeHelper.istDateTimeToUtcMillis(
+                                      year: ist.year,
+                                      month: ist.month,
+                                      day: ist.day,
+                                      hour: 23,
+                                      minute: 59,
+                                      second: 59,
+                                    );
+                                cubit.updateFilter(
+                                  filter.copyWith(toUtcMillis: end),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: AppSpacing.xs),
+                        Wrap(
+                          spacing: AppSpacing.xs,
+                          runSpacing: AppSpacing.xs,
+                          alignment: WrapAlignment.spaceBetween,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            AppChip.filter(
+                              label: l10n.prodHistoryOnlyPending,
+                              selected: filter.onlyPending,
+                              onSelected: (v) => cubit.updateFilter(
+                                filter.copyWith(onlyPending: v),
+                              ),
+                            ),
+                            AppButton(
+                              label: l10n.accountingClearFilters,
+                              variant: AppButtonVariant.text,
+                              onPressed: () => cubit.clearFilters(),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ],
-              );
-            },
-          ),
-          const SizedBox(height: AppSpacing.md),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
 
-          // Search & Multi-Dimension Filters Card
-          AppCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                AppSearchField(
-                  label: l10n.prodHistorySearchHint,
-                  onChanged: (q) =>
-                      cubit.updateFilter(filter.copyWith(searchQuery: q)),
-                ),
+            // Unified Paginated Transaction Feed
+            AppHeading(
+              '${l10n.prodHistoryDashboardTitle} (${data.totalItemsCount})',
+              level: AppHeadingLevel.h3,
+            ),
+            const SizedBox(height: AppSpacing.sm),
+            if (data.items.isEmpty)
+              AppEmptyState(
+                icon: AppIcons.productionHistory,
+                title: l10n.prodHistoryDashboardTitle,
+                subtitle: l10n.prodHistoryDashboardSubtitle,
+              )
+            else ...[
+              for (final item in data.items) ...[
+                _HistoryFeedCard(item: item, localeCode: localeCode),
                 const SizedBox(height: AppSpacing.sm),
-                // Phones: filters fold behind one toggle so the feed starts
-                // near the top of the screen.
-                AppCollapsibleFilters(
-                  activeCount:
-                      [
-                        filter.fromUtcMillis,
-                        filter.toUtcMillis,
-                        filter.lotId,
-                        filter.workerId,
-                        filter.processId,
-                        filter.designName,
-                        filter.colourName,
-                      ].where((v) => v != null).length +
-                      (filter.onlyPending ? 1 : 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Wrap(
-                        spacing: AppSpacing.sm,
-                        runSpacing: AppSpacing.sm,
-                        children: [
-                          AppAdaptiveField(
-                            maxWidth: 210,
-                            child: AppDropdown<String>(
-                              label: l10n.lotsHeading,
-                              value: filter.lotId ?? '__ALL__',
-                              items: [
-                                '__ALL__',
-                                ...options.lots.map((o) => o.id),
-                              ],
-                              itemLabelBuilder: (id) {
-                                if (id == '__ALL__') {
-                                  return l10n.prodHistoryAllEntries;
-                                }
-                                final item = options.lots.firstWhere(
-                                  (o) => o.id == id,
-                                );
-                                return item.isActive
-                                    ? item.label
-                                    : '${item.label} (${l10n.statusInactive})';
-                              },
-                              onChanged: (v) => cubit.updateFilter(
-                                v == null || v == '__ALL__'
-                                    ? filter.copyWith(clearLot: true)
-                                    : filter.copyWith(lotId: v),
-                              ),
-                            ),
-                          ),
-                          AppAdaptiveField(
-                            maxWidth: 210,
-                            child: AppDropdown<String>(
-                              label: l10n.navWorkers,
-                              value: filter.workerId ?? '__ALL__',
-                              items: [
-                                '__ALL__',
-                                ...options.workers.map((o) => o.id),
-                              ],
-                              itemLabelBuilder: (id) {
-                                if (id == '__ALL__') {
-                                  return l10n.prodHistoryAllEntries;
-                                }
-                                final item = options.workers.firstWhere(
-                                  (o) => o.id == id,
-                                );
-                                return item.isActive
-                                    ? item.label
-                                    : '${item.label} (${l10n.statusInactive})';
-                              },
-                              onChanged: (v) => cubit.updateFilter(
-                                v == null || v == '__ALL__'
-                                    ? filter.copyWith(clearWorker: true)
-                                    : filter.copyWith(workerId: v),
-                              ),
-                            ),
-                          ),
-                          AppAdaptiveField(
-                            maxWidth: 210,
-                            child: AppDropdown<String>(
-                              label: l10n.navProcesses,
-                              value: filter.processId ?? '__ALL__',
-                              items: [
-                                '__ALL__',
-                                ...options.processes.map((o) => o.id),
-                              ],
-                              itemLabelBuilder: (id) {
-                                if (id == '__ALL__') {
-                                  return l10n.prodHistoryAllEntries;
-                                }
-                                final item = options.processes.firstWhere(
-                                  (o) => o.id == id,
-                                );
-                                return item.isActive
-                                    ? item.label
-                                    : '${item.label} (${l10n.statusInactive})';
-                              },
-                              onChanged: (v) => cubit.updateFilter(
-                                v == null || v == '__ALL__'
-                                    ? filter.copyWith(clearProcess: true)
-                                    : filter.copyWith(processId: v),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      AppFormRow(
-                        spacing: AppSpacing.sm,
-                        children: [
-                          AppDatePicker(
-                            label: l10n.accountingFromDateLabel,
-                            selectedUtcMillis: filter.fromUtcMillis,
-                            onDateSelectedUtcMillis: (utc) {
-                              final ist = IstDateTimeHelper.fromUtcMillisToIst(
-                                utc,
-                              );
-                              final start =
-                                  IstDateTimeHelper.istDateTimeToUtcMillis(
-                                    year: ist.year,
-                                    month: ist.month,
-                                    day: ist.day,
-                                  );
-                              cubit.updateFilter(
-                                filter.copyWith(fromUtcMillis: start),
-                              );
-                            },
-                          ),
-                          AppDatePicker(
-                            label: l10n.accountingToDateLabel,
-                            selectedUtcMillis: filter.toUtcMillis,
-                            onDateSelectedUtcMillis: (utc) {
-                              final ist = IstDateTimeHelper.fromUtcMillisToIst(
-                                utc,
-                              );
-                              final end =
-                                  IstDateTimeHelper.istDateTimeToUtcMillis(
-                                    year: ist.year,
-                                    month: ist.month,
-                                    day: ist.day,
-                                    hour: 23,
-                                    minute: 59,
-                                    second: 59,
-                                  );
-                              cubit.updateFilter(
-                                filter.copyWith(toUtcMillis: end),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: AppSpacing.xs),
-                      Wrap(
-                        spacing: AppSpacing.xs,
-                        runSpacing: AppSpacing.xs,
-                        alignment: WrapAlignment.spaceBetween,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          AppChip.filter(
-                            label: l10n.prodHistoryOnlyPending,
-                            selected: filter.onlyPending,
-                            onSelected: (v) => cubit.updateFilter(
-                              filter.copyWith(onlyPending: v),
-                            ),
-                          ),
-                          AppButton(
-                            label: l10n.accountingClearFilters,
-                            variant: AppButtonVariant.text,
-                            onPressed: () => cubit.clearFilters(),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
               ],
-            ),
-          ),
-          const SizedBox(height: AppSpacing.md),
-
-          // Unified Paginated Transaction Feed
-          AppHeading(
-            '${l10n.prodHistoryDashboardTitle} (${data.totalItemsCount})',
-            level: AppHeadingLevel.h3,
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          if (data.items.isEmpty)
-            AppEmptyState(
-              icon: AppIcons.productionHistory,
-              title: l10n.prodHistoryDashboardTitle,
-              subtitle: l10n.prodHistoryDashboardSubtitle,
-            )
-          else ...[
-            for (final item in data.items) ...[
-              _HistoryFeedCard(item: item, localeCode: localeCode),
-              const SizedBox(height: AppSpacing.sm),
+              // Feed footer: spinner while the next page loads, a manual
+              // "Load more" when the screen is too tall to scroll, or the end.
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+                child: Center(
+                  child: state.isLoadingMore
+                      ? const AppSpinner()
+                      : data.hasMore
+                      ? AppButton(
+                          label: l10n.paginationLoadMore,
+                          icon: AppIcons.expandMore,
+                          variant: AppButtonVariant.outlined,
+                          onPressed: cubit.loadMore,
+                        )
+                      : AppText(
+                          l10n.paginationShowingAll(data.items.length),
+                          variant: AppTextVariant.bodySmall,
+                        ),
+                ),
+              ),
             ],
-            // Pagination Controls
-            Wrap(
-              spacing: AppSpacing.sm,
-              runSpacing: AppSpacing.xs,
-              alignment: WrapAlignment.spaceBetween,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: [
-                AppButton(
-                  label: 'Previous',
-                  icon: AppIcons.chevronLeft,
-                  variant: AppButtonVariant.outlined,
-                  onPressed: data.page > 0 ? () => cubit.previousPage() : null,
-                ),
-                AppText(
-                  'Page ${data.page + 1} (${data.items.length} / ${data.totalItemsCount})',
-                  variant: AppTextVariant.bodySmall,
-                ),
-                AppButton(
-                  label: 'Next',
-                  icon: AppIcons.chevronRight,
-                  variant: AppButtonVariant.outlined,
-                  onPressed: data.hasMore ? () => cubit.nextPage() : null,
-                ),
-              ],
-            ),
+            const SizedBox(height: AppSpacing.xl),
           ],
-          const SizedBox(height: AppSpacing.xl),
-        ],
+        ),
       ),
     );
   }
@@ -522,10 +525,10 @@ final class _HistoryFeedCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: AppSpacing.xs),
           AppText(item.subtitle, variant: AppTextVariant.bodySmall),
           if (item.amountPaise != null && item.amountPaise! > 0) ...[
-            const SizedBox(height: 2),
+            const SizedBox(height: AppSpacing.xxs),
             AppText(
               '${MoneyFormatter.formatPaise(item.amountPaise!)}${item.ratePaise != null ? ' @ ${MoneyFormatter.formatPaise(item.ratePaise!)}/pc' : ''}',
               variant: AppTextVariant.numeric,

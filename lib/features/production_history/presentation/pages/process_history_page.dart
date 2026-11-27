@@ -96,7 +96,7 @@ final class _ProcessHistoryView extends StatelessWidget {
                   children: [
                     AppAdaptiveField(
                       maxWidth: 200,
-                      child: AppDropdown<String>(
+                      child: AppSelect<String>(
                         label: l10n.navWorkers,
                         value: filter.workerId ?? '__ALL__',
                         items: ['__ALL__', ...options.workers.map((w) => w.id)],
@@ -114,7 +114,7 @@ final class _ProcessHistoryView extends StatelessWidget {
                     ),
                     AppAdaptiveField(
                       maxWidth: 200,
-                      child: AppDropdown<String>(
+                      child: AppSelect<String>(
                         label: l10n.lotsHeading,
                         value: filter.lotId ?? '__ALL__',
                         items: ['__ALL__', ...options.lots.map((l) => l.id)],
@@ -131,7 +131,7 @@ final class _ProcessHistoryView extends StatelessWidget {
                     if (options.designNames.isNotEmpty)
                       AppAdaptiveField(
                         maxWidth: 200,
-                        child: AppDropdown<String>(
+                        child: AppSelect<String>(
                           label: l10n.designsHeading,
                           value: filter.designName ?? '__ALL__',
                           items: ['__ALL__', ...options.designNames],
@@ -147,7 +147,7 @@ final class _ProcessHistoryView extends StatelessWidget {
                     if (options.colourNames.isNotEmpty)
                       AppAdaptiveField(
                         maxWidth: 200,
-                        child: AppDropdown<String>(
+                        child: AppSelect<String>(
                           label: l10n.colourNameLabel,
                           value: filter.colourName ?? '__ALL__',
                           items: ['__ALL__', ...options.colourNames],
@@ -228,32 +228,54 @@ final class _ProcessHistoryView extends StatelessWidget {
           AppDataTable<ProcessCompleteHistory>(
             enablePagination: true,
             columns: [
-              AppDataColumn(label: l10n.processNameLabel),
-              AppDataColumn(label: context.l10n.navLots, numeric: true),
+              AppDataColumn(sortable: true, label: l10n.processNameLabel),
               AppDataColumn(
+                sortable: true,
+                label: context.l10n.navLots,
+                numeric: true,
+              ),
+              AppDataColumn(
+                sortable: true,
                 label: context.l10n.navWorkers,
                 numeric: true,
                 minWidthClass: AppWindowSizeClass.expanded,
               ),
               AppDataColumn(
+                sortable: true,
                 label: l10n.prodHistoryTotalAssigned,
                 numeric: true,
               ),
               AppDataColumn(
+                sortable: true,
                 label: l10n.prodHistoryTotalAccepted,
                 numeric: true,
               ),
               AppDataColumn(
+                sortable: true,
                 label: context.l10n.stockPendingQcLabel,
                 numeric: true,
                 minWidthClass: AppWindowSizeClass.expanded,
               ),
-              AppDataColumn(label: context.l10n.lotCostLabel, numeric: true),
+              AppDataColumn(
+                sortable: true,
+                label: context.l10n.lotCostLabel,
+                numeric: true,
+              ),
               AppDataColumn(
                 label: l10n.lotStatusLabel,
                 minWidthClass: AppWindowSizeClass.expanded,
               ),
             ],
+            sortValueBuilder: (p, i) => switch (i) {
+              0 => p.processName,
+              1 => p.totalLots,
+              2 => p.totalWorkersInvolved,
+              3 => p.assignedQty,
+              4 => p.acceptedQty,
+              5 => p.pendingInspectionQty,
+              6 => p.totalProductionCostPaise,
+              _ => null,
+            },
             items: state.processes,
             itemKeyBuilder: (p) => ValueKey<String>(p.processId),
             onRowTap: (p) =>

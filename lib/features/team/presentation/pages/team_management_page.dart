@@ -1,3 +1,4 @@
+import 'package:business_manager/core/validation/validation_localizer.dart';
 import 'package:business_manager/core/design_system/app_icons.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
@@ -72,7 +73,7 @@ final class _TeamManagementPageState extends State<TeamManagementPage> {
     } catch (e) {
       if (!mounted) return;
       setState(() {
-        _error = e.toString();
+        _error = ValidationLocalizer.describeError(context.l10n, e);
         _loading = false;
       });
     }
@@ -182,7 +183,13 @@ final class _TeamManagementPageState extends State<TeamManagementPage> {
                           } catch (e) {
                             if (sheetCtx.mounted) {
                               setSheetState(() => saving = false);
-                              AppFeedback.showError(sheetCtx, e.toString());
+                              AppFeedback.showError(
+                                sheetCtx,
+                                ValidationLocalizer.describeError(
+                                  sheetCtx.l10n,
+                                  e,
+                                ),
+                              );
                             }
                           }
                         },
@@ -243,7 +250,13 @@ final class _TeamManagementPageState extends State<TeamManagementPage> {
                         } catch (e) {
                           if (sheetCtx.mounted) {
                             setSheetState(() => saving = false);
-                            AppFeedback.showError(sheetCtx, e.toString());
+                            AppFeedback.showError(
+                              sheetCtx,
+                              ValidationLocalizer.describeError(
+                                sheetCtx.l10n,
+                                e,
+                              ),
+                            );
                           }
                         }
                       },
@@ -307,6 +320,13 @@ final class _TeamManagementPageState extends State<TeamManagementPage> {
                   padding: AppSpacing.screenAll,
                   child: AppSkeletonList(itemCount: 3),
                 )
+              : _error != null && _members.isEmpty
+              ? AppErrorView(
+                  title: l10n.errorLoadTitle,
+                  message: _error,
+                  retryLabel: l10n.actionRetry,
+                  onRetry: _load,
+                )
               : ListView(
                   padding: AppSpacing.screenAll,
                   children: [
@@ -340,7 +360,7 @@ final class _TeamManagementPageState extends State<TeamManagementPage> {
                         ),
                       ],
                     ),
-                    if (_error != null) ...[
+                    if (_error != null && _members.isNotEmpty) ...[
                       const SizedBox(height: AppSpacing.md),
                       AppStatusBadge(
                         label: _error!,

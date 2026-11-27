@@ -246,7 +246,7 @@ final class _GuideSpotlightOverlayState extends State<GuideSpotlightOverlay>
                             size: 14,
                             color: colorScheme.onPrimaryContainer,
                           ),
-                          const SizedBox(width: 4),
+                          const SizedBox(width: AppSpacing.xs),
                           Text(
                             l10n.guideStepCounter(
                               widget.state.currentStepIndex + 1,

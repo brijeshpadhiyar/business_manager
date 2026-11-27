@@ -419,7 +419,7 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                       context.l10n,
                       (v) => AppValidators.nonNegativeQuantityValidator(v),
                     ),
-                    label: 'Still Defective / Rejected Again',
+                    label: context.l10n.inspectionStillDefectiveLabel,
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     onChanged: (_) => setSheetState(() => error = null),
@@ -617,8 +617,8 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
     if (state.pendingReturns.isEmpty) {
       return AppEmptyState(
         icon: AppIcons.qcPassed,
-        title: 'No Pending QC Inspections',
-        subtitle: 'All returned pieces have been inspected and reconciled.',
+        title: l10n.inspectionQueueEmptyTitle,
+        subtitle: l10n.inspectionQueueEmptySubtitle,
         actionLabel: l10n.stockReturnAction,
         onAction: () => context.push(RoutePaths.stockReturnPicker),
       );
@@ -646,7 +646,7 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                   ),
                 ],
               ),
-              const SizedBox(height: 2),
+              const SizedBox(height: AppSpacing.xxs),
               AppText(
                 '${item.lotNumber} • ${item.designName} • ${item.colourName}',
                 variant: AppTextVariant.bodySmall,
@@ -741,7 +741,7 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 2),
+                      const SizedBox(height: AppSpacing.xxs),
                       AppText(
                         '${rej.designName} • ${rej.colourName} • Reason: ${rej.record.rejectionReason}',
                         variant: AppTextVariant.bodySmall,
@@ -752,17 +752,23 @@ final class _InspectionQueueViewState extends State<_InspectionQueueView> {
                         runSpacing: 4,
                         children: [
                           AppStatusBadge(
-                            label: 'Rejected: ${rej.record.rejectedQuantity}',
+                            label: context.l10n.lotRejectedValue(
+                              rej.record.rejectedQuantity,
+                            ),
                             tone: AppStatusTone.damaged,
                           ),
                           AppStatusBadge(
-                            label: 'Open: ${rej.openUnrepairedQty}',
+                            label: context.l10n.lotOpenValue(
+                              rej.openUnrepairedQty,
+                            ),
                             tone: rej.openUnrepairedQty > 0
                                 ? AppStatusTone.pending
                                 : AppStatusTone.neutral,
                           ),
                           AppStatusBadge(
-                            label: 'Re-Approved: ${rej.totalReapprovedQty}',
+                            label: context.l10n.lotReapprovedValue(
+                              rej.totalReapprovedQty,
+                            ),
                             tone: AppStatusTone.good,
                           ),
                           if (rej.pendingReinspectionQty > 0)

@@ -12,6 +12,7 @@ final class ProductionHistoryDashboardState {
     this.data,
     this.options = const ProductionHistoryFilterOptions(),
     this.errorMessage,
+    this.isLoadingMore = false,
   });
 
   final ProductionHistoryLoadStatus status;
@@ -20,6 +21,9 @@ final class ProductionHistoryDashboardState {
   final ProductionHistoryFilterOptions options;
   final String? errorMessage;
 
+  /// A next page is being fetched for the infinite-scroll feed.
+  final bool isLoadingMore;
+
   ProductionHistoryDashboardState copyWith({
     ProductionHistoryLoadStatus? status,
     ProductionHistoryFilter? filter,
@@ -27,6 +31,7 @@ final class ProductionHistoryDashboardState {
     ProductionHistoryFilterOptions? options,
     String? errorMessage,
     bool clearError = false,
+    bool? isLoadingMore,
   }) {
     return ProductionHistoryDashboardState(
       status: status ?? this.status,
@@ -34,6 +39,7 @@ final class ProductionHistoryDashboardState {
       data: data ?? this.data,
       options: options ?? this.options,
       errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
     );
   }
 }
@@ -46,13 +52,15 @@ final class ProductionHistoryDashboardCubit
 
   final ProductionHistoryRepository _repo;
 
+  /// Loads the first page (a refresh always starts the feed from the top).
   Future<void> load({ProductionHistoryFilter? filter}) async {
-    final activeFilter = filter ?? state.filter;
+    final activeFilter = filter ?? state.filter.copyWith(page: 0);
     emit(
       state.copyWith(
         status: ProductionHistoryLoadStatus.loading,
         filter: activeFilter,
         clearError: true,
+        isLoadingMore: false,
       ),
     );
     try {
@@ -83,14 +91,33 @@ final class ProductionHistoryDashboardCubit
     return load(filter: next.copyWith(page: 0));
   }
 
-  Future<void> nextPage() {
-    if (!(state.data?.hasMore ?? false)) return Future.value();
-    return load(filter: state.filter.copyWith(page: state.filter.page + 1));
-  }
-
-  Future<void> previousPage() {
-    if (state.filter.page <= 0) return Future.value();
-    return load(filter: state.filter.copyWith(page: state.filter.page - 1));
+  /// Appends the next page to the feed (infinite scroll). Safe to call
+  /// repeatedly: it ignores calls while a load is running or at the end.
+  Future<void> loadMore() async {
+    final data = state.data;
+    if (data == null ||
+        !data.hasMore ||
+        state.isLoadingMore ||
+        state.status == ProductionHistoryLoadStatus.loading) {
+      return;
+    }
+    final nextFilter = state.filter.copyWith(page: state.filter.page + 1);
+    emit(state.copyWith(isLoadingMore: true));
+    try {
+      final next = await _repo.getDashboard(filter: nextFilter);
+      if (isClosed) return;
+      emit(
+        state.copyWith(
+          filter: nextFilter,
+          data: data.appendPage(next),
+          isLoadingMore: false,
+        ),
+      );
+    } catch (e) {
+      if (isClosed) return;
+      // Keep the rows already shown; the user can scroll again to retry.
+      emit(state.copyWith(isLoadingMore: false, errorMessage: e.toString()));
+    }
   }
 
   Future<void> clearFilters() => load(filter: const ProductionHistoryFilter());

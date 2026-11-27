@@ -119,6 +119,9 @@ abstract final class AppColors {
   static const Color darkInfo = indigo300;
   static const Color darkInfoContainer = indigo950;
 
+  /// Text on the dark-mode error colour (deep red, red-950).
+  static const Color darkOnError = Color(0xFF450A0A);
+
   /// Brand hero gradient: Indigo 700 → Indigo 500 → Emerald 600 (135°).
   static const LinearGradient heroGradientLight = LinearGradient(
     begin: Alignment.topLeft,
@@ -133,6 +136,16 @@ abstract final class AppColors {
     colors: [indigo900, indigo950, emerald900],
     stops: [0.0, 0.55, 1.0],
   );
+
+  /// Text, icons and glass on top of [heroGradientLight] / [heroGradientDark]
+  /// (and other deep brand surfaces such as the lock screen). Both gradients
+  /// are dark, so this stays white in light and dark mode. Use it with an
+  /// alpha for secondary text (0.85–0.9), glass fills (0.12–0.15) and
+  /// borders (0.16–0.25).
+  static const Color onHero = Color(0xFFFFFFFF);
+
+  /// Secondary text on the hero gradient.
+  static const Color onHeroMuted = Color(0xE0FFFFFF);
 
   /// Primary button gradient sheen.
   static const LinearGradient primaryButtonGradientLight = LinearGradient(

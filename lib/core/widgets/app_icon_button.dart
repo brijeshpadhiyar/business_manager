@@ -23,14 +23,18 @@ final class AppIconButton extends StatelessWidget {
   final Color? color;
   final bool isFilled;
 
-  /// Smaller 16dp icon and 40dp target for dense rows (e.g. on swatches).
+  /// Smaller 18dp icon with no inner padding for dense rows (e.g. on
+  /// swatches). The touch target stays at the 48dp minimum.
   final bool compact;
 
   @override
   Widget build(BuildContext context) {
     final tokens = context.surfaceTokens;
     final constraints = compact
-        ? const BoxConstraints.tightFor(width: 40, height: 44)
+        ? const BoxConstraints.tightFor(
+            width: AppSizing.touchTargetMin,
+            height: AppSizing.touchTargetMin,
+          )
         : const BoxConstraints(
             minWidth: AppSizing.touchTargetMin,
             minHeight: AppSizing.touchTargetMin,

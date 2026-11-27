@@ -157,7 +157,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
       if (!mounted) return;
       setState(() {
         _loading = false;
-        _loadError = e.toString();
+        _loadError = ValidationLocalizer.describeError(context.l10n, e);
       });
     }
   }
@@ -302,7 +302,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
         if (!mounted) return;
         setState(() {
           _saving = false;
-          _submitError = e.toString();
+          _submitError = ValidationLocalizer.describeError(context.l10n, e);
         });
       }
       return;
@@ -393,7 +393,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
       if (!mounted) return;
       setState(() {
         _saving = false;
-        _submitError = e.toString();
+        _submitError = ValidationLocalizer.describeError(context.l10n, e);
       });
     }
   }
@@ -499,7 +499,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                       '${view.workerName ?? '-'} • ${view.processName ?? '-'}',
                       level: AppHeadingLevel.h3,
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: AppSpacing.xxs),
                     AppText(
                       '${view.lotNumber} • ${view.designName} • ${view.colourName}',
                       variant: AppTextVariant.bodySmall,
@@ -1273,7 +1273,7 @@ final class _ImpactLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

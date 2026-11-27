@@ -617,7 +617,7 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
                   variant: AppTextVariant.bodyLarge,
                   fontWeight: FontWeight.w700,
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: AppSpacing.xxs),
                 AppText(
                   '${view.lotNumber} • ${view.designName} • ${view.colourName}',
                   variant: AppTextVariant.bodySmall,
@@ -713,13 +713,34 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
           enablePagination: true,
           itemKeyBuilder: (b) => ValueKey<String>(b.designColourId),
           columns: [
-            AppDataColumn(label: l10n.lotNumberLabel),
-            AppDataColumn(label: l10n.designNameLabel),
-            AppDataColumn(label: l10n.colourNameLabel),
-            AppDataColumn(label: l10n.stockAvailableGoodLabel, numeric: true),
-            AppDataColumn(label: l10n.stockPendingWorkerLabel, numeric: true),
-            AppDataColumn(label: l10n.stockDamagedBucketLabel, numeric: true),
+            AppDataColumn(sortable: true, label: l10n.lotNumberLabel),
+            AppDataColumn(sortable: true, label: l10n.designNameLabel),
+            AppDataColumn(sortable: true, label: l10n.colourNameLabel),
+            AppDataColumn(
+              sortable: true,
+              label: l10n.stockAvailableGoodLabel,
+              numeric: true,
+            ),
+            AppDataColumn(
+              sortable: true,
+              label: l10n.stockPendingWorkerLabel,
+              numeric: true,
+            ),
+            AppDataColumn(
+              sortable: true,
+              label: l10n.stockDamagedBucketLabel,
+              numeric: true,
+            ),
           ],
+          sortValueBuilder: (b, i) => switch (i) {
+            0 => b.lotNumber,
+            1 => b.designName,
+            2 => b.colourName,
+            3 => b.physicalAvailableInHouse,
+            4 => b.totalPendingWithWorkers,
+            5 => b.damagedBucket,
+            _ => null,
+          },
           items: balances,
           onRowTap: (b) {
             if (b.physicalAvailableInHouse > 0) {
@@ -1016,15 +1037,36 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
           AppDataTable<WorkerStockSummary>(
             enablePagination: true,
             columns: [
-              AppDataColumn(label: l10n.workerNameLabel),
-              AppDataColumn(label: l10n.stockIssuedLabel, numeric: true),
-              AppDataColumn(label: l10n.stockGoodReturnedLabel, numeric: true),
-              AppDataColumn(label: l10n.stockDamagedBucketLabel, numeric: true),
+              AppDataColumn(sortable: true, label: l10n.workerNameLabel),
               AppDataColumn(
+                sortable: true,
+                label: l10n.stockIssuedLabel,
+                numeric: true,
+              ),
+              AppDataColumn(
+                sortable: true,
+                label: l10n.stockGoodReturnedLabel,
+                numeric: true,
+              ),
+              AppDataColumn(
+                sortable: true,
+                label: l10n.stockDamagedBucketLabel,
+                numeric: true,
+              ),
+              AppDataColumn(
+                sortable: true,
                 label: l10n.stockRemainingPendingLabel,
                 numeric: true,
               ),
             ],
+            sortValueBuilder: (w, i) => switch (i) {
+              0 => w.workerName,
+              1 => w.issued,
+              2 => w.goodReturned,
+              3 => w.damaged,
+              4 => w.pending,
+              _ => null,
+            },
             items: workers,
             cellsBuilder: (w) => [
               AppText(w.workerName, fontWeight: FontWeight.w600),

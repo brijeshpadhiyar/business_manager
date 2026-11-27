@@ -185,28 +185,36 @@ final class _WorkerListViewState extends State<_WorkerListView> {
                   ),
                 ],
                 mobileCardBuilder: (ctx, worker) => AppActionRow(
-                  content: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  content: Row(
                     children: [
-                      AppText(
-                        worker.name,
-                        variant: AppTextVariant.bodyLarge,
-                        fontWeight: FontWeight.w700,
+                      AppAvatar(name: worker.name, dimmed: !worker.isActive),
+                      const SizedBox(width: AppSpacing.md),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            AppText(
+                              worker.name,
+                              variant: AppTextVariant.bodyLarge,
+                              fontWeight: FontWeight.w700,
+                            ),
+                            if (worker.phone != null) ...[
+                              const SizedBox(height: AppSpacing.xs),
+                              AppText(
+                                worker.phone!,
+                                variant: AppTextVariant.bodySmall,
+                              ),
+                            ],
+                            if (worker.address != null) ...[
+                              const SizedBox(height: AppSpacing.xs),
+                              AppText(
+                                worker.address!,
+                                variant: AppTextVariant.bodySmall,
+                              ),
+                            ],
+                          ],
+                        ),
                       ),
-                      if (worker.phone != null) ...[
-                        const SizedBox(height: AppSpacing.xs),
-                        AppText(
-                          worker.phone!,
-                          variant: AppTextVariant.bodySmall,
-                        ),
-                      ],
-                      if (worker.address != null) ...[
-                        const SizedBox(height: AppSpacing.xs),
-                        AppText(
-                          worker.address!,
-                          variant: AppTextVariant.bodySmall,
-                        ),
-                      ],
                     ],
                   ),
                   actions: [

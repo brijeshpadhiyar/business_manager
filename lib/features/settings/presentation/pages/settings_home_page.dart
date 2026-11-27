@@ -392,7 +392,7 @@ final class _SettingsTile extends StatelessWidget {
                     variant: AppTextVariant.bodyLarge,
                     fontWeight: FontWeight.w600,
                   ),
-                  const SizedBox(height: 2),
+                  const SizedBox(height: AppSpacing.xxs),
                   AppText(
                     subtitle,
                     variant: AppTextVariant.bodySmall,

@@ -41,8 +41,8 @@ void main() {
 
   /// Files allowed to use raw widgets, with the reason. Keep this short.
   const allowedFiles = <String, String>{
-    // The toast is drawn inside toastification's overlay with 28 px compact
-    // controls that the shared buttons do not offer.
+    // The toast is drawn inside toastification's overlay with small
+    // (still 48dp hit-area) controls that the shared buttons do not offer.
     'lib/core/services/app_message_service.dart': 'toast overlay',
   };
 

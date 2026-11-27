@@ -142,12 +142,12 @@ final class _AppLockScreenState extends State<AppLockScreen> {
                           Container(
                             width: 68,
                             height: 68,
-                            padding: const EdgeInsets.all(12),
+                            padding: const EdgeInsets.all(AppSpacing.md),
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.14),
+                              color: AppColors.onHero.withValues(alpha: 0.14),
                               borderRadius: AppRadius.xlBorder,
                               border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.25),
+                                color: AppColors.onHero.withValues(alpha: 0.25),
                               ),
                             ),
                             child: Image.asset(
@@ -156,7 +156,7 @@ final class _AppLockScreenState extends State<AppLockScreen> {
                               cacheHeight: 192,
                               errorBuilder: (_, _, _) => const Icon(
                                 AppIcons.lock,
-                                color: Colors.white,
+                                color: AppColors.onHero,
                                 size: 32,
                               ),
                             ),
@@ -166,7 +166,7 @@ final class _AppLockScreenState extends State<AppLockScreen> {
                             l10n.securityLockScreenTitle,
                             style: Theme.of(context).textTheme.headlineSmall
                                 ?.copyWith(
-                                  color: Colors.white,
+                                  color: AppColors.onHero,
                                   fontWeight: FontWeight.w700,
                                 ),
                             textAlign: TextAlign.center,
@@ -176,7 +176,9 @@ final class _AppLockScreenState extends State<AppLockScreen> {
                             l10n.securityLockScreenSubtitle,
                             style: Theme.of(context).textTheme.bodyMedium
                                 ?.copyWith(
-                                  color: Colors.white.withValues(alpha: 0.85),
+                                  color: AppColors.onHero.withValues(
+                                    alpha: 0.85,
+                                  ),
                                 ),
                             textAlign: TextAlign.center,
                           ),
@@ -189,7 +191,7 @@ final class _AppLockScreenState extends State<AppLockScreen> {
                               child: state.isVerifying
                                   ? const AppSpinner(
                                       size: 24,
-                                      color: Colors.white,
+                                      color: AppColors.onHero,
                                     )
                                   : errorText != null
                                   ? Container(
@@ -238,7 +240,7 @@ final class _AppLockScreenState extends State<AppLockScreen> {
                               label: l10n.securityUseBiometricAction,
                               icon: AppIcons.biometric,
                               variant: AppButtonVariant.text,
-                              foregroundColor: Colors.white,
+                              foregroundColor: AppColors.onHero,
                               onPressed: canEnterPin ? _triggerBiometric : null,
                             ),
                           ],

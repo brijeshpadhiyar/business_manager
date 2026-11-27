@@ -177,12 +177,12 @@ final class _TransactionDetailView extends StatelessWidget {
               const SizedBox(height: AppSpacing.sm),
               if (d.designName != null || d.colourName != null)
                 _InfoRow(
-                  label: 'Design / Colour',
+                  label: l10n.txnDesignColourLabel,
                   value: '${d.designName ?? '-'} / ${d.colourName ?? '-'}',
                 ),
               if (d.quantity != null)
                 _InfoRow(
-                  label: 'Quantity',
+                  label: l10n.stockStepEnterQty,
                   value:
                       '${MoneyFormatter.formatQuantity(d.quantity!)} ${l10n.piecesUnit}',
                 ),
@@ -202,17 +202,17 @@ final class _TransactionDetailView extends StatelessWidget {
                 _InfoRow(
                   label: l10n.prodHistoryLockedRateSnapshot,
                   value:
-                      '${MoneyFormatter.formatPaise(d.lockedRatePaise!)} / pc',
+                      '${MoneyFormatter.formatPaise(d.lockedRatePaise!)} ${l10n.ratesPerPieceSuffix}',
                 ),
               if (d.amountPaise != null)
                 _InfoRow(
-                  label: 'Amount',
+                  label: l10n.txnAmountLabel,
                   value: MoneyFormatter.formatPaise(d.amountPaise!),
                 ),
               if (d.referenceNo != null && d.referenceNo!.isNotEmpty)
-                _InfoRow(label: 'Reference', value: d.referenceNo!),
+                _InfoRow(label: l10n.txnReferenceLabel, value: d.referenceNo!),
               if (d.reason != null && d.reason!.isNotEmpty)
-                _InfoRow(label: 'Reason', value: d.reason!),
+                _InfoRow(label: l10n.txnReasonLabel, value: d.reason!),
               if (d.notes != null && d.notes!.isNotEmpty)
                 _InfoRow(label: l10n.stockNotesLabel, value: d.notes!),
             ],
@@ -292,7 +292,7 @@ final class _InfoRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

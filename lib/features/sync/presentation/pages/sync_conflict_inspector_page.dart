@@ -1,3 +1,4 @@
+import 'package:business_manager/core/validation/validation_localizer.dart';
 import 'package:business_manager/core/design_system/app_icons.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
@@ -64,7 +65,12 @@ final class _SyncConflictInspectorPageState
       }
       await _load();
     } catch (e) {
-      if (mounted) AppFeedback.showError(context, e.toString());
+      if (mounted) {
+        AppFeedback.showError(
+          context,
+          ValidationLocalizer.describeError(context.l10n, e),
+        );
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -83,7 +89,12 @@ final class _SyncConflictInspectorPageState
       }
       await _load();
     } catch (e) {
-      if (mounted) AppFeedback.showError(context, e.toString());
+      if (mounted) {
+        AppFeedback.showError(
+          context,
+          ValidationLocalizer.describeError(context.l10n, e),
+        );
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -176,7 +187,9 @@ final class _SyncConflictInspectorPageState
                           const AppDivider(height: AppSpacing.lg),
                           for (final diff in record.fieldDiffs) ...[
                             Padding(
-                              padding: const EdgeInsets.only(bottom: 6),
+                              padding: const EdgeInsets.only(
+                                bottom: AppSpacing.xsm,
+                              ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -185,7 +198,7 @@ final class _SyncConflictInspectorPageState
                                     variant: AppTextVariant.bodySmall,
                                     fontWeight: FontWeight.w700,
                                   ),
-                                  const SizedBox(height: 2),
+                                  const SizedBox(height: AppSpacing.xxs),
                                   AppText(
                                     '${l10n.syncConflictLocalLabel}: ${diff.localValue}',
                                     variant: AppTextVariant.bodySmall,

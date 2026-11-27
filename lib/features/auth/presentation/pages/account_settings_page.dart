@@ -125,7 +125,7 @@ final class _AccountSettingsPageState extends State<AccountSettingsPage> {
                                       variant: AppTextVariant.bodyLarge,
                                       fontWeight: FontWeight.w600,
                                     ),
-                                    const SizedBox(height: 2),
+                                    const SizedBox(height: AppSpacing.xxs),
                                     AppText(
                                       l10n.authSignInPromptCardSubtitle,
                                       variant: AppTextVariant.bodySmall,
@@ -188,7 +188,7 @@ final class _AccountSettingsPageState extends State<AccountSettingsPage> {
                               ),
                               if (user.email != null &&
                                   user.email!.isNotEmpty) ...[
-                                const SizedBox(height: 2),
+                                const SizedBox(height: AppSpacing.xxs),
                                 AppText(
                                   user.email!,
                                   variant: AppTextVariant.bodySmall,
@@ -197,7 +197,7 @@ final class _AccountSettingsPageState extends State<AccountSettingsPage> {
                               ],
                               if (user.phone != null &&
                                   user.phone!.isNotEmpty) ...[
-                                const SizedBox(height: 2),
+                                const SizedBox(height: AppSpacing.xxs),
                                 AppText(
                                   user.phone!,
                                   variant: AppTextVariant.bodySmall,

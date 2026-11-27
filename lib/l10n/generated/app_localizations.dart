@@ -230,6 +230,12 @@ abstract class AppLocalizations {
   /// **'An unexpected error occurred. Please try again.'**
   String get errorUnexpected;
 
+  /// Generic title for a page that failed to load.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load this page'**
+  String get errorLoadTitle;
+
   /// Validation message when a required field is empty.
   ///
   /// In en, this message translates to:
@@ -7201,6 +7207,204 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You can select up to {max}'**
   String selectMaxReached(int max);
+
+  /// No description provided for @tableQtyHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Qty'**
+  String get tableQtyHeader;
+
+  /// No description provided for @tableHistoricalPriceHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Historical Price'**
+  String get tableHistoricalPriceHeader;
+
+  /// No description provided for @tableHexHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Hex'**
+  String get tableHexHeader;
+
+  /// No description provided for @tableLotUsesHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot Uses'**
+  String get tableLotUsesHeader;
+
+  /// No description provided for @processDefaultRateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Labour Rate (₹)'**
+  String get processDefaultRateLabel;
+
+  /// No description provided for @processDefaultRateShort.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Rate'**
+  String get processDefaultRateShort;
+
+  /// No description provided for @inspectionStillDefectiveLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Still Defective / Rejected Again'**
+  String get inspectionStillDefectiveLabel;
+
+  /// No description provided for @inspectionQueueEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Pending QC Inspections'**
+  String get inspectionQueueEmptyTitle;
+
+  /// No description provided for @inspectionQueueEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'All returned pieces have been inspected and reconciled.'**
+  String get inspectionQueueEmptySubtitle;
+
+  /// No description provided for @lotOpenValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Open: {a}'**
+  String lotOpenValue(Object a);
+
+  /// No description provided for @lotReapprovedValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-Approved: {a}'**
+  String lotReapprovedValue(Object a);
+
+  /// No description provided for @lotEarnedValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Earned: {a}'**
+  String lotEarnedValue(Object a);
+
+  /// No description provided for @lotPendingEstimateValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Est: {a}'**
+  String lotPendingEstimateValue(Object a);
+
+  /// No description provided for @backupMovementsValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Movements: {a}'**
+  String backupMovementsValue(Object a);
+
+  /// No description provided for @backupPhotosValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Photos: {a}'**
+  String backupPhotosValue(Object a);
+
+  /// No description provided for @txnDesignColourLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Design / Colour'**
+  String get txnDesignColourLabel;
+
+  /// No description provided for @txnAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get txnAmountLabel;
+
+  /// No description provided for @txnReferenceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reference'**
+  String get txnReferenceLabel;
+
+  /// No description provided for @txnReasonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get txnReasonLabel;
+
+  /// No description provided for @workerRateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker Rate'**
+  String get workerRateLabel;
+
+  /// No description provided for @workerCustomRateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Worker Rate (₹ / pc, optional)'**
+  String get workerCustomRateLabel;
+
+  /// No description provided for @assignmentsHistoryPreservedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Historical labour transactions & rates remain preserved.'**
+  String get assignmentsHistoryPreservedNote;
+
+  /// No description provided for @assignmentsReactivateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Reactivate'**
+  String get assignmentsReactivateAction;
+
+  /// No description provided for @reportsNoDataLoaded.
+  ///
+  /// In en, this message translates to:
+  /// **'No report data loaded.'**
+  String get reportsNoDataLoaded;
+
+  /// No description provided for @lotCompletedValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed: {a}'**
+  String lotCompletedValue(Object a);
+
+  /// No description provided for @assignmentsDeactivatedHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivated Assignments ({a})'**
+  String assignmentsDeactivatedHeading(Object a);
+
+  /// No description provided for @workerRateInheritHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave blank to inherit {a}'**
+  String workerRateInheritHint(Object a);
+
+  /// No description provided for @designVariantsSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{a} variants • {b} pcs • {c}'**
+  String designVariantsSummary(Object a, Object b, Object c);
+
+  /// No description provided for @assignmentsRemovedToast.
+  ///
+  /// In en, this message translates to:
+  /// **'{a} removed from this worker'**
+  String assignmentsRemovedToast(Object a);
+
+  /// No description provided for @paginationLoadMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Load more'**
+  String get paginationLoadMore;
+
+  /// No description provided for @paginationShowingAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Showing all {a}'**
+  String paginationShowingAll(Object a);
+
+  /// No description provided for @dashboardWeekTrendHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'This Week\'s Production'**
+  String get dashboardWeekTrendHeading;
+
+  /// No description provided for @securityPinProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'{a} of {b} digits entered'**
+  String securityPinProgress(int a, int b);
 }
 
 class _AppLocalizationsDelegate

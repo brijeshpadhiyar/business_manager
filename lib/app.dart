@@ -162,7 +162,7 @@ final class _BusinessManagerAppState extends State<BusinessManagerApp>
                         builder: (context, child) =>
                             MediaQuery.withClampedTextScaling(
                               minScaleFactor: 1.0,
-                              maxScaleFactor: 1.3,
+                              maxScaleFactor: 1.5,
                               child: ToastificationWrapper(
                                 child: AppLockGate(
                                   onNavigateDeepLink: (routePath) =>

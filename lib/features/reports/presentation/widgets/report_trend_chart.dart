@@ -50,17 +50,28 @@ final class ReportTrendChart extends StatelessWidget {
           ],
         ),
         const SizedBox(height: AppSpacing.sm),
-        SizedBox(
-          height: height,
-          child: CustomPaint(
-            painter: _DualBarChartPainter(
-              points: visible,
-              issuedColor: issuedColor,
-              goodColor: goodColor,
-              gridColor: gridColor,
-              labelColor: labelColor,
+        // Screen readers get the numbers the bars show, one bucket per line.
+        Semantics(
+          container: true,
+          label: [
+            for (final p in visible)
+              '${p.label}: $issuedLabel ${p.issuedQty}, '
+                  '$goodReturnedLabel ${p.goodReturnedQty}',
+          ].join('\n'),
+          child: ExcludeSemantics(
+            child: SizedBox(
+              height: height,
+              child: CustomPaint(
+                painter: _DualBarChartPainter(
+                  points: visible,
+                  issuedColor: issuedColor,
+                  goodColor: goodColor,
+                  gridColor: gridColor,
+                  labelColor: labelColor,
+                ),
+                child: const SizedBox.expand(),
+              ),
             ),
-            child: const SizedBox.expand(),
           ),
         ),
       ],
@@ -87,7 +98,7 @@ final class _LegendDot extends StatelessWidget {
             borderRadius: BorderRadius.circular(3),
           ),
         ),
-        const SizedBox(width: 6),
+        const SizedBox(width: AppSpacing.xsm),
         AppText(label, variant: AppTextVariant.label),
       ],
     );

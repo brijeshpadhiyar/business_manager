@@ -396,7 +396,7 @@ final class _ReportsViewState extends State<_ReportsView> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             AppText(w.workerName, fontWeight: FontWeight.w700),
-                            const SizedBox(height: 2),
+                            const SizedBox(height: AppSpacing.xxs),
                             AppText(
                               '${l10n.reportPeriodFlowBadge}: '
                               '${l10n.stockIssuedLabel} ${w.periodIssuedQty} • '
@@ -451,7 +451,7 @@ final class _ReportsViewState extends State<_ReportsView> {
                   l10n.reportCurrentStandingBadge,
                   variant: AppTextVariant.label,
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: AppSpacing.xs),
                 Wrap(
                   spacing: AppSpacing.xs,
                   runSpacing: AppSpacing.xs,
@@ -492,7 +492,9 @@ final class _ReportsViewState extends State<_ReportsView> {
                     children: [
                       for (final pb in w.processBreakdown)
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 3),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: AppSpacing.xxs,
+                          ),
                           child: Row(
                             children: [
                               Expanded(
@@ -603,7 +605,9 @@ final class _ReportsViewState extends State<_ReportsView> {
                     children: [
                       for (final c in p.workerContributions)
                         Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 3),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: AppSpacing.xxs,
+                          ),
                           child: Row(
                             children: [
                               Expanded(
@@ -1437,7 +1441,9 @@ final class _ReportsViewState extends State<_ReportsView> {
                 const SizedBox(height: AppSpacing.sm),
                 for (final wt in ins.workerTrends)
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.xs,
+                    ),
                     child: Row(
                       children: [
                         Expanded(
@@ -1496,7 +1502,7 @@ final class _ReportsViewState extends State<_ReportsView> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppSpacing.xs),
                   AppProgressBar(value: sh.sharePercent / 100.0, minHeight: 6),
                   const SizedBox(height: AppSpacing.sm),
                 ],
@@ -1520,7 +1526,9 @@ final class _ReportsViewState extends State<_ReportsView> {
                 const SizedBox(height: AppSpacing.sm),
                 for (final dr in ins.topDefectReasons)
                   Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.xs,
+                    ),
                     child: AppActionRow(
                       content: AppText(dr.reason),
                       actions: [
@@ -1577,7 +1585,7 @@ final class _ComparisonRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
       child: Row(
         children: [
           Expanded(

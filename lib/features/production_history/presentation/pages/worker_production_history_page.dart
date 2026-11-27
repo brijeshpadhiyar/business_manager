@@ -94,7 +94,7 @@ final class _WorkerProductionHistoryView extends StatelessWidget {
                 children: [
                   AppAdaptiveField(
                     maxWidth: 220,
-                    child: AppDropdown<String>(
+                    child: AppSelect<String>(
                       label: l10n.navProcesses,
                       value: filter.processId ?? '__ALL__',
                       items: [
@@ -133,32 +133,56 @@ final class _WorkerProductionHistoryView extends StatelessWidget {
           AppDataTable<WorkerCompleteProfile>(
             enablePagination: true,
             columns: [
-              AppDataColumn(label: l10n.workerNameLabel),
-              const AppDataColumn(label: 'Lots', numeric: true),
+              AppDataColumn(sortable: true, label: l10n.workerNameLabel),
               AppDataColumn(
+                sortable: true,
+                label: l10n.lotsHeading,
+                numeric: true,
+              ),
+              AppDataColumn(
+                sortable: true,
                 label: l10n.prodHistoryTotalAssigned,
                 numeric: true,
               ),
               AppDataColumn(
+                sortable: true,
                 label: l10n.prodHistoryTotalAccepted,
                 numeric: true,
               ),
-              const AppDataColumn(
-                label: 'Pending QC',
-                numeric: true,
-                minWidthClass: AppWindowSizeClass.expanded,
-              ),
-              const AppDataColumn(
-                label: 'Rejected',
-                numeric: true,
-                minWidthClass: AppWindowSizeClass.expanded,
-              ),
-              AppDataColumn(label: l10n.prodHistoryTotalEarned, numeric: true),
               AppDataColumn(
+                sortable: true,
+                label: l10n.stockPendingQcLabel,
+                numeric: true,
+                minWidthClass: AppWindowSizeClass.expanded,
+              ),
+              AppDataColumn(
+                sortable: true,
+                label: l10n.prodHistoryTotalRejected,
+                numeric: true,
+                minWidthClass: AppWindowSizeClass.expanded,
+              ),
+              AppDataColumn(
+                sortable: true,
+                label: l10n.prodHistoryTotalEarned,
+                numeric: true,
+              ),
+              AppDataColumn(
+                sortable: true,
                 label: l10n.prodHistoryOutstandingPayable,
                 numeric: true,
               ),
             ],
+            sortValueBuilder: (p, i) => switch (i) {
+              0 => p.workerName,
+              1 => p.totalLotsAssigned,
+              2 => p.assignedQty,
+              3 => p.acceptedQty,
+              4 => p.pendingInspectionQty,
+              5 => p.rejectedQty,
+              6 => p.financialSummary.earnedLabourPaise,
+              7 => p.financialSummary.outstandingPayablePaise,
+              _ => null,
+            },
             items: state.profiles,
             itemKeyBuilder: (p) => ValueKey<String>(p.workerId),
             onRowTap: (p) => context.push(RoutePaths.workerDetail(p.workerId)),
@@ -231,7 +255,7 @@ final class _WorkerSummaryCard extends StatelessWidget {
           runSpacing: 4,
           children: [
             AppStatusBadge(
-              label: 'Lots: ${profile.totalLotsAssigned}',
+              label: l10n.lotLotsValue(profile.totalLotsAssigned),
               tone: AppStatusTone.info,
             ),
             AppStatusBadge(
@@ -244,17 +268,17 @@ final class _WorkerSummaryCard extends StatelessWidget {
             ),
             if (profile.pendingInspectionQty > 0)
               AppStatusBadge(
-                label: 'Pending QC: ${profile.pendingInspectionQty}',
+                label: l10n.lotPendingQcValue(profile.pendingInspectionQty),
                 tone: AppStatusTone.pending,
               ),
             if (profile.outstandingQty > 0)
               AppStatusBadge(
-                label: 'Outstanding: ${profile.outstandingQty}',
+                label: l10n.lotOutstandingValue(profile.outstandingQty),
                 tone: AppStatusTone.pending,
               ),
             if (profile.rejectedQty > 0)
               AppStatusBadge(
-                label: 'Rejected: ${profile.rejectedQty}',
+                label: l10n.lotRejectedValue(profile.rejectedQty),
                 tone: AppStatusTone.damaged,
               ),
           ],

@@ -12,6 +12,7 @@ import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
+import 'package:business_manager/features/reports/presentation/widgets/report_trend_chart.dart';
 import 'package:business_manager/features/search/presentation/quick_actions.dart';
 import 'package:business_manager/features/dashboard/presentation/bloc/dashboard_cubit.dart';
 import 'package:business_manager/features/dashboard/presentation/widgets/setup_checklist_card.dart';
@@ -115,7 +116,8 @@ final class _DashboardViewState extends State<_DashboardView> {
           buildWhen: (prev, curr) =>
               prev.status != curr.status ||
               prev.snapshot != curr.snapshot ||
-              prev.errorMessage != curr.errorMessage,
+              prev.errorMessage != curr.errorMessage ||
+              prev.weekTrend != curr.weekTrend,
           builder: (context, state) {
             final snap = state.snapshot;
 
@@ -144,18 +146,18 @@ final class _DashboardViewState extends State<_DashboardView> {
                       gradient: isDark
                           ? AppColors.heroGradientDark
                           : AppColors.heroGradientLight,
-                      borderColor: Colors.white.withValues(alpha: 0.16),
+                      borderColor: AppColors.onHero.withValues(alpha: 0.16),
                       borderRadius: AppRadius.xlBorder,
                       padding: const EdgeInsets.all(AppSpacing.lg),
                       child: Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(8),
+                            padding: const EdgeInsets.all(AppSpacing.sm),
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.14),
+                              color: AppColors.onHero.withValues(alpha: 0.14),
                               borderRadius: AppRadius.lgBorder,
                               border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.25),
+                                color: AppColors.onHero.withValues(alpha: 0.25),
                               ),
                             ),
                             child: Image.asset(
@@ -166,7 +168,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                               cacheHeight: 120,
                               errorBuilder: (_, _, _) => const Icon(
                                 AppIcons.brand,
-                                color: Colors.white,
+                                color: AppColors.onHero,
                               ),
                             ),
                           ),
@@ -185,11 +187,11 @@ final class _DashboardViewState extends State<_DashboardView> {
                                       .textTheme
                                       .headlineSmall
                                       ?.copyWith(
-                                        color: Colors.white,
+                                        color: AppColors.onHero,
                                         fontWeight: FontWeight.w700,
                                       ),
                                 ),
-                                const SizedBox(height: 2),
+                                const SizedBox(height: AppSpacing.xxs),
                                 Text(
                                   snap != null
                                       ? (localeCode == 'gu'
@@ -199,11 +201,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: Theme.of(context).textTheme.bodySmall
-                                      ?.copyWith(
-                                        color: Colors.white.withValues(
-                                          alpha: 0.88,
-                                        ),
-                                      ),
+                                      ?.copyWith(color: AppColors.onHeroMuted),
                                 ),
                               ],
                             ),
@@ -219,7 +217,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                                 onPressed: () =>
                                     context.read<AppLockCubit>().lockNow(),
                                 icon: AppIcons.lock,
-                                color: Colors.white,
+                                color: AppColors.onHero,
                               );
                             },
                           ),
@@ -228,7 +226,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                             onPressed: () =>
                                 context.read<DashboardCubit>().loadDashboard(),
                             icon: AppIcons.refresh,
-                            color: Colors.white,
+                            color: AppColors.onHero,
                           ),
                         ],
                       ),
@@ -450,6 +448,38 @@ final class _DashboardViewState extends State<_DashboardView> {
                     ),
                     const SizedBox(height: AppSpacing.lg),
 
+                    // 2B+. This week's issued vs good-returned trend.
+                    if (state.weekTrend.any(
+                      (p) => p.issuedQty > 0 || p.goodReturnedQty > 0,
+                    )) ...[
+                      AppCard(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            AppHeading(
+                              l10n.dashboardWeekTrendHeading,
+                              level: AppHeadingLevel.h3,
+                              trailing: AppButton(
+                                label: l10n.navReports,
+                                variant: AppButtonVariant.text,
+                                onPressed: () => _pushAndRefresh(
+                                  context,
+                                  RoutePaths.reports,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(height: AppSpacing.sm),
+                            ReportTrendChart(
+                              points: state.weekTrend,
+                              issuedLabel: l10n.stockIssuedLabel,
+                              goodReturnedLabel: l10n.stockGoodReturnedLabel,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.lg),
+                    ],
+
                     // 2C. Important & Oldest Pending Work
                     if (snap.importantPendingIssues.isNotEmpty) ...[
                       AppMotionEntrance(
@@ -541,7 +571,9 @@ final class _DashboardViewState extends State<_DashboardView> {
                                                       tone:
                                                           AppStatusTone.pending,
                                                     ),
-                                                    const SizedBox(height: 2),
+                                                    const SizedBox(
+                                                      height: AppSpacing.xxs,
+                                                    ),
                                                     AppText(
                                                       ageLabel,
                                                       variant: AppTextVariant

@@ -37,7 +37,10 @@ final class StockIssueStepProgressStrip extends StatelessWidget {
         children: [
           for (int i = 0; i < steps.length; i++) ...[
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: AppSpacing.xsm,
+              ),
               decoration: BoxDecoration(
                 color: steps[i].completed
                     ? semantic.goodStockContainer
@@ -67,7 +70,7 @@ final class StockIssueStepProgressStrip extends StatelessWidget {
                               ? colorScheme.secondary
                               : colorScheme.onSurfaceVariant),
                   ),
-                  const SizedBox(width: 6),
+                  const SizedBox(width: AppSpacing.xsm),
                   Text(
                     '${steps[i].number}. ${steps[i].label}',
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
@@ -116,7 +119,7 @@ final class StockIssueStepBadge extends StatelessWidget {
         borderRadius: AppRadius.fullBorder,
       ),
       child: completed
-          ? const Icon(AppIcons.confirm, size: 16, color: Colors.white)
+          ? const Icon(AppIcons.confirm, size: 16, color: AppColors.onHero)
           : Text(
               '$number',
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
@@ -147,7 +150,7 @@ final class StockIssueSummaryRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

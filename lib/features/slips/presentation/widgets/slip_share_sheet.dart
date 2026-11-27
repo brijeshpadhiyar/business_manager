@@ -1,3 +1,5 @@
+import 'package:business_manager/core/validation/validation_localizer.dart';
+
 import 'dart:ui' as ui;
 
 import 'package:business_manager/core/design_system/app_icons.dart';
@@ -94,7 +96,10 @@ final class _SlipShareSheetState extends State<SlipShareSheet> {
       }
     } catch (e) {
       if (mounted) {
-        AppFeedback.showError(context, e.toString());
+        AppFeedback.showError(
+          context,
+          ValidationLocalizer.describeError(context.l10n, e),
+        );
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -123,7 +128,12 @@ final class _SlipShareSheetState extends State<SlipShareSheet> {
         ),
       );
     } catch (e) {
-      if (mounted) AppFeedback.showError(context, e.toString());
+      if (mounted) {
+        AppFeedback.showError(
+          context,
+          ValidationLocalizer.describeError(context.l10n, e),
+        );
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -156,7 +166,12 @@ final class _SlipShareSheetState extends State<SlipShareSheet> {
         runWithPicker: (action) => _runWithPicker<bool>(action),
       );
     } catch (e) {
-      if (mounted) AppFeedback.showError(context, e.toString());
+      if (mounted) {
+        AppFeedback.showError(
+          context,
+          ValidationLocalizer.describeError(context.l10n, e),
+        );
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }

@@ -183,20 +183,20 @@ final class _LotTimelineView extends StatelessWidget {
                           ],
                         ),
                         if (e.subtitle != null && e.subtitle!.isNotEmpty) ...[
-                          const SizedBox(height: 2),
+                          const SizedBox(height: AppSpacing.xxs),
                           AppText(
                             e.subtitle!,
                             variant: AppTextVariant.bodySmall,
                           ),
                         ],
                         if (e.reason != null && e.reason!.isNotEmpty) ...[
-                          const SizedBox(height: 2),
+                          const SizedBox(height: AppSpacing.xxs),
                           AppText(
                             'Reason: ${e.reason}',
                             variant: AppTextVariant.bodySmall,
                           ),
                         ],
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AppSpacing.xs),
                         Wrap(
                           spacing: AppSpacing.xs,
                           runSpacing: 4,

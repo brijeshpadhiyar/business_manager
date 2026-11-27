@@ -36,6 +36,9 @@ final class _DamagedRepairPageState extends State<DamagedRepairPage> {
   final _reasonFocus = FocusNode();
   final _notesFocus = FocusNode();
 
+  late final _dirty = AppFormDirtyTracker()
+    ..watch([_qtyCtrl, _reasonCtrl, _notesCtrl]);
+
   final _repo = getIt<StockMovementRepository>();
   final _clientRequestId = getIt<IdGenerator>().nextRequestId();
 
@@ -55,6 +58,8 @@ final class _DamagedRepairPageState extends State<DamagedRepairPage> {
 
   @override
   void dispose() {
+    // The tracker unhooks its controller listeners, so it goes first.
+    _dirty.dispose();
     _qtyCtrl.dispose();
     _reasonCtrl.dispose();
     _notesCtrl.dispose();
@@ -109,6 +114,7 @@ final class _DamagedRepairPageState extends State<DamagedRepairPage> {
         clientRequestId: _clientRequestId,
       );
       if (mounted) {
+        _dirty.reset();
         AppFeedback.showSuccess(context, l10n.stockRepairSuccess);
         context.pop(true);
       }
@@ -122,7 +128,7 @@ final class _DamagedRepairPageState extends State<DamagedRepairPage> {
       if (!mounted) return;
       setState(() {
         _saving = false;
-        _submitError = e.toString();
+        _submitError = ValidationLocalizer.describeError(context.l10n, e);
       });
     }
   }
@@ -150,128 +156,136 @@ final class _DamagedRepairPageState extends State<DamagedRepairPage> {
       (b) => b.designColourId == _selectedColourId,
     );
 
-    return AppScaffold(
-      title: l10n.stockRepairHeading,
-      actions: [
-        AppIconButton(
-          icon: AppIcons.qcInspect,
-          tooltip: l10n.navInspectionQueue,
-          onPressed: () => context.push(RoutePaths.inspectionQueue),
-        ),
-      ],
-      body: Form(
-        key: _formKey,
-        autovalidateMode: _submittedOnce
-            ? AutovalidateMode.onUserInteraction
-            : AutovalidateMode.disabled,
-        child: ListView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          children: [
-            AppCard(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  AppDropdown<String>(
-                    label: l10n.stockSelectColourLabel,
-                    value: _selectedColourId,
-                    items: _damagedBalances
-                        .map((b) => b.designColourId)
-                        .toList(),
-                    itemLabelBuilder: (id) {
-                      final b = _damagedBalances.firstWhere(
-                        (e) => e.designColourId == id,
-                      );
-                      return '${b.lotNumber} • ${b.designName} • ${b.colourName} (${b.damagedBucket} ${l10n.stockDamagedBucketLabel})';
-                    },
-                    onChanged: (v) => setState(() => _selectedColourId = v),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppDatePicker(
-                    label: l10n.stockTransactionDateTimeLabel,
-                    selectedUtcMillis: _transactionAtUtc,
-                    includeTime: true,
-                    onDateSelectedUtcMillis: (utc) =>
-                        setState(() => _transactionAtUtc = utc),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppTextField(
-                    fieldKey: _qtyFieldKey,
-                    controller: _qtyCtrl,
-                    focusNode: _qtyFocus,
-                    label: l10n.stockRepairQuantityLabel,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    textInputAction: TextInputAction.next,
-                    onChanged: (_) {
-                      if (_submitError != null) {
-                        setState(() => _submitError = null);
-                      }
-                    },
-                    validator: (v) {
-                      final parsed = AppValidators.parseQuantityExact(v);
-                      if (!parsed.validation.isValid) {
-                        return parsed.validation.code ==
-                                ValidationErrorCode.valueTooLarge
-                            ? l10n.validationValueTooLarge
-                            : l10n.stockInvalidQtyError;
-                      }
-                      if (parsed.value! > selected.damagedBucket) {
-                        return l10n.stockRepairExceedsDamagedError;
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppTextField(
-                    fieldKey: _reasonFieldKey,
-                    controller: _reasonCtrl,
-                    focusNode: _reasonFocus,
-                    label: l10n.stockRepairReasonLabel,
-                    maxLines: 2,
-                    maxLength: ValidationLimits.maxNotesLength,
-                    validator: ValidationLocalizer.wrap(
-                      l10n,
-                      (v) => AppValidators.nameValidator(
-                        v,
-                        maxLength: ValidationLimits.maxNotesLength,
+    return AppUnsavedChangesGuard.tracked(
+      tracker: _dirty,
+      child: AppScaffold(
+        title: l10n.stockRepairHeading,
+        actions: [
+          AppIconButton(
+            icon: AppIcons.qcInspect,
+            tooltip: l10n.navInspectionQueue,
+            onPressed: () => context.push(RoutePaths.inspectionQueue),
+          ),
+        ],
+        body: Form(
+          key: _formKey,
+          autovalidateMode: _submittedOnce
+              ? AutovalidateMode.onUserInteraction
+              : AutovalidateMode.disabled,
+          child: ListView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            children: [
+              AppCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    AppSelect<String>(
+                      label: l10n.stockSelectColourLabel,
+                      value: _selectedColourId,
+                      items: _damagedBalances
+                          .map((b) => b.designColourId)
+                          .toList(),
+                      itemLabelBuilder: (id) {
+                        final b = _damagedBalances.firstWhere(
+                          (e) => e.designColourId == id,
+                        );
+                        return '${b.lotNumber} • ${b.designName} • ${b.colourName} (${b.damagedBucket} ${l10n.stockDamagedBucketLabel})';
+                      },
+                      onChanged: (v) {
+                        _dirty.markDirty();
+                        setState(() => _selectedColourId = v);
+                      },
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    AppDatePicker(
+                      label: l10n.stockTransactionDateTimeLabel,
+                      selectedUtcMillis: _transactionAtUtc,
+                      includeTime: true,
+                      onDateSelectedUtcMillis: (utc) => setState(() {
+                        _dirty.markDirty();
+                        _transactionAtUtc = utc;
+                      }),
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    AppTextField(
+                      fieldKey: _qtyFieldKey,
+                      controller: _qtyCtrl,
+                      focusNode: _qtyFocus,
+                      label: l10n.stockRepairQuantityLabel,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      textInputAction: TextInputAction.next,
+                      onChanged: (_) {
+                        if (_submitError != null) {
+                          setState(() => _submitError = null);
+                        }
+                      },
+                      validator: (v) {
+                        final parsed = AppValidators.parseQuantityExact(v);
+                        if (!parsed.validation.isValid) {
+                          return parsed.validation.code ==
+                                  ValidationErrorCode.valueTooLarge
+                              ? l10n.validationValueTooLarge
+                              : l10n.stockInvalidQtyError;
+                        }
+                        if (parsed.value! > selected.damagedBucket) {
+                          return l10n.stockRepairExceedsDamagedError;
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: AppSpacing.md),
+                    AppTextField(
+                      fieldKey: _reasonFieldKey,
+                      controller: _reasonCtrl,
+                      focusNode: _reasonFocus,
+                      label: l10n.stockRepairReasonLabel,
+                      maxLines: 2,
+                      maxLength: ValidationLimits.maxNotesLength,
+                      validator: ValidationLocalizer.wrap(
+                        l10n,
+                        (v) => AppValidators.nameValidator(
+                          v,
+                          maxLength: ValidationLimits.maxNotesLength,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: AppSpacing.md),
-                  AppTextField(
-                    fieldKey: _notesFieldKey,
-                    controller: _notesCtrl,
-                    focusNode: _notesFocus,
-                    label: l10n.stockNotesLabel,
-                    maxLines: 2,
-                    maxLength: ValidationLimits.maxNotesLength,
-                    validator: ValidationLocalizer.wrap(
-                      l10n,
-                      (v) => AppValidators.maxLengthValidator(
-                        v,
-                        maxLength: ValidationLimits.maxNotesLength,
+                    const SizedBox(height: AppSpacing.md),
+                    AppTextField(
+                      fieldKey: _notesFieldKey,
+                      controller: _notesCtrl,
+                      focusNode: _notesFocus,
+                      label: l10n.stockNotesLabel,
+                      maxLines: 2,
+                      maxLength: ValidationLimits.maxNotesLength,
+                      validator: ValidationLocalizer.wrap(
+                        l10n,
+                        (v) => AppValidators.maxLengthValidator(
+                          v,
+                          maxLength: ValidationLimits.maxNotesLength,
+                        ),
                       ),
                     ),
-                  ),
-                  if (_submitError != null) ...[
-                    const SizedBox(height: AppSpacing.sm),
-                    AppText(
-                      _submitError!,
-                      color: Theme.of(context).colorScheme.error,
+                    if (_submitError != null) ...[
+                      const SizedBox(height: AppSpacing.sm),
+                      AppText(
+                        _submitError!,
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ],
+                    const SizedBox(height: AppSpacing.lg),
+                    AppButton(
+                      label: l10n.actionSave,
+                      icon: AppIcons.confirm,
+                      isExpanded: true,
+                      isLoading: _saving,
+                      onPressed: _submit,
                     ),
                   ],
-                  const SizedBox(height: AppSpacing.lg),
-                  AppButton(
-                    label: l10n.actionSave,
-                    icon: AppIcons.confirm,
-                    isExpanded: true,
-                    isLoading: _saving,
-                    onPressed: _submit,
-                  ),
-                ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

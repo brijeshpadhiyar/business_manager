@@ -105,7 +105,7 @@ final class _LotHistoryView extends StatelessWidget {
                 ],
               ),
               if (lot.title != null && lot.title!.isNotEmpty) ...[
-                const SizedBox(height: 2),
+                const SizedBox(height: AppSpacing.xxs),
                 AppText(lot.title!),
               ],
               const SizedBox(height: AppSpacing.xs),
@@ -373,7 +373,7 @@ final class _LotHistoryView extends StatelessWidget {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: AppSpacing.xs),
                       AppText(
                         context.l10n.lotRejectedLine(
                           r.record.rejectedQuantity,
@@ -436,7 +436,7 @@ final class _AssignmentCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: AppSpacing.xxs),
           AppText(
             '${a.designName} • ${a.colourName} • ${AppDateTimeFormatter.formatDateTime(a.assignedAt, locale: localeCode)}',
             variant: AppTextVariant.bodySmall,

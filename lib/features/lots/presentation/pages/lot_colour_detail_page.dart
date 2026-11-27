@@ -239,7 +239,7 @@ final class _LotColourDetailView extends StatelessWidget {
                                       fontWeight: FontWeight.w800,
                                     ),
                               ),
-                              const SizedBox(height: 2),
+                              const SizedBox(height: AppSpacing.xxs),
                               Text(
                                 '$hexLabel  •  $rgbLabel',
                                 style: Theme.of(context).textTheme.bodySmall
@@ -248,7 +248,7 @@ final class _LotColourDetailView extends StatelessWidget {
                                       fontWeight: FontWeight.w600,
                                     ),
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(height: AppSpacing.xs),
                               Text(
                                 isColourOnly
                                     ? 'Lot #${overview.lot.lotNumber}  •  Colour-Only Lot (No Design)'
@@ -439,7 +439,7 @@ final class _LotColourDetailView extends StatelessWidget {
                     ),
                     if (i < stageSummaries.length - 1)
                       const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 6),
+                        padding: EdgeInsets.symmetric(vertical: AppSpacing.xsm),
                         child: AppDivider(),
                       ),
                   ],
@@ -480,7 +480,7 @@ final class _LotColourDetailView extends StatelessWidget {
                                   '${activeOps[i].workerName ?? 'Unassigned'} • ${activeOps[i].processName}',
                                   fontWeight: FontWeight.w700,
                                 ),
-                                const SizedBox(height: 2),
+                                const SizedBox(height: AppSpacing.xxs),
                                 AppText(
                                   context.l10n.lotAssignedPendingLine(
                                     activeOps[i].dispatchedQuantity > 0
@@ -491,7 +491,7 @@ final class _LotColourDetailView extends StatelessWidget {
                                   variant: AppTextVariant.bodySmall,
                                   color: colorScheme.onSurfaceVariant,
                                 ),
-                                const SizedBox(height: 2),
+                                const SizedBox(height: AppSpacing.xxs),
                                 AppText(
                                   context.l10n.lotRatePayableLine(
                                     MoneyFormatter.formatPaise(
@@ -518,7 +518,7 @@ final class _LotColourDetailView extends StatelessWidget {
                                 label: activeOps[i].status.label,
                                 tone: _statusTone(activeOps[i].status),
                               ),
-                              const SizedBox(height: 4),
+                              const SizedBox(height: AppSpacing.xs),
                               AppStatusBadge(
                                 label: activeOps[i].paymentStatus.label,
                                 tone: _paymentTone(activeOps[i].paymentStatus),
@@ -529,7 +529,9 @@ final class _LotColourDetailView extends StatelessWidget {
                       ),
                       if (i < activeOps.length - 1)
                         const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 6),
+                          padding: EdgeInsets.symmetric(
+                            vertical: AppSpacing.xsm,
+                          ),
                           child: AppDivider(),
                         ),
                     ],
@@ -642,7 +644,7 @@ final class _LotColourDetailView extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: AppSpacing.xs),
                         Row(
                           children: [
                             Expanded(
@@ -661,7 +663,7 @@ final class _LotColourDetailView extends StatelessWidget {
                               ),
                           ],
                         ),
-                        const SizedBox(height: 2),
+                        const SizedBox(height: AppSpacing.xxs),
                         AppText(
                           context.l10n.lotReceivedOfLine(
                             handovers[i].quantityReceived,
@@ -788,7 +790,7 @@ final class _CostLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

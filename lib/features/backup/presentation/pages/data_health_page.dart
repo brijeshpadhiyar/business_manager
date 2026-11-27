@@ -285,7 +285,9 @@ final class _DataHealthView extends StatelessWidget {
                             const SizedBox(height: AppSpacing.sm),
                             for (final issue in report.stockIssues.take(10))
                               Padding(
-                                padding: const EdgeInsets.only(bottom: 4),
+                                padding: const EdgeInsets.only(
+                                  bottom: AppSpacing.xs,
+                                ),
                                 child: AppText(
                                   '• ${issue.lotNumber} / ${issue.designName} / ${issue.colourName} '
                                   '(${issue.reasonCode}: ${issue.reconciledTotalQty} vs ${issue.initialQty})',
@@ -310,7 +312,9 @@ final class _DataHealthView extends StatelessWidget {
                             const SizedBox(height: AppSpacing.sm),
                             for (final li in report.ledgerIssues.take(10))
                               Padding(
-                                padding: const EdgeInsets.only(bottom: 4),
+                                padding: const EdgeInsets.only(
+                                  bottom: AppSpacing.xs,
+                                ),
                                 child: AppText(
                                   '• ${li.code}: ${li.details}',
                                   variant: AppTextVariant.bodySmall,
@@ -462,7 +466,7 @@ final class _MaintenanceActionRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 AppText(title, fontWeight: FontWeight.w600),
-                const SizedBox(height: 2),
+                const SizedBox(height: AppSpacing.xxs),
                 AppText(
                   description,
                   variant: AppTextVariant.bodySmall,

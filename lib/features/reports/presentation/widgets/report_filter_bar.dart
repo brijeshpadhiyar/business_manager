@@ -248,7 +248,7 @@ final class _NullableOptionDropdown extends StatelessWidget {
         ? selectedId!
         : _allSentinel;
 
-    return AppDropdown<String>(
+    return AppSelect<String>(
       label: label,
       items: ids,
       value: effectiveValue,

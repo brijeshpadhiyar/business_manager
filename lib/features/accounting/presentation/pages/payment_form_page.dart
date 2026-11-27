@@ -254,7 +254,7 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
       if (!mounted) return;
       setState(() {
         _saving = false;
-        _submitError = e.toString();
+        _submitError = ValidationLocalizer.describeError(context.l10n, e);
       });
     }
   }

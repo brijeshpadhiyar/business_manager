@@ -347,7 +347,7 @@ final class _VisualColourPickerContentState
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 10,
-                          vertical: 6,
+                          vertical: AppSpacing.xsm,
                         ),
                         decoration: BoxDecoration(
                           borderRadius: AppRadius.fullBorder,
@@ -367,7 +367,7 @@ final class _VisualColourPickerContentState
                               borderRadius: AppRadius.fullBorder,
                               isSelected: isSel,
                             ),
-                            const SizedBox(width: 6),
+                            const SizedBox(width: AppSpacing.xsm),
                             AppText(c.name, variant: AppTextVariant.bodySmall),
                           ],
                         ),
@@ -667,7 +667,7 @@ final class _PaletteSwatchChip extends StatelessWidget {
                 isSelected: isSelected,
                 semanticLabel: colour.name,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: AppSpacing.sm),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,

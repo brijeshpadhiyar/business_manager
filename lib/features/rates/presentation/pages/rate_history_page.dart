@@ -100,7 +100,8 @@ final class _RateHistoryView extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
                           if (state.processes.isNotEmpty)
-                            AppDropdown<ProcessEntity>(
+                            AppSelect<ProcessEntity>(
+                              compareFn: (a, b) => a.id == b.id,
                               key: ValueKey(
                                 'rate_proc_${state.selectedProcessId}',
                               ),

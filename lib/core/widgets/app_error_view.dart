@@ -1,3 +1,5 @@
+import 'package:business_manager/core/validation/validation_localizer.dart';
+import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/widgets/app_button.dart';
@@ -23,6 +25,11 @@ final class AppErrorView extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final l10n = context.l10nOrNull;
+    // Never show a raw exception dump; translate codes when possible.
+    final shownMessage = l10n == null
+        ? message
+        : ValidationLocalizer.describeMessage(l10n, message);
     // Scrolls instead of overflowing when space is short (landscape phones,
     // large text, a small area under a pinned header).
     return Center(
@@ -50,10 +57,10 @@ final class AppErrorView extends StatelessWidget {
                 ),
                 textAlign: TextAlign.center,
               ),
-              if (message != null && message!.isNotEmpty) ...[
+              if (shownMessage != null && shownMessage.isNotEmpty) ...[
                 const SizedBox(height: AppSpacing.xs),
                 Text(
-                  message!,
+                  shownMessage,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: colorScheme.onSurfaceVariant,
                   ),

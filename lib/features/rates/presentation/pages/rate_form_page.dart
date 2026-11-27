@@ -131,7 +131,7 @@ final class _RateFormPageState extends State<RateFormPage> {
       if (!mounted) return;
       setState(() {
         _isLoading = false;
-        _loadError = e.toString();
+        _loadError = ValidationLocalizer.describeError(context.l10n, e);
       });
     }
   }
@@ -257,7 +257,7 @@ final class _RateFormPageState extends State<RateFormPage> {
       if (!mounted) return;
       setState(() {
         _isSaving = false;
-        _submitError = e.toString();
+        _submitError = ValidationLocalizer.describeError(context.l10n, e);
       });
     }
   }
@@ -310,7 +310,8 @@ final class _RateFormPageState extends State<RateFormPage> {
                       ),
                       const SizedBox(height: AppSpacing.md),
                     ],
-                    AppDropdown<ProcessEntity>(
+                    AppSelect<ProcessEntity>(
+                      compareFn: (a, b) => a.id == b.id,
                       label: l10n.ratesFilterProcessLabel,
                       hint: l10n.ratesSelectProcessHint,
                       value: selectedProcess,

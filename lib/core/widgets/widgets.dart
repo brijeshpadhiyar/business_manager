@@ -1,7 +1,26 @@
+/// StitchFlow shared widgets. Screens should build from these, not raw
+/// Material widgets, so every page looks and behaves the same.
+///
+/// State rules for every screen:
+/// * **Loading** — lists, tables and dashboards use [AppSkeletonList] /
+///   [AppSkeletonBox] (the shape of the content); forms, detail pages and
+///   short waits use [AppLoader].
+/// * **Load failed** — [AppErrorView] with a retry action. It turns domain
+///   codes and exception dumps into localized text by itself.
+/// * **Action failed** (save, delete, export) — `AppFeedback.showError`,
+///   which also sanitizes the message. In catch blocks, pass
+///   `ValidationLocalizer.describeError(l10n, e)`, never `e.toString()`.
+/// * **Nothing to show** — [AppEmptyState] with a next-step action.
+/// * **Choosing from records** (workers, lots, processes, colours) —
+///   [AppSelect] / [AppMultiSelect] (searchable); [AppDropdown] is for short
+///   fixed lists such as enums and statuses.
+library;
+
 export '../design_system/app_breakpoints.dart';
 export 'app_action_row.dart';
 export 'app_adaptive_field.dart';
 export 'app_animated_number.dart';
+export 'app_avatar.dart';
 export 'app_bottom_sheet.dart';
 export 'app_breadcrumb_bar.dart';
 export 'app_button.dart';

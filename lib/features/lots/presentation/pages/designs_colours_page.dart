@@ -1,3 +1,5 @@
+import 'package:business_manager/core/design_system/app_radius.dart';
+import 'package:business_manager/core/validation/validation_localizer.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
@@ -112,7 +114,10 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
                       } catch (e) {
                         setDialogState(() => submitting = false);
                         if (context.mounted) {
-                          AppFeedback.showError(context, e.toString());
+                          AppFeedback.showError(
+                            context,
+                            ValidationLocalizer.describeError(context.l10n, e),
+                          );
                         }
                       }
                     },
@@ -160,7 +165,7 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
                       children: [
                         for (final hex in presetHexes)
                           InkWell(
-                            borderRadius: BorderRadius.circular(16),
+                            borderRadius: AppRadius.lgBorder,
                             onTap: () {
                               hexController.text = hex;
                               setDialogState(() {});
@@ -325,9 +330,9 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
                       label: l10n.coloursTabLabel,
                       minWidthClass: AppWindowSizeClass.medium,
                     ),
-                    const AppDataColumn(label: 'Qty', numeric: true),
-                    const AppDataColumn(
-                      label: 'Historical Price',
+                    AppDataColumn(label: l10n.tableQtyHeader, numeric: true),
+                    AppDataColumn(
+                      label: l10n.tableHistoricalPriceHeader,
                       numeric: true,
                       minWidthClass: AppWindowSizeClass.expanded,
                     ),
@@ -382,7 +387,14 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
                       ),
                       const SizedBox(height: AppSpacing.xs),
                       AppText(
-                        '${d.colourVariantCount} variants • ${d.totalInitialQuantity} pcs • ${_formatPriceRange(d.minUnitPricePaise, d.maxUnitPricePaise)}',
+                        l10n.designVariantsSummary(
+                          d.colourVariantCount,
+                          d.totalInitialQuantity,
+                          _formatPriceRange(
+                            d.minUnitPricePaise,
+                            d.maxUnitPricePaise,
+                          ),
+                        ),
                         variant: AppTextVariant.bodySmall,
                       ),
                       if (d.colourNames.isNotEmpty) ...[
@@ -425,15 +437,18 @@ final class _DesignsColoursViewState extends State<_DesignsColoursView> {
                   enablePagination: true,
                   columns: [
                     AppDataColumn(label: l10n.colourNameLabel),
-                    const AppDataColumn(label: 'Hex'),
-                    const AppDataColumn(label: 'Lot Uses', numeric: true),
-                    const AppDataColumn(
-                      label: 'Total Qty',
+                    AppDataColumn(label: l10n.tableHexHeader),
+                    AppDataColumn(
+                      label: l10n.tableLotUsesHeader,
+                      numeric: true,
+                    ),
+                    AppDataColumn(
+                      label: l10n.lotTotalQtyLabel,
                       numeric: true,
                       minWidthClass: AppWindowSizeClass.expanded,
                     ),
-                    const AppDataColumn(
-                      label: 'Historical Price',
+                    AppDataColumn(
+                      label: l10n.tableHistoricalPriceHeader,
                       numeric: true,
                       minWidthClass: AppWindowSizeClass.medium,
                     ),

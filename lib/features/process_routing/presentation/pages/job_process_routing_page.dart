@@ -199,7 +199,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  AppDropdown<String>(
+                  AppSelect<String>(
                     label: l10n.routingVariantLabel,
                     value: selectedSkuId,
                     items: overview.skuBalances
@@ -223,7 +223,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                     },
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  AppDropdown<String>(
+                  AppSelect<String>(
                     label: l10n.routingOperationLabel,
                     value: selectedProcessId,
                     items: overview.availableProcesses
@@ -245,7 +245,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                     },
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  AppDropdown<String>(
+                  AppSelect<String>(
                     label: l10n.routingAssignWorkerLabel,
                     value: selectedWorkerId,
                     items: overview.availableWorkers.map((w) => w.id).toList(),
@@ -498,7 +498,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                           '${source.workerName ?? '-'} (${source.processName})',
                           fontWeight: FontWeight.w700,
                         ),
-                        const SizedBox(height: 2),
+                        const SizedBox(height: AppSpacing.xxs),
                         AppText(
                           '${source.variantLabel} • ${source.pendingQuantity} ${l10n.piecesUnit}',
                           variant: AppTextVariant.bodySmall,
@@ -507,7 +507,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                     ),
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  AppDropdown<String>(
+                  AppSelect<String>(
                     label: l10n.routingNextOperationLabel,
                     value: destProcessId,
                     items: overview.availableProcesses
@@ -528,7 +528,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                     },
                   ),
                   const SizedBox(height: AppSpacing.md),
-                  AppDropdown<String>(
+                  AppSelect<String>(
                     label: l10n.routingDestinationWorkerLabel,
                     value: destWorkerId,
                     items: overview.availableWorkers.map((w) => w.id).toList(),
@@ -1217,7 +1217,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
               gradient: isDark
                   ? AppColors.heroGradientDark
                   : AppColors.heroGradientLight,
-              borderColor: Colors.white.withValues(alpha: 0.18),
+              borderColor: AppColors.onHero.withValues(alpha: 0.18),
               borderRadius: AppRadius.xlBorder,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -1226,7 +1226,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                     content: Text(
                       '#${overview.lot.lotNumber}',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: Colors.white,
+                        color: AppColors.onHero,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -1239,12 +1239,11 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                   ),
                   if (overview.lot.title != null &&
                       overview.lot.title!.isNotEmpty) ...[
-                    const SizedBox(height: 2),
+                    const SizedBox(height: AppSpacing.xxs),
                     Text(
                       overview.lot.title!,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.white.withValues(alpha: 0.88),
-                      ),
+                      style: Theme.of(context).textTheme.bodySmall
+                          ?.copyWith(color: AppColors.onHeroMuted),
                     ),
                   ],
                   const SizedBox(height: AppSpacing.md),
@@ -1308,7 +1307,7 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                             fallbackName: sku.colourName,
                           ),
                           size: 16,
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: AppRadius.smBorder,
                         ),
                         label:
                             '${formatVariantLabel(sku.designName, sku.colourName)} (${sku.totalPendingWithWorkers})',
@@ -1424,7 +1423,9 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
                       ),
                       if (i < costs.workerPayables.length - 1)
                         const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 6),
+                          padding: EdgeInsets.symmetric(
+                            vertical: AppSpacing.xsm,
+                          ),
                           child: AppDivider(),
                         ),
                     ],

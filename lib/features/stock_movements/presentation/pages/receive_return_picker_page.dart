@@ -1,3 +1,4 @@
+import 'package:business_manager/core/validation/validation_localizer.dart';
 import 'package:business_manager/core/utils/app_memo.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
@@ -83,7 +84,7 @@ final class _ReceiveReturnPickerPageState
       if (!mounted) return;
       setState(() {
         _loading = false;
-        _error = e.toString();
+        _error = ValidationLocalizer.describeError(context.l10n, e);
       });
     }
   }
@@ -420,7 +421,7 @@ final class _PendingIssueSelectionCard extends StatelessWidget {
                     tone: AppStatusTone.pending,
                     icon: AppIcons.pending,
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppSpacing.xs),
                   AppStatusBadge(label: ageLabel, tone: ageTone),
                 ],
               ),

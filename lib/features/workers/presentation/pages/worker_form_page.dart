@@ -151,7 +151,7 @@ final class _WorkerFormPageState extends State<WorkerFormPage> {
       if (!mounted) return;
       setState(() {
         _isLoading = false;
-        _loadError = e.toString();
+        _loadError = ValidationLocalizer.describeError(context.l10n, e);
       });
     }
   }
@@ -278,7 +278,7 @@ final class _WorkerFormPageState extends State<WorkerFormPage> {
       if (!mounted) return;
       setState(() {
         _isSaving = false;
-        _submitError = e.toString();
+        _submitError = ValidationLocalizer.describeError(context.l10n, e);
       });
     }
   }
@@ -610,9 +610,14 @@ final class _WorkerFormPageState extends State<WorkerFormPage> {
                     isRequired: false,
                   ),
                 ),
-                label: 'Custom Worker Rate (₹ / pc, optional)',
+                label: context.l10n.workerCustomRateLabel,
                 hint: proc.defaultRatePaise > 0
-                    ? 'Leave blank to inherit ${MoneyFormatter.formatRatePaise(proc.defaultRatePaise, pricingUnit: proc.defaultPricingUnit)}'
+                    ? context.l10n.workerRateInheritHint(
+                        MoneyFormatter.formatRatePaise(
+                          proc.defaultRatePaise,
+                          pricingUnit: proc.defaultPricingUnit,
+                        ),
+                      )
                     : 'e.g. 25.00',
                 prefixIcon: AppIcons.rupee,
                 keyboardType: const TextInputType.numberWithOptions(

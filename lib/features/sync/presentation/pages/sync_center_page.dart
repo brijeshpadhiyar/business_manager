@@ -120,7 +120,7 @@ final class SyncCenterPage extends StatelessWidget {
                                       variant: AppTextVariant.bodyLarge,
                                       fontWeight: FontWeight.w600,
                                     ),
-                                    const SizedBox(height: 2),
+                                    const SizedBox(height: AppSpacing.xxs),
                                     AppText(
                                       '${l10n.syncLastSyncedLabel}: '
                                       '${state.lastSyncedAtUtcMillis != null ? IstDateTimeHelper.formatIstDateTime(state.lastSyncedAtUtcMillis!) : l10n.syncNeverSynced}',

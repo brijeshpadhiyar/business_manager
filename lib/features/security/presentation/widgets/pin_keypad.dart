@@ -1,6 +1,8 @@
+import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/design_system/app_typography.dart';
+import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:business_manager/core/design_system/app_icons.dart';
@@ -34,9 +36,9 @@ final class PinKeypad extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final dotFill = onDarkBackground ? Colors.white : colorScheme.primary;
+    final dotFill = onDarkBackground ? AppColors.onHero : colorScheme.primary;
     final dotBorder = onDarkBackground
-        ? Colors.white.withValues(alpha: 0.45)
+        ? AppColors.onHero.withValues(alpha: 0.45)
         : colorScheme.outline;
 
     // Desktop and web: type the PIN on a physical keyboard (digits, numpad,
@@ -61,26 +63,35 @@ final class PinKeypad extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Masked PIN Dots
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(pinLength, (index) {
-              final filled = index < enteredLength;
-              return AnimatedContainer(
-                duration: const Duration(milliseconds: 140),
-                margin: const EdgeInsets.symmetric(horizontal: 8),
-                width: 16,
-                height: 16,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: filled ? dotFill : Colors.transparent,
-                  border: Border.all(
-                    color: filled ? dotFill : dotBorder,
-                    width: 2,
-                  ),
-                ),
-              );
-            }),
+          // Masked PIN Dots: announced as "2 of 4 digits entered", never
+          // the digits themselves.
+          Semantics(
+            liveRegion: true,
+            label: context.l10n.securityPinProgress(enteredLength, pinLength),
+            child: ExcludeSemantics(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(pinLength, (index) {
+                  final filled = index < enteredLength;
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 140),
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.sm,
+                    ),
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: filled ? dotFill : Colors.transparent,
+                      border: Border.all(
+                        color: filled ? dotFill : dotBorder,
+                        width: 2,
+                      ),
+                    ),
+                  );
+                }),
+              ),
+            ),
           ),
           const SizedBox(height: AppSpacing.lg),
 
@@ -112,7 +123,7 @@ final class PinKeypad extends StatelessWidget {
                                   AppIcons.biometric,
                                   size: 30,
                                   color: onDarkBackground
-                                      ? Colors.white
+                                      ? AppColors.onHero
                                       : colorScheme.secondary,
                                 ),
                               ),
@@ -139,7 +150,7 @@ final class PinKeypad extends StatelessWidget {
                               AppIcons.backspace,
                               size: 24,
                               color: onDarkBackground
-                                  ? Colors.white.withValues(
+                                  ? AppColors.onHero.withValues(
                                       alpha: enteredLength > 0 ? 1 : 0.4,
                                     )
                                   : colorScheme.onSurface.withValues(
@@ -178,7 +189,7 @@ final class PinKeypad extends StatelessWidget {
 
   Widget _digitKey(BuildContext context, String digit) {
     final textColor = onDarkBackground
-        ? Colors.white
+        ? AppColors.onHero
         : Theme.of(context).colorScheme.onSurface;
     return SizedBox(
       width: 68,
@@ -219,12 +230,12 @@ final class _KeyButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final bg = onDarkBackground
-        ? Colors.white.withValues(alpha: enabled ? 0.12 : 0.05)
+        ? AppColors.onHero.withValues(alpha: enabled ? 0.12 : 0.05)
         : colorScheme.surfaceContainerHighest.withValues(
             alpha: enabled ? 0.75 : 0.35,
           );
     final border = onDarkBackground
-        ? Colors.white.withValues(alpha: 0.18)
+        ? AppColors.onHero.withValues(alpha: 0.18)
         : colorScheme.outlineVariant;
 
     return Material(

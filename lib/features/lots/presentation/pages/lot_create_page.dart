@@ -235,7 +235,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                   },
                 ),
                 const SizedBox(height: AppSpacing.sm),
-                AppDropdown<String>(
+                AppSelect<String>(
                   label: context.l10n.navProcesses,
                   value: selectedProcId,
                   items: _activeProcesses.map((p) => p.id).toList(),
@@ -246,7 +246,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                   },
                 ),
                 const SizedBox(height: AppSpacing.sm),
-                AppDropdown<String>(
+                AppSelect<String>(
                   label: context.l10n.navWorkers,
                   value: selectedWorkerId,
                   items: _activeWorkers.map((w) => w.id).toList(),
@@ -693,10 +693,13 @@ final class _LotCreatePageState extends State<LotCreatePage> {
       });
     } catch (e) {
       if (!mounted) return;
-      final raw = e.toString();
+      // A UNIQUE constraint hit means the lot number is already taken.
+      final duplicate = '$e'.contains('UNIQUE');
       setState(() {
         _isSaving = false;
-        _submitError = raw.contains('UNIQUE') ? l10n.lotDuplicateError : raw;
+        _submitError = duplicate
+            ? l10n.lotDuplicateError
+            : ValidationLocalizer.describeError(l10n, e);
       });
     }
   }
@@ -902,7 +905,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                               spacing: AppSpacing.sm,
                               children: [
                                 if (availableKnownDesigns.isNotEmpty)
-                                  AppDropdown<String>(
+                                  AppSelect<String>(
                                     key: ValueKey<String>(
                                       'known_designs_${availableKnownDesigns.join('|')}',
                                     ),

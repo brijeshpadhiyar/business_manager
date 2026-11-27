@@ -77,6 +77,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'An unexpected error occurred. Please try again.';
 
   @override
+  String get errorLoadTitle => 'Couldn\'t load this page';
+
+  @override
   String get validationRequired => 'This field is required.';
 
   @override
@@ -3967,5 +3970,133 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String selectMaxReached(int max) {
     return 'You can select up to $max';
+  }
+
+  @override
+  String get tableQtyHeader => 'Qty';
+
+  @override
+  String get tableHistoricalPriceHeader => 'Historical Price';
+
+  @override
+  String get tableHexHeader => 'Hex';
+
+  @override
+  String get tableLotUsesHeader => 'Lot Uses';
+
+  @override
+  String get processDefaultRateLabel => 'Default Labour Rate (₹)';
+
+  @override
+  String get processDefaultRateShort => 'Default Rate';
+
+  @override
+  String get inspectionStillDefectiveLabel =>
+      'Still Defective / Rejected Again';
+
+  @override
+  String get inspectionQueueEmptyTitle => 'No Pending QC Inspections';
+
+  @override
+  String get inspectionQueueEmptySubtitle =>
+      'All returned pieces have been inspected and reconciled.';
+
+  @override
+  String lotOpenValue(Object a) {
+    return 'Open: $a';
+  }
+
+  @override
+  String lotReapprovedValue(Object a) {
+    return 'Re-Approved: $a';
+  }
+
+  @override
+  String lotEarnedValue(Object a) {
+    return 'Earned: $a';
+  }
+
+  @override
+  String lotPendingEstimateValue(Object a) {
+    return 'Pending Est: $a';
+  }
+
+  @override
+  String backupMovementsValue(Object a) {
+    return 'Movements: $a';
+  }
+
+  @override
+  String backupPhotosValue(Object a) {
+    return 'Photos: $a';
+  }
+
+  @override
+  String get txnDesignColourLabel => 'Design / Colour';
+
+  @override
+  String get txnAmountLabel => 'Amount';
+
+  @override
+  String get txnReferenceLabel => 'Reference';
+
+  @override
+  String get txnReasonLabel => 'Reason';
+
+  @override
+  String get workerRateLabel => 'Worker Rate';
+
+  @override
+  String get workerCustomRateLabel => 'Custom Worker Rate (₹ / pc, optional)';
+
+  @override
+  String get assignmentsHistoryPreservedNote =>
+      'Historical labour transactions & rates remain preserved.';
+
+  @override
+  String get assignmentsReactivateAction => 'Reactivate';
+
+  @override
+  String get reportsNoDataLoaded => 'No report data loaded.';
+
+  @override
+  String lotCompletedValue(Object a) {
+    return 'Completed: $a';
+  }
+
+  @override
+  String assignmentsDeactivatedHeading(Object a) {
+    return 'Deactivated Assignments ($a)';
+  }
+
+  @override
+  String workerRateInheritHint(Object a) {
+    return 'Leave blank to inherit $a';
+  }
+
+  @override
+  String designVariantsSummary(Object a, Object b, Object c) {
+    return '$a variants • $b pcs • $c';
+  }
+
+  @override
+  String assignmentsRemovedToast(Object a) {
+    return '$a removed from this worker';
+  }
+
+  @override
+  String get paginationLoadMore => 'Load more';
+
+  @override
+  String paginationShowingAll(Object a) {
+    return 'Showing all $a';
+  }
+
+  @override
+  String get dashboardWeekTrendHeading => 'This Week\'s Production';
+
+  @override
+  String securityPinProgress(int a, int b) {
+    return '$a of $b digits entered';
   }
 }

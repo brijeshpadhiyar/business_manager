@@ -92,62 +92,65 @@ void main() {
       }
     });
 
-    test('rejects incomplete, invalid-prefix, letters, and unsupported chars', () {
-      expect(
-        AppValidators.mobileNumberValidator('', isRequired: true).code,
-        ValidationErrorCode.mobileRequired,
-      );
-      expect(
-        AppValidators.mobileNumberValidator('', isRequired: false).isValid,
-        isTrue,
-      );
-
-      // Invalid characters / letters
-      for (final badChars in const [
-        '98765abcde',
-        '98765@4321',
-        '98765*4321',
-        '987+6543210',
-        '++919876543210',
-      ]) {
+    test(
+      'rejects incomplete, invalid-prefix, letters, and unsupported chars',
+      () {
         expect(
-          AppValidators.mobileNumberValidator(badChars).code,
-          ValidationErrorCode.mobileInvalidChars,
-          reason: 'Expected "$badChars" to fail invalid chars',
+          AppValidators.mobileNumberValidator('', isRequired: true).code,
+          ValidationErrorCode.mobileRequired,
         );
-      }
-
-      // Invalid Indian 10-digit numbers
-      for (final badIndian in const [
-        '987654321', // 9 digits
-        '98765432101', // 11 digits
-        '09876543210', // leading 0
-        '1234567890', // starts with 1
-        '5555555555', // starts with 5
-        '+91 5123456789', // +91 with invalid starting digit
-        '+91 98765', // +91 incomplete
-      ]) {
         expect(
-          AppValidators.mobileNumberValidator(badIndian).code,
-          ValidationErrorCode.mobileInvalidIndian,
-          reason: 'Expected "$badIndian" to fail Indian mobile validation',
+          AppValidators.mobileNumberValidator('', isRequired: false).isValid,
+          isTrue,
         );
-      }
 
-      // Invalid international E.164
-      expect(
-        AppValidators.mobileNumberValidator('+1 123').code,
-        ValidationErrorCode.mobileInvalidInternational,
-      );
-      expect(
-        AppValidators.mobileNumberValidator('+0123456789').code,
-        ValidationErrorCode.mobileInvalidInternational,
-      );
-      expect(
-        AppValidators.mobileNumberValidator('+1234567890123456').code,
-        ValidationErrorCode.mobileInvalidInternational,
-      );
-    });
+        // Invalid characters / letters
+        for (final badChars in const [
+          '98765abcde',
+          '98765@4321',
+          '98765*4321',
+          '987+6543210',
+          '++919876543210',
+        ]) {
+          expect(
+            AppValidators.mobileNumberValidator(badChars).code,
+            ValidationErrorCode.mobileInvalidChars,
+            reason: 'Expected "$badChars" to fail invalid chars',
+          );
+        }
+
+        // Invalid Indian 10-digit numbers
+        for (final badIndian in const [
+          '987654321', // 9 digits
+          '98765432101', // 11 digits
+          '09876543210', // leading 0
+          '1234567890', // starts with 1
+          '5555555555', // starts with 5
+          '+91 5123456789', // +91 with invalid starting digit
+          '+91 98765', // +91 incomplete
+        ]) {
+          expect(
+            AppValidators.mobileNumberValidator(badIndian).code,
+            ValidationErrorCode.mobileInvalidIndian,
+            reason: 'Expected "$badIndian" to fail Indian mobile validation',
+          );
+        }
+
+        // Invalid international E.164
+        expect(
+          AppValidators.mobileNumberValidator('+1 123').code,
+          ValidationErrorCode.mobileInvalidInternational,
+        );
+        expect(
+          AppValidators.mobileNumberValidator('+0123456789').code,
+          ValidationErrorCode.mobileInvalidInternational,
+        );
+        expect(
+          AppValidators.mobileNumberValidator('+1234567890123456').code,
+          ValidationErrorCode.mobileInvalidInternational,
+        );
+      },
+    );
   });
 
   group('Email & Percentage Validators', () {
@@ -157,7 +160,10 @@ void main() {
         AppValidators.emailValidator('', isRequired: true).code,
         ValidationErrorCode.required,
       );
-      expect(AppValidators.emailValidator('owner@stitchflow.in').isValid, isTrue);
+      expect(
+        AppValidators.emailValidator('owner@stitchflow.in').isValid,
+        isTrue,
+      );
       expect(
         AppValidators.emailValidator('invalid-email').code,
         ValidationErrorCode.invalidEmail,
@@ -271,7 +277,14 @@ void main() {
       );
 
       // NaN, Infinity, scientific notation, letters rejected
-      for (final bad in const ['NaN', 'Infinity', '1e5', '1E2', '₹100', 'abc']) {
+      for (final bad in const [
+        'NaN',
+        'Infinity',
+        '1e5',
+        '1E2',
+        '₹100',
+        'abc',
+      ]) {
         expect(
           AppValidators.amountValidator(bad).isValid,
           isFalse,
@@ -313,36 +326,43 @@ void main() {
         ValidationErrorCode.dateRangeOrder,
       );
       expect(
-        AppValidators.isoDateRangeValidator(
-          startIso: '2026-02-30',
-        ).code,
+        AppValidators.isoDateRangeValidator(startIso: '2026-02-30').code,
         ValidationErrorCode.invalidDate,
       );
     });
 
-    test('duplicateValidator checks case-insensitively with exclude support', () {
-      expect(
-        AppValidators.duplicateValidator(
-          ' cutting ',
-          existingValues: const ['Cutting', 'Stitching'],
-        ).code,
-        ValidationErrorCode.duplicateValue,
-      );
-      expect(
-        AppValidators.duplicateValidator(
-          'Cutting',
-          existingValues: const ['Cutting', 'Stitching'],
-          excludeValue: 'cutting',
-        ).isValid,
-        isTrue,
-      );
-    });
+    test(
+      'duplicateValidator checks case-insensitively with exclude support',
+      () {
+        expect(
+          AppValidators.duplicateValidator(
+            ' cutting ',
+            existingValues: const ['Cutting', 'Stitching'],
+          ).code,
+          ValidationErrorCode.duplicateValue,
+        );
+        expect(
+          AppValidators.duplicateValidator(
+            'Cutting',
+            existingValues: const ['Cutting', 'Stitching'],
+            excludeValue: 'cutting',
+          ).isValid,
+          isTrue,
+        );
+      },
+    );
 
     test('pinValidator and recoveryKeyValidator enforce strict formats', () {
       expect(AppValidators.pinValidator('1234').isValid, isTrue);
       expect(AppValidators.pinValidator('123456').isValid, isTrue);
-      expect(AppValidators.pinValidator('123').code, ValidationErrorCode.invalidPin);
-      expect(AppValidators.pinValidator('12ab').code, ValidationErrorCode.invalidPin);
+      expect(
+        AppValidators.pinValidator('123').code,
+        ValidationErrorCode.invalidPin,
+      );
+      expect(
+        AppValidators.pinValidator('12ab').code,
+        ValidationErrorCode.invalidPin,
+      );
       expect(
         AppValidators.recoveryKeyValidator('   ').code,
         ValidationErrorCode.recoveryKeyRequired,
@@ -351,71 +371,86 @@ void main() {
         AppValidators.recoveryKeyValidator('INVALID!').code,
         ValidationErrorCode.invalidRecoveryKey,
       );
-      expect(
-        AppValidators.recoveryKeyValidator('WXYZ-2345').isValid,
-        isTrue,
-      );
+      expect(AppValidators.recoveryKeyValidator('WXYZ-2345').isValid, isTrue);
     });
   });
 
   group('Bilingual Localization Coverage (EN & GU)', () {
-    test('every ValidationErrorCode produces non-empty distinct EN & GU messages', () {
-      for (final code in ValidationErrorCode.values) {
-        final res = ValidationResult.invalid(code, intParam: 100, maxDecimals: 2);
-        final en = ValidationLocalizer.localize(l10nEn, res);
-        final gu = ValidationLocalizer.localize(l10nGu, res);
-        expect(en, isNotNull, reason: 'EN missing for $code');
-        expect(gu, isNotNull, reason: 'GU missing for $code');
-        expect(en!.trim(), isNotEmpty, reason: 'EN empty for $code');
-        expect(gu!.trim(), isNotEmpty, reason: 'GU empty for $code');
-      }
-    });
+    test(
+      'every ValidationErrorCode produces non-empty distinct EN & GU messages',
+      () {
+        for (final code in ValidationErrorCode.values) {
+          final res = ValidationResult.invalid(
+            code,
+            intParam: 100,
+            maxDecimals: 2,
+          );
+          final en = ValidationLocalizer.localize(l10nEn, res);
+          final gu = ValidationLocalizer.localize(l10nGu, res);
+          expect(en, isNotNull, reason: 'EN missing for $code');
+          expect(gu, isNotNull, reason: 'GU missing for $code');
+          expect(en!.trim(), isNotEmpty, reason: 'EN empty for $code');
+          expect(gu!.trim(), isNotEmpty, reason: 'GU empty for $code');
+        }
+      },
+    );
 
-    test('mobile error messages match required English & Gujarati phrasing', () {
-      expect(
-        ValidationLocalizer.localize(
-          l10nEn,
-          const ValidationResult.invalid(ValidationErrorCode.mobileRequired),
-        ),
-        'Enter mobile number.',
-      );
-      expect(
-        ValidationLocalizer.localize(
-          l10nEn,
-          const ValidationResult.invalid(ValidationErrorCode.mobileInvalidIndian),
-        ),
-        'Enter a valid 10-digit mobile number.',
-      );
-      expect(
-        ValidationLocalizer.localize(
-          l10nEn,
-          const ValidationResult.invalid(ValidationErrorCode.mobileInvalidChars),
-        ),
-        'Mobile number contains invalid characters.',
-      );
+    test(
+      'mobile error messages match required English & Gujarati phrasing',
+      () {
+        expect(
+          ValidationLocalizer.localize(
+            l10nEn,
+            const ValidationResult.invalid(ValidationErrorCode.mobileRequired),
+          ),
+          'Enter mobile number.',
+        );
+        expect(
+          ValidationLocalizer.localize(
+            l10nEn,
+            const ValidationResult.invalid(
+              ValidationErrorCode.mobileInvalidIndian,
+            ),
+          ),
+          'Enter a valid 10-digit mobile number.',
+        );
+        expect(
+          ValidationLocalizer.localize(
+            l10nEn,
+            const ValidationResult.invalid(
+              ValidationErrorCode.mobileInvalidChars,
+            ),
+          ),
+          'Mobile number contains invalid characters.',
+        );
 
-      expect(
-        ValidationLocalizer.localize(
-          l10nGu,
-          const ValidationResult.invalid(ValidationErrorCode.mobileRequired),
-        ),
-        'મોબાઇલ નંબર દાખલ કરો.',
-      );
-      expect(
-        ValidationLocalizer.localize(
-          l10nGu,
-          const ValidationResult.invalid(ValidationErrorCode.mobileInvalidIndian),
-        ),
-        'માન્ય 10 અંકનો મોબાઇલ નંબર દાખલ કરો.',
-      );
-      expect(
-        ValidationLocalizer.localize(
-          l10nGu,
-          const ValidationResult.invalid(ValidationErrorCode.mobileInvalidChars),
-        ),
-        'મોબાઇલ નંબરમાં અમાન્ય અક્ષરો છે.',
-      );
-    });
+        expect(
+          ValidationLocalizer.localize(
+            l10nGu,
+            const ValidationResult.invalid(ValidationErrorCode.mobileRequired),
+          ),
+          'મોબાઇલ નંબર દાખલ કરો.',
+        );
+        expect(
+          ValidationLocalizer.localize(
+            l10nGu,
+            const ValidationResult.invalid(
+              ValidationErrorCode.mobileInvalidIndian,
+            ),
+          ),
+          'માન્ય 10 અંકનો મોબાઇલ નંબર દાખલ કરો.',
+        );
+        expect(
+          ValidationLocalizer.localize(
+            l10nGu,
+            const ValidationResult.invalid(
+              ValidationErrorCode.mobileInvalidChars,
+            ),
+          ),
+          'મોબાઇલ નંબરમાં અમાન્ય અક્ષરો છે.',
+        );
+      },
+    );
 
     test('DomainValidationException codes localize cleanly in EN & GU', () {
       const codes = [

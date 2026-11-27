@@ -146,10 +146,10 @@ final class _PrivacyShieldOverlay extends StatelessWidget {
                 height: 72,
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.14),
+                  color: AppColors.onHero.withValues(alpha: 0.14),
                   borderRadius: AppRadius.xlBorder,
                   border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.25),
+                    color: AppColors.onHero.withValues(alpha: 0.25),
                   ),
                 ),
                 child: Image.asset(
@@ -158,23 +158,25 @@ final class _PrivacyShieldOverlay extends StatelessWidget {
                   cacheHeight: 192,
                   errorBuilder: (_, _, _) => const Icon(
                     AppIcons.shield,
-                    color: Colors.white,
+                    color: AppColors.onHero,
                     size: 36,
                   ),
                 ),
               ),
               const SizedBox(height: AppSpacing.md),
-              const Text(
+              Text(
                 AppIdentity.appName,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                  color: AppColors.onHero,
                   fontWeight: FontWeight.w700,
                 ),
               ),
               if (showProgress) ...[
                 const SizedBox(height: AppSpacing.md),
-                const AppSpinner(size: 20, color: Colors.white70),
+                AppSpinner(
+                  size: 20,
+                  color: AppColors.onHero.withValues(alpha: 0.7),
+                ),
               ],
             ],
           ),

@@ -1293,7 +1293,7 @@ final class _PremiumLotColourCard extends StatelessWidget {
             height: 80,
             padding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.sm,
-              vertical: 6,
+              vertical: AppSpacing.xsm,
             ),
             decoration: BoxDecoration(
               color: swatch,
@@ -1311,8 +1311,8 @@ final class _PremiumLotColourCard extends StatelessWidget {
                     Flexible(
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 2,
+                          horizontal: AppSpacing.xsm,
+                          vertical: AppSpacing.xxs,
                         ),
                         decoration: BoxDecoration(
                           color: onSwatch.withValues(alpha: 0.14),
@@ -1378,7 +1378,7 @@ final class _PremiumLotColourCard extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                     maxLines: 1,
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: AppSpacing.xs),
                 ],
                 Wrap(
                   alignment: WrapAlignment.spaceBetween,
@@ -1400,7 +1400,7 @@ final class _PremiumLotColourCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 6),
+                const SizedBox(height: AppSpacing.xsm),
                 Row(
                   children: [
                     Icon(
@@ -1408,7 +1408,7 @@ final class _PremiumLotColourCard extends StatelessWidget {
                       size: 13,
                       color: colorScheme.onSurfaceVariant,
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: AppSpacing.xs),
                     Expanded(
                       child: AppText(
                         stageLabel,
@@ -1419,7 +1419,7 @@ final class _PremiumLotColourCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: AppSpacing.xxs),
                 Row(
                   children: [
                     Icon(
@@ -1427,7 +1427,7 @@ final class _PremiumLotColourCard extends StatelessWidget {
                       size: 13,
                       color: colorScheme.onSurfaceVariant,
                     ),
-                    const SizedBox(width: 4),
+                    const SizedBox(width: AppSpacing.xs),
                     Expanded(
                       child: AppText(
                         locationLabel,

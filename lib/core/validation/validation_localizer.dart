@@ -81,6 +81,51 @@ abstract final class ValidationLocalizer {
     );
   }
 
+  /// Turns any caught error into a user-safe, localized message.
+  ///
+  /// Domain errors get their specific translation; anything else (network,
+  /// database, programming errors) gets the generic [AppLocalizations.errorUnexpected]
+  /// text, so raw `e.toString()` never reaches the user. The raw error is
+  /// still printed in debug builds.
+  static String describeError(AppLocalizations l10n, Object error) {
+    if (error is DomainValidationException) {
+      return localizeDomainException(l10n, error);
+    }
+    debugPrint('Unhandled UI error: $error');
+    return l10n.errorUnexpected;
+  }
+
+  static final RegExp _domainDump = RegExp(
+    r'^DomainValidationException\(([^)]+)\)',
+  );
+  static final RegExp _bareCode = RegExp(r'^[a-z][a-z0-9_]*$');
+  // Class-name dumps only (`SqliteException(…)`, `StateError: …`,
+  // `Exception: …`), so real sentences like "Integrity Error" pass through.
+  static final RegExp _technical = RegExp(
+    r"(\b[A-Z]\w*(Exception|Error)\s*[:(]|^Exception:|Instance of '|errno|SQLITE_)",
+  );
+
+  /// Makes a cubit's stored error text (a domain code, an exception dump or
+  /// a sentence) safe to show. Returns `null` when [raw] is empty.
+  ///
+  /// * `DomainValidationException(code): …` and bare `snake_case` codes are
+  ///   translated with [localizeDomainCode].
+  /// * Technical dumps (`SqliteException…`, `Instance of …`) become
+  ///   [AppLocalizations.errorUnexpected].
+  /// * Anything else is passed through unchanged.
+  static String? describeMessage(AppLocalizations l10n, String? raw) {
+    if (raw == null || raw.trim().isEmpty) return null;
+    final text = raw.trim();
+    final dump = _domainDump.firstMatch(text);
+    if (dump != null) return localizeDomainCode(l10n, dump.group(1)!.trim());
+    if (_bareCode.hasMatch(text)) return localizeDomainCode(l10n, text);
+    if (_technical.hasMatch(text)) {
+      debugPrint('Unhandled UI error: $text');
+      return l10n.errorUnexpected;
+    }
+    return text;
+  }
+
   /// Maps machine-readable repository & BLoC error codes to localized strings.
   static String localizeDomainCode(
     AppLocalizations l10n,
@@ -116,6 +161,9 @@ abstract final class ValidationLocalizer {
       'colour_not_found' ||
       'design_not_found' ||
       'lot_not_found' => l10n.validationRecordNotFound,
+
+      // Reports
+      'no_report_data' => l10n.reportsNoDataLoaded,
 
       // Rates
       'rate_overlap' => l10n.ratesOverlapError,

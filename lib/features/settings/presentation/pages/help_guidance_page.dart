@@ -196,7 +196,7 @@ final class _HelpGuidancePageState extends State<HelpGuidancePage> {
                             variant: AppTextVariant.bodyLarge,
                             fontWeight: FontWeight.w700,
                           ),
-                          const SizedBox(height: 2),
+                          const SizedBox(height: AppSpacing.xxs),
                           AppText(
                             l10n.guideProgressSummary(completed, total),
                             variant: AppTextVariant.bodySmall,
@@ -417,7 +417,7 @@ final class _HelpGuidancePageState extends State<HelpGuidancePage> {
                       variant: AppTextVariant.bodyLarge,
                       fontWeight: FontWeight.w700,
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: AppSpacing.xxs),
                     AppText(
                       topic.summary(localeCode),
                       variant: AppTextVariant.bodySmall,
@@ -509,7 +509,7 @@ final class _TrainingChapterCard extends StatelessWidget {
                           ),
                       ],
                     ),
-                    const SizedBox(height: 2),
+                    const SizedBox(height: AppSpacing.xxs),
                     AppText(
                       chapter.summary(localeCode),
                       variant: AppTextVariant.bodySmall,
@@ -525,7 +525,7 @@ final class _TrainingChapterCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.sm,
-              vertical: 6,
+              vertical: AppSpacing.xsm,
             ),
             decoration: BoxDecoration(
               color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
@@ -871,7 +871,7 @@ final class HelpTopicDetailPage extends StatelessWidget {
                           color: colorScheme.primary,
                           fontWeight: FontWeight.w700,
                         ),
-                        const SizedBox(height: 2),
+                        const SizedBox(height: AppSpacing.xxs),
                         AppText(
                           '${nextTopic.order}. ${nextTopic.title(localeCode)}',
                           variant: AppTextVariant.bodyLarge,
