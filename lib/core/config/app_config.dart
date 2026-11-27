@@ -1,4 +1,5 @@
 import 'package:business_manager/core/config/app_flavor.dart';
+import 'package:flutter/foundation.dart';
 
 /// Immutable environment configuration isolating `dev` and `prod` storage,
 /// identifiers, and logging behavior.
@@ -89,12 +90,20 @@ final class AppConfig {
     );
   }
 
+  /// Reads `APP_FLAVOR` from `--dart-define-from-file`. There is no silent
+  /// default: a build without a flavor fails fast instead of quietly running
+  /// against the dev database.
   factory AppConfig.fromEnvironment() {
-    const flavorName = String.fromEnvironment(
-      'APP_FLAVOR',
-      defaultValue: 'dev',
-    );
-    return flavorName == 'prod' ? AppConfig.prod() : AppConfig.dev();
+    const flavorName = String.fromEnvironment('APP_FLAVOR');
+    return switch (flavorName) {
+      'prod' => AppConfig.prod(),
+      'dev' => AppConfig.dev(),
+      _ => throw StateError(
+        'APP_FLAVOR is not set. Run with '
+        '--dart-define-from-file=config/<dev|prod>.local.json, '
+        'or use lib/main_dev.dart / lib/main_prod.dart.',
+      ),
+    };
   }
 
   final AppFlavor flavor;
@@ -113,4 +122,15 @@ final class AppConfig {
   /// `--dart-define-from-file=config/<flavor>.local.json` (or `--dart-define`).
   bool get isCloudConfigured =>
       supabaseUrl.trim().isNotEmpty && supabaseAnonKey.trim().isNotEmpty;
+
+  /// Native Google Sign-In on Android/iOS needs `GOOGLE_WEB_CLIENT_ID`;
+  /// web and desktop use the Supabase OAuth redirect instead.
+  bool get isGoogleSignInConfigured {
+    if (!isCloudConfigured) return false;
+    final isMobile =
+        !kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.android ||
+            defaultTargetPlatform == TargetPlatform.iOS);
+    return !isMobile || googleWebClientId.trim().isNotEmpty;
+  }
 }

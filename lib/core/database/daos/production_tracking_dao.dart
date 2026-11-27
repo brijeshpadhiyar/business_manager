@@ -67,26 +67,6 @@ class ProductionTrackingDao extends DatabaseAccessor<AppDatabase>
         .get();
   }
 
-  Future<List<ProductionReturnRow>> getReturnsForMember(String memberId) {
-    return (select(productionReturns)
-          ..where((t) => t.memberId.equals(memberId) & t.deletedAt.isNull())
-          ..orderBy([
-            (t) => OrderingTerm.desc(t.transactionAt),
-            (t) => OrderingTerm.desc(t.recordedAt),
-          ]))
-        .get();
-  }
-
-  Future<List<ProductionReturnRow>> getReturnsForProcess(String processId) {
-    return (select(productionReturns)
-          ..where((t) => t.processId.equals(processId) & t.deletedAt.isNull())
-          ..orderBy([
-            (t) => OrderingTerm.desc(t.transactionAt),
-            (t) => OrderingTerm.desc(t.recordedAt),
-          ]))
-        .get();
-  }
-
   // --- ProductionInspections ---
 
   Future<void> insertInspection(ProductionInspectionsCompanion entry) =>
@@ -157,30 +137,6 @@ class ProductionTrackingDao extends DatabaseAccessor<AppDatabase>
         .get();
   }
 
-  Future<List<ProductionInspectionRow>> getInspectionsForMember(
-    String memberId,
-  ) {
-    return (select(productionInspections)
-          ..where((t) => t.memberId.equals(memberId))
-          ..orderBy([
-            (t) => OrderingTerm.desc(t.transactionAt),
-            (t) => OrderingTerm.desc(t.recordedAt),
-          ]))
-        .get();
-  }
-
-  Future<List<ProductionInspectionRow>> getInspectionsForProcess(
-    String processId,
-  ) {
-    return (select(productionInspections)
-          ..where((t) => t.processId.equals(processId))
-          ..orderBy([
-            (t) => OrderingTerm.desc(t.transactionAt),
-            (t) => OrderingTerm.desc(t.recordedAt),
-          ]))
-        .get();
-  }
-
   // --- RejectionRecords ---
 
   Future<void> insertRejectionRecord(RejectionRecordsCompanion entry) =>
@@ -195,27 +151,6 @@ class ProductionTrackingDao extends DatabaseAccessor<AppDatabase>
           (t) => OrderingTerm.desc(t.inspectedAt),
           (t) => OrderingTerm.desc(t.createdAt),
         ]))
-        .get();
-  }
-
-  Future<List<RejectionRecordRow>> getRejectionsForLot(String lotId) {
-    return (select(rejectionRecords)
-          ..where((t) => t.lotId.equals(lotId))
-          ..orderBy([(t) => OrderingTerm.asc(t.inspectedAt)]))
-        .get();
-  }
-
-  Future<List<RejectionRecordRow>> getRejectionsForMember(String memberId) {
-    return (select(rejectionRecords)
-          ..where((t) => t.memberId.equals(memberId))
-          ..orderBy([(t) => OrderingTerm.desc(t.inspectedAt)]))
-        .get();
-  }
-
-  Future<List<RejectionRecordRow>> getRejectionsForProcess(String processId) {
-    return (select(rejectionRecords)
-          ..where((t) => t.processId.equals(processId))
-          ..orderBy([(t) => OrderingTerm.desc(t.inspectedAt)]))
         .get();
   }
 
@@ -260,13 +195,6 @@ class ProductionTrackingDao extends DatabaseAccessor<AppDatabase>
   ) {
     return (select(rejectionRepairs)
           ..where((t) => t.rejectionRecordId.equals(rejectionRecordId))
-          ..orderBy([(t) => OrderingTerm.asc(t.transactionAt)]))
-        .get();
-  }
-
-  Future<List<RejectionRepairRow>> getRepairsForLot(String lotId) {
-    return (select(rejectionRepairs)
-          ..where((t) => t.lotId.equals(lotId))
           ..orderBy([(t) => OrderingTerm.asc(t.transactionAt)]))
         .get();
   }

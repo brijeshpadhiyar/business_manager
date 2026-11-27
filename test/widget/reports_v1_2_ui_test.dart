@@ -161,8 +161,8 @@ void main() {
       await selectCategoryChip('Worker Performance');
       expect(find.text('Kiran Bhai'), findsWidgets);
 
-      // Category 3: Process Performance
-      await selectCategoryChip('Process Performance');
+      // Category 3: Work Stage Performance
+      await selectCategoryChip('Work Stage Performance');
       expect(find.text('Embroidery'), findsWidgets);
 
       // Category 4: Inventory -> Reference Stock Value (never Profit/Revenue)

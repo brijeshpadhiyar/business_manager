@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'package:business_manager/core/database/app_database.dart';
 import 'package:business_manager/core/database/database_transaction_runner.dart';
-import 'package:business_manager/core/database/migrations/database_migration_manager.dart';
 import 'package:business_manager/core/error/exceptions.dart';
 import 'package:business_manager/core/platform/media_storage_service.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
@@ -450,21 +449,6 @@ void main() {
         pricingUnit: ProcessPricingCalculator.unitFixedAmount,
       ),
       250000,
-    );
-  });
-
-  test('13. Database v4 -> v5 migration integrity is idempotent', () async {
-    await DatabaseMigrationManager.handleOnUpgrade(
-      db.createMigrator(),
-      db,
-      4,
-      5,
-    );
-    final cols = await db.customSelect('PRAGMA table_info(processes);').get();
-    final colNames = cols.map((r) => r.read<String>('name')).toSet();
-    expect(
-      colNames,
-      containsAll(const ['default_rate_paise', 'default_pricing_unit']),
     );
   });
 }

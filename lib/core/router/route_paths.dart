@@ -4,7 +4,6 @@ abstract final class RoutePaths {
   static const String lots = '/lots';
   static const String workers = '/workers';
   static const String designsColours = '/designs-colours';
-  static const String showcase = '/showcase';
   static const String lotCreate = '/lots/new';
   static const String lotDetailPattern = '/lots/:id';
   static const String lotColourDetailPattern = '/lots/:id/colours/:colourId';
@@ -96,6 +95,7 @@ abstract final class RoutePaths {
         ? '$base?colourId=${Uri.encodeQueryComponent(designColourId)}'
         : base;
   }
+
   static String processDetail(String processId) => '/processes/$processId';
   static String processEdit(String processId) => '/processes/$processId/edit';
 

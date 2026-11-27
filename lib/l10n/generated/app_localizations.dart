@@ -116,24 +116,6 @@ abstract class AppLocalizations {
   /// **'From Fabric to Finished.'**
   String get appTagline;
 
-  /// Heading on the foundation status section.
-  ///
-  /// In en, this message translates to:
-  /// **'Project Foundation Ready'**
-  String get foundationTitle;
-
-  /// Subtitle on the foundation status section.
-  ///
-  /// In en, this message translates to:
-  /// **'Offline-first architecture, flavors, Material 3 design system, and bilingual localization are configured.'**
-  String get foundationSubtitle;
-
-  /// Section heading for flavor and environment metadata.
-  ///
-  /// In en, this message translates to:
-  /// **'Environment'**
-  String get environmentSectionTitle;
-
   /// Label for active flavor name.
   ///
   /// In en, this message translates to:
@@ -157,12 +139,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Database File'**
   String get environmentDatabaseLabel;
-
-  /// Label for debug logging status.
-  ///
-  /// In en, this message translates to:
-  /// **'Debug Logging'**
-  String get environmentLoggingLabel;
 
   /// Generic enabled status label.
   ///
@@ -254,137 +230,11 @@ abstract class AppLocalizations {
   /// **'An unexpected error occurred. Please try again.'**
   String get errorUnexpected;
 
-  /// Showcase navigation tab for overview and settings.
-  ///
-  /// In en, this message translates to:
-  /// **'Overview'**
-  String get navOverview;
-
-  /// Showcase navigation tab for form inputs.
-  ///
-  /// In en, this message translates to:
-  /// **'Inputs'**
-  String get navInputs;
-
-  /// Showcase navigation tab for badges, dialogs, states, and tables.
-  ///
-  /// In en, this message translates to:
-  /// **'Feedback'**
-  String get navFeedback;
-
-  /// Heading for button variants preview.
-  ///
-  /// In en, this message translates to:
-  /// **'Buttons & Actions'**
-  String get showcaseButtonsHeading;
-
-  /// Label for primary button preview.
-  ///
-  /// In en, this message translates to:
-  /// **'Primary Action'**
-  String get showcasePrimaryAction;
-
-  /// Label for secondary button preview.
-  ///
-  /// In en, this message translates to:
-  /// **'Secondary'**
-  String get showcaseSecondaryAction;
-
-  /// Label for outlined button preview.
-  ///
-  /// In en, this message translates to:
-  /// **'Outlined'**
-  String get showcaseOutlinedAction;
-
-  /// Label for destructive button preview.
-  ///
-  /// In en, this message translates to:
-  /// **'Delete'**
-  String get showcaseDestructiveAction;
-
-  /// Label for loading button preview.
-  ///
-  /// In en, this message translates to:
-  /// **'Saving...'**
-  String get showcaseLoadingAction;
-
-  /// Label for disabled button preview.
-  ///
-  /// In en, this message translates to:
-  /// **'Disabled'**
-  String get showcaseDisabledAction;
-
-  /// Heading for form inputs preview.
-  ///
-  /// In en, this message translates to:
-  /// **'Form Controls'**
-  String get showcaseInputsHeading;
-
-  /// Sample text field label in design system showcase.
-  ///
-  /// In en, this message translates to:
-  /// **'Reference Name'**
-  String get showcaseSampleFieldLabel;
-
-  /// Sample text field hint in design system showcase.
-  ///
-  /// In en, this message translates to:
-  /// **'Enter a sample value'**
-  String get showcaseSampleFieldHint;
-
   /// Validation message when a required field is empty.
   ///
   /// In en, this message translates to:
   /// **'This field is required.'**
   String get validationRequired;
-
-  /// Sample dropdown label in showcase.
-  ///
-  /// In en, this message translates to:
-  /// **'Sample Category'**
-  String get showcaseDropdownLabel;
-
-  /// Sample option 1.
-  ///
-  /// In en, this message translates to:
-  /// **'Option One'**
-  String get showcaseOptionOne;
-
-  /// Sample option 2.
-  ///
-  /// In en, this message translates to:
-  /// **'Option Two'**
-  String get showcaseOptionTwo;
-
-  /// Sample date picker label.
-  ///
-  /// In en, this message translates to:
-  /// **'Business Date (IST)'**
-  String get showcaseDatePickerLabel;
-
-  /// Sample checkbox label.
-  ///
-  /// In en, this message translates to:
-  /// **'Mark as verified'**
-  String get showcaseCheckboxLabel;
-
-  /// Sample switch label.
-  ///
-  /// In en, this message translates to:
-  /// **'Enable compact preview'**
-  String get showcaseSwitchLabel;
-
-  /// Button to trigger sample form validation.
-  ///
-  /// In en, this message translates to:
-  /// **'Validate Form'**
-  String get showcaseValidateButton;
-
-  /// Heading for semantic status badges.
-  ///
-  /// In en, this message translates to:
-  /// **'Status Badges'**
-  String get showcaseBadgesHeading;
 
   /// Semantic badge label for good stock.
   ///
@@ -404,96 +254,6 @@ abstract class AppLocalizations {
   /// **'Damaged'**
   String get statusDamaged;
 
-  /// Semantic badge label for advance credit.
-  ///
-  /// In en, this message translates to:
-  /// **'Advance Credit'**
-  String get statusAdvanceCredit;
-
-  /// Button label to preview AppDialog.
-  ///
-  /// In en, this message translates to:
-  /// **'Open Dialog'**
-  String get showcaseOpenDialog;
-
-  /// Button label to preview AppBottomSheet.
-  ///
-  /// In en, this message translates to:
-  /// **'Open Adaptive Sheet'**
-  String get showcaseOpenSheet;
-
-  /// Title of preview dialog.
-  ///
-  /// In en, this message translates to:
-  /// **'Confirm Action'**
-  String get showcaseDialogTitle;
-
-  /// Body text of preview dialog.
-  ///
-  /// In en, this message translates to:
-  /// **'This preview verifies consistent Material 3 spacing, typography, and bilingual wrapping.'**
-  String get showcaseDialogMessage;
-
-  /// Heading for typography and long text wrapping verification.
-  ///
-  /// In en, this message translates to:
-  /// **'Typography & Long Text Sample'**
-  String get showcaseLongTextHeading;
-
-  /// Long paragraph sample to verify English and Gujarati wrapping.
-  ///
-  /// In en, this message translates to:
-  /// **'All design tokens, typography weights, and bilingual labels wrap cleanly across compact Android phones, tablets, and desktop layouts without clipping or overflow.'**
-  String get showcaseLongTextSample;
-
-  /// Heading for AppDataTable preview.
-  ///
-  /// In en, this message translates to:
-  /// **'Responsive Data Table'**
-  String get showcaseTableHeading;
-
-  /// Sample table column 1.
-  ///
-  /// In en, this message translates to:
-  /// **'Item'**
-  String get showcaseColName;
-
-  /// Sample table column 2.
-  ///
-  /// In en, this message translates to:
-  /// **'Quantity'**
-  String get showcaseColQty;
-
-  /// Sample table column 3.
-  ///
-  /// In en, this message translates to:
-  /// **'Amount'**
-  String get showcaseColAmount;
-
-  /// Preview title for AppEmptyState.
-  ///
-  /// In en, this message translates to:
-  /// **'No Records Yet'**
-  String get showcaseEmptyTitle;
-
-  /// Preview subtitle for AppEmptyState.
-  ///
-  /// In en, this message translates to:
-  /// **'Items will appear here once added.'**
-  String get showcaseEmptySubtitle;
-
-  /// Preview title for AppErrorView.
-  ///
-  /// In en, this message translates to:
-  /// **'Unable to Load Preview'**
-  String get showcaseErrorTitle;
-
-  /// Preview message for AppLoader.
-  ///
-  /// In en, this message translates to:
-  /// **'Loading preview...'**
-  String get showcaseLoadingMessage;
-
   /// No description provided for @navDashboard.
   ///
   /// In en, this message translates to:
@@ -512,35 +272,11 @@ abstract class AppLocalizations {
   /// **'Inventory'**
   String get navInventory;
 
-  /// No description provided for @navBusinessProfile.
-  ///
-  /// In en, this message translates to:
-  /// **'Business Profile'**
-  String get navBusinessProfile;
-
-  /// No description provided for @navDesignShowcase.
-  ///
-  /// In en, this message translates to:
-  /// **'Design System Showcase'**
-  String get navDesignShowcase;
-
-  /// No description provided for @dashboardWelcomeSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Offline-first Garment & Production Management'**
-  String get dashboardWelcomeSubtitle;
-
   /// No description provided for @dashboardQuickActions.
   ///
   /// In en, this message translates to:
   /// **'Quick Actions'**
   String get dashboardQuickActions;
-
-  /// No description provided for @dashboardPreferences.
-  ///
-  /// In en, this message translates to:
-  /// **'App Preferences'**
-  String get dashboardPreferences;
 
   /// No description provided for @businessProfileHeading.
   ///
@@ -884,12 +620,6 @@ abstract class AppLocalizations {
   /// **'Initial Inventory Overview'**
   String get inventoryHeading;
 
-  /// No description provided for @inventoryNote.
-  ///
-  /// In en, this message translates to:
-  /// **'Shows recorded Initial Quantities only. Stock movements and pending balances arrive in later milestones.'**
-  String get inventoryNote;
-
   /// No description provided for @inventoryTotalLots.
   ///
   /// In en, this message translates to:
@@ -944,12 +674,6 @@ abstract class AppLocalizations {
   /// **'Add lots, designs, and colours to see initial quantity totals here.'**
   String get inventoryEmptySubtitle;
 
-  /// No description provided for @actionEdit.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit'**
-  String get actionEdit;
-
   /// No description provided for @actionDelete.
   ///
   /// In en, this message translates to:
@@ -971,8 +695,26 @@ abstract class AppLocalizations {
   /// No description provided for @navProcesses.
   ///
   /// In en, this message translates to:
-  /// **'Processes'**
+  /// **'Work Stages'**
   String get navProcesses;
+
+  /// Short bottom-navigation label for the Work Stages tab.
+  ///
+  /// In en, this message translates to:
+  /// **'Stages'**
+  String get navWorkStagesShort;
+
+  /// No description provided for @processQuickCreateAction.
+  ///
+  /// In en, this message translates to:
+  /// **'New Work Stage'**
+  String get processQuickCreateAction;
+
+  /// No description provided for @settingsManageWorkStagesAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Work Stages'**
+  String get settingsManageWorkStagesAction;
 
   /// No description provided for @navWorkers.
   ///
@@ -1013,49 +755,49 @@ abstract class AppLocalizations {
   /// No description provided for @processesHeading.
   ///
   /// In en, this message translates to:
-  /// **'Production Processes'**
+  /// **'Work Stages'**
   String get processesHeading;
 
   /// No description provided for @processesSearchHint.
   ///
   /// In en, this message translates to:
-  /// **'Search processes by name or description'**
+  /// **'Search work stages by name or description'**
   String get processesSearchHint;
 
   /// No description provided for @processesEmptyTitle.
   ///
   /// In en, this message translates to:
-  /// **'No Processes Yet'**
+  /// **'No Work Stages Yet'**
   String get processesEmptyTitle;
 
   /// No description provided for @processesEmptySubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Create your own production processes in any order your workshop uses.'**
+  /// **'Create your own work stages in any order your workshop uses.'**
   String get processesEmptySubtitle;
 
   /// No description provided for @processCreateAction.
   ///
   /// In en, this message translates to:
-  /// **'New Process'**
+  /// **'New Work Stage'**
   String get processCreateAction;
 
   /// No description provided for @processEditAction.
   ///
   /// In en, this message translates to:
-  /// **'Edit Process'**
+  /// **'Edit Work Stage'**
   String get processEditAction;
 
   /// No description provided for @processDetailsHeading.
   ///
   /// In en, this message translates to:
-  /// **'Process Details'**
+  /// **'Work Stage Details'**
   String get processDetailsHeading;
 
   /// No description provided for @processNameLabel.
   ///
   /// In en, this message translates to:
-  /// **'Process Name'**
+  /// **'Work Stage Name'**
   String get processNameLabel;
 
   /// No description provided for @processDescriptionLabel.
@@ -1085,19 +827,19 @@ abstract class AppLocalizations {
   /// No description provided for @processActivateAction.
   ///
   /// In en, this message translates to:
-  /// **'Activate Process'**
+  /// **'Activate Work Stage'**
   String get processActivateAction;
 
   /// No description provided for @processDeactivateAction.
   ///
   /// In en, this message translates to:
-  /// **'Deactivate Process'**
+  /// **'Deactivate Work Stage'**
   String get processDeactivateAction;
 
   /// No description provided for @processDeactivateConfirmTitle.
   ///
   /// In en, this message translates to:
-  /// **'Deactivate Process?'**
+  /// **'Deactivate Work Stage?'**
   String get processDeactivateConfirmTitle;
 
   /// No description provided for @processDeactivateConfirmMessage.
@@ -1109,7 +851,7 @@ abstract class AppLocalizations {
   /// No description provided for @processDuplicateNameError.
   ///
   /// In en, this message translates to:
-  /// **'A process with this name already exists.'**
+  /// **'A work stage with this name already exists.'**
   String get processDuplicateNameError;
 
   /// No description provided for @processAssignedWorkersHeading.
@@ -1121,7 +863,7 @@ abstract class AppLocalizations {
   /// No description provided for @processNoAssignedWorkers.
   ///
   /// In en, this message translates to:
-  /// **'No workers are currently assigned to this process.'**
+  /// **'No workers are currently assigned to this work stage.'**
   String get processNoAssignedWorkers;
 
   /// No description provided for @processAuditHistoryHeading.
@@ -1169,7 +911,7 @@ abstract class AppLocalizations {
   /// No description provided for @workersEmptySubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Add your workshop workers to assign processes and configure per-piece rates.'**
+  /// **'Add your workshop workers to assign work stages and configure per-piece rates.'**
   String get workersEmptySubtitle;
 
   /// No description provided for @workerCreateAction.
@@ -1253,13 +995,13 @@ abstract class AppLocalizations {
   /// No description provided for @workerAssignedProcessesHeading.
   ///
   /// In en, this message translates to:
-  /// **'Assigned Processes & Current Rates'**
+  /// **'Assigned Work Stages & Current Rates'**
   String get workerAssignedProcessesHeading;
 
   /// No description provided for @workerNoAssignedProcesses.
   ///
   /// In en, this message translates to:
-  /// **'No processes assigned yet.'**
+  /// **'No work stages assigned yet.'**
   String get workerNoAssignedProcesses;
 
   /// No description provided for @workerManageAssignmentsAction.
@@ -1283,25 +1025,25 @@ abstract class AppLocalizations {
   /// No description provided for @assignmentsHeading.
   ///
   /// In en, this message translates to:
-  /// **'Worker Process Assignments'**
+  /// **'Worker Stage Assignments'**
   String get assignmentsHeading;
 
   /// No description provided for @assignmentsSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'A worker can be assigned to multiple processes with no fixed sequence.'**
+  /// **'A worker can be assigned to multiple work stages with no fixed sequence.'**
   String get assignmentsSubtitle;
 
   /// No description provided for @assignmentsAddLabel.
   ///
   /// In en, this message translates to:
-  /// **'Select Active Process'**
+  /// **'Select Active Work Stage'**
   String get assignmentsAddLabel;
 
   /// No description provided for @assignmentsAddAction.
   ///
   /// In en, this message translates to:
-  /// **'Assign Process'**
+  /// **'Assign Work Stage'**
   String get assignmentsAddAction;
 
   /// No description provided for @assignmentsRemoveAction.
@@ -1331,31 +1073,31 @@ abstract class AppLocalizations {
   /// No description provided for @assignmentsEmptySubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Assign one or more active processes to this worker.'**
+  /// **'Assign one or more active work stages to this worker.'**
   String get assignmentsEmptySubtitle;
 
   /// No description provided for @assignmentsNoAvailableProcesses.
   ///
   /// In en, this message translates to:
-  /// **'All active processes are already assigned or no active processes exist.'**
+  /// **'All active work stages are already assigned or no active work stages exist.'**
   String get assignmentsNoAvailableProcesses;
 
   /// No description provided for @assignmentsDuplicateError.
   ///
   /// In en, this message translates to:
-  /// **'This process is already assigned to the worker.'**
+  /// **'This work stage is already assigned to the worker.'**
   String get assignmentsDuplicateError;
 
   /// No description provided for @assignmentsInactiveWorkerError.
   ///
   /// In en, this message translates to:
-  /// **'Activate this worker before adding process assignments.'**
+  /// **'Activate this worker before adding work stage assignments.'**
   String get assignmentsInactiveWorkerError;
 
   /// No description provided for @assignmentsInactiveProcessError.
   ///
   /// In en, this message translates to:
-  /// **'Only active processes can be assigned.'**
+  /// **'Only active work stages can be assigned.'**
   String get assignmentsInactiveProcessError;
 
   /// No description provided for @ratesHistoryHeading.
@@ -1367,7 +1109,7 @@ abstract class AppLocalizations {
   /// No description provided for @ratesFilterProcessLabel.
   ///
   /// In en, this message translates to:
-  /// **'Process'**
+  /// **'Work Stage'**
   String get ratesFilterProcessLabel;
 
   /// No description provided for @ratesCurrentRateLabel.
@@ -1445,13 +1187,13 @@ abstract class AppLocalizations {
   /// No description provided for @ratesEmptySubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Add an effective-dated per-piece rate for this worker and process.'**
+  /// **'Add an effective-dated per-piece rate for this worker and work stage.'**
   String get ratesEmptySubtitle;
 
   /// No description provided for @ratesSelectProcessHint.
   ///
   /// In en, this message translates to:
-  /// **'Select Process'**
+  /// **'Select Work Stage'**
   String get ratesSelectProcessHint;
 
   /// No description provided for @ratesAutoCloseTitle.
@@ -1463,7 +1205,7 @@ abstract class AppLocalizations {
   /// No description provided for @ratesAutoCloseMessage.
   ///
   /// In en, this message translates to:
-  /// **'An ongoing rate exists for this process. Saving will close it on the previous day and start the new rate from your chosen date.'**
+  /// **'An ongoing rate exists for this work stage. Saving will close it on the previous day and start the new rate from your chosen date.'**
   String get ratesAutoCloseMessage;
 
   /// No description provided for @ratesOverlapError.
@@ -1475,7 +1217,7 @@ abstract class AppLocalizations {
   /// No description provided for @ratesMultipleOpenEndedError.
   ///
   /// In en, this message translates to:
-  /// **'Another ongoing rate already exists for this worker and process.'**
+  /// **'Another ongoing rate already exists for this worker and work stage.'**
   String get ratesMultipleOpenEndedError;
 
   /// No description provided for @ratesToBeforeFromError.
@@ -1544,23 +1286,11 @@ abstract class AppLocalizations {
   /// **'Repair Damaged'**
   String get stockRepairAction;
 
-  /// No description provided for @stockTabOpenIssues.
-  ///
-  /// In en, this message translates to:
-  /// **'Pending Issues'**
-  String get stockTabOpenIssues;
-
   /// No description provided for @stockTabBalances.
   ///
   /// In en, this message translates to:
   /// **'Live Stock'**
   String get stockTabBalances;
-
-  /// No description provided for @stockTabHistory.
-  ///
-  /// In en, this message translates to:
-  /// **'Timeline'**
-  String get stockTabHistory;
 
   /// No description provided for @stockTabWorkers.
   ///
@@ -1571,7 +1301,7 @@ abstract class AppLocalizations {
   /// No description provided for @stockTabProcesses.
   ///
   /// In en, this message translates to:
-  /// **'By Process'**
+  /// **'By Work Stage'**
   String get stockTabProcesses;
 
   /// No description provided for @stockAvailableGoodLabel.
@@ -1622,35 +1352,11 @@ abstract class AppLocalizations {
   /// **'Remaining Pending'**
   String get stockRemainingPendingLabel;
 
-  /// No description provided for @stockSelectLotLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Select Lot'**
-  String get stockSelectLotLabel;
-
-  /// No description provided for @stockSelectDesignLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Select Design'**
-  String get stockSelectDesignLabel;
-
   /// No description provided for @stockSelectColourLabel.
   ///
   /// In en, this message translates to:
   /// **'Select Colour'**
   String get stockSelectColourLabel;
-
-  /// No description provided for @stockSelectProcessLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Select Process'**
-  String get stockSelectProcessLabel;
-
-  /// No description provided for @stockSelectWorkerLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Select Eligible Worker'**
-  String get stockSelectWorkerLabel;
 
   /// No description provided for @stockIssueQuantityLabel.
   ///
@@ -1673,7 +1379,7 @@ abstract class AppLocalizations {
   /// No description provided for @stockRateMissingWarning.
   ///
   /// In en, this message translates to:
-  /// **'No effective historical rate exists for this worker and process on the chosen IST date.'**
+  /// **'No effective historical rate exists for this worker and work stage on the chosen IST date.'**
   String get stockRateMissingWarning;
 
   /// No description provided for @stockRateConflictWarning.
@@ -1706,16 +1412,10 @@ abstract class AppLocalizations {
   /// **'Notes (Optional)'**
   String get stockNotesLabel;
 
-  /// No description provided for @stockIssueSuccess.
-  ///
-  /// In en, this message translates to:
-  /// **'Stock issued successfully.'**
-  String get stockIssueSuccess;
-
   /// No description provided for @stockNoEligibleWorkers.
   ///
   /// In en, this message translates to:
-  /// **'No active workers are assigned to this process.'**
+  /// **'No active workers are assigned to this work stage.'**
   String get stockNoEligibleWorkers;
 
   /// No description provided for @stockInsufficientGoodError.
@@ -1783,18 +1483,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reason is required for damaged, lost, or shortage settlements.'**
   String get stockSettlementReasonRequiredError;
-
-  /// No description provided for @stockSettlementSuccess.
-  ///
-  /// In en, this message translates to:
-  /// **'Return / settlement recorded.'**
-  String get stockSettlementSuccess;
-
-  /// No description provided for @stockInheritedRateNotice.
-  ///
-  /// In en, this message translates to:
-  /// **'Original locked issue rate and billing rule will be inherited automatically.'**
-  String get stockInheritedRateNotice;
 
   /// No description provided for @stockRepairHeading.
   ///
@@ -1895,13 +1583,13 @@ abstract class AppLocalizations {
   /// No description provided for @stockEmptyHistorySubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Issue stock to a worker and process to start tracking movements.'**
+  /// **'Issue stock to a worker and work stage to start tracking movements.'**
   String get stockEmptyHistorySubtitle;
 
   /// No description provided for @stockSearchHint.
   ///
   /// In en, this message translates to:
-  /// **'Search lot, design, colour, worker, process...'**
+  /// **'Search lot, design, colour, worker, work stage...'**
   String get stockSearchHint;
 
   /// No description provided for @stockFilterAllTypes.
@@ -1988,18 +1676,6 @@ abstract class AppLocalizations {
   /// **'Earned Labour'**
   String get accountingEarnedLabourLabel;
 
-  /// No description provided for @accountingIssuedLabourInfoLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Issued Labour (Info)'**
-  String get accountingIssuedLabourInfoLabel;
-
-  /// No description provided for @accountingReceivedLabourInfoLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Received Labour (Info)'**
-  String get accountingReceivedLabourInfoLabel;
-
   /// No description provided for @accountingRegularPaidLabel.
   ///
   /// In en, this message translates to:
@@ -2011,12 +1687,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Advances Paid'**
   String get accountingAdvancePaidLabel;
-
-  /// No description provided for @accountingAdvanceRefundLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Advance Refunds'**
-  String get accountingAdvanceRefundLabel;
 
   /// No description provided for @accountingAdjustmentsLabel.
   ///
@@ -2378,12 +2048,6 @@ abstract class AppLocalizations {
   /// **'• Backups are unencrypted in V1 so you can inspect .sqlite files directly.\n• Keep backup ZIP files in a safe personal folder or external drive.\n• Restoring a Dev backup into Production StitchFlow is blocked for safety.'**
   String get backupLimitationsBody;
 
-  /// No description provided for @dashboardLiveOverview.
-  ///
-  /// In en, this message translates to:
-  /// **'Business Overview'**
-  String get dashboardLiveOverview;
-
   /// No description provided for @dashboardStockHealth.
   ///
   /// In en, this message translates to:
@@ -2399,7 +2063,7 @@ abstract class AppLocalizations {
   /// No description provided for @dashboardProcessPending.
   ///
   /// In en, this message translates to:
-  /// **'Process-Wise Pending Work'**
+  /// **'Stage-Wise Pending Work'**
   String get dashboardProcessPending;
 
   /// No description provided for @dashboardRecentActivity.
@@ -2411,7 +2075,7 @@ abstract class AppLocalizations {
   /// No description provided for @dashboardNoProcessPending.
   ///
   /// In en, this message translates to:
-  /// **'No pending stock across processes.'**
+  /// **'No pending stock across work stages.'**
   String get dashboardNoProcessPending;
 
   /// No description provided for @dashboardNoRecentActivity.
@@ -2437,54 +2101,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Business Reports'**
   String get reportsHeading;
-
-  /// No description provided for @reportsTabStockSummary.
-  ///
-  /// In en, this message translates to:
-  /// **'Stock Summary'**
-  String get reportsTabStockSummary;
-
-  /// No description provided for @reportsTabLots.
-  ///
-  /// In en, this message translates to:
-  /// **'Lot-Wise'**
-  String get reportsTabLots;
-
-  /// No description provided for @reportsTabColours.
-  ///
-  /// In en, this message translates to:
-  /// **'Design / Colour'**
-  String get reportsTabColours;
-
-  /// No description provided for @reportsTabWorkers.
-  ///
-  /// In en, this message translates to:
-  /// **'Worker Stock'**
-  String get reportsTabWorkers;
-
-  /// No description provided for @reportsTabProcesses.
-  ///
-  /// In en, this message translates to:
-  /// **'Process Stock'**
-  String get reportsTabProcesses;
-
-  /// No description provided for @reportsTabPending.
-  ///
-  /// In en, this message translates to:
-  /// **'Pending Stock'**
-  String get reportsTabPending;
-
-  /// No description provided for @reportsTabDamagedLost.
-  ///
-  /// In en, this message translates to:
-  /// **'Damaged & Lost'**
-  String get reportsTabDamagedLost;
-
-  /// No description provided for @reportsTabLabour.
-  ///
-  /// In en, this message translates to:
-  /// **'Labour'**
-  String get reportsTabLabour;
 
   /// No description provided for @reportsTabWorkerLedger.
   ///
@@ -2639,19 +2255,13 @@ abstract class AppLocalizations {
   /// No description provided for @settingsStockLabourSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Global billing rule and per-process labour override overview.'**
+  /// **'Global billing rule and per-stage labour override overview.'**
   String get settingsStockLabourSubtitle;
-
-  /// No description provided for @settingsGlobalBillingSectionTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Global Default Labour Billing Mode'**
-  String get settingsGlobalBillingSectionTitle;
 
   /// No description provided for @settingsGlobalBillingExplanationReceived.
   ///
   /// In en, this message translates to:
-  /// **'Workers earn labour when returned good pieces are recorded. Damaged pieces are excluded unless enabled on a specific process.'**
+  /// **'Workers earn labour when returned good pieces are recorded. Damaged pieces are excluded unless enabled on a specific work stage.'**
   String get settingsGlobalBillingExplanationReceived;
 
   /// No description provided for @settingsGlobalBillingExplanationGiven.
@@ -2663,13 +2273,13 @@ abstract class AppLocalizations {
   /// No description provided for @settingsProcessOverridesTitle.
   ///
   /// In en, this message translates to:
-  /// **'Process-Level Rules'**
+  /// **'Stage-Level Rules'**
   String get settingsProcessOverridesTitle;
 
   /// No description provided for @settingsProcessOverridesSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Each process inherits the global billing mode unless overridden. Tap any process to configure.'**
+  /// **'Each work stage inherits the global billing mode unless overridden. Tap any work stage to configure.'**
   String get settingsProcessOverridesSubtitle;
 
   /// No description provided for @settingsProcessInheritsGlobal.
@@ -2681,7 +2291,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsProcessOverridesGlobal.
   ///
   /// In en, this message translates to:
-  /// **'Process Override'**
+  /// **'Work Stage Override'**
   String get settingsProcessOverridesGlobal;
 
   /// No description provided for @settingsDamagedIncludedShort.
@@ -2699,7 +2309,7 @@ abstract class AppLocalizations {
   /// No description provided for @settingsNoProcessesYet.
   ///
   /// In en, this message translates to:
-  /// **'No production processes created yet.'**
+  /// **'No work stages created yet.'**
   String get settingsNoProcessesYet;
 
   /// No description provided for @settingsBackupTitle.
@@ -2858,12 +2468,6 @@ abstract class AppLocalizations {
   /// **'Create a lot with designs and colours first, or receive returned stock to replenish in-house good stock.'**
   String get stockNoStockItemsSubtitle;
 
-  /// No description provided for @stockSelectedLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Selected'**
-  String get stockSelectedLabel;
-
   /// No description provided for @stockChangeSelection.
   ///
   /// In en, this message translates to:
@@ -2873,7 +2477,7 @@ abstract class AppLocalizations {
   /// No description provided for @stockActiveProcessesLabel.
   ///
   /// In en, this message translates to:
-  /// **'Active Process'**
+  /// **'Active Work Stage'**
   String get stockActiveProcessesLabel;
 
   /// No description provided for @stockEligibleWorkersLabel.
@@ -2885,7 +2489,7 @@ abstract class AppLocalizations {
   /// No description provided for @stockNoActiveProcessesWarning.
   ///
   /// In en, this message translates to:
-  /// **'No active processes exist. Create a process before issuing stock.'**
+  /// **'No active work stages exist. Create a work stage before issuing stock.'**
   String get stockNoActiveProcessesWarning;
 
   /// No description provided for @stockBillingModePreviewLabel.
@@ -2993,7 +2597,7 @@ abstract class AppLocalizations {
   /// No description provided for @stockFilterAllProcesses.
   ///
   /// In en, this message translates to:
-  /// **'All Processes'**
+  /// **'All Work Stages'**
   String get stockFilterAllProcesses;
 
   /// No description provided for @stockPreviouslyReturnedLabel.
@@ -3113,7 +2717,7 @@ abstract class AppLocalizations {
   /// No description provided for @stockIssueNextProcessAction.
   ///
   /// In en, this message translates to:
-  /// **'Issue Returned Stock to Next Process'**
+  /// **'Issue Returned Stock to Next Work Stage'**
   String get stockIssueNextProcessAction;
 
   /// No description provided for @stockReceiveAnotherReturnAction.
@@ -3137,7 +2741,7 @@ abstract class AppLocalizations {
   /// No description provided for @stockTabSummary.
   ///
   /// In en, this message translates to:
-  /// **'Worker & Process'**
+  /// **'Worker & Work Stage'**
   String get stockTabSummary;
 
   /// No description provided for @auditActionDeactivate.
@@ -3731,7 +3335,7 @@ abstract class AppLocalizations {
   /// No description provided for @dailySummaryProcessActivityHeading.
   ///
   /// In en, this message translates to:
-  /// **'Process-Wise Activity'**
+  /// **'Stage-Wise Activity'**
   String get dailySummaryProcessActivityHeading;
 
   /// No description provided for @dailySummaryWorkerActivityHeading.
@@ -3773,7 +3377,7 @@ abstract class AppLocalizations {
   /// No description provided for @stockRecentWorkPairsLabel.
   ///
   /// In en, this message translates to:
-  /// **'Recent Process & Worker'**
+  /// **'Recent Work Stage & Worker'**
   String get stockRecentWorkPairsLabel;
 
   /// No description provided for @stockUnusualConfirmTitle.
@@ -3899,7 +3503,7 @@ abstract class AppLocalizations {
   /// No description provided for @reportCategoryProcesses.
   ///
   /// In en, this message translates to:
-  /// **'Process Performance'**
+  /// **'Work Stage Performance'**
   String get reportCategoryProcesses;
 
   /// No description provided for @reportCategoryInventory.
@@ -4031,7 +3635,7 @@ abstract class AppLocalizations {
   /// No description provided for @reportWorkerProcessBreakdown.
   ///
   /// In en, this message translates to:
-  /// **'Process-Wise Productivity'**
+  /// **'Stage-Wise Productivity'**
   String get reportWorkerProcessBreakdown;
 
   /// No description provided for @reportProcessWorkerContribution.
@@ -4079,13 +3683,13 @@ abstract class AppLocalizations {
   /// No description provided for @reportInsightsBottlenecksTitle.
   ///
   /// In en, this message translates to:
-  /// **'Process Bottlenecks'**
+  /// **'Work Stage Bottlenecks'**
   String get reportInsightsBottlenecksTitle;
 
   /// No description provided for @reportInsightsNoBottlenecks.
   ///
   /// In en, this message translates to:
-  /// **'All processes are clear — no pending bottlenecks.'**
+  /// **'All work stages are clear — no pending bottlenecks.'**
   String get reportInsightsNoBottlenecks;
 
   /// No description provided for @reportInsightsWorkerTrendsTitle.
@@ -4103,7 +3707,7 @@ abstract class AppLocalizations {
   /// No description provided for @reportInsightsLabourShareTitle.
   ///
   /// In en, this message translates to:
-  /// **'Labour Cost by Process'**
+  /// **'Labour Cost by Work Stage'**
   String get reportInsightsLabourShareTitle;
 
   /// No description provided for @reportExportAction.
@@ -4151,7 +3755,7 @@ abstract class AppLocalizations {
   /// No description provided for @reportExportFullWorkbookSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'All sheets: Daily, Workers, Processes, Inventory, Labour & Payments.'**
+  /// **'All sheets: Daily, Workers, Work Stages, Inventory, Labour & Payments.'**
   String get reportExportFullWorkbookSubtitle;
 
   /// No description provided for @reportExportCsvTitle.
@@ -4559,7 +4163,7 @@ abstract class AppLocalizations {
   /// No description provided for @validationWorkerNotAssigned.
   ///
   /// In en, this message translates to:
-  /// **'Selected worker is not actively assigned to this process.'**
+  /// **'Selected worker is not actively assigned to this work stage.'**
   String get validationWorkerNotAssigned;
 
   /// No description provided for @validationRecordNotFound.
@@ -4613,7 +4217,7 @@ abstract class AppLocalizations {
   /// No description provided for @validationUnaccountedRemaining.
   ///
   /// In en, this message translates to:
-  /// **'Process cannot be completed while pending quantity remains unaccounted.'**
+  /// **'Work Stage cannot be completed while pending quantity remains unaccounted.'**
   String get validationUnaccountedRemaining;
 
   /// No description provided for @validationOverpaymentNotAllowed.
@@ -4679,7 +4283,7 @@ abstract class AppLocalizations {
   /// No description provided for @navProcessHistory.
   ///
   /// In en, this message translates to:
-  /// **'Process History'**
+  /// **'Work Stage History'**
   String get navProcessHistory;
 
   /// No description provided for @prodHistoryDashboardTitle.
@@ -4691,13 +4295,13 @@ abstract class AppLocalizations {
   /// No description provided for @prodHistoryDashboardSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Permanent lot, worker, process & financial ledger tracking'**
+  /// **'Permanent lot, worker, work stage & financial ledger tracking'**
   String get prodHistoryDashboardSubtitle;
 
   /// No description provided for @prodHistorySearchHint.
   ///
   /// In en, this message translates to:
-  /// **'Search lot, worker, process, design, colour...'**
+  /// **'Search lot, worker, work stage, design, colour...'**
   String get prodHistorySearchHint;
 
   /// No description provided for @prodHistoryOnlyPending.
@@ -4717,12 +4321,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Assigned'**
   String get prodHistoryTotalAssigned;
-
-  /// No description provided for @prodHistoryTotalReturned.
-  ///
-  /// In en, this message translates to:
-  /// **'Returned'**
-  String get prodHistoryTotalReturned;
 
   /// No description provided for @prodHistoryTotalAccepted.
   ///
@@ -4805,7 +4403,7 @@ abstract class AppLocalizations {
   /// No description provided for @prodHistoryWorkerProcessHistory.
   ///
   /// In en, this message translates to:
-  /// **'Process-Wise History'**
+  /// **'Stage-Wise History'**
   String get prodHistoryWorkerProcessHistory;
 
   /// No description provided for @prodHistoryIncludeInactive.
@@ -4817,13 +4415,13 @@ abstract class AppLocalizations {
   /// No description provided for @prodHistoryProcessHistoryTitle.
   ///
   /// In en, this message translates to:
-  /// **'Process-Wise History'**
+  /// **'Stage-Wise History'**
   String get prodHistoryProcessHistoryTitle;
 
   /// No description provided for @prodHistoryProcessDetailsTitle.
   ///
   /// In en, this message translates to:
-  /// **'Process Production Details'**
+  /// **'Work Stage Production Details'**
   String get prodHistoryProcessDetailsTitle;
 
   /// No description provided for @prodHistoryTabLotWise.
@@ -4931,7 +4529,7 @@ abstract class AppLocalizations {
   /// No description provided for @prodHistoryOpenProcess.
   ///
   /// In en, this message translates to:
-  /// **'Open Process'**
+  /// **'Open Work Stage'**
   String get prodHistoryOpenProcess;
 
   /// No description provided for @prodHistoryLockedRateSnapshot.
@@ -4955,13 +4553,13 @@ abstract class AppLocalizations {
   /// No description provided for @prodHistoryInitialAssignmentsTitle.
   ///
   /// In en, this message translates to:
-  /// **'3. Initial Process Assignments (Optional)'**
+  /// **'3. Initial Work Stage Assignments (Optional)'**
   String get prodHistoryInitialAssignmentsTitle;
 
   /// No description provided for @prodHistoryInitialAssignmentsSubtitle.
   ///
   /// In en, this message translates to:
-  /// **'Optionally assign processes, workers, quantities & locked rates while creating the lot.'**
+  /// **'Optionally assign work stages, workers, quantities & locked rates while creating the lot.'**
   String get prodHistoryInitialAssignmentsSubtitle;
 
   /// No description provided for @prodHistoryAddAssignmentAction.
@@ -5090,36 +4688,6 @@ abstract class AppLocalizations {
   /// **'Historical lot prices stay locked to each lot and are never overwritten.'**
   String get historicalPricePreservedNote;
 
-  /// No description provided for @webBackupExportAction.
-  ///
-  /// In en, this message translates to:
-  /// **'Download Web Backup (.json)'**
-  String get webBackupExportAction;
-
-  /// No description provided for @webBackupExportDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Downloads a verified offline snapshot of all local workshop records from this browser.'**
-  String get webBackupExportDesc;
-
-  /// No description provided for @webBackupRestoreAction.
-  ///
-  /// In en, this message translates to:
-  /// **'Restore Web Backup (.json)'**
-  String get webBackupRestoreAction;
-
-  /// No description provided for @webBackupRestoreDesc.
-  ///
-  /// In en, this message translates to:
-  /// **'Validates checksum and schema before restoring all records into this browser\'s offline database.'**
-  String get webBackupRestoreDesc;
-
-  /// No description provided for @webPrintFallbackNote.
-  ///
-  /// In en, this message translates to:
-  /// **'Opened browser print dialog (use Save as PDF to download).'**
-  String get webPrintFallbackNote;
-
   /// Action label on a success message that reverses the last change.
   ///
   /// In en, this message translates to:
@@ -5171,7 +4739,7 @@ abstract class AppLocalizations {
   /// Hint in the global search box.
   ///
   /// In en, this message translates to:
-  /// **'Search lots, workers, processes…'**
+  /// **'Search lots, workers, work stages…'**
   String get uxSearchHint;
 
   /// Section title for lot results.
@@ -5186,10 +4754,10 @@ abstract class AppLocalizations {
   /// **'Workers'**
   String get uxSearchWorkers;
 
-  /// Section title for process results.
+  /// Section title for work stage results.
   ///
   /// In en, this message translates to:
-  /// **'Processes'**
+  /// **'Work Stages'**
   String get uxSearchProcesses;
 
   /// Shown when global search finds nothing.
@@ -5263,24 +4831,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'More screens'**
   String get uxMoreScreens;
-
-  /// Tooltip of the overflow menu that holds extra card actions.
-  ///
-  /// In en, this message translates to:
-  /// **'More actions'**
-  String get uxMoreActions;
-
-  /// Button that applies filters and closes the filter panel.
-  ///
-  /// In en, this message translates to:
-  /// **'Apply'**
-  String get uxApply;
-
-  /// Button that clears all filters.
-  ///
-  /// In en, this message translates to:
-  /// **'Clear all'**
-  String get uxClearAll;
 
   /// No description provided for @authSignInHeading.
   ///
@@ -5377,12 +4927,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Account & Cloud Sync'**
   String get authAccountTitle;
-
-  /// No description provided for @authAccountSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Manage Google & Phone login, linked devices, and sign-out'**
-  String get authAccountSubtitle;
 
   /// No description provided for @authOfflineModeBadge.
   ///
@@ -5534,12 +5078,6 @@ abstract class AppLocalizations {
   /// **'Needs Attention'**
   String get syncStatusNeedsAttention;
 
-  /// No description provided for @syncStatusPending.
-  ///
-  /// In en, this message translates to:
-  /// **'{count} pending'**
-  String syncStatusPending(int count);
-
   /// No description provided for @syncNowAction.
   ///
   /// In en, this message translates to:
@@ -5603,7 +5141,7 @@ abstract class AppLocalizations {
   /// No description provided for @syncMergeBothDesc.
   ///
   /// In en, this message translates to:
-  /// **'Combines all ledgers safely and keeps the newest edits for lots, workers, and processes.'**
+  /// **'Combines all ledgers safely and keeps the newest edits for lots, workers, and work stages.'**
   String get syncMergeBothDesc;
 
   /// No description provided for @syncKeepCloudAction.
@@ -5719,12 +5257,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Last Checked'**
   String get dataHealthCheckedAtLabel;
-
-  /// No description provided for @dataHealthSchemaVersionLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Schema Version'**
-  String get dataHealthSchemaVersionLabel;
 
   /// No description provided for @dataHealthDbSizeLabel.
   ///
@@ -5885,7 +5417,7 @@ abstract class AppLocalizations {
   /// No description provided for @routingTitle.
   ///
   /// In en, this message translates to:
-  /// **'Process Routing'**
+  /// **'Work Stage Routing'**
   String get routingTitle;
 
   /// No description provided for @routingRefreshTooltip.
@@ -5903,7 +5435,7 @@ abstract class AppLocalizations {
   /// No description provided for @routingAddProcessAction.
   ///
   /// In en, this message translates to:
-  /// **'Add Process'**
+  /// **'Add Work Stage'**
   String get routingAddProcessAction;
 
   /// No description provided for @routingReassignFromFactoryAction.
@@ -5915,7 +5447,7 @@ abstract class AppLocalizations {
   /// No description provided for @routingAddOperationTitle.
   ///
   /// In en, this message translates to:
-  /// **'Add Process Operation'**
+  /// **'Add Work Stage to Lot'**
   String get routingAddOperationTitle;
 
   /// No description provided for @routingVariantLabel.
@@ -5927,7 +5459,7 @@ abstract class AppLocalizations {
   /// No description provided for @routingOperationLabel.
   ///
   /// In en, this message translates to:
-  /// **'Operation / Process'**
+  /// **'Work Stage'**
   String get routingOperationLabel;
 
   /// No description provided for @routingAssignWorkerLabel.
@@ -5975,13 +5507,13 @@ abstract class AppLocalizations {
   /// No description provided for @routingAddDispatchAction.
   ///
   /// In en, this message translates to:
-  /// **'Add & Dispatch Process'**
+  /// **'Add & Dispatch Work Stage'**
   String get routingAddDispatchAction;
 
   /// No description provided for @routingSavePendingAction.
   ///
   /// In en, this message translates to:
-  /// **'Save Pending Process'**
+  /// **'Save Pending Work Stage'**
   String get routingSavePendingAction;
 
   /// No description provided for @routingAddColourFirstError.
@@ -5993,7 +5525,7 @@ abstract class AppLocalizations {
   /// No description provided for @routingAddProcessWorkerFirstError.
   ///
   /// In en, this message translates to:
-  /// **'Please create at least one active Process and Worker first.'**
+  /// **'Please create at least one active Work Stage and Worker first.'**
   String get routingAddProcessWorkerFirstError;
 
   /// No description provided for @routingInvalidQuantityError.
@@ -6023,7 +5555,7 @@ abstract class AppLocalizations {
   /// No description provided for @routingNextOperationLabel.
   ///
   /// In en, this message translates to:
-  /// **'Next Operation / Process'**
+  /// **'Next Work Stage'**
   String get routingNextOperationLabel;
 
   /// No description provided for @routingDestinationWorkerLabel.
@@ -6149,7 +5681,7 @@ abstract class AppLocalizations {
   /// No description provided for @routingCancelProcessAction.
   ///
   /// In en, this message translates to:
-  /// **'Cancel Process'**
+  /// **'Cancel Work Stage'**
   String get routingCancelProcessAction;
 
   /// No description provided for @routingFactoryReadyLabel.
@@ -6287,13 +5819,13 @@ abstract class AppLocalizations {
   /// No description provided for @routingErrPendingRemaining.
   ///
   /// In en, this message translates to:
-  /// **'Cannot complete process while pending quantity remains unaccounted.'**
+  /// **'Cannot complete work stage while pending quantity remains unaccounted.'**
   String get routingErrPendingRemaining;
 
   /// No description provided for @routingErrHeldPiecesCancel.
   ///
   /// In en, this message translates to:
-  /// **'Return or transfer all held pieces before cancelling this process.'**
+  /// **'Return or transfer all held pieces before cancelling this work stage.'**
   String get routingErrHeldPiecesCancel;
 
   /// No description provided for @routingErrSameWorkerProcess.
@@ -6329,7 +5861,7 @@ abstract class AppLocalizations {
   /// No description provided for @routingErrProcessRequired.
   ///
   /// In en, this message translates to:
-  /// **'Select an operation/process.'**
+  /// **'Select a work stage.'**
   String get routingErrProcessRequired;
 
   /// No description provided for @routingErrWorkerRequired.
@@ -6367,12 +5899,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Share Return / QC Slip'**
   String get slipShareReturnAction;
-
-  /// No description provided for @slipShareReceiptAction.
-  ///
-  /// In en, this message translates to:
-  /// **'Share Payment Receipt'**
-  String get slipShareReceiptAction;
 
   /// No description provided for @slipShareKhataAction.
   ///
@@ -6422,42 +5948,6 @@ abstract class AppLocalizations {
   /// **'Slip ready to share.'**
   String get slipGeneratedSuccess;
 
-  /// No description provided for @slipRefLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Ref'**
-  String get slipRefLabel;
-
-  /// No description provided for @slipBalancePayable.
-  ///
-  /// In en, this message translates to:
-  /// **'Outstanding Payable'**
-  String get slipBalancePayable;
-
-  /// No description provided for @slipBalanceAdvance.
-  ///
-  /// In en, this message translates to:
-  /// **'Advance Credit'**
-  String get slipBalanceAdvance;
-
-  /// No description provided for @slipBalanceSettled.
-  ///
-  /// In en, this message translates to:
-  /// **'Account Settled'**
-  String get slipBalanceSettled;
-
-  /// No description provided for @slipFooterOffline.
-  ///
-  /// In en, this message translates to:
-  /// **'Generated offline via StitchFlow'**
-  String get slipFooterOffline;
-
-  /// No description provided for @undoAuditedSuccess.
-  ///
-  /// In en, this message translates to:
-  /// **'Reversal recorded in audit ledger.'**
-  String get undoAuditedSuccess;
-
   /// No description provided for @draftRestoredBanner.
   ///
   /// In en, this message translates to:
@@ -6497,7 +5987,7 @@ abstract class AppLocalizations {
   /// No description provided for @setupStepProcesses.
   ///
   /// In en, this message translates to:
-  /// **'Create Production Processes'**
+  /// **'Create Work Stages'**
   String get setupStepProcesses;
 
   /// No description provided for @setupStepWorkers.
@@ -6661,12 +6151,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Sync Conflict Inspector'**
   String get syncConflictsTitle;
-
-  /// No description provided for @syncConflictsSubtitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Review superseded local edits from multi-device/team sync and optionally restore them.'**
-  String get syncConflictsSubtitle;
 
   /// No description provided for @syncConflictsOpenAction.
   ///
@@ -6967,6 +6451,714 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Training progress reset. You can start fresh anytime.'**
   String get guideResetProgressDone;
+
+  /// No description provided for @lotDesignPriceHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Design price: {price}'**
+  String lotDesignPriceHelper(String price);
+
+  /// No description provided for @lotStageDefaultRateHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Stage default rate: {price}'**
+  String lotStageDefaultRateHelper(String price);
+
+  /// No description provided for @accountingPayFullAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Pay full {amount}'**
+  String accountingPayFullAction(String amount);
+
+  /// No description provided for @accountingUndoFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not undo the payment. Open the worker ledger to reverse it.'**
+  String get accountingUndoFailed;
+
+  /// No description provided for @lotNeedVariantStageWorker.
+  ///
+  /// In en, this message translates to:
+  /// **'Add at least one colour variant, active work stage, and active worker first.'**
+  String get lotNeedVariantStageWorker;
+
+  /// No description provided for @lotDesignColourVariantLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Design / Colour Variant'**
+  String get lotDesignColourVariantLabel;
+
+  /// No description provided for @lotQtyPcsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Qty (pcs)'**
+  String get lotQtyPcsLabel;
+
+  /// No description provided for @lotLockedRateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Locked Rate (₹/pc)'**
+  String get lotLockedRateLabel;
+
+  /// No description provided for @lotEnterPositiveQty.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a positive quantity.'**
+  String get lotEnterPositiveQty;
+
+  /// No description provided for @lotEnterValidRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid rate.'**
+  String get lotEnterValidRate;
+
+  /// No description provided for @lotDesignAlreadyAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Design \"{a}\" is already added to this lot.'**
+  String lotDesignAlreadyAdded(Object a);
+
+  /// No description provided for @lotEnterDesignName.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a design name.'**
+  String get lotEnterDesignName;
+
+  /// No description provided for @lotDesignNameTooLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Design name is too long.'**
+  String get lotDesignNameTooLong;
+
+  /// No description provided for @lotEnterValidDefaultPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid non-negative default price.'**
+  String get lotEnterValidDefaultPrice;
+
+  /// No description provided for @lotSelectColoursForDesign.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Colours — {a}'**
+  String lotSelectColoursForDesign(Object a);
+
+  /// No description provided for @lotSelectColoursColourOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Colours (Colour-Only Lot)'**
+  String get lotSelectColoursColourOnly;
+
+  /// No description provided for @lotEnterPositiveQtyFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a positive quantity for {a}.'**
+  String lotEnterPositiveQtyFor(Object a);
+
+  /// No description provided for @lotEnterPositiveQtyForVariant.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a positive quantity for {a} — {b}.'**
+  String lotEnterPositiveQtyForVariant(Object a, Object b);
+
+  /// No description provided for @lotEnterValidPriceForVariant.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid non-negative unit price for {a} — {b}.'**
+  String lotEnterValidPriceForVariant(Object a, Object b);
+
+  /// No description provided for @lotEnterValidPriceFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid non-negative unit price for {a}.'**
+  String lotEnterValidPriceFor(Object a);
+
+  /// No description provided for @lotQtyExceedsMaxFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity for {a} exceeds the maximum limit.'**
+  String lotQtyExceedsMaxFor(Object a);
+
+  /// No description provided for @lotCreatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot {a} created successfully.'**
+  String lotCreatedSuccess(Object a);
+
+  /// No description provided for @lotSummaryLive.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot Summary (Live)'**
+  String get lotSummaryLive;
+
+  /// No description provided for @lotColoursLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Colours'**
+  String get lotColoursLabel;
+
+  /// No description provided for @lotTotalQtyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Qty'**
+  String get lotTotalQtyLabel;
+
+  /// No description provided for @lotPiecesValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{a} pcs'**
+  String lotPiecesValue(Object a);
+
+  /// No description provided for @lotSkuValueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'SKU Value'**
+  String get lotSkuValueLabel;
+
+  /// No description provided for @lotSectionInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'1. Lot Information'**
+  String get lotSectionInfo;
+
+  /// No description provided for @lotSectionDesigns.
+  ///
+  /// In en, this message translates to:
+  /// **'2. Designs, Colours & SKU Pricing'**
+  String get lotSectionDesigns;
+
+  /// No description provided for @lotSectionDesignsHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit prices here are SKU reference prices (separate from worker labour rates). You can add designs, colours, quantities, and prices in one workflow.'**
+  String get lotSectionDesignsHelp;
+
+  /// No description provided for @lotModeWithDesigns.
+  ///
+  /// In en, this message translates to:
+  /// **'With Design(s)'**
+  String get lotModeWithDesigns;
+
+  /// No description provided for @lotModeColourOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'Colour-Only (No Design)'**
+  String get lotModeColourOnly;
+
+  /// No description provided for @lotSelectExistingDesign.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Existing Design'**
+  String get lotSelectExistingDesign;
+
+  /// No description provided for @lotAddNewDesign.
+  ///
+  /// In en, this message translates to:
+  /// **'Add New Design'**
+  String get lotAddNewDesign;
+
+  /// No description provided for @lotNewDesignInline.
+  ///
+  /// In en, this message translates to:
+  /// **'New Design (Inline)'**
+  String get lotNewDesignInline;
+
+  /// No description provided for @lotDefaultUnitPriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Unit Price (₹ / pc, optional)'**
+  String get lotDefaultUnitPriceLabel;
+
+  /// No description provided for @lotAddDesignToLot.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Design to Lot'**
+  String get lotAddDesignToLot;
+
+  /// No description provided for @lotNoDesignsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No designs added yet. Select an existing design or tap \"+ Add New Design\" above (or save an empty lot and add designs later).'**
+  String get lotNoDesignsYet;
+
+  /// No description provided for @lotColourVariantsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Colour Variants ({a})'**
+  String lotColourVariantsCount(Object a);
+
+  /// No description provided for @lotAddColours.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Colours'**
+  String get lotAddColours;
+
+  /// No description provided for @lotAddColoursHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap \"Add Colours\" to pick colours from the palette or create custom colours with quantity & price.'**
+  String get lotAddColoursHelp;
+
+  /// No description provided for @lotDefaultPriceValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Default: {a}'**
+  String lotDefaultPriceValue(Object a);
+
+  /// No description provided for @lotRemoveDesign.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove design'**
+  String get lotRemoveDesign;
+
+  /// No description provided for @lotRemoveColour.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove colour'**
+  String get lotRemoveColour;
+
+  /// No description provided for @lotUnitPriceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit Price (₹)'**
+  String get lotUnitPriceLabel;
+
+  /// No description provided for @lotColourDetailsFor.
+  ///
+  /// In en, this message translates to:
+  /// **'{a} Details'**
+  String lotColourDetailsFor(Object a);
+
+  /// No description provided for @lotColourDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Colour Details'**
+  String get lotColourDetails;
+
+  /// No description provided for @lotColourDetailsLoadError.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load Colour Details'**
+  String get lotColourDetailsLoadError;
+
+  /// No description provided for @lotColourNotFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Colour Variant Not Found'**
+  String get lotColourNotFound;
+
+  /// No description provided for @lotColourNotFoundHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'This colour variant may have been removed from the lot.'**
+  String get lotColourNotFoundHelp;
+
+  /// No description provided for @lotHashDesign.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot #{a}  •  Design: {b}'**
+  String lotHashDesign(Object a, Object b);
+
+  /// No description provided for @lotQtyPcsValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot Qty: {a} pcs'**
+  String lotQtyPcsValue(Object a);
+
+  /// No description provided for @lotTotalAssignedPcs.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Assigned: {a} pcs'**
+  String lotTotalAssignedPcs(Object a);
+
+  /// No description provided for @lotUnitValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Unit Value: {a}'**
+  String lotUnitValue(Object a);
+
+  /// No description provided for @lotDamagedPcs.
+  ///
+  /// In en, this message translates to:
+  /// **'Damaged: {a} pcs'**
+  String lotDamagedPcs(Object a);
+
+  /// No description provided for @lotManageStagesFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Work Stages for {a}'**
+  String lotManageStagesFor(Object a);
+
+  /// No description provided for @lotAvailableFactory.
+  ///
+  /// In en, this message translates to:
+  /// **'Available (Factory)'**
+  String get lotAvailableFactory;
+
+  /// No description provided for @lotPendingWorkers.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending (Workers)'**
+  String get lotPendingWorkers;
+
+  /// No description provided for @lotCompletedHandedOver.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed / Handed Over'**
+  String get lotCompletedHandedOver;
+
+  /// No description provided for @lotStageBreakdown.
+  ///
+  /// In en, this message translates to:
+  /// **'Stage-wise Breakdown'**
+  String get lotStageBreakdown;
+
+  /// No description provided for @lotStageSummaryLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned: {a} pcs • Completed: {b} pcs • Pending: {c} pcs'**
+  String lotStageSummaryLine(Object a, Object b, Object c);
+
+  /// No description provided for @lotWorkerDistribution.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker-wise Distribution & Pricing'**
+  String get lotWorkerDistribution;
+
+  /// No description provided for @lotNoWorkersAssignedFor.
+  ///
+  /// In en, this message translates to:
+  /// **'No workers have been assigned to {a} yet.'**
+  String lotNoWorkersAssignedFor(Object a);
+
+  /// No description provided for @lotAssignedPendingLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned: {a} pcs • Pending: {b} pcs'**
+  String lotAssignedPendingLine(Object a, Object b);
+
+  /// No description provided for @lotRatePayableLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate: {a} / {b} • Payable: {c}'**
+  String lotRatePayableLine(Object a, Object b, Object c);
+
+  /// No description provided for @lotColourCostSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Colour Cost Summary'**
+  String get lotColourCostSummary;
+
+  /// No description provided for @lotBaseStageCost.
+  ///
+  /// In en, this message translates to:
+  /// **'Base Work Stage Cost'**
+  String get lotBaseStageCost;
+
+  /// No description provided for @lotAdditionalCharges.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional Charges'**
+  String get lotAdditionalCharges;
+
+  /// No description provided for @lotDeductions.
+  ///
+  /// In en, this message translates to:
+  /// **'Deductions'**
+  String get lotDeductions;
+
+  /// No description provided for @lotPaidToWorkers.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid to Workers'**
+  String get lotPaidToWorkers;
+
+  /// No description provided for @lotMovementHistoryCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Movement History ({a})'**
+  String lotMovementHistoryCount(Object a);
+
+  /// No description provided for @lotMovementHistoryEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Dispatches, direct transfers, and returns for {a} will appear here.'**
+  String lotMovementHistoryEmpty(Object a);
+
+  /// No description provided for @lotReceivedOfLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Received: {a}/{b} • {c}'**
+  String lotReceivedOfLine(Object a, Object b, Object c);
+
+  /// No description provided for @lotStatusNotStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Started'**
+  String get lotStatusNotStarted;
+
+  /// No description provided for @lotStatusInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get lotStatusInProgress;
+
+  /// No description provided for @lotStatusPendingCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending ({a})'**
+  String lotStatusPendingCount(Object a);
+
+  /// No description provided for @lotInitialColoursCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Initial Colours ({a})'**
+  String lotInitialColoursCount(Object a);
+
+  /// No description provided for @lotSelectInitialColours.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Initial Colours'**
+  String get lotSelectInitialColours;
+
+  /// No description provided for @lotSelectColoursNoDesign.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Colours (No Design)'**
+  String get lotSelectColoursNoDesign;
+
+  /// No description provided for @lotRoutingHandovers.
+  ///
+  /// In en, this message translates to:
+  /// **'Work Stage Routing & Handovers'**
+  String get lotRoutingHandovers;
+
+  /// No description provided for @lotAddColourNoDesign.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Colour (No Design)'**
+  String get lotAddColourNoDesign;
+
+  /// No description provided for @lotDesignValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Design: {a}'**
+  String lotDesignValue(Object a);
+
+  /// No description provided for @lotTotalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total'**
+  String get lotTotalLabel;
+
+  /// No description provided for @lotDoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get lotDoneLabel;
+
+  /// No description provided for @lotAddCustomColour.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Custom Colour'**
+  String get lotAddCustomColour;
+
+  /// No description provided for @lotEditColour.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Colour'**
+  String get lotEditColour;
+
+  /// No description provided for @lotHexCodeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'HEX Code (e.g. #DC2626)'**
+  String get lotHexCodeLabel;
+
+  /// No description provided for @lotSaveColour.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Colour'**
+  String get lotSaveColour;
+
+  /// No description provided for @lotSearchColourHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search colour name or HEX'**
+  String get lotSearchColourHint;
+
+  /// No description provided for @lotCustomColour.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get lotCustomColour;
+
+  /// No description provided for @lotRecentlyUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Recently Used'**
+  String get lotRecentlyUsed;
+
+  /// No description provided for @lotColourPaletteHelp.
+  ///
+  /// In en, this message translates to:
+  /// **'Colour Palette (Tap to select, long-press to edit)'**
+  String get lotColourPaletteHelp;
+
+  /// No description provided for @lotSelectedColoursCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected Colours ({a})'**
+  String lotSelectedColoursCount(Object a);
+
+  /// No description provided for @lotSelectColoursAbove.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Colours Above'**
+  String get lotSelectColoursAbove;
+
+  /// No description provided for @lotAddColoursSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'Add {a} Colour(s) • {b} pcs'**
+  String lotAddColoursSummary(Object a, Object b);
+
+  /// No description provided for @lotInitialQtyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Initial Qty'**
+  String get lotInitialQtyLabel;
+
+  /// No description provided for @lotDesignsColoursBreakdown.
+  ///
+  /// In en, this message translates to:
+  /// **'Designs & Colours Breakdown'**
+  String get lotDesignsColoursBreakdown;
+
+  /// No description provided for @lotInHouseValue.
+  ///
+  /// In en, this message translates to:
+  /// **'In-House: {a}'**
+  String lotInHouseValue(Object a);
+
+  /// No description provided for @lotWithWorkersValue.
+  ///
+  /// In en, this message translates to:
+  /// **'With Workers: {a}'**
+  String lotWithWorkersValue(Object a);
+
+  /// No description provided for @lotPendingQcValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending QC: {a}'**
+  String lotPendingQcValue(Object a);
+
+  /// No description provided for @lotDamagedValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Damaged: {a}'**
+  String lotDamagedValue(Object a);
+
+  /// No description provided for @lotStageAssignmentsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Work Stage Assignments & Worker Ledger ({a})'**
+  String lotStageAssignmentsCount(Object a);
+
+  /// No description provided for @lotNoStageAssignments.
+  ///
+  /// In en, this message translates to:
+  /// **'No work stage assignments recorded for this lot yet.'**
+  String get lotNoStageAssignments;
+
+  /// No description provided for @lotRejectionRecordsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejection & Repair Records ({a})'**
+  String lotRejectionRecordsCount(Object a);
+
+  /// No description provided for @lotRejectedLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected: {a} • Re-Approved: {b} • Open: {c}'**
+  String lotRejectedLine(Object a, Object b, Object c);
+
+  /// No description provided for @lotReasonValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason: {a}'**
+  String lotReasonValue(Object a);
+
+  /// No description provided for @lotAssignedValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Assigned: {a}'**
+  String lotAssignedValue(Object a);
+
+  /// No description provided for @lotReturnedValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Returned: {a}'**
+  String lotReturnedValue(Object a);
+
+  /// No description provided for @lotAcceptedValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Accepted: {a}'**
+  String lotAcceptedValue(Object a);
+
+  /// No description provided for @lotOutstandingValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Outstanding: {a}'**
+  String lotOutstandingValue(Object a);
+
+  /// No description provided for @lotRejectedValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejected: {a}'**
+  String lotRejectedValue(Object a);
+
+  /// No description provided for @lotRateEarnedLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate: {a}/pc • Earned: {b}'**
+  String lotRateEarnedLine(Object a, Object b);
+
+  /// No description provided for @lotCostLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost'**
+  String get lotCostLabel;
+
+  /// No description provided for @lotLotsValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Lots: {a}'**
+  String lotLotsValue(Object a);
+
+  /// No description provided for @lotWorkersValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Workers: {a}'**
+  String lotWorkersValue(Object a);
+
+  /// No description provided for @lotCostPaidOutstandingLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost: {a} • Paid (est): {b} • Outstanding (est): {c}'**
+  String lotCostPaidOutstandingLine(Object a, Object b, Object c);
+
+  /// No description provided for @stockStageDefaultBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Stage Default'**
+  String get stockStageDefaultBadge;
+
+  /// No description provided for @stockInheritedFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Inherited from {a} ({b})'**
+  String stockInheritedFrom(Object a, Object b);
 }
 
 class _AppLocalizationsDelegate

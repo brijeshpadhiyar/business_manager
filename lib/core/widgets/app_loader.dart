@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:business_manager/core/design_system/app_colors.dart';
@@ -249,88 +248,6 @@ final class AppLoader extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-/// App-wide blocking loader for long actions (save, export, restore…).
-///
-/// ```dart
-/// final result = await AppLoadingOverlay.run(
-///   context,
-///   () => repository.export(),
-///   message: l10n.exporting,
-/// );
-/// ```
-///
-/// Dims the app with a scrim, shows the standard [AppLoader] card, blocks
-/// taps and back navigation, and always removes itself — even on error.
-/// Nested calls share one overlay.
-abstract final class AppLoadingOverlay {
-  static OverlayEntry? _entry;
-  static int _depth = 0;
-  static final ValueNotifier<String?> _message = ValueNotifier<String?>(null);
-
-  static Future<T> run<T>(
-    BuildContext context,
-    Future<T> Function() task, {
-    String? message,
-  }) async {
-    show(context, message: message);
-    try {
-      return await task();
-    } finally {
-      hide();
-    }
-  }
-
-  static void show(BuildContext context, {String? message}) {
-    _message.value = message;
-    _depth++;
-    if (_entry != null) return;
-    final overlay = Overlay.maybeOf(context, rootOverlay: true);
-    if (overlay == null) return;
-    _entry = OverlayEntry(builder: (_) => _OverlayBody(message: _message));
-    overlay.insert(_entry!);
-  }
-
-  static void hide() {
-    if (_depth > 0) _depth--;
-    if (_depth == 0) {
-      _entry?.remove();
-      _entry = null;
-    }
-  }
-}
-
-final class _OverlayBody extends StatelessWidget {
-  const _OverlayBody({required this.message});
-
-  final ValueNotifier<String?> message;
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return PopScope(
-      canPop: false,
-      child: Stack(
-        fit: StackFit.expand,
-        children: [
-          ModalBarrier(
-            dismissible: false,
-            color: (isDark ? Colors.black : AppColors.slate900).withValues(
-              alpha: isDark ? 0.55 : 0.32,
-            ),
-          ),
-          Material(
-            type: MaterialType.transparency,
-            child: ValueListenableBuilder<String?>(
-              valueListenable: message,
-              builder: (_, value, _) => AppLoader(message: value),
-            ),
-          ),
-        ],
       ),
     );
   }

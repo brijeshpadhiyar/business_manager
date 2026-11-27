@@ -59,24 +59,10 @@ An **offline-first, multi-platform Flutter Garment & Production Management Syste
 | 20 | [docs/20_testing_strategy.md](docs/20_testing_strategy.md) | Unit, DB migration, BLoC, widget & integration tests |
 | 21 | [docs/21_implementation_roadmap.md](docs/21_implementation_roadmap.md) | Phased implementation sequence & milestones |
 | 22 | [docs/22_technical_decisions.md](docs/22_technical_decisions.md) | Formal Architecture Decision Records (ADRs) |
-| 23 | [docs/23_DOCUMENTATION_AUDIT_REPORT.md](docs/23_DOCUMENTATION_AUDIT_REPORT.md) | Complete documentation audit & readiness sign-off |
 | 24 | [docs/24_FINAL_TECHNICAL_SAFEGUARDS.md](docs/24_FINAL_TECHNICAL_SAFEGUARDS.md) | Final technical safeguards (reversal guard, idempotency, WAL FULL) |
-| 25 | [docs/25_MILESTONE_1_IMPLEMENTATION_REPORT.md](docs/25_MILESTONE_1_IMPLEMENTATION_REPORT.md) | Milestone 1 foundation implementation & validation report |
-| 26 | [docs/26_MILESTONE_2_IMPLEMENTATION_REPORT.md](docs/26_MILESTONE_2_IMPLEMENTATION_REPORT.md) | Milestone 2 design system & common widgets report |
-| 27 | [docs/27_MILESTONE_3_IMPLEMENTATION_REPORT.md](docs/27_MILESTONE_3_IMPLEMENTATION_REPORT.md) | Milestone 3 offline database core & media storage report |
 | 28 | [docs/28_STITCHFLOW_BRAND_AND_APP_IDENTITY.md](docs/28_STITCHFLOW_BRAND_AND_APP_IDENTITY.md) | Official StitchFlow brand, logo, colors & identity spec |
-| 29 | [docs/29_MILESTONE_3_5_IMPLEMENTATION_REPORT.md](docs/29_MILESTONE_3_5_IMPLEMENTATION_REPORT.md) | Milestone 3.5 branding & platform identity report |
-| 30 | [docs/30_MILESTONE_4_IMPLEMENTATION_REPORT.md](docs/30_MILESTONE_4_IMPLEMENTATION_REPORT.md) | Milestone 4 business foundation (Modules A–F) report |
 | 31 | [docs/31_STITCHFLOW_BUILD_AUTOMATION.md](docs/31_STITCHFLOW_BUILD_AUTOMATION.md) | One-command Windows APK build automation guide |
-| 32 | [docs/32_MILESTONE_3_6_IMPLEMENTATION_REPORT.md](docs/32_MILESTONE_3_6_IMPLEMENTATION_REPORT.md) | Milestone 3.6 APK build automation report |
-| 33 | [docs/33_MILESTONE_5_IMPLEMENTATION_REPORT.md](docs/33_MILESTONE_5_IMPLEMENTATION_REPORT.md) | Milestone 5 processes, workers & historical rates report |
 | 34 | [docs/34_UI_UX_DESIGN_SYSTEM.md](docs/34_UI_UX_DESIGN_SYSTEM.md) | StitchFlow Premium Material 3 UI/UX design system & motion spec |
-| 35 | [docs/35_MILESTONE_6_STOCK_MOVEMENTS_REPORT.md](docs/35_MILESTONE_6_STOCK_MOVEMENTS_REPORT.md) | Milestone 6 stock movements, settlements & reversal safeguards report |
-| 36 | [docs/36_MILESTONE_7_LABOUR_AND_WORKER_ACCOUNTS_REPORT.md](docs/36_MILESTONE_7_LABOUR_AND_WORKER_ACCOUNTS_REPORT.md) | Milestone 7 labour calculation, worker ledger & payments report |
-| 37 | [docs/37_MILESTONE_8_BACKUP_RESTORE_REPORT.md](docs/37_MILESTONE_8_BACKUP_RESTORE_REPORT.md) | Milestone 8 offline WAL-safe backup & atomic restore report |
-| 38 | [docs/38_MILESTONE_9_DASHBOARD_REPORTS_REPORT.md](docs/38_MILESTONE_9_DASHBOARD_REPORTS_REPORT.md) | Milestone 9 live dashboard & 10 business reports report |
-| 39 | [docs/39_MILESTONE_10_FINAL_QA_RELEASE_REPORT.md](docs/39_MILESTONE_10_FINAL_QA_RELEASE_REPORT.md) | Milestone 10 full QA, performance & release readiness report |
-| 40 | [docs/40_STITCHFLOW_V1_1_UX_IMPROVEMENT_REPORT.md](docs/40_STITCHFLOW_V1_1_UX_IMPROVEMENT_REPORT.md) | V1.1 UI/typography fixes, Android 12+ splash, centralized Settings/Help & redesigned Stock workflows |
 
 ### Governance Files
 - [CHANGELOG.md](CHANGELOG.md) — Version history and milestone tracking
@@ -106,10 +92,16 @@ Web: see [docs/42_BUILD_COMMANDS_ALL_PLATFORMS.md](docs/42_BUILD_COMMANDS_ALL_PL
 
 ## Android Flavor Run Commands
 
+First copy `config/dev.example.json` to `config/dev.local.json` (and
+`config/prod.example.json` to `config/prod.local.json`) and fill in the
+Supabase URL and publishable key. The `*.local.json` files are gitignored.
+Release builds in CI read them from the `APP_CONFIG_DEV` / `APP_CONFIG_PROD`
+repository secrets.
+
 ```bash
 # Android Development Flavor
-flutter run --flavor dev -t lib/main_dev.dart --dart-define-from-file=config/dev.json
+flutter run --flavor dev -t lib/main_dev.dart --dart-define-from-file=config/dev.local.json
 
 # Android Production Flavor
-flutter run --flavor prod -t lib/main_prod.dart --dart-define-from-file=config/prod.json
+flutter run --flavor prod -t lib/main_prod.dart --dart-define-from-file=config/prod.local.json
 ```

@@ -197,22 +197,16 @@ final class _LotCreatePageState extends State<LotCreatePage> {
     if (skuOptions.isEmpty ||
         _activeProcesses.isEmpty ||
         _activeWorkers.isEmpty) {
-      AppFeedback.showError(
-        context,
-        'Add at least one colour variant, active process, and active worker first.',
-      );
+      AppFeedback.showError(context, context.l10n.lotNeedVariantStageWorker);
       return;
     }
 
     var selectedSkuIdx = 0;
     var selectedProcId = _activeProcesses.first.id;
     var selectedWorkerId = _activeWorkers.first.id;
-    final qtyCtrl = TextEditingController(text: '${skuOptions.first.qty}');
-    final rateCtrl = TextEditingController(
-      text: MoneyFormatter.formatPaiseForInput(
-        _activeProcesses.first.defaultRatePaise,
-      ),
-    );
+    // Quantity and rate start empty: the user types them for every entry.
+    final qtyCtrl = TextEditingController();
+    final rateCtrl = TextEditingController();
     final notesCtrl = TextEditingController();
     String? err;
 
@@ -227,7 +221,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 AppDropdown<int>(
-                  label: 'Design / Colour Variant',
+                  label: context.l10n.lotDesignColourVariantLabel,
                   value: selectedSkuIdx,
                   items: List<int>.generate(skuOptions.length, (i) => i),
                   itemLabelBuilder: (i) {
@@ -236,10 +230,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                   },
                   onChanged: (v) {
                     if (v != null) {
-                      setSheetState(() {
-                        selectedSkuIdx = v;
-                        qtyCtrl.text = '${skuOptions[v].qty}';
-                      });
+                      setSheetState(() => selectedSkuIdx = v);
                     }
                   },
                 ),
@@ -251,17 +242,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                   itemLabelBuilder: (id) =>
                       _activeProcesses.firstWhere((p) => p.id == id).name,
                   onChanged: (v) {
-                    if (v != null) {
-                      final proc = _activeProcesses.firstWhere(
-                        (p) => p.id == v,
-                      );
-                      setSheetState(() {
-                        selectedProcId = v;
-                        rateCtrl.text = MoneyFormatter.formatPaiseForInput(
-                          proc.defaultRatePaise,
-                        );
-                      });
-                    }
+                    if (v != null) setSheetState(() => selectedProcId = v);
                   },
                 ),
                 const SizedBox(height: AppSpacing.sm),
@@ -281,8 +262,11 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                     Expanded(
                       child: AppTextField(
                         controller: qtyCtrl,
-                        validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.quantityValidator(v)),
-                        label: 'Qty (pcs)',
+                        validator: ValidationLocalizer.wrap(
+                          context.l10n,
+                          (v) => AppValidators.quantityValidator(v),
+                        ),
+                        label: context.l10n.lotQtyPcsLabel,
                         keyboardType: TextInputType.number,
                         inputFormatters: [
                           FilteringTextInputFormatter.digitsOnly,
@@ -293,8 +277,21 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                     Expanded(
                       child: AppTextField(
                         controller: rateCtrl,
-                        validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeAmountValidator(v)),
-                        label: 'Locked Rate (₹/pc)',
+                        validator: ValidationLocalizer.wrap(
+                          context.l10n,
+                          (v) => AppValidators.nonNegativeAmountValidator(v),
+                        ),
+                        label: context.l10n.lotLockedRateLabel,
+                        helperText: () {
+                          final rate = _activeProcesses
+                              .firstWhere((p) => p.id == selectedProcId)
+                              .defaultRatePaise;
+                          return rate > 0
+                              ? context.l10n.lotStageDefaultRateHelper(
+                                  MoneyFormatter.formatPaise(rate),
+                                )
+                              : null;
+                        }(),
                         keyboardType: const TextInputType.numberWithOptions(
                           decimal: true,
                         ),
@@ -321,16 +318,18 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                     final qty = int.tryParse(qtyCtrl.text.trim()) ?? 0;
                     final parsedRate = AppValidators.parseRupeesToPaiseExact(
                       rateCtrl.text,
-                      isRequired: false,
+                      isRequired: true,
                       allowZero: true,
                     );
                     if (qty <= 0) {
-                      setSheetState(() => err = 'Enter a positive quantity.');
+                      setSheetState(
+                        () => err = context.l10n.lotEnterPositiveQty,
+                      );
                       return;
                     }
                     if (!parsedRate.validation.isValid ||
                         parsedRate.paise == null) {
-                      setSheetState(() => err = 'Enter a valid rate.');
+                      setSheetState(() => err = context.l10n.lotEnterValidRate);
                       return;
                     }
                     final sku = skuOptions[selectedSkuIdx];
@@ -409,7 +408,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
     if (trimmed.isEmpty) return;
     if (_hasDesignName(trimmed)) {
       setState(() {
-        _inlineDesignError = 'Design "$trimmed" is already added to this lot.';
+        _inlineDesignError = context.l10n.lotDesignAlreadyAdded(trimmed);
       });
       return;
     }
@@ -426,17 +425,17 @@ final class _LotCreatePageState extends State<LotCreatePage> {
   void _saveInlineNewDesign() {
     final cleanName = _newDesignNameCtrl.text.trim();
     if (cleanName.isEmpty) {
-      setState(() => _inlineDesignError = 'Enter a design name.');
+      setState(() => _inlineDesignError = context.l10n.lotEnterDesignName);
       return;
     }
     if (cleanName.length > ValidationLimits.maxShortNameLength) {
-      setState(() => _inlineDesignError = 'Design name is too long.');
+      setState(() => _inlineDesignError = context.l10n.lotDesignNameTooLong);
       return;
     }
     if (_hasDesignName(cleanName)) {
       setState(
-        () => _inlineDesignError =
-            'Design "$cleanName" is already added to this lot.',
+        () =>
+            _inlineDesignError = context.l10n.lotDesignAlreadyAdded(cleanName),
       );
       return;
     }
@@ -447,7 +446,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
     );
     if (!parsedPrice.validation.isValid || parsedPrice.paise == null) {
       setState(
-        () => _inlineDesignError = 'Enter a valid non-negative default price.',
+        () => _inlineDesignError = context.l10n.lotEnterValidDefaultPrice,
       );
       return;
     }
@@ -491,7 +490,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
         .toSet();
     final picked = await VisualColourPickerSheet.show(
       context,
-      title: 'Select Colours — ${design.designName}',
+      title: context.l10n.lotSelectColoursForDesign(design.designName),
       existingColourNamesLower: existingLower,
       defaultUnitPricePaise: design.defaultUnitPricePaise,
     );
@@ -526,7 +525,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
         .toSet();
     final picked = await VisualColourPickerSheet.show(
       context,
-      title: 'Select Colours (Colour-Only Lot)',
+      title: context.l10n.lotSelectColoursColourOnly,
       existingColourNamesLower: existingLower,
     );
     if (picked == null || picked.isEmpty || !mounted) return;
@@ -584,8 +583,10 @@ final class _LotCreatePageState extends State<LotCreatePage> {
               parsedQty.value == null ||
               parsedQty.value! <= 0) {
             setState(
-              () => _submitError =
-                  'Enter a positive quantity for ${d.designName} — ${c.colourName}.',
+              () => _submitError = context.l10n.lotEnterPositiveQtyForVariant(
+                d.designName,
+                c.colourName,
+              ),
             );
             return;
           }
@@ -596,8 +597,10 @@ final class _LotCreatePageState extends State<LotCreatePage> {
           );
           if (!parsedPrice.validation.isValid || parsedPrice.paise == null) {
             setState(
-              () => _submitError =
-                  'Enter a valid non-negative unit price for ${d.designName} — ${c.colourName}.',
+              () => _submitError = context.l10n.lotEnterValidPriceForVariant(
+                d.designName,
+                c.colourName,
+              ),
             );
             return;
           }
@@ -626,8 +629,9 @@ final class _LotCreatePageState extends State<LotCreatePage> {
             parsedQty.value == null ||
             parsedQty.value! <= 0) {
           setState(
-            () =>
-                _submitError = 'Enter a positive quantity for ${c.colourName}.',
+            () => _submitError = context.l10n.lotEnterPositiveQtyFor(
+              c.colourName,
+            ),
           );
           return;
         }
@@ -638,8 +642,8 @@ final class _LotCreatePageState extends State<LotCreatePage> {
         );
         if (!parsedPrice.validation.isValid || parsedPrice.paise == null) {
           setState(
-            () => _submitError =
-                'Enter a valid non-negative unit price for ${c.colourName}.',
+            () =>
+                _submitError = context.l10n.lotEnterValidPriceFor(c.colourName),
           );
           return;
         }
@@ -678,7 +682,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
       if (!mounted) return;
       AppFeedback.showSuccess(
         context,
-        'Lot ${created.lotNumber} created successfully.',
+        context.l10n.lotCreatedSuccess(created.lotNumber),
       );
       context.pop(true);
     } on DomainValidationException catch (e) {
@@ -729,8 +733,8 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const AppText(
-                            'Lot Summary (Live)',
+                          AppText(
+                            context.l10n.lotSummaryLive,
                             variant: AppTextVariant.bodySmall,
                             fontWeight: FontWeight.w700,
                           ),
@@ -739,25 +743,26 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                             metrics: [
                               if (_useDesigns)
                                 AppSummaryMetric(
-                                  label: 'Designs',
+                                  label: context.l10n.designsTabLabel,
                                   value: '${_designs.length}',
                                   tone: AppStatusTone.info,
                                 ),
                               AppSummaryMetric(
-                                label: 'Colours',
+                                label: context.l10n.lotColoursLabel,
                                 value: '$_totalColoursCount',
                                 tone: AppStatusTone.info,
                               ),
                               AppSummaryMetric(
-                                label: 'Total Qty',
-                                value:
-                                    '${MoneyFormatter.formatQuantity(_totalQuantity)} pcs',
+                                label: context.l10n.lotTotalQtyLabel,
+                                value: context.l10n.lotPiecesValue(
+                                  MoneyFormatter.formatQuantity(_totalQuantity),
+                                ),
                                 tone: _totalQuantity > 0
                                     ? AppStatusTone.good
                                     : AppStatusTone.neutral,
                               ),
                               AppSummaryMetric(
-                                label: 'SKU Value',
+                                label: context.l10n.lotSkuValueLabel,
                                 value: MoneyFormatter.formatPaise(
                                   _totalValuePaise,
                                 ),
@@ -777,8 +782,8 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          const AppHeading(
-                            '1. Lot Information',
+                          AppHeading(
+                            context.l10n.lotSectionInfo,
                             level: AppHeadingLevel.h3,
                           ),
                           const SizedBox(height: AppSpacing.md),
@@ -853,13 +858,13 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          const AppHeading(
-                            '2. Designs, Colours & SKU Pricing',
+                          AppHeading(
+                            context.l10n.lotSectionDesigns,
                             level: AppHeadingLevel.h3,
                           ),
                           const SizedBox(height: AppSpacing.xs),
                           AppText(
-                            'Unit prices here are SKU reference prices (separate from worker labour rates). You can add designs, colours, quantities, and prices in one workflow.',
+                            context.l10n.lotSectionDesignsHelp,
                             variant: AppTextVariant.bodySmall,
                             color: colorScheme.onSurfaceVariant,
                           ),
@@ -869,7 +874,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                             runSpacing: AppSpacing.xs,
                             children: [
                               ChoiceChip(
-                                label: const Text('With Design(s)'),
+                                label: Text(context.l10n.lotModeWithDesigns),
                                 selected: _useDesigns,
                                 onSelected: (selected) {
                                   _dirty.markDirty();
@@ -879,7 +884,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                                 },
                               ),
                               ChoiceChip(
-                                label: const Text('Colour-Only (No Design)'),
+                                label: Text(context.l10n.lotModeColourOnly),
                                 selected: !_useDesigns,
                                 onSelected: (selected) {
                                   _dirty.markDirty();
@@ -901,7 +906,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                                     key: ValueKey<String>(
                                       'known_designs_${availableKnownDesigns.join('|')}',
                                     ),
-                                    label: 'Select Existing Design',
+                                    label: context.l10n.lotSelectExistingDesign,
                                     value:
                                         availableKnownDesigns.contains(
                                           _selectedKnownDesign,
@@ -920,7 +925,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                                 AppButton(
                                   label: _showInlineDesignForm
                                       ? 'Close'
-                                      : 'Add New Design',
+                                      : context.l10n.lotAddNewDesign,
                                   icon: _showInlineDesignForm
                                       ? AppIcons.close
                                       : AppIcons.add,
@@ -951,8 +956,8 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                                   crossAxisAlignment:
                                       CrossAxisAlignment.stretch,
                                   children: [
-                                    const AppText(
-                                      'New Design (Inline)',
+                                    AppText(
+                                      context.l10n.lotNewDesignInline,
                                       fontWeight: FontWeight.w700,
                                     ),
                                     const SizedBox(height: AppSpacing.sm),
@@ -973,8 +978,16 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                                     const SizedBox(height: AppSpacing.sm),
                                     AppTextField(
                                       controller: _newDesignPriceCtrl,
-                                      validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeAmountValidator(v, isRequired: false)),
-                                      label: 'Default Unit Price (₹ / pc, optional)',
+                                      validator: ValidationLocalizer.wrap(
+                                        context.l10n,
+                                        (v) =>
+                                            AppValidators.nonNegativeAmountValidator(
+                                              v,
+                                              isRequired: false,
+                                            ),
+                                      ),
+                                      label:
+                                          context.l10n.lotDefaultUnitPriceLabel,
                                       hint: '0.00',
                                       prefixIcon: AppIcons.rupee,
                                       keyboardType:
@@ -1002,7 +1015,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                                     ],
                                     const SizedBox(height: AppSpacing.sm),
                                     AppButton(
-                                      label: 'Add Design to Lot',
+                                      label: context.l10n.lotAddDesignToLot,
                                       icon: AppIcons.confirm,
                                       onPressed: _saveInlineNewDesign,
                                     ),
@@ -1030,7 +1043,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                                   ),
                                 ),
                                 child: AppText(
-                                  'No designs added yet. Select an existing design or tap "+ Add New Design" above (or save an empty lot and add designs later).',
+                                  context.l10n.lotNoDesignsYet,
                                   variant: AppTextVariant.bodySmall,
                                   color: colorScheme.onSurfaceVariant,
                                 ),
@@ -1043,12 +1056,14 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                           ] else ...[
                             AppActionRow(
                               content: AppText(
-                                'Colour Variants (${_colourOnlyVariants.length})',
+                                context.l10n.lotColourVariantsCount(
+                                  _colourOnlyVariants.length,
+                                ),
                                 fontWeight: FontWeight.w700,
                               ),
                               actions: [
                                 AppButton(
-                                  label: 'Add Colours',
+                                  label: context.l10n.lotAddColours,
                                   icon: AppIcons.colour,
                                   variant: AppButtonVariant.secondary,
                                   onPressed: _pickColoursForColourOnly,
@@ -1066,7 +1081,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                                   ),
                                 ),
                                 child: AppText(
-                                  'Tap "Add Colours" to pick colours from the palette or create custom colours with quantity & price.',
+                                  context.l10n.lotAddColoursHelp,
                                   variant: AppTextVariant.bodySmall,
                                   color: colorScheme.onSurfaceVariant,
                                 ),
@@ -1139,16 +1154,14 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                                   return ListTile(
                                     dense: true,
                                     contentPadding: EdgeInsets.zero,
-                                    leading: Icon(
-                                      AppIcons.processIcon(pName),
-                                    ),
+                                    leading: Icon(AppIcons.processIcon(pName)),
                                     title: Text('$pName • $wName'),
                                     subtitle: Text(
                                       '${formatVariantLabel(a.designName, a.colourName)} • ${a.quantity} pcs @ ${MoneyFormatter.formatPaise(a.agreedRatePaise)}/pc',
                                     ),
                                     trailing: AppIconButton(
                                       icon: AppIcons.close,
-                                      tooltip: 'Remove',
+                                      tooltip: context.l10n.actionDelete,
                                       onPressed: () => setState(
                                         () => _initialAssignments.removeAt(i),
                                       ),
@@ -1223,8 +1236,11 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                     ),
                     if (design.defaultUnitPricePaise > 0)
                       AppStatusBadge(
-                        label:
-                            'Default: ${MoneyFormatter.formatPaise(design.defaultUnitPricePaise)}',
+                        label: context.l10n.lotDefaultPriceValue(
+                          MoneyFormatter.formatPaise(
+                            design.defaultUnitPricePaise,
+                          ),
+                        ),
                         tone: AppStatusTone.info,
                       ),
                   ],
@@ -1233,14 +1249,14 @@ final class _LotCreatePageState extends State<LotCreatePage> {
             ),
             actions: [
               AppButton(
-                label: 'Colours',
+                label: context.l10n.lotColoursLabel,
                 icon: AppIcons.colour,
                 variant: AppButtonVariant.outlined,
                 onPressed: () => _pickColoursForDesign(design),
               ),
               AppIconButton(
                 icon: AppIcons.delete,
-                tooltip: 'Remove design',
+                tooltip: context.l10n.lotRemoveDesign,
                 onPressed: () => _removeDesign(design),
               ),
             ],
@@ -1305,7 +1321,7 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                   ),
                 AppIconButton(
                   icon: AppIcons.close,
-                  tooltip: 'Remove colour',
+                  tooltip: context.l10n.lotRemoveColour,
                   onPressed: onRemove,
                 ),
               ],
@@ -1316,8 +1332,11 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                 Expanded(
                   child: AppTextField(
                     controller: colour.qtyCtrl,
-                    validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.quantityValidator(v)),
-                    label: 'Qty (pcs)',
+                    validator: ValidationLocalizer.wrap(
+                      context.l10n,
+                      (v) => AppValidators.quantityValidator(v),
+                    ),
+                    label: context.l10n.lotQtyPcsLabel,
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     onChanged: (_) => _edit(() {}),
@@ -1327,8 +1346,14 @@ final class _LotCreatePageState extends State<LotCreatePage> {
                 Expanded(
                   child: AppTextField(
                     controller: colour.priceCtrl,
-                    validator: ValidationLocalizer.wrap(context.l10n, (v) => AppValidators.nonNegativeAmountValidator(v, isRequired: false)),
-                    label: 'Unit Price (₹)',
+                    validator: ValidationLocalizer.wrap(
+                      context.l10n,
+                      (v) => AppValidators.nonNegativeAmountValidator(
+                        v,
+                        isRequired: false,
+                      ),
+                    ),
+                    label: context.l10n.lotUnitPriceLabel,
                     hint: '0.00',
                     keyboardType: const TextInputType.numberWithOptions(
                       decimal: true,

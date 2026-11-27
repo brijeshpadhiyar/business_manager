@@ -264,13 +264,11 @@ void main() {
       await tester.pageBack();
       await tester.pumpAndSettle();
 
-      // 2. Stock & Labour Preferences shows finalized payment rule + legacy read-only billing + seeded 'Stitching' process
+      // 2. Stock & Labour Preferences shows the payment rule, the Work Stages
+      // link and the seeded 'Stitching' stage
       await tester.tap(find.text('Stock & Labour Preferences'));
       await tester.pumpAndSettle();
-      expect(
-        find.textContaining('Global Default Labour Billing Mode'),
-        findsOneWidget,
-      );
+      expect(find.text('Manage Work Stages'), findsOneWidget);
       await tester.scrollUntilVisible(
         find.text('Stitching'),
         200,

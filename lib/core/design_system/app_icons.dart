@@ -130,7 +130,6 @@ abstract final class AppIcons {
   static const IconData speed = Icons.speed_rounded;
   static const IconData nextStep = Icons.arrow_forward_rounded;
   static const IconData quick = Icons.bolt_rounded;
-  static const IconData showcase = Icons.widgets_rounded;
   static const IconData brand = StitchIcons.process;
   static const IconData phone = Icons.phone_rounded;
   static const IconData location = Icons.location_on_rounded;

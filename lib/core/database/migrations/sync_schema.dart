@@ -2,13 +2,11 @@ import 'package:business_manager/core/database/app_database.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:drift/drift.dart';
 
-/// Additive Schema v9 -> v10 migration for StitchFlow v1.5 Cloud Sync.
-///
-/// Creates 4 local-only sync tables (`sync_session_state`, `sync_outbox`,
-/// `sync_cursors`, `sync_media_queue`), seeds the singleton session state with
-/// a stable device UUID, and installs guarded SQLite `AFTER INSERT` /
-/// `AFTER UPDATE` triggers on all 23 domain tables.
-abstract final class SchemaV10CloudSync {
+/// Cloud-sync support for the local schema: the synced table order, the
+/// singleton session-state seed (stable device id), and the guarded SQLite
+/// `AFTER INSERT` / `AFTER UPDATE` change-capture triggers on all 23 synced
+/// domain tables.
+abstract final class SyncSchema {
   /// All 23 synced domain tables in strict Foreign-Key topological push order.
   static const List<String> syncedTablesInPushOrder = [
     'attachments',
@@ -36,71 +34,6 @@ abstract final class SchemaV10CloudSync {
     'audit_logs',
   ];
 
-  static Future<void> run(
-    GeneratedDatabase db, {
-    required int nowUtcMillis,
-  }) async {
-    await db.customStatement('''
-      CREATE TABLE IF NOT EXISTS sync_session_state (
-        id INTEGER NOT NULL PRIMARY KEY DEFAULT 1,
-        is_applying_remote INTEGER NOT NULL DEFAULT 0,
-        device_id TEXT NOT NULL,
-        bound_user_id TEXT NULL,
-        bound_business_id TEXT NULL,
-        last_full_sync_at INTEGER NULL,
-        updated_at INTEGER NOT NULL,
-        CHECK(id = 1),
-        CHECK(is_applying_remote IN (0, 1))
-      );
-    ''');
-
-    await db.customStatement('''
-      CREATE TABLE IF NOT EXISTS sync_outbox (
-        entry_key TEXT NOT NULL PRIMARY KEY,
-        table_name TEXT NOT NULL,
-        row_id TEXT NOT NULL,
-        operation TEXT NOT NULL DEFAULT 'UPSERT',
-        enqueued_at INTEGER NOT NULL,
-        status TEXT NOT NULL DEFAULT 'PENDING',
-        retry_count INTEGER NOT NULL DEFAULT 0,
-        next_retry_at INTEGER NULL,
-        last_error TEXT NULL,
-        CHECK(operation IN ('UPSERT', 'DELETE')),
-        CHECK(status IN ('PENDING', 'FAILED')),
-        CHECK(retry_count >= 0)
-      );
-    ''');
-
-    await db.customStatement('''
-      CREATE TABLE IF NOT EXISTS sync_cursors (
-        table_name TEXT NOT NULL PRIMARY KEY,
-        last_server_updated_at TEXT NOT NULL,
-        last_pulled_at INTEGER NOT NULL
-      );
-    ''');
-
-    await db.customStatement('''
-      CREATE TABLE IF NOT EXISTS sync_media_queue (
-        attachment_id TEXT NOT NULL PRIMARY KEY,
-        direction TEXT NOT NULL,
-        sha256 TEXT NOT NULL,
-        relative_path TEXT NOT NULL,
-        remote_path TEXT NULL,
-        status TEXT NOT NULL DEFAULT 'PENDING',
-        retry_count INTEGER NOT NULL DEFAULT 0,
-        next_retry_at INTEGER NULL,
-        last_error TEXT NULL,
-        updated_at INTEGER NOT NULL,
-        CHECK(direction IN ('UPLOAD', 'DOWNLOAD')),
-        CHECK(status IN ('PENDING', 'DONE', 'FAILED')),
-        CHECK(retry_count >= 0)
-      );
-    ''');
-
-    await seedSessionState(db, nowUtcMillis: nowUtcMillis);
-    await installTriggers(db);
-  }
-
   static Future<void> seedSessionState(
     GeneratedDatabase db, {
     required int nowUtcMillis,
@@ -118,9 +51,7 @@ abstract final class SchemaV10CloudSync {
   /// plus automatic media upload enqueue on local `attachments` inserts.
   static Future<void> installTriggers(GeneratedDatabase db) async {
     for (final table in syncedTablesInPushOrder) {
-      await db.customStatement(
-        'DROP TRIGGER IF EXISTS trg_sync_ins_$table;',
-      );
+      await db.customStatement('DROP TRIGGER IF EXISTS trg_sync_ins_$table;');
       await db.customStatement('''
         CREATE TRIGGER trg_sync_ins_$table
         AFTER INSERT ON $table
@@ -138,9 +69,7 @@ abstract final class SchemaV10CloudSync {
         END;
       ''');
 
-      await db.customStatement(
-        'DROP TRIGGER IF EXISTS trg_sync_upd_$table;',
-      );
+      await db.customStatement('DROP TRIGGER IF EXISTS trg_sync_upd_$table;');
       await db.customStatement('''
         CREATE TRIGGER trg_sync_upd_$table
         AFTER UPDATE ON $table
@@ -187,6 +116,5 @@ abstract final class SchemaV10CloudSync {
 
 /// Extension hook so [AppDatabase] can install v10 triggers cleanly on create.
 extension AppDatabaseV10Ext on AppDatabase {
-  Future<void> installV10SyncTriggers() =>
-      SchemaV10CloudSync.installTriggers(this);
+  Future<void> installV10SyncTriggers() => SyncSchema.installTriggers(this);
 }

@@ -15,12 +15,6 @@ class BusinessProfileDao extends DatabaseAccessor<AppDatabase>
     )..where((t) => t.id.equals('default'))).getSingleOrNull();
   }
 
-  Stream<BusinessProfileRow?> watchProfile() {
-    return (select(
-      businessProfiles,
-    )..where((t) => t.id.equals('default'))).watchSingleOrNull();
-  }
-
   Future<void> upsertProfile(BusinessProfilesCompanion entry) {
     return into(businessProfiles).insertOnConflictUpdate(entry);
   }

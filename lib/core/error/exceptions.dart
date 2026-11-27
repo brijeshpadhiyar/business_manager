@@ -20,3 +20,21 @@ final class DomainValidationException implements Exception {
   @override
   String toString() => 'DomainValidationException($code): $message';
 }
+
+/// Thrown when the local database was created by a pre-release schema that
+/// this build no longer upgrades. Reinstall the app or restore a current backup.
+final class UnsupportedSchemaException implements Exception {
+  const UnsupportedSchemaException({
+    required this.foundVersion,
+    required this.minimumVersion,
+  });
+
+  final int foundVersion;
+  final int minimumVersion;
+
+  @override
+  String toString() =>
+      'UnsupportedSchemaException: local database schema v$foundVersion is '
+      'older than the minimum supported v$minimumVersion. Reinstall the app '
+      'or restore a current backup.';
+}

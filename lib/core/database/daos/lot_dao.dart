@@ -1,5 +1,4 @@
 import 'package:business_manager/core/database/app_database.dart';
-import 'package:business_manager/core/database/pagination/page_query.dart';
 import 'package:business_manager/core/database/tables/lot_tables.dart';
 import 'package:drift/drift.dart';
 
@@ -20,52 +19,6 @@ class LotDao extends DatabaseAccessor<AppDatabase> with _$LotDaoMixin {
             ..where((t) => t.deletedAt.isNull())
             ..orderBy([(t) => OrderingTerm.desc(t.transactionAt)]))
           .get();
-
-  /// Indexed SQLite `LIMIT`/`OFFSET` pagination for large lot catalogues.
-  Future<PagedResult<LotRow>> getLotsPaged({
-    int limit = 50,
-    int offset = 0,
-    String? searchQuery,
-    String? statusFilter,
-  }) async {
-    final trimmed = searchQuery?.trim().toLowerCase();
-    Expression<bool> predicate($LotsTable t) {
-      Expression<bool> expr = t.deletedAt.isNull();
-      if (statusFilter != null && statusFilter.isNotEmpty) {
-        expr = expr & t.status.equals(statusFilter);
-      }
-      if (trimmed != null && trimmed.isNotEmpty) {
-        final pattern = '%$trimmed%';
-        expr =
-            expr &
-            (t.lotNumber.lower().like(pattern) |
-                t.title.lower().like(pattern));
-      }
-      return expr;
-    }
-
-    final countExp = lots.id.count();
-    final countRow = await (selectOnly(lots)
-          ..addColumns([countExp])
-          ..where(predicate(lots)))
-        .getSingle();
-    final total = countRow.read(countExp) ?? 0;
-
-    final rows = await (select(lots)
-          ..where(predicate)
-          ..orderBy([
-            (t) => OrderingTerm.desc(t.transactionAt),
-            (t) => OrderingTerm.desc(t.id),
-          ])
-          ..limit(limit, offset: offset))
-        .get();
-
-    return PagedResult<LotRow>(
-      items: rows,
-      totalCount: total,
-      hasMore: offset + rows.length < total,
-    );
-  }
 
   Future<int> updateLotById(String id, LotsCompanion entry) =>
       (update(lots)..where((t) => t.id.equals(id))).write(entry);
@@ -120,14 +73,6 @@ class LotDao extends DatabaseAccessor<AppDatabase> with _$LotDaoMixin {
 
   Future<DesignColourRow?> findDesignColourById(String id) =>
       (select(designColours)..where((t) => t.id.equals(id))).getSingleOrNull();
-
-  Future<List<DesignColourRow>> getColoursForDesign(String lotDesignId) =>
-      (select(designColours)
-            ..where(
-              (t) => t.lotDesignId.equals(lotDesignId) & t.deletedAt.isNull(),
-            )
-            ..orderBy([(t) => OrderingTerm.asc(t.colourName)]))
-          .get();
 
   /// Batch-fetches all active colours for [designIds] using chunked `IN (...)`
   /// queries (eliminating N+1 reads while staying well below SQLite's 999

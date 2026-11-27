@@ -1,5 +1,4 @@
 import 'package:business_manager/core/database/app_database.dart';
-import 'package:business_manager/core/database/pagination/page_query.dart';
 import 'package:business_manager/core/database/tables/attachment_audit_tables.dart';
 import 'package:drift/drift.dart';
 
@@ -75,43 +74,5 @@ class AttachmentAuditDao extends DatabaseAccessor<AppDatabase>
           ..orderBy([(t) => OrderingTerm.desc(t.recordedAt)])
           ..limit(1))
         .getSingleOrNull();
-  }
-
-  /// Indexed SQLite pagination over immutable `audit_logs`.
-  Future<PagedResult<AuditLogRow>> getAuditLogsPaged({
-    int limit = 50,
-    int offset = 0,
-    String? entityType,
-    String? reason,
-  }) async {
-    Expression<bool> predicate($AuditLogsTable t) {
-      Expression<bool> expr = const Constant(true);
-      if (entityType != null && entityType.isNotEmpty) {
-        expr = expr & t.entityType.equals(entityType);
-      }
-      if (reason != null && reason.isNotEmpty) {
-        expr = expr & t.reason.equals(reason);
-      }
-      return expr;
-    }
-
-    final countExp = auditLogs.id.count();
-    final countRow = await (selectOnly(auditLogs)
-          ..addColumns([countExp])
-          ..where(predicate(auditLogs)))
-        .getSingle();
-    final total = countRow.read(countExp) ?? 0;
-
-    final rows = await (select(auditLogs)
-          ..where(predicate)
-          ..orderBy([(t) => OrderingTerm.desc(t.recordedAt)])
-          ..limit(limit, offset: offset))
-        .get();
-
-    return PagedResult<AuditLogRow>(
-      items: rows,
-      totalCount: total,
-      hasMore: offset + rows.length < total,
-    );
   }
 }

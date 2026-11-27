@@ -1,11 +1,8 @@
 import 'package:business_manager/app.dart';
 import 'package:business_manager/core/config/app_config.dart';
 import 'package:business_manager/core/config/app_logger.dart';
-import 'package:business_manager/core/database/app_database.dart';
 import 'package:business_manager/core/database/database_initializer.dart';
-import 'package:business_manager/core/dev/dev_perf_seeder.dart';
 import 'package:business_manager/core/di/injection.dart';
-import 'package:business_manager/core/platform/media_storage_service.dart';
 import 'package:business_manager/core/platform/platform_env.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/features/auth/presentation/bloc/auth_cubit.dart';
@@ -42,14 +39,6 @@ Future<void> bootstrap(AppConfig config) async {
 
   await configureDependencies(config);
   await getIt<DatabaseInitializer>().initialize();
-  if (config.isDev && DevPerfSeeder.enabled) {
-    await DevPerfSeeder.seedIfRequested(
-      config: config,
-      db: getIt<AppDatabase>(),
-      mediaStorage: getIt<MediaStorageService>(),
-      logger: getIt<AppLogger>(),
-    );
-  }
   await getIt<AuthCubit>().initialize();
   await getIt<AppLockCubit>().syncAccountScope(
     getIt<AuthCubit>().state.user?.id,

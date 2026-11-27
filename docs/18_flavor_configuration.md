@@ -15,7 +15,7 @@ Development testing must **never** read, modify, or overwrite production data.
 | **Debug Logging** | Enabled (`true`) | Disabled (`false`) |
 | **Visual Dev Indicator** | Subtle `DEV` badge in Settings/AppBar | None |
 | **Entrypoint** | `lib/main_dev.dart` | `lib/main_prod.dart` |
-| **Config File** | `config/dev.json` | `config/prod.json` |
+| **Config File** | `config/dev.local.json` | `config/prod.local.json` |
 
 ---
 
@@ -49,7 +49,7 @@ Both `dev` and `prod` APKs can be installed **side-by-side on the same Android p
 
 ### Web, Windows & Linux (`--dart-define-from-file`)
 - Native Gradle/Xcode flavors do not apply to Web/Windows/Linux.
-- Pass `config/dev.json` or `config/prod.json` via `--dart-define-from-file=config/dev.json` + `-t lib/main_dev.dart`.
+- Pass `config/dev.local.json` or `config/prod.local.json` via `--dart-define-from-file=config/dev.local.json` + `-t lib/main_dev.dart`.
 - `AppConfig` reads compile-time constants (`String.fromEnvironment('APP_FLAVOR')`, `bool.fromEnvironment('ENABLE_DEBUG_LOGS')`) and routes DB/media paths to `<flavor>`-scoped directories (or flavor-prefixed OPFS/IndexedDB database names on Web).
 
 ---
@@ -58,10 +58,10 @@ Both `dev` and `prod` APKs can be installed **side-by-side on the same Android p
 
 ```bash
 # Android
-flutter run --flavor dev -t lib/main_dev.dart --dart-define-from-file=config/dev.json
-flutter build apk --release --flavor prod -t lib/main_prod.dart --dart-define-from-file=config/prod.json
+flutter run --flavor dev -t lib/main_dev.dart --dart-define-from-file=config/dev.local.json
+flutter build apk --release --flavor prod -t lib/main_prod.dart --dart-define-from-file=config/prod.local.json
 
 # Windows / Linux / macOS / Web
-flutter run -d windows -t lib/main_dev.dart --dart-define-from-file=config/dev.json
-flutter build web --release -t lib/main_prod.dart --dart-define-from-file=config/prod.json
+flutter run -d windows -t lib/main_dev.dart --dart-define-from-file=config/dev.local.json
+flutter build web --release -t lib/main_prod.dart --dart-define-from-file=config/prod.local.json
 ```

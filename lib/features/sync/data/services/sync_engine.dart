@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:business_manager/core/config/app_logger.dart';
 import 'package:business_manager/core/database/app_database.dart';
-import 'package:business_manager/core/database/migrations/schema_v10_cloud_sync.dart';
+import 'package:business_manager/core/database/migrations/sync_schema.dart';
 import 'package:business_manager/core/platform/media_storage_service.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
@@ -169,8 +169,9 @@ final class SyncEngine {
     }
     final orderedTables = byTable.keys.toList()
       ..sort(
-        (a, b) => SyncTableRegistry.orderOf(a)
-            .compareTo(SyncTableRegistry.orderOf(b)),
+        (a, b) =>
+            SyncTableRegistry.orderOf(a)
+                .compareTo(SyncTableRegistry.orderOf(b)),
       );
 
     for (final table in orderedTables) {
@@ -235,7 +236,7 @@ final class SyncEngine {
     var pulled = 0;
     var conflicts = 0;
 
-    for (final table in SchemaV10CloudSync.syncedTablesInPushOrder) {
+    for (final table in SyncSchema.syncedTablesInPushOrder) {
       var cursor = await _db.syncDao.getCursor(table);
       final validColumns = await _db.syncDao.getTableColumns(table);
 

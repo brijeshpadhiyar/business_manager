@@ -63,11 +63,17 @@ List<AppQuickAction> buildQuickActions(BuildContext context) {
       label: l10n.uxActionAddWorker,
       route: RoutePaths.workerCreate,
     ),
+    AppQuickAction(
+      id: 'workStage',
+      icon: AppIcons.process,
+      label: l10n.processQuickCreateAction,
+      route: RoutePaths.processCreate,
+    ),
   ];
 }
 
 /// Large, thumb-friendly buttons for the everyday tasks, shown at the top of
-/// the dashboard. Two columns on phones, up to six in a row on desktop.
+/// the dashboard. Two columns on phones, three on tablets, one row on desktop.
 final class QuickActionsPanel extends StatelessWidget {
   const QuickActionsPanel({super.key, this.onReturn, this.showTitle = true});
 
@@ -110,7 +116,7 @@ final class QuickActionsPanel extends StatelessWidget {
           builder: (context, constraints) {
             final width = constraints.maxWidth;
             final columns = width >= 1024
-                ? 6
+                ? actions.length
                 : width >= 600
                 ? 3
                 : 2;

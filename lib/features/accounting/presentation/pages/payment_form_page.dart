@@ -1,3 +1,4 @@
+import 'package:business_manager/core/config/app_logger.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/error/exceptions.dart';
@@ -63,9 +64,8 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
 
   static const String _draftKey = 'payment_form';
 
-  FormDraftService? get _drafts => getIt.isRegistered<FormDraftService>()
-      ? getIt<FormDraftService>()
-      : null;
+  FormDraftService? get _drafts =>
+      getIt.isRegistered<FormDraftService>() ? getIt<FormDraftService>() : null;
 
   @override
   void initState() {
@@ -214,6 +214,7 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
       await _drafts?.clearDraft(_draftKey);
       if (mounted) {
         final undoRepo = _repo;
+        final messenger = ScaffoldMessenger.of(context);
         AppFeedback.showSuccess(
           context,
           l10n.accountingPaymentSaved,
@@ -226,7 +227,12 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
                 reason: 'UNDO_IMMEDIATE',
                 transactionAtUtcMillis: IstDateTimeHelper.nowUtcMillis(),
               );
-            } catch (_) {}
+            } catch (e) {
+              getIt<AppLogger>().warning('Payment undo failed', error: e);
+              messenger.showSnackBar(
+                SnackBar(content: Text(l10n.accountingUndoFailed)),
+              );
+            }
           },
         );
         context.pop(true);
@@ -385,6 +391,30 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
                         (v) => AppValidators.amountValidator(v),
                       ),
                     ),
+                    if (_paymentType == PaymentType.regular &&
+                        selectedWorker.outstandingPayablePaise > 0) ...[
+                      const SizedBox(height: AppSpacing.xs),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: ActionChip(
+                          avatar: const Icon(AppIcons.rupee, size: 16),
+                          label: Text(
+                            l10n.accountingPayFullAction(
+                              MoneyFormatter.formatPaise(
+                                selectedWorker.outstandingPayablePaise,
+                              ),
+                            ),
+                          ),
+                          onPressed: () => _edit(() {
+                            _amountCtrl.text =
+                                MoneyFormatter.formatPaiseForInput(
+                                  selectedWorker.outstandingPayablePaise,
+                                );
+                            _submitError = null;
+                          }),
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: AppSpacing.md),
                     AppDropdown<PaymentMode>(
                       label: l10n.accountingPaymentModeLabel,

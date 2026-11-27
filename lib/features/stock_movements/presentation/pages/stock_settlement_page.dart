@@ -273,6 +273,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
           _saving = false;
           _detail = refreshed ?? _detail;
           _successInfo = _ReturnSuccessInfo(
+            workerId: _detail!.issueView.movement.memberId,
             designColourId: _detail!.issueView.movement.designColourId,
             lotNumber: _detail!.issueView.lotNumber,
             designName: _detail!.issueView.designName,
@@ -367,6 +368,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
         _saving = false;
         _detail = refreshed ?? _detail;
         _successInfo = _ReturnSuccessInfo(
+          workerId: _detail!.issueView.movement.memberId,
           designColourId: issue.designColourId,
           lotNumber: _detail!.issueView.lotNumber,
           designName: _detail!.issueView.designName,
@@ -1182,6 +1184,18 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
                   ],
                   const SizedBox(height: AppSpacing.sm),
                 ],
+                if (info.workerId != null) ...[
+                  AppButton(
+                    label: l10n.uxActionRecordPayment,
+                    icon: AppIcons.payment,
+                    variant: AppButtonVariant.outlined,
+                    isExpanded: true,
+                    onPressed: () => context.pushReplacement(
+                      RoutePaths.paymentCreate(workerId: info.workerId),
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                ],
                 AppButton(
                   label: l10n.stockReceiveAnotherReturnAction,
                   icon: AppIcons.receiveReturn,
@@ -1216,6 +1230,7 @@ final class _StockSettlementPageState extends State<StockSettlementPage> {
 
 final class _ReturnSuccessInfo {
   const _ReturnSuccessInfo({
+    required this.workerId,
     required this.designColourId,
     required this.lotNumber,
     required this.designName,
@@ -1230,6 +1245,7 @@ final class _ReturnSuccessInfo {
     required this.labourEarnedPaise,
   });
 
+  final String? workerId;
   final String designColourId;
   final String lotNumber;
   final String designName;

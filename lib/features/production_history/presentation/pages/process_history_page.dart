@@ -88,134 +88,134 @@ final class _ProcessHistoryView extends StatelessWidget {
               filter.colourName,
             ].where((v) => v != null).length,
             child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Wrap(
-                spacing: AppSpacing.sm,
-                runSpacing: AppSpacing.sm,
-                children: [
-                  AppAdaptiveField(
-                    maxWidth: 200,
-                    child: AppDropdown<String>(
-                      label: l10n.navWorkers,
-                      value: filter.workerId ?? '__ALL__',
-                      items: ['__ALL__', ...options.workers.map((w) => w.id)],
-                      itemLabelBuilder: (id) => id == '__ALL__'
-                          ? l10n.prodHistoryAllEntries
-                          : options.workers
-                              .firstWhere((w) => w.id == id)
-                              .label,
-                      onChanged: (v) => cubit.loadAll(
-                        filter: v == null || v == '__ALL__'
-                            ? filter.copyWith(clearWorker: true)
-                            : filter.copyWith(workerId: v),
-                      ),
-                    ),
-                  ),
-                  AppAdaptiveField(
-                    maxWidth: 200,
-                    child: AppDropdown<String>(
-                      label: l10n.lotsHeading,
-                      value: filter.lotId ?? '__ALL__',
-                      items: ['__ALL__', ...options.lots.map((l) => l.id)],
-                      itemLabelBuilder: (id) => id == '__ALL__'
-                          ? l10n.prodHistoryAllEntries
-                          : options.lots.firstWhere((l) => l.id == id).label,
-                      onChanged: (v) => cubit.loadAll(
-                        filter: v == null || v == '__ALL__'
-                            ? filter.copyWith(clearLot: true)
-                            : filter.copyWith(lotId: v),
-                      ),
-                    ),
-                  ),
-                  if (options.designNames.isNotEmpty)
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Wrap(
+                  spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
+                  children: [
                     AppAdaptiveField(
                       maxWidth: 200,
                       child: AppDropdown<String>(
-                        label: l10n.designsHeading,
-                        value: filter.designName ?? '__ALL__',
-                        items: ['__ALL__', ...options.designNames],
-                        itemLabelBuilder: (d) =>
-                            d == '__ALL__' ? l10n.prodHistoryAllEntries : d,
+                        label: l10n.navWorkers,
+                        value: filter.workerId ?? '__ALL__',
+                        items: ['__ALL__', ...options.workers.map((w) => w.id)],
+                        itemLabelBuilder: (id) => id == '__ALL__'
+                            ? l10n.prodHistoryAllEntries
+                            : options.workers
+                                  .firstWhere((w) => w.id == id)
+                                  .label,
                         onChanged: (v) => cubit.loadAll(
                           filter: v == null || v == '__ALL__'
-                              ? filter.copyWith(clearDesign: true)
-                              : filter.copyWith(designName: v),
+                              ? filter.copyWith(clearWorker: true)
+                              : filter.copyWith(workerId: v),
                         ),
                       ),
                     ),
-                  if (options.colourNames.isNotEmpty)
                     AppAdaptiveField(
                       maxWidth: 200,
                       child: AppDropdown<String>(
-                        label: l10n.colourNameLabel,
-                        value: filter.colourName ?? '__ALL__',
-                        items: ['__ALL__', ...options.colourNames],
-                        itemLabelBuilder: (c) =>
-                            c == '__ALL__' ? l10n.prodHistoryAllEntries : c,
+                        label: l10n.lotsHeading,
+                        value: filter.lotId ?? '__ALL__',
+                        items: ['__ALL__', ...options.lots.map((l) => l.id)],
+                        itemLabelBuilder: (id) => id == '__ALL__'
+                            ? l10n.prodHistoryAllEntries
+                            : options.lots.firstWhere((l) => l.id == id).label,
                         onChanged: (v) => cubit.loadAll(
                           filter: v == null || v == '__ALL__'
-                              ? filter.copyWith(clearColour: true)
-                              : filter.copyWith(colourName: v),
+                              ? filter.copyWith(clearLot: true)
+                              : filter.copyWith(lotId: v),
                         ),
                       ),
                     ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              AppFormRow(
-                spacing: AppSpacing.sm,
-                children: [
-                  AppDatePicker(
-                    label: l10n.accountingFromDateLabel,
-                    selectedUtcMillis: filter.fromUtcMillis,
-                    onDateSelectedUtcMillis: (utc) {
-                      final ist = IstDateTimeHelper.fromUtcMillisToIst(utc);
-                      cubit.loadAll(
-                        filter: filter.copyWith(
-                          fromUtcMillis:
-                              IstDateTimeHelper.istDateTimeToUtcMillis(
-                                year: ist.year,
-                                month: ist.month,
-                                day: ist.day,
-                              ),
+                    if (options.designNames.isNotEmpty)
+                      AppAdaptiveField(
+                        maxWidth: 200,
+                        child: AppDropdown<String>(
+                          label: l10n.designsHeading,
+                          value: filter.designName ?? '__ALL__',
+                          items: ['__ALL__', ...options.designNames],
+                          itemLabelBuilder: (d) =>
+                              d == '__ALL__' ? l10n.prodHistoryAllEntries : d,
+                          onChanged: (v) => cubit.loadAll(
+                            filter: v == null || v == '__ALL__'
+                                ? filter.copyWith(clearDesign: true)
+                                : filter.copyWith(designName: v),
+                          ),
                         ),
-                      );
-                    },
-                  ),
-                  AppDatePicker(
-                    label: l10n.accountingToDateLabel,
-                    selectedUtcMillis: filter.toUtcMillis,
-                    onDateSelectedUtcMillis: (utc) {
-                      final ist = IstDateTimeHelper.fromUtcMillisToIst(utc);
-                      cubit.loadAll(
-                        filter: filter.copyWith(
-                          toUtcMillis:
-                              IstDateTimeHelper.istDateTimeToUtcMillis(
-                                year: ist.year,
-                                month: ist.month,
-                                day: ist.day,
-                                hour: 23,
-                                minute: 59,
-                                second: 59,
-                              ),
+                      ),
+                    if (options.colourNames.isNotEmpty)
+                      AppAdaptiveField(
+                        maxWidth: 200,
+                        child: AppDropdown<String>(
+                          label: l10n.colourNameLabel,
+                          value: filter.colourName ?? '__ALL__',
+                          items: ['__ALL__', ...options.colourNames],
+                          itemLabelBuilder: (c) =>
+                              c == '__ALL__' ? l10n.prodHistoryAllEntries : c,
+                          onChanged: (v) => cubit.loadAll(
+                            filter: v == null || v == '__ALL__'
+                                ? filter.copyWith(clearColour: true)
+                                : filter.copyWith(colourName: v),
+                          ),
                         ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: AppButton(
-                  label: l10n.accountingClearFilters,
-                  variant: AppButtonVariant.text,
-                  onPressed: () =>
-                      cubit.loadAll(filter: const ProductionHistoryFilter()),
+                      ),
+                  ],
                 ),
-              ),
-            ],
-          ),
+                const SizedBox(height: AppSpacing.sm),
+                AppFormRow(
+                  spacing: AppSpacing.sm,
+                  children: [
+                    AppDatePicker(
+                      label: l10n.accountingFromDateLabel,
+                      selectedUtcMillis: filter.fromUtcMillis,
+                      onDateSelectedUtcMillis: (utc) {
+                        final ist = IstDateTimeHelper.fromUtcMillisToIst(utc);
+                        cubit.loadAll(
+                          filter: filter.copyWith(
+                            fromUtcMillis:
+                                IstDateTimeHelper.istDateTimeToUtcMillis(
+                                  year: ist.year,
+                                  month: ist.month,
+                                  day: ist.day,
+                                ),
+                          ),
+                        );
+                      },
+                    ),
+                    AppDatePicker(
+                      label: l10n.accountingToDateLabel,
+                      selectedUtcMillis: filter.toUtcMillis,
+                      onDateSelectedUtcMillis: (utc) {
+                        final ist = IstDateTimeHelper.fromUtcMillisToIst(utc);
+                        cubit.loadAll(
+                          filter: filter.copyWith(
+                            toUtcMillis:
+                                IstDateTimeHelper.istDateTimeToUtcMillis(
+                                  year: ist.year,
+                                  month: ist.month,
+                                  day: ist.day,
+                                  hour: 23,
+                                  minute: 59,
+                                  second: 59,
+                                ),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: AppButton(
+                    label: l10n.accountingClearFilters,
+                    variant: AppButtonVariant.text,
+                    onPressed: () =>
+                        cubit.loadAll(filter: const ProductionHistoryFilter()),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
         const SizedBox(height: AppSpacing.md),
@@ -229,20 +229,26 @@ final class _ProcessHistoryView extends StatelessWidget {
             enablePagination: true,
             columns: [
               AppDataColumn(label: l10n.processNameLabel),
-              const AppDataColumn(label: 'Lots', numeric: true),
-              const AppDataColumn(
-                label: 'Workers',
+              AppDataColumn(label: context.l10n.navLots, numeric: true),
+              AppDataColumn(
+                label: context.l10n.navWorkers,
                 numeric: true,
                 minWidthClass: AppWindowSizeClass.expanded,
               ),
-              AppDataColumn(label: l10n.prodHistoryTotalAssigned, numeric: true),
-              AppDataColumn(label: l10n.prodHistoryTotalAccepted, numeric: true),
-              const AppDataColumn(
-                label: 'Pending QC',
+              AppDataColumn(
+                label: l10n.prodHistoryTotalAssigned,
+                numeric: true,
+              ),
+              AppDataColumn(
+                label: l10n.prodHistoryTotalAccepted,
+                numeric: true,
+              ),
+              AppDataColumn(
+                label: context.l10n.stockPendingQcLabel,
                 numeric: true,
                 minWidthClass: AppWindowSizeClass.expanded,
               ),
-              const AppDataColumn(label: 'Cost', numeric: true),
+              AppDataColumn(label: context.l10n.lotCostLabel, numeric: true),
               AppDataColumn(
                 label: l10n.lotStatusLabel,
                 minWidthClass: AppWindowSizeClass.expanded,
@@ -286,63 +292,72 @@ final class _ProcessHistoryCard extends StatelessWidget {
     final l10n = context.l10n;
     // The table already wraps each row in a tappable card.
     return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          AppActionRow(content: AppText(
-                  proc.processName,
-                  variant: AppTextVariant.bodyLarge,
-                  fontWeight: FontWeight.w700,
-                ), actions: [AppStatusBadge(
-                label: proc.isActive ? l10n.statusActive : l10n.statusInactive,
-                tone: proc.isActive
-                    ? AppStatusTone.good
-                    : AppStatusTone.neutral,
-              ),],),
-          const SizedBox(height: AppSpacing.xs),
-          Wrap(
-            spacing: AppSpacing.xs,
-            runSpacing: 4,
-            children: [
-              AppStatusBadge(
-                label: 'Lots: ${proc.totalLots}',
-                tone: AppStatusTone.info,
-              ),
-              AppStatusBadge(
-                label: 'Workers: ${proc.totalWorkersInvolved}',
-                tone: AppStatusTone.neutral,
-              ),
-              AppStatusBadge(
-                label: 'Assigned: ${proc.assignedQty}',
-                tone: AppStatusTone.info,
-              ),
-              AppStatusBadge(
-                label: 'Accepted: ${proc.acceptedQty}',
-                tone: AppStatusTone.good,
-              ),
-              if (proc.pendingInspectionQty > 0)
-                AppStatusBadge(
-                  label: 'Pending QC: ${proc.pendingInspectionQty}',
-                  tone: AppStatusTone.pending,
-                ),
-              if (proc.outstandingQty > 0)
-                AppStatusBadge(
-                  label: 'Outstanding: ${proc.outstandingQty}',
-                  tone: AppStatusTone.pending,
-                ),
-              if (proc.rejectedQty > 0)
-                AppStatusBadge(
-                  label: 'Rejected: ${proc.rejectedQty}',
-                  tone: AppStatusTone.damaged,
-                ),
-            ],
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AppActionRow(
+          content: AppText(
+            proc.processName,
+            variant: AppTextVariant.bodyLarge,
+            fontWeight: FontWeight.w700,
           ),
-          const SizedBox(height: AppSpacing.xs),
-          AppText(
-            'Cost: ${MoneyFormatter.formatPaise(proc.totalProductionCostPaise)} • Paid (est): ${MoneyFormatter.formatPaise(proc.estimatedPaidPaise)} • Outstanding (est): ${MoneyFormatter.formatPaise(proc.estimatedOutstandingPaise)}',
-            variant: AppTextVariant.numeric,
-            fontWeight: FontWeight.w600,
+          actions: [
+            AppStatusBadge(
+              label: proc.isActive ? l10n.statusActive : l10n.statusInactive,
+              tone: proc.isActive ? AppStatusTone.good : AppStatusTone.neutral,
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        Wrap(
+          spacing: AppSpacing.xs,
+          runSpacing: 4,
+          children: [
+            AppStatusBadge(
+              label: context.l10n.lotLotsValue(proc.totalLots),
+              tone: AppStatusTone.info,
+            ),
+            AppStatusBadge(
+              label: context.l10n.lotWorkersValue(proc.totalWorkersInvolved),
+              tone: AppStatusTone.neutral,
+            ),
+            AppStatusBadge(
+              label: context.l10n.lotAssignedValue(proc.assignedQty),
+              tone: AppStatusTone.info,
+            ),
+            AppStatusBadge(
+              label: context.l10n.lotAcceptedValue(proc.acceptedQty),
+              tone: AppStatusTone.good,
+            ),
+            if (proc.pendingInspectionQty > 0)
+              AppStatusBadge(
+                label: context.l10n.lotPendingQcValue(
+                  proc.pendingInspectionQty,
+                ),
+                tone: AppStatusTone.pending,
+              ),
+            if (proc.outstandingQty > 0)
+              AppStatusBadge(
+                label: context.l10n.lotOutstandingValue(proc.outstandingQty),
+                tone: AppStatusTone.pending,
+              ),
+            if (proc.rejectedQty > 0)
+              AppStatusBadge(
+                label: context.l10n.lotRejectedValue(proc.rejectedQty),
+                tone: AppStatusTone.damaged,
+              ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.xs),
+        AppText(
+          context.l10n.lotCostPaidOutstandingLine(
+            MoneyFormatter.formatPaise(proc.totalProductionCostPaise),
+            MoneyFormatter.formatPaise(proc.estimatedPaidPaise),
+            MoneyFormatter.formatPaise(proc.estimatedOutstandingPaise),
           ),
-        ],
-      );
+          variant: AppTextVariant.numeric,
+          fontWeight: FontWeight.w600,
+        ),
+      ],
+    );
   }
 }

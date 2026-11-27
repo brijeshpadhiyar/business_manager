@@ -61,15 +61,13 @@ void main() {
       await tester.pumpWidget(BusinessManagerApp(config: config));
       await tester.pumpAndSettle();
 
-      // 1. Open Processes from Dashboard Quick Actions -> verify empty state
-      await tester.drag(find.byType(ListView).first, const Offset(0, -260));
+      // 1. Open the Work Stages tab -> verify empty state
+      await tester.tap(find.text('Stages').first);
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Processes').first);
-      await tester.pumpAndSettle();
-      expect(find.text('No Processes Yet'), findsOneWidget);
+      expect(find.text('No Work Stages Yet'), findsOneWidget);
 
-      // Open New Process form -> test validation -> create 'Cutting'
-      await tester.tap(find.text('New Process').first);
+      // Open New Work Stage form -> test validation -> create 'Cutting'
+      await tester.tap(find.text('New Work Stage').first);
       await tester.pumpAndSettle();
       await tester.tap(find.text('Save'));
       await tester.pumpAndSettle();
@@ -80,9 +78,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Cutting'), findsOneWidget);
 
-      // Back to shell -> Navigate to Workers tab -> verify empty state -> create 'Hasmukh Bhai'
-      await tester.pageBack();
-      await tester.pumpAndSettle();
+      // Work Stages is a main tab, so go straight to the Workers tab
       await tester.tap(find.text('Workers').last);
       await tester.pumpAndSettle();
       expect(find.text('No Workers Yet'), findsOneWidget);
@@ -101,11 +97,11 @@ void main() {
       // 3. Open Worker Profile Summary -> Manage Assignments -> Assign 'Cutting'
       await tester.tap(find.text('Hasmukh Bhai'));
       await tester.pumpAndSettle();
-      expect(find.text('Assigned Processes & Current Rates'), findsOneWidget);
+      expect(find.text('Assigned Work Stages & Current Rates'), findsOneWidget);
 
       await tester.tap(find.text('Manage Assignments').first);
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Assign Process'));
+      await tester.tap(find.text('Assign Work Stage'));
       await tester.pumpAndSettle();
       expect(find.text('Cutting'), findsOneWidget);
 

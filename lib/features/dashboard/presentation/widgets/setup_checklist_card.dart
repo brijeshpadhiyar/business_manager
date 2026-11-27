@@ -114,12 +114,13 @@ final class _SetupChecklistCardState extends State<SetupChecklistCard> {
             _ChecklistStepTile(
               done: _profileCustomized,
               label: l10n.setupStepProfile,
-              onTap: () => widget.onNavigate(RoutePaths.settingsBusinessProfile),
+              onTap: () =>
+                  widget.onNavigate(RoutePaths.settingsBusinessProfile),
             ),
             _ChecklistStepTile(
               done: _hasProcesses,
               label: l10n.setupStepProcesses,
-              onTap: () => widget.onNavigate(RoutePaths.processes),
+              onTap: () => widget.onNavigate(RoutePaths.processCreate),
             ),
             _ChecklistStepTile(
               done: _hasWorkers,

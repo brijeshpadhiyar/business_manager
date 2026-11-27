@@ -131,7 +131,7 @@ final class _LotHistoryView extends StatelessWidget {
                         context.push(RoutePaths.lotTimeline(lot.id)),
                   ),
                   AppButton(
-                    label: 'Multi-Process Routing',
+                    label: context.l10n.routingTitle,
                     icon: AppIcons.routeTransfer,
                     variant: AppButtonVariant.secondary,
                     onPressed: () =>
@@ -165,7 +165,7 @@ final class _LotHistoryView extends StatelessWidget {
                 SizedBox(
                   width: w,
                   child: AppMetricTile(
-                    label: 'Initial Qty',
+                    label: context.l10n.lotInitialQtyLabel,
                     value: history.totalInitialQty,
                     suffix: l10n.piecesUnit,
                     icon: AppIcons.lot,
@@ -222,7 +222,7 @@ final class _LotHistoryView extends StatelessWidget {
                 SizedBox(
                   width: w,
                   child: AppMetricTile(
-                    label: 'Total Production Cost',
+                    label: context.l10n.routingTotalProductionCostLabel,
                     value: history.totalProductionCostPaise,
                     isCurrencyPaise: true,
                     icon: AppIcons.rupee,
@@ -236,8 +236,8 @@ final class _LotHistoryView extends StatelessWidget {
         const SizedBox(height: AppSpacing.lg),
 
         // Design & Colour Stock Conservation Breakdown
-        const AppHeading(
-          'Designs & Colours Breakdown',
+        AppHeading(
+          context.l10n.lotDesignsColoursBreakdown,
           level: AppHeadingLevel.h3,
         ),
         const SizedBox(height: AppSpacing.sm),
@@ -275,23 +275,27 @@ final class _LotHistoryView extends StatelessWidget {
                   runSpacing: 4,
                   children: [
                     AppStatusBadge(
-                      label: 'In-House: ${c.availableInHouse}',
+                      label: context.l10n.lotInHouseValue(c.availableInHouse),
                       tone: AppStatusTone.good,
                     ),
                     AppStatusBadge(
-                      label: 'With Workers: ${c.outstandingWithWorkers}',
+                      label: context.l10n.lotWithWorkersValue(
+                        c.outstandingWithWorkers,
+                      ),
                       tone: c.outstandingWithWorkers > 0
                           ? AppStatusTone.pending
                           : AppStatusTone.neutral,
                     ),
                     if (c.pendingInspection > 0)
                       AppStatusBadge(
-                        label: 'Pending QC: ${c.pendingInspection}',
+                        label: context.l10n.lotPendingQcValue(
+                          c.pendingInspection,
+                        ),
                         tone: AppStatusTone.info,
                       ),
                     if (c.damagedBucket > 0)
                       AppStatusBadge(
-                        label: 'Damaged: ${c.damagedBucket}',
+                        label: context.l10n.lotDamagedValue(c.damagedBucket),
                         tone: AppStatusTone.damaged,
                       ),
                   ],
@@ -304,14 +308,14 @@ final class _LotHistoryView extends StatelessWidget {
 
         const SizedBox(height: AppSpacing.lg),
         AppHeading(
-          'Process Assignments & Worker Ledger (${history.assignments.length})',
+          context.l10n.lotStageAssignmentsCount(history.assignments.length),
           level: AppHeadingLevel.h3,
         ),
         const SizedBox(height: AppSpacing.sm),
         if (history.assignments.isEmpty)
-          const AppCard(
+          AppCard(
             child: AppText(
-              'No process assignments recorded for this lot yet.',
+              context.l10n.lotNoStageAssignments,
               variant: AppTextVariant.bodySmall,
             ),
           )
@@ -333,7 +337,7 @@ final class _LotHistoryView extends StatelessWidget {
         if (history.rejections.isNotEmpty) ...[
           const SizedBox(height: AppSpacing.lg),
           AppHeading(
-            'Rejection & Repair Records (${history.rejections.length})',
+            context.l10n.lotRejectionRecordsCount(history.rejections.length),
             level: AppHeadingLevel.h3,
           ),
           const SizedBox(height: AppSpacing.sm),
@@ -371,11 +375,15 @@ final class _LotHistoryView extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       AppText(
-                        'Rejected: ${r.record.rejectedQuantity} • Re-Approved: ${r.totalReapprovedQty} • Open: ${r.openUnrepairedQty}',
+                        context.l10n.lotRejectedLine(
+                          r.record.rejectedQuantity,
+                          r.totalReapprovedQty,
+                          r.openUnrepairedQty,
+                        ),
                         variant: AppTextVariant.bodySmall,
                       ),
                       AppText(
-                        'Reason: ${r.record.rejectionReason}',
+                        context.l10n.lotReasonValue(r.record.rejectionReason),
                         variant: AppTextVariant.bodySmall,
                       ),
                     ],
@@ -419,7 +427,9 @@ final class _AssignmentCard extends StatelessWidget {
             ),
             actions: [
               AppStatusBadge(
-                label: a.isCompleted ? 'COMPLETED' : 'IN PROGRESS',
+                label: a.isCompleted
+                    ? context.l10n.lotsStatusCompleted
+                    : context.l10n.lotStatusInProgress,
                 tone: a.isCompleted
                     ? AppStatusTone.good
                     : AppStatusTone.pending,
@@ -437,30 +447,30 @@ final class _AssignmentCard extends StatelessWidget {
             runSpacing: 4,
             children: [
               AppStatusBadge(
-                label: 'Assigned: ${a.assignedQty}',
+                label: context.l10n.lotAssignedValue(a.assignedQty),
                 tone: AppStatusTone.info,
               ),
               AppStatusBadge(
-                label: 'Returned: ${a.returnedQty}',
+                label: context.l10n.lotReturnedValue(a.returnedQty),
                 tone: AppStatusTone.neutral,
               ),
               AppStatusBadge(
-                label: 'Accepted: ${a.totalAcceptedQty}',
+                label: context.l10n.lotAcceptedValue(a.totalAcceptedQty),
                 tone: AppStatusTone.good,
               ),
               if (a.pendingInspectionQty > 0)
                 AppStatusBadge(
-                  label: 'Pending QC: ${a.pendingInspectionQty}',
+                  label: context.l10n.lotPendingQcValue(a.pendingInspectionQty),
                   tone: AppStatusTone.pending,
                 ),
               if (a.outstandingQty > 0)
                 AppStatusBadge(
-                  label: 'Outstanding: ${a.outstandingQty}',
+                  label: context.l10n.lotOutstandingValue(a.outstandingQty),
                   tone: AppStatusTone.pending,
                 ),
               if (a.netRejectedQty > 0)
                 AppStatusBadge(
-                  label: 'Rejected: ${a.netRejectedQty}',
+                  label: context.l10n.lotRejectedValue(a.netRejectedQty),
                   tone: AppStatusTone.damaged,
                 ),
             ],
@@ -468,7 +478,10 @@ final class _AssignmentCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.xs),
           AppActionRow(
             content: AppText(
-              'Rate: ${MoneyFormatter.formatPaise(a.lockedRatePaise)}/pc • Earned: ${MoneyFormatter.formatPaise(a.earnedAmountPaise)}',
+              context.l10n.lotRateEarnedLine(
+                MoneyFormatter.formatPaise(a.lockedRatePaise),
+                MoneyFormatter.formatPaise(a.earnedAmountPaise),
+              ),
               variant: AppTextVariant.numeric,
               fontWeight: FontWeight.w700,
             ),

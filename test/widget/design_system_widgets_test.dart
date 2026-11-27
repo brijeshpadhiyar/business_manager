@@ -1,11 +1,5 @@
-import 'package:business_manager/app.dart';
-import 'package:business_manager/core/config/app_config.dart';
 import 'package:business_manager/core/design_system/app_theme.dart';
 import 'package:business_manager/core/di/injection.dart';
-import 'package:business_manager/core/localization/locale_cubit.dart';
-import 'package:business_manager/core/localization/locale_state.dart';
-import 'package:business_manager/core/theme/theme_cubit.dart';
-import 'package:business_manager/core/theme/theme_state.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -90,9 +84,7 @@ void main() {
       expect(find.text('Required field'), findsOneWidget);
     });
 
-    testWidgets('validates live while typing, before any Save', (
-      tester,
-    ) async {
+    testWidgets('validates live while typing, before any Save', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AppTheme.light(),
@@ -201,45 +193,6 @@ void main() {
       expect(find.byType(DataTable), findsOneWidget);
       expect(find.text('Alpha'), findsOneWidget);
     });
-  });
-
-  group('Live Theme & Bilingual (EN/GU) Showcase integration', () {
-    testWidgets(
-      'switches Light/Dark themes and English/Gujarati with long Gujarati text cleanly',
-      (tester) async {
-        final config = AppConfig.dev();
-        await configureDependencies(config);
-
-        await tester.pumpWidget(BusinessManagerApp(config: config));
-        await tester.pumpAndSettle();
-
-        // Verify English initial render & navigate to Design System Showcase
-        expect(find.text('StitchFlow Dev'), findsWidgets);
-        await tester.tap(find.text('Design System Showcase'));
-        await tester.pumpAndSettle();
-
-        // Switch to Dark theme & Gujarati
-        await getIt<ThemeCubit>().setPreference(AppThemePreference.dark);
-        await getIt<LocaleCubit>().setPreference(AppLocalePreference.gu);
-        await tester.pumpAndSettle();
-
-        final materialApp = tester.widget<MaterialApp>(
-          find.byType(MaterialApp),
-        );
-        expect(materialApp.themeMode, ThemeMode.dark);
-        expect(find.text('સ્ટિચફ્લો (Dev)'), findsOneWidget);
-        expect(
-          find.text('ટાઇપોગ્રાફી અને લાંબા ગુજરાતી લખાણનો નમૂનો'),
-          findsOneWidget,
-        );
-
-        // Switch to Light theme
-        await getIt<ThemeCubit>().setPreference(AppThemePreference.light);
-        await tester.pumpAndSettle();
-        final lightApp = tester.widget<MaterialApp>(find.byType(MaterialApp));
-        expect(lightApp.themeMode, ThemeMode.light);
-      },
-    );
   });
 }
 

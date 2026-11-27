@@ -682,7 +682,10 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                   for (final b in _allBalances)
                     if (b.designColourId == id)
                       ActionChip(
-                        avatar: const Icon(AppIcons.productionHistory, size: 16),
+                        avatar: const Icon(
+                          AppIcons.productionHistory,
+                          size: 16,
+                        ),
                         label: Text(
                           '${b.lotNumber} • ${b.colourName} (${b.physicalAvailableInHouse})',
                         ),
@@ -1044,14 +1047,20 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                     variant: AppTextVariant.numeric,
                     fontWeight: FontWeight.w700,
                   ),
-                  const AppStatusBadge(
-                    label: 'Process Default',
+                  AppStatusBadge(
+                    label: context.l10n.stockStageDefaultBadge,
                     tone: AppStatusTone.info,
                   ),
                 ],
               ),
               AppText(
-                'Inherited from $processName (${MoneyFormatter.formatRatePaise(rawDefaultRatePaise, pricingUnit: pricingUnit)})',
+                context.l10n.stockInheritedFrom(
+                  processName,
+                  MoneyFormatter.formatRatePaise(
+                    rawDefaultRatePaise,
+                    pricingUnit: pricingUnit,
+                  ),
+                ),
                 variant: AppTextVariant.bodySmall,
                 color: colorScheme.onSurfaceVariant,
               ),
@@ -1081,11 +1090,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
             const SizedBox(height: AppSpacing.xs),
           Row(
             children: [
-              Icon(
-                AppIcons.lock,
-                size: 16,
-                color: colorScheme.secondary,
-              ),
+              Icon(AppIcons.lock, size: 16, color: colorScheme.secondary),
               const SizedBox(width: AppSpacing.xs),
               Expanded(
                 child: AppText(
@@ -1385,10 +1390,7 @@ final class _StockIssuePageState extends State<StockIssuePage> {
                   borderColor: semantic.goodStock.withValues(alpha: 0.35),
                   child: Row(
                     children: [
-                      Icon(
-                        AppIcons.lot,
-                        color: semantic.goodStock,
-                      ),
+                      Icon(AppIcons.lot, color: semantic.goodStock),
                       const SizedBox(width: AppSpacing.sm),
                       Expanded(
                         child: AppText(

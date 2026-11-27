@@ -1,5 +1,5 @@
 import 'package:business_manager/core/database/app_database.dart';
-import 'package:business_manager/core/database/migrations/schema_v10_cloud_sync.dart';
+import 'package:business_manager/core/database/migrations/sync_schema.dart';
 import 'package:business_manager/core/database/tables/sync_tables.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:drift/drift.dart';
@@ -14,24 +14,21 @@ part 'sync_dao.g.dart';
 class SyncDao extends DatabaseAccessor<AppDatabase> with _$SyncDaoMixin {
   SyncDao(super.db);
 
-  static final Set<String> _allowedTables =
-      SchemaV10CloudSync.syncedTablesInPushOrder.toSet();
+  static final Set<String> _allowedTables = SyncSchema.syncedTablesInPushOrder
+      .toSet();
 
   // ── Session State & Remote-Apply Guard ──────────────────────────────────
 
   Future<SyncSessionStateRow> getSessionState() async {
-    final row = await (select(syncSessionStates)
-          ..where((t) => t.id.equals(1)))
-        .getSingleOrNull();
+    final row = await (select(
+      syncSessionStates,
+    )..where((t) => t.id.equals(1))).getSingleOrNull();
     if (row != null) return row;
     final now = IstDateTimeHelper.nowUtcMillis();
-    await SchemaV10CloudSync.seedSessionState(attachedDatabase, nowUtcMillis: now);
-    return (select(syncSessionStates)..where((t) => t.id.equals(1))).getSingle();
-  }
-
-  Stream<SyncSessionStateRow?> watchSessionState() {
-    return (select(syncSessionStates)..where((t) => t.id.equals(1)))
-        .watchSingleOrNull();
+    await SyncSchema.seedSessionState(attachedDatabase, nowUtcMillis: now);
+    return (select(
+      syncSessionStates,
+    )..where((t) => t.id.equals(1))).getSingle();
   }
 
   Future<void> updateSessionBinding({
@@ -115,9 +112,9 @@ class SyncDao extends DatabaseAccessor<AppDatabase> with _$SyncDaoMixin {
 
   Future<bool> hasPendingOutboxEntry(String tableName, String rowId) async {
     final key = '$tableName:$rowId';
-    final row = await (select(syncOutboxes)
-          ..where((t) => t.entryKey.equals(key)))
-        .getSingleOrNull();
+    final row = await (select(
+      syncOutboxes,
+    )..where((t) => t.entryKey.equals(key))).getSingleOrNull();
     return row != null;
   }
 
@@ -132,15 +129,16 @@ class SyncDao extends DatabaseAccessor<AppDatabase> with _$SyncDaoMixin {
     required int retryCount,
     required int nextRetryAt,
   }) async {
-    await (update(syncOutboxes)..where((t) => t.entryKey.equals(entryKey)))
-        .write(
-          SyncOutboxesCompanion(
-            status: const Value('FAILED'),
-            retryCount: Value(retryCount),
-            nextRetryAt: Value(nextRetryAt),
-            lastError: Value(error),
-          ),
-        );
+    await (update(
+      syncOutboxes,
+    )..where((t) => t.entryKey.equals(entryKey))).write(
+      SyncOutboxesCompanion(
+        status: const Value('FAILED'),
+        retryCount: Value(retryCount),
+        nextRetryAt: Value(nextRetryAt),
+        lastError: Value(error),
+      ),
+    );
   }
 
   Future<void> resetFailedOutboxItems() async {
@@ -163,7 +161,7 @@ class SyncDao extends DatabaseAccessor<AppDatabase> with _$SyncDaoMixin {
     final now = IstDateTimeHelper.nowUtcMillis();
     var total = 0;
     await transaction(() async {
-      for (final table in SchemaV10CloudSync.syncedTablesInPushOrder) {
+      for (final table in SyncSchema.syncedTablesInPushOrder) {
         final rows = await customSelect('SELECT id FROM $table').get();
         for (final row in rows) {
           final id = row.read<String>('id');
@@ -217,7 +215,8 @@ class SyncDao extends DatabaseAccessor<AppDatabase> with _$SyncDaoMixin {
     ];
     var total = 0;
     for (final table in userTables) {
-      final row = await customSelect('SELECT COUNT(*) AS c FROM $table').getSingle();
+      final row = await customSelect('SELECT COUNT(*) AS c FROM $table')
+          .getSingle();
       total += row.read<int>('c');
     }
     return total;
@@ -226,9 +225,9 @@ class SyncDao extends DatabaseAccessor<AppDatabase> with _$SyncDaoMixin {
   // ── Delta Cursors ───────────────────────────────────────────────────────
 
   Future<String?> getCursor(String tableName) async {
-    final row = await (select(syncCursors)
-          ..where((t) => t.tableNameCol.equals(tableName)))
-        .getSingleOrNull();
+    final row = await (select(
+      syncCursors,
+    )..where((t) => t.tableNameCol.equals(tableName))).getSingleOrNull();
     return row?.lastServerUpdatedAt;
   }
 
@@ -300,17 +299,19 @@ class SyncDao extends DatabaseAccessor<AppDatabase> with _$SyncDaoMixin {
   }
 
   Future<void> markMediaDone(String attachmentId, {String? remotePath}) async {
-    await (update(syncMediaQueues)
-          ..where((t) => t.attachmentId.equals(attachmentId)))
-        .write(
-          SyncMediaQueuesCompanion(
-            status: const Value('DONE'),
-            remotePath: remotePath != null ? Value(remotePath) : const Value.absent(),
-            lastError: const Value(null),
-            nextRetryAt: const Value(null),
-            updatedAt: Value(IstDateTimeHelper.nowUtcMillis()),
-          ),
-        );
+    await (update(
+      syncMediaQueues,
+    )..where((t) => t.attachmentId.equals(attachmentId))).write(
+      SyncMediaQueuesCompanion(
+        status: const Value('DONE'),
+        remotePath: remotePath != null
+            ? Value(remotePath)
+            : const Value.absent(),
+        lastError: const Value(null),
+        nextRetryAt: const Value(null),
+        updatedAt: Value(IstDateTimeHelper.nowUtcMillis()),
+      ),
+    );
   }
 
   Future<void> markMediaFailed(
@@ -319,17 +320,17 @@ class SyncDao extends DatabaseAccessor<AppDatabase> with _$SyncDaoMixin {
     required int retryCount,
     required int nextRetryAt,
   }) async {
-    await (update(syncMediaQueues)
-          ..where((t) => t.attachmentId.equals(attachmentId)))
-        .write(
-          SyncMediaQueuesCompanion(
-            status: const Value('FAILED'),
-            retryCount: Value(retryCount),
-            nextRetryAt: Value(nextRetryAt),
-            lastError: Value(error),
-            updatedAt: Value(IstDateTimeHelper.nowUtcMillis()),
-          ),
-        );
+    await (update(
+      syncMediaQueues,
+    )..where((t) => t.attachmentId.equals(attachmentId))).write(
+      SyncMediaQueuesCompanion(
+        status: const Value('FAILED'),
+        retryCount: Value(retryCount),
+        nextRetryAt: Value(nextRetryAt),
+        lastError: Value(error),
+        updatedAt: Value(IstDateTimeHelper.nowUtcMillis()),
+      ),
+    );
   }
 
   Future<List<SyncMediaQueueRow>> getFailedMediaItems() {
@@ -349,15 +350,16 @@ class SyncDao extends DatabaseAccessor<AppDatabase> with _$SyncDaoMixin {
   }
 
   Future<void> resetFailedMediaItems() async {
-    await (update(syncMediaQueues)..where((t) => t.status.equals('FAILED')))
-        .write(
-          SyncMediaQueuesCompanion(
-            status: const Value('PENDING'),
-            nextRetryAt: const Value(null),
-            lastError: const Value(null),
-            updatedAt: Value(IstDateTimeHelper.nowUtcMillis()),
-          ),
-        );
+    await (update(
+      syncMediaQueues,
+    )..where((t) => t.status.equals('FAILED'))).write(
+      SyncMediaQueuesCompanion(
+        status: const Value('PENDING'),
+        nextRetryAt: const Value(null),
+        lastError: const Value(null),
+        updatedAt: Value(IstDateTimeHelper.nowUtcMillis()),
+      ),
+    );
   }
 
   // ── Generic Row Read / Upsert for Sync Engine (Allowlist-Guarded) ───────
@@ -424,7 +426,7 @@ class SyncDao extends DatabaseAccessor<AppDatabase> with _$SyncDaoMixin {
   /// explicitly chooses "Keep Cloud Only" during first-login merge).
   Future<void> wipeLocalDomainDataForCloudReplace() async {
     await runAsRemoteApply(() async {
-      for (final table in SchemaV10CloudSync.syncedTablesInPushOrder.reversed) {
+      for (final table in SyncSchema.syncedTablesInPushOrder.reversed) {
         await customStatement('DELETE FROM $table;');
       }
     });

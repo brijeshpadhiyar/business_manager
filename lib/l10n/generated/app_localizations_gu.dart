@@ -19,16 +19,6 @@ class AppLocalizationsGu extends AppLocalizations {
   String get appTagline => 'કાપડથી તૈયાર વસ્ત્ર સુધી.';
 
   @override
-  String get foundationTitle => 'પ્રોજેક્ટ ફાઉન્ડેશન તૈયાર છે';
-
-  @override
-  String get foundationSubtitle =>
-      'ઓફલાઇન-ફર્સ્ટ આર્કિટેક્ચર, ફ્લેવર્સ, મટીરીયલ ૩ ડિઝાઇન સિસ્ટમ અને દ્વિભાષી લોકલાઇઝેશન સેટઅપ થઈ ગયું છે.';
-
-  @override
-  String get environmentSectionTitle => 'એન્વાયર્નમેન્ટ';
-
-  @override
   String get environmentFlavorLabel => 'ફ્લેવર';
 
   @override
@@ -39,9 +29,6 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get environmentDatabaseLabel => 'ડેટાબેઝ ફાઇલ';
-
-  @override
-  String get environmentLoggingLabel => 'ડીબગ લોગિંગ';
 
   @override
   String get statusEnabled => 'ચાલુ';
@@ -90,70 +77,7 @@ class AppLocalizationsGu extends AppLocalizations {
       'અનપેક્ષિત ભૂલ આવી છે. કૃપા કરીને ફરી પ્રયાસ કરો.';
 
   @override
-  String get navOverview => 'ઝાંખી';
-
-  @override
-  String get navInputs => 'ફોર્મ';
-
-  @override
-  String get navFeedback => 'ઘટકો';
-
-  @override
-  String get showcaseButtonsHeading => 'બટન અને ક્રિયાઓ';
-
-  @override
-  String get showcasePrimaryAction => 'મુખ્ય ક્રિયા';
-
-  @override
-  String get showcaseSecondaryAction => 'ગૌણ';
-
-  @override
-  String get showcaseOutlinedAction => 'આઉટલાઇન';
-
-  @override
-  String get showcaseDestructiveAction => 'કાઢી નાખો';
-
-  @override
-  String get showcaseLoadingAction => 'સાચવી રહ્યું છે...';
-
-  @override
-  String get showcaseDisabledAction => 'નિષ્ક્રિય';
-
-  @override
-  String get showcaseInputsHeading => 'ફોર્મ કંટ્રોલ્સ';
-
-  @override
-  String get showcaseSampleFieldLabel => 'સંદર્ભ નામ';
-
-  @override
-  String get showcaseSampleFieldHint => 'નમૂનાનું મૂલ્ય દાખલ કરો';
-
-  @override
   String get validationRequired => 'આ વિગત ભરવી ફરજિયાત છે.';
-
-  @override
-  String get showcaseDropdownLabel => 'નમૂનાની શ્રેણી';
-
-  @override
-  String get showcaseOptionOne => 'વિકલ્પ એક';
-
-  @override
-  String get showcaseOptionTwo => 'વિકલ્પ બે';
-
-  @override
-  String get showcaseDatePickerLabel => 'વ્યવહાર તારીખ (IST)';
-
-  @override
-  String get showcaseCheckboxLabel => 'ચકાસાયેલ તરીકે ચિહ્નિત કરો';
-
-  @override
-  String get showcaseSwitchLabel => 'કોમ્પેક્ટ પૂર્વાવલોકન ચાલુ કરો';
-
-  @override
-  String get showcaseValidateButton => 'ફોર્મ ચકાસો';
-
-  @override
-  String get showcaseBadgesHeading => 'સ્થિતિ બેજ';
 
   @override
   String get statusGood => 'સારો સ્ટોક';
@@ -165,54 +89,6 @@ class AppLocalizationsGu extends AppLocalizations {
   String get statusDamaged => 'નુકસાનગ્રસ્ત';
 
   @override
-  String get statusAdvanceCredit => 'એડવાન્સ જમા';
-
-  @override
-  String get showcaseOpenDialog => 'ડાયલોગ ખોલો';
-
-  @override
-  String get showcaseOpenSheet => 'શીટ ખોલો';
-
-  @override
-  String get showcaseDialogTitle => 'ક્રિયાની ખાતરી કરો';
-
-  @override
-  String get showcaseDialogMessage =>
-      'આ પૂર્વાવલોકન મટીરીયલ ૩ સ્પેસિંગ, ટાઇપોગ્રાફી અને દ્વિભાષી લખાણની યોગ્ય ગોઠવણી ચકાસે છે.';
-
-  @override
-  String get showcaseLongTextHeading =>
-      'ટાઇપોગ્રાફી અને લાંબા ગુજરાતી લખાણનો નમૂનો';
-
-  @override
-  String get showcaseLongTextSample =>
-      'તમામ ડિઝાઇન ટોકન્સ, ફોન્ટ વેઇટ્સ અને દ્વિભાષી લખાણ કોમ્પેક્ટ એન્ડ્રોઇડ ફોન, ટેબ્લેટ અને ડેસ્કટોપ સ્ક્રીન પર કોઈપણ ઓવરફ્લો કે કપાયા વગર સ્પષ્ટ અને વ્યવસ્થિત રીતે દેખાય છે.';
-
-  @override
-  String get showcaseTableHeading => 'રિસ્પોન્સિવ ડેટા ટેબલ';
-
-  @override
-  String get showcaseColName => 'વિગત';
-
-  @override
-  String get showcaseColQty => 'જથ્થો';
-
-  @override
-  String get showcaseColAmount => 'રકમ';
-
-  @override
-  String get showcaseEmptyTitle => 'હજુ કોઈ નોંધ નથી';
-
-  @override
-  String get showcaseEmptySubtitle => 'નવી વિગત ઉમેર્યા બાદ અહીં દેખાશે.';
-
-  @override
-  String get showcaseErrorTitle => 'પૂર્વાવલોકન લોડ કરવામાં ભૂલ';
-
-  @override
-  String get showcaseLoadingMessage => 'લોડ થઈ રહ્યું છે...';
-
-  @override
   String get navDashboard => 'ડેશબોર્ડ';
 
   @override
@@ -222,20 +98,7 @@ class AppLocalizationsGu extends AppLocalizations {
   String get navInventory => 'સ્ટોક ઝાંખી';
 
   @override
-  String get navBusinessProfile => 'બિઝનેસ પ્રોફાઇલ';
-
-  @override
-  String get navDesignShowcase => 'ડિઝાઇન સિસ્ટમ પૂર્વાવલોકન';
-
-  @override
-  String get dashboardWelcomeSubtitle =>
-      'ઓફલાઇન-ફર્સ્ટ ગાર્મેન્ટ અને પ્રોડક્શન મેનેજમેન્ટ';
-
-  @override
   String get dashboardQuickActions => 'ઝડપી ક્રિયાઓ';
-
-  @override
-  String get dashboardPreferences => 'એપ સેટિંગ્સ';
 
   @override
   String get businessProfileHeading => 'બિઝનેસ પ્રોફાઇલ';
@@ -417,10 +280,6 @@ class AppLocalizationsGu extends AppLocalizations {
   String get inventoryHeading => 'પ્રારંભિક સ્ટોક ઝાંખી';
 
   @override
-  String get inventoryNote =>
-      'અહીં માત્ર નોંધાયેલ પ્રારંભિક જથ્થો દેખાય છે. સ્ટોક મૂવમેન્ટ અને બાકી હિસાબ આગામી માઇલસ્ટોનમાં આવશે.';
-
-  @override
   String get inventoryTotalLots => 'સક્રિય લોટ્સ';
 
   @override
@@ -449,9 +308,6 @@ class AppLocalizationsGu extends AppLocalizations {
       'પ્રારંભિક જથ્થાનો કુલ સરવાળો જોવા માટે લોટ્સ, ડિઝાઇન અને કલર ઉમેરો.';
 
   @override
-  String get actionEdit => 'સુધારો';
-
-  @override
   String get actionDelete => 'દૂર કરો';
 
   @override
@@ -461,7 +317,16 @@ class AppLocalizationsGu extends AppLocalizations {
   String get piecesUnit => 'પીસ';
 
   @override
-  String get navProcesses => 'પ્રક્રિયાઓ';
+  String get navProcesses => 'કામના તબક્કા';
+
+  @override
+  String get navWorkStagesShort => 'તબક્કા';
+
+  @override
+  String get processQuickCreateAction => 'નવો તબક્કો';
+
+  @override
+  String get settingsManageWorkStagesAction => 'કામના તબક્કા મેનેજ કરો';
 
   @override
   String get navWorkers => 'કારીગરો';
@@ -482,29 +347,29 @@ class AppLocalizationsGu extends AppLocalizations {
   String get filterInactive => 'નિષ્ક્રિય';
 
   @override
-  String get processesHeading => 'પ્રોડક્શન પ્રક્રિયાઓ';
+  String get processesHeading => 'કામના તબક્કા';
 
   @override
-  String get processesSearchHint => 'નામ અથવા વિગત દ્વારા પ્રક્રિયા શોધો';
+  String get processesSearchHint => 'નામ અથવા વિગત દ્વારા તબક્કો શોધો';
 
   @override
-  String get processesEmptyTitle => 'હજુ કોઈ પ્રક્રિયા નથી';
+  String get processesEmptyTitle => 'હજુ કોઈ કામનો તબક્કો નથી';
 
   @override
   String get processesEmptySubtitle =>
-      'તમારા કારખાના મુજબ કોઈપણ ક્રમમાં તમારી પોતાની પ્રોડક્શન પ્રક્રિયાઓ બનાવો.';
+      'તમારા કારખાના મુજબ કોઈપણ ક્રમમાં તમારા પોતાના કામના તબક્કા બનાવો.';
 
   @override
-  String get processCreateAction => 'નવી પ્રક્રિયા';
+  String get processCreateAction => 'નવો તબક્કો';
 
   @override
-  String get processEditAction => 'પ્રક્રિયા સુધારો';
+  String get processEditAction => 'તબક્કો સુધારો';
 
   @override
-  String get processDetailsHeading => 'પ્રક્રિયાની વિગતો';
+  String get processDetailsHeading => 'તબક્કાની વિગતો';
 
   @override
-  String get processNameLabel => 'પ્રક્રિયાનું નામ';
+  String get processNameLabel => 'તબક્કાનું નામ';
 
   @override
   String get processDescriptionLabel => 'વિગત (વૈકલ્પિક)';
@@ -520,13 +385,13 @@ class AppLocalizationsGu extends AppLocalizations {
       'નુકસાનગ્રસ્ત પીસને મજૂરીમાં સામેલ કરો';
 
   @override
-  String get processActivateAction => 'પ્રક્રિયા સક્રિય કરો';
+  String get processActivateAction => 'તબક્કો સક્રિય કરો';
 
   @override
-  String get processDeactivateAction => 'પ્રક્રિયા નિષ્ક્રિય કરો';
+  String get processDeactivateAction => 'તબક્કો નિષ્ક્રિય કરો';
 
   @override
-  String get processDeactivateConfirmTitle => 'પ્રક્રિયા નિષ્ક્રિય કરવી છે?';
+  String get processDeactivateConfirmTitle => 'તબક્કો નિષ્ક્રિય કરવો છે?';
 
   @override
   String get processDeactivateConfirmMessage =>
@@ -534,14 +399,14 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get processDuplicateNameError =>
-      'આ નામની પ્રક્રિયા પહેલેથી અસ્તિત્વમાં છે.';
+      'આ નામનો તબક્કો પહેલેથી અસ્તિત્વમાં છે.';
 
   @override
   String get processAssignedWorkersHeading => 'સોંપેલા કારીગરો';
 
   @override
   String get processNoAssignedWorkers =>
-      'આ પ્રક્રિયામાં હાલમાં કોઈ કારીગર સોંપેલ નથી.';
+      'આ તબક્કામાં હાલમાં કોઈ કારીગર સોંપેલ નથી.';
 
   @override
   String get processAuditHistoryHeading => 'ઓડિટ ઇતિહાસ';
@@ -566,7 +431,7 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get workersEmptySubtitle =>
-      'પ્રક્રિયાઓ સોંપવા અને પીસ દીઠ ભાવ સેટ કરવા માટે તમારા કારીગરો ઉમેરો.';
+      'કામના તબક્કા સોંપવા અને પીસ દીઠ ભાવ સેટ કરવા માટે તમારા કારીગરો ઉમેરો.';
 
   @override
   String get workerCreateAction => 'નવો કારીગર';
@@ -600,7 +465,7 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get workerDeactivateConfirmMessage =>
-      'ઐતિહાસિક નોંધ અને ભાવ સુરક્ષિત રહેશે. નિષ્ક્રિય કારીગરને નવી પ્રક્રિયા સોંપી શકાશે નહીં.';
+      'ઐતિહાસિક નોંધ અને ભાવ સુરક્ષિત રહેશે. નિષ્ક્રિય કારીગરને નવો તબક્કો સોંપી શકાશે નહીં.';
 
   @override
   String get workerContactHeading => 'સંપર્ક વિગતો';
@@ -609,14 +474,13 @@ class AppLocalizationsGu extends AppLocalizations {
   String get workerNoContactInfo => 'ફોન અથવા સરનામું નોંધેલ નથી.';
 
   @override
-  String get workerAssignedProcessesHeading =>
-      'સોંપેલી પ્રક્રિયાઓ અને વર્તમાન ભાવ';
+  String get workerAssignedProcessesHeading => 'સોંપેલા તબક્કા અને વર્તમાન ભાવ';
 
   @override
-  String get workerNoAssignedProcesses => 'હજુ કોઈ પ્રક્રિયા સોંપેલ નથી.';
+  String get workerNoAssignedProcesses => 'હજુ કોઈ તબક્કો સોંપેલ નથી.';
 
   @override
-  String get workerManageAssignmentsAction => 'પ્રક્રિયા સોંપણી';
+  String get workerManageAssignmentsAction => 'તબક્કા સોંપણી';
 
   @override
   String get workerViewRateHistoryAction => 'ભાવ ઇતિહાસ';
@@ -625,17 +489,17 @@ class AppLocalizationsGu extends AppLocalizations {
   String get workerAddRateAction => 'ભાવ ઉમેરો';
 
   @override
-  String get assignmentsHeading => 'કારીગર પ્રક્રિયા સોંપણી';
+  String get assignmentsHeading => 'કારીગર તબક્કા સોંપણી';
 
   @override
   String get assignmentsSubtitle =>
-      'એક કારીગરને કોઈપણ ક્રમ વગર એકથી વધુ પ્રક્રિયાઓ સોંપી શકાય છે.';
+      'એક કારીગરને કોઈપણ ક્રમ વગર એકથી વધુ તબક્કા સોંપી શકાય છે.';
 
   @override
-  String get assignmentsAddLabel => 'સક્રિય પ્રક્રિયા પસંદ કરો';
+  String get assignmentsAddLabel => 'સક્રિય તબક્કો પસંદ કરો';
 
   @override
-  String get assignmentsAddAction => 'પ્રક્રિયા સોંપો';
+  String get assignmentsAddAction => 'તબક્કો સોંપો';
 
   @override
   String get assignmentsRemoveAction => 'દૂર કરો';
@@ -652,29 +516,29 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get assignmentsEmptySubtitle =>
-      'આ કારીગરને એક અથવા વધુ સક્રિય પ્રક્રિયાઓ સોંપો.';
+      'આ કારીગરને એક અથવા વધુ સક્રિય તબક્કા સોંપો.';
 
   @override
   String get assignmentsNoAvailableProcesses =>
-      'બધી સક્રિય પ્રક્રિયાઓ પહેલેથી સોંપેલી છે અથવા કોઈ સક્રિય પ્રક્રિયા ઉપલબ્ધ નથી.';
+      'બધા સક્રિય તબક્કા પહેલેથી સોંપેલા છે અથવા કોઈ સક્રિય તબક્કો ઉપલબ્ધ નથી.';
 
   @override
   String get assignmentsDuplicateError =>
-      'આ પ્રક્રિયા આ કારીગરને પહેલેથી સોંપેલી છે.';
+      'આ તબક્કો આ કારીગરને પહેલેથી સોંપેલો છે.';
 
   @override
   String get assignmentsInactiveWorkerError =>
-      'પ્રક્રિયા સોંપતા પહેલા આ કારીગરને સક્રિય કરો.';
+      'તબક્કો સોંપતા પહેલા આ કારીગરને સક્રિય કરો.';
 
   @override
   String get assignmentsInactiveProcessError =>
-      'માત્ર સક્રિય પ્રક્રિયાઓ જ સોંપી શકાય છે.';
+      'માત્ર સક્રિય તબક્કા જ સોંપી શકાય છે.';
 
   @override
   String get ratesHistoryHeading => 'પીસ દીઠ ભાવ ઇતિહાસ';
 
   @override
-  String get ratesFilterProcessLabel => 'પ્રક્રિયા';
+  String get ratesFilterProcessLabel => 'તબક્કો';
 
   @override
   String get ratesCurrentRateLabel => 'વર્તમાન ભાવ';
@@ -714,17 +578,17 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get ratesEmptySubtitle =>
-      'આ કારીગર અને પ્રક્રિયા માટે અમલી તારીખ સાથેનો પીસ દીઠ ભાવ ઉમેરો.';
+      'આ કારીગર અને તબક્કા માટે અમલી તારીખ સાથેનો પીસ દીઠ ભાવ ઉમેરો.';
 
   @override
-  String get ratesSelectProcessHint => 'પ્રક્રિયા પસંદ કરો';
+  String get ratesSelectProcessHint => 'તબક્કો પસંદ કરો';
 
   @override
   String get ratesAutoCloseTitle => 'અગાઉનો ચાલુ ભાવ બંધ કરવો છે?';
 
   @override
   String get ratesAutoCloseMessage =>
-      'આ પ્રક્રિયા માટે અગાઉથી એક ચાલુ ભાવ છે. સાચવવાથી તે અગાઉના દિવસે બંધ થશે અને નવો ભાવ તમારી પસંદ કરેલી તારીખથી શરૂ થશે.';
+      'આ તબક્કા માટે અગાઉથી એક ચાલુ ભાવ છે. સાચવવાથી તે અગાઉના દિવસે બંધ થશે અને નવો ભાવ તમારી પસંદ કરેલી તારીખથી શરૂ થશે.';
 
   @override
   String get ratesOverlapError =>
@@ -732,7 +596,7 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get ratesMultipleOpenEndedError =>
-      'આ કારીગર અને પ્રક્રિયા માટે અગાઉથી બીજો ચાલુ ભાવ અસ્તિત્વમાં છે.';
+      'આ કારીગર અને તબક્કા માટે અગાઉથી બીજો ચાલુ ભાવ અસ્તિત્વમાં છે.';
 
   @override
   String get ratesToBeforeFromError =>
@@ -771,19 +635,13 @@ class AppLocalizationsGu extends AppLocalizations {
   String get stockRepairAction => 'ડેમેજ રિપેર';
 
   @override
-  String get stockTabOpenIssues => 'બાકી માલ';
-
-  @override
   String get stockTabBalances => 'લાઇવ સ્ટોક';
-
-  @override
-  String get stockTabHistory => 'ઇતિહાસ';
 
   @override
   String get stockTabWorkers => 'કારીગર મુજબ';
 
   @override
-  String get stockTabProcesses => 'પ્રક્રિયા મુજબ';
+  String get stockTabProcesses => 'તબક્કા મુજબ';
 
   @override
   String get stockAvailableGoodLabel => 'ઉપલબ્ધ સારો સ્ટોક';
@@ -810,19 +668,7 @@ class AppLocalizationsGu extends AppLocalizations {
   String get stockRemainingPendingLabel => 'હવે બાકી';
 
   @override
-  String get stockSelectLotLabel => 'લોટ પસંદ કરો';
-
-  @override
-  String get stockSelectDesignLabel => 'ડિઝાઇન પસંદ કરો';
-
-  @override
   String get stockSelectColourLabel => 'રંગ પસંદ કરો';
-
-  @override
-  String get stockSelectProcessLabel => 'પ્રક્રિયા પસંદ કરો';
-
-  @override
-  String get stockSelectWorkerLabel => 'યોગ્ય કારીગર પસંદ કરો';
 
   @override
   String get stockIssueQuantityLabel => 'આપવાની સંખ્યા (પીસ)';
@@ -835,7 +681,7 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get stockRateMissingWarning =>
-      'પસંદ કરેલી IST તારીખે આ કારીગર અને પ્રક્રિયા માટે કોઈ અમલી ભાવ નથી.';
+      'પસંદ કરેલી IST તારીખે આ કારીગર અને તબક્કા માટે કોઈ અમલી ભાવ નથી.';
 
   @override
   String get stockRateConflictWarning => 'આ તારીખે એકથી વધુ ઓવરલેપ થતા ભાવ છે.';
@@ -853,11 +699,8 @@ class AppLocalizationsGu extends AppLocalizations {
   String get stockNotesLabel => 'નોંધ (વૈકલ્પિક)';
 
   @override
-  String get stockIssueSuccess => 'સ્ટોક સફળતાપૂર્વક આપવામાં આવ્યો.';
-
-  @override
   String get stockNoEligibleWorkers =>
-      'આ પ્રક્રિયા માટે કોઈ સક્રિય કારીગર સોંપેલ નથી.';
+      'આ તબક્કા માટે કોઈ સક્રિય કારીગર સોંપેલ નથી.';
 
   @override
   String get stockInsufficientGoodError =>
@@ -896,13 +739,6 @@ class AppLocalizationsGu extends AppLocalizations {
   @override
   String get stockSettlementReasonRequiredError =>
       'ડેમેજ, ખોવાયેલ અથવા ઘટ માટે કારણ ફરજિયાત છે.';
-
-  @override
-  String get stockSettlementSuccess => 'માલ પરત / સેટલમેન્ટ નોંધાયું.';
-
-  @override
-  String get stockInheritedRateNotice =>
-      'મૂળ ઇશ્યુનો લોક કરેલ ભાવ અને બિલિંગ નિયમ આપમેળે લાગુ થશે.';
 
   @override
   String get stockRepairHeading => 'ડેમેજ થી સારો સ્ટોક સમાયોજન';
@@ -959,10 +795,10 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get stockEmptyHistorySubtitle =>
-      'હિલચાલ ટ્રેક કરવા માટે કારીગર અને પ્રક્રિયાને સ્ટોક આપો.';
+      'હિલચાલ ટ્રેક કરવા માટે કારીગર અને તબક્કાને સ્ટોક આપો.';
 
   @override
-  String get stockSearchHint => 'લોટ, ડિઝાઇન, રંગ, કારીગર, પ્રક્રિયા શોધો...';
+  String get stockSearchHint => 'લોટ, ડિઝાઇન, રંગ, કારીગર, તબક્કો શોધો...';
 
   @override
   String get stockFilterAllTypes => 'બધા પ્રકાર';
@@ -1007,19 +843,10 @@ class AppLocalizationsGu extends AppLocalizations {
   String get accountingEarnedLabourLabel => 'કમાયેલ મજૂરી';
 
   @override
-  String get accountingIssuedLabourInfoLabel => 'આપેલ મજૂરી (માહિતી)';
-
-  @override
-  String get accountingReceivedLabourInfoLabel => 'મળેલ મજૂરી (માહિતી)';
-
-  @override
   String get accountingRegularPaidLabel => 'નિયમિત ચુકવણી';
 
   @override
   String get accountingAdvancePaidLabel => 'એડવાન્સ આપેલ';
-
-  @override
-  String get accountingAdvanceRefundLabel => 'એડવાન્સ પરત';
 
   @override
   String get accountingAdjustmentsLabel => 'સમાયોજન';
@@ -1211,22 +1038,19 @@ class AppLocalizationsGu extends AppLocalizations {
       '• V1 માં બેકઅપ અનએન્ક્રિપ્ટેડ છે જેથી તમે .sqlite ફાઇલ સીધી તપાસી શકો.\n• બેકઅપ ZIP ફાઇલોને સુરક્ષિત જગ્યાએ અથવા બાહ્ય ડ્રાઇવમાં સાચવો.\n• સુરક્ષા માટે Dev બેકઅપને Production StitchFlow માં રિસ્ટોર કરી શકાતું નથી.';
 
   @override
-  String get dashboardLiveOverview => 'વ્યવસાય ઝાંખી';
-
-  @override
   String get dashboardStockHealth => 'સ્ટોક અને ઉત્પાદન સ્થિતિ';
 
   @override
   String get dashboardFinanceHealth => 'કારીગર હિસાબ સારાંશ';
 
   @override
-  String get dashboardProcessPending => 'પ્રક્રિયા મુજબ બાકી કામ';
+  String get dashboardProcessPending => 'તબક્કા મુજબ બાકી કામ';
 
   @override
   String get dashboardRecentActivity => 'તાજેતરની ઓડિટ પ્રવૃત્તિ';
 
   @override
-  String get dashboardNoProcessPending => 'કોઈપણ પ્રક્રિયામાં બાકી સ્ટોક નથી.';
+  String get dashboardNoProcessPending => 'કોઈપણ તબક્કામાં બાકી સ્ટોક નથી.';
 
   @override
   String get dashboardNoRecentActivity =>
@@ -1240,30 +1064,6 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get reportsHeading => 'વ્યવસાય રિપોર્ટ્સ';
-
-  @override
-  String get reportsTabStockSummary => 'સ્ટોક સારાંશ';
-
-  @override
-  String get reportsTabLots => 'લોટ મુજબ';
-
-  @override
-  String get reportsTabColours => 'ડિઝાઇન / રંગ';
-
-  @override
-  String get reportsTabWorkers => 'કારીગર સ્ટોક';
-
-  @override
-  String get reportsTabProcesses => 'પ્રક્રિયા સ્ટોક';
-
-  @override
-  String get reportsTabPending => 'બાકી સ્ટોક';
-
-  @override
-  String get reportsTabDamagedLost => 'ડેમેજ અને ખોવાયેલ';
-
-  @override
-  String get reportsTabLabour => 'મજૂરી';
 
   @override
   String get reportsTabWorkerLedger => 'કારીગર ખાતા';
@@ -1349,32 +1149,28 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get settingsStockLabourSubtitle =>
-      'મુખ્ય મજૂરી નિયમ અને પ્રક્રિયા મુજબના ખાસ નિયમો જુઓ.';
-
-  @override
-  String get settingsGlobalBillingSectionTitle =>
-      'મુખ્ય (ગ્લોબલ) મજૂરી ગણતરી પદ્ધતિ';
+      'મુખ્ય મજૂરી નિયમ અને તબક્કા મુજબના ખાસ નિયમો જુઓ.';
 
   @override
   String get settingsGlobalBillingExplanationReceived =>
-      'કારીગર સારો માલ પરત આપે ત્યારે તેની મજૂરી જમા થાય છે. ખાસ પ્રક્રિયામાં ચાલુ ન હોય ત્યાં સુધી ડેમેજ પીસ ગણાતા નથી.';
+      'કારીગર સારો માલ પરત આપે ત્યારે તેની મજૂરી જમા થાય છે. ખાસ તબક્કામાં ચાલુ ન હોય ત્યાં સુધી ડેમેજ પીસ ગણાતા નથી.';
 
   @override
   String get settingsGlobalBillingExplanationGiven =>
       'કારીગરને સ્ટોક આપતાની સાથે જ મજૂરી જમા થાય છે. પરત એન્ટ્રી માત્ર માહિતી માટે રહે છે જેથી બેવડી ગણતરી ન થાય.';
 
   @override
-  String get settingsProcessOverridesTitle => 'પ્રક્રિયા મુજબના નિયમો';
+  String get settingsProcessOverridesTitle => 'તબક્કા મુજબના નિયમો';
 
   @override
   String get settingsProcessOverridesSubtitle =>
-      'દરેક પ્રક્રિયા અલગ સેટિંગ ન હોય ત્યાં સુધી મુખ્ય નિયમ અનુસરે છે. બદલવા માટે પ્રક્રિયા પર ટેપ કરો.';
+      'દરેક તબક્કો અલગ સેટિંગ ન હોય ત્યાં સુધી મુખ્ય નિયમ અનુસરે છે. બદલવા માટે તબક્કા પર ટેપ કરો.';
 
   @override
   String get settingsProcessInheritsGlobal => 'મુખ્ય નિયમ મુજબ';
 
   @override
-  String get settingsProcessOverridesGlobal => 'પ્રક્રિયાનો અલગ નિયમ';
+  String get settingsProcessOverridesGlobal => 'તબક્કાનો અલગ નિયમ';
 
   @override
   String get settingsDamagedIncludedShort => 'ડેમેજ સામેલ';
@@ -1383,8 +1179,7 @@ class AppLocalizationsGu extends AppLocalizations {
   String get settingsDamagedExcludedShort => 'ડેમેજ બાકાત';
 
   @override
-  String get settingsNoProcessesYet =>
-      'હજુ સુધી કોઈ પ્રોડક્શન પ્રક્રિયા બનાવેલ નથી.';
+  String get settingsNoProcessesYet => 'હજુ સુધી કોઈ કામનો તબક્કો બનાવેલ નથી.';
 
   @override
   String get settingsBackupTitle => 'બેકઅપ અને ડેટા સુરક્ષા';
@@ -1472,20 +1267,17 @@ class AppLocalizationsGu extends AppLocalizations {
       'પહેલા લોટમાં ડિઝાઇન અને રંગ ઉમેરો અથવા કારીગર પાસેથી સારો માલ પરત લો.';
 
   @override
-  String get stockSelectedLabel => 'પસંદ કરેલ';
-
-  @override
   String get stockChangeSelection => 'બદલો';
 
   @override
-  String get stockActiveProcessesLabel => 'સક્રિય પ્રક્રિયા';
+  String get stockActiveProcessesLabel => 'સક્રિય તબક્કો';
 
   @override
   String get stockEligibleWorkersLabel => 'યોગ્ય સોંપેલા કારીગર';
 
   @override
   String get stockNoActiveProcessesWarning =>
-      'કોઈ સક્રિય પ્રક્રિયા નથી. સ્ટોક આપતા પહેલા પ્રક્રિયા બનાવો.';
+      'કોઈ સક્રિય તબક્કો નથી. સ્ટોક આપતા પહેલા તબક્કો બનાવો.';
 
   @override
   String get stockBillingModePreviewLabel => 'લોક કરેલ બિલિંગ નિયમ';
@@ -1544,7 +1336,7 @@ class AppLocalizationsGu extends AppLocalizations {
   String get stockFilterAllWorkers => 'બધા કારીગરો';
 
   @override
-  String get stockFilterAllProcesses => 'બધી પ્રક્રિયાઓ';
+  String get stockFilterAllProcesses => 'બધા તબક્કા';
 
   @override
   String get stockPreviouslyReturnedLabel => 'પરત આવેલ';
@@ -1609,7 +1401,7 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get stockIssueNextProcessAction =>
-      'પરત મળેલ સ્ટોક આગળની પ્રક્રિયામાં આપો';
+      'પરત મળેલ સ્ટોક આગળના તબક્કામાં આપો';
 
   @override
   String get stockReceiveAnotherReturnAction => 'બીજો માલ પરત લો';
@@ -1621,7 +1413,7 @@ class AppLocalizationsGu extends AppLocalizations {
   String get stockTabMovementHistory => 'હિલચાલ ઇતિહાસ';
 
   @override
-  String get stockTabSummary => 'કારીગર અને પ્રક્રિયા';
+  String get stockTabSummary => 'કારીગર અને તબક્કો';
 
   @override
   String get auditActionDeactivate => 'નિષ્ક્રિય કર્યું';
@@ -1955,7 +1747,7 @@ class AppLocalizationsGu extends AppLocalizations {
       'આ તારીખે કોઈ સ્ટોક ઇશ્યૂ, પરત અથવા ચૂકવણી નોંધાઈ નથી.';
 
   @override
-  String get dailySummaryProcessActivityHeading => 'પ્રક્રિયા મુજબ પ્રવૃત્તિ';
+  String get dailySummaryProcessActivityHeading => 'તબક્કા મુજબ પ્રવૃત્તિ';
 
   @override
   String get dailySummaryWorkerActivityHeading => 'કારીગર મુજબ પ્રવૃત્તિ';
@@ -1979,7 +1771,7 @@ class AppLocalizationsGu extends AppLocalizations {
       'તાજેતરમાં વપરાયેલ ઉપલબ્ધ સ્ટોક';
 
   @override
-  String get stockRecentWorkPairsLabel => 'તાજેતરની પ્રક્રિયા અને કારીગર';
+  String get stockRecentWorkPairsLabel => 'તાજેતરનો તબક્કો અને કારીગર';
 
   @override
   String get stockUnusualConfirmTitle => 'અસામાન્ય ઇશ્યૂની ખાતરી કરો';
@@ -2047,7 +1839,7 @@ class AppLocalizationsGu extends AppLocalizations {
   String get reportCategoryWorkers => 'કારીગર કામગીરી';
 
   @override
-  String get reportCategoryProcesses => 'પ્રક્રિયા કામગીરી';
+  String get reportCategoryProcesses => 'તબક્કા કામગીરી';
 
   @override
   String get reportCategoryInventory => 'સ્ટોક / ઇન્વેન્ટરી';
@@ -2116,7 +1908,7 @@ class AppLocalizationsGu extends AppLocalizations {
   String get reportDefectRateLabel => 'નુકસાન / ઘટ દર';
 
   @override
-  String get reportWorkerProcessBreakdown => 'પ્રક્રિયા મુજબ ઉત્પાદકતા';
+  String get reportWorkerProcessBreakdown => 'તબક્કા મુજબ ઉત્પાદકતા';
 
   @override
   String get reportProcessWorkerContribution => 'કારીગર ફાળો';
@@ -2140,11 +1932,11 @@ class AppLocalizationsGu extends AppLocalizations {
   String get reportInsightsNoPriorData => 'અગાઉનો ડેટા નથી';
 
   @override
-  String get reportInsightsBottlenecksTitle => 'પ્રક્રિયા અવરોધો (બાકી કામ)';
+  String get reportInsightsBottlenecksTitle => 'તબક્કા અવરોધો (બાકી કામ)';
 
   @override
   String get reportInsightsNoBottlenecks =>
-      'કોઈ પ્રક્રિયામાં અવરોધ નથી — બધું કામ સમયસર છે.';
+      'કોઈ તબક્કામાં અવરોધ નથી — બધું કામ સમયસર છે.';
 
   @override
   String get reportInsightsWorkerTrendsTitle => 'ટોચના કારીગર ઉત્પાદકતા';
@@ -2154,7 +1946,7 @@ class AppLocalizationsGu extends AppLocalizations {
       'નુકસાન / ગુમ થવાના મુખ્ય કારણો';
 
   @override
-  String get reportInsightsLabourShareTitle => 'પ્રક્રિયા મુજબ મજૂરી ખર્ચ';
+  String get reportInsightsLabourShareTitle => 'તબક્કા મુજબ મજૂરી ખર્ચ';
 
   @override
   String get reportExportAction => 'એક્સપોર્ટ / પ્રિન્ટ';
@@ -2181,7 +1973,7 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get reportExportFullWorkbookSubtitle =>
-      'બધા રિપોર્ટ એક જ એક્સેલ ફાઇલમાં (દૈનિક, કારીગર, પ્રક્રિયા, સ્ટોક, મજૂરી, ચુકવણી).';
+      'બધા રિપોર્ટ એક જ એક્સેલ ફાઇલમાં (દૈનિક, કારીગર, તબક્કા, સ્ટોક, મજૂરી, ચુકવણી).';
 
   @override
   String get reportExportCsvTitle => 'CSV (UTF-8) એક્સપોર્ટ';
@@ -2422,7 +2214,7 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get validationWorkerNotAssigned =>
-      'પસંદ કરેલા કારીગરને આ પ્રક્રિયા સોંપાયેલી નથી.';
+      'પસંદ કરેલા કારીગરને આ તબક્કો સોંપાયેલો નથી.';
 
   @override
   String get validationRecordNotFound =>
@@ -2458,7 +2250,7 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get validationUnaccountedRemaining =>
-      'બાકી જથ્થાનો હિસાબ બાકી હોય ત્યારે પ્રક્રિયા પૂર્ણ કરી શકાય નહીં.';
+      'બાકી જથ્થાનો હિસાબ બાકી હોય ત્યારે તબક્કો પૂર્ણ કરી શકાય નહીં.';
 
   @override
   String get validationOverpaymentNotAllowed =>
@@ -2492,18 +2284,18 @@ class AppLocalizationsGu extends AppLocalizations {
   String get navWorkerHistory => 'કારીગર પ્રોડક્શન';
 
   @override
-  String get navProcessHistory => 'પ્રક્રિયા હિસ્ટ્રી';
+  String get navProcessHistory => 'તબક્કા હિસ્ટ્રી';
 
   @override
   String get prodHistoryDashboardTitle => 'પ્રોડક્શન હિસ્ટ્રી';
 
   @override
   String get prodHistoryDashboardSubtitle =>
-      'લોટ, કારીગર, પ્રક્રિયા અને નાણાકીય ખાતાનો કાયમી રેકોર્ડ';
+      'લોટ, કારીગર, તબક્કા અને નાણાકીય ખાતાનો કાયમી રેકોર્ડ';
 
   @override
   String get prodHistorySearchHint =>
-      'લોટ, કારીગર, પ્રક્રિયા, ડિઝાઇન, કલર શોધો...';
+      'લોટ, કારીગર, તબક્કો, ડિઝાઇન, કલર શોધો...';
 
   @override
   String get prodHistoryOnlyPending => 'માત્ર બાકી';
@@ -2513,9 +2305,6 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get prodHistoryTotalAssigned => 'સોંપેલ';
-
-  @override
-  String get prodHistoryTotalReturned => 'પરત આવેલ';
 
   @override
   String get prodHistoryTotalAccepted => 'મંજૂર (Accepted)';
@@ -2557,16 +2346,16 @@ class AppLocalizationsGu extends AppLocalizations {
   String get prodHistoryWorkerLotHistory => 'કારીગર લોટ હિસ્ટ્રી';
 
   @override
-  String get prodHistoryWorkerProcessHistory => 'પ્રક્રિયા મુજબ હિસ્ટ્રી';
+  String get prodHistoryWorkerProcessHistory => 'તબક્કા મુજબ હિસ્ટ્રી';
 
   @override
   String get prodHistoryIncludeInactive => 'નિષ્ક્રિય બતાવો';
 
   @override
-  String get prodHistoryProcessHistoryTitle => 'પ્રક્રિયા મુજબ હિસ્ટ્રી';
+  String get prodHistoryProcessHistoryTitle => 'તબક્કા મુજબ હિસ્ટ્રી';
 
   @override
-  String get prodHistoryProcessDetailsTitle => 'પ્રક્રિયા પ્રોડક્શન વિગત';
+  String get prodHistoryProcessDetailsTitle => 'તબક્કા પ્રોડક્શન વિગત';
 
   @override
   String get prodHistoryTabLotWise => 'લોટ મુજબ';
@@ -2624,7 +2413,7 @@ class AppLocalizationsGu extends AppLocalizations {
   String get prodHistoryOpenWorker => 'કારીગર ખોલો';
 
   @override
-  String get prodHistoryOpenProcess => 'પ્રક્રિયા ખોલો';
+  String get prodHistoryOpenProcess => 'તબક્કો ખોલો';
 
   @override
   String get prodHistoryLockedRateSnapshot => 'લોક થયેલ ભાવ';
@@ -2637,11 +2426,11 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get prodHistoryInitialAssignmentsTitle =>
-      '3. પ્રારંભિક પ્રક્રિયા સોંપણી (વૈકલ્પિક)';
+      '3. પ્રારંભિક તબક્કા સોંપણી (વૈકલ્પિક)';
 
   @override
   String get prodHistoryInitialAssignmentsSubtitle =>
-      'લોટ બનાવતી વખતે પ્રક્રિયા, કારીગર, જથ્થો અને ભાવ સીધા સોંપો.';
+      'લોટ બનાવતી વખતે તબક્કો, કારીગર, જથ્થો અને ભાવ સીધા સોંપો.';
 
   @override
   String get prodHistoryAddAssignmentAction => 'સોંપણી ઉમેરો';
@@ -2718,24 +2507,6 @@ class AppLocalizationsGu extends AppLocalizations {
       'જૂના લોટના ભાવ કાયમી લોક રહે છે અને ક્યારેય બદલાતા નથી.';
 
   @override
-  String get webBackupExportAction => 'વેબ બેકઅપ ડાઉનલોડ (.json)';
-
-  @override
-  String get webBackupExportDesc =>
-      'આ બ્રાઉઝરના તમામ ઓફલાઇન રેકોર્ડ્સનો ચકાસેલ બેકઅપ ડાઉનલોડ કરે છે.';
-
-  @override
-  String get webBackupRestoreAction => 'વેબ બેકઅપ રિસ્ટોર (.json)';
-
-  @override
-  String get webBackupRestoreDesc =>
-      'ચેકસમ અને સ્કીમા ચકાસીને બ્રાઉઝરના ઓફલાઇન ડેટાબેઝમાં ડેટા રિસ્ટોર કરે છે.';
-
-  @override
-  String get webPrintFallbackNote =>
-      'બ્રાઉઝર પ્રિન્ટ ડાયલોગ ખૂલ્યો છે (PDF માટે Save as PDF પસંદ કરો).';
-
-  @override
   String get uxUndo => 'પાછું લાવો';
 
   @override
@@ -2763,7 +2534,7 @@ class AppLocalizationsGu extends AppLocalizations {
   String get uxSearchTooltip => 'શોધો (Ctrl+K)';
 
   @override
-  String get uxSearchHint => 'લોટ, કારીગર, પ્રોસેસ શોધો…';
+  String get uxSearchHint => 'લોટ, કારીગર, તબક્કા શોધો…';
 
   @override
   String get uxSearchLots => 'લોટ';
@@ -2772,7 +2543,7 @@ class AppLocalizationsGu extends AppLocalizations {
   String get uxSearchWorkers => 'કારીગરો';
 
   @override
-  String get uxSearchProcesses => 'પ્રોસેસ';
+  String get uxSearchProcesses => 'કામના તબક્કા';
 
   @override
   String uxSearchNoResults(String query) {
@@ -2815,15 +2586,6 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get uxMoreScreens => 'બીજી સ્ક્રીન';
-
-  @override
-  String get uxMoreActions => 'વધુ ક્રિયાઓ';
-
-  @override
-  String get uxApply => 'લાગુ કરો';
-
-  @override
-  String get uxClearAll => 'બધું સાફ કરો';
 
   @override
   String get authSignInHeading => 'ક્લાઉડ સિંક માટે સાઇન ઇન કરો';
@@ -2877,10 +2639,6 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get authAccountTitle => 'એકાઉન્ટ અને ક્લાઉડ સિંક';
-
-  @override
-  String get authAccountSubtitle =>
-      'Google અને ફોન લોગિન, જોડાયેલા ડિવાઇસ અને સાઇન આઉટ મેનેજ કરો';
 
   @override
   String get authOfflineModeBadge => 'ઓફલાઇન મોડ';
@@ -2960,11 +2718,6 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get syncStatusNeedsAttention => 'ધ્યાન જરૂરી';
-
-  @override
-  String syncStatusPending(int count) {
-    return '$count બાકી';
-  }
 
   @override
   String get syncNowAction => 'હવે સિંક કરો';
@@ -3067,9 +2820,6 @@ class AppLocalizationsGu extends AppLocalizations {
   String get dataHealthCheckedAtLabel => 'છેલ્લી તપાસ';
 
   @override
-  String get dataHealthSchemaVersionLabel => 'સ્કીમા વર્ઝન';
-
-  @override
   String get dataHealthDbSizeLabel => 'ડેટાબેઝ સાઇઝ';
 
   @override
@@ -3166,7 +2916,7 @@ class AppLocalizationsGu extends AppLocalizations {
   }
 
   @override
-  String get routingTitle => 'પ્રોસેસ રૂટિંગ';
+  String get routingTitle => 'તબક્કા રૂટિંગ';
 
   @override
   String get routingRefreshTooltip => 'રિફ્રેશ કરો';
@@ -3175,19 +2925,19 @@ class AppLocalizationsGu extends AppLocalizations {
   String get routingLoadErrorTitle => 'જોબ રૂટિંગ લોડ કરી શકાયું નહીં';
 
   @override
-  String get routingAddProcessAction => 'પ્રોસેસ ઉમેરો';
+  String get routingAddProcessAction => 'તબક્કો ઉમેરો';
 
   @override
   String get routingReassignFromFactoryAction => 'ફેક્ટરીથી ફરી સોંપો';
 
   @override
-  String get routingAddOperationTitle => 'પ્રોસેસ ઓપરેશન ઉમેરો';
+  String get routingAddOperationTitle => 'લોટમાં તબક્કો ઉમેરો';
 
   @override
   String get routingVariantLabel => 'વેરિઅન્ટ (ડિઝાઇન / રંગ)';
 
   @override
-  String get routingOperationLabel => 'ઓપરેશન / પ્રોસેસ';
+  String get routingOperationLabel => 'કામનો તબક્કો';
 
   @override
   String get routingAssignWorkerLabel => 'કારીગર / વિભાગ સોંપો';
@@ -3216,7 +2966,7 @@ class AppLocalizationsGu extends AppLocalizations {
   String get routingAddDispatchAction => 'ઉમેરો અને ડિસ્પેચ કરો';
 
   @override
-  String get routingSavePendingAction => 'બાકી પ્રોસેસ સાચવો';
+  String get routingSavePendingAction => 'બાકી તબક્કો સાચવો';
 
   @override
   String get routingAddColourFirstError =>
@@ -3224,7 +2974,7 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get routingAddProcessWorkerFirstError =>
-      'કૃપા કરીને પહેલા ઓછામાં ઓછી એક સક્રિય પ્રોસેસ અને કારીગર બનાવો.';
+      'કૃપા કરીને પહેલા ઓછામાં ઓછો એક સક્રિય તબક્કો અને કારીગર બનાવો.';
 
   @override
   String get routingInvalidQuantityError => 'માન્ય ધન પૂર્ણાંક જથ્થો દાખલ કરો.';
@@ -3239,7 +2989,7 @@ class AppLocalizationsGu extends AppLocalizations {
   String get routingDirectTransferTitle => 'સીધું કારીગર-થી-કારીગર ટ્રાન્સફર';
 
   @override
-  String get routingNextOperationLabel => 'આગળનું ઓપરેશન / પ્રોસેસ';
+  String get routingNextOperationLabel => 'આગળનો તબક્કો';
 
   @override
   String get routingDestinationWorkerLabel => 'ગંતવ્ય કારીગર / વિભાગ';
@@ -3308,7 +3058,7 @@ class AppLocalizationsGu extends AppLocalizations {
   String get routingKeepAction => 'રાખો';
 
   @override
-  String get routingCancelProcessAction => 'પ્રોસેસ રદ કરો';
+  String get routingCancelProcessAction => 'તબક્કો રદ કરો';
 
   @override
   String get routingFactoryReadyLabel => 'ફેક્ટરીમાં તૈયાર';
@@ -3385,11 +3135,11 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get routingErrPendingRemaining =>
-      'બાકી જથ્થો હિસાબમાં લીધા વિના પ્રોસેસ પૂર્ણ કરી શકાતી નથી.';
+      'બાકી જથ્થો હિસાબમાં લીધા વિના તબક્કો પૂર્ણ કરી શકાતો નથી.';
 
   @override
   String get routingErrHeldPiecesCancel =>
-      'આ પ્રોસેસ રદ કરતા પહેલા બધા પીસ પરત અથવા ટ્રાન્સફર કરો.';
+      'આ તબક્કો રદ કરતા પહેલા બધા પીસ પરત અથવા ટ્રાન્સફર કરો.';
 
   @override
   String get routingErrSameWorkerProcess =>
@@ -3410,7 +3160,7 @@ class AppLocalizationsGu extends AppLocalizations {
   String get routingErrReasonRequired => 'કૃપા કરીને કારણ દાખલ કરો.';
 
   @override
-  String get routingErrProcessRequired => 'એક ઓપરેશન/પ્રોસેસ પસંદ કરો.';
+  String get routingErrProcessRequired => 'એક કામનો તબક્કો પસંદ કરો.';
 
   @override
   String get routingErrWorkerRequired => 'એક કારીગર પસંદ કરો.';
@@ -3429,9 +3179,6 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get slipShareReturnAction => 'પરત / QC સ્લિપ શેર કરો';
-
-  @override
-  String get slipShareReceiptAction => 'ચુકવણી રસીદ શેર કરો';
 
   @override
   String get slipShareKhataAction => 'ખાતાવહી સ્ટેટમેન્ટ શેર કરો';
@@ -3458,24 +3205,6 @@ class AppLocalizationsGu extends AppLocalizations {
   String get slipGeneratedSuccess => 'સ્લિપ શેર કરવા માટે તૈયાર છે.';
 
   @override
-  String get slipRefLabel => 'સંદર્ભ';
-
-  @override
-  String get slipBalancePayable => 'બાકી ચૂકવવાપાત્ર';
-
-  @override
-  String get slipBalanceAdvance => 'એડવાન્સ જમા';
-
-  @override
-  String get slipBalanceSettled => 'હિસાબ ચોખ્ખો';
-
-  @override
-  String get slipFooterOffline => 'StitchFlow ઓફલાઇન દ્વારા તૈયાર';
-
-  @override
-  String get undoAuditedSuccess => 'રિવર્સલ ઓડિટ લેજરમાં નોંધાયું.';
-
-  @override
   String get draftRestoredBanner => 'અધૂરો ડ્રાફ્ટ પુનઃસ્થાપિત થયો.';
 
   @override
@@ -3495,7 +3224,7 @@ class AppLocalizationsGu extends AppLocalizations {
   String get setupStepProfile => 'વ્યવસાય પ્રોફાઇલ સેટ કરો';
 
   @override
-  String get setupStepProcesses => 'ઉત્પાદન પ્રોસેસ બનાવો';
+  String get setupStepProcesses => 'કામના તબક્કા બનાવો';
 
   @override
   String get setupStepWorkers => 'કારીગરો અને દર ઉમેરો';
@@ -3581,10 +3310,6 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get syncConflictsTitle => 'સિંક કન્ફ્લિક્ટ ઇન્સ્પેક્ટર';
-
-  @override
-  String get syncConflictsSubtitle =>
-      'મલ્ટી-ડિવાઇસ/ટીમ સિંકના તફાવતો તપાસો અને જરૂર હોય તો તમારો ફેરફાર પુનઃસ્થાપિત કરો.';
 
   @override
   String get syncConflictsOpenAction => 'તફાવતો તપાસો';
@@ -3745,4 +3470,468 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get guideResetProgressDone => 'તાલીમ પ્રગતિ રીસેટ થઈ ગઈ છે.';
+
+  @override
+  String lotDesignPriceHelper(String price) {
+    return 'ડિઝાઇન ભાવ: $price';
+  }
+
+  @override
+  String lotStageDefaultRateHelper(String price) {
+    return 'તબક્કાનો ડિફોલ્ટ ભાવ: $price';
+  }
+
+  @override
+  String accountingPayFullAction(String amount) {
+    return 'પૂરા $amount ચૂકવો';
+  }
+
+  @override
+  String get accountingUndoFailed =>
+      'ચુકવણી પાછી લઈ શકાઈ નહીં. તેને રદ કરવા કારીગરનું ખાતું ખોલો.';
+
+  @override
+  String get lotNeedVariantStageWorker =>
+      'પહેલા ઓછામાં ઓછો એક રંગ, એક સક્રિય તબક્કો અને એક સક્રિય કારીગર ઉમેરો.';
+
+  @override
+  String get lotDesignColourVariantLabel => 'ડિઝાઇન / રંગ';
+
+  @override
+  String get lotQtyPcsLabel => 'જથ્થો (પીસ)';
+
+  @override
+  String get lotLockedRateLabel => 'લોક ભાવ (₹/પીસ)';
+
+  @override
+  String get lotEnterPositiveQty => 'શૂન્યથી વધુ જથ્થો લખો.';
+
+  @override
+  String get lotEnterValidRate => 'સાચો ભાવ લખો.';
+
+  @override
+  String lotDesignAlreadyAdded(Object a) {
+    return 'ડિઝાઇન \"$a\" આ લોટમાં પહેલેથી ઉમેરેલી છે.';
+  }
+
+  @override
+  String get lotEnterDesignName => 'ડિઝાઇનનું નામ લખો.';
+
+  @override
+  String get lotDesignNameTooLong => 'ડિઝાઇનનું નામ ખૂબ લાંબું છે.';
+
+  @override
+  String get lotEnterValidDefaultPrice =>
+      'સાચો ડિફોલ્ટ ભાવ લખો (શૂન્ય અથવા વધુ).';
+
+  @override
+  String lotSelectColoursForDesign(Object a) {
+    return 'રંગ પસંદ કરો — $a';
+  }
+
+  @override
+  String get lotSelectColoursColourOnly => 'રંગ પસંદ કરો (ફક્ત રંગ લોટ)';
+
+  @override
+  String lotEnterPositiveQtyFor(Object a) {
+    return '$a માટે શૂન્યથી વધુ જથ્થો લખો.';
+  }
+
+  @override
+  String lotEnterPositiveQtyForVariant(Object a, Object b) {
+    return '$a — $b માટે શૂન્યથી વધુ જથ્થો લખો.';
+  }
+
+  @override
+  String lotEnterValidPriceForVariant(Object a, Object b) {
+    return '$a — $b માટે સાચો ભાવ લખો (શૂન્ય અથવા વધુ).';
+  }
+
+  @override
+  String lotEnterValidPriceFor(Object a) {
+    return '$a માટે સાચો ભાવ લખો (શૂન્ય અથવા વધુ).';
+  }
+
+  @override
+  String lotQtyExceedsMaxFor(Object a) {
+    return '$a માટેનો જથ્થો મહત્તમ મર્યાદા કરતાં વધુ છે.';
+  }
+
+  @override
+  String lotCreatedSuccess(Object a) {
+    return 'લોટ $a સફળતાપૂર્વક બન્યો.';
+  }
+
+  @override
+  String get lotSummaryLive => 'લોટ સારાંશ (લાઇવ)';
+
+  @override
+  String get lotColoursLabel => 'રંગ';
+
+  @override
+  String get lotTotalQtyLabel => 'કુલ જથ્થો';
+
+  @override
+  String lotPiecesValue(Object a) {
+    return '$a પીસ';
+  }
+
+  @override
+  String get lotSkuValueLabel => 'માલની કિંમત';
+
+  @override
+  String get lotSectionInfo => '1. લોટની વિગત';
+
+  @override
+  String get lotSectionDesigns => '2. ડિઝાઇન, રંગ અને ભાવ';
+
+  @override
+  String get lotSectionDesignsHelp =>
+      'અહીંના ભાવ માલના સંદર્ભ ભાવ છે (કારીગરની મજૂરીથી અલગ). ડિઝાઇન, રંગ, જથ્થો અને ભાવ એક જ જગ્યાએ ઉમેરી શકો છો.';
+
+  @override
+  String get lotModeWithDesigns => 'ડિઝાઇન સાથે';
+
+  @override
+  String get lotModeColourOnly => 'ફક્ત રંગ (ડિઝાઇન વગર)';
+
+  @override
+  String get lotSelectExistingDesign => 'હાલની ડિઝાઇન પસંદ કરો';
+
+  @override
+  String get lotAddNewDesign => 'નવી ડિઝાઇન ઉમેરો';
+
+  @override
+  String get lotNewDesignInline => 'નવી ડિઝાઇન';
+
+  @override
+  String get lotDefaultUnitPriceLabel => 'ડિફોલ્ટ ભાવ (₹ / પીસ, વૈકલ્પિક)';
+
+  @override
+  String get lotAddDesignToLot => 'લોટમાં ડિઝાઇન ઉમેરો';
+
+  @override
+  String get lotNoDesignsYet =>
+      'હજુ કોઈ ડિઝાઇન ઉમેરી નથી. ઉપરથી હાલની ડિઝાઇન પસંદ કરો અથવા \"+ નવી ડિઝાઇન ઉમેરો\" દબાવો (અથવા ખાલી લોટ સાચવી પછીથી ડિઝાઇન ઉમેરો).';
+
+  @override
+  String lotColourVariantsCount(Object a) {
+    return 'રંગ ($a)';
+  }
+
+  @override
+  String get lotAddColours => 'રંગ ઉમેરો';
+
+  @override
+  String get lotAddColoursHelp =>
+      'પેલેટમાંથી રંગ પસંદ કરવા અથવા જથ્થો અને ભાવ સાથે નવો રંગ બનાવવા \"રંગ ઉમેરો\" દબાવો.';
+
+  @override
+  String lotDefaultPriceValue(Object a) {
+    return 'ડિફોલ્ટ: $a';
+  }
+
+  @override
+  String get lotRemoveDesign => 'ડિઝાઇન દૂર કરો';
+
+  @override
+  String get lotRemoveColour => 'રંગ દૂર કરો';
+
+  @override
+  String get lotUnitPriceLabel => 'ભાવ (₹)';
+
+  @override
+  String lotColourDetailsFor(Object a) {
+    return '$a વિગત';
+  }
+
+  @override
+  String get lotColourDetails => 'રંગની વિગત';
+
+  @override
+  String get lotColourDetailsLoadError => 'રંગની વિગત લોડ થઈ શકી નહીં';
+
+  @override
+  String get lotColourNotFound => 'રંગ મળ્યો નહીં';
+
+  @override
+  String get lotColourNotFoundHelp => 'આ રંગ લોટમાંથી દૂર કરાયો હોઈ શકે.';
+
+  @override
+  String lotHashDesign(Object a, Object b) {
+    return 'લોટ #$a  •  ડિઝાઇન: $b';
+  }
+
+  @override
+  String lotQtyPcsValue(Object a) {
+    return 'લોટ જથ્થો: $a પીસ';
+  }
+
+  @override
+  String lotTotalAssignedPcs(Object a) {
+    return 'કુલ સોંપેલ: $a પીસ';
+  }
+
+  @override
+  String lotUnitValue(Object a) {
+    return 'એક પીસ ભાવ: $a';
+  }
+
+  @override
+  String lotDamagedPcs(Object a) {
+    return 'ડેમેજ: $a પીસ';
+  }
+
+  @override
+  String lotManageStagesFor(Object a) {
+    return '$a માટે તબક્કા મેનેજ કરો';
+  }
+
+  @override
+  String get lotAvailableFactory => 'ઉપલબ્ધ (કારખાનામાં)';
+
+  @override
+  String get lotPendingWorkers => 'બાકી (કારીગર પાસે)';
+
+  @override
+  String get lotCompletedHandedOver => 'પૂર્ણ / સોંપાયેલ';
+
+  @override
+  String get lotStageBreakdown => 'તબક્કા મુજબ વિગત';
+
+  @override
+  String lotStageSummaryLine(Object a, Object b, Object c) {
+    return 'સોંપેલ: $a પીસ • પૂર્ણ: $b પીસ • બાકી: $c પીસ';
+  }
+
+  @override
+  String get lotWorkerDistribution => 'કારીગર મુજબ વહેંચણી અને ભાવ';
+
+  @override
+  String lotNoWorkersAssignedFor(Object a) {
+    return '$a માટે હજુ કોઈ કારીગર સોંપાયો નથી.';
+  }
+
+  @override
+  String lotAssignedPendingLine(Object a, Object b) {
+    return 'સોંપેલ: $a પીસ • બાકી: $b પીસ';
+  }
+
+  @override
+  String lotRatePayableLine(Object a, Object b, Object c) {
+    return 'ભાવ: $a / $b • ચૂકવવાપાત્ર: $c';
+  }
+
+  @override
+  String get lotColourCostSummary => 'રંગ ખર્ચ સારાંશ';
+
+  @override
+  String get lotBaseStageCost => 'તબક્કાનો મૂળ ખર્ચ';
+
+  @override
+  String get lotAdditionalCharges => 'વધારાના ચાર્જ';
+
+  @override
+  String get lotDeductions => 'કપાત';
+
+  @override
+  String get lotPaidToWorkers => 'કારીગરોને ચૂકવેલ';
+
+  @override
+  String lotMovementHistoryCount(Object a) {
+    return 'હેરફેર ઇતિહાસ ($a)';
+  }
+
+  @override
+  String lotMovementHistoryEmpty(Object a) {
+    return '$a માટેની મોકલણી, સીધી ટ્રાન્સફર અને પરત અહીં દેખાશે.';
+  }
+
+  @override
+  String lotReceivedOfLine(Object a, Object b, Object c) {
+    return 'મળેલ: $a/$b • $c';
+  }
+
+  @override
+  String get lotStatusNotStarted => 'શરૂ નથી';
+
+  @override
+  String get lotStatusInProgress => 'ચાલુ છે';
+
+  @override
+  String lotStatusPendingCount(Object a) {
+    return 'બાકી ($a)';
+  }
+
+  @override
+  String lotInitialColoursCount(Object a) {
+    return 'શરૂઆતના રંગ ($a)';
+  }
+
+  @override
+  String get lotSelectInitialColours => 'શરૂઆતના રંગ પસંદ કરો';
+
+  @override
+  String get lotSelectColoursNoDesign => 'રંગ પસંદ કરો (ડિઝાઇન વગર)';
+
+  @override
+  String get lotRoutingHandovers => 'તબક્કા રૂટિંગ અને સોંપણી';
+
+  @override
+  String get lotAddColourNoDesign => 'રંગ ઉમેરો (ડિઝાઇન વગર)';
+
+  @override
+  String lotDesignValue(Object a) {
+    return 'ડિઝાઇન: $a';
+  }
+
+  @override
+  String get lotTotalLabel => 'કુલ';
+
+  @override
+  String get lotDoneLabel => 'પૂર્ણ';
+
+  @override
+  String get lotAddCustomColour => 'નવો રંગ ઉમેરો';
+
+  @override
+  String get lotEditColour => 'રંગ સુધારો';
+
+  @override
+  String get lotHexCodeLabel => 'HEX કોડ (દા.ત. #DC2626)';
+
+  @override
+  String get lotSaveColour => 'રંગ સાચવો';
+
+  @override
+  String get lotSearchColourHint => 'રંગનું નામ અથવા HEX શોધો';
+
+  @override
+  String get lotCustomColour => 'નવો';
+
+  @override
+  String get lotRecentlyUsed => 'તાજેતરમાં વાપરેલા';
+
+  @override
+  String get lotColourPaletteHelp =>
+      'રંગ પેલેટ (પસંદ કરવા ટેપ કરો, સુધારવા દબાવી રાખો)';
+
+  @override
+  String lotSelectedColoursCount(Object a) {
+    return 'પસંદ કરેલા રંગ ($a)';
+  }
+
+  @override
+  String get lotSelectColoursAbove => 'ઉપરથી રંગ પસંદ કરો';
+
+  @override
+  String lotAddColoursSummary(Object a, Object b) {
+    return '$a રંગ ઉમેરો • $b પીસ';
+  }
+
+  @override
+  String get lotInitialQtyLabel => 'શરૂઆતનો જથ્થો';
+
+  @override
+  String get lotDesignsColoursBreakdown => 'ડિઝાઇન અને રંગ મુજબ વિગત';
+
+  @override
+  String lotInHouseValue(Object a) {
+    return 'કારખાનામાં: $a';
+  }
+
+  @override
+  String lotWithWorkersValue(Object a) {
+    return 'કારીગર પાસે: $a';
+  }
+
+  @override
+  String lotPendingQcValue(Object a) {
+    return 'QC બાકી: $a';
+  }
+
+  @override
+  String lotDamagedValue(Object a) {
+    return 'ડેમેજ: $a';
+  }
+
+  @override
+  String lotStageAssignmentsCount(Object a) {
+    return 'તબક્કા સોંપણી અને કારીગર ખાતું ($a)';
+  }
+
+  @override
+  String get lotNoStageAssignments =>
+      'આ લોટ માટે હજુ કોઈ તબક્કા સોંપણી નોંધાઈ નથી.';
+
+  @override
+  String lotRejectionRecordsCount(Object a) {
+    return 'રિજેક્શન અને રિપેર રેકોર્ડ ($a)';
+  }
+
+  @override
+  String lotRejectedLine(Object a, Object b, Object c) {
+    return 'રિજેક્ટ: $a • ફરી મંજૂર: $b • બાકી: $c';
+  }
+
+  @override
+  String lotReasonValue(Object a) {
+    return 'કારણ: $a';
+  }
+
+  @override
+  String lotAssignedValue(Object a) {
+    return 'સોંપેલ: $a';
+  }
+
+  @override
+  String lotReturnedValue(Object a) {
+    return 'પરત: $a';
+  }
+
+  @override
+  String lotAcceptedValue(Object a) {
+    return 'મંજૂર: $a';
+  }
+
+  @override
+  String lotOutstandingValue(Object a) {
+    return 'બાકી: $a';
+  }
+
+  @override
+  String lotRejectedValue(Object a) {
+    return 'રિજેક્ટ: $a';
+  }
+
+  @override
+  String lotRateEarnedLine(Object a, Object b) {
+    return 'ભાવ: $a/પીસ • કમાણી: $b';
+  }
+
+  @override
+  String get lotCostLabel => 'ખર્ચ';
+
+  @override
+  String lotLotsValue(Object a) {
+    return 'લોટ: $a';
+  }
+
+  @override
+  String lotWorkersValue(Object a) {
+    return 'કારીગર: $a';
+  }
+
+  @override
+  String lotCostPaidOutstandingLine(Object a, Object b, Object c) {
+    return 'ખર્ચ: $a • ચૂકવેલ (અંદાજ): $b • બાકી (અંદાજ): $c';
+  }
+
+  @override
+  String get stockStageDefaultBadge => 'તબક્કાનો ડિફોલ્ટ';
+
+  @override
+  String stockInheritedFrom(Object a, Object b) {
+    return '$a પરથી લીધેલ ($b)';
+  }
 }

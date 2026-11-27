@@ -1,3 +1,4 @@
+import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
@@ -85,11 +86,13 @@ final class _LotColourDetailView extends StatelessWidget {
             .firstOrNull;
 
         return AppScaffold(
-          title: sku != null ? '${sku.colourName} Details' : 'Colour Details',
+          title: sku != null
+              ? context.l10n.lotColourDetailsFor(sku.colourName)
+              : context.l10n.lotColourDetails,
           actions: [
             AppIconButton(
               icon: AppIcons.refresh,
-              tooltip: 'Refresh',
+              tooltip: context.l10n.routingRefreshTooltip,
               onPressed: () => context.read<JobRoutingCubit>().load(lotId),
             ),
           ],
@@ -98,18 +101,17 @@ final class _LotColourDetailView extends StatelessWidget {
             JobRoutingStatus.initial ||
             JobRoutingStatus.loading => const AppSkeletonList(itemCount: 4),
             JobRoutingStatus.error => AppErrorView(
-              title: 'Unable to load Colour Details',
+              title: context.l10n.lotColourDetailsLoadError,
               message: state.errorMessage,
-              retryLabel: 'Retry',
+              retryLabel: context.l10n.actionRetry,
               onRetry: () => context.read<JobRoutingCubit>().load(lotId),
             ),
             JobRoutingStatus.loaded =>
               sku == null
-                  ? const AppEmptyState(
+                  ? AppEmptyState(
                       icon: AppIcons.colour,
-                      title: 'Colour Variant Not Found',
-                      subtitle:
-                          'This colour variant may have been removed from the lot.',
+                      title: context.l10n.lotColourNotFound,
+                      subtitle: context.l10n.lotColourNotFoundHelp,
                     )
                   : _buildLoaded(context, overview!, sku, localeCode),
           },
@@ -173,9 +175,8 @@ final class _LotColourDetailView extends StatelessWidget {
     final pendingQty = sku.totalPendingWithWorkers;
     final availableQty = sku.physicalAvailableInHouse;
 
-    // Build stage summaries ensuring Cutting, Stitching, and Packing are always
-    // clearly surfaced alongside any other custom processes on this colour.
-    final stageSummaries = _buildProcessStageSummaries(activeOps);
+    // One summary per work stage actually used on this colour.
+    final stageSummaries = _buildProcessStageSummaries(context, activeOps);
 
     return RefreshIndicator(
       onRefresh: () => context.read<JobRoutingCubit>().load(lotId),
@@ -232,9 +233,7 @@ final class _LotColourDetailView extends StatelessWidget {
                             children: [
                               Text(
                                 sku.colourName,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headlineSmall
+                                style: Theme.of(context).textTheme.headlineSmall
                                     ?.copyWith(
                                       color: onSwatch,
                                       fontWeight: FontWeight.w800,
@@ -253,7 +252,10 @@ final class _LotColourDetailView extends StatelessWidget {
                               Text(
                                 isColourOnly
                                     ? 'Lot #${overview.lot.lotNumber}  •  Colour-Only Lot (No Design)'
-                                    : 'Lot #${overview.lot.lotNumber}  •  Design: ${sku.designName}',
+                                    : context.l10n.lotHashDesign(
+                                        overview.lot.lotNumber,
+                                        sku.designName,
+                                      ),
                                 style: Theme.of(context).textTheme.bodySmall
                                     ?.copyWith(
                                       color: onSwatch.withValues(alpha: 0.92),
@@ -275,30 +277,40 @@ final class _LotColourDetailView extends StatelessWidget {
                           runSpacing: AppSpacing.xs,
                           children: [
                             AppStatusBadge(
-                              label: 'Lot Qty: ${sku.initialQuantity} pcs',
+                              label: context.l10n.lotQtyPcsValue(
+                                sku.initialQuantity,
+                              ),
                               tone: AppStatusTone.info,
                             ),
                             AppStatusBadge(
-                              label: 'Total Assigned: $totalAssigned pcs',
+                              label: context.l10n.lotTotalAssignedPcs(
+                                totalAssigned,
+                              ),
                               tone: AppStatusTone.neutral,
                             ),
                             if (sku.unitPricePaise > 0)
                               AppStatusBadge(
-                                label:
-                                    'Unit Value: ${MoneyFormatter.formatPaise(sku.unitPricePaise)}',
+                                label: context.l10n.lotUnitValue(
+                                  MoneyFormatter.formatPaise(
+                                    sku.unitPricePaise,
+                                  ),
+                                ),
                                 tone: AppStatusTone.neutral,
                               ),
                             if (sku.damagedBucket > 0)
                               AppStatusBadge(
-                                label: 'Damaged: ${sku.damagedBucket} pcs',
+                                label: context.l10n.lotDamagedPcs(
+                                  sku.damagedBucket,
+                                ),
                                 tone: AppStatusTone.damaged,
                               ),
                           ],
                         ),
                         const SizedBox(height: AppSpacing.md),
                         AppButton(
-                          label:
-                              'Manage Processes for ${sku.colourName}',
+                          label: context.l10n.lotManageStagesFor(
+                            sku.colourName,
+                          ),
                           icon: AppIcons.routeTransfer,
                           isExpanded: true,
                           onPressed: () => context.push(
@@ -330,7 +342,7 @@ final class _LotColourDetailView extends StatelessWidget {
                     SizedBox(
                       width: tileW,
                       child: AppMetricTile(
-                        label: 'Available (Factory)',
+                        label: context.l10n.lotAvailableFactory,
                         value: availableQty,
                         suffix: 'pcs',
                         icon: AppIcons.factory,
@@ -340,7 +352,7 @@ final class _LotColourDetailView extends StatelessWidget {
                     SizedBox(
                       width: tileW,
                       child: AppMetricTile(
-                        label: 'Pending (Workers)',
+                        label: context.l10n.lotPendingWorkers,
                         value: pendingQty,
                         suffix: 'pcs',
                         icon: AppIcons.pending,
@@ -352,7 +364,7 @@ final class _LotColourDetailView extends StatelessWidget {
                     SizedBox(
                       width: tileW,
                       child: AppMetricTile(
-                        label: 'Completed / Handed Over',
+                        label: context.l10n.lotCompletedHandedOver,
                         value: completedQty,
                         suffix: 'pcs',
                         icon: AppIcons.successOutline,
@@ -364,7 +376,7 @@ final class _LotColourDetailView extends StatelessWidget {
                     SizedBox(
                       width: tileW,
                       child: AppMetricTile(
-                        label: 'Total Production Cost',
+                        label: context.l10n.routingTotalProductionCostLabel,
                         value: costSummary.totalNetCostPaise,
                         isCurrencyPaise: true,
                         icon: AppIcons.rupee,
@@ -378,38 +390,53 @@ final class _LotColourDetailView extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.md),
 
-          // 3. Process-wise Breakdown (Cutting, Stitching, Packing & Others)
+          // 3. Stage-wise breakdown of the work stages used on this colour
           AppMotionEntrance(
             index: 2,
             child: AppCard(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const AppHeading(
-                    'Process-wise Stage Breakdown',
+                  AppHeading(
+                    context.l10n.lotStageBreakdown,
                     level: AppHeadingLevel.h3,
                   ),
                   const SizedBox(height: AppSpacing.sm),
+                  if (stageSummaries.isEmpty)
+                    AppText(
+                      context.l10n.workerNoAssignedProcesses,
+                      variant: AppTextVariant.bodySmall,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
                   for (var i = 0; i < stageSummaries.length; i++) ...[
-                    AppActionRow(content: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              AppText(
-                                stageSummaries[i].processName,
-                                fontWeight: FontWeight.w700,
-                              ),
-                              AppText(
-                                stageSummaries[i].assigned == 0
-                                    ? 'Not started yet'
-                                    : 'Assigned: ${stageSummaries[i].assigned} pcs • Completed: ${stageSummaries[i].completed} pcs • Pending: ${stageSummaries[i].pending} pcs',
-                                variant: AppTextVariant.bodySmall,
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                            ],
-                          ), actions: [AppStatusBadge(
+                    AppActionRow(
+                      content: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          AppText(
+                            stageSummaries[i].processName,
+                            fontWeight: FontWeight.w700,
+                          ),
+                          AppText(
+                            stageSummaries[i].assigned == 0
+                                ? context.l10n.lotStatusNotStarted
+                                : context.l10n.lotStageSummaryLine(
+                                    stageSummaries[i].assigned,
+                                    stageSummaries[i].completed,
+                                    stageSummaries[i].pending,
+                                  ),
+                            variant: AppTextVariant.bodySmall,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ],
+                      ),
+                      actions: [
+                        AppStatusBadge(
                           label: stageSummaries[i].statusLabel,
                           tone: stageSummaries[i].tone,
-                        ),],),
+                        ),
+                      ],
+                    ),
                     if (i < stageSummaries.length - 1)
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 6),
@@ -429,14 +456,14 @@ final class _LotColourDetailView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const AppHeading(
-                    'Worker-wise Distribution & Pricing',
+                  AppHeading(
+                    context.l10n.lotWorkerDistribution,
                     level: AppHeadingLevel.h3,
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   if (activeOps.isEmpty)
                     AppText(
-                      'No workers have been assigned to ${sku.colourName} yet.',
+                      context.l10n.lotNoWorkersAssignedFor(sku.colourName),
                       variant: AppTextVariant.bodySmall,
                       color: colorScheme.onSurfaceVariant,
                     )
@@ -455,13 +482,28 @@ final class _LotColourDetailView extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 2),
                                 AppText(
-                                  'Assigned: ${activeOps[i].dispatchedQuantity > 0 ? activeOps[i].dispatchedQuantity : activeOps[i].plannedQuantity} pcs • Pending: ${activeOps[i].pendingQuantity} pcs',
+                                  context.l10n.lotAssignedPendingLine(
+                                    activeOps[i].dispatchedQuantity > 0
+                                        ? activeOps[i].dispatchedQuantity
+                                        : activeOps[i].plannedQuantity,
+                                    activeOps[i].pendingQuantity,
+                                  ),
                                   variant: AppTextVariant.bodySmall,
                                   color: colorScheme.onSurfaceVariant,
                                 ),
                                 const SizedBox(height: 2),
                                 AppText(
-                                  'Rate: ${MoneyFormatter.formatPaise(activeOps[i].agreedRatePaise)} / ${ProcessPricingCalculator.unitLabel(activeOps[i].pricingUnit)} • Payable: ${MoneyFormatter.formatPaise(activeOps[i].payableAmountPaise)}',
+                                  context.l10n.lotRatePayableLine(
+                                    MoneyFormatter.formatPaise(
+                                      activeOps[i].agreedRatePaise,
+                                    ),
+                                    ProcessPricingCalculator.unitLabel(
+                                      activeOps[i].pricingUnit,
+                                    ),
+                                    MoneyFormatter.formatPaise(
+                                      activeOps[i].payableAmountPaise,
+                                    ),
+                                  ),
                                   variant: AppTextVariant.bodySmall,
                                   color: colorScheme.primary,
                                   fontWeight: FontWeight.w600,
@@ -504,45 +546,45 @@ final class _LotColourDetailView extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const AppHeading(
-                    'Colour Cost Summary',
+                  AppHeading(
+                    context.l10n.lotColourCostSummary,
                     level: AppHeadingLevel.h3,
                   ),
                   const SizedBox(height: AppSpacing.sm),
                   _CostLine(
-                    label: 'Base Process Cost',
+                    label: context.l10n.lotBaseStageCost,
                     value: MoneyFormatter.formatPaise(
                       costSummary.totalBasePaise,
                     ),
                   ),
                   _CostLine(
-                    label: 'Additional Charges',
+                    label: context.l10n.lotAdditionalCharges,
                     value: MoneyFormatter.formatPaise(
                       costSummary.totalAdditionalChargesPaise,
                     ),
                   ),
                   if (costSummary.totalDeductionsPaise > 0)
                     _CostLine(
-                      label: 'Deductions',
+                      label: context.l10n.lotDeductions,
                       value:
                           '- ${MoneyFormatter.formatPaise(costSummary.totalDeductionsPaise)}',
                     ),
                   const Divider(),
                   _CostLine(
-                    label: 'Total Production Cost',
+                    label: context.l10n.routingTotalProductionCostLabel,
                     value: MoneyFormatter.formatPaise(
                       costSummary.totalNetCostPaise,
                     ),
                     bold: true,
                   ),
                   _CostLine(
-                    label: 'Paid to Workers',
+                    label: context.l10n.lotPaidToWorkers,
                     value: MoneyFormatter.formatPaise(
                       costSummary.totalPaidPaise,
                     ),
                   ),
                   _CostLine(
-                    label: 'Outstanding Payable',
+                    label: context.l10n.accountingOutstandingPayableLabel,
                     value: MoneyFormatter.formatPaise(
                       costSummary.totalOutstandingPaise,
                     ),
@@ -556,14 +598,14 @@ final class _LotColourDetailView extends StatelessWidget {
 
           // 6. Full Colour Movement History
           AppHeading(
-            'Movement History (${handovers.length})',
+            context.l10n.lotMovementHistoryCount(handovers.length),
             level: AppHeadingLevel.h3,
           ),
           const SizedBox(height: AppSpacing.sm),
           if (handovers.isEmpty)
             AppCard(
               child: AppText(
-                'Dispatches, direct transfers, and returns for ${sku.colourName} will appear here.',
+                context.l10n.lotMovementHistoryEmpty(sku.colourName),
                 variant: AppTextVariant.bodySmall,
                 color: colorScheme.onSurfaceVariant,
               ),
@@ -611,7 +653,9 @@ final class _LotColourDetailView extends StatelessWidget {
                             ),
                             if (handovers[i].quantityDispatched > 0)
                               AppText(
-                                '${handovers[i].quantityDispatched} pcs',
+                                context.l10n.lotPiecesValue(
+                                  handovers[i].quantityDispatched,
+                                ),
                                 fontWeight: FontWeight.w700,
                                 color: colorScheme.primary,
                               ),
@@ -619,7 +663,11 @@ final class _LotColourDetailView extends StatelessWidget {
                         ),
                         const SizedBox(height: 2),
                         AppText(
-                          'Received: ${handovers[i].quantityReceived}/${handovers[i].quantityDispatched} • ${handovers[i].status.label}',
+                          context.l10n.lotReceivedOfLine(
+                            handovers[i].quantityReceived,
+                            handovers[i].quantityDispatched,
+                            handovers[i].status.label,
+                          ),
                           variant: AppTextVariant.bodySmall,
                           color: colorScheme.onSurfaceVariant,
                         ),
@@ -641,12 +689,10 @@ final class _LotColourDetailView extends StatelessWidget {
   }
 
   List<_StageBreakdown> _buildProcessStageSummaries(
+    BuildContext context,
     List<JobProcessEntity> activeOps,
   ) {
     final byKey = <String, _StageAccum>{};
-    for (final standard in const ['Cutting', 'Stitching', 'Packing']) {
-      byKey[standard.toLowerCase()] = _StageAccum(standard);
-    }
 
     for (final op in activeOps) {
       final key = op.processName.trim().toLowerCase();
@@ -666,7 +712,7 @@ final class _LotColourDetailView extends StatelessWidget {
           assigned: 0,
           completed: 0,
           pending: 0,
-          statusLabel: 'Not Started',
+          statusLabel: context.l10n.lotStatusNotStarted,
           tone: AppStatusTone.neutral,
         );
       }
@@ -676,7 +722,7 @@ final class _LotColourDetailView extends StatelessWidget {
           assigned: a.assigned,
           completed: a.completed,
           pending: 0,
-          statusLabel: 'Completed',
+          statusLabel: context.l10n.lotsStatusCompleted,
           tone: AppStatusTone.good,
         );
       }
@@ -686,7 +732,7 @@ final class _LotColourDetailView extends StatelessWidget {
           assigned: a.assigned,
           completed: a.completed,
           pending: a.pending,
-          statusLabel: 'In Progress',
+          statusLabel: context.l10n.lotStatusInProgress,
           tone: AppStatusTone.info,
         );
       }
@@ -695,7 +741,7 @@ final class _LotColourDetailView extends StatelessWidget {
         assigned: a.assigned,
         completed: a.completed,
         pending: a.pending,
-        statusLabel: 'Pending (${a.pending})',
+        statusLabel: context.l10n.lotStatusPendingCount(a.pending),
         tone: AppStatusTone.pending,
       );
     }).toList();
@@ -748,7 +794,9 @@ final class _CostLine extends StatelessWidget {
         children: [
           AppText(
             label,
-            variant: bold ? AppTextVariant.bodyMedium : AppTextVariant.bodySmall,
+            variant: bold
+                ? AppTextVariant.bodyMedium
+                : AppTextVariant.bodySmall,
             fontWeight: bold ? FontWeight.w700 : FontWeight.w500,
           ),
           AppText(

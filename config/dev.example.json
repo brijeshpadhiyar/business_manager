@@ -1,0 +1,9 @@
+{
+  "APP_FLAVOR": "dev",
+  "DATABASE_NAME": "business_manager_dev.sqlite",
+  "MEDIA_DIR_NAME": "media_dev",
+  "SUPABASE_URL": "https://<project-ref>.supabase.co",
+  "SUPABASE_ANON_KEY": "<supabase-publishable-key>",
+  "GOOGLE_WEB_CLIENT_ID": "",
+  "GOOGLE_IOS_CLIENT_ID": ""
+}
