@@ -4,6 +4,23 @@ Complete run and build commands for **Android**, **Windows**, **iOS**, **macOS**
 
 ---
 
+## Quick Script Launchers (`scripts/`)
+
+Pre-built automation scripts live in [scripts/](file:///c:/A1/business_manager/scripts) and package timestamped outputs under `build/releases/<flavor>/`:
+
+| Platform | Windows (PowerShell) | macOS / Linux (Bash) |
+| :--- | :--- | :--- |
+| **All Supported Targets** | `.\scripts\build_all.ps1 dev` / `prod` | `./scripts/build_all.sh dev` / `prod` |
+| **Android APK** | `.\build_apk.bat dev` or `.\scripts\build_apk.ps1 dev` | `flutter build apk ...` (included in `build_all.sh`) |
+| **Android AAB** | `.\scripts\build_aab.ps1 prod` | — |
+| **Windows (`.exe`)** | `.\scripts\build_windows.ps1 dev` / `prod` | *(Windows host only)* |
+| **Web** | `.\scripts\build_web.ps1 dev` / `prod` | `./scripts/build_web.sh dev` / `prod` |
+| **iOS** | *(macOS host only)* | `./scripts/build_ios.sh dev nocodesign` or `prod ipa` |
+| **macOS** | *(macOS host only)* | `./scripts/build_macos.sh dev` / `prod` |
+| **Linux** | *(Linux host only)* | `./scripts/build_linux.sh dev` / `prod` |
+
+---
+
 ## 0. One-Time Setup & Pre-Build Checks
 
 1. Create local flavour config files (if not already present — `*.local.json` files are gitignored):
