@@ -21,6 +21,13 @@ import 'package:business_manager/features/lots/presentation/pages/lot_create_pag
 import 'package:business_manager/features/lots/presentation/pages/lot_detail_page.dart';
 import 'package:business_manager/features/lots/presentation/pages/lot_list_page.dart';
 import 'package:business_manager/features/notifications/presentation/pages/notification_settings_page.dart';
+import 'package:business_manager/features/parties/presentation/pages/buyer_return_form_page.dart';
+import 'package:business_manager/features/parties/presentation/pages/dispatch_challan_detail_page.dart';
+import 'package:business_manager/features/parties/presentation/pages/dispatch_challan_form_page.dart';
+import 'package:business_manager/features/parties/presentation/pages/parties_list_page.dart';
+import 'package:business_manager/features/parties/presentation/pages/party_detail_page.dart';
+import 'package:business_manager/features/parties/presentation/pages/party_form_page.dart';
+import 'package:business_manager/features/parties/presentation/pages/party_payment_form_page.dart';
 import 'package:business_manager/features/process_routing/presentation/pages/job_process_routing_page.dart';
 import 'package:business_manager/features/processes/presentation/pages/process_detail_page.dart';
 import 'package:business_manager/features/processes/presentation/pages/process_form_page.dart';
@@ -456,6 +463,71 @@ GoRouter createAppRouter(AppConfig config) {
               child: ProductionTransactionDetailPage(
                 kindSegment: state.pathParameters['kind']!,
                 transactionId: state.pathParameters['id']!,
+              ),
+            ),
+          ),
+          // Parties, Dispatch Challans, Buyer Returns & Party Khata
+          GoRoute(
+            path: RoutePaths.parties,
+            pageBuilder: (context, state) => AppMotion.buildPage(
+              state: state,
+              child: const PartiesListPage(),
+            ),
+          ),
+          GoRoute(
+            path: RoutePaths.partyCreate,
+            pageBuilder: (context, state) => AppMotion.buildPage(
+              state: state,
+              child: const PartyFormPage(),
+            ),
+          ),
+          GoRoute(
+            path: RoutePaths.partyDetailPattern,
+            pageBuilder: (context, state) => AppMotion.buildPage(
+              state: state,
+              child: PartyDetailPage(partyId: state.pathParameters['id']!),
+            ),
+          ),
+          GoRoute(
+            path: RoutePaths.partyEditPattern,
+            pageBuilder: (context, state) => AppMotion.buildPage(
+              state: state,
+              child: PartyFormPage(partyId: state.pathParameters['id']!),
+            ),
+          ),
+          GoRoute(
+            path: RoutePaths.partyReturnPattern,
+            pageBuilder: (context, state) => AppMotion.buildPage(
+              state: state,
+              child: BuyerReturnFormPage(
+                partyId: state.pathParameters['id']!,
+                initialChallanId: state.uri.queryParameters['challanId'],
+              ),
+            ),
+          ),
+          GoRoute(
+            path: RoutePaths.partyPaymentPattern,
+            pageBuilder: (context, state) => AppMotion.buildPage(
+              state: state,
+              child: PartyPaymentFormPage(partyId: state.pathParameters['id']!),
+            ),
+          ),
+          GoRoute(
+            path: RoutePaths.dispatchCreatePath,
+            pageBuilder: (context, state) => AppMotion.buildPage(
+              state: state,
+              child: DispatchChallanFormPage(
+                initialPartyId: state.uri.queryParameters['partyId'],
+                initialLotId: state.uri.queryParameters['lotId'],
+              ),
+            ),
+          ),
+          GoRoute(
+            path: RoutePaths.dispatchDetailPattern,
+            pageBuilder: (context, state) => AppMotion.buildPage(
+              state: state,
+              child: DispatchChallanDetailPage(
+                challanId: state.pathParameters['id']!,
               ),
             ),
           ),

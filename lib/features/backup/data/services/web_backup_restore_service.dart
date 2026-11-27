@@ -44,6 +44,13 @@ final class WebBackupRestoreService implements BackupRestoreService {
     'labour_entries',
     'payments',
     'worker_ledger_adjustments',
+    'parties',
+    'dispatch_challans',
+    'dispatch_items',
+    'buyer_returns',
+    'buyer_return_items',
+    'party_payments',
+    'lot_direct_costs',
     'attachments',
     'audit_logs',
   ];

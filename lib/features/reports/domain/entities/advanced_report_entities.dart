@@ -1,4 +1,5 @@
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
+import 'package:business_manager/features/parties/domain/entities/party_entities.dart';
 import 'package:business_manager/features/production_history/domain/entities/production_history_entities.dart';
 import 'package:business_manager/features/reports/domain/entities/dashboard_report_entities.dart';
 import 'package:business_manager/features/reports/domain/entities/report_filter.dart';
@@ -442,6 +443,8 @@ final class AdvancedReportsBundle {
     this.productionHistoryRows = const [],
     this.pendingInspectionReturns = const [],
     this.rejectionRecords = const [],
+    this.partySummaries = const [],
+    this.lotProfitLossRows = const [],
   });
 
   final ReportFilter filter;
@@ -466,4 +469,36 @@ final class AdvancedReportsBundle {
   final List<AssignmentReconciliationSummary> productionHistoryRows;
   final List<PendingReturnView> pendingInspectionReturns;
   final List<RejectionRecordView> rejectionRecords;
+  final List<PartyFinancialSummary> partySummaries;
+  final List<LotProfitLossSummary> lotProfitLossRows;
+
+  AdvancedReportsBundle copyWithPartiesAndPnl({
+    List<PartyFinancialSummary>? partySummaries,
+    List<LotProfitLossSummary>? lotProfitLossRows,
+  }) => AdvancedReportsBundle(
+    filter: filter,
+    filterOptions: filterOptions,
+    businessNameEn: businessNameEn,
+    businessNameGu: businessNameGu,
+    generatedAtUtcMillis: generatedAtUtcMillis,
+    dailyRows: dailyRows,
+    dailyTotalIssued: dailyTotalIssued,
+    dailyTotalGoodReturned: dailyTotalGoodReturned,
+    dailyTotalDamaged: dailyTotalDamaged,
+    dailyTotalLostShortage: dailyTotalLostShortage,
+    dailyTotalLabourPaise: dailyTotalLabourPaise,
+    dailyTotalNetPaymentsPaise: dailyTotalNetPaymentsPaise,
+    currentTotalPendingQty: currentTotalPendingQty,
+    currentTotalPendingInspectionQty: currentTotalPendingInspectionQty,
+    workerPerformance: workerPerformance,
+    processPerformance: processPerformance,
+    inventory: inventory,
+    financial: financial,
+    insights: insights,
+    productionHistoryRows: productionHistoryRows,
+    pendingInspectionReturns: pendingInspectionReturns,
+    rejectionRecords: rejectionRecords,
+    partySummaries: partySummaries ?? this.partySummaries,
+    lotProfitLossRows: lotProfitLossRows ?? this.lotProfitLossRows,
+  );
 }

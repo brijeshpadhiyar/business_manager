@@ -2,7 +2,7 @@ import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:timezone/timezone.dart' as tz;
 
-/// The 6 unified StitchFlow V1.2 report categories.
+/// Unified StitchFlow report categories.
 enum ReportCategory {
   dailyWorkshop,
   workerPerformance,
@@ -10,6 +10,7 @@ enum ReportCategory {
   inventory,
   labourFinancial,
   businessInsights,
+  partiesAndPnl,
 }
 
 /// IST-aligned quick date presets for reports.

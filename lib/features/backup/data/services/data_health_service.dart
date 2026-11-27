@@ -7,6 +7,7 @@ import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/features/backup/domain/calculators/data_health_calculator.dart';
 import 'package:business_manager/features/backup/domain/entities/data_health_entities.dart';
+import 'package:business_manager/features/parties/data/repositories/party_repository_impl.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
@@ -93,10 +94,12 @@ final class DataHealthService {
     }
 
     final pendingQcByColour = await _loadPendingQcByColour();
+    final dispatchDeltas = await PartyRepositoryImpl.loadStockDeltasByColour(_db);
     final reconciliationInputs = <ColourReconciliationInput>[];
     for (final c in colours) {
       final design = designById[c.lotDesignId];
       final lot = design != null ? lotById[design.lotId] : null;
+      final delta = dispatchDeltas[c.id];
       reconciliationInputs.add(
         ColourReconciliationInput(
           designColourId: c.id,
@@ -109,6 +112,9 @@ final class DataHealthService {
           initialQuantity: c.initialQuantity,
           movements: movementsByColour[c.id] ?? const [],
           pendingInspectionQuantity: pendingQcByColour[c.id] ?? 0,
+          dispatchedOutQty: delta?.dispatchedOutQty ?? 0,
+          buyerReturnedGoodQty: delta?.buyerReturnedGoodQty ?? 0,
+          buyerReturnedDamagedQty: delta?.buyerReturnedDamagedQty ?? 0,
         ),
       );
     }

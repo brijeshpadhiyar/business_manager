@@ -11,6 +11,7 @@ import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
 import 'package:business_manager/features/lots/domain/repositories/lot_repository.dart';
+import 'package:business_manager/features/parties/data/repositories/party_repository_impl.dart';
 import 'package:business_manager/features/process_routing/domain/entities/process_routing_entities.dart';
 import 'package:business_manager/features/stock_movements/domain/calculators/stock_calculator.dart';
 import 'package:drift/drift.dart';
@@ -449,7 +450,11 @@ final class LotMediaAndVariantDelegate {
       if (initialQuantity < existing.initialQuantity) {
         final movementRows = await _db.stockMovementDao
             .getMovementsForDesignColour(designColourId);
-        if (movementRows.isNotEmpty) {
+        final dispatchDeltas = await PartyRepositoryImpl.loadStockDeltasByColour(
+          _db,
+        );
+        final delta = dispatchDeltas[existing.id];
+        if (movementRows.isNotEmpty || (delta != null && delta.netDispatchedQty > 0)) {
           final movements = movementRows
               .map(LedgerRowMappers.stockMovement)
               .toList();
@@ -464,12 +469,15 @@ final class LotMediaAndVariantDelegate {
                 unitPricePaise: unitPricePaise,
                 initialQuantity: initialQuantity,
                 allMovementsForColour: movements,
+                dispatchedOutQty: delta?.dispatchedOutQty ?? 0,
+                buyerReturnedGoodQty: delta?.buyerReturnedGoodQty ?? 0,
+                buyerReturnedDamagedQty: delta?.buyerReturnedDamagedQty ?? 0,
               );
           if (simulated.physicalAvailableInHouse < 0 ||
               simulated.totalGoodPhysicalStock < 0) {
             throw const DomainValidationException(
               'quantity_below_committed_stock',
-              'Initial quantity cannot be reduced below stock already issued, damaged, or settled.',
+              'Initial quantity cannot be reduced below stock already issued, dispatched, damaged, or settled.',
             );
           }
         }

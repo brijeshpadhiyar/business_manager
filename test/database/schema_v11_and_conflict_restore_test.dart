@@ -23,9 +23,9 @@ void main() {
   });
 
   test(
-    'Fresh database is the v11 baseline with all tables, seeds and indexes',
+    'Fresh database is the v12 schema with all tables, seeds and indexes',
     () async {
-      expect(DatabaseMigrationManager.currentSchemaVersion, 11);
+      expect(DatabaseMigrationManager.currentSchemaVersion, 12);
       expect(DatabaseMigrationManager.minimumSupportedSchemaVersion, 11);
 
       final tables = await db
@@ -34,7 +34,7 @@ void main() {
             "AND name NOT LIKE 'sqlite_%'",
           )
           .get();
-      expect(tables, hasLength(28));
+      expect(tables, hasLength(35));
 
       final session = await db.syncDao.getSessionState();
       expect(session.activeRole, 'OWNER');

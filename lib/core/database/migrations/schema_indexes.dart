@@ -212,6 +212,56 @@ abstract final class SchemaIndexes {
         'ON audit_logs(reason, recorded_at DESC);',
   ];
 
+  /// v12: Parties, Dispatch Challans, Buyer Returns, Party Payments & Lot Direct Costs.
+  static const List<String> v12IndexStatements = [
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_parties_name_active '
+        'ON parties(lower(name)) WHERE deleted_at IS NULL;',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_dc_number_active '
+        'ON dispatch_challans(lower(challan_number)) WHERE deleted_at IS NULL;',
+    'CREATE INDEX IF NOT EXISTS idx_dc_party_tx '
+        'ON dispatch_challans(party_id, transaction_at DESC);',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_dc_single_reversal '
+        'ON dispatch_challans(reverses_challan_id) '
+        'WHERE reverses_challan_id IS NOT NULL;',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_dc_client_req '
+        'ON dispatch_challans(client_request_id) '
+        'WHERE client_request_id IS NOT NULL;',
+    'CREATE INDEX IF NOT EXISTS idx_di_challan ON dispatch_items(challan_id);',
+    'CREATE INDEX IF NOT EXISTS idx_di_colour ON dispatch_items(design_colour_id);',
+    'CREATE INDEX IF NOT EXISTS idx_di_lot ON dispatch_items(lot_id);',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_br_number_active '
+        'ON buyer_returns(lower(return_number)) WHERE deleted_at IS NULL;',
+    'CREATE INDEX IF NOT EXISTS idx_br_party_tx '
+        'ON buyer_returns(party_id, transaction_at DESC);',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_br_single_reversal '
+        'ON buyer_returns(reverses_return_id) '
+        'WHERE reverses_return_id IS NOT NULL;',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_br_client_req '
+        'ON buyer_returns(client_request_id) '
+        'WHERE client_request_id IS NOT NULL;',
+    'CREATE INDEX IF NOT EXISTS idx_bri_return '
+        'ON buyer_return_items(buyer_return_id);',
+    'CREATE INDEX IF NOT EXISTS idx_bri_colour '
+        'ON buyer_return_items(design_colour_id);',
+    'CREATE INDEX IF NOT EXISTS idx_bri_lot ON buyer_return_items(lot_id);',
+    'CREATE INDEX IF NOT EXISTS idx_pp_party_tx '
+        'ON party_payments(party_id, transaction_at DESC);',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_pp_single_reversal '
+        'ON party_payments(reverses_payment_id) '
+        'WHERE reverses_payment_id IS NOT NULL;',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_pp_client_req '
+        'ON party_payments(client_request_id) '
+        'WHERE client_request_id IS NOT NULL;',
+    'CREATE INDEX IF NOT EXISTS idx_ldc_lot_tx '
+        'ON lot_direct_costs(lot_id, transaction_at DESC);',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_ldc_single_reversal '
+        'ON lot_direct_costs(reverses_cost_id) '
+        'WHERE reverses_cost_id IS NOT NULL;',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_ldc_client_req '
+        'ON lot_direct_costs(client_request_id) '
+        'WHERE client_request_id IS NOT NULL;',
+  ];
+
   static const List<String> allIndexStatements = [
     ...v1IndexStatements,
     ...v2IndexStatements,
@@ -223,5 +273,6 @@ abstract final class SchemaIndexes {
     ...v8IndexStatements,
     ...v10IndexStatements,
     ...v11IndexStatements,
+    ...v12IndexStatements,
   ];
 }

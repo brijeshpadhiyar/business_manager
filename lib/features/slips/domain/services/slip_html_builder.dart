@@ -41,10 +41,15 @@ final class SlipHtmlBuilder {
       rowsHtml.writeln('</tr>');
     }
 
+    final isParty = slip.type.isPartySlip;
     final balanceLabel = slip.outstandingPayablePaise > 0
-        ? (isGu ? 'બાકી ચૂકવવાપાત્ર' : 'Outstanding Payable')
+        ? (isParty
+              ? (isGu ? 'બાકી લેણાં' : 'Receivable Due')
+              : (isGu ? 'બાકી ચૂકવવાપાત્ર' : 'Outstanding Payable'))
         : slip.advanceCreditPaise > 0
-        ? (isGu ? 'એડવાન્સ જમા બાકી' : 'Advance Credit Balance')
+        ? (isParty
+              ? (isGu ? 'પાર્ટી એડવાન્સ જમા' : 'Party Advance Credit')
+              : (isGu ? 'એડવાન્સ જમા બાકી' : 'Advance Credit Balance'))
         : (isGu ? 'ખાતાની બાકી' : 'Account Balance');
     final balanceValue = slip.outstandingPayablePaise > 0
         ? MoneyFormatter.formatPaise(slip.outstandingPayablePaise)
@@ -180,7 +185,7 @@ final class SlipHtmlBuilder {
     <div class="body">
       <div class="meta-grid">
         <div>
-          <div class="meta-label">${isGu ? 'કારીગર' : 'Worker'}</div>
+          <div class="meta-label">${isParty ? (isGu ? 'પાર્ટી' : 'Party') : (isGu ? 'કારીગર' : 'Worker')}</div>
           <div class="meta-val">${_e(slip.workerName)}</div>
           ${slip.workerPhone != null && slip.workerPhone!.isNotEmpty ? '<div class="sub">${_e(slip.workerPhone!)}</div>' : ''}
         </div>

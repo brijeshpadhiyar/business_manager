@@ -4099,4 +4099,324 @@ class AppLocalizationsEn extends AppLocalizations {
   String securityPinProgress(int a, int b) {
     return '$a of $b digits entered';
   }
+
+  @override
+  String get navPartiesDispatch => 'Parties & Dispatch';
+
+  @override
+  String get partiesHeading => 'Parties & Buyers';
+
+  @override
+  String get partiesSearchHint => 'Search party name, phone, or GSTIN';
+
+  @override
+  String get partiesEmptyTitle => 'No Parties Added Yet';
+
+  @override
+  String get partiesEmptySubtitle =>
+      'Add buyers or job-work clients to dispatch finished pieces and track receivables.';
+
+  @override
+  String get partyAddAction => 'New Party';
+
+  @override
+  String get partyEditAction => 'Edit Party';
+
+  @override
+  String get partyNameLabel => 'Party / Buyer Name';
+
+  @override
+  String get partyPhoneLabel => 'Phone Number (optional)';
+
+  @override
+  String get partyAddressLabel => 'Address (optional)';
+
+  @override
+  String get partyGstinLabel => 'GSTIN (optional)';
+
+  @override
+  String get partyTypeLabel => 'Party Type';
+
+  @override
+  String get partyTypeBuyer => 'Buyer';
+
+  @override
+  String get partyTypeJobClient => 'Job-Work Client';
+
+  @override
+  String get partyTypeBoth => 'Both';
+
+  @override
+  String get partyOpeningBalanceLabel =>
+      'Opening Receivable (₹, negative = advance)';
+
+  @override
+  String get partyActiveLabel => 'Active Party';
+
+  @override
+  String get partySavedSuccess => 'Party saved successfully.';
+
+  @override
+  String get partyFilterAll => 'All';
+
+  @override
+  String get partyFilterDue => 'Receivable Due';
+
+  @override
+  String get partyFilterAdvance => 'Advance Credit';
+
+  @override
+  String get partyTotalReceivableLabel => 'Total Receivable';
+
+  @override
+  String get partyAdvanceCreditLabel => 'Party Advance Credit';
+
+  @override
+  String get partyDispatchedNetLabel => 'Net Dispatched';
+
+  @override
+  String get partyReturnsTotalLabel => 'Buyer Returns';
+
+  @override
+  String get partyCollectedNetLabel => 'Net Collected';
+
+  @override
+  String get partyAccountSettledLabel => 'Account Settled';
+
+  @override
+  String get partyKhataHeading => 'Party Khata';
+
+  @override
+  String get partyTabLedger => 'Ledger';
+
+  @override
+  String get partyTabChallans => 'Challans';
+
+  @override
+  String get partyTabReturns => 'Returns';
+
+  @override
+  String get partyTabPayments => 'Payments';
+
+  @override
+  String get partyShareKhataSlip => 'Share Khata Slip';
+
+  @override
+  String get dispatchNewAction => 'Dispatch to Party';
+
+  @override
+  String get dispatchHeading => 'New Dispatch Challan';
+
+  @override
+  String get dispatchDetailHeading => 'Dispatch Challan';
+
+  @override
+  String get dispatchSelectPartyLabel => 'Select Party / Buyer';
+
+  @override
+  String get dispatchChallanNumberLabel => 'Challan Number';
+
+  @override
+  String get dispatchAddItemAction => 'Add Lot / Colour Item';
+
+  @override
+  String get dispatchSelectSkuLabel =>
+      'Select Available Stock (Lot / Design / Colour)';
+
+  @override
+  String dispatchAvailableQtyBadge(Object a) {
+    return 'Available: $a pcs';
+  }
+
+  @override
+  String get dispatchRatePerPcLabel => 'Rate (₹ / pc)';
+
+  @override
+  String get dispatchDiscountLabel => 'Discount (₹, optional)';
+
+  @override
+  String get dispatchOtherChargesLabel =>
+      'Other Charges / Freight (₹, optional)';
+
+  @override
+  String get dispatchGrossTotalLabel => 'Gross Total';
+
+  @override
+  String get dispatchNetTotalLabel => 'Net Challan Total';
+
+  @override
+  String get dispatchSaveAction => 'Save Dispatch';
+
+  @override
+  String dispatchSavedSuccess(Object a) {
+    return 'Dispatch challan $a saved.';
+  }
+
+  @override
+  String get dispatchShareSlipAction => 'Share Challan Slip';
+
+  @override
+  String get dispatchReverseAction => 'Reverse Challan';
+
+  @override
+  String get dispatchReverseConfirmTitle => 'Reverse Dispatch Challan?';
+
+  @override
+  String get dispatchReverseConfirmMessage =>
+      'This restores dispatched pieces back to in-house stock and cancels the party charge.';
+
+  @override
+  String get dispatchReversedBadge => 'Reversed';
+
+  @override
+  String get dispatchNoItemsAvailable =>
+      'No good in-house stock is currently available to dispatch.';
+
+  @override
+  String get dispatchDispatchedStockLabel => 'Dispatched';
+
+  @override
+  String get buyerReturnNewAction => 'Buyer Return';
+
+  @override
+  String get buyerReturnHeading => 'Record Buyer Return';
+
+  @override
+  String get buyerReturnNumberLabel => 'Return Note Number';
+
+  @override
+  String get buyerReturnConditionLabel => 'Returned Condition';
+
+  @override
+  String get buyerReturnConditionGood => 'Good (Back to Available Stock)';
+
+  @override
+  String get buyerReturnConditionDamaged => 'Damaged (Damaged Bucket)';
+
+  @override
+  String get buyerReturnCreditLabel => 'Total Return Credit';
+
+  @override
+  String buyerReturnSavedSuccess(Object a) {
+    return 'Buyer return $a recorded.';
+  }
+
+  @override
+  String get buyerReturnReverseAction => 'Reverse Return';
+
+  @override
+  String get partyPaymentNewAction => 'Record Receipt';
+
+  @override
+  String get partyPaymentHeading => 'Record Party Payment';
+
+  @override
+  String get partyPaymentTypeReceipt => 'Receipt (Against Due)';
+
+  @override
+  String get partyPaymentTypeAdvance => 'Advance Received';
+
+  @override
+  String get partyPaymentTypeRefund => 'Advance Refund Paid';
+
+  @override
+  String partyPaymentCollectFullAction(String amount) {
+    return 'Collect full $amount';
+  }
+
+  @override
+  String get partyPaymentSavedSuccess => 'Party payment recorded.';
+
+  @override
+  String get partyPaymentShareReceiptAction => 'Share Receipt Slip';
+
+  @override
+  String get lotPnlHeading => 'Lot Profit & Loss';
+
+  @override
+  String get lotPnlNetRevenueLabel => 'Net Revenue';
+
+  @override
+  String get lotPnlWorkerLabourLabel => 'Worker Labour';
+
+  @override
+  String get lotPnlDirectCostsLabel => 'Direct Costs';
+
+  @override
+  String get lotPnlNetProfitLabel => 'Net Profit';
+
+  @override
+  String get lotPnlMarginLabel => 'Margin';
+
+  @override
+  String get lotPnlUnsoldValueLabel => 'Unsold Good Stock Value';
+
+  @override
+  String get lotDirectCostAddAction => 'Add Direct Cost';
+
+  @override
+  String get lotDirectCostHeading => 'Add Lot Direct Cost';
+
+  @override
+  String get lotDirectCostCategoryLabel => 'Cost Category';
+
+  @override
+  String get lotDirectCostCatFabric => 'Fabric';
+
+  @override
+  String get lotDirectCostCatTrims => 'Trims & Accessories';
+
+  @override
+  String get lotDirectCostCatTransport => 'Transport';
+
+  @override
+  String get lotDirectCostCatPacking => 'Packing';
+
+  @override
+  String get lotDirectCostCatOther => 'Other';
+
+  @override
+  String get lotDirectCostDescriptionLabel =>
+      'Description (e.g. Cotton Fabric 200m)';
+
+  @override
+  String get lotDirectCostAmountLabel => 'Amount (₹)';
+
+  @override
+  String get lotDirectCostEmpty => 'No extra direct costs added for this lot.';
+
+  @override
+  String get lotDirectCostSavedSuccess => 'Lot direct cost added.';
+
+  @override
+  String get lotDirectCostReverseAction => 'Reverse Cost';
+
+  @override
+  String get reportCategoryPartiesPnl => 'Parties & Lot P&L';
+
+  @override
+  String get partyInactiveOrMissingError =>
+      'Selected party is inactive or does not exist.';
+
+  @override
+  String get dispatchItemsRequiredError => 'Add at least one item to dispatch.';
+
+  @override
+  String get buyerReturnItemsRequiredError => 'Add at least one returned item.';
+
+  @override
+  String get dispatchInsufficientStockError =>
+      'Dispatch quantity exceeds available in-house good stock.';
+
+  @override
+  String get dispatchDiscountExceedsGrossError =>
+      'Discount cannot exceed challan gross total.';
+
+  @override
+  String get dispatchReverseBlockedReturnError =>
+      'Reverse linked buyer returns before reversing this challan.';
+
+  @override
+  String get buyerReturnExceedsDispatchedError =>
+      'Return quantity exceeds remaining dispatched quantity.';
 }

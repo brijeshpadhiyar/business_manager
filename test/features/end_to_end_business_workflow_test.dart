@@ -19,6 +19,7 @@ import 'package:business_manager/features/reports/domain/entities/report_filter.
 import 'package:business_manager/features/security/data/repositories/secure_storage_security_repository.dart';
 import 'package:business_manager/features/security/domain/services/pin_hasher.dart';
 import 'package:business_manager/features/lots/data/repositories/lot_repository_impl.dart';
+import 'package:business_manager/features/parties/data/repositories/party_repository_impl.dart';
 import 'package:business_manager/features/processes/data/repositories/process_repository_impl.dart';
 import 'package:business_manager/features/processes/domain/entities/process_entities.dart';
 import 'package:business_manager/features/rates/data/repositories/rate_repository_impl.dart';
@@ -71,7 +72,8 @@ void main() {
     final rateRepo = RateRepositoryImpl(db, tx, idGen);
     final stockRepo = StockMovementRepositoryImpl(db, tx, idGen);
     final acctRepo = AccountingRepositoryImpl(db, tx, idGen);
-    final reportsRepo = ReportsRepositoryImpl(db, stockRepo, acctRepo);
+    final partyRepo = PartyRepositoryImpl(db, tx, idGen);
+    final reportsRepo = ReportsRepositoryImpl(db, stockRepo, acctRepo, partyRepo);
     final backupSvc = NativeBackupRestoreService(
       db,
       config,

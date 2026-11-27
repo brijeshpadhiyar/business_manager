@@ -106,6 +106,12 @@ _buildExtraRoutes(BuildContext context) {
       route: RoutePaths.accounting,
     ),
     (
+      id: 'parties',
+      label: l10n.navPartiesDispatch,
+      icon: AppIcons.party,
+      route: RoutePaths.parties,
+    ),
+    (
       id: 'reports',
       label: l10n.navReports,
       icon: AppIcons.reports,
@@ -366,6 +372,10 @@ final class StitchFlowShellScaffold extends StatelessWidget {
         location.startsWith(RoutePaths.paymentCreatePath)) {
       return 'accounting';
     }
+    if (location.startsWith(RoutePaths.parties) ||
+        location.startsWith('/dispatch')) {
+      return 'parties';
+    }
     if (location.startsWith(RoutePaths.reports) ||
         location.startsWith(RoutePaths.dailySummary)) {
       return 'reports';
@@ -499,6 +509,28 @@ final class StitchFlowShellScaffold extends StatelessWidget {
     if (location.startsWith(RoutePaths.accounting) ||
         location.startsWith(RoutePaths.paymentCreatePath)) {
       items.add(AppBreadcrumbItem(label: l10n.navAccounting));
+      return items;
+    }
+
+    if (location.startsWith(RoutePaths.parties) ||
+        location.startsWith('/dispatch')) {
+      items.add(
+        AppBreadcrumbItem(
+          label: l10n.navPartiesDispatch,
+          onTap: location == RoutePaths.parties
+              ? null
+              : () => context.go(RoutePaths.parties),
+        ),
+      );
+      if (location == RoutePaths.partyCreate) {
+        items.add(AppBreadcrumbItem(label: l10n.partyAddAction));
+      } else if (location.startsWith('/dispatch')) {
+        items.add(AppBreadcrumbItem(label: l10n.dispatchDetailHeading));
+      } else if (location.endsWith('/return')) {
+        items.add(AppBreadcrumbItem(label: l10n.buyerReturnNewAction));
+      } else if (location.endsWith('/payment')) {
+        items.add(AppBreadcrumbItem(label: l10n.partyPaymentNewAction));
+      }
       return items;
     }
 

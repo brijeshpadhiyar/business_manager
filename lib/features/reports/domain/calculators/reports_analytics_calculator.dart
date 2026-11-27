@@ -1,6 +1,7 @@
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/features/accounting/domain/calculators/ledger_calculator.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
+import 'package:business_manager/features/parties/domain/entities/party_entities.dart';
 import 'package:business_manager/features/reports/domain/calculators/reports_analytics_accumulators.dart';
 import 'package:business_manager/features/reports/domain/calculators/reports_insights_calculator.dart';
 import 'package:business_manager/features/reports/domain/calculators/workshop_daily_calculator.dart';
@@ -47,6 +48,7 @@ final class ReportsAnalyticsCalculator {
     required List<PaymentEntity> allPayments,
     required List<WorkerAdjustmentEntity> allAdjustments,
     Map<String, int> pendingInspectionByIssue = const {},
+    Map<String, PartyDispatchStockDelta> dispatchDeltasByColour = const {},
     int? nowUtcMillis,
   }) {
     final nowUtc = nowUtcMillis ?? IstDateTimeHelper.nowUtcMillis();
@@ -274,6 +276,7 @@ final class ReportsAnalyticsCalculator {
         if (!matchesText) continue;
       }
 
+      final delta = dispatchDeltasByColour[c.id];
       colourBalances.add(
         _stockCalc.calculateDesignColourBalance(
           designColourId: c.id,
@@ -288,6 +291,9 @@ final class ReportsAnalyticsCalculator {
           allMovementsForColour: movementsByColour[c.id] ?? const [],
           processNamesById: processNamesById,
           pendingInspectionQuantity: pendingInspectionByColour[c.id] ?? 0,
+          dispatchedOutQty: delta?.dispatchedOutQty ?? 0,
+          buyerReturnedGoodQty: delta?.buyerReturnedGoodQty ?? 0,
+          buyerReturnedDamagedQty: delta?.buyerReturnedDamagedQty ?? 0,
         ),
       );
     }

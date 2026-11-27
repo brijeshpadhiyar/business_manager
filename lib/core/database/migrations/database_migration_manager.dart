@@ -11,7 +11,7 @@ import 'package:drift/drift.dart';
 /// not upgraded: opening one fails with [UnsupportedSchemaException], and the
 /// app must be reinstalled or restored from a current backup.
 abstract final class DatabaseMigrationManager {
-  static const int currentSchemaVersion = 11;
+  static const int currentSchemaVersion = 12;
 
   /// Oldest schema this build can open or restore from a backup.
   static const int minimumSupportedSchemaVersion = 11;
@@ -41,6 +41,16 @@ abstract final class DatabaseMigrationManager {
         foundVersion: from,
         minimumVersion: minimumSupportedSchemaVersion,
       );
+    }
+
+    if (from < 12) {
+      await m.createTable(db.parties);
+      await m.createTable(db.dispatchChallans);
+      await m.createTable(db.dispatchItems);
+      await m.createTable(db.buyerReturns);
+      await m.createTable(db.buyerReturnItems);
+      await m.createTable(db.partyPayments);
+      await m.createTable(db.lotDirectCosts);
     }
 
     // Keep idempotent indexes, seeds and sync triggers current.

@@ -1,9 +1,19 @@
-/// Four worker-facing bilingual document types supported in StitchFlow v1.6.
+/// Bilingual document types supported in StitchFlow slips.
 enum SlipDocumentType {
   stockIssueChallan,
   returnQcSlip,
   paymentReceipt,
   workerKhataStatement,
+  partyDispatchChallan,
+  buyerReturnCreditNote,
+  partyPaymentReceipt,
+  partyKhataStatement;
+
+  bool get isPartySlip =>
+      this == partyDispatchChallan ||
+      this == buyerReturnCreditNote ||
+      this == partyPaymentReceipt ||
+      this == partyKhataStatement;
 }
 
 /// Single tabular row inside a Karigar slip or Khata statement.

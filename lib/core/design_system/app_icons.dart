@@ -85,6 +85,11 @@ abstract final class AppIcons {
   static const IconData receipt = Icons.receipt_rounded;
   static const IconData reverse = Icons.undo_rounded;
   static const IconData trend = Icons.trending_up_rounded;
+  static const IconData party = Icons.store_rounded;
+  static const IconData partyAdd = Icons.add_business_rounded;
+  static const IconData buyerReturn = Icons.assignment_return_rounded;
+  static const IconData directCost = Icons.request_quote_rounded;
+  static const IconData profitLoss = Icons.assessment_rounded;
 
   // ── Reports, export & data ──────────────────────────────────────────────
   static const IconData reports = Icons.analytics_rounded;

@@ -162,5 +162,34 @@ abstract final class RoutePaths {
   static String workerAdjustmentCreate(String workerId) =>
       '/workers/$workerId/adjustments/new';
 
+  // V1.9 — Parties / Buyers, Dispatch Challans, Buyer Returns & Party Khata
+  static const String parties = '/parties';
+  static const String partyCreate = '/parties/new';
+  static const String partyDetailPattern = '/parties/:id';
+  static const String partyEditPattern = '/parties/:id/edit';
+  static const String partyReturnPattern = '/parties/:id/return';
+  static const String partyPaymentPattern = '/parties/:id/payment';
+  static const String dispatchCreatePath = '/dispatch/new';
+  static const String dispatchDetailPattern = '/dispatch/:id';
+
+  static String partyDetail(String partyId) => '/parties/$partyId';
+  static String partyEdit(String partyId) => '/parties/$partyId/edit';
+  static String partyReturn(String partyId, {String? challanId}) =>
+      challanId != null
+          ? '/parties/$partyId/return?challanId=${Uri.encodeQueryComponent(challanId)}'
+          : '/parties/$partyId/return';
+  static String partyPayment(String partyId) => '/parties/$partyId/payment';
+  static String dispatchCreate({String? partyId, String? lotId}) {
+    final params = <String, String>{};
+    if (partyId != null) params['partyId'] = partyId;
+    if (lotId != null) params['lotId'] = lotId;
+    if (params.isEmpty) return dispatchCreatePath;
+    final qs = params.entries
+        .map((e) => '${e.key}=${Uri.encodeQueryComponent(e.value)}')
+        .join('&');
+    return '$dispatchCreatePath?$qs';
+  }
+  static String dispatchDetail(String challanId) => '/dispatch/$challanId';
+
   static String settingsHelpTopic(String topicId) => '/settings/help/$topicId';
 }

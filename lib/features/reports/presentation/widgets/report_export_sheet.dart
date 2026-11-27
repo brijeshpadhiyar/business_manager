@@ -154,6 +154,8 @@ final class ReportExportSheet {
       ReportCategory.labourFinancial =>
         b.financial.labourEntries.length + b.financial.payments.length,
       ReportCategory.businessInsights => b.insights.trendPoints.length,
+      ReportCategory.partiesAndPnl =>
+        b.partySummaries.length + b.lotProfitLossRows.length,
     };
   }
 }

@@ -258,7 +258,52 @@ final class ExcelCsvExportService implements ReportExportService {
         _paymentsSheet(bundle, isGu: isGu),
       ],
       ReportCategory.businessInsights => [_insightsSheet(bundle, isGu: isGu)],
+      ReportCategory.partiesAndPnl => [_partiesSheet(bundle, isGu: isGu), _lotPnlSheet(bundle, isGu: isGu)],
     };
+  }
+
+  static ExportSheetData _partiesSheet(
+    AdvancedReportsBundle b, {
+    required bool isGu,
+  }) {
+    return ExportSheetData(
+      name: isGu ? 'પાર્ટી_ખાતા' : 'Parties',
+      headers: isGu
+          ? ['પાર્ટી', 'કુલ ડિસ્પેચ (₹)', 'માલ પરત (₹)', 'કુલ જમા (₹)', 'બાકી લેણાં (₹)']
+          : ['Party', 'Dispatched (₹)', 'Returns (₹)', 'Collected (₹)', 'Receivable (₹)'],
+      rows: [
+        for (final p in b.partySummaries)
+          [
+            p.partyName,
+            MoneyFormatter.formatPaiseWithoutSymbol(p.totalDispatchedNetPaise),
+            MoneyFormatter.formatPaiseWithoutSymbol(p.totalBuyerReturnsPaise),
+            MoneyFormatter.formatPaiseWithoutSymbol(p.totalCollectedNetPaise),
+            MoneyFormatter.formatPaiseWithoutSymbol(p.outstandingReceivablePaise),
+          ],
+      ],
+    );
+  }
+
+  static ExportSheetData _lotPnlSheet(
+    AdvancedReportsBundle b, {
+    required bool isGu,
+  }) {
+    return ExportSheetData(
+      name: isGu ? 'લોટ_નફો_નુકસાન' : 'Lot_PnL',
+      headers: isGu
+          ? ['લોટ', 'ચોખ્ખી આવક (₹)', 'મજૂરી (₹)', 'સીધો ખર્ચ (₹)', 'ચોખ્ખો નફો (₹)']
+          : ['Lot', 'Net Revenue (₹)', 'Worker Labour (₹)', 'Direct Costs (₹)', 'Net Profit (₹)'],
+      rows: [
+        for (final l in b.lotProfitLossRows)
+          [
+            l.lotNumber,
+            MoneyFormatter.formatPaiseWithoutSymbol(l.netRevenuePaise),
+            MoneyFormatter.formatPaiseWithoutSymbol(l.workerLabourPaise),
+            MoneyFormatter.formatPaiseWithoutSymbol(l.directCostsPaise),
+            MoneyFormatter.formatPaiseWithoutSymbol(l.netProfitPaise),
+          ],
+      ],
+    );
   }
 
   static ExportSheetData _dailySheet(

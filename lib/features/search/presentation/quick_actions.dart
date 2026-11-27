@@ -69,6 +69,12 @@ List<AppQuickAction> buildQuickActions(BuildContext context) {
       label: l10n.processQuickCreateAction,
       route: RoutePaths.processCreate,
     ),
+    AppQuickAction(
+      id: 'dispatch',
+      icon: AppIcons.dispatch,
+      label: l10n.dispatchNewAction,
+      route: RoutePaths.dispatchCreatePath,
+    ),
   ];
 }
 

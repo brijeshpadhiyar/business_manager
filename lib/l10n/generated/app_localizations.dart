@@ -7405,6 +7405,606 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{a} of {b} digits entered'**
   String securityPinProgress(int a, int b);
+
+  /// No description provided for @navPartiesDispatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Parties & Dispatch'**
+  String get navPartiesDispatch;
+
+  /// No description provided for @partiesHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Parties & Buyers'**
+  String get partiesHeading;
+
+  /// No description provided for @partiesSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search party name, phone, or GSTIN'**
+  String get partiesSearchHint;
+
+  /// No description provided for @partiesEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Parties Added Yet'**
+  String get partiesEmptyTitle;
+
+  /// No description provided for @partiesEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add buyers or job-work clients to dispatch finished pieces and track receivables.'**
+  String get partiesEmptySubtitle;
+
+  /// No description provided for @partyAddAction.
+  ///
+  /// In en, this message translates to:
+  /// **'New Party'**
+  String get partyAddAction;
+
+  /// No description provided for @partyEditAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Party'**
+  String get partyEditAction;
+
+  /// No description provided for @partyNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Party / Buyer Name'**
+  String get partyNameLabel;
+
+  /// No description provided for @partyPhoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number (optional)'**
+  String get partyPhoneLabel;
+
+  /// No description provided for @partyAddressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Address (optional)'**
+  String get partyAddressLabel;
+
+  /// No description provided for @partyGstinLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'GSTIN (optional)'**
+  String get partyGstinLabel;
+
+  /// No description provided for @partyTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Party Type'**
+  String get partyTypeLabel;
+
+  /// No description provided for @partyTypeBuyer.
+  ///
+  /// In en, this message translates to:
+  /// **'Buyer'**
+  String get partyTypeBuyer;
+
+  /// No description provided for @partyTypeJobClient.
+  ///
+  /// In en, this message translates to:
+  /// **'Job-Work Client'**
+  String get partyTypeJobClient;
+
+  /// No description provided for @partyTypeBoth.
+  ///
+  /// In en, this message translates to:
+  /// **'Both'**
+  String get partyTypeBoth;
+
+  /// No description provided for @partyOpeningBalanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening Receivable (₹, negative = advance)'**
+  String get partyOpeningBalanceLabel;
+
+  /// No description provided for @partyActiveLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Party'**
+  String get partyActiveLabel;
+
+  /// No description provided for @partySavedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Party saved successfully.'**
+  String get partySavedSuccess;
+
+  /// No description provided for @partyFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get partyFilterAll;
+
+  /// No description provided for @partyFilterDue.
+  ///
+  /// In en, this message translates to:
+  /// **'Receivable Due'**
+  String get partyFilterDue;
+
+  /// No description provided for @partyFilterAdvance.
+  ///
+  /// In en, this message translates to:
+  /// **'Advance Credit'**
+  String get partyFilterAdvance;
+
+  /// No description provided for @partyTotalReceivableLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Receivable'**
+  String get partyTotalReceivableLabel;
+
+  /// No description provided for @partyAdvanceCreditLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Party Advance Credit'**
+  String get partyAdvanceCreditLabel;
+
+  /// No description provided for @partyDispatchedNetLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Net Dispatched'**
+  String get partyDispatchedNetLabel;
+
+  /// No description provided for @partyReturnsTotalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Buyer Returns'**
+  String get partyReturnsTotalLabel;
+
+  /// No description provided for @partyCollectedNetLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Net Collected'**
+  String get partyCollectedNetLabel;
+
+  /// No description provided for @partyAccountSettledLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account Settled'**
+  String get partyAccountSettledLabel;
+
+  /// No description provided for @partyKhataHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Party Khata'**
+  String get partyKhataHeading;
+
+  /// No description provided for @partyTabLedger.
+  ///
+  /// In en, this message translates to:
+  /// **'Ledger'**
+  String get partyTabLedger;
+
+  /// No description provided for @partyTabChallans.
+  ///
+  /// In en, this message translates to:
+  /// **'Challans'**
+  String get partyTabChallans;
+
+  /// No description provided for @partyTabReturns.
+  ///
+  /// In en, this message translates to:
+  /// **'Returns'**
+  String get partyTabReturns;
+
+  /// No description provided for @partyTabPayments.
+  ///
+  /// In en, this message translates to:
+  /// **'Payments'**
+  String get partyTabPayments;
+
+  /// No description provided for @partyShareKhataSlip.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Khata Slip'**
+  String get partyShareKhataSlip;
+
+  /// No description provided for @dispatchNewAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Dispatch to Party'**
+  String get dispatchNewAction;
+
+  /// No description provided for @dispatchHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'New Dispatch Challan'**
+  String get dispatchHeading;
+
+  /// No description provided for @dispatchDetailHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Dispatch Challan'**
+  String get dispatchDetailHeading;
+
+  /// No description provided for @dispatchSelectPartyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Party / Buyer'**
+  String get dispatchSelectPartyLabel;
+
+  /// No description provided for @dispatchChallanNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Challan Number'**
+  String get dispatchChallanNumberLabel;
+
+  /// No description provided for @dispatchAddItemAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Lot / Colour Item'**
+  String get dispatchAddItemAction;
+
+  /// No description provided for @dispatchSelectSkuLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Available Stock (Lot / Design / Colour)'**
+  String get dispatchSelectSkuLabel;
+
+  /// No description provided for @dispatchAvailableQtyBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Available: {a} pcs'**
+  String dispatchAvailableQtyBadge(Object a);
+
+  /// No description provided for @dispatchRatePerPcLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate (₹ / pc)'**
+  String get dispatchRatePerPcLabel;
+
+  /// No description provided for @dispatchDiscountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount (₹, optional)'**
+  String get dispatchDiscountLabel;
+
+  /// No description provided for @dispatchOtherChargesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Other Charges / Freight (₹, optional)'**
+  String get dispatchOtherChargesLabel;
+
+  /// No description provided for @dispatchGrossTotalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Gross Total'**
+  String get dispatchGrossTotalLabel;
+
+  /// No description provided for @dispatchNetTotalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Net Challan Total'**
+  String get dispatchNetTotalLabel;
+
+  /// No description provided for @dispatchSaveAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Dispatch'**
+  String get dispatchSaveAction;
+
+  /// No description provided for @dispatchSavedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Dispatch challan {a} saved.'**
+  String dispatchSavedSuccess(Object a);
+
+  /// No description provided for @dispatchShareSlipAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Challan Slip'**
+  String get dispatchShareSlipAction;
+
+  /// No description provided for @dispatchReverseAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Reverse Challan'**
+  String get dispatchReverseAction;
+
+  /// No description provided for @dispatchReverseConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reverse Dispatch Challan?'**
+  String get dispatchReverseConfirmTitle;
+
+  /// No description provided for @dispatchReverseConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This restores dispatched pieces back to in-house stock and cancels the party charge.'**
+  String get dispatchReverseConfirmMessage;
+
+  /// No description provided for @dispatchReversedBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Reversed'**
+  String get dispatchReversedBadge;
+
+  /// No description provided for @dispatchNoItemsAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No good in-house stock is currently available to dispatch.'**
+  String get dispatchNoItemsAvailable;
+
+  /// No description provided for @dispatchDispatchedStockLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Dispatched'**
+  String get dispatchDispatchedStockLabel;
+
+  /// No description provided for @buyerReturnNewAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Buyer Return'**
+  String get buyerReturnNewAction;
+
+  /// No description provided for @buyerReturnHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Record Buyer Return'**
+  String get buyerReturnHeading;
+
+  /// No description provided for @buyerReturnNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Return Note Number'**
+  String get buyerReturnNumberLabel;
+
+  /// No description provided for @buyerReturnConditionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Returned Condition'**
+  String get buyerReturnConditionLabel;
+
+  /// No description provided for @buyerReturnConditionGood.
+  ///
+  /// In en, this message translates to:
+  /// **'Good (Back to Available Stock)'**
+  String get buyerReturnConditionGood;
+
+  /// No description provided for @buyerReturnConditionDamaged.
+  ///
+  /// In en, this message translates to:
+  /// **'Damaged (Damaged Bucket)'**
+  String get buyerReturnConditionDamaged;
+
+  /// No description provided for @buyerReturnCreditLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Return Credit'**
+  String get buyerReturnCreditLabel;
+
+  /// No description provided for @buyerReturnSavedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Buyer return {a} recorded.'**
+  String buyerReturnSavedSuccess(Object a);
+
+  /// No description provided for @buyerReturnReverseAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Reverse Return'**
+  String get buyerReturnReverseAction;
+
+  /// No description provided for @partyPaymentNewAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Record Receipt'**
+  String get partyPaymentNewAction;
+
+  /// No description provided for @partyPaymentHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Record Party Payment'**
+  String get partyPaymentHeading;
+
+  /// No description provided for @partyPaymentTypeReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt (Against Due)'**
+  String get partyPaymentTypeReceipt;
+
+  /// No description provided for @partyPaymentTypeAdvance.
+  ///
+  /// In en, this message translates to:
+  /// **'Advance Received'**
+  String get partyPaymentTypeAdvance;
+
+  /// No description provided for @partyPaymentTypeRefund.
+  ///
+  /// In en, this message translates to:
+  /// **'Advance Refund Paid'**
+  String get partyPaymentTypeRefund;
+
+  /// No description provided for @partyPaymentCollectFullAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Collect full {amount}'**
+  String partyPaymentCollectFullAction(String amount);
+
+  /// No description provided for @partyPaymentSavedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Party payment recorded.'**
+  String get partyPaymentSavedSuccess;
+
+  /// No description provided for @partyPaymentShareReceiptAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Receipt Slip'**
+  String get partyPaymentShareReceiptAction;
+
+  /// No description provided for @lotPnlHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot Profit & Loss'**
+  String get lotPnlHeading;
+
+  /// No description provided for @lotPnlNetRevenueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Net Revenue'**
+  String get lotPnlNetRevenueLabel;
+
+  /// No description provided for @lotPnlWorkerLabourLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker Labour'**
+  String get lotPnlWorkerLabourLabel;
+
+  /// No description provided for @lotPnlDirectCostsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct Costs'**
+  String get lotPnlDirectCostsLabel;
+
+  /// No description provided for @lotPnlNetProfitLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Net Profit'**
+  String get lotPnlNetProfitLabel;
+
+  /// No description provided for @lotPnlMarginLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Margin'**
+  String get lotPnlMarginLabel;
+
+  /// No description provided for @lotPnlUnsoldValueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Unsold Good Stock Value'**
+  String get lotPnlUnsoldValueLabel;
+
+  /// No description provided for @lotDirectCostAddAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Direct Cost'**
+  String get lotDirectCostAddAction;
+
+  /// No description provided for @lotDirectCostHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Lot Direct Cost'**
+  String get lotDirectCostHeading;
+
+  /// No description provided for @lotDirectCostCategoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cost Category'**
+  String get lotDirectCostCategoryLabel;
+
+  /// No description provided for @lotDirectCostCatFabric.
+  ///
+  /// In en, this message translates to:
+  /// **'Fabric'**
+  String get lotDirectCostCatFabric;
+
+  /// No description provided for @lotDirectCostCatTrims.
+  ///
+  /// In en, this message translates to:
+  /// **'Trims & Accessories'**
+  String get lotDirectCostCatTrims;
+
+  /// No description provided for @lotDirectCostCatTransport.
+  ///
+  /// In en, this message translates to:
+  /// **'Transport'**
+  String get lotDirectCostCatTransport;
+
+  /// No description provided for @lotDirectCostCatPacking.
+  ///
+  /// In en, this message translates to:
+  /// **'Packing'**
+  String get lotDirectCostCatPacking;
+
+  /// No description provided for @lotDirectCostCatOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get lotDirectCostCatOther;
+
+  /// No description provided for @lotDirectCostDescriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description (e.g. Cotton Fabric 200m)'**
+  String get lotDirectCostDescriptionLabel;
+
+  /// No description provided for @lotDirectCostAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Amount (₹)'**
+  String get lotDirectCostAmountLabel;
+
+  /// No description provided for @lotDirectCostEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'No extra direct costs added for this lot.'**
+  String get lotDirectCostEmpty;
+
+  /// No description provided for @lotDirectCostSavedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot direct cost added.'**
+  String get lotDirectCostSavedSuccess;
+
+  /// No description provided for @lotDirectCostReverseAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Reverse Cost'**
+  String get lotDirectCostReverseAction;
+
+  /// No description provided for @reportCategoryPartiesPnl.
+  ///
+  /// In en, this message translates to:
+  /// **'Parties & Lot P&L'**
+  String get reportCategoryPartiesPnl;
+
+  /// No description provided for @partyInactiveOrMissingError.
+  ///
+  /// In en, this message translates to:
+  /// **'Selected party is inactive or does not exist.'**
+  String get partyInactiveOrMissingError;
+
+  /// No description provided for @dispatchItemsRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Add at least one item to dispatch.'**
+  String get dispatchItemsRequiredError;
+
+  /// No description provided for @buyerReturnItemsRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Add at least one returned item.'**
+  String get buyerReturnItemsRequiredError;
+
+  /// No description provided for @dispatchInsufficientStockError.
+  ///
+  /// In en, this message translates to:
+  /// **'Dispatch quantity exceeds available in-house good stock.'**
+  String get dispatchInsufficientStockError;
+
+  /// No description provided for @dispatchDiscountExceedsGrossError.
+  ///
+  /// In en, this message translates to:
+  /// **'Discount cannot exceed challan gross total.'**
+  String get dispatchDiscountExceedsGrossError;
+
+  /// No description provided for @dispatchReverseBlockedReturnError.
+  ///
+  /// In en, this message translates to:
+  /// **'Reverse linked buyer returns before reversing this challan.'**
+  String get dispatchReverseBlockedReturnError;
+
+  /// No description provided for @buyerReturnExceedsDispatchedError.
+  ///
+  /// In en, this message translates to:
+  /// **'Return quantity exceeds remaining dispatched quantity.'**
+  String get buyerReturnExceedsDispatchedError;
 }
 
 class _AppLocalizationsDelegate

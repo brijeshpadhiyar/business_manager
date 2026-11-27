@@ -18,6 +18,9 @@ final class ColourReconciliationInput {
     required this.initialQuantity,
     required this.movements,
     required this.pendingInspectionQuantity,
+    this.dispatchedOutQty = 0,
+    this.buyerReturnedGoodQty = 0,
+    this.buyerReturnedDamagedQty = 0,
   });
 
   final String designColourId;
@@ -30,6 +33,9 @@ final class ColourReconciliationInput {
   final int initialQuantity;
   final List<StockMovementEntity> movements;
   final int pendingInspectionQuantity;
+  final int dispatchedOutQty;
+  final int buyerReturnedGoodQty;
+  final int buyerReturnedDamagedQty;
 }
 
 /// Pure Dart deterministic health & reconciliation calculator.
@@ -43,7 +49,7 @@ final class DataHealthCalculator {
   final StockCalculator _stockCalculator;
 
   /// Verifies the golden stock reconciliation equation across all colours:
-  /// `initial == available + withWorkers + pendingQc + damaged + lost + shortage`
+  /// `initial == available + withWorkers + pendingQc + damaged + lost + shortage + netDispatched`
   /// and verifies no stock bucket is negative.
   List<StockReconciliationIssue> evaluateStockReconciliation(
     List<ColourReconciliationInput> colours,
@@ -62,6 +68,9 @@ final class DataHealthCalculator {
         initialQuantity: c.initialQuantity,
         allMovementsForColour: c.movements,
         pendingInspectionQuantity: c.pendingInspectionQuantity,
+        dispatchedOutQty: c.dispatchedOutQty,
+        buyerReturnedGoodQty: c.buyerReturnedGoodQty,
+        buyerReturnedDamagedQty: c.buyerReturnedDamagedQty,
       );
 
       final reconciledTotal =
@@ -70,7 +79,8 @@ final class DataHealthCalculator {
           balance.totalPendingInspection +
           balance.damagedBucket +
           balance.totalLost +
-          balance.totalShortage;
+          balance.totalShortage +
+          balance.netDispatchedQty;
 
       String? reason;
       if (balance.physicalAvailableInHouse < 0 ||
@@ -78,7 +88,8 @@ final class DataHealthCalculator {
           balance.totalPendingInspection < 0 ||
           balance.damagedBucket < 0 ||
           balance.totalLost < 0 ||
-          balance.totalShortage < 0) {
+          balance.totalShortage < 0 ||
+          balance.netDispatchedQty < 0) {
         reason = 'NEGATIVE_BUCKET';
       } else if (reconciledTotal != c.initialQuantity) {
         reason = 'GOLDEN_EQUATION_MISMATCH';

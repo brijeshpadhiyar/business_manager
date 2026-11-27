@@ -62,6 +62,9 @@ final class StockCalculator {
     required List<StockMovementEntity> allMovementsForColour,
     Map<String, String> processNamesById = const {},
     int pendingInspectionQuantity = 0,
+    int dispatchedOutQty = 0,
+    int buyerReturnedGoodQty = 0,
+    int buyerReturnedDamagedQty = 0,
   }) {
     final active = activeMovements(allMovementsForColour);
 
@@ -123,9 +126,12 @@ final class StockCalculator {
       }
     }
 
-    final damagedBucket = sumReturnDamaged - sumRepaired;
+    final damagedBucket =
+        sumReturnDamaged - sumRepaired + buyerReturnedDamagedQty;
+    final netDispatched =
+        dispatchedOutQty - buyerReturnedGoodQty - buyerReturnedDamagedQty;
     final totalGoodPhysicalStock =
-        initialQuantity - damagedBucket - sumLost - sumShortage;
+        initialQuantity - damagedBucket - sumLost - sumShortage - netDispatched;
     final safePendingInspection = pendingInspectionQuantity < 0
         ? 0
         : pendingInspectionQuantity;
@@ -174,6 +180,9 @@ final class StockCalculator {
       totalIssued: sumIssue,
       totalGoodReturned: sumReturnGood,
       totalRepairedToGood: sumRepaired,
+      dispatchedOutQty: dispatchedOutQty,
+      buyerReturnedGoodQty: buyerReturnedGoodQty,
+      buyerReturnedDamagedQty: buyerReturnedDamagedQty,
       processBreakdown: processBreakdown,
     );
   }

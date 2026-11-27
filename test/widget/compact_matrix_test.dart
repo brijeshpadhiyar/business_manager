@@ -15,6 +15,7 @@ import 'package:business_manager/core/theme/theme_state.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/features/lots/domain/repositories/lot_repository.dart';
+import 'package:business_manager/features/parties/domain/repositories/party_repository.dart';
 import 'package:business_manager/features/processes/domain/repositories/process_repository.dart';
 import 'package:business_manager/features/rates/domain/repositories/rate_repository.dart';
 import 'package:business_manager/features/security/presentation/widgets/pin_keypad.dart';
@@ -64,6 +65,7 @@ void main() {
     final processRepo = getIt<ProcessRepository>();
     final workerRepo = getIt<WorkerRepository>();
     final rateRepo = getIt<RateRepository>();
+    final partyRepo = getIt<PartyRepository>();
     final now = IstDateTimeHelper.nowUtcMillis();
 
     final lot = await lotRepo.createLot(
@@ -98,6 +100,10 @@ void main() {
       ratePaise: 2500,
       effectiveFrom: '2025-01-01',
     );
+    final party = await partyRepo.createParty(
+      name: 'Mahalaxmi Textiles Surat',
+      phone: '9876543211',
+    );
 
     return [
       RoutePaths.home,
@@ -130,6 +136,10 @@ void main() {
       RoutePaths.stockRepair,
       RoutePaths.accounting,
       RoutePaths.paymentCreate(),
+      RoutePaths.parties,
+      RoutePaths.partyCreate,
+      RoutePaths.partyDetail(party.id),
+      RoutePaths.dispatchCreate(),
       RoutePaths.reports,
       RoutePaths.dailySummary,
       RoutePaths.productionHistory,

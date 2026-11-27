@@ -55,6 +55,10 @@ final class ReportHtmlBuilder {
         bundle,
         isGu: isGu,
       ),
+      ReportCategory.partiesAndPnl => _buildPartiesPnlSection(
+        bundle,
+        isGu: isGu,
+      ),
     };
 
     final disclaimer = isGu
@@ -192,7 +196,27 @@ final class ReportHtmlBuilder {
       isGu ? 'મજૂરી અને હિસાબ રિપોર્ટ' : 'Labour & Financial Report',
     ReportCategory.businessInsights =>
       isGu ? 'વ્યવસાયિક વિશ્લેષણ (Insights)' : 'Business Insights Report',
+    ReportCategory.partiesAndPnl =>
+      isGu ? 'પાર્ટી અને લોટ P&L રિપોર્ટ' : 'Parties & Lot P&L Report',
   };
+
+  String _buildPartiesPnlSection(AdvancedReportsBundle b, {required bool isGu}) {
+    final buf = StringBuffer()
+      ..writeln('<h3>${isGu ? 'પાર્ટી લેણાં' : 'Party Receivables'}</h3>')
+      ..writeln('<table><thead><tr><th>${isGu ? 'પાર્ટી' : 'Party'}</th><th class="num">${isGu ? 'ડિસ્પેચ' : 'Dispatched'}</th><th class="num">${isGu ? 'બાકી લેણાં' : 'Receivable'}</th></tr></thead><tbody>');
+    for (final p in b.partySummaries) {
+      buf.writeln('<tr><td>${_e(p.partyName)}</td><td class="num">${_e(MoneyFormatter.formatPaise(p.totalDispatchedNetPaise))}</td><td class="num">${_e(MoneyFormatter.formatPaise(p.outstandingReceivablePaise))}</td></tr>');
+    }
+    buf
+      ..writeln('</tbody></table>')
+      ..writeln('<h3>${isGu ? 'લોટ નફો-નુકસાન' : 'Lot Profit & Loss'}</h3>')
+      ..writeln('<table><thead><tr><th>${isGu ? 'લોટ' : 'Lot'}</th><th class="num">${isGu ? 'આવક' : 'Revenue'}</th><th class="num">${isGu ? 'ખર્ચ' : 'Cost'}</th><th class="num">${isGu ? 'નફો' : 'Profit'}</th></tr></thead><tbody>');
+    for (final l in b.lotProfitLossRows) {
+      buf.writeln('<tr><td>${_e(l.lotNumber)}</td><td class="num">${_e(MoneyFormatter.formatPaise(l.netRevenuePaise))}</td><td class="num">${_e(MoneyFormatter.formatPaise(l.totalCostPaise))}</td><td class="num">${_e(MoneyFormatter.formatPaise(l.netProfitPaise))}</td></tr>');
+    }
+    buf.writeln('</tbody></table>');
+    return buf.toString();
+  }
 
   String _formatPeriod(ReportFilter f, {required bool isGu}) {
     if (f.fromUtcMillis == null && f.toUtcMillis == null) {

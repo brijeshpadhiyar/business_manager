@@ -14,6 +14,7 @@ import 'package:business_manager/features/business_profile/domain/entities/busin
 import 'package:business_manager/features/lots/data/repositories/lot_repository_impl.dart';
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
 import 'package:business_manager/features/lots/domain/repositories/lot_repository.dart';
+import 'package:business_manager/features/parties/data/repositories/party_repository_impl.dart';
 import 'package:business_manager/features/processes/data/repositories/process_repository_impl.dart';
 import 'package:business_manager/features/processes/domain/entities/process_entities.dart';
 import 'package:business_manager/features/production_history/data/repositories/production_history_repository_impl.dart';
@@ -67,7 +68,8 @@ void main() {
     stockRepo = StockMovementRepositoryImpl(db, tx, ids);
     acctRepo = AccountingRepositoryImpl(db, tx, ids);
     historyRepo = ProductionHistoryRepositoryImpl(db, tx, ids);
-    reportsRepo = ReportsRepositoryImpl(db, stockRepo, acctRepo);
+    final partyRepo = PartyRepositoryImpl(db, tx, ids);
+    reportsRepo = ReportsRepositoryImpl(db, stockRepo, acctRepo, partyRepo);
   });
 
   tearDown(() async {

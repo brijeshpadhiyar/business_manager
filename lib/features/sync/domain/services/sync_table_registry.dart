@@ -57,10 +57,33 @@ abstract final class SyncTableRegistry {
     SyncTableSpec(tableName: 'production_inspections', appendOnly: true),
     SyncTableSpec(tableName: 'rejection_records', appendOnly: false),
     SyncTableSpec(tableName: 'rejection_repairs', appendOnly: false),
+    SyncTableSpec(tableName: 'parties', appendOnly: false),
+    SyncTableSpec(
+      tableName: 'dispatch_challans',
+      appendOnly: true,
+      selfReferenceColumns: ['reverses_challan_id'],
+    ),
+    SyncTableSpec(tableName: 'dispatch_items', appendOnly: true),
+    SyncTableSpec(
+      tableName: 'buyer_returns',
+      appendOnly: true,
+      selfReferenceColumns: ['reverses_return_id'],
+    ),
+    SyncTableSpec(tableName: 'buyer_return_items', appendOnly: true),
+    SyncTableSpec(
+      tableName: 'party_payments',
+      appendOnly: true,
+      selfReferenceColumns: ['reverses_payment_id'],
+    ),
+    SyncTableSpec(
+      tableName: 'lot_direct_costs',
+      appendOnly: true,
+      selfReferenceColumns: ['reverses_cost_id'],
+    ),
     SyncTableSpec(tableName: 'audit_logs', appendOnly: true),
   ];
 
-  /// All 23 synced domain tables in strict Foreign-Key topological push order.
+  /// All 30 synced domain tables in strict Foreign-Key topological push order.
   static const List<String> syncedTablesInPushOrder = [
     'attachments',
     'business_profile',
@@ -84,6 +107,13 @@ abstract final class SyncTableRegistry {
     'production_inspections',
     'rejection_records',
     'rejection_repairs',
+    'parties',
+    'dispatch_challans',
+    'dispatch_items',
+    'buyer_returns',
+    'buyer_return_items',
+    'party_payments',
+    'lot_direct_costs',
     'audit_logs',
   ];
 

@@ -4089,4 +4089,323 @@ class AppLocalizationsGu extends AppLocalizations {
   String securityPinProgress(int a, int b) {
     return '$b માંથી $a અંક દાખલ કર્યા';
   }
+
+  @override
+  String get navPartiesDispatch => 'પાર્ટી અને ડિસ્પેચ';
+
+  @override
+  String get partiesHeading => 'પાર્ટી / ગ્રાહકો';
+
+  @override
+  String get partiesSearchHint => 'પાર્ટીનું નામ, ફોન અથવા GSTIN શોધો';
+
+  @override
+  String get partiesEmptyTitle => 'હજુ સુધી કોઈ પાર્ટી ઉમેરી નથી';
+
+  @override
+  String get partiesEmptySubtitle =>
+      'તૈયાર માલ મોકલવા અને લેણાંનો હિસાબ રાખવા પાર્ટી અથવા ગ્રાહક ઉમેરો.';
+
+  @override
+  String get partyAddAction => 'નવી પાર્ટી';
+
+  @override
+  String get partyEditAction => 'પાર્ટી સુધારો';
+
+  @override
+  String get partyNameLabel => 'પાર્ટી / ગ્રાહકનું નામ';
+
+  @override
+  String get partyPhoneLabel => 'ફોન નંબર (વૈકલ્પિક)';
+
+  @override
+  String get partyAddressLabel => 'સરનામું (વૈકલ્પિક)';
+
+  @override
+  String get partyGstinLabel => 'GSTIN (વૈકલ્પિક)';
+
+  @override
+  String get partyTypeLabel => 'પાર્ટીનો પ્રકાર';
+
+  @override
+  String get partyTypeBuyer => 'ખરીદનાર';
+
+  @override
+  String get partyTypeJobClient => 'જોબ-વર્ક ગ્રાહક';
+
+  @override
+  String get partyTypeBoth => 'બંને';
+
+  @override
+  String get partyOpeningBalanceLabel => 'શરૂઆતનું લેણું (₹, માઇનસ = એડવાન્સ)';
+
+  @override
+  String get partyActiveLabel => 'સક્રિય પાર્ટી';
+
+  @override
+  String get partySavedSuccess => 'પાર્ટી સફળતાપૂર્વક સાચવાઈ.';
+
+  @override
+  String get partyFilterAll => 'બધી';
+
+  @override
+  String get partyFilterDue => 'બાકી લેણાં';
+
+  @override
+  String get partyFilterAdvance => 'એડવાન્સ જમા';
+
+  @override
+  String get partyTotalReceivableLabel => 'કુલ લેણાં';
+
+  @override
+  String get partyAdvanceCreditLabel => 'પાર્ટી એડવાન્સ જમા';
+
+  @override
+  String get partyDispatchedNetLabel => 'કુલ ડિસ્પેચ';
+
+  @override
+  String get partyReturnsTotalLabel => 'માલ પરત';
+
+  @override
+  String get partyCollectedNetLabel => 'કુલ જમા';
+
+  @override
+  String get partyAccountSettledLabel => 'હિસાબ ચોખ્ખો';
+
+  @override
+  String get partyKhataHeading => 'પાર્ટી ખાતાવહી';
+
+  @override
+  String get partyTabLedger => 'ખાતાવહી';
+
+  @override
+  String get partyTabChallans => 'ચલણ';
+
+  @override
+  String get partyTabReturns => 'માલ પરત';
+
+  @override
+  String get partyTabPayments => 'ચુકવણી';
+
+  @override
+  String get partyShareKhataSlip => 'ખાતાવહી સ્લિપ શેર કરો';
+
+  @override
+  String get dispatchNewAction => 'પાર્ટીને ડિસ્પેચ';
+
+  @override
+  String get dispatchHeading => 'નવું ડિસ્પેચ ચલણ';
+
+  @override
+  String get dispatchDetailHeading => 'ડિસ્પેચ ચલણ';
+
+  @override
+  String get dispatchSelectPartyLabel => 'પાર્ટી / ગ્રાહક પસંદ કરો';
+
+  @override
+  String get dispatchChallanNumberLabel => 'ચલણ નંબર';
+
+  @override
+  String get dispatchAddItemAction => 'લોટ / કલર ઉમેરો';
+
+  @override
+  String get dispatchSelectSkuLabel =>
+      'ઉપલબ્ધ માલ પસંદ કરો (લોટ / ડિઝાઇન / કલર)';
+
+  @override
+  String dispatchAvailableQtyBadge(Object a) {
+    return 'ઉપલબ્ધ: $a પીસ';
+  }
+
+  @override
+  String get dispatchRatePerPcLabel => 'ભાવ (₹ / પીસ)';
+
+  @override
+  String get dispatchDiscountLabel => 'ડિસ્કાઉન્ટ (₹, વૈકલ્પિક)';
+
+  @override
+  String get dispatchOtherChargesLabel => 'અન્ય ખર્ચ / ભાડું (₹, વૈકલ્પિક)';
+
+  @override
+  String get dispatchGrossTotalLabel => 'કુલ રકમ';
+
+  @override
+  String get dispatchNetTotalLabel => 'ચોખ્ખું ચલણ ટોટલ';
+
+  @override
+  String get dispatchSaveAction => 'ડિસ્પેચ સાચવો';
+
+  @override
+  String dispatchSavedSuccess(Object a) {
+    return 'ડિસ્પેચ ચલણ $a સાચવાયું.';
+  }
+
+  @override
+  String get dispatchShareSlipAction => 'ચલણ સ્લિપ શેર કરો';
+
+  @override
+  String get dispatchReverseAction => 'ચલણ રિવર્સ કરો';
+
+  @override
+  String get dispatchReverseConfirmTitle => 'ડિસ્પેચ ચલણ રિવર્સ કરવું?';
+
+  @override
+  String get dispatchReverseConfirmMessage =>
+      'આનાથી મોકલેલા પીસ ફરી સ્ટોકમાં જમા થશે અને પાર્ટીનું લેણું રદ થશે.';
+
+  @override
+  String get dispatchReversedBadge => 'રિવર્સ';
+
+  @override
+  String get dispatchNoItemsAvailable =>
+      'ડિસ્પેચ કરવા માટે હાલમાં કોઈ સારો સ્ટોક ઉપલબ્ધ નથી.';
+
+  @override
+  String get dispatchDispatchedStockLabel => 'ડિસ્પેચ કરેલ';
+
+  @override
+  String get buyerReturnNewAction => 'માલ પરત';
+
+  @override
+  String get buyerReturnHeading => 'પાર્ટી માલ પરત નોંધો';
+
+  @override
+  String get buyerReturnNumberLabel => 'પરત નોટ નંબર';
+
+  @override
+  String get buyerReturnConditionLabel => 'પરત આવેલા માલની સ્થિતિ';
+
+  @override
+  String get buyerReturnConditionGood => 'સારો માલ (ફરી સ્ટોકમાં જમા)';
+
+  @override
+  String get buyerReturnConditionDamaged => 'ખામીવાળો માલ (ડેમેજ બકેટમાં)';
+
+  @override
+  String get buyerReturnCreditLabel => 'કુલ પરત ક્રેડિટ';
+
+  @override
+  String buyerReturnSavedSuccess(Object a) {
+    return 'માલ પરત $a નોંધાયું.';
+  }
+
+  @override
+  String get buyerReturnReverseAction => 'પરત રિવર્સ કરો';
+
+  @override
+  String get partyPaymentNewAction => 'રકમ જમા લો';
+
+  @override
+  String get partyPaymentHeading => 'પાર્ટી ચુકવણી નોંધો';
+
+  @override
+  String get partyPaymentTypeReceipt => 'રસીદ (લેણાં સામે)';
+
+  @override
+  String get partyPaymentTypeAdvance => 'એડવાન્સ જમા મળ્યું';
+
+  @override
+  String get partyPaymentTypeRefund => 'એડવાન્સ રિફંડ આપ્યું';
+
+  @override
+  String partyPaymentCollectFullAction(String amount) {
+    return 'પૂરા $amount જમા લો';
+  }
+
+  @override
+  String get partyPaymentSavedSuccess => 'પાર્ટી ચુકવણી નોંધાઈ.';
+
+  @override
+  String get partyPaymentShareReceiptAction => 'રસીદ સ્લિપ શેર કરો';
+
+  @override
+  String get lotPnlHeading => 'લોટ નફો અને નુકસાન (P&L)';
+
+  @override
+  String get lotPnlNetRevenueLabel => 'ચોખ્ખી આવક';
+
+  @override
+  String get lotPnlWorkerLabourLabel => 'કારીગર મજૂરી';
+
+  @override
+  String get lotPnlDirectCostsLabel => 'સીધો ખર્ચ';
+
+  @override
+  String get lotPnlNetProfitLabel => 'ચોખ્ખો નફો';
+
+  @override
+  String get lotPnlMarginLabel => 'માર્જિન';
+
+  @override
+  String get lotPnlUnsoldValueLabel => 'વેચાણ વગરના સ્ટોકની કિંમત';
+
+  @override
+  String get lotDirectCostAddAction => 'સીધો ખર્ચ ઉમેરો';
+
+  @override
+  String get lotDirectCostHeading => 'લોટનો સીધો ખર્ચ ઉમેરો';
+
+  @override
+  String get lotDirectCostCategoryLabel => 'ખર્ચનો પ્રકાર';
+
+  @override
+  String get lotDirectCostCatFabric => 'કાપડ';
+
+  @override
+  String get lotDirectCostCatTrims => 'ટ્રીમ્સ અને એસેસરીઝ';
+
+  @override
+  String get lotDirectCostCatTransport => 'ટ્રાન્સપોર્ટ / ભાડું';
+
+  @override
+  String get lotDirectCostCatPacking => 'પેકિંગ';
+
+  @override
+  String get lotDirectCostCatOther => 'અન્ય';
+
+  @override
+  String get lotDirectCostDescriptionLabel => 'વિગત (દા.ત. કોટન કાપડ 200 મી)';
+
+  @override
+  String get lotDirectCostAmountLabel => 'રકમ (₹)';
+
+  @override
+  String get lotDirectCostEmpty => 'આ લોટ માટે કોઈ વધારાનો ખર્ચ નોંધ્યો નથી.';
+
+  @override
+  String get lotDirectCostSavedSuccess => 'લોટ ખર્ચ ઉમેરાયો.';
+
+  @override
+  String get lotDirectCostReverseAction => 'ખર્ચ રિવર્સ કરો';
+
+  @override
+  String get reportCategoryPartiesPnl => 'પાર્ટી અને લોટ P&L';
+
+  @override
+  String get partyInactiveOrMissingError =>
+      'પસંદ કરેલી પાર્ટી નિષ્ક્રિય છે અથવા અસ્તિત્વમાં નથી.';
+
+  @override
+  String get dispatchItemsRequiredError =>
+      'ડિસ્પેચ માટે ઓછામાં ઓછી એક આઇટમ ઉમેરો.';
+
+  @override
+  String get buyerReturnItemsRequiredError =>
+      'પરત માટે ઓછામાં ઓછી એક આઇટમ ઉમેરો.';
+
+  @override
+  String get dispatchInsufficientStockError =>
+      'ડિસ્પેચ જથ્થો ઉપલબ્ધ સારા સ્ટોક કરતાં વધુ છે.';
+
+  @override
+  String get dispatchDiscountExceedsGrossError =>
+      'ડિસ્કાઉન્ટ કુલ રકમ કરતાં વધુ હોઈ શકે નહીં.';
+
+  @override
+  String get dispatchReverseBlockedReturnError =>
+      'આ ચલણ રિવર્સ કરતા પહેલા તેની સાથે જોડાયેલા માલ પરત રિવર્સ કરો.';
+
+  @override
+  String get buyerReturnExceedsDispatchedError =>
+      'પરત જથ્થો બાકી ડિસ્પેચ જથ્થા કરતાં વધુ છે.';
 }

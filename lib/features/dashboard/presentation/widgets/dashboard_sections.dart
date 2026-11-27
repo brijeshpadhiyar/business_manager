@@ -287,6 +287,18 @@ final class DashboardStockHealthSection extends StatelessWidget {
                                   onPushAndRefresh(RoutePaths.stockRepair),
                             ),
                           ),
+                          SizedBox(
+                            width: tileW,
+                            child: AppMetricTile(
+                              backdropKey: null,
+                              label: l10n.dispatchDispatchedStockLabel,
+                              value: snap.dispatchedStock,
+                              suffix: l10n.piecesUnit,
+                              icon: AppIcons.dispatch,
+                              tone: AppStatusTone.info,
+                              onTap: () => onPushAndRefresh(RoutePaths.parties),
+                            ),
+                          ),
                         ],
                       );
                     },
@@ -379,6 +391,20 @@ final class DashboardFinanceHealthSection extends StatelessWidget {
                       icon: AppIcons.payment,
                       tone: AppStatusTone.neutral,
                       onTap: () => onPushAndRefresh(RoutePaths.accounting),
+                    ),
+                  ),
+                  SizedBox(
+                    width: tileW,
+                    child: AppMetricTile(
+                      backdropKey: null,
+                      label: l10n.partyTotalReceivableLabel,
+                      value: snapshot.totalPartyReceivablePaise,
+                      isCurrencyPaise: true,
+                      icon: AppIcons.party,
+                      tone: snapshot.totalPartyReceivablePaise > 0
+                          ? AppStatusTone.pending
+                          : AppStatusTone.good,
+                      onTap: () => onPushAndRefresh(RoutePaths.parties),
                     ),
                   ),
                 ],

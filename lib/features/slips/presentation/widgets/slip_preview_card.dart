@@ -26,6 +26,7 @@ final class SlipPreviewCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isGu = localeCode == 'gu';
+    final isParty = slip.type.isPartySlip;
     final shop = slip.shopNameForLocale(localeCode);
     final title = _formatter.titleFor(slip.type, isGu: isGu);
     final dateStr = IstDateTimeHelper.formatIstDateTime(
@@ -35,9 +36,13 @@ final class SlipPreviewCard extends StatelessWidget {
     final period = slip.periodForLocale(localeCode);
 
     final balanceLabel = slip.outstandingPayablePaise > 0
-        ? (isGu ? 'બાકી ચૂકવવાપાત્ર' : 'Outstanding Payable')
+        ? (isParty
+              ? (isGu ? 'બાકી લેણાં' : 'Receivable Due')
+              : (isGu ? 'બાકી ચૂકવવાપાત્ર' : 'Outstanding Payable'))
         : slip.advanceCreditPaise > 0
-        ? (isGu ? 'એડવાન્સ જમા' : 'Advance Credit')
+        ? (isParty
+              ? (isGu ? 'પાર્ટી એડવાન્સ જમા' : 'Party Advance Credit')
+              : (isGu ? 'એડવાન્સ જમા' : 'Advance Credit'))
         : (isGu ? 'હિસાબ ચોખ્ખો' : 'Account Settled');
     final balanceValue = slip.outstandingPayablePaise > 0
         ? MoneyFormatter.formatPaise(slip.outstandingPayablePaise)
@@ -133,7 +138,9 @@ final class SlipPreviewCard extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              isGu ? 'કારીગર' : 'Worker',
+                              isParty
+                                  ? (isGu ? 'પાર્ટી' : 'Party')
+                                  : (isGu ? 'કારીગર' : 'Worker'),
                               style: const TextStyle(
                                 color: AppColors.slate500,
                                 fontSize: 10.5,

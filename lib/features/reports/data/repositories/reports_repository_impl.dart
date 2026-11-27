@@ -3,6 +3,8 @@ import 'package:business_manager/core/database/mappers/ledger_row_mappers.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/features/accounting/domain/repositories/accounting_repository.dart';
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
+import 'package:business_manager/features/parties/data/repositories/party_repository_impl.dart';
+import 'package:business_manager/features/parties/domain/repositories/party_repository.dart';
 import 'package:business_manager/features/production_history/domain/calculators/production_history_calculator.dart';
 import 'package:business_manager/features/stock_movements/domain/calculators/stock_calculator.dart';
 import 'package:business_manager/features/production_history/domain/entities/production_history_entities.dart';
@@ -18,11 +20,17 @@ import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: ReportsRepository)
 final class ReportsRepositoryImpl implements ReportsRepository {
-  ReportsRepositoryImpl(this._db, this._stockRepo, this._accountingRepo);
+  ReportsRepositoryImpl(
+    this._db,
+    this._stockRepo,
+    this._accountingRepo,
+    this._partyRepo,
+  );
 
   final AppDatabase _db;
   final StockMovementRepository _stockRepo;
   final AccountingRepository _accountingRepo;
+  final PartyRepository _partyRepo;
 
   static const WorkshopDailyCalculator _dailyCalc = WorkshopDailyCalculator();
   static const ReportsAnalyticsCalculator _analyticsCalc =
@@ -170,6 +178,9 @@ final class ReportsRepositoryImpl implements ReportsRepository {
           ),
         )
         .toList();
+    final dispatchDeltas = await PartyRepositoryImpl.loadStockDeltasByColour(
+      _db,
+    );
     final base = _analyticsCalc.compute(
       filter: filter,
       businessNameEn: profile?.nameEn ?? 'StitchFlow',
@@ -183,6 +194,7 @@ final class ReportsRepositoryImpl implements ReportsRepository {
       allLabourEntries: allLabour,
       allPayments: allPayments,
       allAdjustments: allAdjustments,
+      dispatchDeltasByColour: dispatchDeltas,
       pendingInspectionByIssue: const ProductionHistoryCalculator()
           .pendingInspectionByIssue(
             returns: allReturns,
@@ -398,6 +410,9 @@ final class ReportsRepositoryImpl implements ReportsRepository {
         )
         .toList();
 
+    final partySummaries = await _partyRepo.getAllPartySummaries();
+    final lotPnlRows = await _partyRepo.getAllLotProfitLoss();
+
     return AdvancedReportsBundle(
       filter: base.filter,
       filterOptions: base.filterOptions,
@@ -421,6 +436,8 @@ final class ReportsRepositoryImpl implements ReportsRepository {
       productionHistoryRows: prodRows,
       pendingInspectionReturns: pendingRets,
       rejectionRecords: rejRows,
+      partySummaries: partySummaries,
+      lotProfitLossRows: lotPnlRows,
     );
   }
 
@@ -462,6 +479,7 @@ final class ReportsRepositoryImpl implements ReportsRepository {
     var pendingInspection = 0;
     var lost = 0;
     var shortage = 0;
+    var dispatched = 0;
     for (final b in colourBalances) {
       initialStock += b.initialQuantity;
       availableGood += b.physicalAvailableInHouse;
@@ -470,6 +488,15 @@ final class ReportsRepositoryImpl implements ReportsRepository {
       pendingInspection += b.totalPendingInspection;
       lost += b.totalLost;
       shortage += b.totalShortage;
+      dispatched += b.netDispatchedQty;
+    }
+
+    final partySummaries = await _partyRepo.getAllPartySummaries();
+    var totalPartyReceivable = 0;
+    var totalPartyAdvanceCredit = 0;
+    for (final p in partySummaries) {
+      totalPartyReceivable += p.outstandingReceivablePaise;
+      totalPartyAdvanceCredit += p.advanceCreditPaise;
     }
 
     var earnedLabour = 0;
@@ -554,6 +581,9 @@ final class ReportsRepositoryImpl implements ReportsRepository {
       todayLabourEarnedPaise: todaySummary.labourEarnedPaise,
       todayPaymentsPaise: todaySummary.netPaymentsPaise,
       importantPendingIssues: importantPending,
+      dispatchedStock: dispatched,
+      totalPartyReceivablePaise: totalPartyReceivable,
+      totalPartyAdvanceCreditPaise: totalPartyAdvanceCredit,
     );
   }
 

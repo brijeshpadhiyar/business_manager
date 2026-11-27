@@ -9,6 +9,7 @@ import 'package:business_manager/features/accounting/data/repositories/accountin
 import 'package:business_manager/features/lots/data/repositories/lot_repository_impl.dart';
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
 import 'package:business_manager/features/lots/domain/repositories/lot_repository.dart';
+import 'package:business_manager/features/parties/data/repositories/party_repository_impl.dart';
 import 'package:business_manager/features/process_routing/data/repositories/process_routing_repository_impl.dart';
 import 'package:business_manager/features/processes/data/repositories/process_repository_impl.dart';
 import 'package:business_manager/features/processes/domain/entities/process_entities.dart';
@@ -71,7 +72,13 @@ final class V14Fixture {
     f.accountingRepo = AccountingRepositoryImpl(f.db, tx, ids);
     f.historyRepo = ProductionHistoryRepositoryImpl(f.db, tx, ids);
     f.routingRepo = ProcessRoutingRepositoryImpl(f.db, tx, f.stockRepo, ids);
-    f.reportsRepo = ReportsRepositoryImpl(f.db, f.stockRepo, f.accountingRepo);
+    final partyRepo = PartyRepositoryImpl(f.db, tx, ids);
+    f.reportsRepo = ReportsRepositoryImpl(
+      f.db,
+      f.stockRepo,
+      f.accountingRepo,
+      partyRepo,
+    );
 
     f.stitching = await f.processRepo.createProcess(
       name: 'Stitching',

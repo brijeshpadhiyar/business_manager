@@ -92,6 +92,14 @@ import 'package:business_manager/features/notifications/domain/services/local_no
     as _i105;
 import 'package:business_manager/features/notifications/presentation/bloc/notification_settings_cubit.dart'
     as _i245;
+import 'package:business_manager/features/parties/data/repositories/party_repository_impl.dart'
+    as _i454;
+import 'package:business_manager/features/parties/domain/repositories/party_repository.dart'
+    as _i669;
+import 'package:business_manager/features/parties/presentation/bloc/parties_cubit.dart'
+    as _i908;
+import 'package:business_manager/features/parties/presentation/bloc/party_detail_cubit.dart'
+    as _i666;
 import 'package:business_manager/features/process_routing/data/repositories/process_routing_repository_impl.dart'
     as _i877;
 import 'package:business_manager/features/process_routing/domain/repositories/process_routing_repository.dart'
@@ -307,6 +315,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i339.GuidePreferencesRepository>(
       () => _i97.SharedPrefsGuideRepository(gh<_i460.SharedPreferences>()),
     );
+    gh.lazySingleton<_i932.LotRepository>(
+      () => _i1010.LotRepositoryImpl(
+        gh<_i177.AppDatabase>(),
+        gh<_i665.DatabaseTransactionRunner>(),
+        gh<_i656.IdGenerator>(),
+        gh<_i586.MediaStorageService>(),
+      ),
+    );
     gh.lazySingleton<_i934.DatabaseInitializer>(
       () => _i934.DatabaseInitializer(
         gh<_i177.AppDatabase>(),
@@ -335,19 +351,18 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i790.AppLogger>(),
       ),
     );
-    gh.lazySingleton<_i932.LotRepository>(
-      () => _i1010.LotRepositoryImpl(
-        gh<_i177.AppDatabase>(),
-        gh<_i665.DatabaseTransactionRunner>(),
-        gh<_i656.IdGenerator>(),
-        gh<_i586.MediaStorageService>(),
-      ),
-    );
     gh.factory<_i478.DataHealthCubit>(
       () => _i478.DataHealthCubit(gh<_i125.DataHealthService>()),
     );
     gh.factory<_i548.LotListCubit>(
       () => _i548.LotListCubit(gh<_i932.LotRepository>()),
+    );
+    gh.lazySingleton<_i669.PartyRepository>(
+      () => _i454.PartyRepositoryImpl(
+        gh<_i177.AppDatabase>(),
+        gh<_i665.DatabaseTransactionRunner>(),
+        gh<_i656.IdGenerator>(),
+      ),
     );
     gh.lazySingleton<_i291.WorkerRepository>(
       () => _i966.WorkerRepositoryImpl(
@@ -425,6 +440,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i656.IdGenerator>(),
       ),
     );
+    gh.factory<_i908.PartiesCubit>(
+      () => _i908.PartiesCubit(gh<_i669.PartyRepository>()),
+    );
+    gh.factory<_i666.PartyDetailCubit>(
+      () => _i666.PartyDetailCubit(gh<_i669.PartyRepository>()),
+    );
     gh.lazySingleton<_i154.AuthCubit>(
       () => _i154.AuthCubit(
         gh<_i941.AuthRepository>(),
@@ -437,6 +458,14 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i1043.CloudSyncGateway>(),
         gh<_i154.AuthCubit>(),
         gh<_i790.AppLogger>(),
+      ),
+    );
+    gh.lazySingleton<_i617.ReportsRepository>(
+      () => _i546.ReportsRepositoryImpl(
+        gh<_i177.AppDatabase>(),
+        gh<_i306.StockMovementRepository>(),
+        gh<_i762.AccountingRepository>(),
+        gh<_i669.PartyRepository>(),
       ),
     );
     gh.factory<_i576.RateHistoryCubit>(
@@ -471,6 +500,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i926.ProcessRepository>(),
       ),
     );
+    gh.factory<_i736.DashboardCubit>(
+      () => _i736.DashboardCubit(gh<_i617.ReportsRepository>()),
+    );
+    gh.factory<_i198.DailySummaryCubit>(
+      () => _i198.DailySummaryCubit(gh<_i617.ReportsRepository>()),
+    );
     gh.factory<_i1018.BusinessProfileCubit>(
       () => _i1018.BusinessProfileCubit(gh<_i521.BusinessProfileRepository>()),
     );
@@ -480,13 +515,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i665.DatabaseTransactionRunner>(),
         gh<_i306.StockMovementRepository>(),
         gh<_i656.IdGenerator>(),
-      ),
-    );
-    gh.lazySingleton<_i617.ReportsRepository>(
-      () => _i546.ReportsRepositoryImpl(
-        gh<_i177.AppDatabase>(),
-        gh<_i306.StockMovementRepository>(),
-        gh<_i762.AccountingRepository>(),
       ),
     );
     gh.factory<_i510.InspectionQueueCubit>(
@@ -548,12 +576,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i105.LocalNotificationService>(),
         gh<_i754.NotificationRefreshCoordinator>(),
       ),
-    );
-    gh.factory<_i736.DashboardCubit>(
-      () => _i736.DashboardCubit(gh<_i617.ReportsRepository>()),
-    );
-    gh.factory<_i198.DailySummaryCubit>(
-      () => _i198.DailySummaryCubit(gh<_i617.ReportsRepository>()),
     );
     return this;
   }

@@ -280,6 +280,15 @@ final class _DashboardViewState extends State<_DashboardView> {
                                 ),
                               ),
                               AppButton(
+                                label: l10n.navPartiesDispatch,
+                                icon: AppIcons.party,
+                                variant: AppButtonVariant.outlined,
+                                onPressed: () => _pushAndRefresh(
+                                  context,
+                                  RoutePaths.parties,
+                                ),
+                              ),
+                              AppButton(
                                 label: l10n.navStockMovements,
                                 icon: AppIcons.stockMovements,
                                 variant: AppButtonVariant.outlined,

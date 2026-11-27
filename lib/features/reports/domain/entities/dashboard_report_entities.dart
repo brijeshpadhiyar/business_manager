@@ -59,6 +59,9 @@ final class DashboardSnapshot {
     this.todayPaymentsPaise = 0,
     this.importantPendingIssues = const [],
     this.pendingInspectionStock = 0,
+    this.dispatchedStock = 0,
+    this.totalPartyReceivablePaise = 0,
+    this.totalPartyAdvanceCreditPaise = 0,
   });
 
   final String businessNameEn;
@@ -93,8 +96,11 @@ final class DashboardSnapshot {
   final List<OpenIssueSummary> importantPendingIssues;
 
   /// Pieces returned and waiting for QC. Golden rule:
-  /// initial = available + withWorkers + pendingInspection + damaged + lost + shortage.
+  /// initial = available + withWorkers + pendingInspection + damaged + lost + shortage + dispatched.
   final int pendingInspectionStock;
+  final int dispatchedStock;
+  final int totalPartyReceivablePaise;
+  final int totalPartyAdvanceCreditPaise;
 }
 
 /// Per-process activity totals for a single IST business day.

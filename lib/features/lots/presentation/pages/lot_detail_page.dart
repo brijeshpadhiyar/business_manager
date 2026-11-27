@@ -13,6 +13,7 @@ import 'package:business_manager/features/lots/domain/entities/lot_entities.dart
 import 'package:business_manager/features/lots/presentation/bloc/lot_detail_cubit.dart';
 import 'package:business_manager/features/lots/presentation/widgets/lot_design_section_card.dart';
 import 'package:business_manager/features/lots/presentation/widgets/lot_edit_sheets.dart';
+import 'package:business_manager/features/parties/presentation/widgets/lot_pnl_section.dart';
 import 'package:business_manager/features/process_routing/domain/entities/process_routing_entities.dart';
 import 'package:business_manager/features/security/presentation/bloc/app_lock_cubit.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
@@ -433,6 +434,17 @@ final class _LotDetailView extends StatelessWidget {
               ),
             );
           },
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            0,
+            AppSpacing.lg,
+            AppSpacing.xl,
+          ),
+          sliver: SliverToBoxAdapter(
+            child: LotPnlSection(lotId: lotId),
+          ),
         ),
       ],
     );

@@ -3,6 +3,7 @@ import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
 import 'package:business_manager/features/business_profile/domain/repositories/business_profile_repository.dart';
+import 'package:business_manager/features/parties/domain/entities/party_entities.dart';
 import 'package:business_manager/features/slips/domain/entities/slip_entities.dart';
 
 /// Builds [WorkerSlipData] payloads cleanly from operational domain models
@@ -205,6 +206,131 @@ abstract final class SlipBuilderHelper {
       primaryAmountPaise: summary.earnedLabourPaise,
       outstandingPayablePaise: summary.outstandingPayablePaise,
       advanceCreditPaise: summary.advanceCreditBalancePaise,
+    );
+  }
+
+  static Future<WorkerSlipData> buildPartyDispatchChallan({
+    required DispatchChallanView view,
+    required String discountLabel,
+    required String otherChargesLabel,
+    int outstandingReceivablePaise = 0,
+    int advanceCreditPaise = 0,
+  }) async {
+    final profile = await _loadProfile();
+    final c = view.challan;
+    final items = [
+      for (final item in view.items)
+        SlipLineItem(
+          title:
+              '${item.lotNumber} • ${item.designName} • ${item.colourName}',
+          quantityText: '${item.quantity} pcs',
+          rateText: '${MoneyFormatter.formatPaise(item.ratePaise)}/pc',
+          amountPaise: item.lineTotalPaise,
+        ),
+      if (c.discountPaise > 0)
+        SlipLineItem(
+          title: discountLabel,
+          amountPaise: -c.discountPaise,
+        ),
+      if (c.otherChargesPaise > 0)
+        SlipLineItem(
+          title: otherChargesLabel,
+          amountPaise: c.otherChargesPaise,
+        ),
+    ];
+
+    return WorkerSlipData(
+      type: SlipDocumentType.partyDispatchChallan,
+      referenceId: c.challanNumber,
+      businessNameEn: profile?.nameEn ?? 'Business Manager',
+      businessNameGu: profile?.nameGu ?? 'બિઝનેસ મેનેજર',
+      businessPhone: profile?.phone,
+      businessAddress: profile?.address,
+      workerName: view.partyName,
+      workerPhone: view.partyPhone,
+      transactionAtUtcMillis: c.transactionAt,
+      items: items,
+      primaryAmountPaise: c.netAmountPaise,
+      outstandingPayablePaise: outstandingReceivablePaise,
+      advanceCreditPaise: advanceCreditPaise,
+      notes: c.notes,
+    );
+  }
+
+  static Future<WorkerSlipData> buildPartyPaymentReceipt({
+    required PartyEntity party,
+    required PartyPaymentEntity payment,
+    required int outstandingReceivablePaise,
+    required int advanceCreditPaise,
+  }) async {
+    final profile = await _loadProfile();
+    final refShort = payment.id.length > 8
+        ? payment.id.substring(0, 8).toUpperCase()
+        : payment.id.toUpperCase();
+    return WorkerSlipData(
+      type: SlipDocumentType.partyPaymentReceipt,
+      referenceId: payment.referenceNo ?? 'PR-$refShort',
+      businessNameEn: profile?.nameEn ?? 'Business Manager',
+      businessNameGu: profile?.nameGu ?? 'બિઝનેસ મેનેજર',
+      businessPhone: profile?.phone,
+      businessAddress: profile?.address,
+      workerName: party.name,
+      workerPhone: party.phone,
+      transactionAtUtcMillis: payment.transactionAt,
+      items: [
+        SlipLineItem(
+          title:
+              '${payment.paymentType.dbValue} (${payment.paymentMode.dbValue})',
+          subtitle: payment.referenceNo,
+          amountPaise: payment.amountPaise,
+        ),
+      ],
+      primaryAmountPaise: payment.amountPaise,
+      outstandingPayablePaise: outstandingReceivablePaise,
+      advanceCreditPaise: advanceCreditPaise,
+      notes: payment.notes,
+    );
+  }
+
+  static Future<WorkerSlipData> buildPartyKhataStatement({
+    required PartyLedgerDetail detail,
+    String? periodLabelEn,
+    String? periodLabelGu,
+  }) async {
+    final profile = await _loadProfile();
+    final s = detail.summary;
+    final items = detail.entries
+        .where((e) => !e.isReversed)
+        .take(20)
+        .map(
+          (e) => SlipLineItem(
+            title: e.description,
+            subtitle: e.notes,
+            amountPaise: e.debitPaise > 0 ? e.debitPaise : -e.creditPaise,
+            timestampUtcMillis: e.transactionAt,
+          ),
+        )
+        .toList();
+
+    final refPrefix = detail.party.id.length > 6
+        ? detail.party.id.substring(0, 6).toUpperCase()
+        : detail.party.id.toUpperCase();
+    return WorkerSlipData(
+      type: SlipDocumentType.partyKhataStatement,
+      referenceId: 'PK-$refPrefix',
+      businessNameEn: profile?.nameEn ?? 'Business Manager',
+      businessNameGu: profile?.nameGu ?? 'બિઝનેસ મેનેજર',
+      businessPhone: profile?.phone,
+      businessAddress: profile?.address,
+      workerName: detail.party.name,
+      workerPhone: detail.party.phone,
+      transactionAtUtcMillis: DateTime.now().millisecondsSinceEpoch,
+      items: items,
+      primaryAmountPaise: s.totalDispatchedNetPaise,
+      outstandingPayablePaise: s.outstandingReceivablePaise,
+      advanceCreditPaise: s.advanceCreditPaise,
+      periodLabelEn: periodLabelEn,
+      periodLabelGu: periodLabelGu,
     );
   }
 }

@@ -226,6 +226,23 @@ abstract final class ValidationLocalizer {
       'invalid_pin' => l10n.validationInvalidPin,
       'invalid_recovery_key' => l10n.securityRecoveryKeyInvalidError,
 
+      // Parties, Dispatch, Buyer Returns & Lot Direct Costs (V1.9)
+      'party_name_required' ||
+      'challan_number_required' ||
+      'return_number_required' ||
+      'description_required' => l10n.validationRequired,
+      'duplicate_party_name' ||
+      'duplicate_challan_number' ||
+      'duplicate_return_number' => l10n.validationDuplicateValue,
+      'inactive_or_missing_party' => l10n.partyInactiveOrMissingError,
+      'dispatch_items_required' => l10n.dispatchItemsRequiredError,
+      'return_items_required' => l10n.buyerReturnItemsRequiredError,
+      'insufficient_stock_for_dispatch' => l10n.dispatchInsufficientStockError,
+      'discount_exceeds_gross' => l10n.dispatchDiscountExceedsGrossError,
+      'active_buyer_return_exists' => l10n.dispatchReverseBlockedReturnError,
+      'return_exceeds_dispatched' => l10n.buyerReturnExceedsDispatchedError,
+      'invalid_challan_for_return' => l10n.validationRecordNotFound,
+
       _ => fallback ?? l10n.errorUnexpected,
     };
   }

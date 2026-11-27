@@ -205,6 +205,9 @@ final class DesignColourStockBalance {
     required this.totalIssued,
     required this.totalGoodReturned,
     required this.totalRepairedToGood,
+    this.dispatchedOutQty = 0,
+    this.buyerReturnedGoodQty = 0,
+    this.buyerReturnedDamagedQty = 0,
     required this.processBreakdown,
   });
 
@@ -227,7 +230,13 @@ final class DesignColourStockBalance {
   final int totalIssued;
   final int totalGoodReturned;
   final int totalRepairedToGood;
+  final int dispatchedOutQty;
+  final int buyerReturnedGoodQty;
+  final int buyerReturnedDamagedQty;
   final List<ProcessStockSummary> processBreakdown;
+
+  int get netDispatchedQty =>
+      dispatchedOutQty - buyerReturnedGoodQty - buyerReturnedDamagedQty;
 }
 
 /// Open issue ready for partial or full return/settlement.

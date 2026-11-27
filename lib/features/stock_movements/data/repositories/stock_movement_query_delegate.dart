@@ -1,6 +1,7 @@
 import 'package:business_manager/core/database/app_database.dart';
 import 'package:business_manager/core/database/mappers/ledger_row_mappers.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
+import 'package:business_manager/features/parties/data/repositories/party_repository_impl.dart';
 import 'package:business_manager/features/production_history/data/repositories/production_history_dataset_loader.dart';
 import 'package:business_manager/features/production_history/domain/calculators/production_history_calculator.dart';
 import 'package:business_manager/features/rates/domain/entities/rate_entities.dart';
@@ -141,6 +142,8 @@ final class StockMovementQueryDelegate {
       designColourId,
     )).map(LedgerRowMappers.stockMovement).toList();
     final pendingMaps = await loadPendingInspectionMaps(movements);
+    final dispatchDeltas = await PartyRepositoryImpl.loadStockDeltasByColour(_db);
+    final delta = dispatchDeltas[colour.id];
     final procs = await _db.processMemberDao.getNonDeletedProcesses();
     final procNames = {for (final p in procs) p.id: p.name};
 
@@ -157,6 +160,9 @@ final class StockMovementQueryDelegate {
       allMovementsForColour: movements,
       processNamesById: procNames,
       pendingInspectionQuantity: pendingMaps.pendingByColour[colour.id] ?? 0,
+      dispatchedOutQty: delta?.dispatchedOutQty ?? 0,
+      buyerReturnedGoodQty: delta?.buyerReturnedGoodQty ?? 0,
+      buyerReturnedDamagedQty: delta?.buyerReturnedDamagedQty ?? 0,
     );
   }
 
@@ -171,6 +177,7 @@ final class StockMovementQueryDelegate {
         .map(LedgerRowMappers.stockMovement)
         .toList();
     final pendingMaps = await loadPendingInspectionMaps(allMovements);
+    final dispatchDeltas = await PartyRepositoryImpl.loadStockDeltasByColour(_db);
     final procs = await _db.processMemberDao.getNonDeletedProcesses();
 
     final lotById = {for (final l in activeLots) l.id: l};
@@ -193,6 +200,7 @@ final class StockMovementQueryDelegate {
       if (lot == null) continue;
       if (lotId != null && lot.id != lotId) continue;
 
+      final delta = dispatchDeltas[c.id];
       final balance = _stockCalc.calculateDesignColourBalance(
         designColourId: c.id,
         lotId: lot.id,
@@ -206,6 +214,9 @@ final class StockMovementQueryDelegate {
         allMovementsForColour: movementsByColour[c.id] ?? const [],
         processNamesById: procNames,
         pendingInspectionQuantity: pendingMaps.pendingByColour[c.id] ?? 0,
+        dispatchedOutQty: delta?.dispatchedOutQty ?? 0,
+        buyerReturnedGoodQty: delta?.buyerReturnedGoodQty ?? 0,
+        buyerReturnedDamagedQty: delta?.buyerReturnedDamagedQty ?? 0,
       );
       if (onlyWithDamaged && balance.damagedBucket <= 0) continue;
       result.add(balance);

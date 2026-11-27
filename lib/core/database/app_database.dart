@@ -6,6 +6,7 @@ import 'package:business_manager/core/database/daos/colour_master_dao.dart';
 import 'package:business_manager/core/database/daos/job_process_dao.dart';
 import 'package:business_manager/core/database/daos/labour_entry_dao.dart';
 import 'package:business_manager/core/database/daos/lot_dao.dart';
+import 'package:business_manager/core/database/daos/party_dispatch_dao.dart';
 import 'package:business_manager/core/database/daos/payment_dao.dart';
 import 'package:business_manager/core/database/daos/process_member_dao.dart';
 import 'package:business_manager/core/database/daos/production_tracking_dao.dart';
@@ -20,6 +21,7 @@ import 'package:business_manager/core/database/tables/colour_master_table.dart';
 import 'package:business_manager/core/database/tables/job_process_tables.dart';
 import 'package:business_manager/core/database/tables/ledger_tables.dart';
 import 'package:business_manager/core/database/tables/lot_tables.dart';
+import 'package:business_manager/core/database/tables/party_dispatch_tables.dart';
 import 'package:business_manager/core/database/tables/process_member_tables.dart';
 import 'package:business_manager/core/database/tables/production_tracking_tables.dart';
 import 'package:business_manager/core/database/tables/sync_tables.dart';
@@ -27,7 +29,7 @@ import 'package:drift/drift.dart';
 
 part 'app_database.g.dart';
 
-/// Root offline-first Drift SQLite database (Schema v11: 28 tables, 12 DAOs).
+/// Root offline-first Drift SQLite database (Schema v12: 35 tables, 13 DAOs).
 @DriftDatabase(
   tables: [
     BusinessProfiles,
@@ -53,6 +55,13 @@ part 'app_database.g.dart';
     ProductionInspections,
     RejectionRecords,
     RejectionRepairs,
+    Parties,
+    DispatchChallans,
+    DispatchItems,
+    BuyerReturns,
+    BuyerReturnItems,
+    PartyPayments,
+    LotDirectCosts,
     SyncSessionStates,
     SyncOutboxes,
     SyncCursors,
@@ -71,6 +80,7 @@ part 'app_database.g.dart';
     ColourMasterDao,
     AttachmentAuditDao,
     ProductionTrackingDao,
+    PartyDispatchDao,
     SyncDao,
   ],
 )
