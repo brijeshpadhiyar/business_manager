@@ -84,4 +84,9 @@ final class LotListCubit extends Cubit<LotListState> {
       return e.toString();
     }
   }
+
+  Future<void> unarchiveLot(String lotId) async {
+    await _repository.unarchiveLot(lotId);
+    await loadLots();
+  }
 }

@@ -538,6 +538,13 @@ final class ProductionHistoryCalculator {
           badgeLabel: m.movementType == StockMovementType.issue
               ? 'ISSUED'
               : m.movementType.dbValue,
+          traceCode: m.movementType == StockMovementType.issue
+              ? 'feed_issue'
+              : 'feed_movement',
+          badgeCode: m.movementType == StockMovementType.issue
+              ? 'issued'
+              : 'movement',
+          traceArgs: {'movementType': m.movementType},
           isWarning: m.movementType != StockMovementType.issue,
           isPositive: false,
           timestampUtcMillis: m.transactionAt,
@@ -584,6 +591,10 @@ final class ProductionHistoryCalculator {
           badgeLabel: ret.returnMode == ProductionReturnMode.pendingInspection
               ? 'PENDING QC'
               : 'RETURNED',
+          traceCode: 'feed_return',
+          badgeCode: ret.returnMode == ProductionReturnMode.pendingInspection
+              ? 'pending_qc'
+              : 'returned',
           isWarning: ret.returnMode == ProductionReturnMode.pendingInspection,
           isPositive: false,
           timestampUtcMillis: ret.transactionAt,
@@ -631,6 +642,12 @@ final class ProductionHistoryCalculator {
           subtitle:
               '${worker ?? '-'} • Acc: ${insp.acceptedQuantity}, Rej: ${insp.rejectedQuantity}',
           badgeLabel: isRe ? 'RE-APPROVED' : 'INSPECTED',
+          traceCode: isRe ? 'feed_reinspection' : 'feed_inspection',
+          badgeCode: isRe ? 'reapproved' : 'inspected',
+          traceArgs: {
+            'acc': insp.acceptedQuantity,
+            'rej': insp.rejectedQuantity,
+          },
           isWarning: insp.rejectedQuantity > 0 && insp.acceptedQuantity == 0,
           isPositive: insp.acceptedQuantity > 0,
           timestampUtcMillis: insp.transactionAt,

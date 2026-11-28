@@ -78,8 +78,8 @@ final class _FakeVoiceService implements GuideVoiceService {
 
 void main() {
   group('GuideCatalog & GuideEntities', () {
-    test('contains 9 ordered bilingual End-to-End chapters with valid steps', () {
-      expect(GuideCatalog.chapters.length, 9);
+    test('contains 12 ordered bilingual End-to-End chapters with valid steps', () {
+      expect(GuideCatalog.chapters.length, 12);
       final seenStepIds = <String>{};
       for (var i = 0; i < GuideCatalog.chapters.length; i++) {
         final chapter = GuideCatalog.chapters[i];

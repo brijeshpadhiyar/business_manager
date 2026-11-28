@@ -71,6 +71,7 @@ final class SyncState {
     this.isOnline = true,
     this.pendingOutboxCount = 0,
     this.pendingMediaCount = 0,
+    this.unresolvedConflictCount = 0,
     this.failedItems = const [],
     this.lastSyncedAtUtcMillis,
     this.lastSummary,
@@ -82,6 +83,7 @@ final class SyncState {
   final bool isOnline;
   final int pendingOutboxCount;
   final int pendingMediaCount;
+  final int unresolvedConflictCount;
   final List<SyncFailedItem> failedItems;
   final int? lastSyncedAtUtcMillis;
   final SyncRunSummary? lastSummary;
@@ -95,6 +97,7 @@ final class SyncState {
     bool? isOnline,
     int? pendingOutboxCount,
     int? pendingMediaCount,
+    int? unresolvedConflictCount,
     List<SyncFailedItem>? failedItems,
     int? lastSyncedAtUtcMillis,
     SyncRunSummary? lastSummary,
@@ -108,6 +111,8 @@ final class SyncState {
       isOnline: isOnline ?? this.isOnline,
       pendingOutboxCount: pendingOutboxCount ?? this.pendingOutboxCount,
       pendingMediaCount: pendingMediaCount ?? this.pendingMediaCount,
+      unresolvedConflictCount:
+          unresolvedConflictCount ?? this.unresolvedConflictCount,
       failedItems: failedItems ?? this.failedItems,
       lastSyncedAtUtcMillis:
           lastSyncedAtUtcMillis ?? this.lastSyncedAtUtcMillis,

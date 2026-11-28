@@ -4,6 +4,7 @@ import 'package:business_manager/features/notifications/data/repositories/notifi
 import 'package:business_manager/features/notifications/domain/calculators/notification_plan_calculator.dart';
 import 'package:business_manager/features/notifications/domain/entities/notification_entities.dart';
 import 'package:business_manager/features/notifications/domain/services/local_notification_service.dart';
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:injectable/injectable.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -212,7 +213,8 @@ final class FlutterLocalNotificationsAdapter
         payload: '/daily-summary',
       );
       return true;
-    } catch (_) {
+    } catch (e) {
+      debugPrint('Test notification skipped: $e');
       return false;
     }
   }
@@ -222,7 +224,9 @@ final class FlutterLocalNotificationsAdapter
     if (!_isSupportedPlatform) return;
     try {
       await _plugin.cancelAll();
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('Cancel all notifications skipped: $e');
+    }
   }
 
   @override
@@ -238,5 +242,6 @@ final class FlutterLocalNotificationsAdapter
     NotificationCategory.dailySummary => 'Daily Workshop Summary',
     NotificationCategory.backupReminder => 'Offline Backup Reminders',
     NotificationCategory.businessAlerts => 'Important Workshop Alerts',
+    NotificationCategory.partyReceivable => 'Party Receivable Reminders',
   };
 }

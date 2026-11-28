@@ -3,6 +3,7 @@ import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:business_manager/features/notifications/domain/entities/notification_entities.dart';
+import 'package:business_manager/features/parties/domain/entities/party_entities.dart';
 import 'package:business_manager/features/reports/domain/calculators/workshop_daily_calculator.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -26,6 +27,7 @@ final class NotificationPlanCalculator {
     RoutePaths.stockReturnPicker,
     RoutePaths.stockRepair,
     RoutePaths.accounting,
+    RoutePaths.parties,
     RoutePaths.dailySummary,
     RoutePaths.settingsBackup,
   };
@@ -47,6 +49,7 @@ final class NotificationPlanCalculator {
     required int todayReturnedGoodQty,
     required int totalDamagedQty,
     required int? lastBackupExportUtcMillis,
+    List<PartyFinancialSummary> partySummaries = const [],
     int? lastAlertFiredAtUtcMillis,
     String? lastAlertCooldownKey,
   }) {
@@ -315,6 +318,60 @@ final class NotificationPlanCalculator {
             ),
           );
         }
+      }
+    }
+
+    // -------------------------------------------------------------------------
+    // 1006: Party Receivable Reminder (Weekly @ configured weekday & IST time)
+    // -------------------------------------------------------------------------
+    if (!settings.partyReceivableEnabled) {
+      idsToCancel.add(NotificationCategory.partyReceivable.notificationId);
+    } else {
+      final dueParties = partySummaries
+          .where(
+            (p) =>
+                p.isActive &&
+                p.outstandingReceivablePaise >=
+                    settings.partyReceivableMinPaise,
+          )
+          .toList();
+
+      if (dueParties.isEmpty) {
+        idsToCancel.add(NotificationCategory.partyReceivable.notificationId);
+      } else {
+        final totalReceivablePaise = dueParties.fold<int>(
+          0,
+          (s, p) => s + p.outstandingReceivablePaise,
+        );
+        final nextUtc = _nextWeeklyIstOccurrence(
+          nowUtcMillis: nowUtcMillis,
+          weekday: settings.partyReceivableWeekday,
+          hour: settings.partyReceivableHour,
+          minute: settings.partyReceivableMinute,
+        );
+        final title = isGu
+            ? 'પાર્ટી લેણાંની યાદ અપાવણી'
+            : 'Party Receivable Reminder';
+        final body = isAppLockEnabled
+            ? (isGu
+                  ? '${dueParties.length} પાર્ટીઓ પાસેથી બાકી લેણાં તપાસવાના બાકી છે.'
+                  : '${dueParties.length} parties have pending receivables to review.')
+            : (isGu
+                  ? '${dueParties.length} પાર્ટીઓ પાસેથી કુલ ${MoneyFormatter.formatPaise(totalReceivablePaise)} લેવાના બાકી છે.'
+                  : '${dueParties.length} parties owe ${MoneyFormatter.formatPaise(totalReceivablePaise)} receivable.');
+
+        planned.add(
+          PlannedLocalNotification(
+            id: NotificationCategory.partyReceivable.notificationId,
+            category: NotificationCategory.partyReceivable,
+            channelId: NotificationCategory.partyReceivable.channelId,
+            scheduledAtUtcMillis: nextUtc,
+            title: title,
+            body: body,
+            payloadRoute: RoutePaths.parties,
+            privacyPrivate: isAppLockEnabled,
+          ),
+        );
       }
     }
 

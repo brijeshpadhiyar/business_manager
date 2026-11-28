@@ -464,10 +464,156 @@ abstract final class GuideCatalog {
           titleGu: 'એક્સપોર્ટ અને શેર (PDF / Excel / CSV)',
           actionDescriptionEn: 'Prints or shares clean English & Gujarati PDF reports, multi-sheet Excel workbooks (.xlsx), or CSV files.',
           actionDescriptionGu: 'અંગ્રેજી અને ગુજરાતીમાં PDF પ્રિન્ટ/સેવ, Excel (.xlsx) વર્કબુક અથવા CSV ફાઇલ બનાવીને શેર કરે છે.',
-          nextActionHintEn: 'Final Tip: Remember to take weekly ZIP Backups in Settings -> Backup & Data Safety!',
-          nextActionHintGu: 'અંતિમ ટિપ: દર અઠવાડિયે સેટિંગ્સ -> બેકઅપ અને ડેટા સુરક્ષામાંથી ZIP બેકઅપ લેવાનું ભૂલશો નહીં!',
-          speechEn: 'Tap Export to share PDF or Excel reports. You have completed the end-to-end training! Remember to create regular ZIP backups in Settings.',
-          speechGu: 'એક્સપોર્ટ બટનથી PDF કે Excel રિપોર્ટ શેર કરી શકાય છે. તમારી સંપૂર્ણ તાલીમ પૂરી થઈ! સેટિંગ્સમાંથી નિયમિત ZIP બેકઅપ લેતા રહો.',
+          nextActionHintEn: 'Next: Open Parties & Dispatch to bill buyers and track Khata.',
+          nextActionHintGu: 'આગળ: ખરીદનારના બિલ અને ખાતાવહી માટે પાર્ટી અને ડિસ્પેચ ખોલો.',
+          speechEn: 'Tap Export to share PDF or Excel reports. Next, manage Buyers and Dispatch Challans.',
+          speechGu: 'એક્સપોર્ટ બટનથી PDF કે Excel રિપોર્ટ શેર કરી શકાય છે. આગળ, પાર્ટી અને ડિસ્પેચ ખાતાવહી જુઓ.',
+        ),
+      ],
+    ),
+
+    // Chapter 10: Parties, Buyers & Dispatch Challans
+    GuideChapter(
+      id: 'parties-dispatch',
+      order: 10,
+      screenId: GuideScreenId.parties,
+      routePath: '/parties',
+      iconKey: 'dispatch',
+      titleEn: 'Buyers (Parties) & Dispatch Challans',
+      titleGu: 'પાર્ટી (ખરીદનાર) અને ડિસ્પેચ ચલણ',
+      summaryEn:
+          'Manage buyers, dispatch finished lots with Challans, record Good/Damaged buyer returns, and collect Party Khata receipts.',
+      summaryGu:
+          'ખરીદનારની વિગતો, તૈયાર લોટનું ડિસ્પેચ ચલણ, પરત માલ અને પાર્ટી ખાતાવહીમાં જમા રકમનું સંચાલન કરો.',
+      nextStepLabelEn: 'Next: Check Lot Profit & Loss & Direct Costs.',
+      nextStepLabelGu: 'આગળ: લોટ નફો-નુકસાન અને સીધો ખર્ચ જુઓ.',
+      relatedHelpTopicIds: ['parties-and-dispatch'],
+      steps: [
+        GuideStep(
+          id: 'ch10_parties_create',
+          chapterId: 'parties-dispatch',
+          screenId: GuideScreenId.parties,
+          routePath: '/parties',
+          targetId: GuideTargetId.partiesNewAction,
+          titleEn: 'Add Buyers & View Net Khata',
+          titleGu: 'પાર્ટી ઉમેરો અને ચોખ્ખું ખાતું જુઓ',
+          actionDescriptionEn:
+              'Create Buyers/Agents with phone, GSTIN, and opening balance, then filter receivables vs advances.',
+          actionDescriptionGu:
+              'ફોન, GSTIN અને શરૂઆતના બેલેન્સ સાથે પાર્ટી ઉમેરો અને બાકી લેણું કે જમા ફિલ્ટર કરો.',
+          nextActionHintEn:
+              'Next: Open any Party to issue a Dispatch Challan or record Cash/UPI receipts.',
+          nextActionHintGu:
+              'આગળ: ડિસ્પેચ ચલણ બનાવવા અથવા રોકડ/UPI જમા નોંધવા કોઈપણ પાર્ટી ખોલો.',
+          speechEn:
+              'Add wholesale buyers here and monitor total receivable or advance balances at a glance.',
+          speechGu:
+              'અહીંથી ખરીદનાર ઉમેરો અને દરેક પાર્ટીનું બાકી લેણું કે એડવાન્સ સરળતાથી જુઓ.',
+        ),
+      ],
+    ),
+
+    // Chapter 11: Lot Profit & Loss (P&L) & Direct Costs
+    GuideChapter(
+      id: 'lot-pnl-costs',
+      order: 11,
+      screenId: GuideScreenId.lotDetail,
+      routePath: '/lots',
+      iconKey: 'profit',
+      titleEn: 'Lot Profit & Loss (P&L) & Direct Costs',
+      titleGu: 'લોટ નફો-નુકસાન (P&L) અને સીધો ખર્ચ',
+      summaryEn:
+          'Track exact per-lot profitability across Fabric, Labour, Direct Costs, Damage Loss, and Net Dispatched Sales.',
+      summaryGu:
+          'કાપડ, મજૂરી, સીધો ખર્ચ, ડેમેજ નુકસાન અને ચોખ્ખા વેચાણ મુજબ દરેક લોટનો નફો-નુકસાન જાણો.',
+      nextStepLabelEn: 'Next: Configure Team Roles & Cloud Sync Health.',
+      nextStepLabelGu: 'આગળ: ટીમ ભૂમિકાઓ અને ક્લાઉડ સિંક સુરક્ષા સેટ કરો.',
+      relatedHelpTopicIds: ['lot-profit-and-loss'],
+      steps: [
+        GuideStep(
+          id: 'ch11_lot_pnl',
+          chapterId: 'lot-pnl-costs',
+          screenId: GuideScreenId.lotDetail,
+          routePath: '/lots',
+          targetId: GuideTargetId.lotDetailPnl,
+          titleEn: 'Add Direct Costs & Inspect Lot Margin',
+          titleGu: 'સીધો ખર્ચ ઉમેરો અને લોટ માર્જિન જુઓ',
+          actionDescriptionEn:
+              'Record fabric, accessories, packaging, and transport bills on a Lot to calculate live realized profit %.',
+          actionDescriptionGu:
+              'લોટ પર કાપડ, એસેસરીઝ, પેકિંગ અને ભાડાનો ખર્ચ નોંધી લાઇવ નફો અને માર્જિન % જુઓ.',
+          nextActionHintEn:
+              'Tip: Direct Costs immediately refine per-piece cost and Lot P&L.',
+          nextActionHintGu:
+              'ટિપ: સીધો ખર્ચ ઉમેરતા જ પીસ દીઠ ખર્ચ અને લોટ P&L તરત અપડેટ થાય છે.',
+          speechEn:
+              'Inside any Lot Detail page, add Direct Costs like fabric or packaging to see true Lot Profit and Margin.',
+          speechGu:
+              'લોટની વિગતમાં કાપડ કે પેકિંગ જેવો સીધો ખર્ચ ઉમેરી સાચો નફો અને માર્જિન ટકાવારી જુઓ.',
+        ),
+      ],
+    ),
+
+    // Chapter 12: Team Roles, Cloud Sync & Conflict Resolution
+    GuideChapter(
+      id: 'team-sync-health',
+      order: 12,
+      screenId: GuideScreenId.team,
+      routePath: '/settings/team',
+      iconKey: 'team',
+      titleEn: 'Team Roles, Cloud Sync & Conflict Resolution',
+      titleGu: 'ટીમ ભૂમિકા, ક્લાઉડ સિંક અને વિવાદ ઉકેલ',
+      summaryEn:
+          'Invite workshop staff with role permissions, manage offline-first Cloud Sync, and resolve device conflicts cleanly.',
+      summaryGu:
+          'ભૂમિકા મુજબ સ્ટાફ આમંત્રિત કરો, ક્લાઉડ સિંક ચલાવો અને ઉપકરણ વચ્ચેના વિવાદ સુરક્ષિત રીતે ઉકેલો.',
+      nextStepLabelEn:
+          'Training Complete! You are ready to run your full StitchFlow v2 workshop.',
+      nextStepLabelGu:
+          'તાલીમ પૂર્ણ! હવે તમે સંપૂર્ણ StitchFlow v2 વર્કશોપ ચલાવવા તૈયાર છો.',
+      relatedHelpTopicIds: ['team-rbac-sync-health'],
+      steps: [
+        GuideStep(
+          id: 'ch12_team_roles',
+          chapterId: 'team-sync-health',
+          screenId: GuideScreenId.team,
+          routePath: '/settings/team',
+          targetId: GuideTargetId.teamInviteAction,
+          titleEn: 'Staff Invite Codes & Role Management',
+          titleGu: 'સ્ટાફ આમંત્રણ કોડ અને ભૂમિકા ફેરફાર',
+          actionDescriptionEn:
+              'Invite Managers, Supervisors, or Accountants with 8-char codes and promote or demote members anytime as Owner.',
+          actionDescriptionGu:
+              '૮-અક્ષરના કોડથી મેનેજર, સુપરવાઇઝર કે એકાઉન્ટન્ટ જોડો અને માલિક તરીકે ભૂમિકા બદલો.',
+          nextActionHintEn:
+              'Next: Open Cloud Sync to review queued offline writes or resolve any conflicts.',
+          nextActionHintGu:
+              'આગળ: બાકી ઓફલાઇન નોંધો કે વિવાદ ઉકેલવા ક્લાઉડ સિંક ખોલો.',
+          speechEn:
+              'Create staff invite codes and adjust role permissions safely from Team Management.',
+          speechGu:
+              'ટીમ મેનેજમેન્ટમાંથી સ્ટાફ કોડ બનાવો અને સભ્યોના અધિકાર સુરક્ષિત રીતે સંભાળો.',
+        ),
+        GuideStep(
+          id: 'ch12_sync_health',
+          chapterId: 'team-sync-health',
+          screenId: GuideScreenId.sync,
+          routePath: '/settings/sync',
+          targetId: GuideTargetId.syncNowAction,
+          titleEn: 'Cloud Sync, Devices & Conflict Inspector',
+          titleGu: 'ક્લાઉડ સિંક, ઉપકરણો અને વિવાદ નિરીક્ષક',
+          actionDescriptionEn:
+              'Push local Drift changes to Supabase, check active devices, and compare side-by-side diffs if a conflict occurs.',
+          actionDescriptionGu:
+              'સ્થાનિક ફેરફારો ક્લાઉડમાં મોકલો, સક્રિય ઉપકરણો તપાસો અને વિવાદ વખતે બંને કિંમતો સરખાવી ઉકેલો.',
+          nextActionHintEn:
+              'Final Tip: Keep weekly local ZIP backups alongside Cloud Sync!',
+          nextActionHintGu:
+              'અંતિમ ટિપ: ક્લાઉડ સિંક સાથે દર અઠવાડિયે લોકલ ZIP બેકઅપ પણ લેતા રહો!',
+          speechEn:
+              'Monitor cloud sync status, check data health, and resolve conflicts side-by-side. You have finished the full v2 training!',
+          speechGu:
+              'અહીંથી ક્લાઉડ સિંક, ડેટા હેલ્થ અને વિવાદ નિરીક્ષક તપાસો. તમારી સંપૂર્ણ v2 તાલીમ પૂર્ણ થઈ!',
         ),
       ],
     ),
@@ -695,9 +841,12 @@ abstract final class GuideCatalog {
             'સાપ્તાહિક કે માસિક પગાર હિસાબ માટે અહીંથી કારીગરની ખાતાવહી ખોલો.',
       ),
     ],
+    GuideScreenId.parties: chapters[9].steps,
+    GuideScreenId.team: <GuideStep>[chapters[11].steps.first],
+    GuideScreenId.sync: <GuideStep>[chapters[11].steps.last],
   };
 
-  /// Flattened ordered list of every step across all 9 end-to-end chapters.
+  /// Flattened ordered list of every step across all 12 end-to-end chapters.
   static List<GuideStep> get allJourneySteps => <GuideStep>[
     for (final chapter in chapters) ...chapter.steps,
   ];
@@ -871,6 +1020,27 @@ abstract final class GuideCatalog {
           liveRoutePath: '/settings',
           liveScreenId: GuideScreenId.settings,
           primaryTabIndex: 5,
+          nextTopicId: 'parties-and-dispatch',
+        ),
+        'parties-and-dispatch': HelpTopicActionLink(
+          topicId: 'parties-and-dispatch',
+          chapterId: 'parties-dispatch',
+          liveRoutePath: '/parties',
+          liveScreenId: GuideScreenId.parties,
+          nextTopicId: 'lot-profit-and-loss',
+        ),
+        'lot-profit-and-loss': HelpTopicActionLink(
+          topicId: 'lot-profit-and-loss',
+          chapterId: 'lot-pnl-costs',
+          liveRoutePath: '/lots',
+          liveScreenId: GuideScreenId.lotDetail,
+          nextTopicId: 'team-rbac-sync-health',
+        ),
+        'team-rbac-sync-health': HelpTopicActionLink(
+          topicId: 'team-rbac-sync-health',
+          chapterId: 'team-sync-health',
+          liveRoutePath: '/settings/team',
+          liveScreenId: GuideScreenId.team,
           nextTopicId: null,
         ),
       };

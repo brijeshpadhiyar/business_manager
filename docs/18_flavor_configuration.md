@@ -6,10 +6,10 @@ Development testing must **never** read, modify, or overwrite production data.
 
 | Property | Development (`dev`) | Production (`prod`) |
 | :--- | :--- | :--- |
-| **Android `applicationId`** | `com.brijesh.business_manager.dev` | `com.brijesh.business_manager` |
-| **iOS / macOS Bundle ID** | `com.brijesh.businessManager.dev` | `com.brijesh.businessManager` |
-| **App Display Name (EN)** | `Business Manager Dev` | `Business Manager` |
-| **App Display Name (GU)** | `બિઝનેસ મેનેજર (Dev)` | `બિઝનેસ મેનેજર` |
+| **Android `applicationId`** | `com.brijesh.stitchflow.dev` | `com.brijesh.stitchflow` |
+| **iOS / macOS Bundle ID** | `com.brijesh.stitchflow.dev` | `com.brijesh.stitchflow` |
+| **App Display Name (EN)** | `StitchFlow Dev` | `StitchFlow` |
+| **App Display Name (GU)** | `સ્ટિચફ્લો (Dev)` | `સ્ટિચફ્લો` |
 | **SQLite Database File** | `business_manager_dev.sqlite` | `business_manager_prod.sqlite` |
 | **Media Subdirectory** | `media_dev/` | `media_prod/` |
 | **Debug Logging** | Enabled (`true`) | Disabled (`false`) |
@@ -34,18 +34,18 @@ productFlavors {
         dimension = "environment"
         applicationIdSuffix = ".dev"
         versionNameSuffix = "-dev"
-        resValue("string", "app_name", "Business Manager Dev")
+        resValue("string", "app_name", "StitchFlow Dev")
     }
     create("prod") {
         dimension = "environment"
-        resValue("string", "app_name", "Business Manager")
+        resValue("string", "app_name", "StitchFlow")
     }
 }
 ```
 Both `dev` and `prod` APKs can be installed **side-by-side on the same Android phone** with completely isolated Android sandboxes.
 
 ### iOS & macOS (Xcode Schemes & Build Configurations)
-- Create two Xcode Schemes (`dev`, `prod`) mapped to `Debug-dev` / `Release-dev` and `Debug-prod` / `Release-prod` `.xcconfig` files defining `PRODUCT_BUNDLE_IDENTIFIER` and `APP_DISPLAY_NAME`.
+- Shared Xcode Schemes (`dev`, `prod`) in `ios/Runner.xcodeproj/xcshareddata/xcschemes/` and `macos/Runner.xcodeproj/xcshareddata/xcschemes/` map `Debug-dev`/`Release-dev`/`Profile-dev` and `Debug-prod`/`Release-prod`/`Profile-prod` `.xcconfig` files defining `PRODUCT_BUNDLE_IDENTIFIER` (`com.brijesh.stitchflow.dev` / `com.brijesh.stitchflow`) and display names via `Flavor-dev.xcconfig` / `Flavor-prod.xcconfig`.
 
 ### Web, Windows & Linux (`--dart-define-from-file`)
 - Native Gradle/Xcode flavors do not apply to Web/Windows/Linux.

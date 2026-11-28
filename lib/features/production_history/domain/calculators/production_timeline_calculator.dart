@@ -178,6 +178,8 @@ final class ProductionTimelineCalculator {
         subtitle: lot.title != null
             ? '${lot.title} • $totalInitial pcs'
             : '$totalInitial pcs initial quantity',
+        traceCode: 'lot_created',
+        traceArgs: {'lotTitle': lot.title, 'totalInitial': totalInitial},
         quantity: totalInitial,
         lotId: lot.id,
         lotNumber: lot.lotNumber,
@@ -222,6 +224,7 @@ final class ProductionTimelineCalculator {
                   '${procName ?? 'Process'} assigned & ${m.quantity} pcs issued to ${workerName ?? 'Worker'}',
               subtitle:
                   '${design ?? ''} ${colour ?? ''} • Rate ${MoneyFormatter.formatPaise(m.appliedRatePaise)}/pc',
+              traceCode: 'mov_issue',
               quantity: m.quantity,
               ratePaise: m.appliedRatePaise,
               lotId: lot.id,
@@ -250,6 +253,7 @@ final class ProductionTimelineCalculator {
                     '${m.quantity} pcs returned & accepted (${procName ?? ''})',
                 subtitle:
                     '${workerName ?? ''} • Earned ${MoneyFormatter.formatPaise(m.quantity * m.appliedRatePaise)}',
+                traceCode: 'mov_return_good',
                 quantity: m.quantity,
                 ratePaise: m.appliedRatePaise,
                 amountPaise: m.quantity * m.appliedRatePaise,
@@ -278,6 +282,7 @@ final class ProductionTimelineCalculator {
                 recordedAtUtcMillis: m.recordedAt,
                 title: '${m.quantity} pcs recorded as damaged/rejected',
                 subtitle: '${workerName ?? ''} • ${procName ?? ''}',
+                traceCode: 'mov_return_damaged',
                 quantity: m.quantity,
                 lotId: lot.id,
                 lotNumber: lot.lotNumber,
@@ -304,6 +309,7 @@ final class ProductionTimelineCalculator {
               recordedAtUtcMillis: m.recordedAt,
               title: '${m.quantity} pcs settled as Lost',
               subtitle: '${workerName ?? ''} • ${procName ?? ''}',
+              traceCode: 'mov_lost',
               quantity: m.quantity,
               lotId: lot.id,
               lotNumber: lot.lotNumber,
@@ -329,6 +335,7 @@ final class ProductionTimelineCalculator {
               recordedAtUtcMillis: m.recordedAt,
               title: '${m.quantity} pcs settled as Shortage',
               subtitle: '${workerName ?? ''} • ${procName ?? ''}',
+              traceCode: 'mov_shortage',
               quantity: m.quantity,
               lotId: lot.id,
               lotNumber: lot.lotNumber,
@@ -354,6 +361,7 @@ final class ProductionTimelineCalculator {
               recordedAtUtcMillis: m.recordedAt,
               title: 'Movement reversed (${m.quantity} pcs)',
               subtitle: m.reason ?? '',
+              traceCode: 'mov_reversal',
               quantity: m.quantity,
               lotId: lot.id,
               lotNumber: lot.lotNumber,
@@ -380,6 +388,7 @@ final class ProductionTimelineCalculator {
                 recordedAtUtcMillis: m.recordedAt,
                 title: '${m.quantity} damaged pcs repaired to Good stock',
                 subtitle: '${design ?? ''} ${colour ?? ''}',
+                traceCode: 'mov_damaged_repaired',
                 quantity: m.quantity,
                 lotId: lot.id,
                 lotNumber: lot.lotNumber,
@@ -417,6 +426,11 @@ final class ProductionTimelineCalculator {
           subtitle: ret.returnMode == ProductionReturnMode.pendingInspection
               ? 'Logged as Pending QC Inspection'
               : 'Returned with Immediate Inspection',
+          traceCode: 'ret_logged',
+          traceArgs: {
+            'isPendingQc':
+                ret.returnMode == ProductionReturnMode.pendingInspection,
+          },
           quantity: ret.returnedQuantity,
           lotId: lot.id,
           lotNumber: lot.lotNumber,
@@ -458,6 +472,11 @@ final class ProductionTimelineCalculator {
             subtitle: insp.creditWorkerEarnings
                 ? '${workerName ?? ''} • Earned ${MoneyFormatter.formatPaise(insp.earnedAmountPaise)} @ ${MoneyFormatter.formatPaise(insp.lockedRatePaise)}/pc'
                 : 'In-house repair • No worker earning credited',
+            traceCode: 'insp_accepted',
+            traceArgs: {
+              'isReinsp': isReinsp,
+              'creditWorkerEarnings': insp.creditWorkerEarnings,
+            },
             quantity: insp.acceptedQuantity,
             ratePaise: insp.lockedRatePaise,
             amountPaise: insp.earnedAmountPaise,
@@ -489,6 +508,11 @@ final class ProductionTimelineCalculator {
                 : '${insp.rejectedQuantity} pcs rejected/damaged (${procName ?? ''})',
             subtitle:
                 '${workerName ?? ''} • ₹0 payable${insp.rejectionReason != null ? ' • ${insp.rejectionReason}' : ''}',
+            traceCode: 'insp_rejected',
+            traceArgs: {
+              'isReinsp': isReinsp,
+              'rejectionReason': insp.rejectionReason,
+            },
             quantity: insp.rejectedQuantity,
             lotId: lot.id,
             lotNumber: lot.lotNumber,
@@ -521,6 +545,11 @@ final class ProductionTimelineCalculator {
           title:
               '${rep.repairedQuantity} rejected pcs repaired (${rep.repairSource == RepairSource.originalWorker ? workerName ?? 'Worker' : 'In-House'})',
           subtitle: 'Submitted for QC Reinspection • ${procName ?? ''}',
+          traceCode: 'rep_logged',
+          traceArgs: {
+            'isOriginalWorker':
+                rep.repairSource == RepairSource.originalWorker,
+          },
           quantity: rep.repairedQuantity,
           lotId: lot.id,
           lotNumber: lot.lotNumber,
@@ -548,6 +577,12 @@ final class ProductionTimelineCalculator {
           title:
               'Direct transfer ${h.quantityDispatched} pcs: ${h.fromMemberName ?? 'Worker'} → ${h.toMemberName ?? 'Worker'}',
           subtitle: '${h.processName} • Ref ${h.transferReference}',
+          traceCode: 'handover_transfer',
+          traceArgs: {
+            'fromMember': h.fromMemberName,
+            'toMember': h.toMemberName,
+            'ref': h.transferReference,
+          },
           quantity: h.quantityDispatched,
           lotId: lot.id,
           lotNumber: lot.lotNumber,
@@ -573,6 +608,7 @@ final class ProductionTimelineCalculator {
           recordedAtUtcMillis: lot.updatedAt,
           title: 'Lot ${lot.lotNumber} completed',
           subtitle: 'Production finished and reconciled',
+          traceCode: 'lot_completed',
           lotId: lot.id,
           lotNumber: lot.lotNumber,
           actor: lotEntry.updatedBy,

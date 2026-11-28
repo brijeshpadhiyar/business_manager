@@ -3449,7 +3449,7 @@ class AppLocalizationsGu extends AppLocalizations {
   String get guideTrainingTabLabel => 'લાઇવ તાલીમ';
 
   @override
-  String get guideTopicsTabLabel => 'સંપૂર્ણ ગાઇડ (૧૯)';
+  String get guideTopicsTabLabel => 'સંપૂર્ણ ગાઇડ (૨૨)';
 
   @override
   String guideProgressSummary(int completed, int total) {
@@ -4480,4 +4480,333 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get navSidebarShow => 'સાઇડબાર બતાવો (Ctrl+B)';
+
+  @override
+  String lotArchivedToast(String lotNumber) {
+    return 'લોટ $lotNumber આર્કાઇવ થયો.';
+  }
+
+  @override
+  String lotUnarchivedToast(String lotNumber) {
+    return 'લોટ $lotNumber પુનઃસ્થાપિત થયો.';
+  }
+
+  @override
+  String get lotUnarchiveAction => 'લોટ પુનઃસ્થાપિત કરો';
+
+  @override
+  String get lotUnarchiveFailed =>
+      'આર્કાઇવ કરેલો લોટ પુનઃસ્થાપિત થઈ શક્યો નહીં.';
+
+  @override
+  String traceLotCreatedTitle(String lotNumber) {
+    return 'લોટ $lotNumber બનાવ્યો';
+  }
+
+  @override
+  String traceLotCreatedSubtitle(String title, int qty) {
+    return '$title • $qty પીસ';
+  }
+
+  @override
+  String traceInitialQtySubtitle(int qty) {
+    return '$qty પીસ શરૂઆતનો જથ્થો';
+  }
+
+  @override
+  String traceProcessAssignedTitle(String process, int qty, String worker) {
+    return '$process સોંપાયો અને $qty પીસ $worker ને આપ્યા';
+  }
+
+  @override
+  String traceRatePerPcSubtitle(String designColour, String rate) {
+    return '$designColour • ભાવ $rate/પીસ';
+  }
+
+  @override
+  String traceReturnAcceptedTitle(int qty, String process) {
+    return '$qty પીસ પરત અને મંજૂર ($process)';
+  }
+
+  @override
+  String traceEarnedSubtitle(String worker, String amount) {
+    return '$worker • કમાણી $amount';
+  }
+
+  @override
+  String traceDamagedRecordedTitle(int qty) {
+    return '$qty પીસ ડેમેજ/રિજેક્ટ નોંધાયા';
+  }
+
+  @override
+  String traceSettledLostTitle(int qty) {
+    return '$qty પીસ ખોવાયેલા (Lost) તરીકે નોંધાયા';
+  }
+
+  @override
+  String traceSettledShortageTitle(int qty) {
+    return '$qty પીસ ઘટ (Shortage) તરીકે નોંધાયા';
+  }
+
+  @override
+  String traceMovementReversedTitle(int qty) {
+    return 'વ્યવહાર રિવર્સ થયો ($qty પીસ)';
+  }
+
+  @override
+  String traceDamagedRepairedGoodTitle(int qty) {
+    return '$qty ડેમેજ પીસ રિપેર કરીને સારા સ્ટોકમાં ઉમેરાયા';
+  }
+
+  @override
+  String traceReturnedByTitle(int qty, String worker, String process) {
+    return '$worker દ્વારા $qty પીસ પરત ($process)';
+  }
+
+  @override
+  String get traceReturnPendingQcSubtitle => 'બાકી QC તપાસ તરીકે નોંધાયું';
+
+  @override
+  String get traceReturnImmediateSubtitle => 'તાત્કાલિક તપાસ સાથે પરત';
+
+  @override
+  String traceRepairedReapprovedTitle(int qty, String process) {
+    return '$qty રિપેર પીસ ફરી મંજૂર ($process)';
+  }
+
+  @override
+  String traceApprovedTitle(int qty, String process) {
+    return '$qty પીસ મંજૂર ($process)';
+  }
+
+  @override
+  String traceEarnedAtRateSubtitle(String worker, String amount, String rate) {
+    return '$worker • કમાણી $amount @ $rate/પીસ';
+  }
+
+  @override
+  String get traceInHouseNoEarningSubtitle =>
+      'ઇન-હાઉસ રિપેર • કારીગર મજૂરી જમા નહીં';
+
+  @override
+  String traceRepairedFailedReinspTitle(int qty) {
+    return '$qty રિપેર પીસ ફરી તપાસમાં નાપાસ';
+  }
+
+  @override
+  String traceRejectedTitle(int qty, String process) {
+    return '$qty પીસ રિજેક્ટ/ડેમેજ ($process)';
+  }
+
+  @override
+  String get traceZeroPayableLabel => '₹0 ચૂકવવાપાત્ર';
+
+  @override
+  String traceRejectedRepairedTitle(int qty, String source) {
+    return '$qty રિજેક્ટ પીસ રિપેર ($source)';
+  }
+
+  @override
+  String get traceInHouseLabel => 'ઇન-હાઉસ';
+
+  @override
+  String traceSubmittedReinspSubtitle(String process) {
+    return 'QC ફરી તપાસ માટે મોકલ્યું • $process';
+  }
+
+  @override
+  String traceDirectTransferTitle(int qty, String from, String to) {
+    return 'સીધું ટ્રાન્સફર $qty પીસ: $from → $to';
+  }
+
+  @override
+  String traceLotCompletedTitle(String lotNumber) {
+    return 'લોટ $lotNumber પૂર્ણ';
+  }
+
+  @override
+  String get traceLotCompletedSubtitle => 'ઉત્પાદન પૂર્ણ અને હિસાબ સરભર';
+
+  @override
+  String get traceParentIssueLink => 'મૂળ કામ સોંપણી (ઇશ્યૂ)';
+
+  @override
+  String traceLabourEntryLink(String basis) {
+    return 'મજૂરી નોંધ ($basis)';
+  }
+
+  @override
+  String traceInspectionLink(int acc, int rej) {
+    return 'તપાસ (મંજૂર $acc, રિજેક્ટ $rej)';
+  }
+
+  @override
+  String traceReinspectionLink(int acc) {
+    return 'ફરી તપાસ (મંજૂર $acc)';
+  }
+
+  @override
+  String get traceProductionReturnLink => 'ઉત્પાદન પરત રસીદ';
+
+  @override
+  String get traceWorkerEarningLink => 'જનરેટ થયેલ કારીગર મજૂરી';
+
+  @override
+  String get traceOriginalRejectionLink => 'મૂળ રિજેક્શન નોંધ';
+
+  @override
+  String get traceInspectionEventLink => 'તપાસ વિગત';
+
+  @override
+  String traceRepairLink(int qty) {
+    return 'રિપેર ($qty પીસ)';
+  }
+
+  @override
+  String get traceLinkedMovementLink => 'જોડાયેલ સ્ટોક વ્યવહાર';
+
+  @override
+  String traceTxnStockMovementTitle(String type) {
+    return 'સ્ટોક વ્યવહાર — $type';
+  }
+
+  @override
+  String get traceTxnReinspectionTitle => 'રિપેર ફરી તપાસ અને મંજૂરી';
+
+  @override
+  String get traceTxnInspectionTitle => 'ગુણવત્તા તપાસ (QC) અને મંજૂરી';
+
+  @override
+  String get traceTxnRejectionTitle => 'રિજેક્શન / ખામી નોંધ';
+
+  @override
+  String get traceTxnRepairTitle => 'રિજેક્શન રિપેર કામગીરી';
+
+  @override
+  String traceTxnHandoverTitle(String type) {
+    return 'તબક્કા હસ્તાંતરણ — $type';
+  }
+
+  @override
+  String traceTxnLabourTitle(String basis) {
+    return 'કારીગર મજૂરી કમાણી ($basis)';
+  }
+
+  @override
+  String traceTxnPaymentTitle(String type) {
+    return 'કારીગર ચુકવણી — $type';
+  }
+
+  @override
+  String traceTxnAdjustmentTitle(String type) {
+    return 'કારીગર ખાતા ફેરફાર — $type';
+  }
+
+  @override
+  String traceFeedIssuedTitle(String process, String lotNumber) {
+    return '$process આપ્યું • $lotNumber';
+  }
+
+  @override
+  String traceFeedMovementTitle(String type, String lotNumber) {
+    return '$type • $lotNumber';
+  }
+
+  @override
+  String traceFeedReturnTitle(String process, String lotNumber) {
+    return '$process પરત • $lotNumber';
+  }
+
+  @override
+  String traceFeedReinspectionTitle(String lotNumber, String process) {
+    return 'ફરી તપાસ • $lotNumber ($process)';
+  }
+
+  @override
+  String traceFeedInspectionTitle(String lotNumber, String process) {
+    return 'QC તપાસ • $lotNumber ($process)';
+  }
+
+  @override
+  String traceFeedInspectionSubtitle(String worker, int acc, int rej) {
+    return '$worker • મંજૂર: $acc, રિજેક્ટ: $rej';
+  }
+
+  @override
+  String get traceBadgeIssued => 'આપ્યું';
+
+  @override
+  String get traceBadgePendingQc => 'બાકી QC';
+
+  @override
+  String get traceBadgeReturned => 'પરત';
+
+  @override
+  String get traceBadgeReapproved => 'ફરી મંજૂર';
+
+  @override
+  String get traceBadgeInspected => 'તપાસેલ';
+
+  @override
+  String get traceBadgePayable => 'ચૂકવવાપાત્ર';
+
+  @override
+  String get traceBadgeInformational => 'માહિતીપ્રદ';
+
+  @override
+  String txnIdLabel(String id) {
+    return 'વ્યવહાર ID: $id';
+  }
+
+  @override
+  String txnTimeLabel(String time) {
+    return 'વ્યવહાર સમય: $time';
+  }
+
+  @override
+  String txnRecordedTimeLabel(String time) {
+    return 'નોંધ સમય: $time';
+  }
+
+  @override
+  String txnRecordedByLabel(String actor) {
+    return 'નોંધનાર: $actor';
+  }
+
+  @override
+  String txnApprovedByLabel(String actor) {
+    return 'મંજૂર કરનાર: $actor';
+  }
+
+  @override
+  String get txnPinVerifiedSuffix => ' (PIN ચકાસાયેલ)';
+
+  @override
+  String timelineReasonPrefix(String reason) {
+    return 'કારણ: $reason';
+  }
+
+  @override
+  String get teamChangeRoleAction => 'રોલ બદલો';
+
+  @override
+  String get teamChangeRoleTitle => 'સભ્યનો રોલ બદલો';
+
+  @override
+  String get teamRoleUpdatedSuccess => 'સભ્યનો રોલ અપડેટ થયો.';
+
+  @override
+  String syncConflictsDetectedBanner(int count) {
+    return '$count સિંક તફાવત આપમેળે મર્જ થયા. તમારો ફેરફાર પુનઃસ્થાપિત કરવા તપાસો.';
+  }
+
+  @override
+  String get notificationsPartyReceivableTitle => 'પાર્ટી લેણાંની યાદ અપાવણી';
+
+  @override
+  String get notificationsPartyReceivableSubtitle =>
+      'ખરીદદાર પાસેથી બાકી લેણાં ન્યૂનતમ મર્યાદાથી વધે ત્યારે સાપ્તાહિક યાદ';
+
+  @override
+  String get notificationsPartyMinLabel => 'ન્યૂનતમ લેણાંની મર્યાદા';
 }

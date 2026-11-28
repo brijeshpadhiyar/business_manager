@@ -1,3 +1,4 @@
+import 'package:business_manager/core/config/app_logger.dart';
 import 'package:business_manager/core/design_system/app_icons.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
@@ -96,7 +97,14 @@ final class _LotCreatePageState extends State<LotCreatePage> {
         _activeProcesses = results[1] as List<ProcessEntity>;
         _activeWorkers = results[2] as List<WorkerEntity>;
       });
-    } catch (_) {}
+    } catch (e) {
+      if (getIt.isRegistered<AppLogger>()) {
+        getIt<AppLogger>().warning(
+          'Lot create suggestion load failed',
+          error: e,
+        );
+      }
+    }
   }
 
   Future<void> _showAddInitialAssignmentSheet() async {

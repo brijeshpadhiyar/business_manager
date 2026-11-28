@@ -4,7 +4,25 @@ All notable changes to the **Business Manager (`બિઝનેસ મેને�
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - System Improvements (Phases 1–4)
+## [2.0.0+6] - 2026-11-28 — Parties & Dispatch, Lot P&L, Team RBAC & Quality Release
+
+### Added
+- **Parties (Buyers), Dispatch Challans, Buyer Returns & Party Khata (`v1.9.0`–`v2.0.0`)**:
+  - Added Drift Schema v12 (`parties`, `dispatch_challans`, `dispatch_items`, `buyer_returns`, `buyer_return_items`, `party_payments`, `lot_direct_costs`; 35 total tables, 30 cloud-synced tables) and Supabase Migration 5.
+  - Full Party directory (`PartiesListPage`, `PartyFormPage`), per-buyer Khata & Receipts (`PartyDetailPage`, `PartyPaymentFormPage`), multi-line Dispatch Challans (`DispatchChallanFormPage`, `DispatchChallanDetailPage`), Good/Damaged Buyer Returns (`BuyerReturnFormPage`), and printable/WhatsApp-shareable Dispatch Challan & Party Khata slips.
+  - **Lot Profit & Loss (P&L) & Direct Costs** (`LotPnlSection`, `LotProfitLossCalculator`): tracks Net Revenue, Worker Labour, Direct Costs (Fabric, Trims, Transport, Packing, Other), and live Net Profit / Margin % inside every Lot Detail screen.
+  - **Party Receivable Reminders** (`NotificationCategory.partyReceivable`, deterministic ID `1006`): configurable receivable reminder toggle & threshold in `NotificationSettingsPage` with automatic cancellation when dues settle.
+- **Lot Unarchive & Undo + Worker Selector UX**:
+  - Added `LotRepository.unarchiveLot` with duplicate active lot-number conflict guard & audited `REACTIVATE` history, a 6-second Undo snackbar on archive, and an **Archived** filter/restore flow on `LotListPage`.
+  - Upgraded `AppSelect<T>` to support `FormField<T>` validation keys (`fieldKey`) and migrated `PaymentFormPage` worker picker to searchable `AppSelect<String>`.
+- **Full Localization & Conflict/Role Controls**:
+  - Localized all remaining production timeline, history feed, and transaction detail labels (`traceCode`, `badgeCode`, `titleCode`, `statusCode`, `ProductionRelatedLink` in `DomainLabelLocalizer`) in both English and Gujarati.
+  - Added Owner-only **Change Member Role** UI (`_showChangeRoleSheet`) on `TeamManagementPage`, logged all empty catch blocks, fixed `SyncDao.countLocalUserBusinessRows()` parity across all 30 synced tables, and surfaced live unresolved sync conflict counts/warnings in `StitchFlowShellScaffold` and `SyncCenterPage`.
+- **Interactive Guide & Release Packaging**:
+  - Expanded `GuideCatalog` (9 -> 12 chapters), `StitchFlowHelpCatalog` (19 -> 22 topics), and `GuideScreenId` (`/parties`, `/settings/team`, `/settings/sync`).
+  - Added `test/widget/party_dispatch_ui_test.dart` and `test/widget/team_rbac_and_conflict_ui_test.dart`, and configured shared iOS & macOS `dev` / `prod` Xcode schemes and `.xcconfig` flavor targets.
+
+## [1.8.0] - 2026-11-27 — System Improvements (Phases 1–5)
 
 ### Added
 - **Interactive System Guidance, Button Spotlights, Voice Narration & Complete User Guide Hub**:

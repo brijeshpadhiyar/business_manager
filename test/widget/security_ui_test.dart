@@ -90,7 +90,9 @@ void main() {
       await tester.pumpWidget(BusinessManagerApp(config: AppConfig.dev()));
       await tester.pumpAndSettle();
 
-      // Navigate to Settings -> App Lock & Security
+      // Navigate via More sheet -> Settings -> App Lock & Security
+      await tester.tap(find.text('More').last);
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Settings').last);
       await tester.pumpAndSettle();
       await tester.scrollUntilVisible(

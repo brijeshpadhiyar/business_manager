@@ -26,6 +26,7 @@ import 'package:material_ui/material_ui.dart';
 final class AppSelect<T> extends StatelessWidget {
   const AppSelect({
     super.key,
+    this.fieldKey,
     required this.label,
     required this.itemLabelBuilder,
     this.items,
@@ -50,6 +51,7 @@ final class AppSelect<T> extends StatelessWidget {
          'Provide exactly one of `items` or `loader`.',
        );
 
+  final GlobalKey<FormFieldState<T>>? fieldKey;
   final String label;
   final List<T>? items;
   final AppSelectLoader<T>? loader;
@@ -110,33 +112,58 @@ final class AppSelect<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     final resolved = AppSelectStyle.resolve(context, presentation);
     final popup = _popupProps(context, resolved);
+    final effectiveAutoValidate =
+        autovalidateMode ??
+        (validator != null
+            ? AutovalidateMode.onUserInteraction
+            : AutovalidateMode.disabled);
 
-    return DropdownSearch<T>(
-      key: ValueKey<Object?>((label, _isAsync, items?.length)),
-      items: _find,
-      selectedItem: value,
-      compareFn: _compare,
-      itemAsString: itemLabelBuilder,
-      enabled: enabled && onChanged != null,
-      onSelected: onChanged,
+    Widget buildDropdown({
+      FormFieldState<T>? fieldState,
+    }) {
+      return DropdownSearch<T>(
+        key: ValueKey<Object?>((label, _isAsync, items?.length)),
+        items: _find,
+        selectedItem: value,
+        compareFn: _compare,
+        itemAsString: itemLabelBuilder,
+        enabled: enabled && onChanged != null,
+        onSelected: (v) {
+          fieldState?.didChange(v);
+          onChanged?.call(v);
+        },
+        validator: fieldState == null ? validator : null,
+        autoValidateMode: fieldState == null
+            ? (autovalidateMode ??
+                  (validator != null ? AutovalidateMode.onUserInteraction : null))
+            : null,
+        decoratorProps: DropDownDecoratorProps(
+          decoration: AppSelectStyle.fieldDecoration(
+            label: label,
+            hint: hint,
+            errorText: fieldState?.errorText ?? errorText,
+            enabled: enabled,
+          ),
+        ),
+        suffixProps: DropdownSuffixProps(
+          clearButtonProps: ClearButtonProps(
+            isVisible: clearable && value != null && enabled,
+          ),
+        ),
+        popupProps: popup,
+      );
+    }
+
+    if (fieldKey == null) {
+      return buildDropdown();
+    }
+
+    return FormField<T>(
+      key: fieldKey,
+      initialValue: value,
       validator: validator,
-      autoValidateMode:
-          autovalidateMode ??
-          (validator != null ? AutovalidateMode.onUserInteraction : null),
-      decoratorProps: DropDownDecoratorProps(
-        decoration: AppSelectStyle.fieldDecoration(
-          label: label,
-          hint: hint,
-          errorText: errorText,
-          enabled: enabled,
-        ),
-      ),
-      suffixProps: DropdownSuffixProps(
-        clearButtonProps: ClearButtonProps(
-          isVisible: clearable && value != null && enabled,
-        ),
-      ),
-      popupProps: popup,
+      autovalidateMode: effectiveAutoValidate,
+      builder: (fieldState) => buildDropdown(fieldState: fieldState),
     );
   }
 

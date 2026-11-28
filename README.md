@@ -2,13 +2,16 @@
 
 An **offline-first, multi-platform Flutter Garment & Production Management System**. Built with **Android as the primary target** and full cross-platform support for iOS, Web, Windows, macOS, and Linux from a single Flutter codebase.
 
-> **Project Phase:** **V1.8 Modular Architecture, Multi-User RBAC, Bilingual Slips & Cloud Sync v2** — Verified & Tested (`358/358` tests passing, `0` analyzer issues).
+> **Project Phase:** **V2.0.0 (`2.0.0+6`) — Parties & Dispatch, Lot P&L, Multi-User RBAC & Cloud Sync v2** — Verified & Tested (`flutter analyze --no-pub --fatal-infos`: 0 issues; `0` untranslated l10n keys).
 
 ---
 
 ## Core Capabilities
 
-- **Lot, Design & Colour Management:** Unique lots with photos, nested designs, and colour-wise quantities and prices.
+- **Lot, Design & Colour Management:** Unique lots with photos, nested designs, colour-wise quantities and prices, plus Archived filter & restore.
+- **Buyers (Parties), Dispatch Challans & Party Khata:** Manage buyers/agents, dispatch finished SKUs via multi-line Challans, handle Good/Damaged buyer returns, track Cash/UPI/Bank receipts, and trigger Party Receivable Reminders.
+- **Lot Profit & Loss (P&L) & Direct Costs:** Realized per-lot P&L combining Net Dispatched Sales, Worker Labour, and Direct Costs (Fabric, Trims, Packing, Transport).
+- **Multi-User Team RBAC & Cloud Sync:** Role-based workshop access (`Owner`, `Manager / Supervisor`, `QC Inspector`, `Accountant`) with Role editing, 8-char invite codes, 30-table Supabase offline-first sync, and side-by-side Conflict Inspector.
 - **Quantity-Based Inventory:** Append-only stock ledger tracking physical in-house good stock, damaged stock bucket, lost/shortage settlements, and per-process pending balances.
 - **Dynamic Production Processes:** Fully user-defined processes (e.g., Cutting, Press, Stitching, Finishing, Packing) with zero hardcoded sequence.
 - **Workers / Members & Historical Pricing:** Many-to-many member-to-process assignments with effective-dated historical rates resolved by `transactionAt` in `Asia/Kolkata` and locked on stock issue.

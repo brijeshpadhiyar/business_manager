@@ -62,6 +62,7 @@ final class _SyncConflictInspectorPageState
           context,
           context.l10n.syncConflictAcknowledgedSuccess,
         );
+        context.read<SyncCubit?>()?.refreshConflictsCount();
       }
       await _load();
     } catch (e) {

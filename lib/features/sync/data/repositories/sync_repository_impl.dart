@@ -1,5 +1,7 @@
 import 'package:business_manager/core/database/app_database.dart';
+import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/features/auth/domain/entities/auth_entities.dart';
+import 'package:business_manager/features/sync/data/services/sync_conflict_service.dart';
 import 'package:business_manager/features/sync/data/services/sync_engine.dart';
 import 'package:business_manager/features/sync/domain/entities/sync_entities.dart';
 import 'package:business_manager/features/sync/domain/repositories/sync_repository.dart';
@@ -7,10 +9,16 @@ import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: SyncRepository)
 final class SyncRepositoryImpl implements SyncRepository {
-  SyncRepositoryImpl(this._db, this._engine);
+  SyncRepositoryImpl(
+    this._db,
+    this._engine, [
+    SyncConflictService? conflictService,
+  ]) : _conflictService =
+           conflictService ?? SyncConflictService(_db, IdGenerator());
 
   final AppDatabase _db;
   final SyncEngine _engine;
+  final SyncConflictService _conflictService;
 
   @override
   bool get isCloudConfigured => _engine.isCloudConfigured;
@@ -62,6 +70,12 @@ final class SyncRepositoryImpl implements SyncRepository {
           ),
         )
         .toList(growable: false);
+  }
+
+  @override
+  Future<int> getUnresolvedConflictCount() async {
+    final conflicts = await _conflictService.loadConflicts();
+    return conflicts.where((c) => c.isUnresolved).length;
   }
 
   @override

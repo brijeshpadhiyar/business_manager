@@ -12,8 +12,8 @@ void main() {
     test('exposes official StitchFlow brand identity and URL scheme', () {
       expect(AppIdentity.appName, 'StitchFlow');
       expect(AppIdentity.shortName, 'StitchFlow');
-      expect(AppIdentity.appVersion, '1.5.0');
-      expect(AppIdentity.appBuildNumber, '5');
+      expect(AppIdentity.appVersion, '2.0.0');
+      expect(AppIdentity.appBuildNumber, '6');
       expect(AppIdentity.tagline, 'From Fabric to Finished.');
       expect(AppIdentity.urlScheme, 'stitchflow');
     });
@@ -45,7 +45,8 @@ void main() {
       final dark = AppTheme.dark();
 
       expect(light.colorScheme.primary, AppColors.brandPrimary);
-      expect(light.colorScheme.secondary, AppColors.brandSecondary);
+      // Light theme uses emerald700 for WCAG 2.2 AA contrast (>= 4.5:1 with white).
+      expect(light.colorScheme.secondary, AppColors.emerald700);
       expect(light.colorScheme.tertiary, AppColors.brandAccent);
       expect(light.colorScheme.surface, AppColors.brandSurface);
 

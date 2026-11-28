@@ -373,7 +373,71 @@ final class _NotificationSettingsView extends StatelessWidget {
                 ),
                 const SizedBox(height: AppSpacing.sm),
 
-                // 7. Important Local Business Alerts (1005)
+                // 7. Party Receivable Reminder (1006)
+                AppCard(
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppSwitch(
+                        label: l10n.notificationsPartyReceivableTitle,
+                        subtitle: l10n.notificationsPartyReceivableSubtitle,
+                        value: s.partyReceivableEnabled,
+                        onChanged: (v) => cubit.updateSettings(
+                          s.copyWith(partyReceivableEnabled: v),
+                        ),
+                      ),
+                      if (s.partyReceivableEnabled) ...[
+                        const SizedBox(height: AppSpacing.sm),
+                        AppText(
+                          l10n.notificationsPartyMinLabel,
+                          variant: AppTextVariant.label,
+                        ),
+                        const SizedBox(height: AppSpacing.xsm),
+                        Wrap(
+                          spacing: AppSpacing.xs,
+                          runSpacing: AppSpacing.xs,
+                          children: [
+                            for (final paise in const [
+                              50000,
+                              100000,
+                              500000,
+                              1000000,
+                            ])
+                              AppChip(
+                                label: MoneyFormatter.formatPaise(paise),
+                                selected: s.partyReceivableMinPaise == paise,
+                                onSelected: (_) => cubit.updateSettings(
+                                  s.copyWith(partyReceivableMinPaise: paise),
+                                ),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: AppSpacing.xs),
+                        AppButton(
+                          label:
+                              '${l10n.notificationsTimeLabel}: ${_formatTime(s.partyReceivableHour, s.partyReceivableMinute)}',
+                          icon: AppIcons.time,
+                          variant: AppButtonVariant.text,
+                          onPressed: () => _pickTime(
+                            context,
+                            initialHour: s.partyReceivableHour,
+                            initialMinute: s.partyReceivableMinute,
+                            onPicked: (t) => cubit.updateSettings(
+                              s.copyWith(
+                                partyReceivableHour: t.hour,
+                                partyReceivableMinute: t.minute,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+
+                // 8. Important Local Business Alerts (1005)
                 AppCard(
                   padding: const EdgeInsets.all(AppSpacing.md),
                   child: AppSwitch(

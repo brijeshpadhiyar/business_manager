@@ -153,28 +153,37 @@ final class ProductionHistoryQueryDelegate {
         final movRow = await _db.stockMovementDao.findById(id);
         if (movRow == null) return null;
         final m = LedgerRowMappers.stockMovement(movRow);
-        final links =
-            <({String label, ProductionTransactionKind kind, String id})>[];
+        final links = <ProductionRelatedLink>[];
         if (m.parentIssueId != null) {
-          links.add((
-            label: 'Parent Issue Assignment',
-            kind: ProductionTransactionKind.stockMovement,
-            id: m.parentIssueId!,
-          ));
+          links.add(
+            ProductionRelatedLink(
+              label: 'Parent Issue Assignment',
+              code: 'parent_issue',
+              kind: ProductionTransactionKind.stockMovement,
+              id: m.parentIssueId!,
+            ),
+          );
         }
         final labRows = await _db.labourEntryDao.getEntriesForMovement(m.id);
         for (final l in labRows) {
-          links.add((
-            label: 'Labour Entry (${l.basisType})',
-            kind: ProductionTransactionKind.labourEntry,
-            id: l.id,
-          ));
+          links.add(
+            ProductionRelatedLink(
+              label: 'Labour Entry (${l.basisType})',
+              code: 'labour_entry',
+              args: {'basis': l.basisType},
+              kind: ProductionTransactionKind.labourEntry,
+              id: l.id,
+            ),
+          );
         }
         return ProductionTransactionDetail(
           kind: kind,
           id: m.id,
           title: 'Stock Movement — ${m.movementType.dbValue}',
           statusLabel: m.movementType.dbValue,
+          titleCode: 'stock_movement',
+          statusCode: m.movementType.dbValue,
+          traceArgs: {'movementType': m.movementType},
           transactionAt: m.transactionAt,
           recordedAt: m.recordedAt,
           actor: m.createdBy,
@@ -207,16 +216,19 @@ final class ProductionHistoryQueryDelegate {
         final insps = await _db.productionTrackingDao.getInspectionsForReturn(
           r.id,
         );
-        final links = <({String label, ProductionTransactionKind kind, String id})>[
-          (
+        final links = <ProductionRelatedLink>[
+          ProductionRelatedLink(
             label: 'Parent Assignment Issue',
+            code: 'parent_issue',
             kind: ProductionTransactionKind.stockMovement,
             id: r.parentIssueId,
           ),
           for (final i in insps)
-            (
+            ProductionRelatedLink(
               label:
                   'Inspection (Acc ${i.acceptedQuantity}, Rej ${i.rejectedQuantity})',
+              code: 'inspection',
+              args: {'acc': i.acceptedQuantity, 'rej': i.rejectedQuantity},
               kind: ProductionTransactionKind.inspection,
               id: i.id,
             ),
@@ -226,6 +238,10 @@ final class ProductionHistoryQueryDelegate {
           id: r.id,
           title: 'Production Return Receipt',
           statusLabel: r.returnMode.dbValue,
+          titleCode: 'production_return',
+          statusCode: r.returnMode == ProductionReturnMode.pendingInspection
+              ? 'pending_qc'
+              : 'returned',
           transactionAt: r.transactionAt,
           recordedAt: r.recordedAt,
           actor: r.createdBy,
@@ -248,39 +264,46 @@ final class ProductionHistoryQueryDelegate {
         final inspRow = await _db.productionTrackingDao.findInspectionById(id);
         if (inspRow == null) return null;
         final i = ProductionHistoryDatasetLoader.mapInspection(inspRow);
-        final links =
-            <({String label, ProductionTransactionKind kind, String id})>[
-              (
-                label: 'Parent Assignment Issue',
-                kind: ProductionTransactionKind.stockMovement,
-                id: i.parentIssueId,
-              ),
-              if (i.productionReturnId != null)
-                (
-                  label: 'Production Return Receipt',
-                  kind: ProductionTransactionKind.productionReturn,
-                  id: i.productionReturnId!,
-                ),
-              if (i.linkedLabourEntryId != null)
-                (
-                  label: 'Generated Worker Earning',
-                  kind: ProductionTransactionKind.labourEntry,
-                  id: i.linkedLabourEntryId!,
-                ),
-              if (i.rejectionRecordId != null)
-                (
-                  label: 'Original Rejection Record',
-                  kind: ProductionTransactionKind.rejection,
-                  id: i.rejectionRecordId!,
-                ),
-            ];
+        final isReinsp =
+            i.inspectionType == ProductionInspectionType.reinspection;
+        final links = <ProductionRelatedLink>[
+          ProductionRelatedLink(
+            label: 'Parent Assignment Issue',
+            code: 'parent_issue',
+            kind: ProductionTransactionKind.stockMovement,
+            id: i.parentIssueId,
+          ),
+          if (i.productionReturnId != null)
+            ProductionRelatedLink(
+              label: 'Production Return Receipt',
+              code: 'production_return',
+              kind: ProductionTransactionKind.productionReturn,
+              id: i.productionReturnId!,
+            ),
+          if (i.linkedLabourEntryId != null)
+            ProductionRelatedLink(
+              label: 'Generated Worker Earning',
+              code: 'worker_earning',
+              kind: ProductionTransactionKind.labourEntry,
+              id: i.linkedLabourEntryId!,
+            ),
+          if (i.rejectionRecordId != null)
+            ProductionRelatedLink(
+              label: 'Original Rejection Record',
+              code: 'original_rejection',
+              kind: ProductionTransactionKind.rejection,
+              id: i.rejectionRecordId!,
+            ),
+        ];
         return ProductionTransactionDetail(
           kind: kind,
           id: i.id,
-          title: i.inspectionType == ProductionInspectionType.reinspection
+          title: isReinsp
               ? 'Repair Re-Inspection & Approval'
               : 'Quality Inspection & Approval',
           statusLabel: i.inspectionType.dbValue,
+          titleCode: isReinsp ? 'reinspection' : 'inspection',
+          statusCode: isReinsp ? 'reapproved' : 'inspected',
           transactionAt: i.transactionAt,
           recordedAt: i.recordedAt,
           actor: i.inspectedBy,
@@ -318,6 +341,8 @@ final class ProductionHistoryQueryDelegate {
           id: r.id,
           title: 'Rejection / Defect Record',
           statusLabel: r.status.dbValue,
+          titleCode: 'rejection',
+          statusCode: r.status.dbValue,
           transactionAt: r.inspectedAt,
           recordedAt: r.createdAt,
           actor: r.recordedBy,
@@ -336,14 +361,17 @@ final class ProductionHistoryQueryDelegate {
           notes: r.notes,
           parentIssueId: r.parentIssueId,
           relatedLinks: [
-            (
+            ProductionRelatedLink(
               label: 'Inspection Event',
+              code: 'inspection_event',
               kind: ProductionTransactionKind.inspection,
               id: r.inspectionId,
             ),
             for (final rep in repairs)
-              (
+              ProductionRelatedLink(
                 label: 'Repair (${rep.repairedQuantity} pcs)',
+                code: 'repair',
+                args: {'qty': rep.repairedQuantity},
                 kind: ProductionTransactionKind.repair,
                 id: rep.id,
               ),
@@ -366,6 +394,8 @@ final class ProductionHistoryQueryDelegate {
           id: rep.id,
           title: 'Rejection Repair Operation',
           statusLabel: '${rep.repairSource.dbValue} • ${rep.status.dbValue}',
+          titleCode: 'repair',
+          statusCode: rep.status.dbValue,
           transactionAt: rep.transactionAt,
           recordedAt: rep.recordedAt,
           actor: rep.repairedBy,
@@ -379,14 +409,17 @@ final class ProductionHistoryQueryDelegate {
           quantity: rep.repairedQuantity,
           notes: rep.notes,
           relatedLinks: [
-            (
+            ProductionRelatedLink(
               label: 'Original Rejection Record',
+              code: 'original_rejection',
               kind: ProductionTransactionKind.rejection,
               id: rep.rejectionRecordId,
             ),
             for (final ins in insps)
-              (
+              ProductionRelatedLink(
                 label: 'Re-Inspection (Acc ${ins.acceptedQuantity})',
+                code: 'reinspection',
+                args: {'acc': ins.acceptedQuantity},
                 kind: ProductionTransactionKind.inspection,
                 id: ins.id,
               ),
@@ -402,6 +435,9 @@ final class ProductionHistoryQueryDelegate {
           id: hoRow.id,
           title: 'Process Handover — ${hoRow.handoverType}',
           statusLabel: hoRow.status,
+          titleCode: 'handover',
+          statusCode: hoRow.status,
+          traceArgs: {'handoverType': hoRow.handoverType},
           transactionAt: hoRow.transactionAt,
           recordedAt: hoRow.recordedAt,
           actor: hoRow.createdBy,
@@ -429,6 +465,9 @@ final class ProductionHistoryQueryDelegate {
           id: labRow.id,
           title: 'Worker Labour Earning (${labRow.basisType})',
           statusLabel: labRow.isPayable == 1 ? 'PAYABLE' : 'INFORMATIONAL',
+          titleCode: 'labour_entry',
+          statusCode: labRow.isPayable == 1 ? 'payable' : 'informational',
+          traceArgs: {'basis': labRow.basisType},
           transactionAt: labRow.transactionAt,
           recordedAt: labRow.recordedAt,
           lotId: labRow.lotId,
@@ -441,8 +480,9 @@ final class ProductionHistoryQueryDelegate {
           lockedRatePaise: labRow.ratePaise,
           amountPaise: labRow.amountPaise,
           relatedLinks: [
-            (
+            ProductionRelatedLink(
               label: 'Linked Stock Movement',
+              code: 'linked_movement',
               kind: ProductionTransactionKind.stockMovement,
               id: labRow.stockMovementId,
             ),
@@ -461,6 +501,9 @@ final class ProductionHistoryQueryDelegate {
           id: payRow.id,
           title: 'Worker Payment — ${payRow.paymentType}',
           statusLabel: payRow.paymentMode,
+          titleCode: 'payment',
+          statusCode: payRow.paymentMode,
+          traceArgs: {'paymentType': payRow.paymentType},
           transactionAt: payRow.transactionAt,
           recordedAt: payRow.recordedAt,
           actor: payRow.createdBy,
@@ -481,6 +524,9 @@ final class ProductionHistoryQueryDelegate {
           id: adjRow.id,
           title: 'Worker Ledger Adjustment — ${adjRow.adjustmentType}',
           statusLabel: adjRow.adjustmentType,
+          titleCode: 'adjustment',
+          statusCode: adjRow.adjustmentType,
+          traceArgs: {'adjustmentType': adjRow.adjustmentType},
           transactionAt: adjRow.transactionAt,
           recordedAt: adjRow.recordedAt,
           actor: adjRow.createdBy,

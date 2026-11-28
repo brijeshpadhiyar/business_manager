@@ -1,5 +1,6 @@
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
+import 'package:business_manager/core/localization/domain_label_localizer.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/app_date_time_formatter.dart';
@@ -94,35 +95,48 @@ final class _TransactionDetailView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               AppActionRow(
-                content: AppHeading(d.title, level: AppHeadingLevel.h3),
+                content: AppHeading(
+                  DomainLabelLocalizer.transactionTitle(l10n, d),
+                  level: AppHeadingLevel.h3,
+                ),
                 actions: [
                   AppStatusBadge(
-                    label: d.statusLabel,
+                    label: DomainLabelLocalizer.transactionStatus(l10n, d),
                     tone: AppStatusTone.info,
                   ),
                 ],
               ),
               const SizedBox(height: AppSpacing.xs),
               AppText(
-                'Transaction ID: ${d.id}',
+                l10n.txnIdLabel(d.id),
                 variant: AppTextVariant.bodySmall,
               ),
               AppText(
-                'Transaction Time: ${AppDateTimeFormatter.formatDateTime(d.transactionAt, locale: localeCode)}',
+                l10n.txnTimeLabel(
+                  AppDateTimeFormatter.formatDateTime(
+                    d.transactionAt,
+                    locale: localeCode,
+                  ),
+                ),
                 variant: AppTextVariant.bodySmall,
               ),
               AppText(
-                'Recorded Time: ${AppDateTimeFormatter.formatDateTime(d.recordedAt, locale: localeCode)}',
+                l10n.txnRecordedTimeLabel(
+                  AppDateTimeFormatter.formatDateTime(
+                    d.recordedAt,
+                    locale: localeCode,
+                  ),
+                ),
                 variant: AppTextVariant.bodySmall,
               ),
               if (d.actor != null)
                 AppText(
-                  'Recorded By: ${d.actor}',
+                  l10n.txnRecordedByLabel(d.actor!),
                   variant: AppTextVariant.bodySmall,
                 ),
               if (d.approvedBy != null)
                 AppText(
-                  'Approved By: ${d.approvedBy}${d.authorizedViaPin ? ' (PIN Verified)' : ''}',
+                  '${l10n.txnApprovedByLabel(d.approvedBy!)}${d.authorizedViaPin ? l10n.txnPinVerifiedSuffix : ''}',
                   variant: AppTextVariant.bodySmall,
                 ),
               const SizedBox(height: AppSpacing.md),
@@ -235,7 +249,9 @@ final class _TransactionDetailView extends StatelessWidget {
                     dense: true,
                     contentPadding: EdgeInsets.zero,
                     leading: const Icon(AppIcons.link),
-                    title: Text(link.label),
+                    title: Text(
+                      DomainLabelLocalizer.relatedLinkLabel(l10n, link),
+                    ),
                     subtitle: Text(link.id),
                     trailing: const Icon(AppIcons.chevronRight),
                     onTap: () => context.push(
@@ -266,7 +282,9 @@ final class _TransactionDetailView extends StatelessWidget {
                     dense: true,
                     contentPadding: EdgeInsets.zero,
                     leading: const Icon(AppIcons.productionHistory),
-                    title: Text(a.actionType),
+                    title: Text(
+                      DomainLabelLocalizer.auditAction(l10n, a.actionType),
+                    ),
                     subtitle: Text(
                       '${AppDateTimeFormatter.formatDateTime(a.recordedAt, locale: localeCode)}'
                       '${a.actor != null ? ' • ${a.actor}' : ''}'

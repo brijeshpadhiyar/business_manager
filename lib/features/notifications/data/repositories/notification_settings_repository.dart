@@ -40,6 +40,13 @@ final class NotificationSettingsRepository {
       businessAlertsEnabled: prefs.getBool('${_prefix}alerts_en') ?? true,
       damagedAlertThreshold: prefs.getInt('${_prefix}alerts_dmg_qty') ?? 20,
       overdueAlertDays: prefs.getInt('${_prefix}alerts_overdue_days') ?? 14,
+      partyReceivableEnabled: prefs.getBool('${_prefix}party_en') ?? true,
+      partyReceivableWeekday:
+          prefs.getInt('${_prefix}party_wday') ?? DateTime.monday,
+      partyReceivableHour: prefs.getInt('${_prefix}party_hr') ?? 10,
+      partyReceivableMinute: prefs.getInt('${_prefix}party_min') ?? 30,
+      partyReceivableMinPaise:
+          prefs.getInt('${_prefix}party_min_paise') ?? 100000,
     );
   }
 
@@ -72,6 +79,11 @@ final class NotificationSettingsRepository {
     await prefs.setBool('${_prefix}alerts_en', s.businessAlertsEnabled);
     await prefs.setInt('${_prefix}alerts_dmg_qty', s.damagedAlertThreshold);
     await prefs.setInt('${_prefix}alerts_overdue_days', s.overdueAlertDays);
+    await prefs.setBool('${_prefix}party_en', s.partyReceivableEnabled);
+    await prefs.setInt('${_prefix}party_wday', s.partyReceivableWeekday);
+    await prefs.setInt('${_prefix}party_hr', s.partyReceivableHour);
+    await prefs.setInt('${_prefix}party_min', s.partyReceivableMinute);
+    await prefs.setInt('${_prefix}party_min_paise', s.partyReceivableMinPaise);
   }
 
   Future<String?> getLastPlanDigest() async {

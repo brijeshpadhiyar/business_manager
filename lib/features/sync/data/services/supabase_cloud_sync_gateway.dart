@@ -145,7 +145,9 @@ final class SupabaseCloudSyncGateway implements CloudSyncGateway {
     if (ch != null) {
       try {
         await _client.removeChannel(ch);
-      } catch (_) {}
+      } catch (e) {
+        _logger.warning('Realtime channel removal skipped: $e');
+      }
     }
   }
 

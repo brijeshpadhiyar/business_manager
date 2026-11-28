@@ -73,110 +73,16 @@ final class _LotPnlSectionState extends State<LotPnlSection> {
     final repo = _repo;
     if (repo == null) return;
     final l10n = context.l10n;
-    final formKey = GlobalKey<FormState>();
-    final descCtrl = TextEditingController();
-    final amtCtrl = TextEditingController();
-    final notesCtrl = TextEditingController();
-    var category = LotCostCategory.fabric;
-    var txAt = IstDateTimeHelper.nowUtcMillis();
 
     final saved = await AppBottomSheet.show<bool>(
       context,
       title: l10n.lotDirectCostHeading,
-      builder: (sheetCtx) => StatefulBuilder(
-        builder: (ctx, setSheetState) => Form(
-          key: formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              AppText(
-                l10n.lotDirectCostCategoryLabel,
-                variant: AppTextVariant.label,
-              ),
-              const SizedBox(height: AppSpacing.xs),
-              AppChipGroup<LotCostCategory>(
-                items: LotCostCategory.values,
-                value: category,
-                onChanged: (c) => setSheetState(() => category = c),
-                itemLabelBuilder: (c) => _categoryLabel(ctx, c),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              AppTextField(
-                controller: descCtrl,
-                label: l10n.lotDirectCostDescriptionLabel,
-                validator: ValidationLocalizer.wrap(
-                  l10n,
-                  (v) => AppValidators.nameValidator(v),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.md),
-              AppFormRow(
-                children: [
-                  AppTextField(
-                    controller: amtCtrl,
-                    label: l10n.lotDirectCostAmountLabel,
-                    prefixIcon: AppIcons.rupee,
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    validator: ValidationLocalizer.wrap(
-                      l10n,
-                      (v) => AppValidators.amountValidator(v),
-                    ),
-                  ),
-                  AppDatePicker(
-                    label: l10n.stockTransactionDateTimeLabel,
-                    selectedUtcMillis: txAt,
-                    onDateSelectedUtcMillis: (ms) =>
-                        setSheetState(() => txAt = ms),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.md),
-              AppTextField(
-                controller: notesCtrl,
-                label: l10n.lotNotesLabel,
-              ),
-              const SizedBox(height: AppSpacing.md),
-              AppButton(
-                label: l10n.actionSave,
-                icon: AppIcons.save,
-                isExpanded: true,
-                onPressed: () async {
-                  if (!(formKey.currentState?.validate() ?? false)) return;
-                  final paise = AppValidators.parseRupeesToPaiseExact(
-                    amtCtrl.text,
-                    allowZero: false,
-                  ).paise;
-                  if (paise == null || paise <= 0) return;
-                  try {
-                    await repo.addLotDirectCost(
-                      lotId: widget.lotId,
-                      category: category,
-                      description: descCtrl.text,
-                      amountPaise: paise,
-                      notes: notesCtrl.text,
-                      transactionAtUtcMillis: txAt,
-                    );
-                    if (sheetCtx.mounted) Navigator.of(sheetCtx).pop(true);
-                  } catch (e) {
-                    if (!sheetCtx.mounted) return;
-                    AppFeedback.showError(
-                      sheetCtx,
-                      ValidationLocalizer.describeError(l10n, e),
-                    );
-                  }
-                },
-              ),
-            ],
-          ),
-        ),
+      builder: (sheetCtx) => _AddDirectCostSheet(
+        lotId: widget.lotId,
+        repo: repo,
+        categoryLabel: (c) => _categoryLabel(sheetCtx, c),
       ),
     );
-    descCtrl.dispose();
-    amtCtrl.dispose();
-    notesCtrl.dispose();
     if (saved == true && mounted) {
       AppFeedback.showSuccess(context, l10n.lotDirectCostSavedSuccess);
       await _load();
@@ -352,6 +258,139 @@ final class _LotPnlSectionState extends State<LotPnlSection> {
               ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+final class _AddDirectCostSheet extends StatefulWidget {
+  const _AddDirectCostSheet({
+    required this.lotId,
+    required this.repo,
+    required this.categoryLabel,
+  });
+
+  final String lotId;
+  final PartyRepository repo;
+  final String Function(LotCostCategory) categoryLabel;
+
+  @override
+  State<_AddDirectCostSheet> createState() => _AddDirectCostSheetState();
+}
+
+final class _AddDirectCostSheetState extends State<_AddDirectCostSheet> {
+  final _formKey = GlobalKey<FormState>();
+  final _descCtrl = TextEditingController();
+  final _amtCtrl = TextEditingController();
+  final _notesCtrl = TextEditingController();
+  LotCostCategory _category = LotCostCategory.fabric;
+  int _txAt = IstDateTimeHelper.nowUtcMillis();
+  bool _saving = false;
+
+  @override
+  void dispose() {
+    _descCtrl.dispose();
+    _amtCtrl.dispose();
+    _notesCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
+    final l10n = context.l10n;
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+    final paise = AppValidators.parseRupeesToPaiseExact(
+      _amtCtrl.text,
+      allowZero: false,
+    ).paise;
+    if (paise == null || paise <= 0) return;
+    setState(() => _saving = true);
+    try {
+      await widget.repo.addLotDirectCost(
+        lotId: widget.lotId,
+        category: _category,
+        description: _descCtrl.text,
+        amountPaise: paise,
+        notes: _notesCtrl.text,
+        transactionAtUtcMillis: _txAt,
+      );
+      if (mounted) Navigator.of(context).pop(true);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _saving = false);
+      AppFeedback.showError(
+        context,
+        ValidationLocalizer.describeError(l10n, e),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return Form(
+      key: _formKey,
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            AppText(
+              l10n.lotDirectCostCategoryLabel,
+              variant: AppTextVariant.label,
+            ),
+            const SizedBox(height: AppSpacing.xs),
+            AppChipGroup<LotCostCategory>(
+              items: LotCostCategory.values,
+              value: _category,
+              onChanged: (c) => setState(() => _category = c),
+              itemLabelBuilder: widget.categoryLabel,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            AppTextField(
+              controller: _descCtrl,
+              label: l10n.lotDirectCostDescriptionLabel,
+              validator: ValidationLocalizer.wrap(
+                l10n,
+                (v) => AppValidators.nameValidator(v),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            AppFormRow(
+              children: [
+                AppTextField(
+                  controller: _amtCtrl,
+                  label: l10n.lotDirectCostAmountLabel,
+                  prefixIcon: AppIcons.rupee,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  validator: ValidationLocalizer.wrap(
+                    l10n,
+                    (v) => AppValidators.amountValidator(v),
+                  ),
+                ),
+                AppDatePicker(
+                  label: l10n.stockTransactionDateTimeLabel,
+                  selectedUtcMillis: _txAt,
+                  onDateSelectedUtcMillis: (ms) => setState(() => _txAt = ms),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.md),
+            AppTextField(
+              controller: _notesCtrl,
+              label: l10n.lotNotesLabel,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            AppButton(
+              label: l10n.actionSave,
+              icon: AppIcons.save,
+              isExpanded: true,
+              isLoading: _saving,
+              onPressed: _save,
+            ),
+          ],
+        ),
       ),
     );
   }

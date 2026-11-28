@@ -43,7 +43,13 @@ final class SyncCubit extends Cubit<SyncState> {
     _initialized = true;
 
     final session = await _syncRepository.getSessionState();
-    emit(state.copyWith(lastSyncedAtUtcMillis: session.lastFullSyncAt));
+    final conflicts = await _syncRepository.getUnresolvedConflictCount();
+    emit(
+      state.copyWith(
+        lastSyncedAtUtcMillis: session.lastFullSyncAt,
+        unresolvedConflictCount: conflicts,
+      ),
+    );
 
     _outboxSub = _syncRepository.watchPendingOutboxCount().listen((count) {
       final wasHigher = count > state.pendingOutboxCount;
@@ -247,6 +253,7 @@ final class SyncCubit extends Cubit<SyncState> {
   Future<void> _refreshAfterSync({SyncRunSummary? summary}) async {
     await _refreshFailedItems();
     final session = await _syncRepository.getSessionState();
+    final conflicts = await _syncRepository.getUnresolvedConflictCount();
     final hasFailures =
         state.failedItems.isNotEmpty || (summary?.failedCount ?? 0) > 0;
     emit(
@@ -255,9 +262,15 @@ final class SyncCubit extends Cubit<SyncState> {
         lastSyncedAtUtcMillis:
             summary?.completedAtUtcMillis ?? session.lastFullSyncAt,
         lastSummary: summary ?? state.lastSummary,
+        unresolvedConflictCount: conflicts,
         clearError: !hasFailures,
       ),
     );
+  }
+
+  Future<void> refreshConflictsCount() async {
+    final conflicts = await _syncRepository.getUnresolvedConflictCount();
+    emit(state.copyWith(unresolvedConflictCount: conflicts));
   }
 
   Future<void> _refreshFailedItems() async {

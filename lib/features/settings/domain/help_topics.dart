@@ -549,6 +549,95 @@ abstract final class StitchFlowHelpCatalog {
       exampleEn: 'Set Pending Work reminder to 3 days @ 10:00 AM IST -> If all karigar returns are settled before 10:00 AM, StitchFlow cancels the alert automatically.',
       exampleGu: 'બાકી કામની યાદ અપાવણી ૩ દિવસ / સવારે ૧૦:૦૦ વાગ્યે સેટ કરો -> ૧૦ વાગ્યા પહેલાં બધો માલ પરત આવી જાય તો એલર્ટ આપમેળે રદ થશે.',
     ),
+    HelpTopic(
+      id: 'parties-and-dispatch',
+      order: 20,
+      icon: AppIcons.dispatch,
+      titleEn: 'Buyers (Parties), Dispatch Challans & Khata',
+      titleGu: 'પાર્ટી (ખરીદનાર), ડિસ્પેચ ચલણ અને ખાતાવહી',
+      summaryEn:
+          'Manage wholesale buyers, agents, and merchants; send finished lots via Dispatch Challans; track buyer returns (Good or Damaged) and record Cash/UPI/Bank receipts against Party Khata.',
+      summaryGu:
+          'હોલસેલ ખરીદનાર, એજન્ટ અને વેપારીનું સંચાલન કરો; ડિસ્પેચ ચલણથી તૈયાર લોટ મોકલો; પરત માલ (સારો કે ડેમેજ) અને રોકડ/UPI/બેંક જમા નોંધી પાર્ટી ખાતાવહી જાળવો.',
+      whenToUseEn:
+          'Whenever finished pieces are dispatched to a buyer or you collect payments and handle buyer returns.',
+      whenToUseGu:
+          'જ્યારે તૈયાર માલ પાર્ટીને મોકલવો હોય, પૈસા જમા લેવાના હોય અથવા પાર્ટી તરફથી માલ પરત આવે ત્યારે.',
+      stepsEn: [
+        'Open Parties & Dispatch from Dashboard or More -> Buyers & Parties to add a buyer with GSTIN and opening balance.',
+        'Tap New Dispatch Challan, pick the Party and finished Lot SKUs, set rate per piece, discount, and transport charges.',
+        'Record Buyer Returns (Good returns add back to saleable stock; Damaged returns move to Damaged stock) or Cash/UPI/Bank receipts in Party Khata.',
+        'Share branded Dispatch Challan and Party Khata statement PDFs directly over WhatsApp.',
+      ],
+      stepsGu: [
+        'ડેશબોર્ડ અથવા More -> પાર્ટીમાંથી નવી પાર્ટી GSTIN અને શરૂઆતના બેલેન્સ સાથે ઉમેરો.',
+        'નવું ડિસ્પેચ ચલણ ખોલો, પાર્ટી અને તૈયાર લોટ SKU પસંદ કરી ભાવ, વળતર અને ભાડું દાખલ કરો.',
+        'પાર્ટી પરત માલ (સારો કે ડેમેજ) અથવા રોકડ/UPI/બેંક જમા પાર્ટી ખાતાવહીમાં નોંધો.',
+        'ડિસ્પેચ ચલણ અને ખાતાવહીની PDF સીધી WhatsApp પર શેર કરો.',
+      ],
+      exampleEn:
+          'Dispatch 120 pcs @ ₹450/pc (Total ₹54,000) to Patel Textiles -> Record ₹30,000 UPI receipt -> Net Receivable ₹24,000.',
+      exampleGu:
+          'પટેલ ટેક્સટાઇલ્સને ૧૨૦ પીસ @ ₹૪૫૦/પીસ (કુલ ₹૫૪,૦૦૦) મોકલો -> ₹૩૦,૦૦૦ UPI જમા નોંધો -> બાકી લેણું ₹૨૪,૦૦૦.',
+    ),
+    HelpTopic(
+      id: 'lot-profit-and-loss',
+      order: 21,
+      icon: AppIcons.accounting,
+      titleEn: 'Lot Profit & Loss (P&L) & Direct Costs',
+      titleGu: 'લોટ નફો-નુકસાન (P&L) અને સીધો ખર્ચ',
+      summaryEn:
+          'See exact net profit or loss per production lot by combining Fabric/Raw Material cost, Job-Work labour, Direct Costs (buttons, packing, transport), Damage write-offs, and Net Dispatched Sales.',
+      summaryGu:
+          'કાપડ/કાચા માલનો ખર્ચ, કારીગર મજૂરી, સીધો ખર્ચ (બટન, પેકિંગ, ભાડું), ડેમેજ નુકસાન અને ચોખ્ખા ડિસ્પેચ વેચાણના આધારે દરેક લોટનો ચોખ્ખો નફો-નુકસાન જુઓ.',
+      whenToUseEn:
+          'Open any Lot Detail screen and scroll to Profit & Loss to add direct expenses or review gross and net margin.',
+      whenToUseGu:
+          'કોઈપણ લોટની વિગત ખોલી સીધો ખર્ચ ઉમેરવા અથવા લોટ દીઠ માર્જિન અને નફો-નુકસાન તપાસવા.',
+      stepsEn: [
+        'Open a Lot -> scroll to the Profit & Loss card to view Net Sales, Fabric Cost, Labour Cost, and Direct Cost.',
+        'Tap Add Direct Cost to record Fabric, Stitching accessories, Packaging, Transport, or Dyeing bills on that lot.',
+        'Watch Realized Profit and Profit Margin % update live as Challans, Returns, and Labour entries change.',
+      ],
+      stepsGu: [
+        'કોઈપણ લોટ ખોલી નફો-નુકસાન વિભાગમાં ચોખ્ખું વેચાણ, કાપડ, મજૂરી અને સીધો ખર્ચ જુઓ.',
+        'સીધો ખર્ચ ઉમેરો પર ટેપ કરીને કાપડ, પેકિંગ, ભાડું કે ડાઇંગ બિલ નોંધો.',
+        'ચલણ, પરત માલ અને મજૂરી મુજબ નફો અને માર્જિન % લાઇવ અપડેટ થતો જુઓ.',
+      ],
+      exampleEn:
+          'Lot L-204 Net Sales ₹1,20,000 - Fabric ₹52,000 - Labour ₹28,500 - Packing ₹4,500 = ₹35,000 Profit (29.2%).',
+      exampleGu:
+          'લોટ L-204 વેચાણ ₹૧,૨૦,૦૦૦ - કાપડ ₹૫૨,૦૦૦ - મજૂરી ₹૨૮,૫૦૦ - પેકિંગ ₹૪,૫૦૦ = ₹૩૫,૦૦૦ નફો (૨૯.૨%).',
+    ),
+    HelpTopic(
+      id: 'team-rbac-sync-health',
+      order: 22,
+      icon: AppIcons.team,
+      titleEn: 'Team Roles (RBAC), Cloud Sync & Conflict Resolution',
+      titleGu: 'ટીમ ભૂમિકા (RBAC), ક્લાઉડ સિંક અને વિવાદ ઉકેલ',
+      summaryEn:
+          'Invite Managers, Supervisors, and Accountants with 8-character codes, change roles as Owner, sync offline changes with Supabase, and review Sync Conflicts or Data Health checks.',
+      summaryGu:
+          'મેનેજર, સુપરવાઇઝર અને એકાઉન્ટન્ટને ૮-અક્ષરના કોડથી આમંત્રિત કરો, માલિક તરીકે ભૂમિકા બદલો, ઓફલાઇન ડેટા ક્લાઉડ સાથે સિંક કરો અને સિંક વિવાદ કે ડેટા હેલ્થ તપાસો.',
+      whenToUseEn:
+          'When adding staff devices to the same workshop, updating permissions, or resolving multi-device sync conflicts.',
+      whenToUseGu:
+          'જ્યારે વર્કશોપમાં સ્ટાફના ફોન ઉમેરવા હોય, અધિકાર બદલવા હોય અથવા બે ડિવાઇસ વચ્ચેનો સિંક વિવાદ ઉકેલવો હોય.',
+      stepsEn: [
+        'Open Settings -> Team & Permissions: generate an 8-char invite code or change an existing member role (Owner only).',
+        'Open Settings -> Cloud Sync to check pending queue count, registered devices, and trigger Sync Now.',
+        'If a record has a conflict, open Sync Conflicts to inspect Local vs Cloud values and Keep Local, Use Cloud, or Mark Resolved.',
+      ],
+      stepsGu: [
+        'સેટિંગ્સ -> ટીમ અને પરવાનગીમાંથી ૮-અક્ષરનો આમંત્રણ કોડ બનાવો અથવા સભ્યની ભૂમિકા બદલો (ફક્ત માલિક).',
+        'સેટિંગ્સ -> ક્લાઉડ સિંકમાં બાકી કતાર, ઉપકરણો અને તરત સિંક જુઓ.',
+        'જો કોઈ રેકોર્ડમાં વિવાદ આવે તો સિંક વિવાદ નિરીક્ષકમાં સ્થાનિક અને ક્લાઉડ કિંમતો સરખાવી ઉકેલો.',
+      ],
+      exampleEn:
+          'Invite a floor Supervisor via code -> Change role from Supervisor to Manager anytime -> Resolve an offline rate edit in Conflict Inspector.',
+      exampleGu:
+          'કોડથી સુપરવાઇઝર ઉમેરો -> જરૂર પડે ત્યારે મેનેજર બનાવો -> વિવાદ નિરીક્ષકમાં દરનો ફેરફાર સરખાવી ઉકેલો.',
+    ),
   ];
 
   static HelpTopic? byId(String id) {

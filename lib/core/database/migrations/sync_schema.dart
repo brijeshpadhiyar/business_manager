@@ -5,10 +5,10 @@ import 'package:drift/drift.dart';
 
 /// Cloud-sync support for the local schema: the synced table order, the
 /// singleton session-state seed (stable device id), and the guarded SQLite
-/// `AFTER INSERT` / `AFTER UPDATE` change-capture triggers on all 23 synced
+/// `AFTER INSERT` / `AFTER UPDATE` change-capture triggers on all 30 synced
 /// domain tables.
 abstract final class SyncSchema {
-  /// All 23 synced domain tables in strict Foreign-Key topological push order.
+  /// All 30 synced domain tables in strict Foreign-Key topological push order.
   static const List<String> syncedTablesInPushOrder =
       SyncTableRegistry.syncedTablesInPushOrder;
 
@@ -25,7 +25,7 @@ abstract final class SyncSchema {
     );
   }
 
-  /// Installs idempotent SQLite change-capture triggers on all 23 synced tables
+  /// Installs idempotent SQLite change-capture triggers on all 30 synced tables
   /// plus automatic media upload enqueue on local `attachments` inserts.
   static Future<void> installTriggers(GeneratedDatabase db) async {
     for (final table in syncedTablesInPushOrder) {

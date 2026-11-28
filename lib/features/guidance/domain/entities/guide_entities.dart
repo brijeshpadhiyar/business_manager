@@ -116,6 +116,13 @@ abstract final class GuideTargetId {
   static const String settingsSecurityTile = 'settings_security_tile';
   static const String settingsBackupTile = 'settings_backup_tile';
   static const String settingsHelpTile = 'settings_help_tile';
+  // Parties, Dispatch & Lot P&L
+  static const String partiesNewAction = 'parties_new_action';
+  static const String lotDetailPnl = 'lot_detail_pnl';
+
+  // Team, Sync & Data Health
+  static const String teamInviteAction = 'team_invite_action';
+  static const String syncNowAction = 'sync_now_action';
 }
 
 /// Canonical screen IDs mapped from GoRouter locations for per-screen tours
@@ -130,6 +137,9 @@ abstract final class GuideScreenId {
   static const String processes = 'processes';
   static const String accounting = 'accounting';
   static const String reports = 'reports';
+  static const String parties = 'parties';
+  static const String team = 'team';
+  static const String sync = 'sync';
   static const String settings = 'settings';
   static const String businessProfile = 'business_profile';
 
@@ -160,6 +170,15 @@ abstract final class GuideScreenId {
     if (path == '/processes') return processes;
     if (path == '/accounting') return accounting;
     if (path == '/reports') return reports;
+    if (path == '/parties' ||
+        path.startsWith('/parties/') ||
+        path.startsWith('/dispatch')) {
+      return parties;
+    }
+    if (path == '/settings/team') return team;
+    if (path == '/settings/sync' || path.startsWith('/settings/sync/')) {
+      return sync;
+    }
     if (path == '/settings') return settings;
     if (path == '/settings/business-profile') return businessProfile;
     return null;

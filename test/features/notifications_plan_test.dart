@@ -3,6 +3,7 @@ import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:business_manager/features/notifications/domain/calculators/notification_plan_calculator.dart';
 import 'package:business_manager/features/notifications/domain/entities/notification_entities.dart';
+import 'package:business_manager/features/parties/domain/entities/party_entities.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -74,8 +75,30 @@ void main() {
     );
   }
 
+  PartyFinancialSummary mkPartyFin({
+    required String id,
+    required String name,
+    required int receivablePaise,
+  }) {
+    return PartyFinancialSummary(
+      partyId: id,
+      partyName: name,
+      partyType: PartyType.buyer,
+      isActive: true,
+      openingBalancePaise: 0,
+      totalDispatchedNetPaise: receivablePaise,
+      totalBuyerReturnsPaise: 0,
+      totalReceiptsPaise: 0,
+      totalAdvancesPaise: 0,
+      totalRefundsPaise: 0,
+      netBalancePaise: receivablePaise,
+      totalDispatchedPieces: 10,
+      totalReturnedPieces: 0,
+    );
+  }
+
   group('NotificationPlanCalculator', () {
-    test('schedules all 5 categories in IST with deterministic IDs & redacts lock-screen privacy when PIN ON', () {
+    test('schedules all 6 categories in IST with deterministic IDs & redacts lock-screen privacy when PIN ON', () {
       // Thursday 2026-04-16 09:00:00 IST (before 10:00 AM, 8:00 PM, 8:30 PM)
       final nowUtc = IstDateTimeHelper.istDateTimeToUtcMillis(
         year: 2026,
@@ -115,6 +138,13 @@ void main() {
             outstandingPaise: 125000, // ₹1,250
           ),
         ],
+        partySummaries: [
+          mkPartyFin(
+            id: 'p1',
+            name: 'Surat Silk Mart',
+            receivablePaise: 250000, // ₹2,500
+          ),
+        ],
         hasActivityToday: true,
         todayIssuedQty: 50,
         todayReturnedGoodQty: 30,
@@ -124,13 +154,14 @@ void main() {
       );
 
       expect(plan.idsToCancel, isEmpty);
-      expect(plan.planned.length, 5);
+      expect(plan.planned.length, 6);
       expect(plan.planned.map((e) => e.id).toSet(), {
         1001,
         1002,
         1003,
         1004,
         1005,
+        1006,
       });
 
       // Verify IST scheduling times
@@ -184,7 +215,7 @@ void main() {
             nowUtc, // just backed up -> schedules 7d later
       );
 
-      expect(plan.idsToCancel, containsAll(const [1001, 1002, 1003, 1005]));
+      expect(plan.idsToCancel, containsAll(const [1001, 1002, 1003, 1005, 1006]));
       expect(plan.planned.length, 1);
       expect(plan.planned.first.id, 1004);
       final backupIst = IstDateTimeHelper.fromUtcMillisToIst(
@@ -222,6 +253,12 @@ void main() {
       expect(
         NotificationPlanCalculator.isAllowedDeepLinkRoute(
           RoutePaths.dailySummary,
+        ),
+        isTrue,
+      );
+      expect(
+        NotificationPlanCalculator.isAllowedDeepLinkRoute(
+          RoutePaths.parties,
         ),
         isTrue,
       );

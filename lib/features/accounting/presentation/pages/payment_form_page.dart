@@ -322,7 +322,7 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    AppDropdown<String>(
+                    AppSelect<String>(
                       fieldKey: _workerFieldKey,
                       label: l10n.workerNameLabel,
                       value: _selectedWorkerId,
@@ -330,6 +330,16 @@ final class _PaymentFormPageState extends State<PaymentFormPage> {
                       itemLabelBuilder: (id) => _workers
                           .firstWhere((w) => w.workerId == id)
                           .workerName,
+                      itemSubtitleBuilder: (id) {
+                        final w = _workers.firstWhere((w) => w.workerId == id);
+                        if (w.outstandingPayablePaise > 0) {
+                          return '${l10n.accountingOutstandingPayableLabel}: ${MoneyFormatter.formatPaise(w.outstandingPayablePaise)}';
+                        }
+                        if (w.advanceCreditBalancePaise > 0) {
+                          return '${l10n.accountingAdvanceCreditLabel}: ${MoneyFormatter.formatPaise(w.advanceCreditBalancePaise)}';
+                        }
+                        return null;
+                      },
                       validator: (v) =>
                           v == null ? l10n.validationRequired : null,
                       onChanged: (v) => _edit(() => _selectedWorkerId = v),

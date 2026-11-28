@@ -100,7 +100,7 @@ final class SyncEngine {
       // 1. Push local outbox in FK topological order.
       final pushResult = await _pushOutbox(user, now);
 
-      // 2. Pull incremental deltas for all 23 tables.
+      // 2. Pull incremental deltas for all 30 tables.
       final pullResult = await _pullDeltas(user, now);
 
       // 3. Sync queued media uploads & downloads.

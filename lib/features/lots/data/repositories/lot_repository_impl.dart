@@ -48,7 +48,9 @@ final class LotRepositoryImpl implements LotRepository {
     String? searchQuery,
     LotStatus? status,
   }) async {
-    final rows = await _db.lotDao.getActiveLots();
+    final rows = status == LotStatus.archived
+        ? await _db.lotDao.getArchivedLots()
+        : await _db.lotDao.getActiveLots();
     final q = searchQuery?.trim().toLowerCase() ?? '';
     return rows
         .where((row) {
@@ -999,6 +1001,63 @@ final class LotRepositoryImpl implements LotRepository {
           ),
           newValueJson: Value(
             jsonEncode({'status': 'ARCHIVED', 'deleted_at': now}),
+          ),
+          transactionAt: Value(now),
+          recordedAt: Value(now),
+        ),
+      );
+    });
+  }
+
+  @override
+  Future<void> unarchiveLot(
+    String lotId, {
+    LotStatus restoreStatus = LotStatus.active,
+  }) async {
+    final targetStatus = restoreStatus == LotStatus.archived
+        ? LotStatus.active
+        : restoreStatus;
+    await _txRunner.runInTransaction(() async {
+      final existing = await _db.lotDao.findLotById(lotId);
+      if (existing == null || existing.deletedAt == null) return;
+      final activeLots = await _db.lotDao.getActiveLots();
+      final conflict = activeLots.any(
+        (l) =>
+            l.id != lotId &&
+            l.lotNumber.trim().toLowerCase() ==
+                existing.lotNumber.trim().toLowerCase(),
+      );
+      if (conflict) {
+        throw const DomainValidationException(
+          'duplicate_lot_number',
+          'Another active lot already uses this lot number.',
+        );
+      }
+
+      final now = IstDateTimeHelper.nowUtcMillis();
+      final actor = await ActorResolver.resolveOptional(_db);
+      await _db.lotDao.restoreArchivedLot(
+        lotId,
+        status: targetStatus.dbValue,
+        updatedAtUtcMillis: now,
+        actor: actor,
+      );
+      await _db.attachmentAuditDao.insertAuditLog(
+        AuditLogsCompanion(
+          id: Value(_idGenerator.nextEntityId()),
+          entityType: const Value('lots'),
+          entityId: Value(lotId),
+          actionType: const Value('REACTIVATE'),
+          actor: Value(actor),
+          previousValueJson: Value(
+            jsonEncode({
+              'lot_number': existing.lotNumber,
+              'status': existing.status,
+              'deleted_at': existing.deletedAt,
+            }),
+          ),
+          newValueJson: Value(
+            jsonEncode({'status': targetStatus.dbValue, 'deleted_at': null}),
           ),
           transactionAt: Value(now),
           recordedAt: Value(now),

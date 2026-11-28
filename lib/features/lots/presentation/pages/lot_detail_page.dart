@@ -10,6 +10,7 @@ import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/guidance/domain/entities/guide_entities.dart';
 import 'package:business_manager/features/guidance/presentation/registry/guide_target_registry.dart';
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
+import 'package:business_manager/features/lots/domain/repositories/lot_repository.dart';
 import 'package:business_manager/features/lots/presentation/bloc/lot_detail_cubit.dart';
 import 'package:business_manager/features/lots/presentation/widgets/lot_design_section_card.dart';
 import 'package:business_manager/features/lots/presentation/widgets/lot_edit_sheets.dart';
@@ -117,10 +118,43 @@ final class _LotDetailView extends StatelessWidget {
                         isDestructive: true,
                       );
                       if (confirmed == true && context.mounted) {
+                        final previousStatus = detail.lot.status;
+                        final archivedId = detail.lot.id;
+                        final archivedNumber = detail.lot.lotNumber;
+                        final undoRepo = getIt<LotRepository>();
+                        final feedbackContext = Navigator.of(
+                          context,
+                          rootNavigator: true,
+                        ).context;
                         await context.read<LotDetailCubit>().archiveLot(
-                          detail.lot.id,
+                          archivedId,
                         );
-                        if (context.mounted) context.pop();
+                        if (!context.mounted) return;
+                        AppFeedback.showSuccess(
+                          context,
+                          l10n.lotArchivedToast(archivedNumber),
+                          duration: const Duration(seconds: 6),
+                          actionLabel: l10n.uxUndo,
+                          onAction: () async {
+                            try {
+                              await undoRepo.unarchiveLot(
+                                archivedId,
+                                restoreStatus: previousStatus,
+                              );
+                            } catch (e) {
+                              if (feedbackContext.mounted) {
+                                AppFeedback.showError(
+                                  feedbackContext,
+                                  ValidationLocalizer.describeError(
+                                    l10n,
+                                    e,
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                        );
+                        context.pop(true);
                       }
                     },
                   ),

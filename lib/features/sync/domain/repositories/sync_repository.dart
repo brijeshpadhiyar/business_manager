@@ -23,6 +23,8 @@ abstract interface class SyncRepository {
 
   Future<List<SyncFailedItem>> getFailedOutboxItems();
 
+  Future<int> getUnresolvedConflictCount();
+
   Future<void> resetFailedItems();
 
   Future<FirstLoginMergeSummary> inspectFirstLoginMerge(AuthUser user);

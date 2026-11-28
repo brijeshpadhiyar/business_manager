@@ -4,6 +4,7 @@ import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/app_date_time_formatter.dart';
+import 'package:business_manager/core/validation/validation.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/guidance/domain/entities/guide_entities.dart';
 import 'package:business_manager/features/guidance/presentation/widgets/screen_first_visit_hint.dart';
@@ -82,9 +83,36 @@ final class _LotListViewState extends State<_LotListView> {
   }
 
   Future<void> _openLotDetail(BuildContext context, LotEntity lot) async {
+    if (lot.status == LotStatus.archived) {
+      await _confirmAndRestoreLot(context, lot);
+      return;
+    }
     await context.push(RoutePaths.lotDetail(lot.id));
     if (context.mounted) {
       await context.read<LotListCubit>().loadLots();
+    }
+  }
+
+  Future<void> _confirmAndRestoreLot(BuildContext context, LotEntity lot) async {
+    final l10n = context.l10n;
+    final confirmed = await AppDialog.showConfirmation(
+      context,
+      title: l10n.lotUnarchiveAction,
+      message: lot.lotNumber,
+      confirmLabel: l10n.lotUnarchiveAction,
+      cancelLabel: l10n.actionCancel,
+    );
+    if (confirmed != true || !context.mounted) return;
+    try {
+      await context.read<LotListCubit>().unarchiveLot(lot.id);
+      if (!context.mounted) return;
+      AppFeedback.showSuccess(context, l10n.lotUnarchivedToast(lot.lotNumber));
+    } catch (e) {
+      if (!context.mounted) return;
+      AppFeedback.showError(
+        context,
+        ValidationLocalizer.describeError(l10n, e),
+      );
     }
   }
 
@@ -336,6 +364,14 @@ final class _LotListViewState extends State<_LotListView> {
                       selected: state.statusFilter == LotStatus.completed,
                       onSelected: (_) => context.read<LotListCubit>().loadLots(
                         statusFilter: LotStatus.completed,
+                      ),
+                    ),
+                    const AppGap.hSm(),
+                    AppChip.filter(
+                      label: l10n.lotsStatusArchived,
+                      selected: state.statusFilter == LotStatus.archived,
+                      onSelected: (_) => context.read<LotListCubit>().loadLots(
+                        statusFilter: LotStatus.archived,
                       ),
                     ),
                   ],

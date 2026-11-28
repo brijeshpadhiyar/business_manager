@@ -3455,7 +3455,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get guideTrainingTabLabel => 'Interactive Training';
 
   @override
-  String get guideTopicsTabLabel => 'Complete Guide (19)';
+  String get guideTopicsTabLabel => 'Complete Guide (22)';
 
   @override
   String guideProgressSummary(int completed, int total) {
@@ -4491,4 +4491,333 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get navSidebarShow => 'Show sidebar (Ctrl+B)';
+
+  @override
+  String lotArchivedToast(String lotNumber) {
+    return 'Lot $lotNumber archived.';
+  }
+
+  @override
+  String lotUnarchivedToast(String lotNumber) {
+    return 'Lot $lotNumber restored.';
+  }
+
+  @override
+  String get lotUnarchiveAction => 'Restore Lot';
+
+  @override
+  String get lotUnarchiveFailed => 'Could not restore archived lot.';
+
+  @override
+  String traceLotCreatedTitle(String lotNumber) {
+    return 'Lot $lotNumber created';
+  }
+
+  @override
+  String traceLotCreatedSubtitle(String title, int qty) {
+    return '$title • $qty pcs';
+  }
+
+  @override
+  String traceInitialQtySubtitle(int qty) {
+    return '$qty pcs initial quantity';
+  }
+
+  @override
+  String traceProcessAssignedTitle(String process, int qty, String worker) {
+    return '$process assigned & $qty pcs issued to $worker';
+  }
+
+  @override
+  String traceRatePerPcSubtitle(String designColour, String rate) {
+    return '$designColour • Rate $rate/pc';
+  }
+
+  @override
+  String traceReturnAcceptedTitle(int qty, String process) {
+    return '$qty pcs returned & accepted ($process)';
+  }
+
+  @override
+  String traceEarnedSubtitle(String worker, String amount) {
+    return '$worker • Earned $amount';
+  }
+
+  @override
+  String traceDamagedRecordedTitle(int qty) {
+    return '$qty pcs recorded as damaged/rejected';
+  }
+
+  @override
+  String traceSettledLostTitle(int qty) {
+    return '$qty pcs settled as Lost';
+  }
+
+  @override
+  String traceSettledShortageTitle(int qty) {
+    return '$qty pcs settled as Shortage';
+  }
+
+  @override
+  String traceMovementReversedTitle(int qty) {
+    return 'Movement reversed ($qty pcs)';
+  }
+
+  @override
+  String traceDamagedRepairedGoodTitle(int qty) {
+    return '$qty damaged pcs repaired to Good stock';
+  }
+
+  @override
+  String traceReturnedByTitle(int qty, String worker, String process) {
+    return '$qty pcs returned by $worker ($process)';
+  }
+
+  @override
+  String get traceReturnPendingQcSubtitle => 'Logged as Pending QC Inspection';
+
+  @override
+  String get traceReturnImmediateSubtitle =>
+      'Returned with Immediate Inspection';
+
+  @override
+  String traceRepairedReapprovedTitle(int qty, String process) {
+    return '$qty repaired pcs re-approved ($process)';
+  }
+
+  @override
+  String traceApprovedTitle(int qty, String process) {
+    return '$qty pcs approved ($process)';
+  }
+
+  @override
+  String traceEarnedAtRateSubtitle(String worker, String amount, String rate) {
+    return '$worker • Earned $amount @ $rate/pc';
+  }
+
+  @override
+  String get traceInHouseNoEarningSubtitle =>
+      'In-house repair • No worker earning credited';
+
+  @override
+  String traceRepairedFailedReinspTitle(int qty) {
+    return '$qty repaired pcs failed reinspection';
+  }
+
+  @override
+  String traceRejectedTitle(int qty, String process) {
+    return '$qty pcs rejected/damaged ($process)';
+  }
+
+  @override
+  String get traceZeroPayableLabel => '₹0 payable';
+
+  @override
+  String traceRejectedRepairedTitle(int qty, String source) {
+    return '$qty rejected pcs repaired ($source)';
+  }
+
+  @override
+  String get traceInHouseLabel => 'In-House';
+
+  @override
+  String traceSubmittedReinspSubtitle(String process) {
+    return 'Submitted for QC Reinspection • $process';
+  }
+
+  @override
+  String traceDirectTransferTitle(int qty, String from, String to) {
+    return 'Direct transfer $qty pcs: $from → $to';
+  }
+
+  @override
+  String traceLotCompletedTitle(String lotNumber) {
+    return 'Lot $lotNumber completed';
+  }
+
+  @override
+  String get traceLotCompletedSubtitle => 'Production finished and reconciled';
+
+  @override
+  String get traceParentIssueLink => 'Parent Assignment Issue';
+
+  @override
+  String traceLabourEntryLink(String basis) {
+    return 'Labour Entry ($basis)';
+  }
+
+  @override
+  String traceInspectionLink(int acc, int rej) {
+    return 'Inspection (Acc $acc, Rej $rej)';
+  }
+
+  @override
+  String traceReinspectionLink(int acc) {
+    return 'Re-Inspection (Acc $acc)';
+  }
+
+  @override
+  String get traceProductionReturnLink => 'Production Return Receipt';
+
+  @override
+  String get traceWorkerEarningLink => 'Generated Worker Earning';
+
+  @override
+  String get traceOriginalRejectionLink => 'Original Rejection Record';
+
+  @override
+  String get traceInspectionEventLink => 'Inspection Event';
+
+  @override
+  String traceRepairLink(int qty) {
+    return 'Repair ($qty pcs)';
+  }
+
+  @override
+  String get traceLinkedMovementLink => 'Linked Stock Movement';
+
+  @override
+  String traceTxnStockMovementTitle(String type) {
+    return 'Stock Movement — $type';
+  }
+
+  @override
+  String get traceTxnReinspectionTitle => 'Repair Re-Inspection & Approval';
+
+  @override
+  String get traceTxnInspectionTitle => 'Quality Inspection & Approval';
+
+  @override
+  String get traceTxnRejectionTitle => 'Rejection / Defect Record';
+
+  @override
+  String get traceTxnRepairTitle => 'Rejection Repair Operation';
+
+  @override
+  String traceTxnHandoverTitle(String type) {
+    return 'Process Handover — $type';
+  }
+
+  @override
+  String traceTxnLabourTitle(String basis) {
+    return 'Worker Labour Earning ($basis)';
+  }
+
+  @override
+  String traceTxnPaymentTitle(String type) {
+    return 'Worker Payment — $type';
+  }
+
+  @override
+  String traceTxnAdjustmentTitle(String type) {
+    return 'Worker Ledger Adjustment — $type';
+  }
+
+  @override
+  String traceFeedIssuedTitle(String process, String lotNumber) {
+    return '$process Issued • $lotNumber';
+  }
+
+  @override
+  String traceFeedMovementTitle(String type, String lotNumber) {
+    return '$type • $lotNumber';
+  }
+
+  @override
+  String traceFeedReturnTitle(String process, String lotNumber) {
+    return '$process Return • $lotNumber';
+  }
+
+  @override
+  String traceFeedReinspectionTitle(String lotNumber, String process) {
+    return 'Re-Inspection • $lotNumber ($process)';
+  }
+
+  @override
+  String traceFeedInspectionTitle(String lotNumber, String process) {
+    return 'QC Inspection • $lotNumber ($process)';
+  }
+
+  @override
+  String traceFeedInspectionSubtitle(String worker, int acc, int rej) {
+    return '$worker • Acc: $acc, Rej: $rej';
+  }
+
+  @override
+  String get traceBadgeIssued => 'ISSUED';
+
+  @override
+  String get traceBadgePendingQc => 'PENDING QC';
+
+  @override
+  String get traceBadgeReturned => 'RETURNED';
+
+  @override
+  String get traceBadgeReapproved => 'RE-APPROVED';
+
+  @override
+  String get traceBadgeInspected => 'INSPECTED';
+
+  @override
+  String get traceBadgePayable => 'PAYABLE';
+
+  @override
+  String get traceBadgeInformational => 'INFORMATIONAL';
+
+  @override
+  String txnIdLabel(String id) {
+    return 'Transaction ID: $id';
+  }
+
+  @override
+  String txnTimeLabel(String time) {
+    return 'Transaction Time: $time';
+  }
+
+  @override
+  String txnRecordedTimeLabel(String time) {
+    return 'Recorded Time: $time';
+  }
+
+  @override
+  String txnRecordedByLabel(String actor) {
+    return 'Recorded By: $actor';
+  }
+
+  @override
+  String txnApprovedByLabel(String actor) {
+    return 'Approved By: $actor';
+  }
+
+  @override
+  String get txnPinVerifiedSuffix => ' (PIN Verified)';
+
+  @override
+  String timelineReasonPrefix(String reason) {
+    return 'Reason: $reason';
+  }
+
+  @override
+  String get teamChangeRoleAction => 'Change Role';
+
+  @override
+  String get teamChangeRoleTitle => 'Change Member Role';
+
+  @override
+  String get teamRoleUpdatedSuccess => 'Member role updated.';
+
+  @override
+  String syncConflictsDetectedBanner(int count) {
+    return '$count sync conflict(s) auto-merged. Review to restore any local edit.';
+  }
+
+  @override
+  String get notificationsPartyReceivableTitle => 'Party Receivable Reminders';
+
+  @override
+  String get notificationsPartyReceivableSubtitle =>
+      'Weekly reminder when buyer receivables exceed minimum threshold';
+
+  @override
+  String get notificationsPartyMinLabel => 'Minimum Receivable Threshold';
 }

@@ -71,6 +71,7 @@ int? _readSyncAttentionBadge(BuildContext context) {
   final syncState = context.watch<SyncCubit>().state;
   final attentionCount =
       syncState.failedItems.length +
+      syncState.unresolvedConflictCount +
       (syncState.phase == SyncPhase.needsAttention &&
               syncState.failedItems.isEmpty
           ? 1

@@ -81,9 +81,33 @@ void main() {
       // Archive (soft delete, never physical delete)
       await repo.archiveLot(lot1.id);
       expect((await repo.getLots()).length, 1);
+      final archived = await repo.getLots(status: LotStatus.archived);
+      expect(archived.map((l) => l.id), [lot1.id]);
       final rawRow = await db.lotDao.findLotById(lot1.id);
       expect(rawRow, isNotNull);
       expect(rawRow!.deletedAt, isNotNull);
+
+      // Unarchive restores the lot to active list; duplicate active lot number blocked
+      await repo.unarchiveLot(lot1.id);
+      expect((await repo.getLots(status: LotStatus.archived)), isEmpty);
+      expect((await repo.getLots()).length, 2);
+
+      final lot1Dup = await repo.createLot(
+        lotNumber: 'LOT-001-ALT',
+        transactionAtUtcMillis: now,
+      );
+      await repo.archiveLot(lot1.id);
+      await repo.updateLot(
+        lotId: lot1Dup.id,
+        lotNumber: 'LOT-001',
+        title: 'Duplicate Active',
+        status: LotStatus.active,
+        transactionAtUtcMillis: now,
+      );
+      await expectLater(
+        () => repo.unarchiveLot(lot1.id),
+        throwsA(isA<DomainValidationException>()),
+      );
     },
   );
 

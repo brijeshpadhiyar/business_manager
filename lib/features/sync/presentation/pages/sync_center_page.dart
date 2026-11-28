@@ -36,6 +36,16 @@ final class SyncCenterPage extends StatelessWidget {
           ),
           child: BlocConsumer<SyncCubit, SyncState>(
             listener: (context, state) async {
+              final conflictsResolved =
+                  state.lastSummary?.conflictsResolved ?? 0;
+              if (conflictsResolved > 0 && state.unresolvedConflictCount > 0) {
+                AppFeedback.showWarning(
+                  context,
+                  l10n.syncConflictsDetectedBanner(
+                    state.unresolvedConflictCount,
+                  ),
+                );
+              }
               if (state.phase == SyncPhase.awaitingMergeChoice &&
                   state.pendingMergeSummary != null) {
                 final choice = await FirstLoginMergeDialog.show(
@@ -165,6 +175,16 @@ final class SyncCenterPage extends StatelessWidget {
                               ),
                             ],
                           ),
+                          if (state.unresolvedConflictCount > 0) ...[
+                            const SizedBox(height: AppSpacing.md),
+                            AppStatusBadge(
+                              label: l10n.syncConflictsDetectedBanner(
+                                state.unresolvedConflictCount,
+                              ),
+                              tone: AppStatusTone.pending,
+                              icon: AppIcons.conflict,
+                            ),
+                          ],
                           if (state.errorMessage != null) ...[
                             const SizedBox(height: AppSpacing.md),
                             AppStatusBadge(

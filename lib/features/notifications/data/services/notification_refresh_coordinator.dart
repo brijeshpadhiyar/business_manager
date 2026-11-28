@@ -9,6 +9,8 @@ import 'package:business_manager/features/notifications/data/repositories/notifi
 import 'package:business_manager/features/notifications/domain/calculators/notification_plan_calculator.dart';
 import 'package:business_manager/features/notifications/domain/entities/notification_entities.dart';
 import 'package:business_manager/features/notifications/domain/services/local_notification_service.dart';
+import 'package:business_manager/features/parties/domain/entities/party_entities.dart';
+import 'package:business_manager/features/parties/domain/repositories/party_repository.dart';
 import 'package:business_manager/features/reports/domain/repositories/reports_repository.dart';
 import 'package:business_manager/features/security/domain/repositories/security_repository.dart';
 import 'package:business_manager/features/stock_movements/domain/repositories/stock_movement_repository.dart';
@@ -87,6 +89,11 @@ final class NotificationRefreshCoordinator {
 
       final openIssues = await _stockRepo.getOpenIssues();
       final workerFinancials = await _accountingRepo.getAllWorkerSummaries();
+      final partySummaries = getIt.isRegistered<PartyRepository>()
+          ? await getIt<PartyRepository>().getAllPartySummaries(
+              includeInactive: false,
+            )
+          : const <PartyFinancialSummary>[];
       final todaySummary = await _reportsRepo.getDailyWorkshopSummary(
         targetDayUtcMillis: nowUtc,
       );
@@ -101,6 +108,7 @@ final class NotificationRefreshCoordinator {
         isAppLockEnabled: security.pinEnabled,
         openIssues: openIssues,
         workerFinancials: workerFinancials,
+        partySummaries: partySummaries,
         hasActivityToday: todaySummary.hasAnyActivity,
         todayIssuedQty: todaySummary.issuedQty,
         todayReturnedGoodQty: todaySummary.goodReturnedQty,

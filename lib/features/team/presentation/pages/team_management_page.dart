@@ -205,6 +205,82 @@ final class _TeamManagementPageState extends State<TeamManagementPage> {
     }
   }
 
+  Future<void> _showChangeRoleSheet(
+    BuildContext context,
+    TeamMemberInfo member,
+  ) async {
+    final l10n = context.l10n;
+    var selectedRole = member.role == BusinessRole.owner
+        ? BusinessRole.manager
+        : member.role;
+    var saving = false;
+
+    await AppBottomSheet.show<void>(
+      context,
+      title: l10n.teamChangeRoleTitle,
+      builder: (sheetCtx) => StatefulBuilder(
+        builder: (ctx, setSheetState) => Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            AppText(member.bestLabel, fontWeight: FontWeight.w700),
+            const SizedBox(height: AppSpacing.md),
+            AppDropdown<BusinessRole>(
+              label: l10n.settingsTeamTitle,
+              value: selectedRole,
+              items: const [
+                BusinessRole.manager,
+                BusinessRole.qcInspector,
+                BusinessRole.accountant,
+              ],
+              itemLabelBuilder: (r) => _roleLabel(ctx, r),
+              onChanged: (r) {
+                if (r != null) setSheetState(() => selectedRole = r);
+              },
+            ),
+            const SizedBox(height: AppSpacing.lg),
+            AppButton(
+              label: l10n.teamChangeRoleAction,
+              icon: AppIcons.confirm,
+              isExpanded: true,
+              isLoading: saving,
+              onPressed: saving
+                  ? null
+                  : () async {
+                      setSheetState(() => saving = true);
+                      try {
+                        await _repo.updateMemberRole(
+                          businessId: member.businessId,
+                          userId: member.userId,
+                          role: selectedRole,
+                        );
+                        if (sheetCtx.mounted) Navigator.of(sheetCtx).pop();
+                        if (!mounted) return;
+                        AppFeedback.showSuccess(
+                          this.context,
+                          l10n.teamRoleUpdatedSuccess,
+                        );
+                        await _load();
+                      } catch (e) {
+                        if (sheetCtx.mounted) {
+                          setSheetState(() => saving = false);
+                          AppFeedback.showError(
+                            sheetCtx,
+                            ValidationLocalizer.describeError(
+                              sheetCtx.l10n,
+                              e,
+                            ),
+                          );
+                        }
+                      }
+                    },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Future<void> _showJoinCodeSheet(BuildContext context) async {
     final l10n = context.l10n;
     final codeCtrl = TextEditingController();
@@ -411,7 +487,21 @@ final class _TeamManagementPageState extends State<TeamManagementPage> {
                                       ),
                                       if (_members[i].role !=
                                               BusinessRole.owner &&
-                                          _members[i].isActive)
+                                          _members[i].isActive) ...[
+                                        PermissionGate(
+                                          permission: AppPermission
+                                              .manageTeamAndInvites,
+                                          child: AppIconButton(
+                                            icon: AppIcons.edit,
+                                            tooltip: l10n.teamChangeRoleAction,
+                                            onPressed: _busy
+                                                ? null
+                                                : () => _showChangeRoleSheet(
+                                                    context,
+                                                    _members[i],
+                                                  ),
+                                          ),
+                                        ),
                                         PermissionGate(
                                           permission: AppPermission
                                               .manageTeamAndInvites,
@@ -435,6 +525,7 @@ final class _TeamManagementPageState extends State<TeamManagementPage> {
                                             },
                                           ),
                                         ),
+                                      ],
                                     ],
                                   ),
                                   if (i < _members.length - 1)

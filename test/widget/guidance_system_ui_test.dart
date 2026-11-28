@@ -243,7 +243,7 @@ void main() {
   );
 
   testWidgets(
-    'HelpGuidancePage displays 9-chapter roadmap, switches to 19 topics, and speaks aloud',
+    'HelpGuidancePage displays 12-chapter roadmap, switches to 22 topics, and speaks aloud',
     (tester) async {
       tester.view.physicalSize = const Size(412, 892);
       tester.view.devicePixelRatio = 1.0;
@@ -258,16 +258,16 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Interactive Training'), findsOneWidget);
-      expect(find.text('Complete Guide (19)'), findsOneWidget);
-      expect(find.text('0 of 9 chapters completed'), findsOneWidget);
+      expect(find.text('Complete Guide (22)'), findsOneWidget);
+      expect(find.text('0 of 12 chapters completed'), findsOneWidget);
 
       // Tap Listen on Chapter 1 to trigger TTS voice service.
       await tester.tap(find.text('Listen').first);
       await tester.pumpAndSettle();
       expect(voice.spokenTexts, isNotEmpty);
 
-      // Switch to Complete Guide (19) tab.
-      await tester.tap(find.text('Complete Guide (19)'));
+      // Switch to Complete Guide (22) tab.
+      await tester.tap(find.text('Complete Guide (22)'));
       await tester.pumpAndSettle();
       expect(find.text('1. Getting Started with StitchFlow'), findsOneWidget);
     },

@@ -73,6 +73,11 @@ abstract interface class LotRepository {
 
   Future<void> archiveLot(String lotId);
 
+  Future<void> unarchiveLot(
+    String lotId, {
+    LotStatus restoreStatus = LotStatus.active,
+  });
+
   Future<LotDesignEntity> createDesign({
     required String lotId,
     required String designName,

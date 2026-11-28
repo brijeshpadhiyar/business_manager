@@ -1,6 +1,8 @@
+import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/app_status_badge.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
+import 'package:business_manager/features/production_history/domain/entities/production_history_entities.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 import 'package:business_manager/l10n/generated/app_localizations.dart';
 
@@ -110,5 +112,241 @@ abstract final class DomainLabelLocalizer {
       'app_security' => l10n.auditEntityAppSecurity,
       _ => normalized.replaceAll('_', ' '),
     };
+  }
+
+  static String timelineTitle(AppLocalizations l10n, LotTimelineEvent e) {
+    final qty = e.quantity ?? 0;
+    final proc = e.processName ?? l10n.navProcesses;
+    final worker = e.workerName ?? l10n.navWorkers;
+    return switch (e.traceCode) {
+      'lot_created' => l10n.traceLotCreatedTitle(e.lotNumber),
+      'mov_issue' => l10n.traceProcessAssignedTitle(proc, qty, worker),
+      'mov_return_good' => l10n.traceReturnAcceptedTitle(qty, e.processName ?? ''),
+      'mov_return_damaged' => l10n.traceDamagedRecordedTitle(qty),
+      'mov_lost' => l10n.traceSettledLostTitle(qty),
+      'mov_shortage' => l10n.traceSettledShortageTitle(qty),
+      'mov_reversal' => l10n.traceMovementReversedTitle(qty),
+      'mov_damaged_repaired' => l10n.traceDamagedRepairedGoodTitle(qty),
+      'ret_logged' => l10n.traceReturnedByTitle(
+        qty,
+        worker,
+        e.processName ?? '',
+      ),
+      'insp_accepted' => (e.traceArgs['isReinsp'] == true)
+          ? l10n.traceRepairedReapprovedTitle(qty, e.processName ?? '')
+          : l10n.traceApprovedTitle(qty, e.processName ?? ''),
+      'insp_rejected' => (e.traceArgs['isReinsp'] == true)
+          ? l10n.traceRepairedFailedReinspTitle(qty)
+          : l10n.traceRejectedTitle(qty, e.processName ?? ''),
+      'rep_logged' => l10n.traceRejectedRepairedTitle(
+        qty,
+        e.traceArgs['isOriginalWorker'] == true
+            ? worker
+            : l10n.traceInHouseLabel,
+      ),
+      'handover_transfer' => l10n.traceDirectTransferTitle(
+        qty,
+        (e.traceArgs['fromMember'] as String?) ?? l10n.navWorkers,
+        (e.traceArgs['toMember'] as String?) ?? l10n.navWorkers,
+      ),
+      'lot_completed' => l10n.traceLotCompletedTitle(e.lotNumber),
+      _ => e.title,
+    };
+  }
+
+  static String? timelineSubtitle(AppLocalizations l10n, LotTimelineEvent e) {
+    final worker = e.workerName ?? '';
+    final proc = e.processName ?? '';
+    final designColour = '${e.designName ?? ''} ${e.colourName ?? ''}'.trim();
+    return switch (e.traceCode) {
+      'lot_created' => (e.traceArgs['lotTitle'] as String?) != null
+          ? l10n.traceLotCreatedSubtitle(
+              e.traceArgs['lotTitle'] as String,
+              e.quantity ?? 0,
+            )
+          : l10n.traceInitialQtySubtitle(e.quantity ?? 0),
+      'mov_issue' => l10n.traceRatePerPcSubtitle(
+        designColour,
+        MoneyFormatter.formatPaise(e.ratePaise ?? 0),
+      ),
+      'mov_return_good' => l10n.traceEarnedSubtitle(
+        worker,
+        MoneyFormatter.formatPaise(e.amountPaise ?? 0),
+      ),
+      'mov_return_damaged' || 'mov_lost' || 'mov_shortage' =>
+        '$worker • $proc',
+      'mov_reversal' => e.reason,
+      'mov_damaged_repaired' => designColour,
+      'ret_logged' => (e.traceArgs['isPendingQc'] == true)
+          ? l10n.traceReturnPendingQcSubtitle
+          : l10n.traceReturnImmediateSubtitle,
+      'insp_accepted' => (e.traceArgs['creditWorkerEarnings'] == true)
+          ? l10n.traceEarnedAtRateSubtitle(
+              worker,
+              MoneyFormatter.formatPaise(e.amountPaise ?? 0),
+              MoneyFormatter.formatPaise(e.ratePaise ?? 0),
+            )
+          : l10n.traceInHouseNoEarningSubtitle,
+      'insp_rejected' =>
+        '$worker • ${l10n.traceZeroPayableLabel}'
+            '${e.reason != null ? ' • ${e.reason}' : ''}',
+      'rep_logged' => l10n.traceSubmittedReinspSubtitle(proc),
+      'handover_transfer' =>
+        '$proc • ${e.traceArgs['ref'] ?? ''}',
+      'lot_completed' => l10n.traceLotCompletedSubtitle,
+      _ => e.subtitle,
+    };
+  }
+
+  static String feedTitle(AppLocalizations l10n, ProductionHistoryFeedItem item) {
+    final proc = item.processName ?? l10n.navProcesses;
+    final lotNum = item.lotNumber ?? '';
+    final movType = item.traceArgs['movementType'];
+    return switch (item.traceCode) {
+      'feed_issue' => l10n.traceFeedIssuedTitle(proc, lotNum),
+      'feed_movement' => l10n.traceFeedMovementTitle(
+        movType is StockMovementType
+            ? movementType(l10n, movType)
+            : item.badgeLabel,
+        lotNum,
+      ),
+      'feed_return' => l10n.traceFeedReturnTitle(proc, lotNum),
+      'feed_reinspection' => l10n.traceFeedReinspectionTitle(lotNum, proc),
+      'feed_inspection' => l10n.traceFeedInspectionTitle(lotNum, proc),
+      _ => item.title,
+    };
+  }
+
+  static String feedSubtitle(
+    AppLocalizations l10n,
+    ProductionHistoryFeedItem item,
+  ) {
+    if (item.traceCode == 'feed_reinspection' ||
+        item.traceCode == 'feed_inspection') {
+      return l10n.traceFeedInspectionSubtitle(
+        item.workerName ?? '-',
+        (item.traceArgs['acc'] as int?) ?? 0,
+        (item.traceArgs['rej'] as int?) ?? 0,
+      );
+    }
+    return item.subtitle;
+  }
+
+  static String feedBadge(AppLocalizations l10n, ProductionHistoryFeedItem item) {
+    final movType = item.traceArgs['movementType'];
+    return switch (item.badgeCode) {
+      'issued' => l10n.traceBadgeIssued,
+      'movement' => movType is StockMovementType
+          ? movementType(l10n, movType)
+          : item.badgeLabel,
+      'pending_qc' => l10n.traceBadgePendingQc,
+      'returned' => l10n.traceBadgeReturned,
+      'reapproved' => l10n.traceBadgeReapproved,
+      'inspected' => l10n.traceBadgeInspected,
+      _ => item.badgeLabel,
+    };
+  }
+
+  static String transactionTitle(
+    AppLocalizations l10n,
+    ProductionTransactionDetail d,
+  ) {
+    final movType = d.traceArgs['movementType'];
+    return switch (d.titleCode) {
+      'stock_movement' => l10n.traceTxnStockMovementTitle(
+        movType is StockMovementType
+            ? movementType(l10n, movType)
+            : d.statusLabel,
+      ),
+      'production_return' => l10n.traceProductionReturnLink,
+      'reinspection' => l10n.traceTxnReinspectionTitle,
+      'inspection' => l10n.traceTxnInspectionTitle,
+      'rejection' => l10n.traceTxnRejectionTitle,
+      'repair' => l10n.traceTxnRepairTitle,
+      'handover' => l10n.traceTxnHandoverTitle(
+        (d.traceArgs['handoverType'] as String?) ?? d.statusLabel,
+      ),
+      'labour_entry' => l10n.traceTxnLabourTitle(
+        _localizeBasisString(l10n, d.traceArgs['basis'] as String?),
+      ),
+      'payment' => l10n.traceTxnPaymentTitle(
+        _localizePaymentTypeString(
+          l10n,
+          d.traceArgs['paymentType'] as String?,
+        ),
+      ),
+      'adjustment' => l10n.traceTxnAdjustmentTitle(
+        (d.traceArgs['adjustmentType'] as String?) ?? d.statusLabel,
+      ),
+      _ => d.title,
+    };
+  }
+
+  static String transactionStatus(
+    AppLocalizations l10n,
+    ProductionTransactionDetail d,
+  ) {
+    final movType = d.traceArgs['movementType'];
+    if (d.titleCode == 'stock_movement' && movType is StockMovementType) {
+      return movementType(l10n, movType);
+    }
+    return switch (d.statusCode) {
+      'pending_qc' => l10n.traceBadgePendingQc,
+      'returned' => l10n.traceBadgeReturned,
+      'reapproved' => l10n.traceBadgeReapproved,
+      'inspected' => l10n.traceBadgeInspected,
+      'payable' => l10n.traceBadgePayable,
+      'informational' => l10n.traceBadgeInformational,
+      _ => _localizeStatusFallback(l10n, d.statusLabel),
+    };
+  }
+
+  static String relatedLinkLabel(
+    AppLocalizations l10n,
+    ProductionRelatedLink link,
+  ) {
+    return switch (link.code) {
+      'parent_issue' => l10n.traceParentIssueLink,
+      'labour_entry' => l10n.traceLabourEntryLink(
+        _localizeBasisString(l10n, link.args['basis'] as String?),
+      ),
+      'inspection' => l10n.traceInspectionLink(
+        (link.args['acc'] as int?) ?? 0,
+        (link.args['rej'] as int?) ?? 0,
+      ),
+      'reinspection' => l10n.traceReinspectionLink(
+        (link.args['acc'] as int?) ?? 0,
+      ),
+      'production_return' => l10n.traceProductionReturnLink,
+      'worker_earning' => l10n.traceWorkerEarningLink,
+      'original_rejection' => l10n.traceOriginalRejectionLink,
+      'inspection_event' => l10n.traceInspectionEventLink,
+      'repair' => l10n.traceRepairLink((link.args['qty'] as int?) ?? 0),
+      'linked_movement' => l10n.traceLinkedMovementLink,
+      _ => link.label,
+    };
+  }
+
+  static String _localizeBasisString(AppLocalizations l10n, String? raw) {
+    if (raw == null || raw.isEmpty) return '';
+    for (final b in LabourBasisType.values) {
+      if (b.dbValue == raw) return labourBasis(l10n, b);
+    }
+    return raw;
+  }
+
+  static String _localizePaymentTypeString(AppLocalizations l10n, String? raw) {
+    if (raw == null || raw.isEmpty) return '';
+    for (final t in PaymentType.values) {
+      if (t.dbValue == raw) return paymentType(l10n, t);
+    }
+    return raw;
+  }
+
+  static String _localizeStatusFallback(AppLocalizations l10n, String raw) {
+    for (final m in PaymentMode.values) {
+      if (m.dbValue == raw) return paymentMode(l10n, m);
+    }
+    return raw;
   }
 }

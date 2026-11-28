@@ -436,6 +436,7 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i1059.SyncRepositoryImpl(
         gh<_i177.AppDatabase>(),
         gh<_i605.SyncEngine>(),
+        gh<_i649.SyncConflictService>(),
       ),
     );
     gh.lazySingleton<_i306.StockMovementRepository>(

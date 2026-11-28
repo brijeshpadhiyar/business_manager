@@ -19,8 +19,8 @@ Native `--flavor` support:
 | Platform | `--flavor dev/prod` | How the flavour is chosen |
 | :--- | :--- | :--- |
 | Android | ✅ Yes (Gradle `productFlavors`) | `--flavor` + `-t` + config file |
-| iOS | ❌ Not wired yet (see §3.3) | `-t` + config file only |
-| macOS | ❌ Not wired | `-t` + config file only |
+| iOS | ✅ Yes (`dev` / `prod` Xcode schemes) | `--flavor` + `-t` + config file |
+| macOS | ✅ Yes (`dev` / `prod` Xcode schemes) | `--flavor` + `-t` + config file |
 | Windows / Linux / Web | Not supported by Flutter | `-t` + config file only |
 
 Always run first, once per checkout or after pulling changes:

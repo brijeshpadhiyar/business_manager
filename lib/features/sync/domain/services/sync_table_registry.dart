@@ -11,7 +11,7 @@ final class SyncTableSpec {
   final List<String> selfReferenceColumns;
 }
 
-/// Pure Dart registry of all 23 synced tables in strict Foreign-Key topological
+/// Pure Dart registry of all 30 synced tables in strict Foreign-Key topological
 /// order, with self-reference sorting and exponential backoff math.
 abstract final class SyncTableRegistry {
   static const List<SyncTableSpec> specs = [

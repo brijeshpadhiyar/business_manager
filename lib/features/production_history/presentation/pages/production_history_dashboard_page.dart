@@ -1,5 +1,6 @@
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
+import 'package:business_manager/core/localization/domain_label_localizer.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/app_date_time_formatter.dart';
@@ -479,11 +480,14 @@ final class _HistoryFeedCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              AppStatusBadge(label: item.badgeLabel, tone: tone),
+              AppStatusBadge(
+                label: DomainLabelLocalizer.feedBadge(l10n, item),
+                tone: tone,
+              ),
               const SizedBox(width: AppSpacing.xs),
               Expanded(
                 child: AppText(
-                  item.title,
+                  DomainLabelLocalizer.feedTitle(l10n, item),
                   fontWeight: FontWeight.w700,
                   maxLines: 1,
                 ),
@@ -496,7 +500,10 @@ final class _HistoryFeedCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppSpacing.xs),
-          AppText(item.subtitle, variant: AppTextVariant.bodySmall),
+          AppText(
+            DomainLabelLocalizer.feedSubtitle(l10n, item),
+            variant: AppTextVariant.bodySmall,
+          ),
           if (item.amountPaise != null && item.amountPaise! > 0) ...[
             const SizedBox(height: AppSpacing.xxs),
             AppText(

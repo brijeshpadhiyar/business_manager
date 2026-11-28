@@ -359,7 +359,9 @@ final class SupabaseAuthRepository implements AuthRepository {
           if (_googleInitialized) {
             await GoogleSignIn.instance.signOut();
           }
-        } catch (_) {}
+        } catch (e) {
+          _logger.warning('Google signOut cleanup skipped: $e');
+        }
       }
     }
     _authController.add(null);

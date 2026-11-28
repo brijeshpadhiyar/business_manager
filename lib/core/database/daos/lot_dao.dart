@@ -20,6 +20,12 @@ class LotDao extends DatabaseAccessor<AppDatabase> with _$LotDaoMixin {
             ..orderBy([(t) => OrderingTerm.desc(t.transactionAt)]))
           .get();
 
+  Future<List<LotRow>> getArchivedLots() =>
+      (select(lots)
+            ..where((t) => t.deletedAt.isNotNull())
+            ..orderBy([(t) => OrderingTerm.desc(t.updatedAt)]))
+          .get();
+
   Future<int> updateLotById(String id, LotsCompanion entry) =>
       (update(lots)..where((t) => t.id.equals(id))).write(entry);
 
@@ -32,6 +38,20 @@ class LotDao extends DatabaseAccessor<AppDatabase> with _$LotDaoMixin {
           updatedBy: Value(actor),
         ),
       );
+
+  Future<int> restoreArchivedLot(
+    String id, {
+    required String status,
+    required int updatedAtUtcMillis,
+    String? actor,
+  }) => (update(lots)..where((t) => t.id.equals(id))).write(
+    LotsCompanion(
+      status: Value(status),
+      deletedAt: const Value(null),
+      updatedAt: Value(updatedAtUtcMillis),
+      updatedBy: Value(actor),
+    ),
+  );
 
   // --- Lot Designs ---
   Future<void> insertDesign(LotDesignsCompanion entry) =>

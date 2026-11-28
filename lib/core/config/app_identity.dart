@@ -6,8 +6,8 @@ abstract final class AppIdentity {
   static const String appName = 'StitchFlow';
   static const String shortName = 'StitchFlow';
   static const String devAppName = 'StitchFlow Dev';
-  static const String appVersion = '1.5.0';
-  static const String appBuildNumber = '5';
+  static const String appVersion = '2.0.0';
+  static const String appBuildNumber = '6';
   static const String tagline = 'From Fabric to Finished.';
   static const String category = 'Garment & Production Management';
   static const String urlScheme = 'stitchflow';

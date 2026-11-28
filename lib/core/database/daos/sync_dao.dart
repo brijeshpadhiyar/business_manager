@@ -155,7 +155,7 @@ class SyncDao extends DatabaseAccessor<AppDatabase> with _$SyncDaoMixin {
     await delete(syncOutboxes).go();
   }
 
-  /// Enqueues every existing local row across all 23 synced tables so a user
+  /// Enqueues every existing local row across all 30 synced tables so a user
   /// signing in for the first time uploads their full offline history.
   Future<int> enqueueAllLocalRowsForInitialSync() async {
     final now = IstDateTimeHelper.nowUtcMillis();
@@ -212,6 +212,11 @@ class SyncDao extends DatabaseAccessor<AppDatabase> with _$SyncDaoMixin {
       'stock_movements',
       'payments',
       'labour_entries',
+      'parties',
+      'dispatch_challans',
+      'buyer_returns',
+      'party_payments',
+      'lot_direct_costs',
     ];
     var total = 0;
     for (final table in userTables) {
@@ -422,7 +427,7 @@ class SyncDao extends DatabaseAccessor<AppDatabase> with _$SyncDaoMixin {
     await customInsert(sql, variables: vars);
   }
 
-  /// Clears all 23 domain tables in reverse FK order (used ONLY when user
+  /// Clears all 30 domain tables in reverse FK order (used ONLY when user
   /// explicitly chooses "Keep Cloud Only" during first-login merge).
   Future<void> wipeLocalDomainDataForCloudReplace() async {
     await runAsRemoteApply(() async {

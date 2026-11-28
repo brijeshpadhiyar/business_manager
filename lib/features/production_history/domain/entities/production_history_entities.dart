@@ -474,6 +474,8 @@ final class LotTimelineEvent {
     required this.recordedAtUtcMillis,
     required this.title,
     this.subtitle,
+    this.traceCode,
+    this.traceArgs = const <String, Object?>{},
     this.quantity,
     this.amountPaise,
     this.ratePaise,
@@ -498,6 +500,8 @@ final class LotTimelineEvent {
   final int recordedAtUtcMillis;
   final String title;
   final String? subtitle;
+  final String? traceCode;
+  final Map<String, Object?> traceArgs;
   final int? quantity;
   final int? amountPaise;
   final int? ratePaise;
@@ -860,6 +864,9 @@ final class ProductionHistoryFeedItem {
     required this.title,
     required this.subtitle,
     required this.badgeLabel,
+    this.traceCode,
+    this.badgeCode,
+    this.traceArgs = const <String, Object?>{},
     required this.isWarning,
     required this.isPositive,
     required this.timestampUtcMillis,
@@ -884,6 +891,9 @@ final class ProductionHistoryFeedItem {
   final String title;
   final String subtitle;
   final String badgeLabel;
+  final String? traceCode;
+  final String? badgeCode;
+  final Map<String, Object?> traceArgs;
   final bool isWarning;
   final bool isPositive;
   final int timestampUtcMillis;
@@ -989,12 +999,31 @@ final class ProductionAuditEntryView {
   final String? newValueJson;
 }
 
+final class ProductionRelatedLink {
+  const ProductionRelatedLink({
+    required this.label,
+    required this.kind,
+    required this.id,
+    this.code,
+    this.args = const <String, Object?>{},
+  });
+
+  final String label;
+  final ProductionTransactionKind kind;
+  final String id;
+  final String? code;
+  final Map<String, Object?> args;
+}
+
 final class ProductionTransactionDetail {
   const ProductionTransactionDetail({
     required this.kind,
     required this.id,
     required this.title,
     required this.statusLabel,
+    this.titleCode,
+    this.statusCode,
+    this.traceArgs = const <String, Object?>{},
     required this.transactionAt,
     required this.recordedAt,
     this.actor,
@@ -1025,6 +1054,9 @@ final class ProductionTransactionDetail {
   final String id;
   final String title;
   final String statusLabel;
+  final String? titleCode;
+  final String? statusCode;
+  final Map<String, Object?> traceArgs;
   final int transactionAt;
   final int recordedAt;
   final String? actor;
@@ -1047,8 +1079,7 @@ final class ProductionTransactionDetail {
   final String? notes;
   final String? referenceNo;
   final String? parentIssueId;
-  final List<({String label, ProductionTransactionKind kind, String id})>
-  relatedLinks;
+  final List<ProductionRelatedLink> relatedLinks;
   final List<ProductionAuditEntryView> auditTrail;
 }
 

@@ -1,10 +1,11 @@
-/// The 5 local offline Android notification categories in StitchFlow V1.2.
+/// The 6 local offline Android notification categories in StitchFlow v2.
 enum NotificationCategory {
   pendingWork(1001, 'sf_pending_work'),
   workerSettlement(1002, 'sf_worker_settlement'),
   dailySummary(1003, 'sf_daily_summary'),
   backupReminder(1004, 'sf_backup_reminder'),
-  businessAlerts(1005, 'sf_business_alerts');
+  businessAlerts(1005, 'sf_business_alerts'),
+  partyReceivable(1006, 'sf_party_receivable');
 
   const NotificationCategory(this.notificationId, this.channelId);
 
@@ -39,6 +40,11 @@ final class NotificationSettings {
     this.businessAlertsEnabled = true,
     this.damagedAlertThreshold = 20,
     this.overdueAlertDays = 14,
+    this.partyReceivableEnabled = true,
+    this.partyReceivableWeekday = DateTime.monday,
+    this.partyReceivableHour = 10,
+    this.partyReceivableMinute = 30,
+    this.partyReceivableMinPaise = 100000, // ₹1,000
   });
 
   final bool masterEnabled;
@@ -67,6 +73,12 @@ final class NotificationSettings {
   final int damagedAlertThreshold;
   final int overdueAlertDays;
 
+  final bool partyReceivableEnabled;
+  final int partyReceivableWeekday; // 1 = Mon ... 7 = Sun
+  final int partyReceivableHour;
+  final int partyReceivableMinute;
+  final int partyReceivableMinPaise;
+
   NotificationSettings copyWith({
     bool? masterEnabled,
     bool? pendingWorkEnabled,
@@ -89,6 +101,11 @@ final class NotificationSettings {
     bool? businessAlertsEnabled,
     int? damagedAlertThreshold,
     int? overdueAlertDays,
+    bool? partyReceivableEnabled,
+    int? partyReceivableWeekday,
+    int? partyReceivableHour,
+    int? partyReceivableMinute,
+    int? partyReceivableMinPaise,
   }) {
     return NotificationSettings(
       masterEnabled: masterEnabled ?? this.masterEnabled,
@@ -122,6 +139,15 @@ final class NotificationSettings {
       damagedAlertThreshold:
           damagedAlertThreshold ?? this.damagedAlertThreshold,
       overdueAlertDays: overdueAlertDays ?? this.overdueAlertDays,
+      partyReceivableEnabled:
+          partyReceivableEnabled ?? this.partyReceivableEnabled,
+      partyReceivableWeekday:
+          partyReceivableWeekday ?? this.partyReceivableWeekday,
+      partyReceivableHour: partyReceivableHour ?? this.partyReceivableHour,
+      partyReceivableMinute:
+          partyReceivableMinute ?? this.partyReceivableMinute,
+      partyReceivableMinPaise:
+          partyReceivableMinPaise ?? this.partyReceivableMinPaise,
     );
   }
 }

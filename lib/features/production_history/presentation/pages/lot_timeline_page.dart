@@ -1,5 +1,6 @@
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
+import 'package:business_manager/core/localization/domain_label_localizer.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/app_date_time_formatter.dart';
@@ -121,6 +122,11 @@ final class _LotTimelineView extends StatelessWidget {
       itemBuilder: (context, index) {
         final e = events[index];
         final isLast = index == events.length - 1;
+        final localizedTitle = DomainLabelLocalizer.timelineTitle(l10n, e);
+        final localizedSubtitle = DomainLabelLocalizer.timelineSubtitle(
+          l10n,
+          e,
+        );
         return IntrinsicHeight(
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -170,7 +176,7 @@ final class _LotTimelineView extends StatelessWidget {
                           children: [
                             Expanded(
                               child: AppText(
-                                '${index + 1}. ${e.title}',
+                                '${index + 1}. $localizedTitle',
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -182,17 +188,18 @@ final class _LotTimelineView extends StatelessWidget {
                               ),
                           ],
                         ),
-                        if (e.subtitle != null && e.subtitle!.isNotEmpty) ...[
+                        if (localizedSubtitle != null &&
+                            localizedSubtitle.isNotEmpty) ...[
                           const SizedBox(height: AppSpacing.xxs),
                           AppText(
-                            e.subtitle!,
+                            localizedSubtitle,
                             variant: AppTextVariant.bodySmall,
                           ),
                         ],
                         if (e.reason != null && e.reason!.isNotEmpty) ...[
                           const SizedBox(height: AppSpacing.xxs),
                           AppText(
-                            'Reason: ${e.reason}',
+                            l10n.timelineReasonPrefix(e.reason!),
                             variant: AppTextVariant.bodySmall,
                           ),
                         ],
@@ -219,7 +226,7 @@ final class _LotTimelineView extends StatelessWidget {
                             if (e.workerId != null)
                               AppChip.action(
                                 dense: true,
-                                label: e.workerName ?? 'Worker',
+                                label: e.workerName ?? l10n.navWorkers,
                                 onPressed: () => context.push(
                                   RoutePaths.workerDetail(e.workerId!),
                                 ),
@@ -227,7 +234,7 @@ final class _LotTimelineView extends StatelessWidget {
                             if (e.processId != null)
                               AppChip.action(
                                 dense: true,
-                                label: e.processName ?? 'Process',
+                                label: e.processName ?? l10n.navProcesses,
                                 onPressed: () => context.push(
                                   RoutePaths.processDetail(e.processId!),
                                 ),

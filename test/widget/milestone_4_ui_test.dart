@@ -52,6 +52,11 @@ void main() {
   testWidgets(
     'navigates Dashboard -> Lots -> Inventory -> Business Profile in EN & GU + Dark theme',
     (tester) async {
+      tester.view.physicalSize = const Size(360, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
       final config = AppConfig.dev();
       await tester.pumpWidget(BusinessManagerApp(config: config));
       await tester.pumpAndSettle();
@@ -63,20 +68,24 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('No Lots Yet'), findsOneWidget);
 
-      // Return to Dashboard -> open Inventory -> verify empty initial inventory state
+      // Return to Dashboard -> open Inventory via More sheet -> verify empty initial inventory state
       await tester.tap(find.text('Dashboard').last);
       await tester.pumpAndSettle();
-      await tester.ensureVisible(find.text('Inventory').first);
+      await tester.tap(find.text('More').last);
       await tester.pumpAndSettle();
-      await tester.tap(find.text('Inventory').first);
+      await tester.tap(find.text('Inventory').last);
       await tester.pumpAndSettle();
       expect(find.text('Initial Inventory Overview'), findsOneWidget);
       expect(find.text('No Initial Inventory Yet'), findsOneWidget);
       await tester.pageBack();
       await tester.pumpAndSettle();
 
-      // Navigate to Settings tab -> Business Profile -> verify seeded profile
+      // Navigate via More sheet -> Settings -> Business Profile -> verify seeded profile
+      await tester.tap(find.text('More').last);
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Settings').last);
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text('Business Profile').first);
       await tester.pumpAndSettle();
       await tester.tap(find.text('Business Profile').first);
       await tester.pumpAndSettle();

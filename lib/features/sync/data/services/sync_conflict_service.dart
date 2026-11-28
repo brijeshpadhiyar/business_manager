@@ -102,7 +102,9 @@ final class SyncConflictService {
                 : SyncConflictStatus.acknowledged,
           );
         }
-      } catch (_) {}
+      } catch (e) {
+        debugPrint('SyncConflictService: skipping malformed resolution JSON: $e');
+      }
     }
 
     final results = <SyncConflictRecord>[];
@@ -263,7 +265,9 @@ final class SyncConflictService {
       if (decoded is Map) {
         return decoded.map((k, v) => MapEntry(k.toString(), v));
       }
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('SyncConflictService: skipping malformed row JSON: $e');
+    }
     return const {};
   }
 }

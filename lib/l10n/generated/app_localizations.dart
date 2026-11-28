@@ -6413,7 +6413,7 @@ abstract class AppLocalizations {
   /// No description provided for @guideTopicsTabLabel.
   ///
   /// In en, this message translates to:
-  /// **'Complete Guide (19)'**
+  /// **'Complete Guide (22)'**
   String get guideTopicsTabLabel;
 
   /// No description provided for @guideProgressSummary.
@@ -8143,6 +8143,474 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Show sidebar (Ctrl+B)'**
   String get navSidebarShow;
+
+  /// No description provided for @lotArchivedToast.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot {lotNumber} archived.'**
+  String lotArchivedToast(String lotNumber);
+
+  /// No description provided for @lotUnarchivedToast.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot {lotNumber} restored.'**
+  String lotUnarchivedToast(String lotNumber);
+
+  /// No description provided for @lotUnarchiveAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Lot'**
+  String get lotUnarchiveAction;
+
+  /// No description provided for @lotUnarchiveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not restore archived lot.'**
+  String get lotUnarchiveFailed;
+
+  /// No description provided for @traceLotCreatedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot {lotNumber} created'**
+  String traceLotCreatedTitle(String lotNumber);
+
+  /// No description provided for @traceLotCreatedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{title} • {qty} pcs'**
+  String traceLotCreatedSubtitle(String title, int qty);
+
+  /// No description provided for @traceInitialQtySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{qty} pcs initial quantity'**
+  String traceInitialQtySubtitle(int qty);
+
+  /// No description provided for @traceProcessAssignedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{process} assigned & {qty} pcs issued to {worker}'**
+  String traceProcessAssignedTitle(String process, int qty, String worker);
+
+  /// No description provided for @traceRatePerPcSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{designColour} • Rate {rate}/pc'**
+  String traceRatePerPcSubtitle(String designColour, String rate);
+
+  /// No description provided for @traceReturnAcceptedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{qty} pcs returned & accepted ({process})'**
+  String traceReturnAcceptedTitle(int qty, String process);
+
+  /// No description provided for @traceEarnedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{worker} • Earned {amount}'**
+  String traceEarnedSubtitle(String worker, String amount);
+
+  /// No description provided for @traceDamagedRecordedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{qty} pcs recorded as damaged/rejected'**
+  String traceDamagedRecordedTitle(int qty);
+
+  /// No description provided for @traceSettledLostTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{qty} pcs settled as Lost'**
+  String traceSettledLostTitle(int qty);
+
+  /// No description provided for @traceSettledShortageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{qty} pcs settled as Shortage'**
+  String traceSettledShortageTitle(int qty);
+
+  /// No description provided for @traceMovementReversedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Movement reversed ({qty} pcs)'**
+  String traceMovementReversedTitle(int qty);
+
+  /// No description provided for @traceDamagedRepairedGoodTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{qty} damaged pcs repaired to Good stock'**
+  String traceDamagedRepairedGoodTitle(int qty);
+
+  /// No description provided for @traceReturnedByTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{qty} pcs returned by {worker} ({process})'**
+  String traceReturnedByTitle(int qty, String worker, String process);
+
+  /// No description provided for @traceReturnPendingQcSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Logged as Pending QC Inspection'**
+  String get traceReturnPendingQcSubtitle;
+
+  /// No description provided for @traceReturnImmediateSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Returned with Immediate Inspection'**
+  String get traceReturnImmediateSubtitle;
+
+  /// No description provided for @traceRepairedReapprovedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{qty} repaired pcs re-approved ({process})'**
+  String traceRepairedReapprovedTitle(int qty, String process);
+
+  /// No description provided for @traceApprovedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{qty} pcs approved ({process})'**
+  String traceApprovedTitle(int qty, String process);
+
+  /// No description provided for @traceEarnedAtRateSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{worker} • Earned {amount} @ {rate}/pc'**
+  String traceEarnedAtRateSubtitle(String worker, String amount, String rate);
+
+  /// No description provided for @traceInHouseNoEarningSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'In-house repair • No worker earning credited'**
+  String get traceInHouseNoEarningSubtitle;
+
+  /// No description provided for @traceRepairedFailedReinspTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{qty} repaired pcs failed reinspection'**
+  String traceRepairedFailedReinspTitle(int qty);
+
+  /// No description provided for @traceRejectedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{qty} pcs rejected/damaged ({process})'**
+  String traceRejectedTitle(int qty, String process);
+
+  /// No description provided for @traceZeroPayableLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'₹0 payable'**
+  String get traceZeroPayableLabel;
+
+  /// No description provided for @traceRejectedRepairedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{qty} rejected pcs repaired ({source})'**
+  String traceRejectedRepairedTitle(int qty, String source);
+
+  /// No description provided for @traceInHouseLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'In-House'**
+  String get traceInHouseLabel;
+
+  /// No description provided for @traceSubmittedReinspSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Submitted for QC Reinspection • {process}'**
+  String traceSubmittedReinspSubtitle(String process);
+
+  /// No description provided for @traceDirectTransferTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Direct transfer {qty} pcs: {from} → {to}'**
+  String traceDirectTransferTitle(int qty, String from, String to);
+
+  /// No description provided for @traceLotCompletedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Lot {lotNumber} completed'**
+  String traceLotCompletedTitle(String lotNumber);
+
+  /// No description provided for @traceLotCompletedSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Production finished and reconciled'**
+  String get traceLotCompletedSubtitle;
+
+  /// No description provided for @traceParentIssueLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Parent Assignment Issue'**
+  String get traceParentIssueLink;
+
+  /// No description provided for @traceLabourEntryLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Labour Entry ({basis})'**
+  String traceLabourEntryLink(String basis);
+
+  /// No description provided for @traceInspectionLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspection (Acc {acc}, Rej {rej})'**
+  String traceInspectionLink(int acc, int rej);
+
+  /// No description provided for @traceReinspectionLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-Inspection (Acc {acc})'**
+  String traceReinspectionLink(int acc);
+
+  /// No description provided for @traceProductionReturnLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Production Return Receipt'**
+  String get traceProductionReturnLink;
+
+  /// No description provided for @traceWorkerEarningLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Generated Worker Earning'**
+  String get traceWorkerEarningLink;
+
+  /// No description provided for @traceOriginalRejectionLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Original Rejection Record'**
+  String get traceOriginalRejectionLink;
+
+  /// No description provided for @traceInspectionEventLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Inspection Event'**
+  String get traceInspectionEventLink;
+
+  /// No description provided for @traceRepairLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Repair ({qty} pcs)'**
+  String traceRepairLink(int qty);
+
+  /// No description provided for @traceLinkedMovementLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Linked Stock Movement'**
+  String get traceLinkedMovementLink;
+
+  /// No description provided for @traceTxnStockMovementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock Movement — {type}'**
+  String traceTxnStockMovementTitle(String type);
+
+  /// No description provided for @traceTxnReinspectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Repair Re-Inspection & Approval'**
+  String get traceTxnReinspectionTitle;
+
+  /// No description provided for @traceTxnInspectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quality Inspection & Approval'**
+  String get traceTxnInspectionTitle;
+
+  /// No description provided for @traceTxnRejectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejection / Defect Record'**
+  String get traceTxnRejectionTitle;
+
+  /// No description provided for @traceTxnRepairTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejection Repair Operation'**
+  String get traceTxnRepairTitle;
+
+  /// No description provided for @traceTxnHandoverTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Process Handover — {type}'**
+  String traceTxnHandoverTitle(String type);
+
+  /// No description provided for @traceTxnLabourTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker Labour Earning ({basis})'**
+  String traceTxnLabourTitle(String basis);
+
+  /// No description provided for @traceTxnPaymentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker Payment — {type}'**
+  String traceTxnPaymentTitle(String type);
+
+  /// No description provided for @traceTxnAdjustmentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker Ledger Adjustment — {type}'**
+  String traceTxnAdjustmentTitle(String type);
+
+  /// No description provided for @traceFeedIssuedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{process} Issued • {lotNumber}'**
+  String traceFeedIssuedTitle(String process, String lotNumber);
+
+  /// No description provided for @traceFeedMovementTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{type} • {lotNumber}'**
+  String traceFeedMovementTitle(String type, String lotNumber);
+
+  /// No description provided for @traceFeedReturnTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{process} Return • {lotNumber}'**
+  String traceFeedReturnTitle(String process, String lotNumber);
+
+  /// No description provided for @traceFeedReinspectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Re-Inspection • {lotNumber} ({process})'**
+  String traceFeedReinspectionTitle(String lotNumber, String process);
+
+  /// No description provided for @traceFeedInspectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'QC Inspection • {lotNumber} ({process})'**
+  String traceFeedInspectionTitle(String lotNumber, String process);
+
+  /// No description provided for @traceFeedInspectionSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{worker} • Acc: {acc}, Rej: {rej}'**
+  String traceFeedInspectionSubtitle(String worker, int acc, int rej);
+
+  /// No description provided for @traceBadgeIssued.
+  ///
+  /// In en, this message translates to:
+  /// **'ISSUED'**
+  String get traceBadgeIssued;
+
+  /// No description provided for @traceBadgePendingQc.
+  ///
+  /// In en, this message translates to:
+  /// **'PENDING QC'**
+  String get traceBadgePendingQc;
+
+  /// No description provided for @traceBadgeReturned.
+  ///
+  /// In en, this message translates to:
+  /// **'RETURNED'**
+  String get traceBadgeReturned;
+
+  /// No description provided for @traceBadgeReapproved.
+  ///
+  /// In en, this message translates to:
+  /// **'RE-APPROVED'**
+  String get traceBadgeReapproved;
+
+  /// No description provided for @traceBadgeInspected.
+  ///
+  /// In en, this message translates to:
+  /// **'INSPECTED'**
+  String get traceBadgeInspected;
+
+  /// No description provided for @traceBadgePayable.
+  ///
+  /// In en, this message translates to:
+  /// **'PAYABLE'**
+  String get traceBadgePayable;
+
+  /// No description provided for @traceBadgeInformational.
+  ///
+  /// In en, this message translates to:
+  /// **'INFORMATIONAL'**
+  String get traceBadgeInformational;
+
+  /// No description provided for @txnIdLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction ID: {id}'**
+  String txnIdLabel(String id);
+
+  /// No description provided for @txnTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Transaction Time: {time}'**
+  String txnTimeLabel(String time);
+
+  /// No description provided for @txnRecordedTimeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Recorded Time: {time}'**
+  String txnRecordedTimeLabel(String time);
+
+  /// No description provided for @txnRecordedByLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Recorded By: {actor}'**
+  String txnRecordedByLabel(String actor);
+
+  /// No description provided for @txnApprovedByLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Approved By: {actor}'**
+  String txnApprovedByLabel(String actor);
+
+  /// No description provided for @txnPinVerifiedSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **' (PIN Verified)'**
+  String get txnPinVerifiedSuffix;
+
+  /// No description provided for @timelineReasonPrefix.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason: {reason}'**
+  String timelineReasonPrefix(String reason);
+
+  /// No description provided for @teamChangeRoleAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Role'**
+  String get teamChangeRoleAction;
+
+  /// No description provided for @teamChangeRoleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Member Role'**
+  String get teamChangeRoleTitle;
+
+  /// No description provided for @teamRoleUpdatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Member role updated.'**
+  String get teamRoleUpdatedSuccess;
+
+  /// No description provided for @syncConflictsDetectedBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} sync conflict(s) auto-merged. Review to restore any local edit.'**
+  String syncConflictsDetectedBanner(int count);
+
+  /// No description provided for @notificationsPartyReceivableTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Party Receivable Reminders'**
+  String get notificationsPartyReceivableTitle;
+
+  /// No description provided for @notificationsPartyReceivableSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly reminder when buyer receivables exceed minimum threshold'**
+  String get notificationsPartyReceivableSubtitle;
+
+  /// No description provided for @notificationsPartyMinLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum Receivable Threshold'**
+  String get notificationsPartyMinLabel;
 }
 
 class _AppLocalizationsDelegate

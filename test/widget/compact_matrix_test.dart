@@ -269,11 +269,11 @@ void main() {
     await settle(tester);
 
     expect(find.byIcon(AppIcons.search), findsWidgets);
-    expect(find.byIcon(AppIcons.more), findsOneWidget);
+    expect(find.byIcon(AppIcons.moreApps), findsOneWidget);
     // The desktop/tablet icon row (e.g. the Reports icon) is not shown.
     expect(find.byIcon(AppIcons.reports), findsNothing);
 
-    await tester.tap(find.byIcon(AppIcons.more));
+    await tester.tap(find.byIcon(AppIcons.moreApps));
     await settle(tester);
     expect(find.text('Reports'), findsWidgets);
     expect(find.textContaining('Inspection'), findsWidgets);
@@ -295,7 +295,7 @@ void main() {
 
     await tester.tap(find.byIcon(AppIcons.home));
     await settle(tester);
-    expect(find.byIcon(AppIcons.more), findsOneWidget);
+    expect(find.byIcon(AppIcons.moreApps), findsOneWidget);
   });
 
   group('System back button never closes the app unexpectedly', () {
@@ -313,7 +313,7 @@ void main() {
 
       router.go(RoutePaths.lots);
       await settle(tester);
-      await tester.tap(find.byIcon(AppIcons.more));
+      await tester.tap(find.byIcon(AppIcons.moreApps));
       await settle(tester);
       await tester.ensureVisible(find.text('Reports').last);
       await settle(tester);

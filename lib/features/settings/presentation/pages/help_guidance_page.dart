@@ -51,6 +51,9 @@ final class _HelpGuidancePageState extends State<HelpGuidancePage> {
       'receiveReturn' => AppIcons.receiveReturn,
       'accounting' => AppIcons.accounting,
       'reports' => AppIcons.reports,
+      'dispatch' => AppIcons.dispatch,
+      'profit' => AppIcons.accounting,
+      'team' => AppIcons.team,
       _ => AppIcons.training,
     };
   }

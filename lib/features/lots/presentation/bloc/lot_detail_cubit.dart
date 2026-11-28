@@ -151,6 +151,13 @@ final class LotDetailCubit extends Cubit<LotDetailState> {
     await _repository.archiveLot(lotId);
   }
 
+  Future<void> unarchiveLot(
+    String lotId, {
+    LotStatus restoreStatus = LotStatus.active,
+  }) async {
+    await _repository.unarchiveLot(lotId, restoreStatus: restoreStatus);
+  }
+
   Future<String?> addDesign({
     required String lotId,
     required String designName,
