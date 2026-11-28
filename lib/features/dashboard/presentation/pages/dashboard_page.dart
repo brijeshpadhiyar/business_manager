@@ -6,6 +6,8 @@ import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
+import 'package:business_manager/features/auth/domain/services/rbac_policy.dart';
+import 'package:business_manager/features/auth/presentation/widgets/permission_gate.dart';
 import 'package:business_manager/features/dashboard/presentation/bloc/dashboard_cubit.dart';
 import 'package:business_manager/features/dashboard/presentation/widgets/dashboard_sections.dart';
 import 'package:business_manager/features/dashboard/presentation/widgets/setup_checklist_card.dart';
@@ -293,6 +295,19 @@ final class _DashboardViewState extends State<_DashboardView> {
                                 onPressed: () => _pushAndRefresh(
                                   context,
                                   RoutePaths.parties,
+                                ),
+                              ),
+                              PermissionGate(
+                                permission:
+                                    AppPermission.viewCashbookAndExpenses,
+                                child: AppButton(
+                                  label: l10n.navCashbookExpenses,
+                                  icon: AppIcons.cashbook,
+                                  variant: AppButtonVariant.outlined,
+                                  onPressed: () => _pushAndRefresh(
+                                    context,
+                                    RoutePaths.cashbook,
+                                  ),
                                 ),
                               ),
                               AppButton(

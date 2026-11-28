@@ -11,6 +11,7 @@ enum ReportCategory {
   labourFinancial,
   businessInsights,
   partiesAndPnl,
+  cashbookAndNetProfit,
 }
 
 /// IST-aligned quick date presets for reports.

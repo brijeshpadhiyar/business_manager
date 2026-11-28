@@ -75,6 +75,12 @@ List<AppQuickAction> buildQuickActions(BuildContext context) {
       label: l10n.dispatchNewAction,
       route: RoutePaths.dispatchCreatePath,
     ),
+    AppQuickAction(
+      id: 'expense',
+      icon: AppIcons.expense,
+      label: l10n.cashbookRecordExpenseAction,
+      route: RoutePaths.expenseCreate,
+    ),
   ];
 }
 

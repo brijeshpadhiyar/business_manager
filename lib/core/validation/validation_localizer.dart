@@ -243,6 +243,22 @@ abstract final class ValidationLocalizer {
       'return_exceeds_dispatched' => l10n.buyerReturnExceedsDispatchedError,
       'invalid_challan_for_return' => l10n.validationRecordNotFound,
 
+      // Cashbook & Workshop Expenses (V2.1)
+      'permission_denied' => l10n.cashbookPermissionDeniedError,
+      'title_required' => l10n.validationRequired,
+      'positive_amount_required' => l10n.validationPositiveAmount,
+      'negative_amount_not_allowed' => l10n.validationNegativeNotAllowed,
+      'payment_mode_required' ||
+      'unsupported_payment_mode' ||
+      'invalid_cashbook_entry_type' => l10n.errorUnexpected,
+      'expense_not_found' ||
+      'cashbook_entry_not_found' => l10n.validationRecordNotFound,
+      'expense_already_reversed' ||
+      'entry_already_reversed' => l10n.validationAlreadyReversed,
+      'expense_has_active_settlement' => l10n.cashbookExpenseHasSettlementError,
+      'settlement_exceeds_unpaid_balance' => l10n.cashbookSettlementExceedsError,
+      'expense_already_paid' => l10n.cashbookPaidSuccess,
+
       _ => fallback ?? l10n.errorUnexpected,
     };
   }

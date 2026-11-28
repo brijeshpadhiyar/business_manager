@@ -62,6 +62,10 @@ final class DashboardSnapshot {
     this.dispatchedStock = 0,
     this.totalPartyReceivablePaise = 0,
     this.totalPartyAdvanceCreditPaise = 0,
+    this.cashBalancePaise = 0,
+    this.bankBalancePaise = 0,
+    this.todayExpensesPaise = 0,
+    this.unpaidBillsPaise = 0,
   });
 
   final String businessNameEn;
@@ -101,6 +105,10 @@ final class DashboardSnapshot {
   final int dispatchedStock;
   final int totalPartyReceivablePaise;
   final int totalPartyAdvanceCreditPaise;
+  final int cashBalancePaise;
+  final int bankBalancePaise;
+  final int todayExpensesPaise;
+  final int unpaidBillsPaise;
 }
 
 /// Per-process activity totals for a single IST business day.

@@ -27142,6 +27142,2150 @@ class LotDirectCostsCompanion extends UpdateCompanion<LotDirectCostRow> {
   }
 }
 
+class $WorkshopExpensesTable extends WorkshopExpenses
+    with TableInfo<$WorkshopExpensesTable, WorkshopExpenseRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $WorkshopExpensesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _categoryMeta = const VerificationMeta(
+    'category',
+  );
+  @override
+  late final GeneratedColumn<String> category = GeneratedColumn<String>(
+    'category',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _payeeNameMeta = const VerificationMeta(
+    'payeeName',
+  );
+  @override
+  late final GeneratedColumn<String> payeeName = GeneratedColumn<String>(
+    'payee_name',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _amountPaiseMeta = const VerificationMeta(
+    'amountPaise',
+  );
+  @override
+  late final GeneratedColumn<int> amountPaise = GeneratedColumn<int>(
+    'amount_paise',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _paymentStatusMeta = const VerificationMeta(
+    'paymentStatus',
+  );
+  @override
+  late final GeneratedColumn<String> paymentStatus = GeneratedColumn<String>(
+    'payment_status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _paymentModeMeta = const VerificationMeta(
+    'paymentMode',
+  );
+  @override
+  late final GeneratedColumn<String> paymentMode = GeneratedColumn<String>(
+    'payment_mode',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _referenceNoMeta = const VerificationMeta(
+    'referenceNo',
+  );
+  @override
+  late final GeneratedColumn<String> referenceNo = GeneratedColumn<String>(
+    'reference_no',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _reversesExpenseIdMeta = const VerificationMeta(
+    'reversesExpenseId',
+  );
+  @override
+  late final GeneratedColumn<String> reversesExpenseId =
+      GeneratedColumn<String>(
+        'reverses_expense_id',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'REFERENCES workshop_expenses (id) ON DELETE RESTRICT',
+        ),
+      );
+  static const VerificationMeta _clientRequestIdMeta = const VerificationMeta(
+    'clientRequestId',
+  );
+  @override
+  late final GeneratedColumn<String> clientRequestId = GeneratedColumn<String>(
+    'client_request_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _reasonMeta = const VerificationMeta('reason');
+  @override
+  late final GeneratedColumn<String> reason = GeneratedColumn<String>(
+    'reason',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _transactionAtMeta = const VerificationMeta(
+    'transactionAt',
+  );
+  @override
+  late final GeneratedColumn<int> transactionAt = GeneratedColumn<int>(
+    'transaction_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _recordedAtMeta = const VerificationMeta(
+    'recordedAt',
+  );
+  @override
+  late final GeneratedColumn<int> recordedAt = GeneratedColumn<int>(
+    'recorded_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdByMeta = const VerificationMeta(
+    'createdBy',
+  );
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedByMeta = const VerificationMeta(
+    'updatedBy',
+  );
+  @override
+  late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>(
+    'updated_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<int> deletedAt = GeneratedColumn<int>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    category,
+    title,
+    payeeName,
+    amountPaise,
+    paymentStatus,
+    paymentMode,
+    referenceNo,
+    reversesExpenseId,
+    clientRequestId,
+    reason,
+    notes,
+    transactionAt,
+    recordedAt,
+    createdBy,
+    updatedBy,
+    createdAt,
+    updatedAt,
+    deletedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'workshop_expenses';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<WorkshopExpenseRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('category')) {
+      context.handle(
+        _categoryMeta,
+        category.isAcceptableOrUnknown(data['category']!, _categoryMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_categoryMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('payee_name')) {
+      context.handle(
+        _payeeNameMeta,
+        payeeName.isAcceptableOrUnknown(data['payee_name']!, _payeeNameMeta),
+      );
+    }
+    if (data.containsKey('amount_paise')) {
+      context.handle(
+        _amountPaiseMeta,
+        amountPaise.isAcceptableOrUnknown(
+          data['amount_paise']!,
+          _amountPaiseMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_amountPaiseMeta);
+    }
+    if (data.containsKey('payment_status')) {
+      context.handle(
+        _paymentStatusMeta,
+        paymentStatus.isAcceptableOrUnknown(
+          data['payment_status']!,
+          _paymentStatusMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_paymentStatusMeta);
+    }
+    if (data.containsKey('payment_mode')) {
+      context.handle(
+        _paymentModeMeta,
+        paymentMode.isAcceptableOrUnknown(
+          data['payment_mode']!,
+          _paymentModeMeta,
+        ),
+      );
+    }
+    if (data.containsKey('reference_no')) {
+      context.handle(
+        _referenceNoMeta,
+        referenceNo.isAcceptableOrUnknown(
+          data['reference_no']!,
+          _referenceNoMeta,
+        ),
+      );
+    }
+    if (data.containsKey('reverses_expense_id')) {
+      context.handle(
+        _reversesExpenseIdMeta,
+        reversesExpenseId.isAcceptableOrUnknown(
+          data['reverses_expense_id']!,
+          _reversesExpenseIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('client_request_id')) {
+      context.handle(
+        _clientRequestIdMeta,
+        clientRequestId.isAcceptableOrUnknown(
+          data['client_request_id']!,
+          _clientRequestIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('reason')) {
+      context.handle(
+        _reasonMeta,
+        reason.isAcceptableOrUnknown(data['reason']!, _reasonMeta),
+      );
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    if (data.containsKey('transaction_at')) {
+      context.handle(
+        _transactionAtMeta,
+        transactionAt.isAcceptableOrUnknown(
+          data['transaction_at']!,
+          _transactionAtMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_transactionAtMeta);
+    }
+    if (data.containsKey('recorded_at')) {
+      context.handle(
+        _recordedAtMeta,
+        recordedAt.isAcceptableOrUnknown(data['recorded_at']!, _recordedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_recordedAtMeta);
+    }
+    if (data.containsKey('created_by')) {
+      context.handle(
+        _createdByMeta,
+        createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('updated_by')) {
+      context.handle(
+        _updatedByMeta,
+        updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  WorkshopExpenseRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return WorkshopExpenseRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      category: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}category'],
+      )!,
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      )!,
+      payeeName: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payee_name'],
+      ),
+      amountPaise: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_paise'],
+      )!,
+      paymentStatus: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payment_status'],
+      )!,
+      paymentMode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payment_mode'],
+      ),
+      referenceNo: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}reference_no'],
+      ),
+      reversesExpenseId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}reverses_expense_id'],
+      ),
+      clientRequestId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}client_request_id'],
+      ),
+      reason: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}reason'],
+      ),
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      transactionAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}transaction_at'],
+      )!,
+      recordedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}recorded_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
+  }
+
+  @override
+  $WorkshopExpensesTable createAlias(String alias) {
+    return $WorkshopExpensesTable(attachedDatabase, alias);
+  }
+}
+
+class WorkshopExpenseRow extends DataClass
+    implements Insertable<WorkshopExpenseRow> {
+  final String id;
+  final String category;
+  final String title;
+  final String? payeeName;
+  final int amountPaise;
+  final String paymentStatus;
+  final String? paymentMode;
+  final String? referenceNo;
+  final String? reversesExpenseId;
+  final String? clientRequestId;
+  final String? reason;
+  final String? notes;
+  final int transactionAt;
+  final int recordedAt;
+  final String? createdBy;
+  final String? updatedBy;
+  final int createdAt;
+  final int updatedAt;
+  final int? deletedAt;
+  const WorkshopExpenseRow({
+    required this.id,
+    required this.category,
+    required this.title,
+    this.payeeName,
+    required this.amountPaise,
+    required this.paymentStatus,
+    this.paymentMode,
+    this.referenceNo,
+    this.reversesExpenseId,
+    this.clientRequestId,
+    this.reason,
+    this.notes,
+    required this.transactionAt,
+    required this.recordedAt,
+    this.createdBy,
+    this.updatedBy,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['category'] = Variable<String>(category);
+    map['title'] = Variable<String>(title);
+    if (!nullToAbsent || payeeName != null) {
+      map['payee_name'] = Variable<String>(payeeName);
+    }
+    map['amount_paise'] = Variable<int>(amountPaise);
+    map['payment_status'] = Variable<String>(paymentStatus);
+    if (!nullToAbsent || paymentMode != null) {
+      map['payment_mode'] = Variable<String>(paymentMode);
+    }
+    if (!nullToAbsent || referenceNo != null) {
+      map['reference_no'] = Variable<String>(referenceNo);
+    }
+    if (!nullToAbsent || reversesExpenseId != null) {
+      map['reverses_expense_id'] = Variable<String>(reversesExpenseId);
+    }
+    if (!nullToAbsent || clientRequestId != null) {
+      map['client_request_id'] = Variable<String>(clientRequestId);
+    }
+    if (!nullToAbsent || reason != null) {
+      map['reason'] = Variable<String>(reason);
+    }
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    map['transaction_at'] = Variable<int>(transactionAt);
+    map['recorded_at'] = Variable<int>(recordedAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['created_at'] = Variable<int>(createdAt);
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  WorkshopExpensesCompanion toCompanion(bool nullToAbsent) {
+    return WorkshopExpensesCompanion(
+      id: Value(id),
+      category: Value(category),
+      title: Value(title),
+      payeeName: payeeName == null && nullToAbsent
+          ? const Value.absent()
+          : Value(payeeName),
+      amountPaise: Value(amountPaise),
+      paymentStatus: Value(paymentStatus),
+      paymentMode: paymentMode == null && nullToAbsent
+          ? const Value.absent()
+          : Value(paymentMode),
+      referenceNo: referenceNo == null && nullToAbsent
+          ? const Value.absent()
+          : Value(referenceNo),
+      reversesExpenseId: reversesExpenseId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(reversesExpenseId),
+      clientRequestId: clientRequestId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(clientRequestId),
+      reason: reason == null && nullToAbsent
+          ? const Value.absent()
+          : Value(reason),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      transactionAt: Value(transactionAt),
+      recordedAt: Value(recordedAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory WorkshopExpenseRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return WorkshopExpenseRow(
+      id: serializer.fromJson<String>(json['id']),
+      category: serializer.fromJson<String>(json['category']),
+      title: serializer.fromJson<String>(json['title']),
+      payeeName: serializer.fromJson<String?>(json['payeeName']),
+      amountPaise: serializer.fromJson<int>(json['amountPaise']),
+      paymentStatus: serializer.fromJson<String>(json['paymentStatus']),
+      paymentMode: serializer.fromJson<String?>(json['paymentMode']),
+      referenceNo: serializer.fromJson<String?>(json['referenceNo']),
+      reversesExpenseId: serializer.fromJson<String?>(
+        json['reversesExpenseId'],
+      ),
+      clientRequestId: serializer.fromJson<String?>(json['clientRequestId']),
+      reason: serializer.fromJson<String?>(json['reason']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      transactionAt: serializer.fromJson<int>(json['transactionAt']),
+      recordedAt: serializer.fromJson<int>(json['recordedAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'category': serializer.toJson<String>(category),
+      'title': serializer.toJson<String>(title),
+      'payeeName': serializer.toJson<String?>(payeeName),
+      'amountPaise': serializer.toJson<int>(amountPaise),
+      'paymentStatus': serializer.toJson<String>(paymentStatus),
+      'paymentMode': serializer.toJson<String?>(paymentMode),
+      'referenceNo': serializer.toJson<String?>(referenceNo),
+      'reversesExpenseId': serializer.toJson<String?>(reversesExpenseId),
+      'clientRequestId': serializer.toJson<String?>(clientRequestId),
+      'reason': serializer.toJson<String?>(reason),
+      'notes': serializer.toJson<String?>(notes),
+      'transactionAt': serializer.toJson<int>(transactionAt),
+      'recordedAt': serializer.toJson<int>(recordedAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  WorkshopExpenseRow copyWith({
+    String? id,
+    String? category,
+    String? title,
+    Value<String?> payeeName = const Value.absent(),
+    int? amountPaise,
+    String? paymentStatus,
+    Value<String?> paymentMode = const Value.absent(),
+    Value<String?> referenceNo = const Value.absent(),
+    Value<String?> reversesExpenseId = const Value.absent(),
+    Value<String?> clientRequestId = const Value.absent(),
+    Value<String?> reason = const Value.absent(),
+    Value<String?> notes = const Value.absent(),
+    int? transactionAt,
+    int? recordedAt,
+    Value<String?> createdBy = const Value.absent(),
+    Value<String?> updatedBy = const Value.absent(),
+    int? createdAt,
+    int? updatedAt,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => WorkshopExpenseRow(
+    id: id ?? this.id,
+    category: category ?? this.category,
+    title: title ?? this.title,
+    payeeName: payeeName.present ? payeeName.value : this.payeeName,
+    amountPaise: amountPaise ?? this.amountPaise,
+    paymentStatus: paymentStatus ?? this.paymentStatus,
+    paymentMode: paymentMode.present ? paymentMode.value : this.paymentMode,
+    referenceNo: referenceNo.present ? referenceNo.value : this.referenceNo,
+    reversesExpenseId: reversesExpenseId.present
+        ? reversesExpenseId.value
+        : this.reversesExpenseId,
+    clientRequestId: clientRequestId.present
+        ? clientRequestId.value
+        : this.clientRequestId,
+    reason: reason.present ? reason.value : this.reason,
+    notes: notes.present ? notes.value : this.notes,
+    transactionAt: transactionAt ?? this.transactionAt,
+    recordedAt: recordedAt ?? this.recordedAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  WorkshopExpenseRow copyWithCompanion(WorkshopExpensesCompanion data) {
+    return WorkshopExpenseRow(
+      id: data.id.present ? data.id.value : this.id,
+      category: data.category.present ? data.category.value : this.category,
+      title: data.title.present ? data.title.value : this.title,
+      payeeName: data.payeeName.present ? data.payeeName.value : this.payeeName,
+      amountPaise: data.amountPaise.present
+          ? data.amountPaise.value
+          : this.amountPaise,
+      paymentStatus: data.paymentStatus.present
+          ? data.paymentStatus.value
+          : this.paymentStatus,
+      paymentMode: data.paymentMode.present
+          ? data.paymentMode.value
+          : this.paymentMode,
+      referenceNo: data.referenceNo.present
+          ? data.referenceNo.value
+          : this.referenceNo,
+      reversesExpenseId: data.reversesExpenseId.present
+          ? data.reversesExpenseId.value
+          : this.reversesExpenseId,
+      clientRequestId: data.clientRequestId.present
+          ? data.clientRequestId.value
+          : this.clientRequestId,
+      reason: data.reason.present ? data.reason.value : this.reason,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      transactionAt: data.transactionAt.present
+          ? data.transactionAt.value
+          : this.transactionAt,
+      recordedAt: data.recordedAt.present
+          ? data.recordedAt.value
+          : this.recordedAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('WorkshopExpenseRow(')
+          ..write('id: $id, ')
+          ..write('category: $category, ')
+          ..write('title: $title, ')
+          ..write('payeeName: $payeeName, ')
+          ..write('amountPaise: $amountPaise, ')
+          ..write('paymentStatus: $paymentStatus, ')
+          ..write('paymentMode: $paymentMode, ')
+          ..write('referenceNo: $referenceNo, ')
+          ..write('reversesExpenseId: $reversesExpenseId, ')
+          ..write('clientRequestId: $clientRequestId, ')
+          ..write('reason: $reason, ')
+          ..write('notes: $notes, ')
+          ..write('transactionAt: $transactionAt, ')
+          ..write('recordedAt: $recordedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    category,
+    title,
+    payeeName,
+    amountPaise,
+    paymentStatus,
+    paymentMode,
+    referenceNo,
+    reversesExpenseId,
+    clientRequestId,
+    reason,
+    notes,
+    transactionAt,
+    recordedAt,
+    createdBy,
+    updatedBy,
+    createdAt,
+    updatedAt,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is WorkshopExpenseRow &&
+          other.id == this.id &&
+          other.category == this.category &&
+          other.title == this.title &&
+          other.payeeName == this.payeeName &&
+          other.amountPaise == this.amountPaise &&
+          other.paymentStatus == this.paymentStatus &&
+          other.paymentMode == this.paymentMode &&
+          other.referenceNo == this.referenceNo &&
+          other.reversesExpenseId == this.reversesExpenseId &&
+          other.clientRequestId == this.clientRequestId &&
+          other.reason == this.reason &&
+          other.notes == this.notes &&
+          other.transactionAt == this.transactionAt &&
+          other.recordedAt == this.recordedAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedBy == this.updatedBy &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt);
+}
+
+class WorkshopExpensesCompanion extends UpdateCompanion<WorkshopExpenseRow> {
+  final Value<String> id;
+  final Value<String> category;
+  final Value<String> title;
+  final Value<String?> payeeName;
+  final Value<int> amountPaise;
+  final Value<String> paymentStatus;
+  final Value<String?> paymentMode;
+  final Value<String?> referenceNo;
+  final Value<String?> reversesExpenseId;
+  final Value<String?> clientRequestId;
+  final Value<String?> reason;
+  final Value<String?> notes;
+  final Value<int> transactionAt;
+  final Value<int> recordedAt;
+  final Value<String?> createdBy;
+  final Value<String?> updatedBy;
+  final Value<int> createdAt;
+  final Value<int> updatedAt;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const WorkshopExpensesCompanion({
+    this.id = const Value.absent(),
+    this.category = const Value.absent(),
+    this.title = const Value.absent(),
+    this.payeeName = const Value.absent(),
+    this.amountPaise = const Value.absent(),
+    this.paymentStatus = const Value.absent(),
+    this.paymentMode = const Value.absent(),
+    this.referenceNo = const Value.absent(),
+    this.reversesExpenseId = const Value.absent(),
+    this.clientRequestId = const Value.absent(),
+    this.reason = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.transactionAt = const Value.absent(),
+    this.recordedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  WorkshopExpensesCompanion.insert({
+    required String id,
+    required String category,
+    required String title,
+    this.payeeName = const Value.absent(),
+    required int amountPaise,
+    required String paymentStatus,
+    this.paymentMode = const Value.absent(),
+    this.referenceNo = const Value.absent(),
+    this.reversesExpenseId = const Value.absent(),
+    this.clientRequestId = const Value.absent(),
+    this.reason = const Value.absent(),
+    this.notes = const Value.absent(),
+    required int transactionAt,
+    required int recordedAt,
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    required int createdAt,
+    required int updatedAt,
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       category = Value(category),
+       title = Value(title),
+       amountPaise = Value(amountPaise),
+       paymentStatus = Value(paymentStatus),
+       transactionAt = Value(transactionAt),
+       recordedAt = Value(recordedAt),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<WorkshopExpenseRow> custom({
+    Expression<String>? id,
+    Expression<String>? category,
+    Expression<String>? title,
+    Expression<String>? payeeName,
+    Expression<int>? amountPaise,
+    Expression<String>? paymentStatus,
+    Expression<String>? paymentMode,
+    Expression<String>? referenceNo,
+    Expression<String>? reversesExpenseId,
+    Expression<String>? clientRequestId,
+    Expression<String>? reason,
+    Expression<String>? notes,
+    Expression<int>? transactionAt,
+    Expression<int>? recordedAt,
+    Expression<String>? createdBy,
+    Expression<String>? updatedBy,
+    Expression<int>? createdAt,
+    Expression<int>? updatedAt,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (category != null) 'category': category,
+      if (title != null) 'title': title,
+      if (payeeName != null) 'payee_name': payeeName,
+      if (amountPaise != null) 'amount_paise': amountPaise,
+      if (paymentStatus != null) 'payment_status': paymentStatus,
+      if (paymentMode != null) 'payment_mode': paymentMode,
+      if (referenceNo != null) 'reference_no': referenceNo,
+      if (reversesExpenseId != null) 'reverses_expense_id': reversesExpenseId,
+      if (clientRequestId != null) 'client_request_id': clientRequestId,
+      if (reason != null) 'reason': reason,
+      if (notes != null) 'notes': notes,
+      if (transactionAt != null) 'transaction_at': transactionAt,
+      if (recordedAt != null) 'recorded_at': recordedAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  WorkshopExpensesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? category,
+    Value<String>? title,
+    Value<String?>? payeeName,
+    Value<int>? amountPaise,
+    Value<String>? paymentStatus,
+    Value<String?>? paymentMode,
+    Value<String?>? referenceNo,
+    Value<String?>? reversesExpenseId,
+    Value<String?>? clientRequestId,
+    Value<String?>? reason,
+    Value<String?>? notes,
+    Value<int>? transactionAt,
+    Value<int>? recordedAt,
+    Value<String?>? createdBy,
+    Value<String?>? updatedBy,
+    Value<int>? createdAt,
+    Value<int>? updatedAt,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return WorkshopExpensesCompanion(
+      id: id ?? this.id,
+      category: category ?? this.category,
+      title: title ?? this.title,
+      payeeName: payeeName ?? this.payeeName,
+      amountPaise: amountPaise ?? this.amountPaise,
+      paymentStatus: paymentStatus ?? this.paymentStatus,
+      paymentMode: paymentMode ?? this.paymentMode,
+      referenceNo: referenceNo ?? this.referenceNo,
+      reversesExpenseId: reversesExpenseId ?? this.reversesExpenseId,
+      clientRequestId: clientRequestId ?? this.clientRequestId,
+      reason: reason ?? this.reason,
+      notes: notes ?? this.notes,
+      transactionAt: transactionAt ?? this.transactionAt,
+      recordedAt: recordedAt ?? this.recordedAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedBy: updatedBy ?? this.updatedBy,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (category.present) {
+      map['category'] = Variable<String>(category.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (payeeName.present) {
+      map['payee_name'] = Variable<String>(payeeName.value);
+    }
+    if (amountPaise.present) {
+      map['amount_paise'] = Variable<int>(amountPaise.value);
+    }
+    if (paymentStatus.present) {
+      map['payment_status'] = Variable<String>(paymentStatus.value);
+    }
+    if (paymentMode.present) {
+      map['payment_mode'] = Variable<String>(paymentMode.value);
+    }
+    if (referenceNo.present) {
+      map['reference_no'] = Variable<String>(referenceNo.value);
+    }
+    if (reversesExpenseId.present) {
+      map['reverses_expense_id'] = Variable<String>(reversesExpenseId.value);
+    }
+    if (clientRequestId.present) {
+      map['client_request_id'] = Variable<String>(clientRequestId.value);
+    }
+    if (reason.present) {
+      map['reason'] = Variable<String>(reason.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (transactionAt.present) {
+      map['transaction_at'] = Variable<int>(transactionAt.value);
+    }
+    if (recordedAt.present) {
+      map['recorded_at'] = Variable<int>(recordedAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('WorkshopExpensesCompanion(')
+          ..write('id: $id, ')
+          ..write('category: $category, ')
+          ..write('title: $title, ')
+          ..write('payeeName: $payeeName, ')
+          ..write('amountPaise: $amountPaise, ')
+          ..write('paymentStatus: $paymentStatus, ')
+          ..write('paymentMode: $paymentMode, ')
+          ..write('referenceNo: $referenceNo, ')
+          ..write('reversesExpenseId: $reversesExpenseId, ')
+          ..write('clientRequestId: $clientRequestId, ')
+          ..write('reason: $reason, ')
+          ..write('notes: $notes, ')
+          ..write('transactionAt: $transactionAt, ')
+          ..write('recordedAt: $recordedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $CashbookEntriesTable extends CashbookEntries
+    with TableInfo<$CashbookEntriesTable, CashbookEntryRow> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $CashbookEntriesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _entryTypeMeta = const VerificationMeta(
+    'entryType',
+  );
+  @override
+  late final GeneratedColumn<String> entryType = GeneratedColumn<String>(
+    'entry_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _accountBucketMeta = const VerificationMeta(
+    'accountBucket',
+  );
+  @override
+  late final GeneratedColumn<String> accountBucket = GeneratedColumn<String>(
+    'account_bucket',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _paymentModeMeta = const VerificationMeta(
+    'paymentMode',
+  );
+  @override
+  late final GeneratedColumn<String> paymentMode = GeneratedColumn<String>(
+    'payment_mode',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _amountPaiseMeta = const VerificationMeta(
+    'amountPaise',
+  );
+  @override
+  late final GeneratedColumn<int> amountPaise = GeneratedColumn<int>(
+    'amount_paise',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _linkedExpenseIdMeta = const VerificationMeta(
+    'linkedExpenseId',
+  );
+  @override
+  late final GeneratedColumn<String> linkedExpenseId = GeneratedColumn<String>(
+    'linked_expense_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES workshop_expenses (id) ON DELETE RESTRICT',
+    ),
+  );
+  static const VerificationMeta _reversesEntryIdMeta = const VerificationMeta(
+    'reversesEntryId',
+  );
+  @override
+  late final GeneratedColumn<String> reversesEntryId = GeneratedColumn<String>(
+    'reverses_entry_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES cashbook_entries (id) ON DELETE RESTRICT',
+    ),
+  );
+  static const VerificationMeta _clientRequestIdMeta = const VerificationMeta(
+    'clientRequestId',
+  );
+  @override
+  late final GeneratedColumn<String> clientRequestId = GeneratedColumn<String>(
+    'client_request_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _referenceNoMeta = const VerificationMeta(
+    'referenceNo',
+  );
+  @override
+  late final GeneratedColumn<String> referenceNo = GeneratedColumn<String>(
+    'reference_no',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _reasonMeta = const VerificationMeta('reason');
+  @override
+  late final GeneratedColumn<String> reason = GeneratedColumn<String>(
+    'reason',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _notesMeta = const VerificationMeta('notes');
+  @override
+  late final GeneratedColumn<String> notes = GeneratedColumn<String>(
+    'notes',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _transactionAtMeta = const VerificationMeta(
+    'transactionAt',
+  );
+  @override
+  late final GeneratedColumn<int> transactionAt = GeneratedColumn<int>(
+    'transaction_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _recordedAtMeta = const VerificationMeta(
+    'recordedAt',
+  );
+  @override
+  late final GeneratedColumn<int> recordedAt = GeneratedColumn<int>(
+    'recorded_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdByMeta = const VerificationMeta(
+    'createdBy',
+  );
+  @override
+  late final GeneratedColumn<String> createdBy = GeneratedColumn<String>(
+    'created_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _updatedByMeta = const VerificationMeta(
+    'updatedBy',
+  );
+  @override
+  late final GeneratedColumn<String> updatedBy = GeneratedColumn<String>(
+    'updated_by',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<int> createdAt = GeneratedColumn<int>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _updatedAtMeta = const VerificationMeta(
+    'updatedAt',
+  );
+  @override
+  late final GeneratedColumn<int> updatedAt = GeneratedColumn<int>(
+    'updated_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _deletedAtMeta = const VerificationMeta(
+    'deletedAt',
+  );
+  @override
+  late final GeneratedColumn<int> deletedAt = GeneratedColumn<int>(
+    'deleted_at',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    entryType,
+    accountBucket,
+    paymentMode,
+    amountPaise,
+    linkedExpenseId,
+    reversesEntryId,
+    clientRequestId,
+    referenceNo,
+    reason,
+    notes,
+    transactionAt,
+    recordedAt,
+    createdBy,
+    updatedBy,
+    createdAt,
+    updatedAt,
+    deletedAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'cashbook_entries';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<CashbookEntryRow> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('entry_type')) {
+      context.handle(
+        _entryTypeMeta,
+        entryType.isAcceptableOrUnknown(data['entry_type']!, _entryTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_entryTypeMeta);
+    }
+    if (data.containsKey('account_bucket')) {
+      context.handle(
+        _accountBucketMeta,
+        accountBucket.isAcceptableOrUnknown(
+          data['account_bucket']!,
+          _accountBucketMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_accountBucketMeta);
+    }
+    if (data.containsKey('payment_mode')) {
+      context.handle(
+        _paymentModeMeta,
+        paymentMode.isAcceptableOrUnknown(
+          data['payment_mode']!,
+          _paymentModeMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_paymentModeMeta);
+    }
+    if (data.containsKey('amount_paise')) {
+      context.handle(
+        _amountPaiseMeta,
+        amountPaise.isAcceptableOrUnknown(
+          data['amount_paise']!,
+          _amountPaiseMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_amountPaiseMeta);
+    }
+    if (data.containsKey('linked_expense_id')) {
+      context.handle(
+        _linkedExpenseIdMeta,
+        linkedExpenseId.isAcceptableOrUnknown(
+          data['linked_expense_id']!,
+          _linkedExpenseIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('reverses_entry_id')) {
+      context.handle(
+        _reversesEntryIdMeta,
+        reversesEntryId.isAcceptableOrUnknown(
+          data['reverses_entry_id']!,
+          _reversesEntryIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('client_request_id')) {
+      context.handle(
+        _clientRequestIdMeta,
+        clientRequestId.isAcceptableOrUnknown(
+          data['client_request_id']!,
+          _clientRequestIdMeta,
+        ),
+      );
+    }
+    if (data.containsKey('reference_no')) {
+      context.handle(
+        _referenceNoMeta,
+        referenceNo.isAcceptableOrUnknown(
+          data['reference_no']!,
+          _referenceNoMeta,
+        ),
+      );
+    }
+    if (data.containsKey('reason')) {
+      context.handle(
+        _reasonMeta,
+        reason.isAcceptableOrUnknown(data['reason']!, _reasonMeta),
+      );
+    }
+    if (data.containsKey('notes')) {
+      context.handle(
+        _notesMeta,
+        notes.isAcceptableOrUnknown(data['notes']!, _notesMeta),
+      );
+    }
+    if (data.containsKey('transaction_at')) {
+      context.handle(
+        _transactionAtMeta,
+        transactionAt.isAcceptableOrUnknown(
+          data['transaction_at']!,
+          _transactionAtMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_transactionAtMeta);
+    }
+    if (data.containsKey('recorded_at')) {
+      context.handle(
+        _recordedAtMeta,
+        recordedAt.isAcceptableOrUnknown(data['recorded_at']!, _recordedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_recordedAtMeta);
+    }
+    if (data.containsKey('created_by')) {
+      context.handle(
+        _createdByMeta,
+        createdBy.isAcceptableOrUnknown(data['created_by']!, _createdByMeta),
+      );
+    }
+    if (data.containsKey('updated_by')) {
+      context.handle(
+        _updatedByMeta,
+        updatedBy.isAcceptableOrUnknown(data['updated_by']!, _updatedByMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    if (data.containsKey('updated_at')) {
+      context.handle(
+        _updatedAtMeta,
+        updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_updatedAtMeta);
+    }
+    if (data.containsKey('deleted_at')) {
+      context.handle(
+        _deletedAtMeta,
+        deletedAt.isAcceptableOrUnknown(data['deleted_at']!, _deletedAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  CashbookEntryRow map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return CashbookEntryRow(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      entryType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}entry_type'],
+      )!,
+      accountBucket: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}account_bucket'],
+      )!,
+      paymentMode: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}payment_mode'],
+      )!,
+      amountPaise: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}amount_paise'],
+      )!,
+      linkedExpenseId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}linked_expense_id'],
+      ),
+      reversesEntryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}reverses_entry_id'],
+      ),
+      clientRequestId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}client_request_id'],
+      ),
+      referenceNo: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}reference_no'],
+      ),
+      reason: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}reason'],
+      ),
+      notes: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}notes'],
+      ),
+      transactionAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}transaction_at'],
+      )!,
+      recordedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}recorded_at'],
+      )!,
+      createdBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}created_by'],
+      ),
+      updatedBy: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}updated_by'],
+      ),
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}created_at'],
+      )!,
+      updatedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}updated_at'],
+      )!,
+      deletedAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}deleted_at'],
+      ),
+    );
+  }
+
+  @override
+  $CashbookEntriesTable createAlias(String alias) {
+    return $CashbookEntriesTable(attachedDatabase, alias);
+  }
+}
+
+class CashbookEntryRow extends DataClass
+    implements Insertable<CashbookEntryRow> {
+  final String id;
+  final String entryType;
+  final String accountBucket;
+  final String paymentMode;
+  final int amountPaise;
+  final String? linkedExpenseId;
+  final String? reversesEntryId;
+  final String? clientRequestId;
+  final String? referenceNo;
+  final String? reason;
+  final String? notes;
+  final int transactionAt;
+  final int recordedAt;
+  final String? createdBy;
+  final String? updatedBy;
+  final int createdAt;
+  final int updatedAt;
+  final int? deletedAt;
+  const CashbookEntryRow({
+    required this.id,
+    required this.entryType,
+    required this.accountBucket,
+    required this.paymentMode,
+    required this.amountPaise,
+    this.linkedExpenseId,
+    this.reversesEntryId,
+    this.clientRequestId,
+    this.referenceNo,
+    this.reason,
+    this.notes,
+    required this.transactionAt,
+    required this.recordedAt,
+    this.createdBy,
+    this.updatedBy,
+    required this.createdAt,
+    required this.updatedAt,
+    this.deletedAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['entry_type'] = Variable<String>(entryType);
+    map['account_bucket'] = Variable<String>(accountBucket);
+    map['payment_mode'] = Variable<String>(paymentMode);
+    map['amount_paise'] = Variable<int>(amountPaise);
+    if (!nullToAbsent || linkedExpenseId != null) {
+      map['linked_expense_id'] = Variable<String>(linkedExpenseId);
+    }
+    if (!nullToAbsent || reversesEntryId != null) {
+      map['reverses_entry_id'] = Variable<String>(reversesEntryId);
+    }
+    if (!nullToAbsent || clientRequestId != null) {
+      map['client_request_id'] = Variable<String>(clientRequestId);
+    }
+    if (!nullToAbsent || referenceNo != null) {
+      map['reference_no'] = Variable<String>(referenceNo);
+    }
+    if (!nullToAbsent || reason != null) {
+      map['reason'] = Variable<String>(reason);
+    }
+    if (!nullToAbsent || notes != null) {
+      map['notes'] = Variable<String>(notes);
+    }
+    map['transaction_at'] = Variable<int>(transactionAt);
+    map['recorded_at'] = Variable<int>(recordedAt);
+    if (!nullToAbsent || createdBy != null) {
+      map['created_by'] = Variable<String>(createdBy);
+    }
+    if (!nullToAbsent || updatedBy != null) {
+      map['updated_by'] = Variable<String>(updatedBy);
+    }
+    map['created_at'] = Variable<int>(createdAt);
+    map['updated_at'] = Variable<int>(updatedAt);
+    if (!nullToAbsent || deletedAt != null) {
+      map['deleted_at'] = Variable<int>(deletedAt);
+    }
+    return map;
+  }
+
+  CashbookEntriesCompanion toCompanion(bool nullToAbsent) {
+    return CashbookEntriesCompanion(
+      id: Value(id),
+      entryType: Value(entryType),
+      accountBucket: Value(accountBucket),
+      paymentMode: Value(paymentMode),
+      amountPaise: Value(amountPaise),
+      linkedExpenseId: linkedExpenseId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(linkedExpenseId),
+      reversesEntryId: reversesEntryId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(reversesEntryId),
+      clientRequestId: clientRequestId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(clientRequestId),
+      referenceNo: referenceNo == null && nullToAbsent
+          ? const Value.absent()
+          : Value(referenceNo),
+      reason: reason == null && nullToAbsent
+          ? const Value.absent()
+          : Value(reason),
+      notes: notes == null && nullToAbsent
+          ? const Value.absent()
+          : Value(notes),
+      transactionAt: Value(transactionAt),
+      recordedAt: Value(recordedAt),
+      createdBy: createdBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdBy),
+      updatedBy: updatedBy == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedBy),
+      createdAt: Value(createdAt),
+      updatedAt: Value(updatedAt),
+      deletedAt: deletedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(deletedAt),
+    );
+  }
+
+  factory CashbookEntryRow.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return CashbookEntryRow(
+      id: serializer.fromJson<String>(json['id']),
+      entryType: serializer.fromJson<String>(json['entryType']),
+      accountBucket: serializer.fromJson<String>(json['accountBucket']),
+      paymentMode: serializer.fromJson<String>(json['paymentMode']),
+      amountPaise: serializer.fromJson<int>(json['amountPaise']),
+      linkedExpenseId: serializer.fromJson<String?>(json['linkedExpenseId']),
+      reversesEntryId: serializer.fromJson<String?>(json['reversesEntryId']),
+      clientRequestId: serializer.fromJson<String?>(json['clientRequestId']),
+      referenceNo: serializer.fromJson<String?>(json['referenceNo']),
+      reason: serializer.fromJson<String?>(json['reason']),
+      notes: serializer.fromJson<String?>(json['notes']),
+      transactionAt: serializer.fromJson<int>(json['transactionAt']),
+      recordedAt: serializer.fromJson<int>(json['recordedAt']),
+      createdBy: serializer.fromJson<String?>(json['createdBy']),
+      updatedBy: serializer.fromJson<String?>(json['updatedBy']),
+      createdAt: serializer.fromJson<int>(json['createdAt']),
+      updatedAt: serializer.fromJson<int>(json['updatedAt']),
+      deletedAt: serializer.fromJson<int?>(json['deletedAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'entryType': serializer.toJson<String>(entryType),
+      'accountBucket': serializer.toJson<String>(accountBucket),
+      'paymentMode': serializer.toJson<String>(paymentMode),
+      'amountPaise': serializer.toJson<int>(amountPaise),
+      'linkedExpenseId': serializer.toJson<String?>(linkedExpenseId),
+      'reversesEntryId': serializer.toJson<String?>(reversesEntryId),
+      'clientRequestId': serializer.toJson<String?>(clientRequestId),
+      'referenceNo': serializer.toJson<String?>(referenceNo),
+      'reason': serializer.toJson<String?>(reason),
+      'notes': serializer.toJson<String?>(notes),
+      'transactionAt': serializer.toJson<int>(transactionAt),
+      'recordedAt': serializer.toJson<int>(recordedAt),
+      'createdBy': serializer.toJson<String?>(createdBy),
+      'updatedBy': serializer.toJson<String?>(updatedBy),
+      'createdAt': serializer.toJson<int>(createdAt),
+      'updatedAt': serializer.toJson<int>(updatedAt),
+      'deletedAt': serializer.toJson<int?>(deletedAt),
+    };
+  }
+
+  CashbookEntryRow copyWith({
+    String? id,
+    String? entryType,
+    String? accountBucket,
+    String? paymentMode,
+    int? amountPaise,
+    Value<String?> linkedExpenseId = const Value.absent(),
+    Value<String?> reversesEntryId = const Value.absent(),
+    Value<String?> clientRequestId = const Value.absent(),
+    Value<String?> referenceNo = const Value.absent(),
+    Value<String?> reason = const Value.absent(),
+    Value<String?> notes = const Value.absent(),
+    int? transactionAt,
+    int? recordedAt,
+    Value<String?> createdBy = const Value.absent(),
+    Value<String?> updatedBy = const Value.absent(),
+    int? createdAt,
+    int? updatedAt,
+    Value<int?> deletedAt = const Value.absent(),
+  }) => CashbookEntryRow(
+    id: id ?? this.id,
+    entryType: entryType ?? this.entryType,
+    accountBucket: accountBucket ?? this.accountBucket,
+    paymentMode: paymentMode ?? this.paymentMode,
+    amountPaise: amountPaise ?? this.amountPaise,
+    linkedExpenseId: linkedExpenseId.present
+        ? linkedExpenseId.value
+        : this.linkedExpenseId,
+    reversesEntryId: reversesEntryId.present
+        ? reversesEntryId.value
+        : this.reversesEntryId,
+    clientRequestId: clientRequestId.present
+        ? clientRequestId.value
+        : this.clientRequestId,
+    referenceNo: referenceNo.present ? referenceNo.value : this.referenceNo,
+    reason: reason.present ? reason.value : this.reason,
+    notes: notes.present ? notes.value : this.notes,
+    transactionAt: transactionAt ?? this.transactionAt,
+    recordedAt: recordedAt ?? this.recordedAt,
+    createdBy: createdBy.present ? createdBy.value : this.createdBy,
+    updatedBy: updatedBy.present ? updatedBy.value : this.updatedBy,
+    createdAt: createdAt ?? this.createdAt,
+    updatedAt: updatedAt ?? this.updatedAt,
+    deletedAt: deletedAt.present ? deletedAt.value : this.deletedAt,
+  );
+  CashbookEntryRow copyWithCompanion(CashbookEntriesCompanion data) {
+    return CashbookEntryRow(
+      id: data.id.present ? data.id.value : this.id,
+      entryType: data.entryType.present ? data.entryType.value : this.entryType,
+      accountBucket: data.accountBucket.present
+          ? data.accountBucket.value
+          : this.accountBucket,
+      paymentMode: data.paymentMode.present
+          ? data.paymentMode.value
+          : this.paymentMode,
+      amountPaise: data.amountPaise.present
+          ? data.amountPaise.value
+          : this.amountPaise,
+      linkedExpenseId: data.linkedExpenseId.present
+          ? data.linkedExpenseId.value
+          : this.linkedExpenseId,
+      reversesEntryId: data.reversesEntryId.present
+          ? data.reversesEntryId.value
+          : this.reversesEntryId,
+      clientRequestId: data.clientRequestId.present
+          ? data.clientRequestId.value
+          : this.clientRequestId,
+      referenceNo: data.referenceNo.present
+          ? data.referenceNo.value
+          : this.referenceNo,
+      reason: data.reason.present ? data.reason.value : this.reason,
+      notes: data.notes.present ? data.notes.value : this.notes,
+      transactionAt: data.transactionAt.present
+          ? data.transactionAt.value
+          : this.transactionAt,
+      recordedAt: data.recordedAt.present
+          ? data.recordedAt.value
+          : this.recordedAt,
+      createdBy: data.createdBy.present ? data.createdBy.value : this.createdBy,
+      updatedBy: data.updatedBy.present ? data.updatedBy.value : this.updatedBy,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+      updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
+      deletedAt: data.deletedAt.present ? data.deletedAt.value : this.deletedAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CashbookEntryRow(')
+          ..write('id: $id, ')
+          ..write('entryType: $entryType, ')
+          ..write('accountBucket: $accountBucket, ')
+          ..write('paymentMode: $paymentMode, ')
+          ..write('amountPaise: $amountPaise, ')
+          ..write('linkedExpenseId: $linkedExpenseId, ')
+          ..write('reversesEntryId: $reversesEntryId, ')
+          ..write('clientRequestId: $clientRequestId, ')
+          ..write('referenceNo: $referenceNo, ')
+          ..write('reason: $reason, ')
+          ..write('notes: $notes, ')
+          ..write('transactionAt: $transactionAt, ')
+          ..write('recordedAt: $recordedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    entryType,
+    accountBucket,
+    paymentMode,
+    amountPaise,
+    linkedExpenseId,
+    reversesEntryId,
+    clientRequestId,
+    referenceNo,
+    reason,
+    notes,
+    transactionAt,
+    recordedAt,
+    createdBy,
+    updatedBy,
+    createdAt,
+    updatedAt,
+    deletedAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is CashbookEntryRow &&
+          other.id == this.id &&
+          other.entryType == this.entryType &&
+          other.accountBucket == this.accountBucket &&
+          other.paymentMode == this.paymentMode &&
+          other.amountPaise == this.amountPaise &&
+          other.linkedExpenseId == this.linkedExpenseId &&
+          other.reversesEntryId == this.reversesEntryId &&
+          other.clientRequestId == this.clientRequestId &&
+          other.referenceNo == this.referenceNo &&
+          other.reason == this.reason &&
+          other.notes == this.notes &&
+          other.transactionAt == this.transactionAt &&
+          other.recordedAt == this.recordedAt &&
+          other.createdBy == this.createdBy &&
+          other.updatedBy == this.updatedBy &&
+          other.createdAt == this.createdAt &&
+          other.updatedAt == this.updatedAt &&
+          other.deletedAt == this.deletedAt);
+}
+
+class CashbookEntriesCompanion extends UpdateCompanion<CashbookEntryRow> {
+  final Value<String> id;
+  final Value<String> entryType;
+  final Value<String> accountBucket;
+  final Value<String> paymentMode;
+  final Value<int> amountPaise;
+  final Value<String?> linkedExpenseId;
+  final Value<String?> reversesEntryId;
+  final Value<String?> clientRequestId;
+  final Value<String?> referenceNo;
+  final Value<String?> reason;
+  final Value<String?> notes;
+  final Value<int> transactionAt;
+  final Value<int> recordedAt;
+  final Value<String?> createdBy;
+  final Value<String?> updatedBy;
+  final Value<int> createdAt;
+  final Value<int> updatedAt;
+  final Value<int?> deletedAt;
+  final Value<int> rowid;
+  const CashbookEntriesCompanion({
+    this.id = const Value.absent(),
+    this.entryType = const Value.absent(),
+    this.accountBucket = const Value.absent(),
+    this.paymentMode = const Value.absent(),
+    this.amountPaise = const Value.absent(),
+    this.linkedExpenseId = const Value.absent(),
+    this.reversesEntryId = const Value.absent(),
+    this.clientRequestId = const Value.absent(),
+    this.referenceNo = const Value.absent(),
+    this.reason = const Value.absent(),
+    this.notes = const Value.absent(),
+    this.transactionAt = const Value.absent(),
+    this.recordedAt = const Value.absent(),
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  CashbookEntriesCompanion.insert({
+    required String id,
+    required String entryType,
+    required String accountBucket,
+    required String paymentMode,
+    required int amountPaise,
+    this.linkedExpenseId = const Value.absent(),
+    this.reversesEntryId = const Value.absent(),
+    this.clientRequestId = const Value.absent(),
+    this.referenceNo = const Value.absent(),
+    this.reason = const Value.absent(),
+    this.notes = const Value.absent(),
+    required int transactionAt,
+    required int recordedAt,
+    this.createdBy = const Value.absent(),
+    this.updatedBy = const Value.absent(),
+    required int createdAt,
+    required int updatedAt,
+    this.deletedAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       entryType = Value(entryType),
+       accountBucket = Value(accountBucket),
+       paymentMode = Value(paymentMode),
+       amountPaise = Value(amountPaise),
+       transactionAt = Value(transactionAt),
+       recordedAt = Value(recordedAt),
+       createdAt = Value(createdAt),
+       updatedAt = Value(updatedAt);
+  static Insertable<CashbookEntryRow> custom({
+    Expression<String>? id,
+    Expression<String>? entryType,
+    Expression<String>? accountBucket,
+    Expression<String>? paymentMode,
+    Expression<int>? amountPaise,
+    Expression<String>? linkedExpenseId,
+    Expression<String>? reversesEntryId,
+    Expression<String>? clientRequestId,
+    Expression<String>? referenceNo,
+    Expression<String>? reason,
+    Expression<String>? notes,
+    Expression<int>? transactionAt,
+    Expression<int>? recordedAt,
+    Expression<String>? createdBy,
+    Expression<String>? updatedBy,
+    Expression<int>? createdAt,
+    Expression<int>? updatedAt,
+    Expression<int>? deletedAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (entryType != null) 'entry_type': entryType,
+      if (accountBucket != null) 'account_bucket': accountBucket,
+      if (paymentMode != null) 'payment_mode': paymentMode,
+      if (amountPaise != null) 'amount_paise': amountPaise,
+      if (linkedExpenseId != null) 'linked_expense_id': linkedExpenseId,
+      if (reversesEntryId != null) 'reverses_entry_id': reversesEntryId,
+      if (clientRequestId != null) 'client_request_id': clientRequestId,
+      if (referenceNo != null) 'reference_no': referenceNo,
+      if (reason != null) 'reason': reason,
+      if (notes != null) 'notes': notes,
+      if (transactionAt != null) 'transaction_at': transactionAt,
+      if (recordedAt != null) 'recorded_at': recordedAt,
+      if (createdBy != null) 'created_by': createdBy,
+      if (updatedBy != null) 'updated_by': updatedBy,
+      if (createdAt != null) 'created_at': createdAt,
+      if (updatedAt != null) 'updated_at': updatedAt,
+      if (deletedAt != null) 'deleted_at': deletedAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  CashbookEntriesCompanion copyWith({
+    Value<String>? id,
+    Value<String>? entryType,
+    Value<String>? accountBucket,
+    Value<String>? paymentMode,
+    Value<int>? amountPaise,
+    Value<String?>? linkedExpenseId,
+    Value<String?>? reversesEntryId,
+    Value<String?>? clientRequestId,
+    Value<String?>? referenceNo,
+    Value<String?>? reason,
+    Value<String?>? notes,
+    Value<int>? transactionAt,
+    Value<int>? recordedAt,
+    Value<String?>? createdBy,
+    Value<String?>? updatedBy,
+    Value<int>? createdAt,
+    Value<int>? updatedAt,
+    Value<int?>? deletedAt,
+    Value<int>? rowid,
+  }) {
+    return CashbookEntriesCompanion(
+      id: id ?? this.id,
+      entryType: entryType ?? this.entryType,
+      accountBucket: accountBucket ?? this.accountBucket,
+      paymentMode: paymentMode ?? this.paymentMode,
+      amountPaise: amountPaise ?? this.amountPaise,
+      linkedExpenseId: linkedExpenseId ?? this.linkedExpenseId,
+      reversesEntryId: reversesEntryId ?? this.reversesEntryId,
+      clientRequestId: clientRequestId ?? this.clientRequestId,
+      referenceNo: referenceNo ?? this.referenceNo,
+      reason: reason ?? this.reason,
+      notes: notes ?? this.notes,
+      transactionAt: transactionAt ?? this.transactionAt,
+      recordedAt: recordedAt ?? this.recordedAt,
+      createdBy: createdBy ?? this.createdBy,
+      updatedBy: updatedBy ?? this.updatedBy,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      deletedAt: deletedAt ?? this.deletedAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (entryType.present) {
+      map['entry_type'] = Variable<String>(entryType.value);
+    }
+    if (accountBucket.present) {
+      map['account_bucket'] = Variable<String>(accountBucket.value);
+    }
+    if (paymentMode.present) {
+      map['payment_mode'] = Variable<String>(paymentMode.value);
+    }
+    if (amountPaise.present) {
+      map['amount_paise'] = Variable<int>(amountPaise.value);
+    }
+    if (linkedExpenseId.present) {
+      map['linked_expense_id'] = Variable<String>(linkedExpenseId.value);
+    }
+    if (reversesEntryId.present) {
+      map['reverses_entry_id'] = Variable<String>(reversesEntryId.value);
+    }
+    if (clientRequestId.present) {
+      map['client_request_id'] = Variable<String>(clientRequestId.value);
+    }
+    if (referenceNo.present) {
+      map['reference_no'] = Variable<String>(referenceNo.value);
+    }
+    if (reason.present) {
+      map['reason'] = Variable<String>(reason.value);
+    }
+    if (notes.present) {
+      map['notes'] = Variable<String>(notes.value);
+    }
+    if (transactionAt.present) {
+      map['transaction_at'] = Variable<int>(transactionAt.value);
+    }
+    if (recordedAt.present) {
+      map['recorded_at'] = Variable<int>(recordedAt.value);
+    }
+    if (createdBy.present) {
+      map['created_by'] = Variable<String>(createdBy.value);
+    }
+    if (updatedBy.present) {
+      map['updated_by'] = Variable<String>(updatedBy.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<int>(createdAt.value);
+    }
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<int>(updatedAt.value);
+    }
+    if (deletedAt.present) {
+      map['deleted_at'] = Variable<int>(deletedAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('CashbookEntriesCompanion(')
+          ..write('id: $id, ')
+          ..write('entryType: $entryType, ')
+          ..write('accountBucket: $accountBucket, ')
+          ..write('paymentMode: $paymentMode, ')
+          ..write('amountPaise: $amountPaise, ')
+          ..write('linkedExpenseId: $linkedExpenseId, ')
+          ..write('reversesEntryId: $reversesEntryId, ')
+          ..write('clientRequestId: $clientRequestId, ')
+          ..write('referenceNo: $referenceNo, ')
+          ..write('reason: $reason, ')
+          ..write('notes: $notes, ')
+          ..write('transactionAt: $transactionAt, ')
+          ..write('recordedAt: $recordedAt, ')
+          ..write('createdBy: $createdBy, ')
+          ..write('updatedBy: $updatedBy, ')
+          ..write('createdAt: $createdAt, ')
+          ..write('updatedAt: $updatedAt, ')
+          ..write('deletedAt: $deletedAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $SyncSessionStatesTable extends SyncSessionStates
     with TableInfo<$SyncSessionStatesTable, SyncSessionStateRow> {
   @override
@@ -29786,6 +31930,12 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   );
   late final $PartyPaymentsTable partyPayments = $PartyPaymentsTable(this);
   late final $LotDirectCostsTable lotDirectCosts = $LotDirectCostsTable(this);
+  late final $WorkshopExpensesTable workshopExpenses = $WorkshopExpensesTable(
+    this,
+  );
+  late final $CashbookEntriesTable cashbookEntries = $CashbookEntriesTable(
+    this,
+  );
   late final $SyncSessionStatesTable syncSessionStates =
       $SyncSessionStatesTable(this);
   late final $SyncOutboxesTable syncOutboxes = $SyncOutboxesTable(this);
@@ -29824,6 +31974,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final PartyDispatchDao partyDispatchDao = PartyDispatchDao(
     this as AppDatabase,
   );
+  late final CashbookDao cashbookDao = CashbookDao(this as AppDatabase);
   late final SyncDao syncDao = SyncDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
@@ -29860,6 +32011,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     buyerReturnItems,
     partyPayments,
     lotDirectCosts,
+    workshopExpenses,
+    cashbookEntries,
     syncSessionStates,
     syncOutboxes,
     syncCursors,
@@ -59630,6 +61783,1384 @@ typedef $$LotDirectCostsTableProcessedTableManager =
       LotDirectCostRow,
       PrefetchHooks Function({bool lotId, bool reversesCostId})
     >;
+typedef $$WorkshopExpensesTableCreateCompanionBuilder =
+    WorkshopExpensesCompanion Function({
+      required String id,
+      required String category,
+      required String title,
+      Value<String?> payeeName,
+      required int amountPaise,
+      required String paymentStatus,
+      Value<String?> paymentMode,
+      Value<String?> referenceNo,
+      Value<String?> reversesExpenseId,
+      Value<String?> clientRequestId,
+      Value<String?> reason,
+      Value<String?> notes,
+      required int transactionAt,
+      required int recordedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
+      required int createdAt,
+      required int updatedAt,
+      Value<int?> deletedAt,
+      Value<int> rowid,
+    });
+typedef $$WorkshopExpensesTableUpdateCompanionBuilder =
+    WorkshopExpensesCompanion Function({
+      Value<String> id,
+      Value<String> category,
+      Value<String> title,
+      Value<String?> payeeName,
+      Value<int> amountPaise,
+      Value<String> paymentStatus,
+      Value<String?> paymentMode,
+      Value<String?> referenceNo,
+      Value<String?> reversesExpenseId,
+      Value<String?> clientRequestId,
+      Value<String?> reason,
+      Value<String?> notes,
+      Value<int> transactionAt,
+      Value<int> recordedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
+      Value<int> createdAt,
+      Value<int> updatedAt,
+      Value<int?> deletedAt,
+      Value<int> rowid,
+    });
+
+final class $$WorkshopExpensesTableReferences
+    extends
+        BaseReferences<
+          _$AppDatabase,
+          $WorkshopExpensesTable,
+          WorkshopExpenseRow
+        > {
+  $$WorkshopExpensesTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $WorkshopExpensesTable _reversesExpenseIdTable(_$AppDatabase db) =>
+      db.workshopExpenses.createAlias(
+        'workshop_expenses__reverses_expense_id__workshop_expenses__id',
+      );
+
+  $$WorkshopExpensesTableProcessedTableManager? get reversesExpenseId {
+    final $_column = $_itemColumn<String>('reverses_expense_id');
+    if ($_column == null) return null;
+    final manager = $$WorkshopExpensesTableTableManager(
+      $_db,
+      $_db.workshopExpenses,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_reversesExpenseIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static MultiTypedResultKey<$CashbookEntriesTable, List<CashbookEntryRow>>
+  _cashbookEntriesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.cashbookEntries,
+    aliasName: 'workshop_expenses__id__cashbook_entries__linked_expense_id',
+  );
+
+  $$CashbookEntriesTableProcessedTableManager get cashbookEntriesRefs {
+    final manager =
+        $$CashbookEntriesTableTableManager($_db, $_db.cashbookEntries).filter(
+          (f) => f.linkedExpenseId.id.sqlEquals($_itemColumn<String>('id')!),
+        );
+
+    final cache = $_typedResult.readTableOrNull(
+      _cashbookEntriesRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
+class $$WorkshopExpensesTableFilterComposer
+    extends Composer<_$AppDatabase, $WorkshopExpensesTable> {
+  $$WorkshopExpensesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get category => $composableBuilder(
+    column: $table.category,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get payeeName => $composableBuilder(
+    column: $table.payeeName,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get amountPaise => $composableBuilder(
+    column: $table.amountPaise,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get paymentStatus => $composableBuilder(
+    column: $table.paymentStatus,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get paymentMode => $composableBuilder(
+    column: $table.paymentMode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get referenceNo => $composableBuilder(
+    column: $table.referenceNo,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get clientRequestId => $composableBuilder(
+    column: $table.clientRequestId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get reason => $composableBuilder(
+    column: $table.reason,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get transactionAt => $composableBuilder(
+    column: $table.transactionAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get recordedAt => $composableBuilder(
+    column: $table.recordedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$WorkshopExpensesTableFilterComposer get reversesExpenseId {
+    final $$WorkshopExpensesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.reversesExpenseId,
+      referencedTable: $db.workshopExpenses,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WorkshopExpensesTableFilterComposer(
+            $db: $db,
+            $table: $db.workshopExpenses,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<bool> cashbookEntriesRefs(
+    Expression<bool> Function($$CashbookEntriesTableFilterComposer f) f,
+  ) {
+    final $$CashbookEntriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.cashbookEntries,
+      getReferencedColumn: (t) => t.linkedExpenseId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CashbookEntriesTableFilterComposer(
+            $db: $db,
+            $table: $db.cashbookEntries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$WorkshopExpensesTableOrderingComposer
+    extends Composer<_$AppDatabase, $WorkshopExpensesTable> {
+  $$WorkshopExpensesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get category => $composableBuilder(
+    column: $table.category,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get payeeName => $composableBuilder(
+    column: $table.payeeName,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get amountPaise => $composableBuilder(
+    column: $table.amountPaise,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get paymentStatus => $composableBuilder(
+    column: $table.paymentStatus,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get paymentMode => $composableBuilder(
+    column: $table.paymentMode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get referenceNo => $composableBuilder(
+    column: $table.referenceNo,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get clientRequestId => $composableBuilder(
+    column: $table.clientRequestId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get reason => $composableBuilder(
+    column: $table.reason,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get transactionAt => $composableBuilder(
+    column: $table.transactionAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get recordedAt => $composableBuilder(
+    column: $table.recordedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$WorkshopExpensesTableOrderingComposer get reversesExpenseId {
+    final $$WorkshopExpensesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.reversesExpenseId,
+      referencedTable: $db.workshopExpenses,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WorkshopExpensesTableOrderingComposer(
+            $db: $db,
+            $table: $db.workshopExpenses,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$WorkshopExpensesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $WorkshopExpensesTable> {
+  $$WorkshopExpensesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get category =>
+      $composableBuilder(column: $table.category, builder: (column) => column);
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get payeeName =>
+      $composableBuilder(column: $table.payeeName, builder: (column) => column);
+
+  GeneratedColumn<int> get amountPaise => $composableBuilder(
+    column: $table.amountPaise,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get paymentStatus => $composableBuilder(
+    column: $table.paymentStatus,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get paymentMode => $composableBuilder(
+    column: $table.paymentMode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get referenceNo => $composableBuilder(
+    column: $table.referenceNo,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get clientRequestId => $composableBuilder(
+    column: $table.clientRequestId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get reason =>
+      $composableBuilder(column: $table.reason, builder: (column) => column);
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<int> get transactionAt => $composableBuilder(
+    column: $table.transactionAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get recordedAt => $composableBuilder(
+    column: $table.recordedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get updatedBy =>
+      $composableBuilder(column: $table.updatedBy, builder: (column) => column);
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  $$WorkshopExpensesTableAnnotationComposer get reversesExpenseId {
+    final $$WorkshopExpensesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.reversesExpenseId,
+      referencedTable: $db.workshopExpenses,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WorkshopExpensesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.workshopExpenses,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  Expression<T> cashbookEntriesRefs<T extends Object>(
+    Expression<T> Function($$CashbookEntriesTableAnnotationComposer a) f,
+  ) {
+    final $$CashbookEntriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.cashbookEntries,
+      getReferencedColumn: (t) => t.linkedExpenseId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CashbookEntriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.cashbookEntries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+}
+
+class $$WorkshopExpensesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $WorkshopExpensesTable,
+          WorkshopExpenseRow,
+          $$WorkshopExpensesTableFilterComposer,
+          $$WorkshopExpensesTableOrderingComposer,
+          $$WorkshopExpensesTableAnnotationComposer,
+          $$WorkshopExpensesTableCreateCompanionBuilder,
+          $$WorkshopExpensesTableUpdateCompanionBuilder,
+          (WorkshopExpenseRow, $$WorkshopExpensesTableReferences),
+          WorkshopExpenseRow,
+          PrefetchHooks Function({
+            bool reversesExpenseId,
+            bool cashbookEntriesRefs,
+          })
+        > {
+  $$WorkshopExpensesTableTableManager(
+    _$AppDatabase db,
+    $WorkshopExpensesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$WorkshopExpensesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$WorkshopExpensesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$WorkshopExpensesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> category = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<String?> payeeName = const Value.absent(),
+                Value<int> amountPaise = const Value.absent(),
+                Value<String> paymentStatus = const Value.absent(),
+                Value<String?> paymentMode = const Value.absent(),
+                Value<String?> referenceNo = const Value.absent(),
+                Value<String?> reversesExpenseId = const Value.absent(),
+                Value<String?> clientRequestId = const Value.absent(),
+                Value<String?> reason = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<int> transactionAt = const Value.absent(),
+                Value<int> recordedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => WorkshopExpensesCompanion(
+                id: id,
+                category: category,
+                title: title,
+                payeeName: payeeName,
+                amountPaise: amountPaise,
+                paymentStatus: paymentStatus,
+                paymentMode: paymentMode,
+                referenceNo: referenceNo,
+                reversesExpenseId: reversesExpenseId,
+                clientRequestId: clientRequestId,
+                reason: reason,
+                notes: notes,
+                transactionAt: transactionAt,
+                recordedAt: recordedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String category,
+                required String title,
+                Value<String?> payeeName = const Value.absent(),
+                required int amountPaise,
+                required String paymentStatus,
+                Value<String?> paymentMode = const Value.absent(),
+                Value<String?> referenceNo = const Value.absent(),
+                Value<String?> reversesExpenseId = const Value.absent(),
+                Value<String?> clientRequestId = const Value.absent(),
+                Value<String?> reason = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                required int transactionAt,
+                required int recordedAt,
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
+                required int createdAt,
+                required int updatedAt,
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => WorkshopExpensesCompanion.insert(
+                id: id,
+                category: category,
+                title: title,
+                payeeName: payeeName,
+                amountPaise: amountPaise,
+                paymentStatus: paymentStatus,
+                paymentMode: paymentMode,
+                referenceNo: referenceNo,
+                reversesExpenseId: reversesExpenseId,
+                clientRequestId: clientRequestId,
+                reason: reason,
+                notes: notes,
+                transactionAt: transactionAt,
+                recordedAt: recordedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$WorkshopExpensesTable, WorkshopExpenseRow>(
+                    table,
+                  ),
+                  $$WorkshopExpensesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({reversesExpenseId = false, cashbookEntriesRefs = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [
+                    if (cashbookEntriesRefs) db.cashbookEntries,
+                  ],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (reversesExpenseId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.reversesExpenseId,
+                            referencedTable: $$WorkshopExpensesTableReferences
+                                ._reversesExpenseIdTable(db),
+                            referencedColumn: $$WorkshopExpensesTableReferences
+                                ._reversesExpenseIdTable(db)
+                                .id,
+                          ) as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [
+                      if (cashbookEntriesRefs)
+                        await $_getPrefetchedDataByColumns<
+                          WorkshopExpenseRow,
+                          $WorkshopExpensesTable,
+                          CashbookEntryRow,
+                          $CashbookEntriesTable
+                        >(
+                          currentTable: table,
+                          referencedTable: $$WorkshopExpensesTableReferences
+                              ._cashbookEntriesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$WorkshopExpensesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).cashbookEntriesRefs,
+                          currentColumn: 'id',
+                          referencedColumn: 'linked_expense_id',
+                          typedResults: items,
+                        ),
+                    ];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$WorkshopExpensesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $WorkshopExpensesTable,
+      WorkshopExpenseRow,
+      $$WorkshopExpensesTableFilterComposer,
+      $$WorkshopExpensesTableOrderingComposer,
+      $$WorkshopExpensesTableAnnotationComposer,
+      $$WorkshopExpensesTableCreateCompanionBuilder,
+      $$WorkshopExpensesTableUpdateCompanionBuilder,
+      (WorkshopExpenseRow, $$WorkshopExpensesTableReferences),
+      WorkshopExpenseRow,
+      PrefetchHooks Function({bool reversesExpenseId, bool cashbookEntriesRefs})
+    >;
+typedef $$CashbookEntriesTableCreateCompanionBuilder =
+    CashbookEntriesCompanion Function({
+      required String id,
+      required String entryType,
+      required String accountBucket,
+      required String paymentMode,
+      required int amountPaise,
+      Value<String?> linkedExpenseId,
+      Value<String?> reversesEntryId,
+      Value<String?> clientRequestId,
+      Value<String?> referenceNo,
+      Value<String?> reason,
+      Value<String?> notes,
+      required int transactionAt,
+      required int recordedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
+      required int createdAt,
+      required int updatedAt,
+      Value<int?> deletedAt,
+      Value<int> rowid,
+    });
+typedef $$CashbookEntriesTableUpdateCompanionBuilder =
+    CashbookEntriesCompanion Function({
+      Value<String> id,
+      Value<String> entryType,
+      Value<String> accountBucket,
+      Value<String> paymentMode,
+      Value<int> amountPaise,
+      Value<String?> linkedExpenseId,
+      Value<String?> reversesEntryId,
+      Value<String?> clientRequestId,
+      Value<String?> referenceNo,
+      Value<String?> reason,
+      Value<String?> notes,
+      Value<int> transactionAt,
+      Value<int> recordedAt,
+      Value<String?> createdBy,
+      Value<String?> updatedBy,
+      Value<int> createdAt,
+      Value<int> updatedAt,
+      Value<int?> deletedAt,
+      Value<int> rowid,
+    });
+
+final class $$CashbookEntriesTableReferences
+    extends
+        BaseReferences<_$AppDatabase, $CashbookEntriesTable, CashbookEntryRow> {
+  $$CashbookEntriesTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $WorkshopExpensesTable _linkedExpenseIdTable(_$AppDatabase db) =>
+      db.workshopExpenses.createAlias(
+        'cashbook_entries__linked_expense_id__workshop_expenses__id',
+      );
+
+  $$WorkshopExpensesTableProcessedTableManager? get linkedExpenseId {
+    final $_column = $_itemColumn<String>('linked_expense_id');
+    if ($_column == null) return null;
+    final manager = $$WorkshopExpensesTableTableManager(
+      $_db,
+      $_db.workshopExpenses,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_linkedExpenseIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+
+  static $CashbookEntriesTable _reversesEntryIdTable(_$AppDatabase db) => db
+      .cashbookEntries
+      .createAlias('cashbook_entries__reverses_entry_id__cashbook_entries__id');
+
+  $$CashbookEntriesTableProcessedTableManager? get reversesEntryId {
+    final $_column = $_itemColumn<String>('reverses_entry_id');
+    if ($_column == null) return null;
+    final manager = $$CashbookEntriesTableTableManager(
+      $_db,
+      $_db.cashbookEntries,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_reversesEntryIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$CashbookEntriesTableFilterComposer
+    extends Composer<_$AppDatabase, $CashbookEntriesTable> {
+  $$CashbookEntriesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get entryType => $composableBuilder(
+    column: $table.entryType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get accountBucket => $composableBuilder(
+    column: $table.accountBucket,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get paymentMode => $composableBuilder(
+    column: $table.paymentMode,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get amountPaise => $composableBuilder(
+    column: $table.amountPaise,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get clientRequestId => $composableBuilder(
+    column: $table.clientRequestId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get referenceNo => $composableBuilder(
+    column: $table.referenceNo,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get reason => $composableBuilder(
+    column: $table.reason,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get transactionAt => $composableBuilder(
+    column: $table.transactionAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get recordedAt => $composableBuilder(
+    column: $table.recordedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$WorkshopExpensesTableFilterComposer get linkedExpenseId {
+    final $$WorkshopExpensesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.linkedExpenseId,
+      referencedTable: $db.workshopExpenses,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WorkshopExpensesTableFilterComposer(
+            $db: $db,
+            $table: $db.workshopExpenses,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$CashbookEntriesTableFilterComposer get reversesEntryId {
+    final $$CashbookEntriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.reversesEntryId,
+      referencedTable: $db.cashbookEntries,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CashbookEntriesTableFilterComposer(
+            $db: $db,
+            $table: $db.cashbookEntries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$CashbookEntriesTableOrderingComposer
+    extends Composer<_$AppDatabase, $CashbookEntriesTable> {
+  $$CashbookEntriesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get entryType => $composableBuilder(
+    column: $table.entryType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get accountBucket => $composableBuilder(
+    column: $table.accountBucket,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get paymentMode => $composableBuilder(
+    column: $table.paymentMode,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get amountPaise => $composableBuilder(
+    column: $table.amountPaise,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get clientRequestId => $composableBuilder(
+    column: $table.clientRequestId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get referenceNo => $composableBuilder(
+    column: $table.referenceNo,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get reason => $composableBuilder(
+    column: $table.reason,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get notes => $composableBuilder(
+    column: $table.notes,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get transactionAt => $composableBuilder(
+    column: $table.transactionAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get recordedAt => $composableBuilder(
+    column: $table.recordedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get createdBy => $composableBuilder(
+    column: $table.createdBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get updatedBy => $composableBuilder(
+    column: $table.updatedBy,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get updatedAt => $composableBuilder(
+    column: $table.updatedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get deletedAt => $composableBuilder(
+    column: $table.deletedAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$WorkshopExpensesTableOrderingComposer get linkedExpenseId {
+    final $$WorkshopExpensesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.linkedExpenseId,
+      referencedTable: $db.workshopExpenses,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WorkshopExpensesTableOrderingComposer(
+            $db: $db,
+            $table: $db.workshopExpenses,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$CashbookEntriesTableOrderingComposer get reversesEntryId {
+    final $$CashbookEntriesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.reversesEntryId,
+      referencedTable: $db.cashbookEntries,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CashbookEntriesTableOrderingComposer(
+            $db: $db,
+            $table: $db.cashbookEntries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$CashbookEntriesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $CashbookEntriesTable> {
+  $$CashbookEntriesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get entryType =>
+      $composableBuilder(column: $table.entryType, builder: (column) => column);
+
+  GeneratedColumn<String> get accountBucket => $composableBuilder(
+    column: $table.accountBucket,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get paymentMode => $composableBuilder(
+    column: $table.paymentMode,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get amountPaise => $composableBuilder(
+    column: $table.amountPaise,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get clientRequestId => $composableBuilder(
+    column: $table.clientRequestId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get referenceNo => $composableBuilder(
+    column: $table.referenceNo,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get reason =>
+      $composableBuilder(column: $table.reason, builder: (column) => column);
+
+  GeneratedColumn<String> get notes =>
+      $composableBuilder(column: $table.notes, builder: (column) => column);
+
+  GeneratedColumn<int> get transactionAt => $composableBuilder(
+    column: $table.transactionAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get recordedAt => $composableBuilder(
+    column: $table.recordedAt,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get createdBy =>
+      $composableBuilder(column: $table.createdBy, builder: (column) => column);
+
+  GeneratedColumn<String> get updatedBy =>
+      $composableBuilder(column: $table.updatedBy, builder: (column) => column);
+
+  GeneratedColumn<int> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  GeneratedColumn<int> get updatedAt =>
+      $composableBuilder(column: $table.updatedAt, builder: (column) => column);
+
+  GeneratedColumn<int> get deletedAt =>
+      $composableBuilder(column: $table.deletedAt, builder: (column) => column);
+
+  $$WorkshopExpensesTableAnnotationComposer get linkedExpenseId {
+    final $$WorkshopExpensesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.linkedExpenseId,
+      referencedTable: $db.workshopExpenses,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$WorkshopExpensesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.workshopExpenses,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+
+  $$CashbookEntriesTableAnnotationComposer get reversesEntryId {
+    final $$CashbookEntriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.reversesEntryId,
+      referencedTable: $db.cashbookEntries,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CashbookEntriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.cashbookEntries,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$CashbookEntriesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $CashbookEntriesTable,
+          CashbookEntryRow,
+          $$CashbookEntriesTableFilterComposer,
+          $$CashbookEntriesTableOrderingComposer,
+          $$CashbookEntriesTableAnnotationComposer,
+          $$CashbookEntriesTableCreateCompanionBuilder,
+          $$CashbookEntriesTableUpdateCompanionBuilder,
+          (CashbookEntryRow, $$CashbookEntriesTableReferences),
+          CashbookEntryRow,
+          PrefetchHooks Function({bool linkedExpenseId, bool reversesEntryId})
+        > {
+  $$CashbookEntriesTableTableManager(
+    _$AppDatabase db,
+    $CashbookEntriesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$CashbookEntriesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$CashbookEntriesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$CashbookEntriesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> entryType = const Value.absent(),
+                Value<String> accountBucket = const Value.absent(),
+                Value<String> paymentMode = const Value.absent(),
+                Value<int> amountPaise = const Value.absent(),
+                Value<String?> linkedExpenseId = const Value.absent(),
+                Value<String?> reversesEntryId = const Value.absent(),
+                Value<String?> clientRequestId = const Value.absent(),
+                Value<String?> referenceNo = const Value.absent(),
+                Value<String?> reason = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                Value<int> transactionAt = const Value.absent(),
+                Value<int> recordedAt = const Value.absent(),
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
+                Value<int> createdAt = const Value.absent(),
+                Value<int> updatedAt = const Value.absent(),
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CashbookEntriesCompanion(
+                id: id,
+                entryType: entryType,
+                accountBucket: accountBucket,
+                paymentMode: paymentMode,
+                amountPaise: amountPaise,
+                linkedExpenseId: linkedExpenseId,
+                reversesEntryId: reversesEntryId,
+                clientRequestId: clientRequestId,
+                referenceNo: referenceNo,
+                reason: reason,
+                notes: notes,
+                transactionAt: transactionAt,
+                recordedAt: recordedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String entryType,
+                required String accountBucket,
+                required String paymentMode,
+                required int amountPaise,
+                Value<String?> linkedExpenseId = const Value.absent(),
+                Value<String?> reversesEntryId = const Value.absent(),
+                Value<String?> clientRequestId = const Value.absent(),
+                Value<String?> referenceNo = const Value.absent(),
+                Value<String?> reason = const Value.absent(),
+                Value<String?> notes = const Value.absent(),
+                required int transactionAt,
+                required int recordedAt,
+                Value<String?> createdBy = const Value.absent(),
+                Value<String?> updatedBy = const Value.absent(),
+                required int createdAt,
+                required int updatedAt,
+                Value<int?> deletedAt = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => CashbookEntriesCompanion.insert(
+                id: id,
+                entryType: entryType,
+                accountBucket: accountBucket,
+                paymentMode: paymentMode,
+                amountPaise: amountPaise,
+                linkedExpenseId: linkedExpenseId,
+                reversesEntryId: reversesEntryId,
+                clientRequestId: clientRequestId,
+                referenceNo: referenceNo,
+                reason: reason,
+                notes: notes,
+                transactionAt: transactionAt,
+                recordedAt: recordedAt,
+                createdBy: createdBy,
+                updatedBy: updatedBy,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                deletedAt: deletedAt,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$CashbookEntriesTable, CashbookEntryRow>(table),
+                  $$CashbookEntriesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback:
+              ({linkedExpenseId = false, reversesEntryId = false}) {
+                return PrefetchHooks(
+                  db: db,
+                  explicitlyWatchedTables: [],
+                  addJoins:
+                      <
+                        T extends TableManagerState<
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic,
+                          dynamic
+                        >
+                      >(state) {
+                        if (linkedExpenseId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.linkedExpenseId,
+                            referencedTable: $$CashbookEntriesTableReferences
+                                ._linkedExpenseIdTable(db),
+                            referencedColumn: $$CashbookEntriesTableReferences
+                                ._linkedExpenseIdTable(db)
+                                .id,
+                          ) as T;
+                        }
+                        if (reversesEntryId) {
+                          state = state.withJoin(
+                            currentTable: table,
+                            currentColumn: table.reversesEntryId,
+                            referencedTable: $$CashbookEntriesTableReferences
+                                ._reversesEntryIdTable(db),
+                            referencedColumn: $$CashbookEntriesTableReferences
+                                ._reversesEntryIdTable(db)
+                                .id,
+                          ) as T;
+                        }
+
+                        return state;
+                      },
+                  getPrefetchedDataCallback: (items) async {
+                    return [];
+                  },
+                );
+              },
+        ),
+      );
+}
+
+typedef $$CashbookEntriesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $CashbookEntriesTable,
+      CashbookEntryRow,
+      $$CashbookEntriesTableFilterComposer,
+      $$CashbookEntriesTableOrderingComposer,
+      $$CashbookEntriesTableAnnotationComposer,
+      $$CashbookEntriesTableCreateCompanionBuilder,
+      $$CashbookEntriesTableUpdateCompanionBuilder,
+      (CashbookEntryRow, $$CashbookEntriesTableReferences),
+      CashbookEntryRow,
+      PrefetchHooks Function({bool linkedExpenseId, bool reversesEntryId})
+    >;
 typedef $$SyncSessionStatesTableCreateCompanionBuilder =
     SyncSessionStatesCompanion Function({
       Value<int> id,
@@ -61080,6 +64611,10 @@ class $AppDatabaseManager {
       $$PartyPaymentsTableTableManager(_db, _db.partyPayments);
   $$LotDirectCostsTableTableManager get lotDirectCosts =>
       $$LotDirectCostsTableTableManager(_db, _db.lotDirectCosts);
+  $$WorkshopExpensesTableTableManager get workshopExpenses =>
+      $$WorkshopExpensesTableTableManager(_db, _db.workshopExpenses);
+  $$CashbookEntriesTableTableManager get cashbookEntries =>
+      $$CashbookEntriesTableTableManager(_db, _db.cashbookEntries);
   $$SyncSessionStatesTableTableManager get syncSessionStates =>
       $$SyncSessionStatesTableTableManager(_db, _db.syncSessionStates);
   $$SyncOutboxesTableTableManager get syncOutboxes =>

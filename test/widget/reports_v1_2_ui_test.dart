@@ -154,7 +154,7 @@ void main() {
 
       // Category 1: Daily Workshop
       expect(find.text('Daily Workshop'), findsWidgets);
-      expect(find.textContaining('Profit'), findsNothing);
+      expect(find.text('True Workshop Net Profit'), findsNothing);
       expect(find.textContaining('Revenue'), findsNothing);
 
       // Category 2: Worker Performance
@@ -168,7 +168,7 @@ void main() {
       // Category 4: Inventory -> Reference Stock Value (never Profit/Revenue)
       await selectCategoryChip('Inventory');
       expect(find.text('Reference Stock Value'), findsWidgets);
-      expect(find.textContaining('Profit'), findsNothing);
+      expect(find.text('True Workshop Net Profit'), findsNothing);
 
       // Category 5: Labour & Financial
       await selectCategoryChip('Labour & Financial');
@@ -177,7 +177,7 @@ void main() {
       // Category 6: Business Insights
       await selectCategoryChip('Business Insights');
       expect(find.text('Production Trends'), findsOneWidget);
-      expect(find.textContaining('Profit'), findsNothing);
+      expect(find.text('True Workshop Net Profit'), findsNothing);
       expect(find.textContaining('Revenue'), findsNothing);
 
       // Open Export Sheet

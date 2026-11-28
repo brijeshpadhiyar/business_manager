@@ -2,6 +2,7 @@ import 'package:business_manager/core/config/app_config.dart';
 import 'package:business_manager/core/database/connection/database_connection.dart';
 import 'package:business_manager/core/database/daos/attachment_audit_dao.dart';
 import 'package:business_manager/core/database/daos/business_profile_dao.dart';
+import 'package:business_manager/core/database/daos/cashbook_dao.dart';
 import 'package:business_manager/core/database/daos/colour_master_dao.dart';
 import 'package:business_manager/core/database/daos/job_process_dao.dart';
 import 'package:business_manager/core/database/daos/labour_entry_dao.dart';
@@ -17,6 +18,7 @@ import 'package:business_manager/core/database/database_pragma_status.dart';
 import 'package:business_manager/core/database/migrations/database_migration_manager.dart';
 import 'package:business_manager/core/database/tables/attachment_audit_tables.dart';
 import 'package:business_manager/core/database/tables/business_profile_table.dart';
+import 'package:business_manager/core/database/tables/cashbook_tables.dart';
 import 'package:business_manager/core/database/tables/colour_master_table.dart';
 import 'package:business_manager/core/database/tables/job_process_tables.dart';
 import 'package:business_manager/core/database/tables/ledger_tables.dart';
@@ -29,7 +31,7 @@ import 'package:drift/drift.dart';
 
 part 'app_database.g.dart';
 
-/// Root offline-first Drift SQLite database (Schema v12: 35 tables, 13 DAOs).
+/// Root offline-first Drift SQLite database (Schema v13: 37 tables, 14 DAOs).
 @DriftDatabase(
   tables: [
     BusinessProfiles,
@@ -62,6 +64,8 @@ part 'app_database.g.dart';
     BuyerReturnItems,
     PartyPayments,
     LotDirectCosts,
+    WorkshopExpenses,
+    CashbookEntries,
     SyncSessionStates,
     SyncOutboxes,
     SyncCursors,
@@ -81,6 +85,7 @@ part 'app_database.g.dart';
     AttachmentAuditDao,
     ProductionTrackingDao,
     PartyDispatchDao,
+    CashbookDao,
     SyncDao,
   ],
 )

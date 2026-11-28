@@ -4820,4 +4820,325 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notificationsPartyMinLabel => 'Minimum Receivable Threshold';
+
+  @override
+  String get navCashbookExpenses => 'Cashbook & Expenses';
+
+  @override
+  String get cashbookHeading => 'Cashbook & Expenses';
+
+  @override
+  String get cashbookSubtitle =>
+      'Live Cash & Bank balances, workshop bills & transfers';
+
+  @override
+  String get cashbookCashInHandLabel => 'Cash in Hand';
+
+  @override
+  String get cashbookBankBalanceLabel => 'Bank / UPI Balance';
+
+  @override
+  String get cashbookTotalBalanceLabel => 'Total Balance';
+
+  @override
+  String get cashbookPendingBillsLabel => 'Pending Bills';
+
+  @override
+  String get cashbookTodayExpensesLabel => 'Today\'s Expenses';
+
+  @override
+  String get cashbookTabAll => 'All Cashbook';
+
+  @override
+  String get cashbookTabExpenses => 'Expenses';
+
+  @override
+  String get cashbookTabPendingBills => 'Pending Bills';
+
+  @override
+  String get cashbookRecordExpenseAction => 'Record Expense';
+
+  @override
+  String get cashbookTransferAction => 'Transfer / Capital';
+
+  @override
+  String get cashbookOpeningBalanceAction => 'Opening Balance';
+
+  @override
+  String get cashbookFilterAllBuckets => 'All';
+
+  @override
+  String get cashbookFilterCash => 'Cash';
+
+  @override
+  String get cashbookFilterBank => 'Bank / UPI';
+
+  @override
+  String get cashbookFilterAllSources => 'All Sources';
+
+  @override
+  String get cashbookSourceExpense => 'Expenses';
+
+  @override
+  String get cashbookSourceWorkerPayment => 'Worker Payments';
+
+  @override
+  String get cashbookSourcePartyReceipt => 'Party Receipts';
+
+  @override
+  String get cashbookSourceTransfer => 'Transfers & Opening';
+
+  @override
+  String get cashbookEmptyTitle => 'No Cashbook Entries Yet';
+
+  @override
+  String get cashbookEmptySubtitle =>
+      'Record workshop expenses, transfers, or worker and party payments to see live Cash & Bank balances.';
+
+  @override
+  String get cashbookPendingBillsEmptyTitle => 'No Pending Unpaid Bills';
+
+  @override
+  String get cashbookPendingBillsEmptySubtitle =>
+      'All workshop credit bills are settled.';
+
+  @override
+  String get cashbookMarkPaidAction => 'Mark Paid';
+
+  @override
+  String get cashbookMarkPaidTitle => 'Settle Unpaid Bill';
+
+  @override
+  String get cashbookPaidSuccess => 'Expense marked as paid.';
+
+  @override
+  String get cashbookExpenseSavedSuccess => 'Workshop expense saved.';
+
+  @override
+  String get cashbookTransferSavedSuccess => 'Cashbook entry saved.';
+
+  @override
+  String get cashbookOpeningSavedSuccess => 'Opening balances updated.';
+
+  @override
+  String get cashbookReversedSuccess => 'Entry reversed.';
+
+  @override
+  String get cashbookReverseExpenseTitle => 'Reverse Workshop Expense?';
+
+  @override
+  String get cashbookReverseEntryTitle => 'Reverse Cashbook Entry?';
+
+  @override
+  String get cashbookExpenseFormHeading => 'Record Workshop Expense';
+
+  @override
+  String get cashbookExpenseCategoryLabel => 'Expense Category';
+
+  @override
+  String get cashbookExpenseTitleLabel => 'Expense Title / Description';
+
+  @override
+  String get cashbookExpensePayeeLabel => 'Payee / Vendor Name (optional)';
+
+  @override
+  String get cashbookExpenseStatusLabel => 'Payment Status';
+
+  @override
+  String get cashbookExpenseStatusPaid => 'Paid Now';
+
+  @override
+  String get cashbookExpenseStatusUnpaid => 'Unpaid / Credit Bill';
+
+  @override
+  String get cashbookExpenseManagerCashNote =>
+      'Manager role can record Paid Cash expenses only.';
+
+  @override
+  String get cashbookExpenseReceiptLabel => 'Receipt Photo (optional)';
+
+  @override
+  String get cashbookExpenseAddReceipt => 'Attach Receipt';
+
+  @override
+  String get cashbookExpenseRemoveReceipt => 'Remove';
+
+  @override
+  String get cashbookExpenseHasReceiptBadge => 'Receipt';
+
+  @override
+  String get cashbookExpensePaidBadge => 'Paid';
+
+  @override
+  String get cashbookExpenseUnpaidBadge => 'Unpaid';
+
+  @override
+  String cashbookExpenseSettledValue(String paid, String total) {
+    return 'Paid $paid of $total';
+  }
+
+  @override
+  String get cashbookTransferFormHeading => 'Cashbook Transfer / Capital';
+
+  @override
+  String get cashbookEntryTypeLabel => 'Entry Type';
+
+  @override
+  String get cashbookAccountBucketLabel => 'Account';
+
+  @override
+  String get cashbookOpeningCashLabel => 'Opening Cash Balance (₹)';
+
+  @override
+  String get cashbookOpeningBankLabel => 'Opening Bank / UPI Balance (₹)';
+
+  @override
+  String get cashbookOpeningBalanceHelper =>
+      'Sets the starting balance for your Cash Drawer and Bank / UPI accounts.';
+
+  @override
+  String get cashbookCatRent => 'Rent';
+
+  @override
+  String get cashbookCatElectricity => 'Electricity & Water';
+
+  @override
+  String get cashbookCatMachineRepair => 'Machine & Repair';
+
+  @override
+  String get cashbookCatStaffSalary => 'Staff Salary';
+
+  @override
+  String get cashbookCatSupplies => 'Thread / Oil / Supplies';
+
+  @override
+  String get cashbookCatRefreshments => 'Tea & Refreshments';
+
+  @override
+  String get cashbookCatTransport => 'Transport & Courier';
+
+  @override
+  String get cashbookCatOther => 'Other Overhead';
+
+  @override
+  String get cashbookTypeOpeningCash => 'Opening Cash Balance';
+
+  @override
+  String get cashbookTypeOpeningBank => 'Opening Bank Balance';
+
+  @override
+  String get cashbookTypeCashToBank => 'Cash → Bank Deposit';
+
+  @override
+  String get cashbookTypeBankToCash => 'Bank → Cash Withdrawal';
+
+  @override
+  String get cashbookTypeCapitalIn => 'Owner Capital In';
+
+  @override
+  String get cashbookTypeOwnerDrawing => 'Owner Drawing';
+
+  @override
+  String get cashbookTypeExpenseSettlement => 'Bill Settlement';
+
+  @override
+  String get cashbookTypeReversal => 'Reversal';
+
+  @override
+  String get cashbookCategoryBreakdownHeading => 'Expenses by Category';
+
+  @override
+  String get reportCategoryCashbookNetProfit => 'Cashbook & Net Profit';
+
+  @override
+  String get reportTrueNetProfitHeading => 'True Workshop Net Profit';
+
+  @override
+  String get reportOverheadExpensesLabel => 'Workshop Overheads';
+
+  @override
+  String get reportCashflowSummaryHeading => 'Cash & Bank Flow Summary';
+
+  @override
+  String get reportOpeningBalanceLabel => 'Opening Balance';
+
+  @override
+  String get reportTotalInflowsLabel => 'Total Inflows';
+
+  @override
+  String get reportTotalOutflowsLabel => 'Total Outflows';
+
+  @override
+  String get reportClosingBalanceLabel => 'Closing Balance';
+
+  @override
+  String get cashbookPermissionDeniedError =>
+      'You do not have permission for this Cashbook action.';
+
+  @override
+  String get cashbookExpenseHasSettlementError =>
+      'Reverse the bill payment settlement before reversing this expense.';
+
+  @override
+  String get cashbookSettlementExceedsError =>
+      'Settlement amount exceeds remaining unpaid balance.';
+
+  @override
+  String get guideChapterCashbookTitle => '13. Cashbook & Workshop Expenses';
+
+  @override
+  String get guideChapterCashbookSubtitle =>
+      'Track Cash in Hand, Bank/UPI balance, overhead bills & true Net Profit.';
+
+  @override
+  String get helpTopicCashbookTitle => 'Cashbook, Expenses & True Net Profit';
+
+  @override
+  String get helpTopicCashbookWhen =>
+      'Use daily for workshop rent, electricity, machine repair, cash deposits/withdrawals, and checking Cash vs Bank balance.';
+
+  @override
+  String get cashbookSearchHint => 'Search expenses, payee, ref, notes';
+
+  @override
+  String get cashbookPeriodCashFlow => 'Period Cash';
+
+  @override
+  String get cashbookPeriodBankFlow => 'Period Bank / UPI';
+
+  @override
+  String cashbookPeriodInOutValue(String inflow, String outflow) {
+    return '+$inflow / -$outflow';
+  }
+
+  @override
+  String get cashbookExpensePartialBadge => 'Partially Paid';
+
+  @override
+  String get cashbookSettlementAmountLabel => 'Settlement Amount (₹)';
+
+  @override
+  String get cashbookExpenseDetailTitle => 'Expense Details';
+
+  @override
+  String get cashbookSettlementHistoryHeading => 'Settlement History';
+
+  @override
+  String get cashbookNoSettlementsYet =>
+      'No payments recorded for this bill yet.';
+
+  @override
+  String get cashbookReceiptAttachedSuccess => 'Receipt attached.';
+
+  @override
+  String get cashbookRemainingDueLabel => 'Remaining Due';
+
+  @override
+  String get cashbookTotalAmountLabel => 'Total Bill';
+
+  @override
+  String get cashbookReversalReasonLabel => 'Reversal Reason';
+
+  @override
+  String get cashbookCreatedByLabel => 'Recorded By';
 }

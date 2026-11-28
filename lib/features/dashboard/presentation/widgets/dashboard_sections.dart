@@ -6,6 +6,8 @@ import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
+import 'package:business_manager/features/auth/domain/services/rbac_policy.dart';
+import 'package:business_manager/features/auth/presentation/widgets/permission_gate.dart';
 import 'package:business_manager/features/dashboard/presentation/bloc/dashboard_cubit.dart';
 import 'package:business_manager/features/reports/domain/calculators/workshop_daily_calculator.dart';
 import 'package:business_manager/features/reports/domain/entities/advanced_report_entities.dart';
@@ -365,6 +367,47 @@ final class DashboardFinanceHealthSection extends StatelessWidget {
                     : AppStatusTone.good,
                 onTap: () => onPushAndRefresh(RoutePaths.parties),
               ),
+              if (PermissionGate.hasPermission(
+                context,
+                AppPermission.viewCashbookAndExpenses,
+              )) ...[
+                AppMetricTile(
+                  backdropKey: null,
+                  label: l10n.cashbookCashInHandLabel,
+                  value: snapshot.cashBalancePaise,
+                  isCurrencyPaise: true,
+                  icon: AppIcons.cashbook,
+                  tone: snapshot.cashBalancePaise >= 0
+                      ? AppStatusTone.good
+                      : AppStatusTone.damaged,
+                  onTap: () => onPushAndRefresh(RoutePaths.cashbook),
+                ),
+                AppMetricTile(
+                  backdropKey: null,
+                  label: l10n.cashbookBankBalanceLabel,
+                  value: snapshot.bankBalancePaise,
+                  isCurrencyPaise: true,
+                  icon: AppIcons.bank,
+                  tone: snapshot.bankBalancePaise >= 0
+                      ? AppStatusTone.info
+                      : AppStatusTone.damaged,
+                  onTap: () => onPushAndRefresh(RoutePaths.cashbook),
+                ),
+                AppMetricTile(
+                  backdropKey: null,
+                  label: l10n.cashbookTodayExpensesLabel,
+                  value: snapshot.todayExpensesPaise,
+                  isCurrencyPaise: true,
+                  subtitle: snapshot.unpaidBillsPaise > 0
+                      ? '${l10n.cashbookPendingBillsLabel}: ${MoneyFormatter.formatPaise(snapshot.unpaidBillsPaise)}'
+                      : null,
+                  icon: AppIcons.expense,
+                  tone: snapshot.unpaidBillsPaise > 0
+                      ? AppStatusTone.pending
+                      : AppStatusTone.neutral,
+                  onTap: () => onPushAndRefresh(RoutePaths.cashbook),
+                ),
+              ],
             ],
           ),
         ],

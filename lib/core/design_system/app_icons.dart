@@ -96,6 +96,10 @@ abstract final class AppIcons {
   static const IconData buyerReturn = Icons.assignment_return_rounded;
   static const IconData directCost = Icons.request_quote_rounded;
   static const IconData profitLoss = Icons.assessment_rounded;
+  static const IconData cashbook = Icons.account_balance_wallet_rounded;
+  static const IconData expense = Icons.receipt_long_rounded;
+  static const IconData transfer = Icons.swap_horiz_rounded;
+  static const IconData bank = Icons.account_balance_rounded;
 
   // ── Reports, export & data ──────────────────────────────────────────────
   static const IconData reports = Icons.analytics_rounded;

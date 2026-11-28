@@ -46,6 +46,8 @@ TRUNCATE TABLE
   public.business_profile,
   public.attachments,
   public.audit_logs,
+  public.cashbook_entries,
+  public.workshop_expenses,
   public.sync_notifications,
   public.business_invites
 CASCADE;

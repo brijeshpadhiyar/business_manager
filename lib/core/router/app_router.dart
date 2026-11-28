@@ -13,6 +13,9 @@ import 'package:business_manager/features/backup/presentation/pages/data_health_
 import 'package:business_manager/features/sync/presentation/pages/sync_conflict_inspector_page.dart';
 import 'package:business_manager/features/team/presentation/pages/team_management_page.dart';
 import 'package:business_manager/features/business_profile/presentation/pages/business_profile_page.dart';
+import 'package:business_manager/features/cashbook/presentation/pages/cashbook_page.dart';
+import 'package:business_manager/features/cashbook/presentation/pages/cashbook_transfer_form_page.dart';
+import 'package:business_manager/features/cashbook/presentation/pages/expense_form_page.dart';
 import 'package:business_manager/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:business_manager/features/inventory/presentation/pages/inventory_overview_page.dart';
 import 'package:business_manager/features/lots/presentation/pages/designs_colours_page.dart';
@@ -529,6 +532,28 @@ GoRouter createAppRouter(AppConfig config) {
               child: DispatchChallanDetailPage(
                 challanId: state.pathParameters['id']!,
               ),
+            ),
+          ),
+          // V2.1 — Workshop Expenses & Unified Cash/Bank Book
+          GoRoute(
+            path: RoutePaths.cashbook,
+            pageBuilder: (context, state) => AppMotion.buildPage(
+              state: state,
+              child: const CashbookPage(),
+            ),
+          ),
+          GoRoute(
+            path: RoutePaths.expenseCreate,
+            pageBuilder: (context, state) => AppMotion.buildPage(
+              state: state,
+              child: const ExpenseFormPage(),
+            ),
+          ),
+          GoRoute(
+            path: RoutePaths.cashbookTransferCreate,
+            pageBuilder: (context, state) => AppMotion.buildPage(
+              state: state,
+              child: const CashbookTransferFormPage(),
             ),
           ),
           // Centralized Settings & Help Hub

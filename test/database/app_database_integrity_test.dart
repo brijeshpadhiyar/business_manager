@@ -97,6 +97,7 @@ void main() {
       'buyer_return_items',
       'buyer_returns',
       'cached_team_members',
+      'cashbook_entries',
       'colour_master',
       'design_colours',
       'dispatch_challans',
@@ -126,6 +127,7 @@ void main() {
       'sync_outbox',
       'sync_session_state',
       'worker_ledger_adjustments',
+      'workshop_expenses',
     });
 
     final profile = await db.businessProfileDao.getProfile();

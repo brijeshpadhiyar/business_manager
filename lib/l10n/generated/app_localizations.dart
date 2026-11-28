@@ -8611,6 +8611,618 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Minimum Receivable Threshold'**
   String get notificationsPartyMinLabel;
+
+  /// No description provided for @navCashbookExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Cashbook & Expenses'**
+  String get navCashbookExpenses;
+
+  /// No description provided for @cashbookHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Cashbook & Expenses'**
+  String get cashbookHeading;
+
+  /// No description provided for @cashbookSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Live Cash & Bank balances, workshop bills & transfers'**
+  String get cashbookSubtitle;
+
+  /// No description provided for @cashbookCashInHandLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash in Hand'**
+  String get cashbookCashInHandLabel;
+
+  /// No description provided for @cashbookBankBalanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank / UPI Balance'**
+  String get cashbookBankBalanceLabel;
+
+  /// No description provided for @cashbookTotalBalanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Balance'**
+  String get cashbookTotalBalanceLabel;
+
+  /// No description provided for @cashbookPendingBillsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Bills'**
+  String get cashbookPendingBillsLabel;
+
+  /// No description provided for @cashbookTodayExpensesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Expenses'**
+  String get cashbookTodayExpensesLabel;
+
+  /// No description provided for @cashbookTabAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All Cashbook'**
+  String get cashbookTabAll;
+
+  /// No description provided for @cashbookTabExpenses.
+  ///
+  /// In en, this message translates to:
+  /// **'Expenses'**
+  String get cashbookTabExpenses;
+
+  /// No description provided for @cashbookTabPendingBills.
+  ///
+  /// In en, this message translates to:
+  /// **'Pending Bills'**
+  String get cashbookTabPendingBills;
+
+  /// No description provided for @cashbookRecordExpenseAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Record Expense'**
+  String get cashbookRecordExpenseAction;
+
+  /// No description provided for @cashbookTransferAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfer / Capital'**
+  String get cashbookTransferAction;
+
+  /// No description provided for @cashbookOpeningBalanceAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening Balance'**
+  String get cashbookOpeningBalanceAction;
+
+  /// No description provided for @cashbookFilterAllBuckets.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get cashbookFilterAllBuckets;
+
+  /// No description provided for @cashbookFilterCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash'**
+  String get cashbookFilterCash;
+
+  /// No description provided for @cashbookFilterBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank / UPI'**
+  String get cashbookFilterBank;
+
+  /// No description provided for @cashbookFilterAllSources.
+  ///
+  /// In en, this message translates to:
+  /// **'All Sources'**
+  String get cashbookFilterAllSources;
+
+  /// No description provided for @cashbookSourceExpense.
+  ///
+  /// In en, this message translates to:
+  /// **'Expenses'**
+  String get cashbookSourceExpense;
+
+  /// No description provided for @cashbookSourceWorkerPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Worker Payments'**
+  String get cashbookSourceWorkerPayment;
+
+  /// No description provided for @cashbookSourcePartyReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Party Receipts'**
+  String get cashbookSourcePartyReceipt;
+
+  /// No description provided for @cashbookSourceTransfer.
+  ///
+  /// In en, this message translates to:
+  /// **'Transfers & Opening'**
+  String get cashbookSourceTransfer;
+
+  /// No description provided for @cashbookEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Cashbook Entries Yet'**
+  String get cashbookEmptyTitle;
+
+  /// No description provided for @cashbookEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Record workshop expenses, transfers, or worker and party payments to see live Cash & Bank balances.'**
+  String get cashbookEmptySubtitle;
+
+  /// No description provided for @cashbookPendingBillsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Pending Unpaid Bills'**
+  String get cashbookPendingBillsEmptyTitle;
+
+  /// No description provided for @cashbookPendingBillsEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'All workshop credit bills are settled.'**
+  String get cashbookPendingBillsEmptySubtitle;
+
+  /// No description provided for @cashbookMarkPaidAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark Paid'**
+  String get cashbookMarkPaidAction;
+
+  /// No description provided for @cashbookMarkPaidTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settle Unpaid Bill'**
+  String get cashbookMarkPaidTitle;
+
+  /// No description provided for @cashbookPaidSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense marked as paid.'**
+  String get cashbookPaidSuccess;
+
+  /// No description provided for @cashbookExpenseSavedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Workshop expense saved.'**
+  String get cashbookExpenseSavedSuccess;
+
+  /// No description provided for @cashbookTransferSavedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Cashbook entry saved.'**
+  String get cashbookTransferSavedSuccess;
+
+  /// No description provided for @cashbookOpeningSavedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening balances updated.'**
+  String get cashbookOpeningSavedSuccess;
+
+  /// No description provided for @cashbookReversedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Entry reversed.'**
+  String get cashbookReversedSuccess;
+
+  /// No description provided for @cashbookReverseExpenseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reverse Workshop Expense?'**
+  String get cashbookReverseExpenseTitle;
+
+  /// No description provided for @cashbookReverseEntryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reverse Cashbook Entry?'**
+  String get cashbookReverseEntryTitle;
+
+  /// No description provided for @cashbookExpenseFormHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Record Workshop Expense'**
+  String get cashbookExpenseFormHeading;
+
+  /// No description provided for @cashbookExpenseCategoryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense Category'**
+  String get cashbookExpenseCategoryLabel;
+
+  /// No description provided for @cashbookExpenseTitleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense Title / Description'**
+  String get cashbookExpenseTitleLabel;
+
+  /// No description provided for @cashbookExpensePayeeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Payee / Vendor Name (optional)'**
+  String get cashbookExpensePayeeLabel;
+
+  /// No description provided for @cashbookExpenseStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment Status'**
+  String get cashbookExpenseStatusLabel;
+
+  /// No description provided for @cashbookExpenseStatusPaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid Now'**
+  String get cashbookExpenseStatusPaid;
+
+  /// No description provided for @cashbookExpenseStatusUnpaid.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpaid / Credit Bill'**
+  String get cashbookExpenseStatusUnpaid;
+
+  /// No description provided for @cashbookExpenseManagerCashNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Manager role can record Paid Cash expenses only.'**
+  String get cashbookExpenseManagerCashNote;
+
+  /// No description provided for @cashbookExpenseReceiptLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt Photo (optional)'**
+  String get cashbookExpenseReceiptLabel;
+
+  /// No description provided for @cashbookExpenseAddReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Attach Receipt'**
+  String get cashbookExpenseAddReceipt;
+
+  /// No description provided for @cashbookExpenseRemoveReceipt.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get cashbookExpenseRemoveReceipt;
+
+  /// No description provided for @cashbookExpenseHasReceiptBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt'**
+  String get cashbookExpenseHasReceiptBadge;
+
+  /// No description provided for @cashbookExpensePaidBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid'**
+  String get cashbookExpensePaidBadge;
+
+  /// No description provided for @cashbookExpenseUnpaidBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpaid'**
+  String get cashbookExpenseUnpaidBadge;
+
+  /// No description provided for @cashbookExpenseSettledValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Paid {paid} of {total}'**
+  String cashbookExpenseSettledValue(String paid, String total);
+
+  /// No description provided for @cashbookTransferFormHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Cashbook Transfer / Capital'**
+  String get cashbookTransferFormHeading;
+
+  /// No description provided for @cashbookEntryTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Entry Type'**
+  String get cashbookEntryTypeLabel;
+
+  /// No description provided for @cashbookAccountBucketLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get cashbookAccountBucketLabel;
+
+  /// No description provided for @cashbookOpeningCashLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening Cash Balance (₹)'**
+  String get cashbookOpeningCashLabel;
+
+  /// No description provided for @cashbookOpeningBankLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening Bank / UPI Balance (₹)'**
+  String get cashbookOpeningBankLabel;
+
+  /// No description provided for @cashbookOpeningBalanceHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'Sets the starting balance for your Cash Drawer and Bank / UPI accounts.'**
+  String get cashbookOpeningBalanceHelper;
+
+  /// No description provided for @cashbookCatRent.
+  ///
+  /// In en, this message translates to:
+  /// **'Rent'**
+  String get cashbookCatRent;
+
+  /// No description provided for @cashbookCatElectricity.
+  ///
+  /// In en, this message translates to:
+  /// **'Electricity & Water'**
+  String get cashbookCatElectricity;
+
+  /// No description provided for @cashbookCatMachineRepair.
+  ///
+  /// In en, this message translates to:
+  /// **'Machine & Repair'**
+  String get cashbookCatMachineRepair;
+
+  /// No description provided for @cashbookCatStaffSalary.
+  ///
+  /// In en, this message translates to:
+  /// **'Staff Salary'**
+  String get cashbookCatStaffSalary;
+
+  /// No description provided for @cashbookCatSupplies.
+  ///
+  /// In en, this message translates to:
+  /// **'Thread / Oil / Supplies'**
+  String get cashbookCatSupplies;
+
+  /// No description provided for @cashbookCatRefreshments.
+  ///
+  /// In en, this message translates to:
+  /// **'Tea & Refreshments'**
+  String get cashbookCatRefreshments;
+
+  /// No description provided for @cashbookCatTransport.
+  ///
+  /// In en, this message translates to:
+  /// **'Transport & Courier'**
+  String get cashbookCatTransport;
+
+  /// No description provided for @cashbookCatOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other Overhead'**
+  String get cashbookCatOther;
+
+  /// No description provided for @cashbookTypeOpeningCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening Cash Balance'**
+  String get cashbookTypeOpeningCash;
+
+  /// No description provided for @cashbookTypeOpeningBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening Bank Balance'**
+  String get cashbookTypeOpeningBank;
+
+  /// No description provided for @cashbookTypeCashToBank.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash → Bank Deposit'**
+  String get cashbookTypeCashToBank;
+
+  /// No description provided for @cashbookTypeBankToCash.
+  ///
+  /// In en, this message translates to:
+  /// **'Bank → Cash Withdrawal'**
+  String get cashbookTypeBankToCash;
+
+  /// No description provided for @cashbookTypeCapitalIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner Capital In'**
+  String get cashbookTypeCapitalIn;
+
+  /// No description provided for @cashbookTypeOwnerDrawing.
+  ///
+  /// In en, this message translates to:
+  /// **'Owner Drawing'**
+  String get cashbookTypeOwnerDrawing;
+
+  /// No description provided for @cashbookTypeExpenseSettlement.
+  ///
+  /// In en, this message translates to:
+  /// **'Bill Settlement'**
+  String get cashbookTypeExpenseSettlement;
+
+  /// No description provided for @cashbookTypeReversal.
+  ///
+  /// In en, this message translates to:
+  /// **'Reversal'**
+  String get cashbookTypeReversal;
+
+  /// No description provided for @cashbookCategoryBreakdownHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Expenses by Category'**
+  String get cashbookCategoryBreakdownHeading;
+
+  /// No description provided for @reportCategoryCashbookNetProfit.
+  ///
+  /// In en, this message translates to:
+  /// **'Cashbook & Net Profit'**
+  String get reportCategoryCashbookNetProfit;
+
+  /// No description provided for @reportTrueNetProfitHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'True Workshop Net Profit'**
+  String get reportTrueNetProfitHeading;
+
+  /// No description provided for @reportOverheadExpensesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Workshop Overheads'**
+  String get reportOverheadExpensesLabel;
+
+  /// No description provided for @reportCashflowSummaryHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Cash & Bank Flow Summary'**
+  String get reportCashflowSummaryHeading;
+
+  /// No description provided for @reportOpeningBalanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Opening Balance'**
+  String get reportOpeningBalanceLabel;
+
+  /// No description provided for @reportTotalInflowsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Inflows'**
+  String get reportTotalInflowsLabel;
+
+  /// No description provided for @reportTotalOutflowsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Outflows'**
+  String get reportTotalOutflowsLabel;
+
+  /// No description provided for @reportClosingBalanceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Closing Balance'**
+  String get reportClosingBalanceLabel;
+
+  /// No description provided for @cashbookPermissionDeniedError.
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have permission for this Cashbook action.'**
+  String get cashbookPermissionDeniedError;
+
+  /// No description provided for @cashbookExpenseHasSettlementError.
+  ///
+  /// In en, this message translates to:
+  /// **'Reverse the bill payment settlement before reversing this expense.'**
+  String get cashbookExpenseHasSettlementError;
+
+  /// No description provided for @cashbookSettlementExceedsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Settlement amount exceeds remaining unpaid balance.'**
+  String get cashbookSettlementExceedsError;
+
+  /// No description provided for @guideChapterCashbookTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'13. Cashbook & Workshop Expenses'**
+  String get guideChapterCashbookTitle;
+
+  /// No description provided for @guideChapterCashbookSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Track Cash in Hand, Bank/UPI balance, overhead bills & true Net Profit.'**
+  String get guideChapterCashbookSubtitle;
+
+  /// No description provided for @helpTopicCashbookTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cashbook, Expenses & True Net Profit'**
+  String get helpTopicCashbookTitle;
+
+  /// No description provided for @helpTopicCashbookWhen.
+  ///
+  /// In en, this message translates to:
+  /// **'Use daily for workshop rent, electricity, machine repair, cash deposits/withdrawals, and checking Cash vs Bank balance.'**
+  String get helpTopicCashbookWhen;
+
+  /// No description provided for @cashbookSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search expenses, payee, ref, notes'**
+  String get cashbookSearchHint;
+
+  /// No description provided for @cashbookPeriodCashFlow.
+  ///
+  /// In en, this message translates to:
+  /// **'Period Cash'**
+  String get cashbookPeriodCashFlow;
+
+  /// No description provided for @cashbookPeriodBankFlow.
+  ///
+  /// In en, this message translates to:
+  /// **'Period Bank / UPI'**
+  String get cashbookPeriodBankFlow;
+
+  /// No description provided for @cashbookPeriodInOutValue.
+  ///
+  /// In en, this message translates to:
+  /// **'+{inflow} / -{outflow}'**
+  String cashbookPeriodInOutValue(String inflow, String outflow);
+
+  /// No description provided for @cashbookExpensePartialBadge.
+  ///
+  /// In en, this message translates to:
+  /// **'Partially Paid'**
+  String get cashbookExpensePartialBadge;
+
+  /// No description provided for @cashbookSettlementAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Settlement Amount (₹)'**
+  String get cashbookSettlementAmountLabel;
+
+  /// No description provided for @cashbookExpenseDetailTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Expense Details'**
+  String get cashbookExpenseDetailTitle;
+
+  /// No description provided for @cashbookSettlementHistoryHeading.
+  ///
+  /// In en, this message translates to:
+  /// **'Settlement History'**
+  String get cashbookSettlementHistoryHeading;
+
+  /// No description provided for @cashbookNoSettlementsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No payments recorded for this bill yet.'**
+  String get cashbookNoSettlementsYet;
+
+  /// No description provided for @cashbookReceiptAttachedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Receipt attached.'**
+  String get cashbookReceiptAttachedSuccess;
+
+  /// No description provided for @cashbookRemainingDueLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining Due'**
+  String get cashbookRemainingDueLabel;
+
+  /// No description provided for @cashbookTotalAmountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Bill'**
+  String get cashbookTotalAmountLabel;
+
+  /// No description provided for @cashbookReversalReasonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Reversal Reason'**
+  String get cashbookReversalReasonLabel;
+
+  /// No description provided for @cashbookCreatedByLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Recorded By'**
+  String get cashbookCreatedByLabel;
 }
 
 class _AppLocalizationsDelegate

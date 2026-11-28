@@ -259,7 +259,85 @@ final class ExcelCsvExportService implements ReportExportService {
       ],
       ReportCategory.businessInsights => [_insightsSheet(bundle, isGu: isGu)],
       ReportCategory.partiesAndPnl => [_partiesSheet(bundle, isGu: isGu), _lotPnlSheet(bundle, isGu: isGu)],
+      ReportCategory.cashbookAndNetProfit => [
+        _cashbookPnlSheet(bundle, isGu: isGu),
+        _expenseCategoriesSheet(bundle, isGu: isGu),
+      ],
     };
+  }
+
+  static ExportSheetData _cashbookPnlSheet(
+    AdvancedReportsBundle b, {
+    required bool isGu,
+  }) {
+    final cb = b.cashbookSummary;
+    final pnl = b.trueNetProfit;
+    return ExportSheetData(
+      name: isGu ? 'કેશબુક_ચોખ્ખો_નફો' : 'Cashbook_NetProfit',
+      headers: isGu
+          ? const ['વિગત', 'રકમ (₹)']
+          : const ['Metric', 'Amount (INR)'],
+      rows: [
+        if (pnl != null) ...[
+          [
+            isGu ? 'ચોખ્ખું વેચાણ' : 'Net Dispatched Sales',
+            pnl.netDispatchedSalesPaise / 100.0,
+          ],
+          [
+            isGu ? 'કારીગર મજૂરી' : 'Worker Labour',
+            pnl.workerLabourPaise / 100.0,
+          ],
+          [
+            isGu ? 'લોટ સીધો ખર્ચ' : 'Lot Direct Costs',
+            pnl.lotDirectCostsPaise / 100.0,
+          ],
+          [
+            isGu ? 'વર્કશોપ ખર્ચ' : 'Workshop Overheads',
+            pnl.workshopOverheadExpensesPaise / 100.0,
+          ],
+          [
+            isGu ? 'સાચો ચોખ્ખો નફો' : 'True Net Profit',
+            pnl.trueNetProfitPaise / 100.0,
+          ],
+        ],
+        if (cb != null) ...[
+          [
+            isGu ? 'હાથ પર રોકડ' : 'Cash in Hand',
+            cb.currentCashBalancePaise / 100.0,
+          ],
+          [
+            isGu ? 'બેંક / UPI બેલેન્સ' : 'Bank / UPI Balance',
+            cb.currentBankBalancePaise / 100.0,
+          ],
+          [
+            isGu ? 'બાકી બિલ' : 'Pending Unpaid Bills',
+            cb.totalExpensesUnpaidPaise / 100.0,
+          ],
+        ],
+      ],
+    );
+  }
+
+  static ExportSheetData _expenseCategoriesSheet(
+    AdvancedReportsBundle b, {
+    required bool isGu,
+  }) {
+    final cats = b.cashbookSummary?.categoryBreakdowns ?? const [];
+    return ExportSheetData(
+      name: isGu ? 'ખર્ચ_કેટેગરી' : 'Expense_Categories',
+      headers: isGu
+          ? const ['કેટેગરી', 'ચૂકવેલ (₹)', 'બાકી (₹)', 'કુલ (₹)']
+          : const ['Category', 'Paid (INR)', 'Unpaid (INR)', 'Total (INR)'],
+      rows: [
+        for (final c in cats)
+          [
+            c.category.dbValue,
+            c.paidPaise / 100.0,
+            c.unpaidPaise / 100.0,
+            c.totalPaise / 100.0,
+          ],
+      ],
+    );
   }
 
   static ExportSheetData _partiesSheet(

@@ -2,6 +2,7 @@ import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/app_status_badge.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
+import 'package:business_manager/features/cashbook/domain/entities/cashbook_entities.dart';
 import 'package:business_manager/features/production_history/domain/entities/production_history_entities.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
 import 'package:business_manager/l10n/generated/app_localizations.dart';
@@ -348,5 +349,34 @@ abstract final class DomainLabelLocalizer {
       if (m.dbValue == raw) return paymentMode(l10n, m);
     }
     return raw;
+  }
+
+  static String expenseCategory(AppLocalizations l10n, ExpenseCategory cat) {
+    return switch (cat) {
+      ExpenseCategory.rent => l10n.cashbookCatRent,
+      ExpenseCategory.electricity => l10n.cashbookCatElectricity,
+      ExpenseCategory.machineRepair => l10n.cashbookCatMachineRepair,
+      ExpenseCategory.staffSalary => l10n.cashbookCatStaffSalary,
+      ExpenseCategory.supplies => l10n.cashbookCatSupplies,
+      ExpenseCategory.refreshments => l10n.cashbookCatRefreshments,
+      ExpenseCategory.transport => l10n.cashbookCatTransport,
+      ExpenseCategory.other => l10n.cashbookCatOther,
+    };
+  }
+
+  static String cashbookEntryType(
+    AppLocalizations l10n,
+    CashbookEntryType type,
+  ) {
+    return switch (type) {
+      CashbookEntryType.openingCash => l10n.cashbookTypeOpeningCash,
+      CashbookEntryType.openingBank => l10n.cashbookTypeOpeningBank,
+      CashbookEntryType.cashToBank => l10n.cashbookTypeCashToBank,
+      CashbookEntryType.bankToCash => l10n.cashbookTypeBankToCash,
+      CashbookEntryType.capitalIn => l10n.cashbookTypeCapitalIn,
+      CashbookEntryType.ownerDrawing => l10n.cashbookTypeOwnerDrawing,
+      CashbookEntryType.expenseSettlement => l10n.cashbookTypeExpenseSettlement,
+      CashbookEntryType.reversal => l10n.cashbookTypeReversal,
+    };
   }
 }

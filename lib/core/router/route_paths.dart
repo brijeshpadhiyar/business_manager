@@ -191,5 +191,10 @@ abstract final class RoutePaths {
   }
   static String dispatchDetail(String challanId) => '/dispatch/$challanId';
 
+  // V2.1 — Workshop Expenses & Unified Cash/Bank Book
+  static const String cashbook = '/cashbook';
+  static const String expenseCreate = '/cashbook/expense/new';
+  static const String cashbookTransferCreate = '/cashbook/transfer/new';
+
   static String settingsHelpTopic(String topicId) => '/settings/help/$topicId';
 }

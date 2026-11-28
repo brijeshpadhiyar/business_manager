@@ -11,7 +11,7 @@ import 'package:drift/drift.dart';
 /// not upgraded: opening one fails with [UnsupportedSchemaException], and the
 /// app must be reinstalled or restored from a current backup.
 abstract final class DatabaseMigrationManager {
-  static const int currentSchemaVersion = 12;
+  static const int currentSchemaVersion = 13;
 
   /// Oldest schema this build can open or restore from a backup.
   static const int minimumSupportedSchemaVersion = 11;
@@ -53,12 +53,55 @@ abstract final class DatabaseMigrationManager {
       await m.createTable(db.lotDirectCosts);
     }
 
+    if (from < 13) {
+      await m.createTable(db.workshopExpenses);
+      await m.createTable(db.cashbookEntries);
+      await _rebuildAttachmentsAllowingWorkshopExpense(db);
+    }
+
     // Keep idempotent indexes, seeds and sync triggers current.
     for (final statement in SchemaIndexes.allIndexStatements) {
       await db.customStatement(statement);
     }
     await seedDefaultColourMaster(db);
     await SyncSchema.installTriggers(db);
+  }
+
+  /// Rebuilds `attachments` so `entity_type` allows `'WORKSHOP_EXPENSE'`
+  /// on databases upgraded from v11/v12 without losing existing attachments.
+  static Future<void> _rebuildAttachmentsAllowingWorkshopExpense(
+    AppDatabase db,
+  ) async {
+    await db.customStatement('DROP TABLE IF EXISTS attachments_v13;');
+    await db.customStatement('''
+      CREATE TABLE attachments_v13 (
+        id TEXT NOT NULL PRIMARY KEY,
+        entity_type TEXT NOT NULL CHECK(entity_type IN ('LOT', 'STOCK_MOVEMENT', 'PAYMENT', 'BUSINESS_PROFILE', 'WORKSHOP_EXPENSE')),
+        entity_id TEXT NOT NULL,
+        relative_path TEXT NOT NULL,
+        mime_type TEXT NOT NULL,
+        file_size_bytes INTEGER NOT NULL,
+        sha256 TEXT NOT NULL,
+        caption TEXT NULL,
+        created_at INTEGER NOT NULL,
+        updated_at INTEGER NOT NULL,
+        deleted_at INTEGER NULL
+      );
+    ''');
+    await db.customStatement('''
+      INSERT INTO attachments_v13 (
+        id, entity_type, entity_id, relative_path, mime_type,
+        file_size_bytes, sha256, caption, created_at, updated_at, deleted_at
+      )
+      SELECT
+        id, entity_type, entity_id, relative_path, mime_type,
+        file_size_bytes, sha256, caption, created_at, updated_at, deleted_at
+      FROM attachments;
+    ''');
+    await db.customStatement('DROP TABLE attachments;');
+    await db.customStatement(
+      'ALTER TABLE attachments_v13 RENAME TO attachments;',
+    );
   }
 
   static Future<void> seedDefaultColourMaster(GeneratedDatabase db) async {

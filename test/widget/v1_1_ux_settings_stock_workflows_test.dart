@@ -171,8 +171,8 @@ void main() {
     expect(gradleText, contains('com.brijesh.stitchflow'));
   });
 
-  test('Help & Guidance catalog contains all 22 bilingual workshop topics', () {
-    expect(StitchFlowHelpCatalog.topics.length, 22);
+  test('Help & Guidance catalog contains all 23 bilingual workshop topics', () {
+    expect(StitchFlowHelpCatalog.topics.length, 23);
     for (final topic in StitchFlowHelpCatalog.topics) {
       expect(topic.titleEn.trim(), isNotEmpty);
       expect(topic.titleGu.trim(), isNotEmpty);

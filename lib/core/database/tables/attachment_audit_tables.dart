@@ -23,7 +23,7 @@ class Attachments extends Table {
 
   @override
   List<String> get customConstraints => const [
-    "CHECK(entity_type IN ('LOT', 'STOCK_MOVEMENT', 'PAYMENT', 'BUSINESS_PROFILE'))",
+    "CHECK(entity_type IN ('LOT', 'STOCK_MOVEMENT', 'PAYMENT', 'BUSINESS_PROFILE', 'WORKSHOP_EXPENSE'))",
   ];
 }
 

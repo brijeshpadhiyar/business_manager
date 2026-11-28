@@ -5,6 +5,8 @@ import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/services/app_message_service.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
+import 'package:business_manager/features/auth/domain/services/rbac_policy.dart';
+import 'package:business_manager/features/auth/presentation/widgets/permission_gate.dart';
 import 'package:business_manager/features/guidance/domain/entities/guide_entities.dart';
 import 'package:business_manager/features/guidance/presentation/registry/guide_target_registry.dart';
 import 'package:business_manager/features/guidance/presentation/widgets/guide_quick_menu_sheet.dart';
@@ -220,6 +222,17 @@ List<ResponsiveNavSection> _buildGroupedSections(
       isActive: activeExtraId == 'accounting',
       onTap: () => onOpenExtraRoute(RoutePaths.accounting),
     ),
+    if (PermissionGate.hasPermission(
+      context,
+      AppPermission.viewCashbookAndExpenses,
+    ))
+      ResponsiveNavSectionItem(
+        id: 'cashbook',
+        label: l10n.navCashbookExpenses,
+        icon: AppIcons.cashbook,
+        isActive: activeExtraId == 'cashbook',
+        onTap: () => onOpenExtraRoute(RoutePaths.cashbook),
+      ),
     ResponsiveNavSectionItem(
       id: 'parties',
       label: l10n.navPartiesDispatch,
@@ -489,6 +502,9 @@ final class StitchFlowShellScaffold extends StatelessWidget {
         location.startsWith(RoutePaths.paymentCreatePath)) {
       return 'accounting';
     }
+    if (location.startsWith(RoutePaths.cashbook)) {
+      return 'cashbook';
+    }
     if (location.startsWith(RoutePaths.parties) ||
         location.startsWith('/dispatch')) {
       return 'parties';
@@ -626,6 +642,23 @@ final class StitchFlowShellScaffold extends StatelessWidget {
     if (location.startsWith(RoutePaths.accounting) ||
         location.startsWith(RoutePaths.paymentCreatePath)) {
       items.add(AppBreadcrumbItem(label: l10n.navAccounting));
+      return items;
+    }
+
+    if (location.startsWith(RoutePaths.cashbook)) {
+      items.add(
+        AppBreadcrumbItem(
+          label: l10n.navCashbookExpenses,
+          onTap: location == RoutePaths.cashbook
+              ? null
+              : () => context.go(RoutePaths.cashbook),
+        ),
+      );
+      if (location == RoutePaths.expenseCreate) {
+        items.add(AppBreadcrumbItem(label: l10n.cashbookRecordExpenseAction));
+      } else if (location == RoutePaths.cashbookTransferCreate) {
+        items.add(AppBreadcrumbItem(label: l10n.cashbookTransferAction));
+      }
       return items;
     }
 

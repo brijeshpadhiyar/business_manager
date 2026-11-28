@@ -59,6 +59,10 @@ final class ReportHtmlBuilder {
         bundle,
         isGu: isGu,
       ),
+      ReportCategory.cashbookAndNetProfit => _buildCashbookNetProfitSection(
+        bundle,
+        isGu: isGu,
+      ),
     };
 
     final disclaimer = isGu
@@ -198,7 +202,93 @@ final class ReportHtmlBuilder {
       isGu ? 'વ્યવસાયિક વિશ્લેષણ (Insights)' : 'Business Insights Report',
     ReportCategory.partiesAndPnl =>
       isGu ? 'પાર્ટી અને લોટ P&L રિપોર્ટ' : 'Parties & Lot P&L Report',
+    ReportCategory.cashbookAndNetProfit =>
+      isGu ? 'કેશબુક અને ચોખ્ખો નફો રિપોર્ટ' : 'Cashbook & True Net Profit Report',
   };
+
+  String _buildCashbookNetProfitSection(
+    AdvancedReportsBundle b, {
+    required bool isGu,
+  }) {
+    final cb = b.cashbookSummary;
+    final pnl = b.trueNetProfit;
+    if (cb == null || pnl == null) {
+      return '<p class="empty">—</p>';
+    }
+    final buf = StringBuffer()
+      ..write('<div class="kpi-grid">')
+      ..write(
+        _kpi(
+          isGu ? 'ચોખ્ખું વેચાણ' : 'Net Sales',
+          MoneyFormatter.formatPaise(pnl.netDispatchedSalesPaise),
+        ),
+      )
+      ..write(
+        _kpi(
+          isGu ? 'કારીગર મજૂરી' : 'Worker Labour',
+          MoneyFormatter.formatPaise(pnl.workerLabourPaise),
+        ),
+      )
+      ..write(
+        _kpi(
+          isGu ? 'લોટ સીધો ખર્ચ' : 'Lot Direct Costs',
+          MoneyFormatter.formatPaise(pnl.lotDirectCostsPaise),
+        ),
+      )
+      ..write(
+        _kpi(
+          isGu ? 'વર્કશોપ ખર્ચ' : 'Workshop Overheads',
+          MoneyFormatter.formatPaise(pnl.workshopOverheadExpensesPaise),
+        ),
+      )
+      ..write(
+        _kpi(
+          isGu ? 'સાચો ચોખ્ખો નફો' : 'True Net Profit',
+          '${MoneyFormatter.formatPaise(pnl.trueNetProfitPaise)} (${pnl.netMarginPercent.toStringAsFixed(1)}%)',
+          warn: pnl.trueNetProfitPaise < 0,
+        ),
+      )
+      ..write(
+        _kpi(
+          isGu ? 'હાથ પર રોકડ' : 'Cash in Hand',
+          MoneyFormatter.formatPaise(cb.currentCashBalancePaise),
+        ),
+      )
+      ..write(
+        _kpi(
+          isGu ? 'બેંક / UPI બેલેન્સ' : 'Bank / UPI Balance',
+          MoneyFormatter.formatPaise(cb.currentBankBalancePaise),
+        ),
+      )
+      ..write('</div>');
+
+    if (cb.categoryBreakdowns.isNotEmpty) {
+      buf
+        ..write(
+          '<h3>${_e(isGu ? 'કેટેગરી મુજબ ખર્ચ' : 'Workshop Expenses by Category')}</h3>',
+        )
+        ..write(
+          '<table><thead><tr>'
+          '<th>${_e(isGu ? 'કેટેગરી' : 'Category')}</th>'
+          '<th class="num">${_e(isGu ? 'ચૂકવેલ' : 'Paid')}</th>'
+          '<th class="num">${_e(isGu ? 'બાકી' : 'Unpaid')}</th>'
+          '<th class="num">${_e(isGu ? 'કુલ' : 'Total')}</th>'
+          '</tr></thead><tbody>',
+        );
+      for (final c in cb.categoryBreakdowns) {
+        buf.write(
+          '<tr>'
+          '<td>${_e(c.category.dbValue)}</td>'
+          '<td class="num">${_e(MoneyFormatter.formatPaise(c.paidPaise))}</td>'
+          '<td class="num">${_e(MoneyFormatter.formatPaise(c.unpaidPaise))}</td>'
+          '<td class="num">${_e(MoneyFormatter.formatPaise(c.totalPaise))}</td>'
+          '</tr>',
+        );
+      }
+      buf.write('</tbody></table>');
+    }
+    return buf.toString();
+  }
 
   String _buildPartiesPnlSection(AdvancedReportsBundle b, {required bool isGu}) {
     final buf = StringBuffer()

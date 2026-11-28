@@ -4809,4 +4809,325 @@ class AppLocalizationsGu extends AppLocalizations {
 
   @override
   String get notificationsPartyMinLabel => 'ન્યૂનતમ લેણાંની મર્યાદા';
+
+  @override
+  String get navCashbookExpenses => 'કેશબુક અને ખર્ચ';
+
+  @override
+  String get cashbookHeading => 'કેશબુક અને ખર્ચ';
+
+  @override
+  String get cashbookSubtitle =>
+      'હાથ પર રોકડ, બેંક/UPI બેલેન્સ, બિલ અને ટ્રાન્સફર';
+
+  @override
+  String get cashbookCashInHandLabel => 'હાથ પર રોકડ';
+
+  @override
+  String get cashbookBankBalanceLabel => 'બેંક / UPI બેલેન્સ';
+
+  @override
+  String get cashbookTotalBalanceLabel => 'કુલ બેલેન્સ';
+
+  @override
+  String get cashbookPendingBillsLabel => 'બાકી બિલ';
+
+  @override
+  String get cashbookTodayExpensesLabel => 'આજનો ખર્ચ';
+
+  @override
+  String get cashbookTabAll => 'બધી કેશબુક';
+
+  @override
+  String get cashbookTabExpenses => 'ખર્ચ';
+
+  @override
+  String get cashbookTabPendingBills => 'બાકી બિલ';
+
+  @override
+  String get cashbookRecordExpenseAction => 'ખર્ચ નોંધો';
+
+  @override
+  String get cashbookTransferAction => 'ટ્રાન્સફર / મૂડી';
+
+  @override
+  String get cashbookOpeningBalanceAction => 'શરૂઆતનું બેલેન્સ';
+
+  @override
+  String get cashbookFilterAllBuckets => 'બધા';
+
+  @override
+  String get cashbookFilterCash => 'રોકડ';
+
+  @override
+  String get cashbookFilterBank => 'બેંક / UPI';
+
+  @override
+  String get cashbookFilterAllSources => 'બધા સ્ત્રોત';
+
+  @override
+  String get cashbookSourceExpense => 'ખર્ચ';
+
+  @override
+  String get cashbookSourceWorkerPayment => 'કારીગર ચુકવણી';
+
+  @override
+  String get cashbookSourcePartyReceipt => 'પાર્ટી આવક';
+
+  @override
+  String get cashbookSourceTransfer => 'ટ્રાન્સફર અને ઓપનિંગ';
+
+  @override
+  String get cashbookEmptyTitle => 'હજુ સુધી કોઈ કેશબુક નોંધ નથી';
+
+  @override
+  String get cashbookEmptySubtitle =>
+      'રોકડ અને બેંક બેલેન્સ જોવા માટે વર્કશોપ ખર્ચ, ટ્રાન્સફર અથવા કારીગર/પાર્ટી વ્યવહાર નોંધો.';
+
+  @override
+  String get cashbookPendingBillsEmptyTitle => 'કોઈ બાકી બિલ નથી';
+
+  @override
+  String get cashbookPendingBillsEmptySubtitle =>
+      'બધા ઉધાર વર્કશોપ બિલ ચૂકવાઈ ગયા છે.';
+
+  @override
+  String get cashbookMarkPaidAction => 'ચૂકવેલ નોંધો';
+
+  @override
+  String get cashbookMarkPaidTitle => 'બાકી બિલ ચૂકવો';
+
+  @override
+  String get cashbookPaidSuccess => 'ખર્ચ ચૂકવેલ તરીકે નોંધાયો.';
+
+  @override
+  String get cashbookExpenseSavedSuccess => 'વર્કશોપ ખર્ચ સચવાયો.';
+
+  @override
+  String get cashbookTransferSavedSuccess => 'કેશબુક નોંધ સચવાઈ.';
+
+  @override
+  String get cashbookOpeningSavedSuccess => 'શરૂઆતનું બેલેન્સ અપડેટ થયું.';
+
+  @override
+  String get cashbookReversedSuccess => 'નોંધ રિવર્સ થઈ.';
+
+  @override
+  String get cashbookReverseExpenseTitle => 'વર્કશોપ ખર્ચ રિવર્સ કરવો?';
+
+  @override
+  String get cashbookReverseEntryTitle => 'કેશબુક નોંધ રિવર્સ કરવી?';
+
+  @override
+  String get cashbookExpenseFormHeading => 'વર્કશોપ ખર્ચ નોંધો';
+
+  @override
+  String get cashbookExpenseCategoryLabel => 'ખર્ચનો પ્રકાર';
+
+  @override
+  String get cashbookExpenseTitleLabel => 'ખર્ચની વિગત / નામ';
+
+  @override
+  String get cashbookExpensePayeeLabel => 'વેપારી / મેળવનારનું નામ (વૈકલ્પિક)';
+
+  @override
+  String get cashbookExpenseStatusLabel => 'ચુકવણી સ્થિતિ';
+
+  @override
+  String get cashbookExpenseStatusPaid => 'અત્યારે ચૂકવેલ';
+
+  @override
+  String get cashbookExpenseStatusUnpaid => 'બાકી / ઉધાર બિલ';
+
+  @override
+  String get cashbookExpenseManagerCashNote =>
+      'મેનેજર રોલ ફક્ત રોકડમાં ચૂકવેલ ખર્ચ નોંધી શકે છે.';
+
+  @override
+  String get cashbookExpenseReceiptLabel => 'બિલ / રસીદ ફોટો (વૈકલ્પિક)';
+
+  @override
+  String get cashbookExpenseAddReceipt => 'રસીદ ઉમેરો';
+
+  @override
+  String get cashbookExpenseRemoveReceipt => 'દૂર કરો';
+
+  @override
+  String get cashbookExpenseHasReceiptBadge => 'રસીદ';
+
+  @override
+  String get cashbookExpensePaidBadge => 'ચૂકવેલ';
+
+  @override
+  String get cashbookExpenseUnpaidBadge => 'બાકી';
+
+  @override
+  String cashbookExpenseSettledValue(String paid, String total) {
+    return '$total માંથી $paid ચૂકવેલ';
+  }
+
+  @override
+  String get cashbookTransferFormHeading => 'કેશબુક ટ્રાન્સફર / મૂડી';
+
+  @override
+  String get cashbookEntryTypeLabel => 'વ્યવહાર પ્રકાર';
+
+  @override
+  String get cashbookAccountBucketLabel => 'ખાતું';
+
+  @override
+  String get cashbookOpeningCashLabel => 'શરૂઆતનું રોકડ બેલેન્સ (₹)';
+
+  @override
+  String get cashbookOpeningBankLabel => 'શરૂઆતનું બેંક / UPI બેલેન્સ (₹)';
+
+  @override
+  String get cashbookOpeningBalanceHelper =>
+      'તમારા રોકડ અને બેંક / UPI ખાતાઓનું શરૂઆતનું બેલેન્સ સેટ કરો.';
+
+  @override
+  String get cashbookCatRent => 'ભાડું';
+
+  @override
+  String get cashbookCatElectricity => 'વીજળી અને પાણી';
+
+  @override
+  String get cashbookCatMachineRepair => 'મશીન અને રિપેરિંગ';
+
+  @override
+  String get cashbookCatStaffSalary => 'સ્ટાફ પગાર';
+
+  @override
+  String get cashbookCatSupplies => 'દોરા / તેલ / સામગ્રી';
+
+  @override
+  String get cashbookCatRefreshments => 'ચા અને નાસ્તો';
+
+  @override
+  String get cashbookCatTransport => 'વાહન અને કુરિયર';
+
+  @override
+  String get cashbookCatOther => 'અન્ય ખર્ચ';
+
+  @override
+  String get cashbookTypeOpeningCash => 'શરૂઆતની રોકડ';
+
+  @override
+  String get cashbookTypeOpeningBank => 'શરૂઆતની બેંક બેલેન્સ';
+
+  @override
+  String get cashbookTypeCashToBank => 'રોકડ → બેંકમાં જમા';
+
+  @override
+  String get cashbookTypeBankToCash => 'બેંક → રોકડ ઉપાડ';
+
+  @override
+  String get cashbookTypeCapitalIn => 'માલિકની મૂડી જમા';
+
+  @override
+  String get cashbookTypeOwnerDrawing => 'માલિકનો ઉપાડ';
+
+  @override
+  String get cashbookTypeExpenseSettlement => 'બિલ ચુકવણી';
+
+  @override
+  String get cashbookTypeReversal => 'રિવર્સલ';
+
+  @override
+  String get cashbookCategoryBreakdownHeading => 'કેટેગરી મુજબ ખર્ચ';
+
+  @override
+  String get reportCategoryCashbookNetProfit => 'કેશબુક અને ચોખ્ખો નફો';
+
+  @override
+  String get reportTrueNetProfitHeading => 'વર્કશોપનો સાચો ચોખ્ખો નફો';
+
+  @override
+  String get reportOverheadExpensesLabel => 'વર્કશોપ ખર્ચ';
+
+  @override
+  String get reportCashflowSummaryHeading => 'રોકડ અને બેંક પ્રવાહ સારાંશ';
+
+  @override
+  String get reportOpeningBalanceLabel => 'શરૂઆતનું બેલેન્સ';
+
+  @override
+  String get reportTotalInflowsLabel => 'કુલ આવક';
+
+  @override
+  String get reportTotalOutflowsLabel => 'કુલ જાવક';
+
+  @override
+  String get reportClosingBalanceLabel => 'અંતિમ બેલેન્સ';
+
+  @override
+  String get cashbookPermissionDeniedError =>
+      'આ કેશબુક કામગીરી માટે તમને પરવાનગી નથી.';
+
+  @override
+  String get cashbookExpenseHasSettlementError =>
+      'આ ખર્ચ રિવર્સ કરતા પહેલા તેની બિલ ચુકવણી રિવર્સ કરો.';
+
+  @override
+  String get cashbookSettlementExceedsError =>
+      'ચુકવણીની રકમ બાકી બિલ કરતા વધારે છે.';
+
+  @override
+  String get guideChapterCashbookTitle => '૧૩. કેશબુક અને વર્કશોપ ખર્ચ';
+
+  @override
+  String get guideChapterCashbookSubtitle =>
+      'રોકડ, બેંક/UPI બેલેન્સ, બિલ અને સાચો ચોખ્ખો નફો ટ્રેક કરો.';
+
+  @override
+  String get helpTopicCashbookTitle => 'કેશબુક, ખર્ચ અને સાચો ચોખ્ખો નફો';
+
+  @override
+  String get helpTopicCashbookWhen =>
+      'ભાડું, વીજળી, મશીન રિપેર, રોકડ જમા/ઉપાડ અને રોકડ વિરુદ્ધ બેંક બેલેન્સ જોવા દરરોજ ઉપયોગ કરો.';
+
+  @override
+  String get cashbookSearchHint => 'ખર્ચ, પાર્ટી, રેફરન્સ કે નોંધ શોધો';
+
+  @override
+  String get cashbookPeriodCashFlow => 'સમયગાળાની રોકડ';
+
+  @override
+  String get cashbookPeriodBankFlow => 'સમયગાળાનું બેંક / UPI';
+
+  @override
+  String cashbookPeriodInOutValue(String inflow, String outflow) {
+    return '+$inflow / -$outflow';
+  }
+
+  @override
+  String get cashbookExpensePartialBadge => 'અંશતઃ ચૂકવેલ';
+
+  @override
+  String get cashbookSettlementAmountLabel => 'ચુકવણીની રકમ (₹)';
+
+  @override
+  String get cashbookExpenseDetailTitle => 'ખર્ચની વિગતો';
+
+  @override
+  String get cashbookSettlementHistoryHeading => 'ચુકવણીનો ઇતિહાસ';
+
+  @override
+  String get cashbookNoSettlementsYet =>
+      'આ બિલ માટે હજુ સુધી કોઈ ચુકવણી નોંધાઈ નથી.';
+
+  @override
+  String get cashbookReceiptAttachedSuccess => 'રસીદ જોડાઈ ગઈ.';
+
+  @override
+  String get cashbookRemainingDueLabel => 'બાકી રકમ';
+
+  @override
+  String get cashbookTotalAmountLabel => 'કુલ બિલ';
+
+  @override
+  String get cashbookReversalReasonLabel => 'રિવર્સલનું કારણ';
+
+  @override
+  String get cashbookCreatedByLabel => 'નોંધનાર';
 }

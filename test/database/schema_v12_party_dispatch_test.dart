@@ -10,13 +10,13 @@ import 'package:sqlite3/sqlite3.dart' as sq;
 
 void main() {
   test(
-    'Fresh v12 database installs all 35 tables, v12 indexes and sync triggers',
+    'Fresh v13 database installs all 37 tables, v12/v13 indexes and sync triggers',
     () async {
       final db = AppDatabase.forTesting(NativeDatabase.memory());
       addTearDown(db.close);
 
       await db.customSelect('SELECT 1').getSingle();
-      expect(DatabaseMigrationManager.currentSchemaVersion, 12);
+      expect(DatabaseMigrationManager.currentSchemaVersion, 13);
 
       final tables = await db
           .customSelect(
@@ -24,7 +24,7 @@ void main() {
             "AND name NOT LIKE 'sqlite_%'",
           )
           .get();
-      expect(tables, hasLength(35));
+      expect(tables, hasLength(37));
 
       final now = DateTime.now().millisecondsSinceEpoch;
       await db.partyDispatchDao.insertParty(
@@ -97,7 +97,7 @@ void main() {
             "AND name NOT LIKE 'sqlite_%'",
           )
           .get();
-      expect(tables, hasLength(35));
+      expect(tables, hasLength(37));
 
       final fk = await db.customSelect('PRAGMA foreign_key_check;').get();
       expect(fk, isEmpty);

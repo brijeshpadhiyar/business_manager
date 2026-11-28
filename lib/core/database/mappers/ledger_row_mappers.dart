@@ -1,6 +1,7 @@
 import 'package:business_manager/core/database/app_database.dart';
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
 import 'package:business_manager/features/business_profile/domain/entities/business_profile_entity.dart';
+import 'package:business_manager/features/cashbook/domain/entities/cashbook_entities.dart';
 import 'package:business_manager/features/parties/domain/entities/party_entities.dart';
 import 'package:business_manager/features/rates/domain/entities/rate_entities.dart';
 import 'package:business_manager/features/stock_movements/domain/entities/stock_movement_entities.dart';
@@ -234,6 +235,49 @@ abstract final class LedgerRowMappers {
         category: LotCostCategory.fromDbValue(row.category),
         description: row.description,
         amountPaise: row.amountPaise,
+        reason: row.reason,
+        notes: row.notes,
+        transactionAt: row.transactionAt,
+        recordedAt: row.recordedAt,
+        createdBy: row.createdBy,
+        createdAt: row.createdAt,
+        updatedAt: row.updatedAt,
+      );
+
+  static WorkshopExpenseEntity workshopExpense(WorkshopExpenseRow row) =>
+      WorkshopExpenseEntity(
+        id: row.id,
+        category: ExpenseCategory.fromDbValue(row.category),
+        title: row.title,
+        payeeName: row.payeeName,
+        amountPaise: row.amountPaise,
+        paymentStatus: ExpensePaymentStatus.fromDbValue(row.paymentStatus),
+        paymentMode: row.paymentMode != null
+            ? PaymentMode.fromDbValue(row.paymentMode!)
+            : null,
+        referenceNo: row.referenceNo,
+        reversesExpenseId: row.reversesExpenseId,
+        clientRequestId: row.clientRequestId,
+        reason: row.reason,
+        notes: row.notes,
+        transactionAt: row.transactionAt,
+        recordedAt: row.recordedAt,
+        createdBy: row.createdBy,
+        createdAt: row.createdAt,
+        updatedAt: row.updatedAt,
+      );
+
+  static CashbookEntryEntity cashbookEntry(CashbookEntryRow row) =>
+      CashbookEntryEntity(
+        id: row.id,
+        entryType: CashbookEntryType.fromDbValue(row.entryType),
+        accountBucket: CashbookAccountBucket.fromDbValue(row.accountBucket),
+        paymentMode: PaymentMode.fromDbValue(row.paymentMode),
+        amountPaise: row.amountPaise,
+        linkedExpenseId: row.linkedExpenseId,
+        reversesEntryId: row.reversesEntryId,
+        clientRequestId: row.clientRequestId,
+        referenceNo: row.referenceNo,
         reason: row.reason,
         notes: row.notes,
         transactionAt: row.transactionAt,

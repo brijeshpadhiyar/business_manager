@@ -316,7 +316,11 @@ void main() {
     });
 
     test('SyncTableRegistry orders party parent tables before children', () {
-      expect(SyncTableRegistry.syncedTablesInPushOrder, hasLength(30));
+      expect(SyncTableRegistry.syncedTablesInPushOrder, hasLength(32));
+      expect(
+        SyncTableRegistry.orderOf('workshop_expenses'),
+        lessThan(SyncTableRegistry.orderOf('cashbook_entries')),
+      );
       expect(
         SyncTableRegistry.orderOf('parties'),
         lessThan(SyncTableRegistry.orderOf('dispatch_challans')),

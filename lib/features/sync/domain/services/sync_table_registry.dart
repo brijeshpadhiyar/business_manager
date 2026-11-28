@@ -80,10 +80,20 @@ abstract final class SyncTableRegistry {
       appendOnly: true,
       selfReferenceColumns: ['reverses_cost_id'],
     ),
+    SyncTableSpec(
+      tableName: 'workshop_expenses',
+      appendOnly: true,
+      selfReferenceColumns: ['reverses_expense_id'],
+    ),
+    SyncTableSpec(
+      tableName: 'cashbook_entries',
+      appendOnly: true,
+      selfReferenceColumns: ['reverses_entry_id'],
+    ),
     SyncTableSpec(tableName: 'audit_logs', appendOnly: true),
   ];
 
-  /// All 30 synced domain tables in strict Foreign-Key topological push order.
+  /// All 32 synced domain tables in strict Foreign-Key topological push order.
   static const List<String> syncedTablesInPushOrder = [
     'attachments',
     'business_profile',
@@ -114,6 +124,8 @@ abstract final class SyncTableRegistry {
     'buyer_return_items',
     'party_payments',
     'lot_direct_costs',
+    'workshop_expenses',
+    'cashbook_entries',
     'audit_logs',
   ];
 

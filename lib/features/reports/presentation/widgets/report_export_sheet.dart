@@ -156,6 +156,8 @@ final class ReportExportSheet {
       ReportCategory.businessInsights => b.insights.trendPoints.length,
       ReportCategory.partiesAndPnl =>
         b.partySummaries.length + b.lotProfitLossRows.length,
+      ReportCategory.cashbookAndNetProfit =>
+        b.cashbookSummary?.categoryBreakdowns.length ?? 0,
     };
   }
 }

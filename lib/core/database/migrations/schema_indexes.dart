@@ -262,6 +262,28 @@ abstract final class SchemaIndexes {
         'WHERE client_request_id IS NOT NULL;',
   ];
 
+  /// v13: Workshop Expenses & Cash/Bank Book entries.
+  static const List<String> v13IndexStatements = [
+    'CREATE INDEX IF NOT EXISTS idx_we_tx '
+        'ON workshop_expenses(transaction_at DESC, category);',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_we_single_reversal '
+        'ON workshop_expenses(reverses_expense_id) '
+        'WHERE reverses_expense_id IS NOT NULL;',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_we_client_req '
+        'ON workshop_expenses(client_request_id) '
+        'WHERE client_request_id IS NOT NULL;',
+    'CREATE INDEX IF NOT EXISTS idx_cb_tx '
+        'ON cashbook_entries(transaction_at DESC, entry_type);',
+    'CREATE INDEX IF NOT EXISTS idx_cb_expense '
+        'ON cashbook_entries(linked_expense_id);',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_cb_single_reversal '
+        'ON cashbook_entries(reverses_entry_id) '
+        'WHERE reverses_entry_id IS NOT NULL;',
+    'CREATE UNIQUE INDEX IF NOT EXISTS idx_cb_client_req '
+        'ON cashbook_entries(client_request_id) '
+        'WHERE client_request_id IS NOT NULL;',
+  ];
+
   static const List<String> allIndexStatements = [
     ...v1IndexStatements,
     ...v2IndexStatements,
@@ -274,5 +296,6 @@ abstract final class SchemaIndexes {
     ...v10IndexStatements,
     ...v11IndexStatements,
     ...v12IndexStatements,
+    ...v13IndexStatements,
   ];
 }

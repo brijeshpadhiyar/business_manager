@@ -38,6 +38,10 @@ enum AppPermission {
   createDispatchAndReturns,
   recordPartyReceipts,
   manageLotDirectCosts,
+  viewCashbookAndExpenses,
+  recordCashExpense,
+  recordNonCashExpenseAndTransfers,
+  manageOpeningBalances,
   restoreSyncConflicts,
   manageBusinessProfile,
   manageTeamAndInvites,
@@ -67,9 +71,13 @@ abstract final class RbacPolicy {
         AppPermission.viewPartiesAndDispatch ||
         AppPermission.createDispatchAndReturns ||
         AppPermission.manageLotDirectCosts ||
+        AppPermission.viewCashbookAndExpenses ||
+        AppPermission.recordCashExpense ||
         AppPermission.restoreSyncConflicts => true,
         AppPermission.recordPaymentsAndAdjustments ||
         AppPermission.recordPartyReceipts ||
+        AppPermission.recordNonCashExpenseAndTransfers ||
+        AppPermission.manageOpeningBalances ||
         AppPermission.manageBusinessProfile ||
         AppPermission.manageTeamAndInvites ||
         AppPermission.restoreLocalBackup => false,
@@ -87,6 +95,10 @@ abstract final class RbacPolicy {
         AppPermission.createDispatchAndReturns ||
         AppPermission.recordPartyReceipts ||
         AppPermission.manageLotDirectCosts ||
+        AppPermission.viewCashbookAndExpenses ||
+        AppPermission.recordCashExpense ||
+        AppPermission.recordNonCashExpenseAndTransfers ||
+        AppPermission.manageOpeningBalances ||
         AppPermission.restoreSyncConflicts ||
         AppPermission.manageBusinessProfile ||
         AppPermission.manageTeamAndInvites ||
@@ -99,12 +111,16 @@ abstract final class RbacPolicy {
         AppPermission.recordPaymentsAndAdjustments ||
         AppPermission.viewPartiesAndDispatch ||
         AppPermission.recordPartyReceipts ||
-        AppPermission.manageLotDirectCosts => true,
+        AppPermission.manageLotDirectCosts ||
+        AppPermission.viewCashbookAndExpenses ||
+        AppPermission.recordCashExpense ||
+        AppPermission.recordNonCashExpenseAndTransfers => true,
         AppPermission.editLotsAndMasterData ||
         AppPermission.editWorkerRates ||
         AppPermission.issueAndRouteStock ||
         AppPermission.performQcInspection ||
         AppPermission.createDispatchAndReturns ||
+        AppPermission.manageOpeningBalances ||
         AppPermission.restoreSyncConflicts ||
         AppPermission.manageBusinessProfile ||
         AppPermission.manageTeamAndInvites ||

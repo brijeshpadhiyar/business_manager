@@ -1041,6 +1041,13 @@ abstract final class GuideCatalog {
           chapterId: 'team-sync-health',
           liveRoutePath: '/settings/team',
           liveScreenId: GuideScreenId.team,
+          nextTopicId: 'cashbook-and-expenses',
+        ),
+        'cashbook-and-expenses': HelpTopicActionLink(
+          topicId: 'cashbook-and-expenses',
+          chapterId: 'payments-ledger',
+          liveRoutePath: '/cashbook',
+          liveScreenId: GuideScreenId.accounting,
           nextTopicId: null,
         ),
       };

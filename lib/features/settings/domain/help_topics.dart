@@ -638,6 +638,37 @@ abstract final class StitchFlowHelpCatalog {
       exampleGu:
           'કોડથી સુપરવાઇઝર ઉમેરો -> જરૂર પડે ત્યારે મેનેજર બનાવો -> વિવાદ નિરીક્ષકમાં દરનો ફેરફાર સરખાવી ઉકેલો.',
     ),
+    HelpTopic(
+      id: 'cashbook-and-expenses',
+      order: 23,
+      icon: AppIcons.cashbook,
+      titleEn: 'Cashbook, Workshop Expenses & True Net Profit',
+      titleGu: 'કેશબુક, વર્કશોપ ખર્ચ અને સાચો ચોખ્ખો નફો',
+      summaryEn:
+          'Track live Cash in Hand vs Bank/UPI balance across Worker Payments, Party Receipts, Workshop Expenses (Rent, Electricity, Machine Repair, Salary), Unpaid Bills, and Cash↔Bank Transfers.',
+      summaryGu:
+          'કારીગર ચુકવણી, પાર્ટી આવક, વર્કશોપ ખર્ચ (ભાડું, વીજળી, મશીન રિપેર, પગાર), બાકી બિલ અને રોકડ↔બેંક ટ્રાન્સફર સાથે લાઇવ રોકડ અને બેંક બેલેન્સ ટ્રેક કરો.',
+      whenToUseEn:
+          'Daily for recording overhead bills, depositing or withdrawing cash, settling unpaid bills, and viewing true workshop net profit.',
+      whenToUseGu:
+          'દરરોજ વર્કશોપ ખર્ચ, રોકડ જમા/ઉપાડ, બાકી બિલ ચુકવણી અને સાચો ચોખ્ખો નફો જોવા માટે.',
+      stepsEn: [
+        'Open Finance & Parties -> Cashbook & Expenses (or tap Cash in Hand / Bank Balance on Dashboard).',
+        'Owner can set Opening Cash and Opening Bank balances once to match your real cash drawer and bank account.',
+        'Tap Record Expense for Rent, Electricity, Machine Repair, Staff Salary, or Supplies (Paid or Unpaid bill with optional receipt photo).',
+        'Use Pending Bills -> Mark Paid when settling credit bills, or open Reports -> Cashbook & Net Profit for true business profit.',
+      ],
+      stepsGu: [
+        'નાણાં અને પાર્ટી -> કેશબુક અને ખર્ચ ખોલો (અથવા ડેશબોર્ડ પર રોકડ / બેંક બેલેન્સ પર ટેપ કરો).',
+        'માલિક તમારા ખરેખર રોકડ અને બેંક ખાતા મુજબ શરૂઆતનું બેલેન્સ સેટ કરી શકે છે.',
+        'ભાડું, વીજળી, મશીન રિપેર, પગાર કે સામગ્રી માટે ખર્ચ નોંધો (ચૂકવેલ કે બાકી બિલ રસીદ ફોટા સાથે).',
+        'બાકી બિલ ચૂકવવા "ચૂકવેલ નોંધો" વાપરો અને સાચા ચોખ્ખા નફા માટે રિપોર્ટ્સ -> કેશબુક અને ચોખ્ખો નફો જુઓ.',
+      ],
+      exampleEn:
+          'Set Opening Cash ₹10,000 -> Pay Electricity ₹2,500 UPI -> Deposit ₹4,000 Cash to Bank -> Cash is ₹6,000 and Bank drops/rises automatically.',
+      exampleGu:
+          'શરૂઆતની રોકડ ₹૧૦,૦૦૦ -> વીજળી ₹૨,૫૦૦ UPI થી ચૂકવો -> ₹૪,૦૦૦ રોકડ બેંકમાં જમા કરો -> રોકડ અને બેંક આપમેળે અપડેટ થાય છે.',
+    ),
   ];
 
   static HelpTopic? byId(String id) {

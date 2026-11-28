@@ -2,6 +2,7 @@ import 'package:business_manager/core/database/app_database.dart';
 import 'package:business_manager/core/database/mappers/ledger_row_mappers.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:business_manager/features/accounting/domain/repositories/accounting_repository.dart';
+import 'package:business_manager/features/cashbook/domain/calculators/cashbook_calculator.dart';
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
 import 'package:business_manager/features/parties/data/repositories/party_repository_impl.dart';
 import 'package:business_manager/features/parties/domain/repositories/party_repository.dart';
@@ -413,6 +414,48 @@ final class ReportsRepositoryImpl implements ReportsRepository {
     final partySummaries = await _partyRepo.getAllPartySummaries();
     final lotPnlRows = await _partyRepo.getAllLotProfitLoss();
 
+    final cashbookExpenses = (await _db.cashbookDao.getAllExpenses())
+        .map(LedgerRowMappers.workshopExpense)
+        .toList();
+    final cashbookEntries = (await _db.cashbookDao.getAllCashbookEntries())
+        .map(LedgerRowMappers.cashbookEntry)
+        .toList();
+    final partyPayments = (await _db.partyDispatchDao.getAllPartyPayments())
+        .map(LedgerRowMappers.partyPayment)
+        .toList();
+    final challans = (await _db.partyDispatchDao.getAllChallans())
+        .map(LedgerRowMappers.dispatchChallan)
+        .toList();
+    final buyerReturns = (await _db.partyDispatchDao.getAllBuyerReturns())
+        .map(LedgerRowMappers.buyerReturn)
+        .toList();
+    final lotDirectCosts = (await _db.partyDispatchDao.getAllLotDirectCosts())
+        .map(LedgerRowMappers.lotDirectCost)
+        .toList();
+    final nonDeletedParties = await _db.partyDispatchDao.getNonDeletedParties();
+    const cashbookCalc = CashbookCalculator();
+    final cashbookSummary = cashbookCalc.calculateSummary(
+      expenses: cashbookExpenses,
+      cashbookEntries: cashbookEntries,
+      workerPayments: allPayments,
+      partyPayments: partyPayments,
+      workerNames: {for (final w in workers) w.id: w.name},
+      partyNames: {for (final p in nonDeletedParties) p.id: p.name},
+      fromUtcMillis: filter.fromUtcMillis,
+      toUtcMillis: filter.toUtcMillis,
+    );
+    final trueNetProfit = cashbookCalc.calculateTrueNetProfit(
+      challans: challans,
+      buyerReturns: buyerReturns,
+      labourEntries: allLabour,
+      workerAdjustments: allAdjustments,
+      lotDirectCosts: lotDirectCosts,
+      workshopExpenses: cashbookExpenses,
+      cashbookEntries: cashbookEntries,
+      fromUtcMillis: filter.fromUtcMillis,
+      toUtcMillis: filter.toUtcMillis,
+    );
+
     return AdvancedReportsBundle(
       filter: base.filter,
       filterOptions: base.filterOptions,
@@ -438,6 +481,8 @@ final class ReportsRepositoryImpl implements ReportsRepository {
       rejectionRecords: rejRows,
       partySummaries: partySummaries,
       lotProfitLossRows: lotPnlRows,
+      cashbookSummary: cashbookSummary,
+      trueNetProfit: trueNetProfit,
     );
   }
 
@@ -498,6 +543,22 @@ final class ReportsRepositoryImpl implements ReportsRepository {
       totalPartyReceivable += p.outstandingReceivablePaise;
       totalPartyAdvanceCredit += p.advanceCreditPaise;
     }
+
+    final cashbookExpenses = (await _db.cashbookDao.getAllExpenses())
+        .map(LedgerRowMappers.workshopExpense)
+        .toList();
+    final cashbookEntries = (await _db.cashbookDao.getAllCashbookEntries())
+        .map(LedgerRowMappers.cashbookEntry)
+        .toList();
+    final allPartyPayments = (await _db.partyDispatchDao.getAllPartyPayments())
+        .map(LedgerRowMappers.partyPayment)
+        .toList();
+    final cashbookSummary = const CashbookCalculator().calculateSummary(
+      expenses: cashbookExpenses,
+      cashbookEntries: cashbookEntries,
+      workerPayments: allPayments,
+      partyPayments: allPartyPayments,
+    );
 
     var earnedLabour = 0;
     var adjNet = 0;
@@ -584,6 +645,10 @@ final class ReportsRepositoryImpl implements ReportsRepository {
       dispatchedStock: dispatched,
       totalPartyReceivablePaise: totalPartyReceivable,
       totalPartyAdvanceCreditPaise: totalPartyAdvanceCredit,
+      cashBalancePaise: cashbookSummary.currentCashBalancePaise,
+      bankBalancePaise: cashbookSummary.currentBankBalancePaise,
+      todayExpensesPaise: cashbookSummary.todayExpensesPaise,
+      unpaidBillsPaise: cashbookSummary.totalExpensesUnpaidPaise,
     );
   }
 

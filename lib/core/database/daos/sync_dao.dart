@@ -217,6 +217,8 @@ class SyncDao extends DatabaseAccessor<AppDatabase> with _$SyncDaoMixin {
       'buyer_returns',
       'party_payments',
       'lot_direct_costs',
+      'workshop_expenses',
+      'cashbook_entries',
     ];
     var total = 0;
     for (final table in userTables) {

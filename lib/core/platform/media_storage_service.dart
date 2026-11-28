@@ -5,6 +5,7 @@ enum MediaCategory {
   lots('lots'),
   movements('movements'),
   payments('payments'),
+  expenses('expenses'),
   profile('profile');
 
   const MediaCategory(this.folderName);

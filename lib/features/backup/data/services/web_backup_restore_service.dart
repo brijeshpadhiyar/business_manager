@@ -51,6 +51,8 @@ final class WebBackupRestoreService implements BackupRestoreService {
     'buyer_return_items',
     'party_payments',
     'lot_direct_costs',
+    'workshop_expenses',
+    'cashbook_entries',
     'attachments',
     'audit_logs',
   ];

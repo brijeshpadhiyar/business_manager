@@ -1,4 +1,5 @@
 import 'package:business_manager/features/accounting/domain/entities/accounting_entities.dart';
+import 'package:business_manager/features/cashbook/domain/entities/cashbook_entities.dart';
 import 'package:business_manager/features/parties/domain/entities/party_entities.dart';
 import 'package:business_manager/features/production_history/domain/entities/production_history_entities.dart';
 import 'package:business_manager/features/reports/domain/entities/dashboard_report_entities.dart';
@@ -445,6 +446,8 @@ final class AdvancedReportsBundle {
     this.rejectionRecords = const [],
     this.partySummaries = const [],
     this.lotProfitLossRows = const [],
+    this.cashbookSummary,
+    this.trueNetProfit,
   });
 
   final ReportFilter filter;
@@ -471,10 +474,14 @@ final class AdvancedReportsBundle {
   final List<RejectionRecordView> rejectionRecords;
   final List<PartyFinancialSummary> partySummaries;
   final List<LotProfitLossSummary> lotProfitLossRows;
+  final CashbookSummary? cashbookSummary;
+  final TrueWorkshopNetProfitSummary? trueNetProfit;
 
   AdvancedReportsBundle copyWithPartiesAndPnl({
     List<PartyFinancialSummary>? partySummaries,
     List<LotProfitLossSummary>? lotProfitLossRows,
+    CashbookSummary? cashbookSummary,
+    TrueWorkshopNetProfitSummary? trueNetProfit,
   }) => AdvancedReportsBundle(
     filter: filter,
     filterOptions: filterOptions,
@@ -500,5 +507,7 @@ final class AdvancedReportsBundle {
     rejectionRecords: rejectionRecords,
     partySummaries: partySummaries ?? this.partySummaries,
     lotProfitLossRows: lotProfitLossRows ?? this.lotProfitLossRows,
+    cashbookSummary: cashbookSummary ?? this.cashbookSummary,
+    trueNetProfit: trueNetProfit ?? this.trueNetProfit,
   );
 }

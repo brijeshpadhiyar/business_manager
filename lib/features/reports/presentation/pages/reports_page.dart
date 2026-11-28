@@ -4,6 +4,7 @@ import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
+import 'package:business_manager/features/cashbook/presentation/widgets/reports_cashbook_pnl_view.dart';
 import 'package:business_manager/features/guidance/domain/entities/guide_entities.dart';
 import 'package:business_manager/features/guidance/presentation/registry/guide_target_registry.dart';
 import 'package:business_manager/features/guidance/presentation/widgets/screen_first_visit_hint.dart';
@@ -65,6 +66,7 @@ final class _ReportsViewState extends State<_ReportsView> {
       (ReportCategory.labourFinancial, l10n.reportCategoryFinancial),
       (ReportCategory.businessInsights, l10n.reportCategoryInsights),
       (ReportCategory.partiesAndPnl, l10n.reportCategoryPartiesPnl),
+      (ReportCategory.cashbookAndNetProfit, l10n.reportCategoryCashbookNetProfit),
     ];
 
     return BlocBuilder<ReportsCubit, ReportsState>(
@@ -177,6 +179,8 @@ final class _ReportsViewState extends State<_ReportsView> {
                           ReportsInsightsCategoryView(bundle: state.bundle!),
                         ReportCategory.partiesAndPnl =>
                           ReportsPartiesPnlView(bundle: state.bundle!),
+                        ReportCategory.cashbookAndNetProfit =>
+                          ReportsCashbookPnlView(bundle: state.bundle!),
                       },
               ),
             ],
