@@ -1,12 +1,17 @@
 import 'package:business_manager/core/design_system/app_breakpoints.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_theme.dart';
+import 'package:business_manager/core/theme/navigation_sidebar_cubit.dart';
 import 'package:business_manager/core/widgets/app_glass_backdrop.dart';
 import 'package:business_manager/core/widgets/app_scaffold.dart';
 import 'package:business_manager/core/widgets/responsive_navigation.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final class _StatefulTabCounter extends StatefulWidget {
   const _StatefulTabCounter({required this.label});
@@ -330,7 +335,7 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        expect(find.byType(NavigationBar), findsOneWidget);
+        expect(find.byType(StitchFlowBottomNav), findsOneWidget);
         await tester.tap(find.text('Inc Home'));
         await tester.pump();
         expect(find.text('Home: 1'), findsOneWidget);
@@ -349,7 +354,7 @@ void main() {
         router.pop();
         await tester.pumpAndSettle();
         expect(find.text('Open Lot 42'), findsOneWidget);
-        expect(find.byType(NavigationBar), findsOneWidget);
+        expect(find.byType(StitchFlowBottomNav), findsOneWidget);
 
         await tester.tap(find.text('Home'));
         await tester.pumpAndSettle();
@@ -372,8 +377,8 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        expect(find.byType(NavigationDrawer), findsOneWidget);
-        expect(find.byType(NavigationBar), findsNothing);
+        expect(find.byType(StitchFlowSideNav), findsOneWidget);
+        expect(find.byType(StitchFlowBottomNav), findsNothing);
 
         await tester.tap(find.text('Lots'));
         await tester.pumpAndSettle();
@@ -382,8 +387,200 @@ void main() {
         await tester.tap(find.text('Open Lot 42'));
         await tester.pumpAndSettle();
         // Sidebar stays mounted while opaque detail page renders in right pane.
-        expect(find.byType(NavigationDrawer), findsOneWidget);
+        expect(find.byType(StitchFlowSideNav), findsOneWidget);
         expect(find.text('Lot Detail Content'), findsOneWidget);
+      },
+    );
+  });
+
+  group('Redesigned Bottom Navigation & Collapsible/Hideable Side Navigator', () {
+    testWidgets(
+      'mobile bottom nav opens categorized More sheet and invokes extra module',
+      (tester) async {
+        tester.view.physicalSize = const Size(390, 844);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.reset);
+
+        var selectedTab = 0;
+        String? tappedModule;
+
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.light(),
+            home: StatefulBuilder(
+              builder: (context, setState) => ResponsiveNavigation(
+                title: 'StitchFlow',
+                selectedIndex: selectedTab,
+                onDestinationSelected: (idx) =>
+                    setState(() => selectedTab = idx),
+                destinations: const [
+                  ResponsiveNavDestination(
+                    label: 'Home',
+                    icon: AppIcons.dashboard,
+                  ),
+                  ResponsiveNavDestination(
+                    label: 'Lots',
+                    icon: AppIcons.lot,
+                  ),
+                  ResponsiveNavDestination(
+                    label: 'Stock',
+                    icon: AppIcons.stockMovements,
+                  ),
+                  ResponsiveNavDestination(
+                    label: 'Workers',
+                    icon: AppIcons.workers,
+                  ),
+                ],
+                mobileMoreSections: [
+                  ResponsiveNavSection(
+                    id: 'production',
+                    title: 'Production',
+                    items: [
+                      ResponsiveNavSectionItem(
+                        id: 'processes',
+                        label: 'Work Stages',
+                        icon: AppIcons.process,
+                        onTap: () => tappedModule = 'processes',
+                      ),
+                    ],
+                  ),
+                  ResponsiveNavSection(
+                    id: 'system',
+                    title: 'System',
+                    items: [
+                      ResponsiveNavSectionItem(
+                        id: 'settings',
+                        label: 'Settings',
+                        icon: AppIcons.settings,
+                        badgeCount: 2,
+                        onTap: () => tappedModule = 'settings',
+                      ),
+                    ],
+                  ),
+                ],
+                body: Center(child: Text('Tab $selectedTab')),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.byType(StitchFlowBottomNav), findsOneWidget);
+        expect(find.text('More'), findsOneWidget);
+
+        await tester.tap(find.text('More'));
+        await tester.pumpAndSettle();
+        expect(find.text('All Modules'), findsOneWidget);
+        expect(find.text('PRODUCTION'), findsOneWidget);
+        expect(find.text('SYSTEM'), findsOneWidget);
+
+        await tester.tap(find.text('Settings'));
+        await tester.pumpAndSettle();
+        expect(tappedModule, 'settings');
+      },
+    );
+
+    testWidgets(
+      'desktop side navigator cycles Expanded (220dp) -> Compact Rail (60dp) -> Hidden (0dp) and persists state',
+      (tester) async {
+        tester.view.physicalSize = const Size(1280, 800);
+        tester.view.devicePixelRatio = 1.0;
+        addTearDown(tester.view.reset);
+
+        SharedPreferences.setMockInitialValues({});
+        final prefs = await SharedPreferences.getInstance();
+        final sidebarCubit = NavigationSidebarCubit(prefs);
+        addTearDown(sidebarCubit.close);
+
+        await tester.pumpWidget(
+          BlocProvider<NavigationSidebarCubit>.value(
+            value: sidebarCubit,
+            child: MaterialApp(
+              theme: AppTheme.light(),
+              home: ResponsiveNavigation(
+                title: 'StitchFlow',
+                selectedIndex: 0,
+                onDestinationSelected: (_) {},
+                destinations: const [
+                  ResponsiveNavDestination(
+                    label: 'Dashboard',
+                    icon: AppIcons.dashboard,
+                  ),
+                ],
+                sections: [
+                  ResponsiveNavSection(
+                    id: 'overview',
+                    title: 'Overview',
+                    collapsible: false,
+                    items: [
+                      ResponsiveNavSectionItem(
+                        id: 'dashboard',
+                        label: 'Dashboard',
+                        icon: AppIcons.dashboard,
+                        isActive: true,
+                        onTap: () {},
+                      ),
+                    ],
+                  ),
+                  ResponsiveNavSection(
+                    id: 'production',
+                    title: 'Production',
+                    items: [
+                      ResponsiveNavSectionItem(
+                        id: 'lots',
+                        label: 'Lots',
+                        icon: AppIcons.lot,
+                        onTap: () {},
+                      ),
+                    ],
+                  ),
+                ],
+                body: const Center(child: Text('Workspace')),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Starts expanded (220dp)
+        expect(sidebarCubit.state.mode, SidebarMode.expanded);
+        expect(tester.getSize(find.byType(StitchFlowSideNav)).width, 220);
+
+        // Collapse to compact rail (60dp)
+        await tester.tap(find.byIcon(AppIcons.sidebarCollapse));
+        await tester.pumpAndSettle();
+        expect(sidebarCubit.state.mode, SidebarMode.compactRail);
+        expect(tester.getSize(find.byType(StitchFlowSideNav)).width, 60);
+
+        // Hide completely (0dp)
+        await tester.tap(find.byIcon(AppIcons.sidebarHide));
+        await tester.pumpAndSettle();
+        expect(sidebarCubit.state.mode, SidebarMode.hidden);
+        expect(tester.getSize(find.byType(StitchFlowSideNav)).width, 0);
+
+        // Restore via top-bar menu button (restores compactRail as last visible)
+        await tester.tap(find.byIcon(AppIcons.menu));
+        await tester.pumpAndSettle();
+        expect(sidebarCubit.state.mode, SidebarMode.compactRail);
+        expect(tester.getSize(find.byType(StitchFlowSideNav)).width, 60);
+
+        // Ctrl+B cycles compactRail -> hidden -> expanded
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+        await tester.sendKeyEvent(LogicalKeyboardKey.keyB);
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+        await tester.pumpAndSettle();
+        expect(sidebarCubit.state.mode, SidebarMode.hidden);
+
+        await tester.sendKeyDownEvent(LogicalKeyboardKey.controlLeft);
+        await tester.sendKeyEvent(LogicalKeyboardKey.keyB);
+        await tester.sendKeyUpEvent(LogicalKeyboardKey.controlLeft);
+        await tester.pumpAndSettle();
+        expect(sidebarCubit.state.mode, SidebarMode.expanded);
+
+        // Persistence check
+        final restoredCubit = NavigationSidebarCubit(prefs);
+        addTearDown(restoredCubit.close);
+        expect(restoredCubit.state.mode, SidebarMode.expanded);
       },
     );
   });

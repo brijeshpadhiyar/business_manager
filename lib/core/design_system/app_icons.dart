@@ -28,6 +28,12 @@ abstract final class AppIcons {
   static const IconData settingsSelected = Icons.settings_rounded;
   static const IconData home = Icons.home_rounded;
   static const IconData moreScreens = Icons.apps_rounded;
+  static const IconData moreApps = Icons.grid_view_rounded;
+  static const IconData menu = Icons.menu_rounded;
+  static const IconData sidebarToggle = Icons.view_sidebar_rounded;
+  static const IconData sidebarCollapse = Icons.keyboard_double_arrow_left_rounded;
+  static const IconData sidebarExpand = Icons.keyboard_double_arrow_right_rounded;
+  static const IconData sidebarHide = Icons.visibility_off_outlined;
 
   // ── Lots, designs & colours ─────────────────────────────────────────────
   static const IconData lot = StitchIcons.lot;

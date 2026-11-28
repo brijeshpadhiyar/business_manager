@@ -13,6 +13,7 @@ import 'package:business_manager/core/theme/theme_cubit.dart';
 import 'package:business_manager/core/theme/theme_state.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
+import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -62,7 +63,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // 1. Open the Work Stages tab -> verify empty state
-      await tester.tap(find.text('Stages').first);
+      await tester.tap(find.byIcon(AppIcons.process).first);
       await tester.pumpAndSettle();
       expect(find.text('No Work Stages Yet'), findsOneWidget);
 
@@ -78,8 +79,11 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('Cutting'), findsOneWidget);
 
-      // Work Stages is a main tab, so go straight to the Workers tab
-      await tester.tap(find.text('Workers').last);
+      // Work Stages is a primary section, so go straight to the Workers tab
+      final workersBtn = find.byIcon(AppIcons.workers).first;
+      await tester.ensureVisible(workersBtn);
+      await tester.pumpAndSettle();
+      await tester.tap(workersBtn);
       await tester.pumpAndSettle();
       expect(find.text('No Workers Yet'), findsOneWidget);
 
@@ -141,11 +145,11 @@ void main() {
 
     await tester.pumpWidget(BusinessManagerApp(config: config));
     await tester.pumpAndSettle();
-    expect(find.byType(NavigationBar), findsOneWidget);
+    expect(find.byType(StitchFlowBottomNav), findsOneWidget);
 
     // Desktop expanded width
     tester.view.physicalSize = const Size(1280, 800);
     await tester.pumpAndSettle();
-    expect(find.byType(NavigationDrawer), findsOneWidget);
+    expect(find.byType(StitchFlowSideNav), findsOneWidget);
   });
 }

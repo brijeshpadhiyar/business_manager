@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:business_manager/app.dart';
 import 'package:business_manager/core/config/app_config.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 import 'package:business_manager/core/database/app_database.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/locale_cubit.dart';
@@ -12,6 +13,7 @@ import 'package:business_manager/core/theme/theme_cubit.dart';
 import 'package:business_manager/core/theme/theme_state.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
+import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -108,8 +110,21 @@ void main() {
       await tester.pageBack();
       await tester.pumpAndSettle();
 
-      // Open Settings -> Backup & Data Safety screen
-      await tester.tap(find.text('Settings').last);
+      // Open Settings -> Backup & Data Safety screen (from rail or drawer)
+      final railScrollable = find.descendant(
+        of: find.byType(StitchFlowSideNav),
+        matching: find.byType(Scrollable),
+      );
+      final settingsIconInNav = find.descendant(
+        of: find.byType(StitchFlowSideNav),
+        matching: find.byIcon(AppIcons.settings),
+      );
+      await tester.scrollUntilVisible(
+        settingsIconInNav,
+        150,
+        scrollable: railScrollable,
+      );
+      await tester.tap(settingsIconInNav.first);
       await tester.pumpAndSettle();
       await tester.scrollUntilVisible(
         find.text('Backup & Data Safety'),
@@ -154,17 +169,17 @@ void main() {
       tester.view.physicalSize = const Size(360, 800);
       await tester.pumpWidget(BusinessManagerApp(config: config));
       await tester.pumpAndSettle();
-      expect(find.byType(NavigationBar), findsOneWidget);
+      expect(find.byType(StitchFlowBottomNav), findsOneWidget);
 
       // Tablet 800dp
       tester.view.physicalSize = const Size(800, 1024);
       await tester.pumpAndSettle();
-      expect(find.byType(NavigationRail), findsOneWidget);
+      expect(find.byType(StitchFlowSideNav), findsOneWidget);
 
       // Desktop 1280dp
       tester.view.physicalSize = const Size(1280, 900);
       await tester.pumpAndSettle();
-      expect(find.byType(NavigationDrawer), findsOneWidget);
+      expect(find.byType(StitchFlowSideNav), findsOneWidget);
     },
   );
 }

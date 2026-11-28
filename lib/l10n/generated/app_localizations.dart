@@ -8005,6 +8005,144 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Return quantity exceeds remaining dispatched quantity.'**
   String get buyerReturnExceedsDispatchedError;
+
+  /// No description provided for @appearanceSurfaceStyleTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Surface Style'**
+  String get appearanceSurfaceStyleTitle;
+
+  /// No description provided for @appearanceSurfaceModernGlass.
+  ///
+  /// In en, this message translates to:
+  /// **'Modern Frosted Glass'**
+  String get appearanceSurfaceModernGlass;
+
+  /// No description provided for @appearanceSurfaceModernGlassDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Translucent frosted chrome & focal cards with smooth 120Hz lists'**
+  String get appearanceSurfaceModernGlassDesc;
+
+  /// No description provided for @appearanceSurfaceLiquidAurora.
+  ///
+  /// In en, this message translates to:
+  /// **'Liquid Aurora Glass'**
+  String get appearanceSurfaceLiquidAurora;
+
+  /// No description provided for @appearanceSurfaceLiquidAuroraDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Subtle single-hue ambient wash & frosted crystal surfaces'**
+  String get appearanceSurfaceLiquidAuroraDesc;
+
+  /// No description provided for @appearanceSurfaceClassicSolid.
+  ///
+  /// In en, this message translates to:
+  /// **'Classic Solid'**
+  String get appearanceSurfaceClassicSolid;
+
+  /// No description provided for @appearanceSurfaceClassicSolidDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'High-contrast opaque cards with soft elevation'**
+  String get appearanceSurfaceClassicSolidDesc;
+
+  /// No description provided for @appearanceColorPresetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Color Theme'**
+  String get appearanceColorPresetTitle;
+
+  /// No description provided for @appearancePresetIndigoThread.
+  ///
+  /// In en, this message translates to:
+  /// **'Indigo Thread'**
+  String get appearancePresetIndigoThread;
+
+  /// No description provided for @appearancePresetEmeraldMint.
+  ///
+  /// In en, this message translates to:
+  /// **'Emerald Mint'**
+  String get appearancePresetEmeraldMint;
+
+  /// No description provided for @appearancePresetMidnightCyan.
+  ///
+  /// In en, this message translates to:
+  /// **'Midnight Cyan'**
+  String get appearancePresetMidnightCyan;
+
+  /// No description provided for @appearancePresetRoyalSaffron.
+  ///
+  /// In en, this message translates to:
+  /// **'Royal Saffron'**
+  String get appearancePresetRoyalSaffron;
+
+  /// No description provided for @navMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get navMore;
+
+  /// No description provided for @navAllModules.
+  ///
+  /// In en, this message translates to:
+  /// **'All Modules'**
+  String get navAllModules;
+
+  /// No description provided for @navSectionOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get navSectionOverview;
+
+  /// No description provided for @navSectionProduction.
+  ///
+  /// In en, this message translates to:
+  /// **'Production'**
+  String get navSectionProduction;
+
+  /// No description provided for @navSectionStockQc.
+  ///
+  /// In en, this message translates to:
+  /// **'Stock & QC'**
+  String get navSectionStockQc;
+
+  /// No description provided for @navSectionFinanceParties.
+  ///
+  /// In en, this message translates to:
+  /// **'Finance & Parties'**
+  String get navSectionFinanceParties;
+
+  /// No description provided for @navSectionSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get navSectionSystem;
+
+  /// No description provided for @navSidebarCollapse.
+  ///
+  /// In en, this message translates to:
+  /// **'Collapse to compact rail'**
+  String get navSidebarCollapse;
+
+  /// No description provided for @navSidebarExpand.
+  ///
+  /// In en, this message translates to:
+  /// **'Expand sidebar'**
+  String get navSidebarExpand;
+
+  /// No description provided for @navSidebarHide.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide sidebar'**
+  String get navSidebarHide;
+
+  /// No description provided for @navSidebarShow.
+  ///
+  /// In en, this message translates to:
+  /// **'Show sidebar (Ctrl+B)'**
+  String get navSidebarShow;
 }
 
 class _AppLocalizationsDelegate

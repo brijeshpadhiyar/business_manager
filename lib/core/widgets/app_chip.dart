@@ -1,7 +1,9 @@
 import 'package:business_manager/core/design_system/app_density.dart';
+import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:motor/motor.dart';
 
 /// Visual/behavioural flavour of [AppChip].
 enum AppChipVariant {
@@ -116,7 +118,7 @@ final class AppChip extends StatelessWidget {
     final density = useDense ? VisualDensity.compact : null;
     final tapTarget = d.isCompact ? MaterialTapTargetSize.shrinkWrap : null;
 
-    return switch (variant) {
+    final chip = switch (variant) {
       AppChipVariant.choice => ChoiceChip(
         label: text,
         avatar: leading,
@@ -164,6 +166,18 @@ final class AppChip extends StatelessWidget {
         isEnabled: enabled,
       ),
     };
+
+    if (variant == AppChipVariant.choice || variant == AppChipVariant.filter) {
+      return SingleMotionBuilder(
+        value: selected ? 1.03 : 1.0,
+        from: selected ? 1.03 : 1.0,
+        motion: AppMotion.spring(context, AppMotion.snappySpring),
+        builder: (context, scale, child) =>
+            Transform.scale(scale: scale, child: child),
+        child: chip,
+      );
+    }
+    return chip;
   }
 }
 

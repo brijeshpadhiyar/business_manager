@@ -2,10 +2,11 @@ import 'package:animations/animations.dart' show SharedAxisTransitionType;
 import 'package:business_manager/core/widgets/app_glass_backdrop.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
+import 'package:motor/motor.dart';
 
-/// Centralized StitchFlow motion tokens, reduced-motion accessibility helpers,
-/// zero-blink Material 3 page transition builders, and reusable micro-motion
-/// primitives.
+/// Centralized StitchFlow motion tokens, `motor` spring physics presets,
+/// reduced-motion accessibility helpers, zero-blink Material 3 page transition
+/// builders, and reusable micro-motion primitives.
 abstract final class AppMotion {
   static const Duration micro = Duration(milliseconds: 110);
   static const Duration tabFade = Duration(milliseconds: 150);
@@ -16,6 +17,35 @@ abstract final class AppMotion {
 
   static const Curve standardCurve = Curves.easeOutCubic;
   static const Curve emphasizedCurve = Curves.easeInOutCubicEmphasized;
+
+  /// Snappy spring for tactile buttons, toggles, and chips.
+  static const Motion snappySpring = Motion.snappySpring(
+    duration: Duration(milliseconds: 280),
+    snapToEnd: true,
+  );
+
+  /// Bouncy spring for navigation icon highlights and celebratory badges.
+  static const Motion bouncySpring = Motion.bouncySpring(
+    duration: Duration(milliseconds: 360),
+    snapToEnd: true,
+  );
+
+  /// Smooth spring for sheets, expandable panels, and card lifts.
+  static const Motion smoothSpring = Motion.smoothSpring(
+    duration: Duration(milliseconds: 320),
+    snapToEnd: true,
+  );
+
+  /// Interactive spring for press-and-release micro-physics.
+  static const Motion interactiveSpring = Motion.interactiveSpring(
+    duration: Duration(milliseconds: 240),
+    snapToEnd: true,
+  );
+
+  /// Returns [Motion.none] when reduced motion is requested.
+  static Motion spring(BuildContext context, [Motion preferred = snappySpring]) {
+    return reduceMotion(context) ? const Motion.none() : preferred;
+  }
 
   /// Returns `true` when the platform requests reduced motion.
   static bool reduceMotion(BuildContext context) {
@@ -300,10 +330,13 @@ final class _AppPressableState extends State<AppPressable> {
         _downPosition = null;
         _setPressed(false);
       },
-      child: AnimatedScale(
-        scale: _pressed ? widget.pressedScale : 1.0,
-        duration: AppMotion.micro,
-        curve: Curves.easeOut,
+      child: SingleMotionBuilder(
+        value: _pressed ? widget.pressedScale : 1.0,
+        from: 1.0,
+        motion: AppMotion.spring(context, AppMotion.interactiveSpring),
+        builder: (context, scale, child) {
+          return Transform.scale(scale: scale, child: child);
+        },
         child: widget.child,
       ),
     );

@@ -99,7 +99,6 @@ final class _DashboardViewState extends State<_DashboardView> {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final localeCode = Localizations.localeOf(context).languageCode;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final d = context.density;
 
     return Align(
@@ -141,9 +140,9 @@ final class _DashboardViewState extends State<_DashboardView> {
                     child: AppCard(
                       glassStyle: AppGlassStyle.full,
                       blurSigma: 12,
-                      gradient: isDark
-                          ? AppColors.heroGradientDark
-                          : AppColors.heroGradientLight,
+                      gradient: context.themePresetPalette.heroGradientFor(
+                        Theme.of(context).brightness,
+                      ),
                       borderColor: AppColors.onHero.withValues(alpha: 0.16),
                       borderRadius: d.radiusXlBorder,
                       padding: EdgeInsets.all(d.isCompact ? d.md : d.lg),

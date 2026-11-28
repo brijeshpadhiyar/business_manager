@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ThemeState {
 
- AppThemePreference get preference;
+ AppThemePreference get preference; AppSurfaceStyle get surfaceStyle; AppThemePreset get preset;
 /// Create a copy of ThemeState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $ThemeStateCopyWith<ThemeState> get copyWith => _$ThemeStateCopyWithImpl<ThemeSt
 @override
 bool operator ==(Object other) {
   final _this = this as ThemeState;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ThemeState&&(identical(other.preference, _this.preference) || other.preference == _this.preference));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ThemeState&&(identical(other.preference, _this.preference) || other.preference == _this.preference)&&(identical(other.surfaceStyle, _this.surfaceStyle) || other.surfaceStyle == _this.surfaceStyle)&&(identical(other.preset, _this.preset) || other.preset == _this.preset));
 }
 
 
 @override
 int get hashCode {
   final _this = this as ThemeState;
-  return Object.hash(runtimeType,_this.preference);
+  return Object.hash(runtimeType,_this.preference,_this.surfaceStyle,_this.preset);
 }
 
 @override
 String toString() {
   final _this = this as ThemeState;
-  return 'ThemeState(preference: ${_this.preference})';
+  return 'ThemeState(preference: ${_this.preference}, surfaceStyle: ${_this.surfaceStyle}, preset: ${_this.preset})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $ThemeStateCopyWith<$Res>  {
   factory $ThemeStateCopyWith(ThemeState value, $Res Function(ThemeState) _then) = _$ThemeStateCopyWithImpl;
 @useResult
 $Res call({
- AppThemePreference preference
+ AppThemePreference preference, AppSurfaceStyle surfaceStyle, AppThemePreset preset
 });
 
 
@@ -68,10 +68,12 @@ class _$ThemeStateCopyWithImpl<$Res>
 
 /// Create a copy of ThemeState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? preference = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? preference = null,Object? surfaceStyle = null,Object? preset = null,}) {
   return _then(ThemeState(
 preference: null == preference ? _self.preference : preference // ignore: cast_nullable_to_non_nullable
-as AppThemePreference,
+as AppThemePreference,surfaceStyle: null == surfaceStyle ? _self.surfaceStyle : surfaceStyle // ignore: cast_nullable_to_non_nullable
+as AppSurfaceStyle,preset: null == preset ? _self.preset : preset // ignore: cast_nullable_to_non_nullable
+as AppThemePreset,
   ));
 }
 
@@ -153,10 +155,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( AppThemePreference preference)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( AppThemePreference preference,  AppSurfaceStyle surfaceStyle,  AppThemePreset preset)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ThemeState() when $default != null:
-return $default(_that.preference);case _:
+return $default(_that.preference,_that.surfaceStyle,_that.preset);case _:
   return orElse();
 
 }
@@ -174,10 +176,10 @@ return $default(_that.preference);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( AppThemePreference preference)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( AppThemePreference preference,  AppSurfaceStyle surfaceStyle,  AppThemePreset preset)  $default,) {final _that = this;
 switch (_that) {
 case _ThemeState():
-return $default(_that.preference);}
+return $default(_that.preference,_that.surfaceStyle,_that.preset);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -191,10 +193,10 @@ return $default(_that.preference);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( AppThemePreference preference)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( AppThemePreference preference,  AppSurfaceStyle surfaceStyle,  AppThemePreset preset)?  $default,) {final _that = this;
 switch (_that) {
 case _ThemeState() when $default != null:
-return $default(_that.preference);case _:
+return $default(_that.preference,_that.surfaceStyle,_that.preset);case _:
   return null;
 
 }
@@ -206,10 +208,12 @@ return $default(_that.preference);case _:
 
 
 class _ThemeState implements ThemeState {
-  const _ThemeState({this.preference = AppThemePreference.system});
+  const _ThemeState({this.preference = AppThemePreference.system, this.surfaceStyle = AppSurfaceStyle.modernGlass, this.preset = AppThemePreset.indigoThread});
   
 
 @override@JsonKey() final  AppThemePreference preference;
+@override@JsonKey() final  AppSurfaceStyle surfaceStyle;
+@override@JsonKey() final  AppThemePreset preset;
 
 /// Create a copy of ThemeState
 /// with the given fields replaced by the non-null parameter values.
@@ -221,18 +225,18 @@ _$ThemeStateCopyWith<_ThemeState> get copyWith => __$ThemeStateCopyWithImpl<_The
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ThemeState&&(identical(other.preference, preference) || other.preference == preference));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ThemeState&&(identical(other.preference, preference) || other.preference == preference)&&(identical(other.surfaceStyle, surfaceStyle) || other.surfaceStyle == surfaceStyle)&&(identical(other.preset, preset) || other.preset == preset));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,preference);
+    return Object.hash(runtimeType,preference,surfaceStyle,preset);
 }
 
 @override
 String toString() {
-    return 'ThemeState(preference: $preference)';
+    return 'ThemeState(preference: $preference, surfaceStyle: $surfaceStyle, preset: $preset)';
 }
 
 
@@ -243,7 +247,7 @@ abstract mixin class _$ThemeStateCopyWith<$Res> implements $ThemeStateCopyWith<$
   factory _$ThemeStateCopyWith(_ThemeState value, $Res Function(_ThemeState) _then) = __$ThemeStateCopyWithImpl;
 @override @useResult
 $Res call({
- AppThemePreference preference
+ AppThemePreference preference, AppSurfaceStyle surfaceStyle, AppThemePreset preset
 });
 
 
@@ -260,10 +264,12 @@ class __$ThemeStateCopyWithImpl<$Res>
 
 /// Create a copy of ThemeState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? preference = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? preference = null,Object? surfaceStyle = null,Object? preset = null,}) {
   return _then(_ThemeState(
 preference: null == preference ? _self.preference : preference // ignore: cast_nullable_to_non_nullable
-as AppThemePreference,
+as AppThemePreference,surfaceStyle: null == surfaceStyle ? _self.surfaceStyle : surfaceStyle // ignore: cast_nullable_to_non_nullable
+as AppSurfaceStyle,preset: null == preset ? _self.preset : preset // ignore: cast_nullable_to_non_nullable
+as AppThemePreset,
   ));
 }
 

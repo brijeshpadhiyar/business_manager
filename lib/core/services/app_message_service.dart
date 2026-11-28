@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:business_manager/core/design_system/app_breakpoints.dart';
 import 'package:business_manager/core/design_system/app_colors.dart';
+import 'package:business_manager/core/design_system/app_glass_quality.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_shadows.dart';
@@ -356,8 +357,11 @@ final class _GlassToastCard extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: AppRadius.lgBorder,
                 child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                  enabled: false, // v1.4 soft elevation: opaque surfaces
+                  filter: ImageFilter.blur(
+                    sigmaX: AppGlassQuality.resolve(context).chromeBlurSigma,
+                    sigmaY: AppGlassQuality.resolve(context).chromeBlurSigma,
+                  ),
+                  enabled: AppGlassQuality.resolve(context).enableBackdropBlur,
                   child: Material(
                     color: Colors.transparent,
                     child: DecoratedBox(

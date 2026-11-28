@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:business_manager/core/design_system/app_breakpoints.dart';
 import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_density.dart';
+import 'package:business_manager/core/design_system/app_glass_quality.dart';
 import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/widgets/app_breadcrumb_bar.dart';
 import 'package:business_manager/core/widgets/app_button.dart';
@@ -240,6 +241,7 @@ PreferredSizeWidget _buildGlassAppBar(
   List<Widget>? actions,
 }) {
   final tokens = context.surfaceTokens;
+  final quality = AppGlassQuality.resolve(context);
   return AppBar(
     toolbarHeight: toolbarHeight,
     backgroundColor: Colors.transparent,
@@ -251,8 +253,11 @@ PreferredSizeWidget _buildGlassAppBar(
     actions: actions,
     flexibleSpace: ClipRect(
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        enabled: false, // v1.4 soft elevation: opaque surfaces
+        filter: ImageFilter.blur(
+          sigmaX: quality.chromeBlurSigma,
+          sigmaY: quality.chromeBlurSigma,
+        ),
+        enabled: quality.enableBackdropBlur,
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: tokens.navGlassFill,
@@ -487,8 +492,11 @@ final class _CollapsibleScaffoldLayoutState
                 actions: hdr.actions,
                 flexibleSpace: ClipRect(
                   child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                    enabled: false, // v1.4 soft elevation: opaque surfaces
+                    filter: ImageFilter.blur(
+                      sigmaX: AppGlassQuality.resolve(context).chromeBlurSigma,
+                      sigmaY: AppGlassQuality.resolve(context).chromeBlurSigma,
+                    ),
+                    enabled: AppGlassQuality.resolve(context).enableBackdropBlur,
                     backdropGroupKey: _chromeBackdropKey,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
@@ -597,10 +605,14 @@ final class AppStickyActionBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final tokens = context.surfaceTokens;
     final d = context.density;
+    final quality = AppGlassQuality.resolve(context);
     return ClipRect(
       child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-        enabled: false, // v1.4 soft elevation: opaque surfaces
+        filter: ImageFilter.blur(
+          sigmaX: quality.chromeBlurSigma,
+          sigmaY: quality.chromeBlurSigma,
+        ),
+        enabled: quality.enableBackdropBlur,
         child: DecoratedBox(
           decoration: BoxDecoration(
             color: tokens.navGlassFill,

@@ -24,6 +24,8 @@ import 'package:business_manager/core/platform/media_storage_service.dart'
 import 'package:business_manager/core/services/form_draft_service.dart'
     as _i1031;
 import 'package:business_manager/core/theme/density_cubit.dart' as _i520;
+import 'package:business_manager/core/theme/navigation_sidebar_cubit.dart'
+    as _i719;
 import 'package:business_manager/core/theme/theme_cubit.dart' as _i772;
 import 'package:business_manager/core/utils/id_generator.dart' as _i656;
 import 'package:business_manager/features/accounting/data/repositories/accounting_repository_impl.dart'
@@ -258,6 +260,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.lazySingleton<_i520.DensityCubit>(
       () => _i520.DensityCubit(gh<_i460.SharedPreferences>()),
+    );
+    gh.lazySingleton<_i719.NavigationSidebarCubit>(
+      () => _i719.NavigationSidebarCubit(gh<_i460.SharedPreferences>()),
     );
     gh.lazySingleton<_i772.ThemeCubit>(
       () => _i772.ThemeCubit(gh<_i460.SharedPreferences>()),

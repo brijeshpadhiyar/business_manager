@@ -1,16 +1,12 @@
+import 'package:business_manager/core/design_system/app_theme_presets.dart';
+import 'package:business_manager/core/theme/theme_state.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// StitchFlow "Indigo Thread" color system (v1.4).
+/// StitchFlow "Indigo Thread" color system and Next-Gen Glass tokens.
 ///
 /// Built like Tailwind / Radix scales: every brand hue has a 50–950 ramp, and
 /// UI code should reference *roles* (brandPrimary, surfaces, semantic tokens)
 /// rather than raw steps. All text/background pairs target WCAG 2.2 AA.
-///
-/// - Primary  : Indigo 600  #4F46E5 — trust, textile indigo dye heritage
-/// - Secondary: Emerald 600 #059669 — money-in, good stock, success
-/// - Accent   : Saffron 500 #F59E0B — highlights, badges (fills/icons only,
-///              never body text on white: contrast is below 3:1)
-/// - Neutral  : Slate 50–950
 abstract final class AppColors {
   // ── Indigo (primary) ───────────────────────────────────────────────────────
   static const Color indigo50 = Color(0xFFEEF2FF);
@@ -263,15 +259,13 @@ final class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
   }
 }
 
-/// Surface tokens for the v1.4 "soft elevation" system.
-///
-/// Field names are kept from the v1.3 glass system so existing widgets keep
-/// compiling, but every value is now an opaque surface: solid cards on a calm
-/// Slate (light) or indigo-night (dark) canvas, separated by 1px borders and
-/// layered shadows from `AppShadows`. No translucency, no backdrop blur.
+/// Surface tokens for StitchFlow's Next-Gen adaptive glass & soft-elevation
+/// system (`Classic Solid`, `Modern Frosted Glass`, `Liquid Aurora Glass`).
 @immutable
 final class AppSurfaceTokens extends ThemeExtension<AppSurfaceTokens> {
   const AppSurfaceTokens({
+    required this.surfaceStyle,
+    required this.preset,
     required this.glassFill,
     required this.glassFillStrong,
     required this.glassBorder,
@@ -292,48 +286,160 @@ final class AppSurfaceTokens extends ThemeExtension<AppSurfaceTokens> {
     required this.orbAccent,
   });
 
-  static final AppSurfaceTokens light = AppSurfaceTokens(
-    glassFill: AppColors.lightCardSurface,
-    glassFillStrong: AppColors.lightCardSurface,
-    glassBorder: AppColors.lightBorder,
-    glassHighlightTop: AppColors.lightCardSurface,
-    glassHighlightBottom: AppColors.lightCardSurface,
-    cardShadow: AppColors.shadowInk.withValues(alpha: 0.08),
-    ambientGlow: AppColors.indigo600.withValues(alpha: 0.06),
-    subtleTint: AppColors.indigo600.withValues(alpha: 0.05),
-    navGlassFill: AppColors.lightCardSurface,
-    navGlassBorder: AppColors.lightBorder,
-    inputGlassFill: AppColors.lightCardSurface,
-    dialogGlassFill: AppColors.lightCardSurface,
-    backdropTop: const Color(0xFFF4F6FE),
-    backdropMid: AppColors.lightBackground,
-    backdropBottom: AppColors.lightBackground,
-    orbPrimary: AppColors.indigo500.withValues(alpha: 0.04),
-    orbSecondary: const Color(0x00000000),
-    orbAccent: const Color(0x00000000),
+  /// Resolves surface tokens for [brightness], [style], and [preset].
+  factory AppSurfaceTokens.resolve({
+    required Brightness brightness,
+    AppSurfaceStyle style = AppSurfaceStyle.modernGlass,
+    AppThemePreset preset = AppThemePreset.indigoThread,
+  }) {
+    final isDark = brightness == Brightness.dark;
+    final palette = AppPresetPalette.of(preset);
+    final primaryAccent = palette.primaryFor(brightness);
+    final orb1 = isDark ? palette.accentOrbDark : palette.accentOrbLight;
+
+    if (style == AppSurfaceStyle.classicSolid) {
+      if (isDark) {
+        return AppSurfaceTokens(
+          surfaceStyle: style,
+          preset: preset,
+          glassFill: AppColors.darkSurfaceLow,
+          glassFillStrong: AppColors.darkSurfaceLow,
+          glassBorder: AppColors.darkBorder,
+          glassHighlightTop: AppColors.darkSurfaceLow,
+          glassHighlightBottom: AppColors.darkSurfaceLow,
+          cardShadow: Colors.black.withValues(alpha: 0.40),
+          ambientGlow: primaryAccent.withValues(alpha: 0.10),
+          subtleTint: primaryAccent.withValues(alpha: 0.08),
+          navGlassFill: AppColors.darkSurfaceLow,
+          navGlassBorder: AppColors.darkBorder,
+          inputGlassFill: const Color(0xFF0E1429),
+          dialogGlassFill: AppColors.darkSurfaceHigh,
+          backdropTop: Color.alphaBlend(
+            orb1.withValues(alpha: 0.06),
+            AppColors.darkBackground,
+          ),
+          backdropMid: AppColors.darkBackground,
+          backdropBottom: AppColors.darkBackground,
+          orbPrimary: orb1.withValues(alpha: 0.06),
+          orbSecondary: const Color(0x00000000),
+          orbAccent: const Color(0x00000000),
+        );
+      }
+      return AppSurfaceTokens(
+        surfaceStyle: style,
+        preset: preset,
+        glassFill: AppColors.lightCardSurface,
+        glassFillStrong: AppColors.lightCardSurface,
+        glassBorder: AppColors.lightBorder,
+        glassHighlightTop: AppColors.lightCardSurface,
+        glassHighlightBottom: AppColors.lightCardSurface,
+        cardShadow: AppColors.shadowInk.withValues(alpha: 0.08),
+        ambientGlow: primaryAccent.withValues(alpha: 0.06),
+        subtleTint: primaryAccent.withValues(alpha: 0.05),
+        navGlassFill: AppColors.lightCardSurface,
+        navGlassBorder: AppColors.lightBorder,
+        inputGlassFill: AppColors.lightCardSurface,
+        dialogGlassFill: AppColors.lightCardSurface,
+        backdropTop: Color.alphaBlend(
+          orb1.withValues(alpha: 0.04),
+          AppColors.lightBackground,
+        ),
+        backdropMid: AppColors.lightBackground,
+        backdropBottom: AppColors.lightBackground,
+        orbPrimary: orb1.withValues(alpha: 0.04),
+        orbSecondary: const Color(0x00000000),
+        orbAccent: const Color(0x00000000),
+      );
+    }
+
+    final isAurora = style == AppSurfaceStyle.liquidAurora;
+    if (isDark) {
+      final darkFill = AppColors.darkSurfaceLow.withValues(
+        alpha: isAurora ? 0.72 : 0.78,
+      );
+      final darkFillStrong = AppColors.darkSurfaceContainer.withValues(
+        alpha: isAurora ? 0.80 : 0.86,
+      );
+      return AppSurfaceTokens(
+        surfaceStyle: style,
+        preset: preset,
+        glassFill: darkFill,
+        glassFillStrong: darkFillStrong,
+        glassBorder: Colors.white.withValues(alpha: isAurora ? 0.12 : 0.10),
+        glassHighlightTop: darkFill,
+        glassHighlightBottom: darkFill,
+        cardShadow: Colors.black.withValues(alpha: 0.45),
+        ambientGlow: primaryAccent.withValues(alpha: isAurora ? 0.12 : 0.08),
+        subtleTint: primaryAccent.withValues(alpha: isAurora ? 0.10 : 0.08),
+        navGlassFill: AppColors.darkSurfaceLow.withValues(
+          alpha: isAurora ? 0.78 : 0.84,
+        ),
+        navGlassBorder: Colors.white.withValues(alpha: 0.10),
+        inputGlassFill: const Color(0xFF0E1429).withValues(alpha: 0.84),
+        dialogGlassFill: AppColors.darkSurfaceHigh.withValues(
+          alpha: isAurora ? 0.84 : 0.90,
+        ),
+        backdropTop: isAurora
+            ? Color.alphaBlend(
+                primaryAccent.withValues(alpha: 0.06),
+                AppColors.darkBackground,
+              )
+            : AppColors.darkBackground,
+        backdropMid: AppColors.darkBackground,
+        backdropBottom: AppColors.darkBackground,
+        orbPrimary: isAurora
+            ? primaryAccent.withValues(alpha: 0.07)
+            : const Color(0x00000000),
+        orbSecondary: const Color(0x00000000),
+        orbAccent: const Color(0x00000000),
+      );
+    }
+
+    final lightFill = Colors.white.withValues(alpha: isAurora ? 0.80 : 0.86);
+    final lightFillStrong = Colors.white.withValues(
+      alpha: isAurora ? 0.88 : 0.92,
+    );
+    return AppSurfaceTokens(
+      surfaceStyle: style,
+      preset: preset,
+      glassFill: lightFill,
+      glassFillStrong: lightFillStrong,
+      glassBorder: AppColors.slate300.withValues(alpha: 0.60),
+      glassHighlightTop: lightFill,
+      glassHighlightBottom: lightFill,
+      cardShadow: AppColors.shadowInk.withValues(alpha: 0.07),
+      ambientGlow: primaryAccent.withValues(alpha: isAurora ? 0.08 : 0.05),
+      subtleTint: primaryAccent.withValues(alpha: isAurora ? 0.07 : 0.05),
+      navGlassFill: Colors.white.withValues(alpha: isAurora ? 0.82 : 0.88),
+      navGlassBorder: AppColors.slate300.withValues(alpha: 0.65),
+      inputGlassFill: Colors.white.withValues(alpha: 0.90),
+      dialogGlassFill: Colors.white.withValues(alpha: isAurora ? 0.90 : 0.94),
+      backdropTop: isAurora
+          ? Color.alphaBlend(
+              primaryAccent.withValues(alpha: 0.04),
+              AppColors.lightBackground,
+            )
+          : AppColors.lightBackground,
+      backdropMid: AppColors.lightBackground,
+      backdropBottom: AppColors.lightBackground,
+      orbPrimary: isAurora
+          ? primaryAccent.withValues(alpha: 0.05)
+          : const Color(0x00000000),
+      orbSecondary: const Color(0x00000000),
+      orbAccent: const Color(0x00000000),
+    );
+  }
+
+  static final AppSurfaceTokens light = AppSurfaceTokens.resolve(
+    brightness: Brightness.light,
   );
 
-  static final AppSurfaceTokens dark = AppSurfaceTokens(
-    glassFill: AppColors.darkSurfaceLow,
-    glassFillStrong: AppColors.darkSurfaceLow,
-    glassBorder: AppColors.darkBorder,
-    glassHighlightTop: AppColors.darkSurfaceLow,
-    glassHighlightBottom: AppColors.darkSurfaceLow,
-    cardShadow: Colors.black.withValues(alpha: 0.40),
-    ambientGlow: AppColors.indigo400.withValues(alpha: 0.10),
-    subtleTint: AppColors.indigo400.withValues(alpha: 0.08),
-    navGlassFill: AppColors.darkSurfaceLow,
-    navGlassBorder: AppColors.darkBorder,
-    inputGlassFill: const Color(0xFF0E1429),
-    dialogGlassFill: AppColors.darkSurfaceHigh,
-    backdropTop: const Color(0xFF0E1330),
-    backdropMid: AppColors.darkBackground,
-    backdropBottom: AppColors.darkBackground,
-    orbPrimary: AppColors.indigo500.withValues(alpha: 0.06),
-    orbSecondary: const Color(0x00000000),
-    orbAccent: const Color(0x00000000),
+  static final AppSurfaceTokens dark = AppSurfaceTokens.resolve(
+    brightness: Brightness.dark,
   );
 
+  final AppSurfaceStyle surfaceStyle;
+  final AppThemePreset preset;
   final Color glassFill;
   final Color glassFillStrong;
   final Color glassBorder;
@@ -353,7 +459,6 @@ final class AppSurfaceTokens extends ThemeExtension<AppSurfaceTokens> {
   final Color orbSecondary;
   final Color orbAccent;
 
-  // Clean Indigo Thread semantic aliases (retiring legacy "glass" terminology)
   Color get surfaceFill => glassFill;
   Color get surfaceFillStrong => glassFillStrong;
   Color get surfaceBorder => glassBorder;
@@ -362,7 +467,7 @@ final class AppSurfaceTokens extends ThemeExtension<AppSurfaceTokens> {
   Color get inputFill => inputGlassFill;
   Color get dialogFill => dialogGlassFill;
 
-  /// Surface gradient (flat in v1.4: highlight stops equal the fill).
+  /// Uniform glass gradient for focal panels (glare-free).
   LinearGradient get glassGradient => LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
@@ -370,16 +475,18 @@ final class AppSurfaceTokens extends ThemeExtension<AppSurfaceTokens> {
     stops: const [0.0, 0.45, 1.0],
   );
 
-  /// Surface gradient for dense list rows (flat in v1.4).
+  /// Uniform lightweight glass gradient for dense list rows (glare-free).
   LinearGradient get lightweightGlassGradient => LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [glassHighlightTop, glassFillStrong, glassHighlightBottom],
-    stops: const [0.0, 0.48, 1.0],
+    colors: [glassFillStrong, glassFillStrong],
+    stops: const [0.0, 1.0],
   );
 
   @override
   AppSurfaceTokens copyWith({
+    AppSurfaceStyle? surfaceStyle,
+    AppThemePreset? preset,
     Color? glassFill,
     Color? glassFillStrong,
     Color? glassBorder,
@@ -400,6 +507,8 @@ final class AppSurfaceTokens extends ThemeExtension<AppSurfaceTokens> {
     Color? orbAccent,
   }) {
     return AppSurfaceTokens(
+      surfaceStyle: surfaceStyle ?? this.surfaceStyle,
+      preset: preset ?? this.preset,
       glassFill: glassFill ?? this.glassFill,
       glassFillStrong: glassFillStrong ?? this.glassFillStrong,
       glassBorder: glassBorder ?? this.glassBorder,
@@ -425,6 +534,8 @@ final class AppSurfaceTokens extends ThemeExtension<AppSurfaceTokens> {
   AppSurfaceTokens lerp(ThemeExtension<AppSurfaceTokens>? other, double t) {
     if (other is! AppSurfaceTokens) return this;
     return AppSurfaceTokens(
+      surfaceStyle: t < 0.5 ? surfaceStyle : other.surfaceStyle,
+      preset: t < 0.5 ? preset : other.preset,
       glassFill: Color.lerp(glassFill, other.glassFill, t)!,
       glassFillStrong: Color.lerp(glassFillStrong, other.glassFillStrong, t)!,
       glassBorder: Color.lerp(glassBorder, other.glassBorder, t)!,
@@ -464,4 +575,7 @@ extension AppSemanticColorsX on BuildContext {
       (Theme.of(this).brightness == Brightness.dark
           ? AppSurfaceTokens.dark
           : AppSurfaceTokens.light);
+
+  AppPresetPalette get themePresetPalette =>
+      AppPresetPalette.of(surfaceTokens.preset);
 }

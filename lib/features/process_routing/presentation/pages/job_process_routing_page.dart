@@ -182,9 +182,9 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
           AppMotionEntrance(
             index: 0,
             child: AppCard(
-              gradient: isDark
-                  ? AppColors.heroGradientDark
-                  : AppColors.heroGradientLight,
+              gradient: context.themePresetPalette.heroGradientFor(
+                Theme.of(context).brightness,
+              ),
               borderColor: AppColors.onHero.withValues(alpha: 0.18),
               borderRadius: AppRadius.xlBorder,
               child: Column(

@@ -223,7 +223,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      final comfyNavH = tester.getSize(find.byType(NavigationBar)).height;
+      final comfyNavH = tester.getSize(find.byType(StitchFlowBottomNav)).height;
       final comfyBarH = tester.getSize(find.byType(AppBar)).height;
 
       await tester.pumpWidget(
@@ -237,7 +237,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      final compactNavH = tester.getSize(find.byType(NavigationBar)).height;
+      final compactNavH = tester.getSize(find.byType(StitchFlowBottomNav)).height;
       final compactBarH = tester.getSize(find.byType(AppBar)).height;
 
       expect(compactNavH, lessThan(comfyNavH));
@@ -285,6 +285,11 @@ void main() {
 
       // Scroll to and tap Compact
       final compactFinder = find.textContaining('Compact');
+      await tester.scrollUntilVisible(
+        compactFinder,
+        200,
+        scrollable: find.byType(Scrollable).last,
+      );
       await tester.ensureVisible(compactFinder);
       await tester.pumpAndSettle();
       await tester.tap(compactFinder);

@@ -4408,4 +4408,76 @@ class AppLocalizationsGu extends AppLocalizations {
   @override
   String get buyerReturnExceedsDispatchedError =>
       'પરત જથ્થો બાકી ડિસ્પેચ જથ્થા કરતાં વધુ છે.';
+
+  @override
+  String get appearanceSurfaceStyleTitle => 'સપાટી શૈલી (Surface Style)';
+
+  @override
+  String get appearanceSurfaceModernGlass => 'મોડર્ન ફ્રોસ્ટેડ ગ્લાસ';
+
+  @override
+  String get appearanceSurfaceModernGlassDesc =>
+      'સ્મૂથ 120Hz લિસ્ટ સાથે પારદર્શક ફ્રોસ્ટેડ ગ્લાસ દેખાવ';
+
+  @override
+  String get appearanceSurfaceLiquidAurora => 'લિક્વિડ ઓરોરા ગ્લાસ';
+
+  @override
+  String get appearanceSurfaceLiquidAuroraDesc =>
+      'સોફ્ટ સિંગલ-કલર બેકડ્રોપ અને ક્લિયર ફ્રોસ્ટેડ ગ્લાસ દેખાવ';
+
+  @override
+  String get appearanceSurfaceClassicSolid => 'ક્લાસિક સોલિડ';
+
+  @override
+  String get appearanceSurfaceClassicSolidDesc =>
+      'સ્પષ્ટ સોલિડ કાર્ડ્સ અને સોફ્ટ એલિવેશન';
+
+  @override
+  String get appearanceColorPresetTitle => 'રંગ થીમ (Color Theme)';
+
+  @override
+  String get appearancePresetIndigoThread => 'ઇન્ડિગો થ્રેડ';
+
+  @override
+  String get appearancePresetEmeraldMint => 'એમેરાલ્ડ મિન્ટ';
+
+  @override
+  String get appearancePresetMidnightCyan => 'મિડનાઇટ સાયન';
+
+  @override
+  String get appearancePresetRoyalSaffron => 'રોયલ કેસરી';
+
+  @override
+  String get navMore => 'વધુ';
+
+  @override
+  String get navAllModules => 'બધા વિભાગો';
+
+  @override
+  String get navSectionOverview => 'ઝાંખી';
+
+  @override
+  String get navSectionProduction => 'ઉત્પાદન';
+
+  @override
+  String get navSectionStockQc => 'સ્ટોક અને QC';
+
+  @override
+  String get navSectionFinanceParties => 'નાણાં અને પાર્ટી';
+
+  @override
+  String get navSectionSystem => 'સિસ્ટમ';
+
+  @override
+  String get navSidebarCollapse => 'નાની રેલ પર સંકોચો';
+
+  @override
+  String get navSidebarExpand => 'સાઇડબાર વિસ્તૃત કરો';
+
+  @override
+  String get navSidebarHide => 'સાઇડબાર છુપાવો';
+
+  @override
+  String get navSidebarShow => 'સાઇડબાર બતાવો (Ctrl+B)';
 }

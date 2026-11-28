@@ -1,21 +1,29 @@
+import 'dart:ui';
+
 import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_density.dart';
+import 'package:business_manager/core/design_system/app_glass_quality.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_shadows.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Elevation mode for [AppGlassSurface] and [AppCard].
 enum AppGlassStyle {
-  /// Raised surface (`AppShadows.md`). Hero banners, KPI tiles, dialogs.
+  /// Raised focal surface (`AppShadows.md`). Hero banners, KPI tiles, dialogs.
+  /// Uses live frosted blur when glass mode is active.
   full,
 
   /// Resting surface (`AppShadows.sm`). Dense list rows and nested cards.
+  /// Never runs per-row `BackdropFilter` readbacks so scrolling stays 120Hz.
   lightweight,
 }
 
-/// Opaque card surface with a 1px border, soft layered shadow from
-/// `AppShadows`, and optional tactile press animation when interactive.
-/// (Name kept from the v1.3 glass system for API compatibility.)
+/// Adaptive StitchFlow surface with 3-tier Next-Gen Glass support:
+/// - `Classic Solid`: opaque surface with crisp 1px border & layered shadow.
+/// - `Modern Frosted Glass`: clean uniform translucent fill + `BackdropFilter`
+///   on [AppGlassStyle.full] surfaces (zero blur on [AppGlassStyle.lightweight]).
+/// - `Liquid Aurora Glass`: clean uniform translucent fill + `BackdropFilter`
+///   over the subtle single-hue ambient wash (zero diagonal or edge glare).
 final class AppGlassSurface extends StatelessWidget {
   const AppGlassSurface({
     super.key,
@@ -55,41 +63,72 @@ final class AppGlassSurface extends StatelessWidget {
     final resolvedRadius = borderRadius ?? d.radiusLgBorder;
     final tokens = context.surfaceTokens;
     final shadows = AppShadows.of(context);
-    // v1.4 soft elevation: surfaces are opaque. `blurSigma` / `backdropKey`
-    // are accepted for API compatibility but no BackdropFilter is used.
+    final quality = AppGlassQuality.resolve(context);
     final isFull = glassStyle == AppGlassStyle.full;
     final useRepaintBoundary = isolateRepaintBoundary ?? false;
 
-    final Widget body = DecoratedBox(
-      decoration: BoxDecoration(
-        color: gradient == null
-            ? (tintColor ??
-                  (isFull ? tokens.glassFill : tokens.glassFillStrong))
-            : null,
-        gradient: gradient,
-        borderRadius: resolvedRadius,
-        border: Border.all(color: borderColor ?? tokens.glassBorder),
-        boxShadow: elevated ? (isFull ? shadows.md : shadows.sm) : null,
-      ),
-      child: onTap != null
-          ? Material(
-              type: MaterialType.transparency,
-              borderRadius: resolvedRadius,
-              clipBehavior: Clip.antiAlias,
-              child: InkWell(
-                onTap: onTap,
-                borderRadius: resolvedRadius,
-                child: Padding(padding: resolvedPadding, child: child),
-              ),
-            )
-          // Own transparent Material so ListTile ink/backgrounds paint on top
-          // of the opaque surface instead of being hidden behind it.
-          : Material(
-              type: MaterialType.transparency,
+    final useRealBlur =
+        isFull && quality.enableBackdropBlur && blurSigma > 0;
+    final effectiveSigma = useRealBlur
+        ? blurSigma.clamp(0.0, quality.cardBlurSigma).toDouble()
+        : 0.0;
+
+    final Widget innerMaterial = onTap != null
+        ? Material(
+            type: MaterialType.transparency,
+            borderRadius: resolvedRadius,
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: onTap,
               borderRadius: resolvedRadius,
               child: Padding(padding: resolvedPadding, child: child),
             ),
+          )
+        : Material(
+            type: MaterialType.transparency,
+            borderRadius: resolvedRadius,
+            child: Padding(padding: resolvedPadding, child: child),
+          );
+
+    final resolvedColor =
+        tintColor ?? (isFull ? tokens.glassFill : tokens.glassFillStrong);
+
+    final BoxDecoration boxDecoration = BoxDecoration(
+      color: gradient == null ? resolvedColor : null,
+      gradient: gradient,
+      borderRadius: resolvedRadius,
+      border: Border.all(color: borderColor ?? tokens.glassBorder),
+      boxShadow: elevated ? (isFull ? shadows.md : shadows.sm) : null,
     );
+
+    Widget body;
+    if (useRealBlur) {
+      body = DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: resolvedRadius,
+          boxShadow: elevated ? shadows.md : null,
+        ),
+        child: ClipRRect(
+          borderRadius: resolvedRadius,
+          child: BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: effectiveSigma,
+              sigmaY: effectiveSigma,
+            ),
+            backdropGroupKey: backdropKey,
+            child: DecoratedBox(
+              decoration: boxDecoration.copyWith(boxShadow: const []),
+              child: innerMaterial,
+            ),
+          ),
+        ),
+      );
+    } else {
+      body = DecoratedBox(
+        decoration: boxDecoration,
+        child: innerMaterial,
+      );
+    }
 
     Widget container = body;
     if (useRepaintBoundary) {

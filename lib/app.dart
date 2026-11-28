@@ -8,6 +8,7 @@ import 'package:business_manager/core/localization/locale_state.dart';
 import 'package:business_manager/core/router/app_router.dart';
 import 'package:business_manager/core/services/app_message_service.dart';
 import 'package:business_manager/core/theme/density_cubit.dart';
+import 'package:business_manager/core/theme/navigation_sidebar_cubit.dart';
 import 'package:business_manager/core/theme/theme_cubit.dart';
 import 'package:business_manager/core/theme/theme_state.dart';
 import 'package:business_manager/features/auth/domain/entities/auth_entities.dart';
@@ -90,6 +91,10 @@ final class _BusinessManagerAppState extends State<BusinessManagerApp>
           BlocProvider<LocaleCubit>.value(value: getIt<LocaleCubit>()),
           BlocProvider<ThemeCubit>.value(value: getIt<ThemeCubit>()),
           BlocProvider<DensityCubit>.value(value: getIt<DensityCubit>()),
+          if (getIt.isRegistered<NavigationSidebarCubit>())
+            BlocProvider<NavigationSidebarCubit>.value(
+              value: getIt<NavigationSidebarCubit>(),
+            ),
           BlocProvider<AppLockCubit>.value(value: getIt<AppLockCubit>()),
           BlocProvider<AuthCubit>.value(value: getIt<AuthCubit>()),
           BlocProvider<SyncCubit>.value(value: getIt<SyncCubit>()),
@@ -153,8 +158,20 @@ final class _BusinessManagerAppState extends State<BusinessManagerApp>
                           ...GlobalMaterialLocalizations.delegates,
                         ],
                         themeMode: themeState.preference.themeMode,
-                        theme: AppTheme.light(visualDensity: vd),
-                        darkTheme: AppTheme.dark(visualDensity: vd),
+                        theme: AppTheme.light(
+                          visualDensity: vd,
+                          surfaceStyle: themeState.surfaceStyle,
+                          preset: themeState.preset,
+                        ),
+                        darkTheme: AppTheme.dark(
+                          visualDensity: vd,
+                          surfaceStyle: themeState.surfaceStyle,
+                          preset: themeState.preset,
+                        ),
+                        themeAnimationDuration: const Duration(
+                          milliseconds: 240,
+                        ),
+                        themeAnimationCurve: Curves.easeOutCubic,
                         routerConfig: _router,
                         scrollBehavior: const AppScrollBehavior(),
                         // Respect the phone's font-size setting, but cap it so very

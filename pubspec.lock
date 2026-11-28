@@ -105,6 +105,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.13.1"
+  binarize:
+    dependency: transitive
+    description:
+      name: binarize
+      sha256: "9f0ff4059989f8b9ff09a951e1896998d55cac5fa0d86f701d0165ededf06622"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   bloc:
     dependency: transitive
     description:
@@ -177,6 +185,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "8.13.0"
+  cached_value:
+    dependency: transitive
+    description:
+      name: cached_value
+      sha256: "534a6c618e2e891548236c90a3a3ac055dfe4c870efff29719cf28c51ca8b7a5"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   calendar_date_picker2:
     dependency: "direct main"
     description:
@@ -345,6 +361,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.1.14"
+  data_assets:
+    dependency: transitive
+    description:
+      name: data_assets
+      sha256: "8bfdbf25ec8a0f4b5a3c993042c4ab9996ba354f0b03d40f4e360f3730d71cae"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.20.0"
   dbus:
     dependency: transitive
     description:
@@ -413,10 +437,10 @@ packages:
     dependency: transitive
     description:
       name: equatable
-      sha256: ea36e500cbf0ec18361deabca755434f73e42fe53c5130021c7e2d6b5ebe1702
+      sha256: "3bce007a596ff8b3119c45d68aaef631272537c03d30e5d4534dd24bf4c5eaa2"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.0"
+    version: "2.1.0"
   excel_plus:
     dependency: "direct main"
     description:
@@ -558,6 +582,19 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "9.1.2"
+  flutter_gpu:
+    dependency: transitive
+    description: flutter
+    source: sdk
+    version: "0.0.0"
+  flutter_gpu_shaders:
+    dependency: transitive
+    description:
+      name: flutter_gpu_shaders
+      sha256: "1e8c5438c24e79629f5688c7b5dfd2b7cf09b36b443a806bc8c083cd8c04644a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.2"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -1029,6 +1066,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.0"
+  liquid_glass_renderer:
+    dependency: "direct main"
+    description:
+      name: liquid_glass_renderer
+      sha256: a7597021a821bef6d7d883e132ed01fa09c6b1770239220058e94d6020954c3a
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0-dev.3"
   listen:
     dependency: transitive
     description:
@@ -1117,6 +1162,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.11.1"
+  mesh:
+    dependency: "direct main"
+    description:
+      name: mesh
+      sha256: "2396c5d6b143c0d5056c1e11a10665a04646d51f85c232d0e2740effe50e15ab"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.3"
   meta:
     dependency: transitive
     description:
@@ -1141,6 +1194,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
+  motor:
+    dependency: "direct main"
+    description:
+      name: motor
+      sha256: cbd49f21b00e568c2b1a55f134ed803614a107782f4fea7769693bca32940c58
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.1.0"
   native_toolchain_c:
     dependency: transitive
     description:

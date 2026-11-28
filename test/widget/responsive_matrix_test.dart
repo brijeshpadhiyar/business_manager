@@ -98,11 +98,11 @@ void main() {
           await tester.pumpAndSettle();
 
           if (width < 600) {
-            expect(find.byType(NavigationBar), findsOneWidget);
+            expect(find.byType(StitchFlowBottomNav), findsOneWidget);
           } else if (width < 1024) {
-            expect(find.byType(NavigationRail), findsOneWidget);
+            expect(find.byType(StitchFlowSideNav), findsOneWidget);
           } else {
-            expect(find.byType(NavigationDrawer), findsOneWidget);
+            expect(find.byType(StitchFlowSideNav), findsOneWidget);
             expect(find.byType(AppBreadcrumbBar), findsOneWidget);
           }
 
@@ -123,19 +123,19 @@ void main() {
         tester.view.physicalSize = const Size(390, 844);
         await tester.pumpWidget(BusinessManagerApp(config: AppConfig.dev()));
         await tester.pumpAndSettle();
-        expect(find.byType(NavigationBar), findsOneWidget);
+        expect(find.byType(StitchFlowBottomNav), findsOneWidget);
 
         tester.view.physicalSize = const Size(768, 1024);
         await tester.pumpAndSettle();
-        expect(find.byType(NavigationRail), findsOneWidget);
+        expect(find.byType(StitchFlowSideNav), findsOneWidget);
 
         tester.view.physicalSize = const Size(1440, 900);
         await tester.pumpAndSettle();
-        expect(find.byType(NavigationDrawer), findsOneWidget);
+        expect(find.byType(StitchFlowSideNav), findsOneWidget);
 
         tester.view.physicalSize = const Size(360, 800);
         await tester.pumpAndSettle();
-        expect(find.byType(NavigationBar), findsOneWidget);
+        expect(find.byType(StitchFlowBottomNav), findsOneWidget);
         expect(tester.takeException(), isNull);
       },
     );

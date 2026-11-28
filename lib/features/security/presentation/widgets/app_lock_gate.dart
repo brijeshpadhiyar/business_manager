@@ -136,7 +136,9 @@ final class _PrivacyShieldOverlay extends StatelessWidget {
       child: Container(
         width: double.infinity,
         height: double.infinity,
-        decoration: const BoxDecoration(gradient: AppColors.heroGradientDark),
+        decoration: BoxDecoration(
+          gradient: context.themePresetPalette.heroGradientDark,
+        ),
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,

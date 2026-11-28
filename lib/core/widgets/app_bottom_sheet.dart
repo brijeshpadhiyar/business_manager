@@ -4,6 +4,7 @@ import 'package:animations/animations.dart';
 import 'package:business_manager/core/design_system/app_breakpoints.dart';
 import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_density.dart';
+import 'package:business_manager/core/design_system/app_glass_quality.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
@@ -73,8 +74,17 @@ final class AppBottomSheet {
                 child: ClipRRect(
                   borderRadius: d.radiusXlBorder,
                   child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
-                    enabled: false, // v1.4 soft elevation: opaque surfaces
+                    filter: ImageFilter.blur(
+                      sigmaX: AppGlassQuality.resolve(
+                        dialogContext,
+                      ).chromeBlurSigma,
+                      sigmaY: AppGlassQuality.resolve(
+                        dialogContext,
+                      ).chromeBlurSigma,
+                    ),
+                    enabled: AppGlassQuality.resolve(
+                      dialogContext,
+                    ).enableBackdropBlur,
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         color: tokens.dialogGlassFill,
@@ -157,8 +167,13 @@ final class AppBottomSheet {
           child: ClipRRect(
             borderRadius: topRadius,
             child: BackdropFilter(
-              filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
-              enabled: false, // v1.4 soft elevation: opaque surfaces
+              filter: ImageFilter.blur(
+                sigmaX: AppGlassQuality.resolve(sheetContext).chromeBlurSigma,
+                sigmaY: AppGlassQuality.resolve(sheetContext).chromeBlurSigma,
+              ),
+              enabled: AppGlassQuality.resolve(
+                sheetContext,
+              ).enableBackdropBlur,
               child: DecoratedBox(
                 decoration: BoxDecoration(
                   color: tokens.dialogGlassFill,

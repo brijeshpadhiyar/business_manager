@@ -4419,4 +4419,76 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get buyerReturnExceedsDispatchedError =>
       'Return quantity exceeds remaining dispatched quantity.';
+
+  @override
+  String get appearanceSurfaceStyleTitle => 'Surface Style';
+
+  @override
+  String get appearanceSurfaceModernGlass => 'Modern Frosted Glass';
+
+  @override
+  String get appearanceSurfaceModernGlassDesc =>
+      'Translucent frosted chrome & focal cards with smooth 120Hz lists';
+
+  @override
+  String get appearanceSurfaceLiquidAurora => 'Liquid Aurora Glass';
+
+  @override
+  String get appearanceSurfaceLiquidAuroraDesc =>
+      'Subtle single-hue ambient wash & frosted crystal surfaces';
+
+  @override
+  String get appearanceSurfaceClassicSolid => 'Classic Solid';
+
+  @override
+  String get appearanceSurfaceClassicSolidDesc =>
+      'High-contrast opaque cards with soft elevation';
+
+  @override
+  String get appearanceColorPresetTitle => 'Color Theme';
+
+  @override
+  String get appearancePresetIndigoThread => 'Indigo Thread';
+
+  @override
+  String get appearancePresetEmeraldMint => 'Emerald Mint';
+
+  @override
+  String get appearancePresetMidnightCyan => 'Midnight Cyan';
+
+  @override
+  String get appearancePresetRoyalSaffron => 'Royal Saffron';
+
+  @override
+  String get navMore => 'More';
+
+  @override
+  String get navAllModules => 'All Modules';
+
+  @override
+  String get navSectionOverview => 'Overview';
+
+  @override
+  String get navSectionProduction => 'Production';
+
+  @override
+  String get navSectionStockQc => 'Stock & QC';
+
+  @override
+  String get navSectionFinanceParties => 'Finance & Parties';
+
+  @override
+  String get navSectionSystem => 'System';
+
+  @override
+  String get navSidebarCollapse => 'Collapse to compact rail';
+
+  @override
+  String get navSidebarExpand => 'Expand sidebar';
+
+  @override
+  String get navSidebarHide => 'Hide sidebar';
+
+  @override
+  String get navSidebarShow => 'Show sidebar (Ctrl+B)';
 }

@@ -2,53 +2,81 @@ import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:business_manager/core/design_system/app_elevation.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
+import 'package:business_manager/core/design_system/app_theme_presets.dart';
 import 'package:business_manager/core/design_system/app_typography.dart';
+import 'package:business_manager/core/theme/theme_state.dart';
 import 'package:cupertino_ui/cupertino_ui.dart'
     show CupertinoPageTransitionsBuilder;
 import 'package:material_ui/material_ui.dart';
 
-/// Centralized Material 3 light and dark themes for the v1.4 "Indigo Thread"
-/// color system: solid surfaces, soft layered shadows (see `AppShadows`) and
-/// WCAG AA text contrast for bilingual (Gujarati/English) readability.
+/// Centralized Material 3 light and dark themes for StitchFlow's Next-Gen
+/// adaptive glass & preset system with WCAG 2.2 AA contrast for bilingual
+/// (Gujarati/English) readability.
 abstract final class AppTheme {
-  static final ThemeData _lightTheme = _build(Brightness.light);
-  static final ThemeData _darkTheme = _build(Brightness.dark);
-  static final ThemeData _lightCompactTheme = _build(
-    Brightness.light,
-    visualDensity: VisualDensity.compact,
-  );
-  static final ThemeData _darkCompactTheme = _build(
-    Brightness.dark,
-    visualDensity: VisualDensity.compact,
-  );
+  static final Map<
+    (Brightness, VisualDensity, AppSurfaceStyle, AppThemePreset),
+    ThemeData
+  >
+  _cache = {};
 
-  static ThemeData light({VisualDensity? visualDensity}) =>
-      visualDensity == VisualDensity.compact ? _lightCompactTheme : _lightTheme;
+  static ThemeData light({
+    VisualDensity? visualDensity,
+    AppSurfaceStyle surfaceStyle = AppSurfaceStyle.modernGlass,
+    AppThemePreset preset = AppThemePreset.indigoThread,
+  }) {
+    final vd = visualDensity ?? VisualDensity.standard;
+    return _cache.putIfAbsent(
+      (Brightness.light, vd, surfaceStyle, preset),
+      () => _build(
+        Brightness.light,
+        visualDensity: vd,
+        surfaceStyle: surfaceStyle,
+        preset: preset,
+      ),
+    );
+  }
 
-  static ThemeData dark({VisualDensity? visualDensity}) =>
-      visualDensity == VisualDensity.compact ? _darkCompactTheme : _darkTheme;
+  static ThemeData dark({
+    VisualDensity? visualDensity,
+    AppSurfaceStyle surfaceStyle = AppSurfaceStyle.modernGlass,
+    AppThemePreset preset = AppThemePreset.indigoThread,
+  }) {
+    final vd = visualDensity ?? VisualDensity.standard;
+    return _cache.putIfAbsent(
+      (Brightness.dark, vd, surfaceStyle, preset),
+      () => _build(
+        Brightness.dark,
+        visualDensity: vd,
+        surfaceStyle: surfaceStyle,
+        preset: preset,
+      ),
+    );
+  }
 
   static ThemeData _build(
     Brightness brightness, {
     VisualDensity visualDensity = VisualDensity.standard,
+    AppSurfaceStyle surfaceStyle = AppSurfaceStyle.modernGlass,
+    AppThemePreset preset = AppThemePreset.indigoThread,
   }) {
     final isDark = brightness == Brightness.dark;
+    final palette = AppPresetPalette.of(preset);
     final baseScheme = ColorScheme.fromSeed(
-      seedColor: AppColors.brandPrimary,
-      secondary: AppColors.brandSecondary,
+      seedColor: palette.primaryFor(brightness),
+      secondary: palette.secondaryFor(brightness),
       tertiary: AppColors.brandAccent,
       brightness: brightness,
     );
     final colorScheme = isDark
         ? baseScheme.copyWith(
-            primary: AppColors.indigo400,
-            onPrimary: AppColors.indigo950,
-            primaryContainer: AppColors.indigo900,
-            onPrimaryContainer: AppColors.indigo100,
-            secondary: AppColors.emerald400,
-            onSecondary: AppColors.emerald950,
-            secondaryContainer: AppColors.emerald900,
-            onSecondaryContainer: AppColors.emerald100,
+            primary: palette.primaryDark,
+            onPrimary: palette.onPrimaryDark,
+            primaryContainer: palette.primaryContainerDark,
+            onPrimaryContainer: palette.onPrimaryContainerDark,
+            secondary: palette.secondaryDark,
+            onSecondary: palette.onSecondaryDark,
+            secondaryContainer: palette.secondaryContainerDark,
+            onSecondaryContainer: palette.onSecondaryContainerDark,
             tertiary: AppColors.saffron400,
             onTertiary: AppColors.saffron900,
             error: AppColors.darkDamaged,
@@ -67,17 +95,17 @@ abstract final class AppTheme {
             outlineVariant: AppColors.darkBorder,
             inverseSurface: AppColors.slate100,
             onInverseSurface: AppColors.slate900,
-            inversePrimary: AppColors.indigo600,
+            inversePrimary: palette.primaryLight,
           )
         : baseScheme.copyWith(
-            primary: AppColors.indigo600,
-            onPrimary: Colors.white,
-            primaryContainer: AppColors.indigo100,
-            onPrimaryContainer: AppColors.indigo900,
-            secondary: AppColors.emerald600,
-            onSecondary: Colors.white,
-            secondaryContainer: AppColors.emerald100,
-            onSecondaryContainer: AppColors.emerald900,
+            primary: palette.primaryLight,
+            onPrimary: palette.onPrimaryLight,
+            primaryContainer: palette.primaryContainerLight,
+            onPrimaryContainer: palette.onPrimaryContainerLight,
+            secondary: palette.secondaryLight,
+            onSecondary: palette.onSecondaryLight,
+            secondaryContainer: palette.secondaryContainerLight,
+            onSecondaryContainer: palette.onSecondaryContainerLight,
             tertiary: AppColors.saffron500,
             onTertiary: AppColors.slate900,
             tertiaryContainer: AppColors.saffron100,
@@ -98,7 +126,7 @@ abstract final class AppTheme {
             outlineVariant: AppColors.lightBorder,
             inverseSurface: AppColors.slate800,
             onInverseSurface: AppColors.slate50,
-            inversePrimary: AppColors.indigo300,
+            inversePrimary: palette.primaryDark,
           );
     final isCompact = visualDensity == VisualDensity.compact;
     final density = isCompact
@@ -111,9 +139,11 @@ abstract final class AppTheme {
     final semanticColors = isDark
         ? AppSemanticColors.dark
         : AppSemanticColors.light;
-    final surfaceTokens = isDark
-        ? AppSurfaceTokens.dark
-        : AppSurfaceTokens.light;
+    final surfaceTokens = AppSurfaceTokens.resolve(
+      brightness: brightness,
+      style: surfaceStyle,
+      preset: preset,
+    );
 
     final glassInputBorderColor = isDark
         ? AppColors.darkBorderStrong
@@ -138,11 +168,6 @@ abstract final class AppTheme {
       fontFamilyFallback: AppTypography.fontFamilyFallback,
       textTheme: textTheme,
       extensions: [semanticColors, surfaceTokens, density],
-      // Native-feeling navigation (used by every pushed page via
-      // `AppMotion.buildPage`): Android follows the predictive back gesture,
-      // iOS/macOS keep edge-swipe back, desktop/web use a light fade-forward.
-      // `allowSnapshotting: false` prevents freezing a frame-0 loading spinner
-      // bitmap across the transition and snapping to loaded content at t=1.0.
       pageTransitionsTheme: PageTransitionsTheme(
         builders: {
           TargetPlatform.android: PredictiveBackPageTransitionsBuilder(
@@ -379,7 +404,6 @@ abstract final class AppTheme {
           color: colorScheme.onInverseSurface,
         ),
       ),
-      // Determinate/linear progress (export, backup) matches the brand spinner.
       progressIndicatorTheme: ProgressIndicatorThemeData(
         color: colorScheme.primary,
         linearTrackColor: colorScheme.primary.withValues(alpha: 0.14),

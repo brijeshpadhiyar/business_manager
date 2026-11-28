@@ -150,7 +150,6 @@ final class _BackupRestoreView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return AppScaffold(
       title: l10n.backupHeading,
@@ -174,9 +173,9 @@ final class _BackupRestoreView extends StatelessWidget {
             children: [
               // Branded Offline Safety Banner
               AppCard(
-                gradient: isDark
-                    ? AppColors.heroGradientDark
-                    : AppColors.heroGradientLight,
+                gradient: context.themePresetPalette.heroGradientFor(
+                  Theme.of(context).brightness,
+                ),
                 borderColor: AppColors.onHero.withValues(alpha: 0.14),
                 child: Row(
                   children: [

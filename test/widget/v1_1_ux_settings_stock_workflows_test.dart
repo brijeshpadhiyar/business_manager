@@ -13,6 +13,7 @@ import 'package:business_manager/core/theme/theme_cubit.dart';
 import 'package:business_manager/core/theme/theme_state.dart';
 import 'package:business_manager/core/utils/id_generator.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
+import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/accounting/domain/repositories/accounting_repository.dart';
 import 'package:business_manager/features/lots/domain/repositories/lot_repository.dart';
 import 'package:business_manager/features/processes/domain/repositories/process_repository.dart';
@@ -195,8 +196,10 @@ void main() {
       await tester.pumpWidget(BusinessManagerApp(config: config));
       await tester.pumpAndSettle();
 
-      // Open Settings tab from bottom NavigationBar (5 clean tabs)
-      expect(find.byType(NavigationBar), findsOneWidget);
+      // Open Settings via More sheet from compact StitchFlowBottomNav
+      expect(find.byType(StitchFlowBottomNav), findsOneWidget);
+      await tester.tap(find.text('More').last);
+      await tester.pumpAndSettle();
       await tester.tap(find.text('Settings').last);
       await tester.pumpAndSettle();
 
@@ -250,14 +253,28 @@ void main() {
         200,
         scrollable: find.byType(Scrollable).last,
       );
+      await tester.ensureVisible(find.text('ગુજરાતી (Gujarati)'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('ગુજરાતી (Gujarati)'));
       await tester.pumpAndSettle();
       expect(getIt<LocaleCubit>().state.preference, AppLocalePreference.gu);
 
       // Switch back to English Light for readable assertions
+      await tester.scrollUntilVisible(
+        find.text('English (અંગ્રેજી)'),
+        -200,
+        scrollable: find.byType(Scrollable).last,
+      );
+      await tester.ensureVisible(find.text('English (અંગ્રેજી)'));
+      await tester.pumpAndSettle();
       await tester.tap(find.text('English (અંગ્રેજી)'));
       await tester.pumpAndSettle();
-      await tester.drag(find.byType(ListView).first, const Offset(0, 400));
+      await tester.scrollUntilVisible(
+        find.text('Light'),
+        -200,
+        scrollable: find.byType(Scrollable).last,
+      );
+      await tester.ensureVisible(find.text('Light'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('Light'));
       await tester.pumpAndSettle();
@@ -560,18 +577,22 @@ void main() {
       await tester.pumpWidget(BusinessManagerApp(config: config));
       await tester.pumpAndSettle();
 
-      // Walk through all 5 bottom navigation tabs in Gujarati + Dark at 360dp
+      // Walk through all 5 bottom navigation slots in Gujarati + Dark at 360dp
       for (final tabLabel in const [
         'ડેશબોર્ડ',
         'લોટ્સ',
         'સ્ટોક',
         'કારીગરો',
-        'સેટિંગ્સ',
+        'વધુ',
       ]) {
         await tester.tap(find.text(tabLabel).last);
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
       }
+      // Open Settings from the More sheet in Gujarati + Dark
+      await tester.tap(find.text('સેટિંગ્સ').last);
+      await tester.pumpAndSettle();
+      expect(tester.takeException(), isNull);
     },
   );
 }

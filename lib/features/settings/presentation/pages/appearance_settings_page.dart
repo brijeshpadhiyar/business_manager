@@ -1,4 +1,8 @@
+import 'package:business_manager/core/design_system/app_colors.dart';
+import 'package:business_manager/core/design_system/app_icons.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
+import 'package:business_manager/core/design_system/app_radius.dart';
+import 'package:business_manager/core/design_system/app_theme_presets.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/localization/locale_cubit.dart';
 import 'package:business_manager/core/localization/locale_state.dart';
@@ -9,12 +13,22 @@ import 'package:business_manager/core/utils/money_formatter.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:business_manager/core/design_system/app_icons.dart';
 
-/// Appearance settings: Theme mode (System / Light Glass / Dark Glass), App
-/// language (System / English / Gujarati), and live glass readability preview.
+/// Appearance settings: Theme mode (System / Light / Dark), Surface Style
+/// (Modern Frosted Glass / Liquid Aurora Glass / Classic Solid), Color Theme
+/// presets, App language (System / English / Gujarati), and live glass preview.
 final class AppearanceSettingsPage extends StatelessWidget {
   const AppearanceSettingsPage({super.key});
+
+  String _presetLabel(BuildContext context, AppThemePreset preset) {
+    final l10n = context.l10n;
+    return switch (preset) {
+      AppThemePreset.indigoThread => l10n.appearancePresetIndigoThread,
+      AppThemePreset.emeraldMint => l10n.appearancePresetEmeraldMint,
+      AppThemePreset.midnightCyan => l10n.appearancePresetMidnightCyan,
+      AppThemePreset.royalSaffron => l10n.appearancePresetRoyalSaffron,
+    };
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +49,7 @@ final class AppearanceSettingsPage extends StatelessWidget {
                   AppHeading(l10n.themeSectionTitle, level: AppHeadingLevel.h3),
                   const AppGap.sm(),
                   BlocBuilder<ThemeCubit, ThemeState>(
+                    buildWhen: (prev, curr) => prev.preference != curr.preference,
                     builder: (context, themeState) =>
                         AppRadio<AppThemePreference>(
                           groupValue: themeState.preference,
@@ -66,6 +81,98 @@ final class AppearanceSettingsPage extends StatelessWidget {
           const AppGap.md(),
           AppMotionEntrance(
             index: 1,
+            child: AppCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AppHeading(
+                    l10n.appearanceSurfaceStyleTitle,
+                    level: AppHeadingLevel.h3,
+                  ),
+                  const AppGap.sm(),
+                  BlocBuilder<ThemeCubit, ThemeState>(
+                    buildWhen: (prev, curr) =>
+                        prev.surfaceStyle != curr.surfaceStyle,
+                    builder: (context, themeState) =>
+                        AppRadio<AppSurfaceStyle>(
+                          groupValue: themeState.surfaceStyle,
+                          onChanged: (style) {
+                            if (style != null) {
+                              context.read<ThemeCubit>().setSurfaceStyle(style);
+                            }
+                          },
+                          options: [
+                            AppRadioOption(
+                              value: AppSurfaceStyle.modernGlass,
+                              label: l10n.appearanceSurfaceModernGlass,
+                              subtitle: l10n.appearanceSurfaceModernGlassDesc,
+                            ),
+                            AppRadioOption(
+                              value: AppSurfaceStyle.liquidAurora,
+                              label: l10n.appearanceSurfaceLiquidAurora,
+                              subtitle: l10n.appearanceSurfaceLiquidAuroraDesc,
+                            ),
+                            AppRadioOption(
+                              value: AppSurfaceStyle.classicSolid,
+                              label: l10n.appearanceSurfaceClassicSolid,
+                              subtitle: l10n.appearanceSurfaceClassicSolidDesc,
+                            ),
+                          ],
+                        ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const AppGap.md(),
+          AppMotionEntrance(
+            index: 2,
+            child: AppCard(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AppHeading(
+                    l10n.appearanceColorPresetTitle,
+                    level: AppHeadingLevel.h3,
+                  ),
+                  const AppGap.sm(),
+                  BlocBuilder<ThemeCubit, ThemeState>(
+                    buildWhen: (prev, curr) => prev.preset != curr.preset,
+                    builder: (context, themeState) => Wrap(
+                      spacing: d.sm,
+                      runSpacing: d.sm,
+                      children: [
+                        for (final preset in AppThemePreset.values)
+                          AppChip(
+                            label: _presetLabel(context, preset),
+                            selected: themeState.preset == preset,
+                            showCheckmark: false,
+                            avatar: SizedBox.square(
+                              dimension: d.iconSm,
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  color: AppPresetPalette.of(preset).swatchColor,
+                                  borderRadius: AppRadius.fullBorder,
+                                  border: Border.all(
+                                    color: AppColors.onHero,
+                                    width: 1.5,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            onSelected: (_) =>
+                                context.read<ThemeCubit>().setPreset(preset),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const AppGap.md(),
+          AppMotionEntrance(
+            index: 3,
             child: AppCard(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -107,7 +214,7 @@ final class AppearanceSettingsPage extends StatelessWidget {
           const AppGap.md(),
           if (context.read<DensityCubit?>() != null) ...[
             AppMotionEntrance(
-              index: 2,
+              index: 4,
               child: AppCard(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,8 +252,10 @@ final class AppearanceSettingsPage extends StatelessWidget {
             const AppGap.md(),
           ],
           AppMotionEntrance(
-            index: 3,
+            index: 5,
             child: AppCard(
+              glassStyle: AppGlassStyle.full,
+              blurSigma: 14,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

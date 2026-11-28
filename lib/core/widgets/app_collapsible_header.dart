@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:business_manager/core/design_system/app_breakpoints.dart';
 import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_density.dart';
+import 'package:business_manager/core/design_system/app_glass_quality.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/widgets/app_icon_button.dart';
 import 'package:business_manager/core/widgets/app_status_badge.dart';
@@ -174,11 +175,15 @@ final class AppCollapsibleHeader {
             );
           }
 
+          final quality = AppGlassQuality.resolve(context);
           return RepaintBoundary(
             child: ClipRect(
               child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
-                enabled: false, // v1.4 soft elevation: opaque surfaces
+                filter: ImageFilter.blur(
+                  sigmaX: quality.chromeBlurSigma,
+                  sigmaY: quality.chromeBlurSigma,
+                ),
+                enabled: quality.enableBackdropBlur,
                 backdropGroupKey: backdropKey,
                 child: DecoratedBox(
                   decoration: BoxDecoration(

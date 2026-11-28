@@ -19,7 +19,6 @@ final class AboutStitchFlowPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final colorScheme = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return AppScaffold(
       title: l10n.settingsAboutTitle,
@@ -27,9 +26,9 @@ final class AboutStitchFlowPage extends StatelessWidget {
       body: ListView(
         children: [
           AppCard(
-            gradient: isDark
-                ? AppColors.heroGradientDark
-                : AppColors.heroGradientLight,
+            gradient: context.themePresetPalette.heroGradientFor(
+              Theme.of(context).brightness,
+            ),
             borderRadius: AppRadius.xlBorder,
             padding: const EdgeInsets.all(AppSpacing.xl),
             child: Column(

@@ -1,4 +1,6 @@
+import 'package:business_manager/core/design_system/app_glass_quality.dart';
 import 'package:business_manager/core/design_system/app_theme.dart';
+import 'package:business_manager/core/theme/theme_state.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:business_manager/features/lots/domain/entities/lot_entities.dart';
 import 'package:business_manager/features/lots/domain/repositories/lot_repository.dart';
@@ -12,7 +14,7 @@ class _MockLotRepository extends Mock implements LotRepository {}
 void main() {
   group('Global 120Hz glassmorphism & rebuild performance modes', () {
     testWidgets(
-      'Default AppCard, AppCard.listItem, and AppMetricTile use lightweight frosted glass (zero BackdropFilter) in Light & Dark themes',
+      'Default AppCard, AppCard.listItem, and AppMetricTile use lightweight glass (zero BackdropFilter) in Light & Dark themes',
       (tester) async {
         for (final theme in [AppTheme.light(), AppTheme.dark()]) {
           await tester.pumpWidget(
@@ -46,11 +48,11 @@ void main() {
     );
 
     testWidgets(
-      'v1.4 soft elevation: full-style Hero AppCard and AppScaffold AppBar render no active backdrop blur',
+      'Classic Solid disables BackdropFilter on full Hero AppCard and AppScaffold AppBar',
       (tester) async {
         await tester.pumpWidget(
           MaterialApp(
-            theme: AppTheme.dark(),
+            theme: AppTheme.dark(surfaceStyle: AppSurfaceStyle.classicSolid),
             home: const AppScaffold(
               title: 'Dashboard',
               body: AppCard(
@@ -64,12 +66,69 @@ void main() {
         await tester.pumpAndSettle();
 
         expect(find.text('Hero Banner'), findsOneWidget);
-        // Surfaces are opaque in v1.4: the card has no BackdropFilter and the
-        // AppBar keeps its filter disabled.
         final activeBlurs = tester
             .widgetList<BackdropFilter>(find.byType(BackdropFilter))
             .where((f) => f.enabled);
         expect(activeBlurs, isEmpty);
+      },
+    );
+
+    testWidgets(
+      'Modern Glass enables BackdropFilter on full Hero AppCard and AppScaffold AppBar',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.dark(surfaceStyle: AppSurfaceStyle.modernGlass),
+            home: const AppScaffold(
+              title: 'Dashboard',
+              body: AppCard(
+                glassStyle: AppGlassStyle.full,
+                blurSigma: 12,
+                child: Text('Hero Banner'),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Hero Banner'), findsOneWidget);
+        final activeBlurs = tester
+            .widgetList<BackdropFilter>(find.byType(BackdropFilter))
+            .where((f) => f.enabled);
+        expect(activeBlurs, hasLength(2));
+      },
+    );
+
+    testWidgets(
+      'Liquid Aurora Glass disables LiquidGlass shader glare and uses clean BackdropFilter blur',
+      (tester) async {
+        AppGlassQuality? resolvedQuality;
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.dark(surfaceStyle: AppSurfaceStyle.liquidAurora),
+            home: AppScaffold(
+              title: 'Dashboard',
+              body: Builder(
+                builder: (context) {
+                  resolvedQuality = AppGlassQuality.resolve(context);
+                  return const AppCard(
+                    glassStyle: AppGlassStyle.full,
+                    blurSigma: 12,
+                    child: Text('Aurora Hero'),
+                  );
+                },
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(find.text('Aurora Hero'), findsOneWidget);
+        expect(resolvedQuality?.enableLiquidShader, isFalse);
+        final activeBlurs = tester
+            .widgetList<BackdropFilter>(find.byType(BackdropFilter))
+            .where((f) => f.enabled);
+        expect(activeBlurs, hasLength(2));
       },
     );
 

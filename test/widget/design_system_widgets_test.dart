@@ -1,5 +1,6 @@
 import 'package:business_manager/core/design_system/app_theme.dart';
 import 'package:business_manager/core/di/injection.dart';
+import 'package:business_manager/core/theme/navigation_sidebar_cubit.dart';
 import 'package:business_manager/core/widgets/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -140,27 +141,32 @@ void main() {
       );
     }
 
-    testWidgets('uses NavigationBar on mobile (< 600dp)', (tester) async {
+    testWidgets('uses StitchFlowBottomNav on mobile (< 600dp)', (tester) async {
       await tester.pumpWidget(buildNav(const Size(360, 800)));
-      expect(find.byType(NavigationBar), findsOneWidget);
-      expect(find.byType(NavigationRail), findsNothing);
-      expect(find.byType(NavigationDrawer), findsNothing);
+      expect(find.byType(StitchFlowBottomNav), findsOneWidget);
+      expect(find.byType(StitchFlowSideNav), findsNothing);
     });
 
-    testWidgets('uses NavigationRail on tablet (600..1023dp)', (tester) async {
+    testWidgets('uses compact StitchFlowSideNav rail on tablet (600..1023dp)', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildNav(const Size(768, 1024)));
-      expect(find.byType(NavigationRail), findsOneWidget);
-      expect(find.byType(NavigationBar), findsNothing);
-      expect(find.byType(NavigationDrawer), findsNothing);
+      final sideNav = tester.widget<StitchFlowSideNav>(
+        find.byType(StitchFlowSideNav),
+      );
+      expect(sideNav.mode, SidebarMode.compactRail);
+      expect(find.byType(StitchFlowBottomNav), findsNothing);
     });
 
-    testWidgets('uses NavigationDrawer sidebar on desktop (>= 1024dp)', (
+    testWidgets('uses expanded StitchFlowSideNav on desktop (>= 1024dp)', (
       tester,
     ) async {
       await tester.pumpWidget(buildNav(const Size(1280, 800)));
-      expect(find.byType(NavigationDrawer), findsOneWidget);
-      expect(find.byType(NavigationBar), findsNothing);
-      expect(find.byType(NavigationRail), findsNothing);
+      final sideNav = tester.widget<StitchFlowSideNav>(
+        find.byType(StitchFlowSideNav),
+      );
+      expect(sideNav.mode, SidebarMode.expanded);
+      expect(find.byType(StitchFlowBottomNav), findsNothing);
     });
   });
 

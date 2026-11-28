@@ -4,6 +4,7 @@ import 'package:animations/animations.dart';
 import 'package:business_manager/core/design_system/app_breakpoints.dart';
 import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_density.dart';
+import 'package:business_manager/core/design_system/app_glass_quality.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_shadows.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
@@ -179,8 +180,11 @@ final class AppDialog extends StatelessWidget {
             child: ClipRRect(
               borderRadius: radius,
               child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
-                enabled: false, // v1.4 soft elevation: opaque surfaces
+                filter: ImageFilter.blur(
+                  sigmaX: AppGlassQuality.resolve(context).chromeBlurSigma,
+                  sigmaY: AppGlassQuality.resolve(context).chromeBlurSigma,
+                ),
+                enabled: AppGlassQuality.resolve(context).enableBackdropBlur,
                 child: DecoratedBox(
                   decoration: BoxDecoration(
                     color: tokens.dialogGlassFill,

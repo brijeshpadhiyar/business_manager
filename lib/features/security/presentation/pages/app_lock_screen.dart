@@ -126,8 +126,8 @@ final class _AppLockScreenState extends State<AppLockScreen> {
             body: Container(
               width: double.infinity,
               height: double.infinity,
-              decoration: const BoxDecoration(
-                gradient: AppColors.heroGradientDark,
+              decoration: BoxDecoration(
+                gradient: context.themePresetPalette.heroGradientDark,
               ),
               child: SafeArea(
                 child: Center(

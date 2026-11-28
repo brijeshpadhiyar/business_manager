@@ -68,6 +68,11 @@ dependencies:
   dropdown_search: ^8.1.0
   calendar_date_picker2: ^4.0.0
 
+  # Next-Gen glass & spring motion
+  liquid_glass_renderer: ^1.0.0-dev.3
+  mesh: ^0.5.3
+  motor: ^1.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

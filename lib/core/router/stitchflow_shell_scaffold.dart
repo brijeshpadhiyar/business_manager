@@ -65,114 +65,233 @@ void navigatePrimaryTab(
   context.go(_primaryTabRoutes[safeIndex]);
 }
 
-List<({String id, String label, IconData icon, String route})>
-_buildExtraRoutes(BuildContext context) {
+int? _readSyncAttentionBadge(BuildContext context) {
+  final syncCubit = context.read<SyncCubit?>();
+  if (syncCubit == null) return null;
+  final syncState = context.watch<SyncCubit>().state;
+  final attentionCount =
+      syncState.failedItems.length +
+      (syncState.phase == SyncPhase.needsAttention &&
+              syncState.failedItems.isEmpty
+          ? 1
+          : 0);
+  return attentionCount > 0 ? attentionCount : null;
+}
+
+/// 4 core Mobile Bottom Navigation destinations (plus the 5th `More` sheet).
+List<ResponsiveNavDestination> _buildMobileCoreDestinations(
+  BuildContext context,
+) {
   final l10n = context.l10n;
-  return <({String id, String label, IconData icon, String route})>[
-    (
-      id: 'productionHistory',
-      label: l10n.navProductionHistory,
-      icon: AppIcons.productionHistory,
-      route: RoutePaths.productionHistory,
+  return [
+    ResponsiveNavDestination(
+      id: 'dashboard',
+      label: l10n.navDashboard,
+      icon: AppIcons.dashboard,
+      selectedIcon: AppIcons.dashboardSelected,
+      guideTargetId: GuideTargetId.navHome,
     ),
-    (
-      id: 'inspectionQueue',
-      label: l10n.navInspectionQueue,
-      icon: AppIcons.qcInspect,
-      route: RoutePaths.inspectionQueue,
+    ResponsiveNavDestination(
+      id: 'lots',
+      label: l10n.navLots,
+      icon: AppIcons.lot,
+      selectedIcon: AppIcons.lotsSelected,
+      guideTargetId: GuideTargetId.navLots,
     ),
-    (
-      id: 'processHistory',
-      label: l10n.navProcessHistory,
-      icon: AppIcons.processHistory,
-      route: RoutePaths.processProductionHistory,
+    ResponsiveNavDestination(
+      id: 'stock',
+      label: l10n.navStockShort,
+      icon: AppIcons.stockMovements,
+      selectedIcon: AppIcons.stockMovements,
+      guideTargetId: GuideTargetId.navStock,
     ),
-    (
-      id: 'designsColours',
-      label: l10n.navDesignsColours,
-      icon: AppIcons.designs,
-      route: RoutePaths.designsColours,
-    ),
-    (
-      id: 'inventory',
-      label: l10n.navInventory,
-      icon: AppIcons.inventory,
-      route: RoutePaths.inventory,
-    ),
-    (
-      id: 'accounting',
-      label: l10n.navAccounting,
-      icon: AppIcons.accounting,
-      route: RoutePaths.accounting,
-    ),
-    (
-      id: 'parties',
-      label: l10n.navPartiesDispatch,
-      icon: AppIcons.party,
-      route: RoutePaths.parties,
-    ),
-    (
-      id: 'reports',
-      label: l10n.navReports,
-      icon: AppIcons.reports,
-      route: RoutePaths.reports,
-    ),
-    (
-      id: 'help',
-      label: l10n.settingsHelpTitle,
-      icon: AppIcons.guide,
-      route: RoutePaths.settingsHelp,
+    ResponsiveNavDestination(
+      id: 'workers',
+      label: l10n.navWorkers,
+      icon: AppIcons.workers,
+      selectedIcon: AppIcons.workersSelected,
+      guideTargetId: GuideTargetId.navWorkers,
     ),
   ];
 }
 
-List<ResponsiveNavDestination> _buildPrimaryDestinations(BuildContext context) {
+/// Builds the grouped sections for the Web/Desktop/Tablet Side Navigator
+/// (`includeOverview: true`) or the Mobile `More` modules sheet
+/// (`includeOverview: false`, omitting the 4 core bottom-bar tabs).
+List<ResponsiveNavSection> _buildGroupedSections(
+  BuildContext context, {
+  required bool includeCoreTabs,
+  required int selectedPrimaryIndex,
+  required String? activeExtraId,
+  required ValueChanged<int> onSelectPrimaryTab,
+  required ValueChanged<String> onOpenExtraRoute,
+  int? syncAttentionBadge,
+}) {
   final l10n = context.l10n;
-  int? syncAttentionBadge;
-  final syncCubit = context.read<SyncCubit?>();
-  if (syncCubit != null) {
-    final syncState = context.watch<SyncCubit>().state;
-    final attentionCount =
-        syncState.failedItems.length +
-        (syncState.phase == SyncPhase.needsAttention &&
-                syncState.failedItems.isEmpty
-            ? 1
-            : 0);
-    if (attentionCount > 0) {
-      syncAttentionBadge = attentionCount;
-    }
-  }
-  return [
-    ResponsiveNavDestination(
-      label: l10n.navDashboard,
-      icon: AppIcons.dashboard,
-      selectedIcon: AppIcons.dashboardSelected,
-    ),
-    ResponsiveNavDestination(
-      label: l10n.navLots,
-      icon: AppIcons.lot,
-      selectedIcon: AppIcons.lotsSelected,
-    ),
-    ResponsiveNavDestination(
-      label: l10n.navStockShort,
-      icon: AppIcons.stockMovements,
-      selectedIcon: AppIcons.stockMovements,
-    ),
-    ResponsiveNavDestination(
-      label: l10n.navWorkers,
-      icon: AppIcons.workers,
-      selectedIcon: AppIcons.workersSelected,
-    ),
-    ResponsiveNavDestination(
-      label: l10n.navWorkStagesShort,
+
+  bool isPrimaryActive(int idx) =>
+      activeExtraId == null && selectedPrimaryIndex == idx;
+
+  final productionItems = <ResponsiveNavSectionItem>[
+    if (includeCoreTabs)
+      ResponsiveNavSectionItem(
+        id: 'lots',
+        label: l10n.navLots,
+        icon: AppIcons.lot,
+        selectedIcon: AppIcons.lotsSelected,
+        guideTargetId: GuideTargetId.navLots,
+        isActive: isPrimaryActive(1),
+        onTap: () => onSelectPrimaryTab(1),
+      ),
+    ResponsiveNavSectionItem(
+      id: 'processes',
+      label: l10n.navProcesses,
       icon: AppIcons.process,
       selectedIcon: AppIcons.process,
+      isActive: isPrimaryActive(4),
+      onTap: () => onSelectPrimaryTab(4),
     ),
-    ResponsiveNavDestination(
+    ResponsiveNavSectionItem(
+      id: 'designsColours',
+      label: l10n.navDesignsColours,
+      icon: AppIcons.designs,
+      isActive: activeExtraId == 'designsColours',
+      onTap: () => onOpenExtraRoute(RoutePaths.designsColours),
+    ),
+    ResponsiveNavSectionItem(
+      id: 'productionHistory',
+      label: l10n.navProductionHistory,
+      icon: AppIcons.productionHistory,
+      isActive: activeExtraId == 'productionHistory',
+      onTap: () => onOpenExtraRoute(RoutePaths.productionHistory),
+    ),
+    ResponsiveNavSectionItem(
+      id: 'processHistory',
+      label: l10n.navProcessHistory,
+      icon: AppIcons.processHistory,
+      isActive: activeExtraId == 'processHistory',
+      onTap: () => onOpenExtraRoute(RoutePaths.processProductionHistory),
+    ),
+  ];
+
+  final stockQcItems = <ResponsiveNavSectionItem>[
+    if (includeCoreTabs)
+      ResponsiveNavSectionItem(
+        id: 'stock',
+        label: l10n.navStockMovements,
+        icon: AppIcons.stockMovements,
+        selectedIcon: AppIcons.stockMovements,
+        guideTargetId: GuideTargetId.navStock,
+        isActive: isPrimaryActive(2),
+        onTap: () => onSelectPrimaryTab(2),
+      ),
+    ResponsiveNavSectionItem(
+      id: 'inventory',
+      label: l10n.navInventory,
+      icon: AppIcons.inventory,
+      isActive: activeExtraId == 'inventory',
+      onTap: () => onOpenExtraRoute(RoutePaths.inventory),
+    ),
+    ResponsiveNavSectionItem(
+      id: 'inspectionQueue',
+      label: l10n.navInspectionQueue,
+      icon: AppIcons.qcInspect,
+      isActive: activeExtraId == 'inspectionQueue',
+      onTap: () => onOpenExtraRoute(RoutePaths.inspectionQueue),
+    ),
+  ];
+
+  final financePartiesItems = <ResponsiveNavSectionItem>[
+    if (includeCoreTabs)
+      ResponsiveNavSectionItem(
+        id: 'workers',
+        label: l10n.navWorkers,
+        icon: AppIcons.workers,
+        selectedIcon: AppIcons.workersSelected,
+        guideTargetId: GuideTargetId.navWorkers,
+        isActive: isPrimaryActive(3),
+        onTap: () => onSelectPrimaryTab(3),
+      ),
+    ResponsiveNavSectionItem(
+      id: 'accounting',
+      label: l10n.navAccounting,
+      icon: AppIcons.accounting,
+      isActive: activeExtraId == 'accounting',
+      onTap: () => onOpenExtraRoute(RoutePaths.accounting),
+    ),
+    ResponsiveNavSectionItem(
+      id: 'parties',
+      label: l10n.navPartiesDispatch,
+      icon: AppIcons.party,
+      isActive: activeExtraId == 'parties',
+      onTap: () => onOpenExtraRoute(RoutePaths.parties),
+    ),
+    ResponsiveNavSectionItem(
+      id: 'reports',
+      label: l10n.navReports,
+      icon: AppIcons.reports,
+      isActive: activeExtraId == 'reports',
+      onTap: () => onOpenExtraRoute(RoutePaths.reports),
+    ),
+  ];
+
+  final systemItems = <ResponsiveNavSectionItem>[
+    ResponsiveNavSectionItem(
+      id: 'settings',
       label: l10n.navSettings,
       icon: AppIcons.settings,
       selectedIcon: AppIcons.settingsSelected,
       badgeCount: syncAttentionBadge,
+      guideTargetId: GuideTargetId.navSettings,
+      isActive: isPrimaryActive(5),
+      onTap: () => onSelectPrimaryTab(5),
+    ),
+    ResponsiveNavSectionItem(
+      id: 'help',
+      label: l10n.settingsHelpTitle,
+      icon: AppIcons.guide,
+      isActive: activeExtraId == 'help',
+      onTap: () => onOpenExtraRoute(RoutePaths.settingsHelp),
+    ),
+  ];
+
+  return [
+    if (includeCoreTabs)
+      ResponsiveNavSection(
+        id: 'overview',
+        title: l10n.navSectionOverview,
+        collapsible: false,
+        items: [
+          ResponsiveNavSectionItem(
+            id: 'dashboard',
+            label: l10n.navDashboard,
+            icon: AppIcons.dashboard,
+            selectedIcon: AppIcons.dashboardSelected,
+            guideTargetId: GuideTargetId.navHome,
+            isActive: isPrimaryActive(0),
+            onTap: () => onSelectPrimaryTab(0),
+          ),
+        ],
+      ),
+    ResponsiveNavSection(
+      id: 'production',
+      title: l10n.navSectionProduction,
+      items: productionItems,
+    ),
+    ResponsiveNavSection(
+      id: 'stock_qc',
+      title: l10n.navSectionStockQc,
+      items: stockQcItems,
+    ),
+    ResponsiveNavSection(
+      id: 'finance_parties',
+      title: l10n.navSectionFinanceParties,
+      items: financePartiesItems,
+    ),
+    ResponsiveNavSection(
+      id: 'system',
+      title: l10n.navSectionSystem,
+      items: systemItems,
     ),
   ];
 }
@@ -204,12 +323,12 @@ Map<ShortcutActivator, VoidCallback> _buildGlobalShortcuts(
 /// Hosts the 6 alive primary tabs inside [StatefulShellRoute] with a smooth
 /// 150ms zero-blank cross-fade.
 ///
-/// - On Compact mobile (`< 600dp`), renders the Mobile AppBar and Bottom
-///   NavigationBar inside this page itself, so pushing any detail/form sibling
-///   route transitions cleanly OVER the tab chrome with zero layout jump or
-///   unmount blink.
+/// - On Compact mobile (`< 600dp`), renders the Mobile AppBar and compact 4+1
+///   frosted-glass Bottom Bar ([StitchFlowBottomNav]) inside this page itself,
+///   so pushing any detail/form sibling route transitions cleanly OVER the tab
+///   chrome with zero layout jump or unmount blink.
 /// - On Tablet / Desktop (`>= 600dp`), renders the tab stack directly because
-///   [StitchFlowShellScaffold] already provides the persistent Rail / Sidebar.
+///   [StitchFlowShellScaffold] already provides the persistent Side Navigator.
 final class PrimaryTabsViewport extends StatelessWidget {
   const PrimaryTabsViewport({
     super.key,
@@ -249,7 +368,28 @@ final class PrimaryTabsViewport extends StatelessWidget {
     final l10n = context.l10n;
     final appTitle = config.isDev ? l10n.appTitleDev : l10n.appTitle;
     final router = GoRouter.of(context);
-    final extraRoutes = _buildExtraRoutes(context);
+    final syncAttentionBadge = _readSyncAttentionBadge(context);
+    final lockState = context.watch<AppLockCubit?>()?.state;
+
+    final moreSections = _buildGroupedSections(
+      context,
+      includeCoreTabs: false,
+      selectedPrimaryIndex: navigationShell.currentIndex,
+      activeExtraId: null,
+      onSelectPrimaryTab: _onSelectTab,
+      onOpenExtraRoute: (route) => router.push(route),
+      syncAttentionBadge: syncAttentionBadge,
+    );
+
+    final footerActions = <ResponsiveNavActionItem>[
+      if (lockState != null && lockState.isPinEnabled)
+        ResponsiveNavActionItem(
+          id: 'lock',
+          label: l10n.securityLockNowAction,
+          icon: AppIcons.lock,
+          onTap: () => context.read<AppLockCubit>().lockNow(),
+        ),
+    ];
 
     return ResponsiveNavigation(
       title: appTitle,
@@ -257,6 +397,13 @@ final class PrimaryTabsViewport extends StatelessWidget {
       selectedIndex: navigationShell.currentIndex,
       showMobileChrome: true,
       onDestinationSelected: _onSelectTab,
+      destinations: _buildMobileCoreDestinations(context),
+      mobileMoreSections: moreSections,
+      mobileSheetFooterActions: footerActions,
+      isMoreActive: navigationShell.currentIndex >= 4,
+      moreLabel: l10n.navMore,
+      allModulesTitle: l10n.navAllModules,
+      moreBadgeCount: syncAttentionBadge,
       compactActions: [
         const SyncStatusBadge(compact: true),
         GuideTarget(
@@ -275,46 +422,15 @@ final class PrimaryTabsViewport extends StatelessWidget {
             onPressed: () => showGlobalSearch(context),
           ),
         ),
-        BlocBuilder<AppLockCubit, AppLockState>(
-          builder: (context, lockState) {
-            return PopupMenuButton<VoidCallback>(
-              tooltip: MaterialLocalizations.of(context).showMenuTooltip,
-              icon: const Icon(AppIcons.more),
-              onSelected: (action) => action(),
-              itemBuilder: (_) => [
-                for (final item in extraRoutes)
-                  PopupMenuItem<VoidCallback>(
-                    value: () => router.push(item.route),
-                    child: AppListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: Icon(item.icon),
-                      title: Text(item.label),
-                    ),
-                  ),
-                if (lockState.isPinEnabled) ...[
-                  const PopupMenuDivider(),
-                  PopupMenuItem<VoidCallback>(
-                    value: () => context.read<AppLockCubit>().lockNow(),
-                    child: AppListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: const Icon(AppIcons.lock),
-                      title: Text(l10n.securityLockNowAction),
-                    ),
-                  ),
-                ],
-              ],
-            );
-          },
-        ),
       ],
-      destinations: _buildPrimaryDestinations(context),
       body: tabStack,
     );
   }
 }
 
 /// Persistent adaptive GoRouter shell:
-/// - Keeps Desktop Sidebar & Tablet Rail mounted across all 45+ routes
+/// - Keeps Desktop / Web toggleable Side Navigator & Tablet Rail mounted
+///   across all 45+ routes
 /// - Computes active primary/secondary destination highlight and clickable
 ///   breadcrumbs directly from the current URL [location]
 /// - On Mobile (`< 600dp`), keeps a single stable passthrough tree so the
@@ -610,17 +726,20 @@ final class StitchFlowShellScaffold extends StatelessWidget {
 
     final l10n = context.l10n;
     final appTitle = config.isDev ? l10n.appTitleDev : l10n.appTitle;
-    final extraRoutes = _buildExtraRoutes(context);
-    // Sidebar / drawer: sibling sections, so replace the location.
-    final extraActions = <ResponsiveNavActionItem>[
-      for (final e in extraRoutes)
-        ResponsiveNavActionItem(
-          id: e.id,
-          label: e.label,
-          icon: e.icon,
-          onTap: () => context.go(e.route),
-        ),
-    ];
+    final syncAttentionBadge = _readSyncAttentionBadge(context);
+    final selectedPrimary = _selectedPrimaryIndex;
+    final activeExtra = _activeExtraId;
+
+    final groupedSections = _buildGroupedSections(
+      context,
+      includeCoreTabs: true,
+      selectedPrimaryIndex: selectedPrimary,
+      activeExtraId: activeExtra,
+      onSelectPrimaryTab: (idx) =>
+          navigatePrimaryTab(context, idx, tabRefreshBus),
+      onOpenExtraRoute: (route) => context.go(route),
+      syncAttentionBadge: syncAttentionBadge,
+    );
 
     return _RootBackGuard(
       location: location,
@@ -628,23 +747,27 @@ final class StitchFlowShellScaffold extends StatelessWidget {
       child: ResponsiveNavigation(
         title: appTitle,
         subtitle: l10n.appTagline,
-        selectedIndex: _selectedPrimaryIndex,
-        activeExtraActionId: _activeExtraId,
+        selectedIndex: selectedPrimary,
+        activeExtraActionId: activeExtra,
         showMobileChrome: _isPrimaryRootRoute,
         breadcrumbs: _buildBreadcrumbs(context),
+        sections: groupedSections,
+        destinations: _buildMobileCoreDestinations(context),
         onDestinationSelected: (idx) =>
             navigatePrimaryTab(context, idx, tabRefreshBus),
+        onSearchPressed: () => showGlobalSearch(context),
+        searchTooltip: l10n.uxSearchTooltip,
         extraShortcuts: {
-          // Ctrl+K (Cmd+K on Mac): search lots, workers, processes or start a
-          // quick action from anywhere.
           const SingleActivator(LogicalKeyboardKey.keyK, control: true): () =>
               showGlobalSearch(context),
           const SingleActivator(LogicalKeyboardKey.keyK, meta: true): () =>
               showGlobalSearch(context),
-          // Esc goes back like the system back button, so unsaved-changes
-          // guards still ask before leaving a form.
           const SingleActivator(LogicalKeyboardKey.escape): () =>
               GoRouter.of(context).routerDelegate.popRoute(),
+          const SingleActivator(LogicalKeyboardKey.digit6, alt: true): () =>
+              navigatePrimaryTab(context, 5, tabRefreshBus),
+          const SingleActivator(LogicalKeyboardKey.digit5, alt: true): () =>
+              navigatePrimaryTab(context, 4, tabRefreshBus),
         },
         actions: [
           const Padding(
@@ -669,21 +792,6 @@ final class StitchFlowShellScaffold extends StatelessWidget {
               );
             },
           ),
-          AppIconButton(
-            icon: AppIcons.productionHistory,
-            tooltip: l10n.navProductionHistory,
-            onPressed: () => context.push(RoutePaths.productionHistory),
-          ),
-          AppIconButton(
-            icon: AppIcons.accounting,
-            tooltip: l10n.navAccounting,
-            onPressed: () => context.push(RoutePaths.accounting),
-          ),
-          AppIconButton(
-            icon: AppIcons.reports,
-            tooltip: l10n.navReports,
-            onPressed: () => context.push(RoutePaths.reports),
-          ),
           GuideTarget(
             id: GuideTargetId.appBarGuide,
             child: AppIconButton(
@@ -693,8 +801,6 @@ final class StitchFlowShellScaffold extends StatelessWidget {
             ),
           ),
         ],
-        sidebarExtraActions: extraActions,
-        destinations: _buildPrimaryDestinations(context),
         body: child,
       ),
     );
