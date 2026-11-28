@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:business_manager/core/design_system/app_radius.dart';
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:business_manager/core/utils/ist_datetime_helper.dart';
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:material_ui/material_ui.dart';
@@ -188,8 +188,9 @@ abstract final class AppDateTimeDialogs {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
     final text = theme.textTheme;
+    final d = context.density;
     final size = MediaQuery.sizeOf(context);
-    final width = math.min(size.width - 32, 400.0);
+    final width = math.min(size.width - (d.lg * 2), 400.0);
 
     final config = CalendarDatePicker2WithActionButtonsConfig(
       calendarType: type,
@@ -220,7 +221,7 @@ abstract final class AppDateTimeDialogs {
         color: scheme.onSurfaceVariant,
       ),
       controlsTextStyle: text.titleSmall,
-      dayBorderRadius: AppRadius.mdBorder,
+      dayBorderRadius: d.radiusMdBorder,
       okButtonTextStyle: text.labelLarge?.copyWith(color: scheme.primary),
       cancelButtonTextStyle: text.labelLarge?.copyWith(
         color: scheme.onSurfaceVariant,
@@ -232,9 +233,9 @@ abstract final class AppDateTimeDialogs {
     return showCalendarDatePicker2Dialog(
       context: context,
       config: config,
-      dialogSize: Size(width, 420),
+      dialogSize: Size(width, d.isCompact ? 350 : 420),
       value: value,
-      borderRadius: AppRadius.xlBorder,
+      borderRadius: d.radiusXlBorder,
       dialogBackgroundColor: scheme.surfaceContainerHigh,
       useRootNavigator: true,
     );

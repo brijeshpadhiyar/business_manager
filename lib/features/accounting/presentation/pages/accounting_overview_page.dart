@@ -186,14 +186,10 @@ final class _AccountingOverviewViewState
             ),
           ];
         } else {
+          final d = context.density;
           slivers = [
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.lg,
-                AppSpacing.md,
-                AppSpacing.lg,
-                AppSpacing.md,
-              ),
+              padding: EdgeInsets.fromLTRB(d.lg, d.md, d.lg, d.md),
               sliver: SliverToBoxAdapter(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -209,14 +205,14 @@ final class _AccountingOverviewViewState
                         icon: AppIcons.trend,
                         tone: AppStatusTone.info,
                       ),
-                      const SizedBox(height: AppSpacing.sm),
+                      const AppGap.sm(),
                     ],
                     AppText(
                       l10n.accountingAdvanceNote,
                       variant: AppTextVariant.bodySmall,
                     ),
                     if (_tab == 0) ...[
-                      const SizedBox(height: AppSpacing.md),
+                      const AppGap.md(),
                       AppSearchField(
                         controller: _searchCtrl,
                         label: l10n.workersSearchHint,
@@ -231,11 +227,11 @@ final class _AccountingOverviewViewState
               ),
             ),
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.lg,
+              padding: EdgeInsets.fromLTRB(
+                d.lg,
                 0,
-                AppSpacing.lg,
-                96,
+                d.lg,
+                d.isCompact ? 68 : 96,
               ),
               sliver: switch (_tab) {
                 0 => _buildWorkerBalancesSliver(context, state),
@@ -254,6 +250,7 @@ final class _AccountingOverviewViewState
           ];
         }
 
+        final d = context.density;
         return AppScaffold(
           scrollMode: AppScrollMode.collapsible,
           contentWidth: AppContentWidth.wide,
@@ -262,7 +259,13 @@ final class _AccountingOverviewViewState
             id: GuideTargetId.accountingRecordPaymentAction,
             child: FloatingActionButton.extended(
               onPressed: _openRecordPayment,
-              icon: const Icon(AppIcons.payment),
+              materialTapTargetSize: d.isCompact
+                  ? MaterialTapTargetSize.shrinkWrap
+                  : MaterialTapTargetSize.padded,
+              extendedPadding: d.isCompact
+                  ? EdgeInsets.symmetric(horizontal: d.md, vertical: d.xs)
+                  : null,
+              icon: Icon(AppIcons.payment, size: d.iconMd),
               label: Text(l10n.accountingRecordPaymentAction),
             ),
           ),

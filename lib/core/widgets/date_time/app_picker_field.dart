@@ -1,5 +1,5 @@
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:business_manager/core/design_system/app_icons.dart';
-import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Read-only, tappable form field shell shared by every picker field
@@ -32,6 +32,7 @@ final class AppPickerField extends StatelessWidget {
   Widget build(BuildContext context) {
     final hasValue = displayText.isNotEmpty;
     final showClear = onClear != null && hasValue && enabled;
+    final d = context.density;
 
     return Semantics(
       button: true,
@@ -49,12 +50,12 @@ final class AppPickerField extends StatelessWidget {
             enabled: enabled,
             suffixIcon: showClear
                 ? IconButton(
-                    icon: const Icon(AppIcons.close, size: AppSizing.iconMd),
+                    icon: Icon(AppIcons.close, size: d.iconMd),
                     tooltip: MaterialLocalizations.of(context)
                         .deleteButtonTooltip,
                     onPressed: onClear,
                   )
-                : Icon(icon, size: AppSizing.iconMd),
+                : Icon(icon, size: d.iconMd),
           ),
           child: Text(
             displayText,

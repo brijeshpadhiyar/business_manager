@@ -298,63 +298,50 @@ final class _JobProcessRoutingViewState extends State<_JobProcessRoutingView> {
 
           AppMotionEntrance(
             index: 1,
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final tileW = (constraints.maxWidth - AppSpacing.sm) / 2;
-                return Wrap(
-                  spacing: AppSpacing.sm,
-                  runSpacing: AppSpacing.sm,
-                  children: [
-                    SizedBox(
-                      width: tileW,
-                      child: AppMetricTile(
-                        label: l10n.routingFactoryReadyLabel,
-                        value: totalFactory,
-                        suffix: l10n.piecesUnit,
-                        icon: AppIcons.factory,
-                        tone: AppStatusTone.good,
-                      ),
-                    ),
-                    SizedBox(
-                      width: tileW,
-                      child: AppMetricTile(
-                        label: l10n.routingWithWorkersLabel,
-                        value: totalWithWorkers,
-                        suffix: l10n.piecesUnit,
-                        icon: AppIcons.pending,
-                        tone: totalWithWorkers > 0
-                            ? AppStatusTone.pending
-                            : AppStatusTone.neutral,
-                      ),
-                    ),
-                    SizedBox(
-                      width: tileW,
-                      child: AppMetricTile(
-                        label: l10n.routingTotalProductionCostLabel,
-                        value: costs.totalNetCostPaise,
-                        isCurrencyPaise: true,
-                        icon: AppIcons.rupee,
-                        tone: AppStatusTone.info,
-                      ),
-                    ),
-                    SizedBox(
-                      width: tileW,
-                      child: AppMetricTile(
-                        label: l10n.routingOutstandingPayableLabel,
-                        value: costs.totalOutstandingPaise,
-                        isCurrencyPaise: true,
-                        icon: AppIcons.accounting,
-                        tone: costs.totalOutstandingPaise > 0
-                            ? AppStatusTone.pending
-                            : AppStatusTone.good,
-                      ),
-                    ),
-                  ],
-                );
-              },
+            child: AppResponsiveGrid(
+              compactColumns: 2,
+              mediumColumns: 4,
+              expandedColumns: 4,
+              compactModeExtraCompact: 1,
+              compactModeExtraMedium: 0,
+              compactModeExtraExpanded: 0,
+              children: [
+                AppMetricTile(
+                  label: l10n.routingFactoryReadyLabel,
+                  value: totalFactory,
+                  suffix: l10n.piecesUnit,
+                  icon: AppIcons.factory,
+                  tone: AppStatusTone.good,
+                ),
+                AppMetricTile(
+                  label: l10n.routingWithWorkersLabel,
+                  value: totalWithWorkers,
+                  suffix: l10n.piecesUnit,
+                  icon: AppIcons.pending,
+                  tone: totalWithWorkers > 0
+                      ? AppStatusTone.pending
+                      : AppStatusTone.neutral,
+                ),
+                AppMetricTile(
+                  label: l10n.routingTotalProductionCostLabel,
+                  value: costs.totalNetCostPaise,
+                  isCurrencyPaise: true,
+                  icon: AppIcons.rupee,
+                  tone: AppStatusTone.info,
+                ),
+                AppMetricTile(
+                  label: l10n.routingOutstandingPayableLabel,
+                  value: costs.totalOutstandingPaise,
+                  isCurrencyPaise: true,
+                  icon: AppIcons.accounting,
+                  tone: costs.totalOutstandingPaise > 0
+                      ? AppStatusTone.pending
+                      : AppStatusTone.good,
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: AppSpacing.md),
+          const AppGap.md(),
 
           if (costs.workerPayables.isNotEmpty) ...[
             RoutingWorkerPayablesCard(workerPayables: costs.workerPayables),

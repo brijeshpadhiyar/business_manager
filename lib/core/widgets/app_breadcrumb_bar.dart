@@ -1,6 +1,4 @@
-import 'package:business_manager/core/design_system/app_radius.dart';
-import 'package:business_manager/core/design_system/app_sizing.dart';
-import 'package:business_manager/core/design_system/app_spacing.dart';
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:business_manager/core/design_system/app_icons.dart';
 
@@ -23,6 +21,7 @@ final class AppBreadcrumbBar extends StatelessWidget {
     if (items.isEmpty) return const SizedBox.shrink();
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final d = context.density;
 
     return Semantics(
       label: items.map((e) => e.label).join(' / '),
@@ -34,10 +33,10 @@ final class AppBreadcrumbBar extends StatelessWidget {
             for (var i = 0; i < items.length; i++) ...[
               if (i > 0)
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 2),
+                  padding: EdgeInsets.symmetric(horizontal: d.xxs),
                   child: Icon(
                     AppIcons.chevronRight,
-                    size: 16,
+                    size: d.iconSm,
                     color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
                   ),
                 ),
@@ -60,6 +59,7 @@ final class _BreadcrumbChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final d = context.density;
     final textStyle = theme.textTheme.labelMedium?.copyWith(
       fontWeight: isCurrent ? FontWeight.w700 : FontWeight.w500,
       color: isCurrent ? colorScheme.onSurface : colorScheme.onSurfaceVariant,
@@ -67,9 +67,9 @@ final class _BreadcrumbChip extends StatelessWidget {
 
     if (isCurrent || item.onTap == null) {
       return Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.xs + 2,
-          vertical: AppSpacing.xs,
+        padding: EdgeInsets.symmetric(
+          horizontal: d.xs + d.xxs,
+          vertical: d.xs,
         ),
         child: Text(
           item.label,
@@ -85,13 +85,13 @@ final class _BreadcrumbChip extends StatelessWidget {
       label: item.label,
       child: InkWell(
         onTap: item.onTap,
-        borderRadius: AppRadius.smBorder,
+        borderRadius: d.radiusSmBorder,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: AppSizing.iconLg + 8),
+          constraints: BoxConstraints(minHeight: d.isCompact ? 24 : d.iconLg + 8),
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.xs + 2,
-              vertical: AppSpacing.xs,
+            padding: EdgeInsets.symmetric(
+              horizontal: d.xs + d.xxs,
+              vertical: d.xs,
             ),
             child: Align(
               alignment: Alignment.centerLeft,

@@ -1,6 +1,6 @@
 import 'package:business_manager/core/design_system/app_breakpoints.dart';
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
-import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:business_manager/core/design_system/app_icons.dart';
@@ -43,6 +43,7 @@ final class _AppCollapsibleFiltersState extends State<AppCollapsibleFilters> {
     final compact = AppBreakpoints.fromWidth(MediaQuery.sizeOf(context).width)
         .isCompact;
     if (!compact) return widget.child;
+    final d = context.density;
 
     final l10n = context.l10n;
     final label =
@@ -57,11 +58,15 @@ final class _AppCollapsibleFiltersState extends State<AppCollapsibleFilters> {
         Align(
           alignment: AlignmentDirectional.centerStart,
           child: FilterChip(
+            visualDensity: d.isCompact ? VisualDensity.compact : null,
+            materialTapTargetSize: d.isCompact
+                ? MaterialTapTargetSize.shrinkWrap
+                : null,
             avatar: Icon(
               _expanded
                   ? AppIcons.expandLess
                   : (widget.icon ?? AppIcons.filter),
-              size: 18,
+              size: d.iconSm + 2,
             ),
             label: Text(label),
             selected: _expanded || widget.activeCount > 0,
@@ -71,7 +76,7 @@ final class _AppCollapsibleFiltersState extends State<AppCollapsibleFilters> {
         AppExpandableSection(
           expanded: _expanded,
           child: Padding(
-            padding: const EdgeInsets.only(top: AppSpacing.sm),
+            padding: EdgeInsets.only(top: d.sm),
             child: widget.child,
           ),
         ),

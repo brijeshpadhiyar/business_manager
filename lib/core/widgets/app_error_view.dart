@@ -1,7 +1,7 @@
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:business_manager/core/validation/validation_localizer.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
-import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/widgets/app_button.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:business_manager/core/design_system/app_icons.dart';
@@ -25,6 +25,7 @@ final class AppErrorView extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final d = context.density;
     final l10n = context.l10nOrNull;
     // Never show a raw exception dump; translate codes when possible.
     final shownMessage = l10n == null
@@ -34,22 +35,26 @@ final class AppErrorView extends StatelessWidget {
     // large text, a small area under a pinned header).
     return Center(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSpacing.xl),
+        padding: EdgeInsets.all(d.xl),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 420),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: 64,
-                height: 64,
+                width: d.isCompact ? 44 : 64,
+                height: d.isCompact ? 44 : 64,
                 decoration: BoxDecoration(
                   color: colorScheme.errorContainer.withValues(alpha: 0.7),
                   borderRadius: AppRadius.fullBorder,
                 ),
-                child: Icon(AppIcons.error, size: 32, color: colorScheme.error),
+                child: Icon(
+                  AppIcons.error,
+                  size: d.iconXl,
+                  color: colorScheme.error,
+                ),
               ),
-              const SizedBox(height: AppSpacing.md),
+              SizedBox(height: d.md),
               Text(
                 title,
                 style: theme.textTheme.titleMedium?.copyWith(
@@ -58,7 +63,7 @@ final class AppErrorView extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               if (shownMessage != null && shownMessage.isNotEmpty) ...[
-                const SizedBox(height: AppSpacing.xs),
+                SizedBox(height: d.xs),
                 Text(
                   shownMessage,
                   style: theme.textTheme.bodySmall?.copyWith(
@@ -68,7 +73,7 @@ final class AppErrorView extends StatelessWidget {
                 ),
               ],
               if (retryLabel != null && onRetry != null) ...[
-                const SizedBox(height: AppSpacing.lg),
+                SizedBox(height: d.lg),
                 AppButton(
                   label: retryLabel!,
                   icon: AppIcons.refresh,

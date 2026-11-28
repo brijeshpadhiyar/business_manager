@@ -109,10 +109,11 @@ final class _DataHealthView extends StatelessWidget {
               }
             },
             builder: (context, state) {
+              final d = context.density;
               if (state.isLoading && state.report == null) {
-                return const Padding(
-                  padding: AppSpacing.screenAll,
-                  child: AppSkeletonList(itemCount: 4),
+                return Padding(
+                  padding: d.screenAll,
+                  child: const AppSkeletonList(itemCount: 4),
                 );
               }
 
@@ -142,7 +143,7 @@ final class _DataHealthView extends StatelessWidget {
                 onRefresh: () =>
                     context.read<DataHealthCubit>().runDiagnostics(),
                 child: ListView(
-                  padding: AppSpacing.screenAll,
+                  padding: d.screenAll,
                   children: [
                     AppHeading(
                       l10n.dataHealthHeading,

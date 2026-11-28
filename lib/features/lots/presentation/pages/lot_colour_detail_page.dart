@@ -327,68 +327,55 @@ final class _LotColourDetailView extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: AppSpacing.md),
+          const AppGap.md(),
 
           // 2. Quantity Summary Metric Tiles
           AppMotionEntrance(
             index: 1,
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final tileW = (constraints.maxWidth - AppSpacing.sm) / 2;
-                return Wrap(
-                  spacing: AppSpacing.sm,
-                  runSpacing: AppSpacing.sm,
-                  children: [
-                    SizedBox(
-                      width: tileW,
-                      child: AppMetricTile(
-                        label: context.l10n.lotAvailableFactory,
-                        value: availableQty,
-                        suffix: 'pcs',
-                        icon: AppIcons.factory,
-                        tone: AppStatusTone.good,
-                      ),
-                    ),
-                    SizedBox(
-                      width: tileW,
-                      child: AppMetricTile(
-                        label: context.l10n.lotPendingWorkers,
-                        value: pendingQty,
-                        suffix: 'pcs',
-                        icon: AppIcons.pending,
-                        tone: pendingQty > 0
-                            ? AppStatusTone.pending
-                            : AppStatusTone.neutral,
-                      ),
-                    ),
-                    SizedBox(
-                      width: tileW,
-                      child: AppMetricTile(
-                        label: context.l10n.lotCompletedHandedOver,
-                        value: completedQty,
-                        suffix: 'pcs',
-                        icon: AppIcons.successOutline,
-                        tone: completedQty > 0
-                            ? AppStatusTone.good
-                            : AppStatusTone.neutral,
-                      ),
-                    ),
-                    SizedBox(
-                      width: tileW,
-                      child: AppMetricTile(
-                        label: context.l10n.routingTotalProductionCostLabel,
-                        value: costSummary.totalNetCostPaise,
-                        isCurrencyPaise: true,
-                        icon: AppIcons.rupee,
-                        tone: AppStatusTone.info,
-                      ),
-                    ),
-                  ],
-                );
-              },
+            child: AppResponsiveGrid(
+              compactColumns: 2,
+              mediumColumns: 4,
+              expandedColumns: 4,
+              compactModeExtraCompact: 1,
+              compactModeExtraMedium: 0,
+              compactModeExtraExpanded: 0,
+              children: [
+                AppMetricTile(
+                  label: context.l10n.lotAvailableFactory,
+                  value: availableQty,
+                  suffix: 'pcs',
+                  icon: AppIcons.factory,
+                  tone: AppStatusTone.good,
+                ),
+                AppMetricTile(
+                  label: context.l10n.lotPendingWorkers,
+                  value: pendingQty,
+                  suffix: 'pcs',
+                  icon: AppIcons.pending,
+                  tone: pendingQty > 0
+                      ? AppStatusTone.pending
+                      : AppStatusTone.neutral,
+                ),
+                AppMetricTile(
+                  label: context.l10n.lotCompletedHandedOver,
+                  value: completedQty,
+                  suffix: 'pcs',
+                  icon: AppIcons.successOutline,
+                  tone: completedQty > 0
+                      ? AppStatusTone.good
+                      : AppStatusTone.neutral,
+                ),
+                AppMetricTile(
+                  label: context.l10n.routingTotalProductionCostLabel,
+                  value: costSummary.totalNetCostPaise,
+                  isCurrencyPaise: true,
+                  icon: AppIcons.rupee,
+                  tone: AppStatusTone.info,
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: AppSpacing.md),
+          const AppGap.md(),
 
           // 3. Stage-wise breakdown of the work stages used on this colour
           AppMotionEntrance(

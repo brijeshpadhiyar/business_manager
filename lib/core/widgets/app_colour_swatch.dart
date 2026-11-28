@@ -1,5 +1,5 @@
 import 'package:business_manager/core/design_system/app_colors.dart';
-import 'package:business_manager/core/design_system/app_radius.dart';
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:business_manager/core/design_system/app_icons.dart';
 
@@ -121,21 +121,24 @@ final class AppColourSwatch extends StatelessWidget {
   const AppColourSwatch({
     super.key,
     required this.color,
-    this.size = 36,
-    this.borderRadius = AppRadius.mdBorder,
+    this.size,
+    this.borderRadius,
     this.isSelected = false,
     this.semanticLabel,
   });
 
   final Color color;
-  final double size;
-  final BorderRadius borderRadius;
+  final double? size;
+  final BorderRadius? borderRadius;
   final bool isSelected;
   final String? semanticLabel;
 
   @override
   Widget build(BuildContext context) {
     final brightness = Theme.of(context).brightness;
+    final d = context.density;
+    final resolvedSize = size ?? (d.isCompact ? 26.0 : 36.0);
+    final resolvedRadius = borderRadius ?? d.radiusMdBorder;
     final fg = AppColourUtils.contrastForeground(color);
     final borderColor = isSelected
         ? Theme.of(context).colorScheme.secondary
@@ -146,11 +149,11 @@ final class AppColourSwatch extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         curve: Curves.easeOutCubic,
-        width: size,
-        height: size,
+        width: resolvedSize,
+        height: resolvedSize,
         decoration: BoxDecoration(
           color: color,
-          borderRadius: borderRadius,
+          borderRadius: resolvedRadius,
           border: Border.all(color: borderColor, width: isSelected ? 2.4 : 1.2),
           boxShadow: [
             BoxShadow(
@@ -162,7 +165,7 @@ final class AppColourSwatch extends StatelessWidget {
         ),
         child: DecoratedBox(
           decoration: BoxDecoration(
-            borderRadius: borderRadius,
+            borderRadius: resolvedRadius,
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
@@ -175,7 +178,11 @@ final class AppColourSwatch extends StatelessWidget {
           ),
           child: isSelected
               ? Center(
-                  child: Icon(AppIcons.confirm, size: size * 0.52, color: fg),
+                  child: Icon(
+                    AppIcons.confirm,
+                    size: resolvedSize * 0.52,
+                    color: fg,
+                  ),
                 )
               : null,
         ),

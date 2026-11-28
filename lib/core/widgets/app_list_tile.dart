@@ -1,4 +1,4 @@
-import 'package:business_manager/core/design_system/app_radius.dart';
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// The app's list row. Wraps [ListTile] with the app radius and text styles.
@@ -53,6 +53,8 @@ final class AppListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final d = context.density;
+    final isDense = dense || d.isCompact;
     return ListTile(
       title: title,
       subtitle: subtitle,
@@ -60,12 +62,19 @@ final class AppListTile extends StatelessWidget {
       trailing: trailing,
       onTap: onTap,
       onLongPress: onLongPress,
-      dense: dense,
+      dense: isDense,
+      visualDensity: d.isCompact ? VisualDensity.compact : null,
+      minVerticalPadding: d.isCompact ? 2 : null,
+      horizontalTitleGap: d.isCompact ? d.sm : null,
       selected: selected,
       enabled: enabled,
-      contentPadding: contentPadding,
+      contentPadding:
+          contentPadding ??
+          (d.isCompact
+              ? EdgeInsets.symmetric(horizontal: d.md, vertical: d.xxs)
+              : null),
       isThreeLine: isThreeLine,
-      shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdBorder),
+      shape: RoundedRectangleBorder(borderRadius: d.radiusMdBorder),
     );
   }
 }

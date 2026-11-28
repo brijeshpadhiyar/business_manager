@@ -1,8 +1,7 @@
 import 'package:business_manager/core/design_system/app_breakpoints.dart';
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:business_manager/core/design_system/app_icons.dart';
-import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
-import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/widgets/app_loader.dart';
 import 'package:business_manager/core/widgets/app_text.dart';
@@ -52,12 +51,13 @@ abstract final class AppSelectStyle {
   }
 
   static TextFieldProps searchField(BuildContext context) {
+    final d = context.density;
     return TextFieldProps(
       autofocus: true,
       textInputAction: TextInputAction.search,
       decoration: InputDecoration(
         hintText: context.l10n.selectSearchHint,
-        prefixIcon: const Icon(AppIcons.search, size: AppSizing.iconMd),
+        prefixIcon: Icon(AppIcons.search, size: d.iconMd),
         isDense: true,
       ),
     );
@@ -65,35 +65,38 @@ abstract final class AppSelectStyle {
 
   static MenuProps menu(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final d = context.density;
     return MenuProps(
       backgroundColor: scheme.surfaceContainer,
       elevation: 3,
-      shape: const RoundedRectangleBorder(borderRadius: AppRadius.lgBorder),
+      shape: RoundedRectangleBorder(borderRadius: d.radiusLgBorder),
       clipBehavior: Clip.antiAlias,
-      margin: const EdgeInsets.only(top: AppSpacing.xs),
+      margin: EdgeInsets.only(top: d.xs),
     );
   }
 
   static ModalBottomSheetProps sheet(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final d = context.density;
     return ModalBottomSheetProps(
       backgroundColor: scheme.surfaceContainerLow,
       showDragHandle: true,
       useSafeArea: true,
       isScrollControlled: true,
       clipBehavior: Clip.antiAlias,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppRadius.xl)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(d.radiusXl)),
       ),
     );
   }
 
   static DialogProps dialog(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final d = context.density;
     return DialogProps(
       backgroundColor: scheme.surfaceContainerLow,
       barrierDismissible: true,
-      shape: const RoundedRectangleBorder(borderRadius: AppRadius.xlBorder),
+      shape: RoundedRectangleBorder(borderRadius: d.radiusXlBorder),
       clipBehavior: Clip.antiAlias,
     );
   }
@@ -114,14 +117,14 @@ abstract final class AppSelectStyle {
 
   static Widget? title(String label, AppSelectPresentation resolved) {
     if (resolved == AppSelectPresentation.menu) return null;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        AppSpacing.lg,
-        0,
-        AppSpacing.lg,
-        AppSpacing.xs,
-      ),
-      child: AppText(label, variant: AppTextVariant.label),
+    return Builder(
+      builder: (context) {
+        final d = context.density;
+        return Padding(
+          padding: EdgeInsets.fromLTRB(d.lg, 0, d.lg, d.xs),
+          child: AppText(label, variant: AppTextVariant.label),
+        );
+      },
     );
   }
 
@@ -131,17 +134,17 @@ abstract final class AppSelectStyle {
   static Widget error(BuildContext context, String _, Object? _) =>
       _Message(icon: AppIcons.error, text: context.l10n.selectLoadError);
 
-  static Widget loading(BuildContext context, String _) => const Padding(
-    padding: EdgeInsets.all(AppSpacing.xl),
-    child: Center(child: AppSpinner(size: 28)),
+  static Widget loading(BuildContext context, String _) => Padding(
+    padding: EdgeInsets.all(context.density.xl),
+    child: const Center(child: AppSpinner(size: 28)),
   );
 
   static InfiniteScrollProps infiniteScroll(int pageSize) =>
       InfiniteScrollProps(
         loadProps: LoadProps(take: pageSize),
-        loadingMoreBuilder: (context, _) => const Padding(
-          padding: EdgeInsets.all(AppSpacing.md),
-          child: Center(child: AppSpinner(size: 20)),
+        loadingMoreBuilder: (context, _) => Padding(
+          padding: EdgeInsets.all(context.density.md),
+          child: const Center(child: AppSpinner(size: 20)),
         ),
       );
 
@@ -158,6 +161,7 @@ abstract final class AppSelectStyle {
   }) {
     final theme = Theme.of(context);
     final scheme = theme.colorScheme;
+    final d = context.density;
     final subtitle = subtitleOf?.call(item);
     final leading = leadingOf?.call(item);
     final color = isDisabled
@@ -168,10 +172,10 @@ abstract final class AppSelectStyle {
       selected: isSelected,
       enabled: !isDisabled,
       child: Container(
-        constraints: const BoxConstraints(minHeight: AppSizing.touchTargetMin),
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.lg,
-          vertical: AppSpacing.sm,
+        constraints: BoxConstraints(minHeight: d.touchTargetMin),
+        padding: EdgeInsets.symmetric(
+          horizontal: d.lg,
+          vertical: d.sm,
         ),
         color: isSelected
             ? scheme.primaryContainer.withValues(alpha: 0.35)
@@ -180,7 +184,7 @@ abstract final class AppSelectStyle {
           children: [
             if (leading != null) ...[
               leading,
-              const SizedBox(width: AppSpacing.md),
+              SizedBox(width: d.md),
             ],
             Expanded(
               child: Column(
@@ -209,7 +213,7 @@ abstract final class AppSelectStyle {
               ),
             ),
             if (showCheck && isSelected)
-              Icon(AppIcons.confirm, size: AppSizing.iconMd, color: color),
+              Icon(AppIcons.confirm, size: d.iconMd, color: color),
           ],
         ),
       ),
@@ -240,13 +244,14 @@ final class _Message extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = Theme.of(context).colorScheme.onSurfaceVariant;
+    final d = context.density;
     return Padding(
-      padding: const EdgeInsets.all(AppSpacing.xl),
+      padding: EdgeInsets.all(d.xl),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: color, size: AppSizing.iconLg),
-          const SizedBox(height: AppSpacing.sm),
+          Icon(icon, color: color, size: d.iconLg),
+          SizedBox(height: d.sm),
           AppText(text, textAlign: TextAlign.center, color: color),
         ],
       ),

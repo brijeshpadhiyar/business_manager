@@ -165,14 +165,10 @@ final class _ProcessListViewState extends State<_ProcessListView> {
             ),
           ];
         } else {
+          final d = context.density;
           slivers = [
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.lg,
-                AppSpacing.sm,
-                AppSpacing.lg,
-                AppSpacing.xl,
-              ),
+              padding: EdgeInsets.fromLTRB(d.lg, d.sm, d.lg, d.xl),
               sliver: AppDataTable.buildSliver<ProcessEntity>(
                 context,
                 enablePagination: true,

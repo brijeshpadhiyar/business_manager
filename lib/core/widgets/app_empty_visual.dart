@@ -1,3 +1,4 @@
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:business_manager/core/design_system/app_icons.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
@@ -158,15 +159,17 @@ class _AppEmptyVisualState extends State<AppEmptyVisual>
 
   @override
   Widget build(BuildContext context) {
+    final d = context.density;
+    final effectiveSize = d.isCompact ? widget.size * 0.68 : widget.size;
     final gif = widget.gifAsset;
     if (gif != null && gif.isNotEmpty) {
       return RepaintBoundary(
         child: ClipRRect(
-          borderRadius: AppRadius.xlBorder,
+          borderRadius: d.radiusXlBorder,
           child: Image.asset(
             gif,
-            width: widget.size,
-            height: widget.size,
+            width: effectiveSize,
+            height: effectiveSize,
             fit: BoxFit.contain,
             excludeFromSemantics: true,
             errorBuilder: (_, _, _) => _buildIconFallback(context),
@@ -179,7 +182,7 @@ class _AppEmptyVisualState extends State<AppEmptyVisual>
     if (lottiePath != null) {
       return RepaintBoundary(
         child: SizedBox.square(
-          dimension: widget.size,
+          dimension: effectiveSize,
           child: Lottie.asset(
             lottiePath,
             controller: _controller,
@@ -202,9 +205,11 @@ class _AppEmptyVisualState extends State<AppEmptyVisual>
 
   Widget _buildIconFallback(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final d = context.density;
+    final haloSize = d.isCompact ? 46.0 : 68.0;
     final halo = Container(
-      width: 68,
-      height: 68,
+      width: haloSize,
+      height: haloSize,
       decoration: BoxDecoration(
         color: colorScheme.secondary.withValues(alpha: 0.12),
         borderRadius: AppRadius.fullBorder,
@@ -212,7 +217,7 @@ class _AppEmptyVisualState extends State<AppEmptyVisual>
           color: colorScheme.secondary.withValues(alpha: 0.25),
         ),
       ),
-      child: Icon(widget.icon, size: 32, color: colorScheme.secondary),
+      child: Icon(widget.icon, size: d.iconXl, color: colorScheme.secondary),
     );
 
     if (!widget.animateIcon || AppMotion.reduceMotion(context)) {

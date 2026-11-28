@@ -52,9 +52,10 @@ final class SyncCenterPage extends StatelessWidget {
             builder: (context, state) {
               final authState = context.watch<AuthCubit>().state;
               final isSyncing = state.phase == SyncPhase.syncing;
+              final d = context.density;
 
               return ListView(
-                padding: AppSpacing.screenAll,
+                padding: d.screenAll,
                 children: [
                   AppHeading(
                     l10n.syncCenterTitle,

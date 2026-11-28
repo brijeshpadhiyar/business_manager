@@ -3,10 +3,10 @@ import 'dart:ui';
 import 'package:animations/animations.dart';
 import 'package:business_manager/core/design_system/app_breakpoints.dart';
 import 'package:business_manager/core/design_system/app_colors.dart';
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
-import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/widgets/app_heading.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:business_manager/core/design_system/app_icons.dart';
@@ -37,7 +37,7 @@ final class AppBottomSheet {
     // Primary actions stay pinned below the scrolling content.
     List<Widget> pinnedActions(BuildContext ctx) {
       if (actionsBuilder == null) return const [];
-      return [const SizedBox(height: AppSpacing.md), actionsBuilder(ctx)];
+      return [SizedBox(height: ctx.density.md), actionsBuilder(ctx)];
     }
 
     final width = MediaQuery.sizeOf(context).width;
@@ -60,6 +60,7 @@ final class AppBottomSheet {
         ),
         builder: (dialogContext) {
           final tokens = dialogContext.surfaceTokens;
+          final d = dialogContext.density;
           return Dialog(
             backgroundColor: Colors.transparent,
             surfaceTintColor: Colors.transparent,
@@ -70,21 +71,21 @@ final class AppBottomSheet {
               ),
               child: RepaintBoundary(
                 child: ClipRRect(
-                  borderRadius: AppRadius.xlBorder,
+                  borderRadius: d.radiusXlBorder,
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
                     enabled: false, // v1.4 soft elevation: opaque surfaces
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         color: tokens.dialogGlassFill,
-                        borderRadius: AppRadius.xlBorder,
+                        borderRadius: d.radiusXlBorder,
                         border: Border.all(
                           color: tokens.glassBorder,
                           width: 1.2,
                         ),
                       ),
                       child: Padding(
-                        padding: AppSpacing.screenAll,
+                        padding: d.screenAll,
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -101,15 +102,20 @@ final class AppBottomSheet {
                                   tooltip: MaterialLocalizations.of(
                                     dialogContext,
                                   ).closeButtonTooltip,
-                                  icon: const Icon(AppIcons.close, size: 20),
+                                  constraints: BoxConstraints(
+                                    minWidth: d.touchTargetMin,
+                                    minHeight: d.touchTargetMin,
+                                  ),
+                                  padding: d.isCompact ? EdgeInsets.zero : null,
+                                  icon: Icon(AppIcons.close, size: d.iconMd),
                                   onPressed: () =>
                                       Navigator.of(dialogContext).pop(),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: AppSpacing.sm),
+                            SizedBox(height: d.sm),
                             const Divider(),
-                            const SizedBox(height: AppSpacing.md),
+                            SizedBox(height: d.md),
                             Flexible(child: body(dialogContext)),
                             ...pinnedActions(dialogContext),
                           ],
@@ -142,8 +148,9 @@ final class AppBottomSheet {
       builder: (sheetContext) {
         final tokens = sheetContext.surfaceTokens;
         final colorScheme = Theme.of(sheetContext).colorScheme;
-        const topRadius = BorderRadius.vertical(
-          top: Radius.circular(AppRadius.xl),
+        final d = sheetContext.density;
+        final topRadius = BorderRadius.vertical(
+          top: Radius.circular(d.radiusXl),
         );
 
         return RepaintBoundary(
@@ -164,16 +171,16 @@ final class AppBottomSheet {
                 ),
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(
-                    AppSpacing.lg,
-                    AppSpacing.sm,
-                    AppSpacing.lg,
+                    d.sheetPadding,
+                    d.sm,
+                    d.sheetPadding,
                     // Above the keyboard when it is open, otherwise clear of
                     // the home indicator / gesture bar.
                     (MediaQuery.viewInsetsOf(sheetContext).bottom >
                                 MediaQuery.viewPaddingOf(sheetContext).bottom
                             ? MediaQuery.viewInsetsOf(sheetContext).bottom
                             : MediaQuery.viewPaddingOf(sheetContext).bottom) +
-                        AppSpacing.lg,
+                        d.sheetPadding,
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -181,9 +188,9 @@ final class AppBottomSheet {
                     children: [
                       Center(
                         child: Container(
-                          width: 40,
+                          width: d.isCompact ? 32 : 40,
                           height: 4,
-                          margin: const EdgeInsets.only(bottom: AppSpacing.md),
+                          margin: EdgeInsets.only(bottom: d.md),
                           decoration: BoxDecoration(
                             color: colorScheme.onSurfaceVariant.withValues(
                               alpha: 0.35,
@@ -193,7 +200,7 @@ final class AppBottomSheet {
                         ),
                       ),
                       AppHeading(title, level: AppHeadingLevel.h3),
-                      const SizedBox(height: AppSpacing.md),
+                      SizedBox(height: d.md),
                       Flexible(child: body(sheetContext)),
                       ...pinnedActions(sheetContext),
                     ],

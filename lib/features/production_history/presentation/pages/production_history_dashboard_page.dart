@@ -139,117 +139,87 @@ final class _ProductionHistoryDashboardView extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: AppSpacing.md),
+            const AppGap.md(),
 
             // Reconciled KPI Grid
-            LayoutBuilder(
-              builder: (context, constraints) {
-                final cols = constraints.maxWidth >= 900
-                    ? 4
-                    : (constraints.maxWidth >= 560 ? 3 : 2);
-                final tileW =
-                    (constraints.maxWidth - (AppSpacing.sm * (cols - 1))) /
-                    cols;
-                return Wrap(
-                  spacing: AppSpacing.sm,
-                  runSpacing: AppSpacing.sm,
-                  children: [
-                    SizedBox(
-                      width: tileW,
-                      child: AppMetricTile(
-                        label: l10n.prodHistoryTotalAssigned,
-                        value: data.totalAssignedQty,
-                        suffix: l10n.piecesUnit,
-                        icon: AppIcons.stockIssue,
-                        tone: AppStatusTone.info,
-                      ),
-                    ),
-                    SizedBox(
-                      width: tileW,
-                      child: AppMetricTile(
-                        label: l10n.prodHistoryTotalAccepted,
-                        value: data.totalAcceptedQty,
-                        suffix: l10n.piecesUnit,
-                        icon: AppIcons.qcPassed,
-                        tone: AppStatusTone.good,
-                      ),
-                    ),
-                    SizedBox(
-                      width: tileW,
-                      child: AppMetricTile(
-                        label: l10n.prodHistoryPendingInspection,
-                        value: data.totalPendingInspectionQty,
-                        suffix: l10n.piecesUnit,
-                        icon: AppIcons.qcInspect,
-                        tone: data.totalPendingInspectionQty > 0
-                            ? AppStatusTone.pending
-                            : AppStatusTone.neutral,
-                        onTap: () => context.push(RoutePaths.inspectionQueue),
-                      ),
-                    ),
-                    SizedBox(
-                      width: tileW,
-                      child: AppMetricTile(
-                        label: l10n.prodHistoryOutstandingWork,
-                        value: data.totalOutstandingQty,
-                        suffix: l10n.piecesUnit,
-                        icon: AppIcons.pending,
-                        tone: data.totalOutstandingQty > 0
-                            ? AppStatusTone.pending
-                            : AppStatusTone.good,
-                      ),
-                    ),
-                    SizedBox(
-                      width: tileW,
-                      child: AppMetricTile(
-                        label: l10n.prodHistoryTotalRejected,
-                        value: data.totalRejectedQty,
-                        suffix: l10n.piecesUnit,
-                        icon: AppIcons.damaged,
-                        tone: data.totalRejectedQty > 0
-                            ? AppStatusTone.damaged
-                            : AppStatusTone.neutral,
-                        onTap: () => context.push(RoutePaths.inspectionQueue),
-                      ),
-                    ),
-                    SizedBox(
-                      width: tileW,
-                      child: AppMetricTile(
-                        label: l10n.prodHistoryTotalEarned,
-                        value: data.totalEarnedPaise,
-                        isCurrencyPaise: true,
-                        icon: AppIcons.work,
-                        tone: AppStatusTone.good,
-                      ),
-                    ),
-                    SizedBox(
-                      width: tileW,
-                      child: AppMetricTile(
-                        label: l10n.prodHistoryTotalPaid,
-                        value: data.totalPaidPaise,
-                        isCurrencyPaise: true,
-                        icon: AppIcons.payment,
-                        tone: AppStatusTone.info,
-                      ),
-                    ),
-                    SizedBox(
-                      width: tileW,
-                      child: AppMetricTile(
-                        label: l10n.prodHistoryOutstandingPayable,
-                        value: data.totalOutstandingPayablePaise,
-                        isCurrencyPaise: true,
-                        icon: AppIcons.accounting,
-                        tone: data.totalOutstandingPayablePaise > 0
-                            ? AppStatusTone.pending
-                            : AppStatusTone.good,
-                        onTap: () => context.push(RoutePaths.accounting),
-                      ),
-                    ),
-                  ],
-                );
-              },
+            AppResponsiveGrid(
+              compactColumns: 2,
+              mediumColumns: 3,
+              expandedColumns: 4,
+              compactModeExtraCompact: 1,
+              compactModeExtraMedium: 1,
+              compactModeExtraExpanded: 2,
+              children: [
+                AppMetricTile(
+                  label: l10n.prodHistoryTotalAssigned,
+                  value: data.totalAssignedQty,
+                  suffix: l10n.piecesUnit,
+                  icon: AppIcons.stockIssue,
+                  tone: AppStatusTone.info,
+                ),
+                AppMetricTile(
+                  label: l10n.prodHistoryTotalAccepted,
+                  value: data.totalAcceptedQty,
+                  suffix: l10n.piecesUnit,
+                  icon: AppIcons.qcPassed,
+                  tone: AppStatusTone.good,
+                ),
+                AppMetricTile(
+                  label: l10n.prodHistoryPendingInspection,
+                  value: data.totalPendingInspectionQty,
+                  suffix: l10n.piecesUnit,
+                  icon: AppIcons.qcInspect,
+                  tone: data.totalPendingInspectionQty > 0
+                      ? AppStatusTone.pending
+                      : AppStatusTone.neutral,
+                  onTap: () => context.push(RoutePaths.inspectionQueue),
+                ),
+                AppMetricTile(
+                  label: l10n.prodHistoryOutstandingWork,
+                  value: data.totalOutstandingQty,
+                  suffix: l10n.piecesUnit,
+                  icon: AppIcons.pending,
+                  tone: data.totalOutstandingQty > 0
+                      ? AppStatusTone.pending
+                      : AppStatusTone.good,
+                ),
+                AppMetricTile(
+                  label: l10n.prodHistoryTotalRejected,
+                  value: data.totalRejectedQty,
+                  suffix: l10n.piecesUnit,
+                  icon: AppIcons.damaged,
+                  tone: data.totalRejectedQty > 0
+                      ? AppStatusTone.damaged
+                      : AppStatusTone.neutral,
+                  onTap: () => context.push(RoutePaths.inspectionQueue),
+                ),
+                AppMetricTile(
+                  label: l10n.prodHistoryTotalEarned,
+                  value: data.totalEarnedPaise,
+                  isCurrencyPaise: true,
+                  icon: AppIcons.work,
+                  tone: AppStatusTone.good,
+                ),
+                AppMetricTile(
+                  label: l10n.prodHistoryTotalPaid,
+                  value: data.totalPaidPaise,
+                  isCurrencyPaise: true,
+                  icon: AppIcons.payment,
+                  tone: AppStatusTone.info,
+                ),
+                AppMetricTile(
+                  label: l10n.prodHistoryOutstandingPayable,
+                  value: data.totalOutstandingPayablePaise,
+                  isCurrencyPaise: true,
+                  icon: AppIcons.accounting,
+                  tone: data.totalOutstandingPayablePaise > 0
+                      ? AppStatusTone.pending
+                      : AppStatusTone.good,
+                  onTap: () => context.push(RoutePaths.accounting),
+                ),
+              ],
             ),
-            const SizedBox(height: AppSpacing.md),
+            const AppGap.md(),
 
             // Search & Multi-Dimension Filters Card
             AppCard(

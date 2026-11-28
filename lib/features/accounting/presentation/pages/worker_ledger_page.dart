@@ -258,72 +258,55 @@ final class _WorkerLedgerViewState extends State<_WorkerLedgerView> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // Financial KPI Grid
-                    LayoutBuilder(
-                      builder: (context, constraints) {
-                        final isWide = constraints.maxWidth >= 680;
-                        final tileW = isWide
-                            ? (constraints.maxWidth - AppSpacing.sm * 3) / 4
-                            : (constraints.maxWidth - AppSpacing.sm) / 2;
-                        return Wrap(
-                          spacing: AppSpacing.sm,
-                          runSpacing: AppSpacing.sm,
-                          children: [
-                            SizedBox(
-                              width: tileW,
-                              child: AppMetricTile(
-                                label: l10n.accountingEarnedLabourLabel,
-                                value: summary.earnedLabourPaise,
+                    AppResponsiveGrid(
+                      compactColumns: 2,
+                      mediumColumns: 4,
+                      expandedColumns: 4,
+                      compactModeExtraCompact: 1,
+                      compactModeExtraMedium: 0,
+                      compactModeExtraExpanded: 0,
+                      children: [
+                        AppMetricTile(
+                          label: l10n.accountingEarnedLabourLabel,
+                          value: summary.earnedLabourPaise,
+                          isCurrencyPaise: true,
+                          icon: AppIcons.work,
+                          tone: AppStatusTone.good,
+                        ),
+                        AppMetricTile(
+                          label: l10n.accountingAdvancePaidLabel,
+                          value: summary.advancePaymentsPaise,
+                          isCurrencyPaise: true,
+                          icon: AppIcons.ledger,
+                          tone: AppStatusTone.info,
+                        ),
+                        AppMetricTile(
+                          label: l10n.accountingRegularPaidLabel,
+                          value: summary.regularPaymentsPaise,
+                          isCurrencyPaise: true,
+                          icon: AppIcons.payment,
+                          tone: AppStatusTone.neutral,
+                        ),
+                        summary.advanceCreditBalancePaise > 0
+                            ? AppMetricTile(
+                                label: l10n.accountingAdvanceCreditLabel,
+                                value: summary.advanceCreditBalancePaise,
                                 isCurrencyPaise: true,
-                                icon: AppIcons.work,
-                                tone: AppStatusTone.good,
-                              ),
-                            ),
-                            SizedBox(
-                              width: tileW,
-                              child: AppMetricTile(
-                                label: l10n.accountingAdvancePaidLabel,
-                                value: summary.advancePaymentsPaise,
-                                isCurrencyPaise: true,
-                                icon: AppIcons.ledger,
+                                icon: AppIcons.trend,
                                 tone: AppStatusTone.info,
-                              ),
-                            ),
-                            SizedBox(
-                              width: tileW,
-                              child: AppMetricTile(
-                                label: l10n.accountingRegularPaidLabel,
-                                value: summary.regularPaymentsPaise,
+                              )
+                            : AppMetricTile(
+                                label: l10n.accountingOutstandingPayableLabel,
+                                value: summary.outstandingPayablePaise,
                                 isCurrencyPaise: true,
-                                icon: AppIcons.payment,
-                                tone: AppStatusTone.neutral,
+                                icon: AppIcons.accounting,
+                                tone: summary.outstandingPayablePaise > 0
+                                    ? AppStatusTone.pending
+                                    : AppStatusTone.good,
                               ),
-                            ),
-                            SizedBox(
-                              width: tileW,
-                              child: summary.advanceCreditBalancePaise > 0
-                                  ? AppMetricTile(
-                                      label: l10n.accountingAdvanceCreditLabel,
-                                      value: summary.advanceCreditBalancePaise,
-                                      isCurrencyPaise: true,
-                                      icon: AppIcons.trend,
-                                      tone: AppStatusTone.info,
-                                    )
-                                  : AppMetricTile(
-                                      label: l10n
-                                          .accountingOutstandingPayableLabel,
-                                      value: summary.outstandingPayablePaise,
-                                      isCurrencyPaise: true,
-                                      icon: AppIcons.accounting,
-                                      tone: summary.outstandingPayablePaise > 0
-                                          ? AppStatusTone.pending
-                                          : AppStatusTone.good,
-                                    ),
-                            ),
-                          ],
-                        );
-                      },
+                      ],
                     ),
-                    const SizedBox(height: AppSpacing.md),
+                    const AppGap.md(),
                     Wrap(
                       spacing: AppSpacing.sm,
                       runSpacing: AppSpacing.sm,

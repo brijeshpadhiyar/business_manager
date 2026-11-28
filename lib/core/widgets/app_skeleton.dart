@@ -1,6 +1,6 @@
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
-import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/widgets/app_glass_surface.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:material_ui/material_ui.dart';
@@ -57,25 +57,26 @@ final class AppSkeletonList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final d = context.density;
     return ListView.separated(
-      padding: AppSpacing.screenAll,
+      padding: d.screenAll,
       physics: const NeverScrollableScrollPhysics(),
       shrinkWrap: true,
       itemCount: itemCount,
-      separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
+      separatorBuilder: (_, _) => SizedBox(height: d.sm),
       itemBuilder: (context, index) {
         return AppMotionEntrance(
           index: index,
-          child: const AppGlassSurface(
+          child: AppGlassSurface(
             glassStyle: AppGlassStyle.lightweight,
             blurSigma: 0,
-            padding: AppSpacing.cardPadding,
+            padding: d.cardPadding,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                AppSkeletonBox(width: 160, height: 14),
-                SizedBox(height: AppSpacing.sm),
-                AppSkeletonBox(width: 240, height: 11),
+                AppSkeletonBox(width: 160, height: d.isCompact ? 11 : 14),
+                SizedBox(height: d.sm),
+                AppSkeletonBox(width: 240, height: d.isCompact ? 9 : 11),
               ],
             ),
           ),

@@ -2,8 +2,7 @@ import 'dart:ui';
 
 import 'package:business_manager/core/design_system/app_breakpoints.dart';
 import 'package:business_manager/core/design_system/app_colors.dart';
-import 'package:business_manager/core/design_system/app_sizing.dart';
-import 'package:business_manager/core/design_system/app_spacing.dart';
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:business_manager/core/router/route_paths.dart';
 import 'package:business_manager/core/widgets/app_breadcrumb_bar.dart';
 import 'package:business_manager/core/widgets/app_button.dart';
@@ -79,7 +78,7 @@ final class AppScaffold extends StatelessWidget {
     this.collapseOnDesktop = false,
     this.floatingActionButton,
     this.bottomNavigationBar,
-    this.padding = AppSpacing.screenAll,
+    this.padding,
     this.constrainMaxWidth = true,
     this.contentWidth = AppContentWidth.standard,
     this.breadcrumbs,
@@ -120,8 +119,9 @@ final class AppScaffold extends StatelessWidget {
   /// keyboard and home indicator), so long forms never hide their main button.
   final Widget? bottomAction;
 
-  double get effectiveMaxWidth =>
-      constrainMaxWidth ? contentWidth.maxWidth : double.infinity;
+  double effectiveMaxWidth(BuildContext context) => constrainMaxWidth
+      ? contentWidth.effectiveMaxWidth(isCompact: context.isCompactDensity)
+      : double.infinity;
 
   static bool _isCompact(BuildContext context) =>
       AppBreakpoints.fromWidth(MediaQuery.sizeOf(context).width).isCompact;
@@ -130,6 +130,7 @@ final class AppScaffold extends StatelessWidget {
   List<Widget>? actionsFor(BuildContext context, List<Widget>? base) {
     final action = primaryAction;
     if (action == null || _isCompact(context)) return base;
+    final d = context.density;
     Widget toolbarBtn = AppButton(
       label: action.label,
       icon: action.icon,
@@ -141,7 +142,7 @@ final class AppScaffold extends StatelessWidget {
     return [
       ...?base,
       Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+        padding: EdgeInsets.symmetric(horizontal: d.xs),
         child: Center(child: toolbarBtn),
       ),
     ];
@@ -152,10 +153,17 @@ final class AppScaffold extends StatelessWidget {
     if (floatingActionButton != null) return floatingActionButton;
     final action = primaryAction;
     if (action == null || !_isCompact(context)) return null;
+    final d = context.density;
     Widget fab = FloatingActionButton.extended(
       heroTag: null,
       onPressed: action.onPressed,
-      icon: Icon(action.icon),
+      materialTapTargetSize: d.isCompact
+          ? MaterialTapTargetSize.shrinkWrap
+          : MaterialTapTargetSize.padded,
+      extendedPadding: d.isCompact
+          ? EdgeInsets.symmetric(horizontal: d.md, vertical: d.xs)
+          : null,
+      icon: Icon(action.icon, size: d.iconMd),
       label: Text(action.label),
     );
     if (action.guideTargetId != null) {
@@ -198,12 +206,13 @@ final class AppScaffold extends StatelessWidget {
     // Embedded pages (root tabs inside the navigation shell) have no Scaffold
     // of their own, so the compact FAB floats over the content instead.
     if (embedded && primaryAction != null && _isCompact(context)) {
+      final d = context.density;
       return Stack(
         children: [
           Positioned.fill(child: layout),
           Positioned(
-            right: AppSpacing.lg,
-            bottom: AppSpacing.lg,
+            right: d.lg,
+            bottom: d.lg,
             child: fabFor(context)!,
           ),
         ],
@@ -264,21 +273,23 @@ final class _StandardScaffoldLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final d = context.density;
     Widget content = config.body ?? const SizedBox.shrink();
     if (config.breadcrumbs != null && config.breadcrumbs!.isNotEmpty) {
       content = Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           AppBreadcrumbBar(items: config.breadcrumbs!),
-          const SizedBox(height: AppSpacing.xs),
+          SizedBox(height: d.xs),
           Expanded(child: content),
         ],
       );
     }
-    if (config.padding != null) {
-      content = Padding(padding: config.padding!, child: content);
+    final resolvedPadding = config.padding ?? d.screenAll;
+    if (resolvedPadding != EdgeInsets.zero) {
+      content = Padding(padding: resolvedPadding, child: content);
     }
-    final maxW = config.effectiveMaxWidth;
+    final maxW = config.effectiveMaxWidth(context);
     if (maxW.isFinite) {
       content = Align(
         alignment: Alignment.topCenter,
@@ -306,7 +317,7 @@ final class _StandardScaffoldLayout extends StatelessWidget {
         appBar: showAppBar
             ? _buildGlassAppBar(
                 context,
-                toolbarHeight: AppSizing.appBarHeight,
+                toolbarHeight: d.appBarHeight,
                 title: config.title,
                 titleWidget: config.titleWidget,
                 leading: config.leadingFor(context, config.leading),
@@ -328,11 +339,13 @@ final class _CompactScaffoldLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final d = context.density;
     Widget content = config.body ?? const SizedBox.shrink();
-    if (config.padding != null && config.padding != EdgeInsets.zero) {
-      content = Padding(padding: config.padding!, child: content);
+    final resolvedPadding = config.padding ?? d.screenAll;
+    if (resolvedPadding != EdgeInsets.zero) {
+      content = Padding(padding: resolvedPadding, child: content);
     }
-    final maxW = config.effectiveMaxWidth;
+    final maxW = config.effectiveMaxWidth(context);
     if (maxW.isFinite) {
       content = Align(
         alignment: Alignment.topCenter,
@@ -360,7 +373,7 @@ final class _CompactScaffoldLayout extends StatelessWidget {
         appBar: showAppBar
             ? _buildGlassAppBar(
                 context,
-                toolbarHeight: 48,
+                toolbarHeight: d.compactAppBarHeight,
                 title: config.title,
                 titleWidget: config.titleWidget,
                 leading: config.leadingFor(context, config.leading),
@@ -392,6 +405,7 @@ final class _CollapsibleScaffoldLayoutState
   @override
   Widget build(BuildContext context) {
     final config = widget.config;
+    final d = context.density;
     final shell = ResponsiveShellScope.maybeOf(context);
     final inPersistentShell = shell != null && shell.hasPersistentChrome;
     final baseHdr =
@@ -420,22 +434,30 @@ final class _CollapsibleScaffoldLayoutState
           final useDesktopCompact =
               sizeClass.isExpanded && !config.collapseOnDesktop;
 
+          final scaledExpanded =
+              hdr.expandedHeight * d.collapsibleExpandedScale;
           final effectiveExpandedHeight = switch (sizeClass) {
-            AppWindowSizeClass.compact => hdr.expandedHeight,
-            AppWindowSizeClass.medium => (hdr.expandedHeight * 0.88).clamp(
-              132.0,
-              210.0,
+            AppWindowSizeClass.compact => scaledExpanded,
+            AppWindowSizeClass.medium => (scaledExpanded * 0.88).clamp(
+              d.isCompact ? 96.0 : 132.0,
+              d.isCompact ? 150.0 : 210.0,
             ),
             AppWindowSizeClass.expanded =>
               config.collapseOnDesktop
-                  ? (hdr.expandedHeight * 0.82).clamp(124.0, 190.0)
-                  : AppSizing.appBarHeight,
+                  ? (scaledExpanded * 0.82).clamp(
+                      d.isCompact ? 92.0 : 124.0,
+                      d.isCompact ? 140.0 : 190.0,
+                    )
+                  : d.appBarHeight,
           };
 
-          final maxW = config.effectiveMaxWidth;
+          final maxW = config.effectiveMaxWidth(context);
           final horizontalInset = maxW.isFinite && width > maxW
               ? (width - maxW) / 2
               : 0.0;
+
+          final effectivePinnedHeight =
+              config.pinnedHeaderHeight * d.pinnedHeaderScale;
 
           final allSlivers = <Widget>[
             if (!useDesktopCompact)
@@ -454,7 +476,7 @@ final class _CollapsibleScaffoldLayoutState
                 scrolledUnderElevation: 0,
                 backgroundColor: Colors.transparent,
                 surfaceTintColor: Colors.transparent,
-                toolbarHeight: AppSizing.appBarHeight,
+                toolbarHeight: d.appBarHeight,
                 leading: hdr.leading,
                 automaticallyImplyLeading: hdr.automaticallyImplyLeading,
                 title: Text(
@@ -485,10 +507,10 @@ final class _CollapsibleScaffoldLayoutState
               if (hdr.summary != null)
                 SliverPadding(
                   padding: EdgeInsets.fromLTRB(
-                    horizontalInset + AppSpacing.lg,
-                    AppSpacing.md,
-                    horizontalInset + AppSpacing.lg,
-                    AppSpacing.xs,
+                    horizontalInset + d.lg,
+                    d.md,
+                    horizontalInset + d.lg,
+                    d.xs,
                   ),
                   sliver: SliverToBoxAdapter(child: hdr.summary),
                 ),
@@ -497,7 +519,7 @@ final class _CollapsibleScaffoldLayoutState
               SliverPersistentHeader(
                 pinned: !shortScreen,
                 delegate: AppPinnedSliverHeader(
-                  height: config.pinnedHeaderHeight,
+                  height: effectivePinnedHeight,
                   backdropKey: _chromeBackdropKey,
                   child: config.pinnedHeader!,
                 ),
@@ -522,7 +544,7 @@ final class _CollapsibleScaffoldLayoutState
           // Leave room so the floating action button never hides the last row.
           if (config.primaryAction != null && AppScaffold._isCompact(context)) {
             allSlivers.add(
-              const SliverToBoxAdapter(child: SizedBox(height: 88)),
+              SliverToBoxAdapter(child: SizedBox(height: d.isCompact ? 64 : 88)),
             );
           }
 
@@ -574,6 +596,7 @@ final class AppStickyActionBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tokens = context.surfaceTokens;
+    final d = context.density;
     return ClipRect(
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
@@ -588,17 +611,14 @@ final class AppStickyActionBar extends StatelessWidget {
           child: SafeArea(
             top: false,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.lg,
-                AppSpacing.sm,
-                AppSpacing.lg,
-                AppSpacing.sm,
-              ),
+              padding: EdgeInsets.fromLTRB(d.lg, d.sm, d.lg, d.sm),
               child: Center(
                 heightFactor: 1,
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(
-                    maxWidth: AppSizing.narrowContentWidth,
+                  constraints: BoxConstraints(
+                    maxWidth: AppContentWidth.narrow.effectiveMaxWidth(
+                      isCompact: d.isCompact,
+                    ),
                   ),
                   child: child,
                 ),

@@ -97,7 +97,7 @@ final class _ReportsViewState extends State<_ReportsView> {
           ],
           padding: EdgeInsets.zero,
           body: ListView(
-            padding: AppSpacing.screenAll,
+            padding: context.density.screenAll,
             children: [
               const ScreenFirstVisitHint(screenId: GuideScreenId.reports),
               GuideTarget(
@@ -110,7 +110,7 @@ final class _ReportsViewState extends State<_ReportsView> {
                   ),
                 ),
               ),
-              const SizedBox(height: AppSpacing.md),
+              const AppGap.md(),
               GuideTarget(
                 id: GuideTargetId.reportsCategories,
                 child: SingleChildScrollView(
@@ -123,7 +123,7 @@ final class _ReportsViewState extends State<_ReportsView> {
                           selected: state.category == cat,
                           onSelected: (_) => cubit.selectCategory(cat),
                         ),
-                        const SizedBox(width: AppSpacing.xs),
+                        const AppGap.hXs(),
                       ],
                     ],
                   ),

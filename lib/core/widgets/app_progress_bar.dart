@@ -1,6 +1,6 @@
 import 'package:business_manager/core/design_system/app_colors.dart';
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
-import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/widgets/app_status_badge.dart';
 import 'package:business_manager/core/widgets/app_text.dart';
 import 'package:material_ui/material_ui.dart';
@@ -31,6 +31,7 @@ final class AppProgressBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final semantic = context.semanticColors;
+    final d = context.density;
     final color = switch (tone) {
       null => scheme.primary,
       AppStatusTone.good => semantic.goodStock,
@@ -42,7 +43,7 @@ final class AppProgressBar extends StatelessWidget {
 
     final bar = LinearProgressIndicator(
       value: value?.clamp(0.0, 1.0),
-      minHeight: minHeight,
+      minHeight: d.isCompact ? (minHeight * 0.75).clamp(2.5, minHeight) : minHeight,
       color: color,
       backgroundColor: scheme.surfaceContainerHighest,
       borderRadius: AppRadius.fullBorder,
@@ -55,7 +56,7 @@ final class AppProgressBar extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         AppText(label!, variant: AppTextVariant.bodySmall),
-        const SizedBox(height: AppSpacing.xs),
+        SizedBox(height: d.xs),
         bar,
       ],
     );

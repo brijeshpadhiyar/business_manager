@@ -1,6 +1,5 @@
 import 'package:business_manager/core/design_system/app_colors.dart';
-import 'package:business_manager/core/design_system/app_radius.dart';
-import 'package:business_manager/core/design_system/app_spacing.dart';
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:business_manager/core/widgets/app_animated_number.dart';
 import 'package:business_manager/core/widgets/app_card.dart';
 import 'package:business_manager/core/widgets/app_status_badge.dart';
@@ -40,6 +39,7 @@ final class AppMetricTile extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final semantic = context.semanticColors;
+    final d = context.density;
 
     final (Color accent, Color accentBg) = switch (tone) {
       AppStatusTone.good => (semantic.goodStock, semantic.goodStockContainer),
@@ -69,7 +69,7 @@ final class AppMetricTile extends StatelessWidget {
         isGlass: isGlass,
         backdropKey: backdropKey,
         onTap: onTap,
-        padding: const EdgeInsets.all(AppSpacing.md),
+        padding: d.cardPadding,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -79,27 +79,35 @@ final class AppMetricTile extends StatelessWidget {
               children: [
                 if (icon != null) ...[
                   Container(
-                    width: 34,
-                    height: 34,
+                    width: d.metricIconBoxSize,
+                    height: d.metricIconBoxSize,
                     decoration: BoxDecoration(
                       color: accentBg.withValues(alpha: 0.85),
-                      borderRadius: AppRadius.mdBorder,
+                      borderRadius: d.radiusMdBorder,
                       border: Border.all(
                         color: accent.withValues(alpha: 0.25),
                         width: 0.9,
                       ),
                     ),
-                    child: Icon(icon, size: 18, color: accent),
+                    child: Icon(
+                      icon,
+                      size: d.isCompact ? d.iconSm : 18,
+                      color: accent,
+                    ),
                   ),
-                  const SizedBox(width: AppSpacing.sm),
+                  SizedBox(width: d.sm),
                 ],
                 Expanded(
                   child: Text(
                     label,
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: colorScheme.onSurfaceVariant,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style:
+                        (d.isCompact
+                                ? theme.textTheme.labelSmall
+                                : theme.textTheme.labelMedium)
+                            ?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                              fontWeight: FontWeight.w600,
+                            ),
                     maxLines: 2,
                     softWrap: true,
                     overflow: TextOverflow.ellipsis,
@@ -107,16 +115,16 @@ final class AppMetricTile extends StatelessWidget {
                 ),
                 if (onTap != null)
                   Padding(
-                    padding: const EdgeInsets.only(top: 2, left: 4),
+                    padding: EdgeInsets.only(top: d.xxs, left: d.xs),
                     child: Icon(
                       AppIcons.forward,
-                      size: 13,
+                      size: d.isCompact ? 11 : 13,
                       color: colorScheme.onSurfaceVariant,
                     ),
                   ),
               ],
             ),
-            const SizedBox(height: AppSpacing.sm),
+            SizedBox(height: d.isCompact ? d.xs : d.sm),
             SizedBox(
               width: double.infinity,
               child: AppAnimatedNumber(
@@ -128,18 +136,18 @@ final class AppMetricTile extends StatelessWidget {
                     : accent,
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.w700,
-                  fontSize: 19,
+                  fontSize: d.isCompact ? 15.5 : 19,
                 ),
               ),
             ),
             if (subtitle != null && subtitle!.isNotEmpty) ...[
-              const SizedBox(height: AppSpacing.xs),
+              SizedBox(height: d.isCompact ? d.xxs : d.xs),
               Text(
                 subtitle!,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: colorScheme.onSurfaceVariant,
                 ),
-                maxLines: 2,
+                maxLines: d.isCompact ? 1 : 2,
                 softWrap: true,
                 overflow: TextOverflow.ellipsis,
               ),

@@ -1,6 +1,4 @@
 import 'package:business_manager/core/design_system/app_icons.dart';
-import 'package:business_manager/core/design_system/app_radius.dart';
-import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/localization/locale_cubit.dart';
 import 'package:business_manager/core/localization/locale_state.dart';
@@ -45,11 +43,12 @@ final class FirstTimeWelcomeCard extends StatelessWidget {
         final localeCode = Localizations.localeOf(context).languageCode;
         final colorScheme = Theme.of(context).colorScheme;
         final localeCubit = context.read<LocaleCubit?>();
+        final d = context.density;
 
         return Padding(
-          padding: const EdgeInsets.only(bottom: AppSpacing.md),
+          padding: EdgeInsets.only(bottom: d.md),
           child: AppCard(
-            padding: const EdgeInsets.all(AppSpacing.md),
+            padding: EdgeInsets.all(d.md),
             color: colorScheme.primaryContainer.withValues(alpha: 0.45),
             borderColor: colorScheme.primary.withValues(alpha: 0.5),
             elevated: false,
@@ -60,19 +59,19 @@ final class FirstTimeWelcomeCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Container(
-                      width: 36,
-                      height: 36,
+                      width: d.isCompact ? 28 : 36,
+                      height: d.isCompact ? 28 : 36,
                       decoration: BoxDecoration(
                         color: colorScheme.primary,
-                        borderRadius: AppRadius.mdBorder,
+                        borderRadius: d.radiusMdBorder,
                       ),
                       child: Icon(
                         AppIcons.training,
                         color: colorScheme.onPrimary,
-                        size: 20,
+                        size: d.iconMd,
                       ),
                     ),
-                    const SizedBox(width: AppSpacing.sm),
+                    const AppGap.hSm(),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,12 +93,12 @@ final class FirstTimeWelcomeCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: AppSpacing.sm),
+                const AppGap.sm(),
 
                 // Quick Language & Voice Selection Strip
                 Wrap(
-                  spacing: AppSpacing.xs,
-                  runSpacing: AppSpacing.xs,
+                  spacing: d.xs,
+                  runSpacing: d.xs,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     if (localeCubit != null) ...[
@@ -134,12 +133,12 @@ final class FirstTimeWelcomeCard extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: AppSpacing.sm),
+                const AppGap.sm(),
 
                 // Action CTAs
                 Wrap(
-                  spacing: AppSpacing.xs,
-                  runSpacing: AppSpacing.xs,
+                  spacing: d.xs,
+                  runSpacing: d.xs,
                   children: [
                     AppButton(
                       label: l10n.guideStartFullTraining,

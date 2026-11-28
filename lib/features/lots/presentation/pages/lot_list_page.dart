@@ -177,14 +177,10 @@ final class _LotListViewState extends State<_LotListView> {
             ),
           ];
         } else {
+          final d = context.density;
           slivers = [
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.lg,
-                AppSpacing.sm,
-                AppSpacing.lg,
-                AppSpacing.xl,
-              ),
+              padding: EdgeInsets.fromLTRB(d.lg, d.sm, d.lg, d.xl),
               sliver: AppDataTable.buildSliver<LotEntity>(
                 context,
                 enablePagination: true,
@@ -226,14 +222,19 @@ final class _LotListViewState extends State<_LotListView> {
                         children: [
                           AppText(
                             lot.lotNumber,
-                            variant: AppTextVariant.bodyLarge,
+                            variant: d.isCompact
+                                ? AppTextVariant.bodyMedium
+                                : AppTextVariant.bodyLarge,
                             fontWeight: FontWeight.w700,
                           ),
                           if (lot.title != null) ...[
-                            const SizedBox(height: AppSpacing.xs),
-                            AppText(lot.title!),
+                            const AppGap.xs(),
+                            AppText(
+                              lot.title!,
+                              maxLines: d.isCompact ? 1 : null,
+                            ),
                           ],
-                          const SizedBox(height: AppSpacing.xs),
+                          const AppGap.xs(),
                           AppText(
                             AppDateTimeFormatter.formatDate(
                               lot.transactionAt,
@@ -245,8 +246,8 @@ final class _LotListViewState extends State<_LotListView> {
                       ),
                     ),
                     _statusBadge(ctx, lot.status),
-                    const SizedBox(width: AppSpacing.xs),
-                    const Icon(AppIcons.chevronRight),
+                    const AppGap.hXs(),
+                    Icon(AppIcons.chevronRight, size: d.iconMd),
                   ],
                 ),
               ),
@@ -309,7 +310,7 @@ final class _LotListViewState extends State<_LotListView> {
                 onChanged: (q) =>
                     context.read<LotListCubit>().loadLots(searchQuery: q),
               ),
-              const SizedBox(height: AppSpacing.xs),
+              const AppGap.xs(),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
@@ -321,7 +322,7 @@ final class _LotListViewState extends State<_LotListView> {
                         clearStatusFilter: true,
                       ),
                     ),
-                    const SizedBox(width: AppSpacing.sm),
+                    const AppGap.hSm(),
                     AppChip.filter(
                       label: l10n.lotsStatusActive,
                       selected: state.statusFilter == LotStatus.active,
@@ -329,7 +330,7 @@ final class _LotListViewState extends State<_LotListView> {
                         statusFilter: LotStatus.active,
                       ),
                     ),
-                    const SizedBox(width: AppSpacing.sm),
+                    const AppGap.hSm(),
                     AppChip.filter(
                       label: l10n.lotsStatusCompleted,
                       selected: state.statusFilter == LotStatus.completed,

@@ -1,4 +1,4 @@
-import 'package:business_manager/core/design_system/app_spacing.dart';
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:business_manager/core/widgets/app_button.dart';
 import 'package:business_manager/core/widgets/app_empty_visual.dart';
 import 'package:material_ui/material_ui.dart';
@@ -42,11 +42,12 @@ final class AppEmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final d = context.density;
     // Scrolls instead of overflowing when space is short (landscape phones,
     // large text, a small area under a pinned header).
     return Center(
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSpacing.xl),
+        padding: EdgeInsets.all(d.xl),
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 400),
           child: Column(
@@ -59,7 +60,7 @@ final class AppEmptyState extends StatelessWidget {
                 gifAsset: gifAsset,
                 animateIcon: animateIcon,
               ),
-              const SizedBox(height: AppSpacing.md),
+              SizedBox(height: d.md),
               Text(
                 title,
                 style: theme.textTheme.titleMedium?.copyWith(
@@ -68,7 +69,7 @@ final class AppEmptyState extends StatelessWidget {
                 textAlign: TextAlign.center,
               ),
               if (subtitle != null) ...[
-                const SizedBox(height: AppSpacing.xs),
+                SizedBox(height: d.xs),
                 Text(
                   subtitle!,
                   style: theme.textTheme.bodySmall?.copyWith(
@@ -78,7 +79,7 @@ final class AppEmptyState extends StatelessWidget {
                 ),
               ],
               if (actionLabel != null && onAction != null) ...[
-                const SizedBox(height: AppSpacing.lg),
+                SizedBox(height: d.lg),
                 AppButton(label: actionLabel!, onPressed: onAction),
               ],
             ],

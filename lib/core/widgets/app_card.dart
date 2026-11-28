@@ -1,7 +1,6 @@
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
-import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_shadows.dart';
-import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/widgets/app_glass_surface.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -15,12 +14,12 @@ final class AppCard extends StatelessWidget {
   const AppCard({
     super.key,
     required this.child,
-    this.padding = AppSpacing.cardPadding,
+    this.padding,
     this.onTap,
     this.color,
     this.borderColor,
     this.gradient,
-    this.borderRadius = AppRadius.lgBorder,
+    this.borderRadius,
     this.isGlass = true,
     this.glassStyle = AppGlassStyle.lightweight,
     this.blurSigma = 0,
@@ -36,12 +35,12 @@ final class AppCard extends StatelessWidget {
   const AppCard.listItem({
     super.key,
     required this.child,
-    this.padding = AppSpacing.cardPadding,
+    this.padding,
     this.onTap,
     this.color,
     this.borderColor,
     this.gradient,
-    this.borderRadius = AppRadius.lgBorder,
+    this.borderRadius,
     this.elevated = true,
     this.semanticLabel,
   }) : isGlass = true,
@@ -51,12 +50,12 @@ final class AppCard extends StatelessWidget {
        backdropKey = null;
 
   final Widget child;
-  final EdgeInsetsGeometry padding;
+  final EdgeInsetsGeometry? padding;
   final VoidCallback? onTap;
   final Color? color;
   final Color? borderColor;
   final Gradient? gradient;
-  final BorderRadius borderRadius;
+  final BorderRadius? borderRadius;
   final bool isGlass;
   final AppGlassStyle glassStyle;
   final double blurSigma;
@@ -67,10 +66,14 @@ final class AppCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final d = context.density;
+    final resolvedPadding = padding ?? d.cardPadding;
+    final resolvedRadius = borderRadius ?? d.radiusLgBorder;
+
     if (isGlass) {
       final glass = AppGlassSurface(
-        padding: padding,
-        borderRadius: borderRadius,
+        padding: resolvedPadding,
+        borderRadius: resolvedRadius,
         blurSigma: blurSigma,
         glassStyle: glassStyle,
         tintColor: color,
@@ -101,7 +104,7 @@ final class AppCard extends StatelessWidget {
             ? (color ?? colorScheme.surfaceContainerLow)
             : null,
         gradient: gradient,
-        borderRadius: borderRadius,
+        borderRadius: resolvedRadius,
         border: Border.all(
           color: borderColor ?? colorScheme.outlineVariant,
           width: 1,
@@ -110,15 +113,15 @@ final class AppCard extends StatelessWidget {
       ),
       child: Material(
         type: MaterialType.transparency,
-        borderRadius: borderRadius,
+        borderRadius: resolvedRadius,
         clipBehavior: Clip.antiAlias,
         child: onTap != null
             ? InkWell(
                 onTap: onTap,
-                borderRadius: borderRadius,
-                child: Padding(padding: padding, child: child),
+                borderRadius: resolvedRadius,
+                child: Padding(padding: resolvedPadding, child: child),
               )
-            : Padding(padding: padding, child: child),
+            : Padding(padding: resolvedPadding, child: child),
       ),
     );
 

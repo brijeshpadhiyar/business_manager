@@ -3,11 +3,10 @@ import 'dart:ui';
 import 'package:animations/animations.dart';
 import 'package:business_manager/core/design_system/app_breakpoints.dart';
 import 'package:business_manager/core/design_system/app_colors.dart';
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
-import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_shadows.dart';
 import 'package:business_manager/core/design_system/app_sizing.dart';
-import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/widgets/app_button.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -141,14 +140,15 @@ final class AppDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final tokens = context.surfaceTokens;
     final theme = Theme.of(context);
+    final d = context.density;
     // On phones (and narrow windows) the dialog becomes a full-width panel
     // anchored to the bottom edge: within thumb reach, above the keyboard,
     // and clear of the home indicator.
     final compact = AppBreakpoints.fromWidth(MediaQuery.sizeOf(context).width)
         .isCompact;
     final radius = compact
-        ? const BorderRadius.vertical(top: Radius.circular(AppRadius.xl))
-        : AppRadius.xlBorder;
+        ? BorderRadius.vertical(top: Radius.circular(d.radiusXl))
+        : d.radiusXlBorder;
     final bottomSafe = compact ? MediaQuery.viewPaddingOf(context).bottom : 0.0;
 
     return Dialog(
@@ -156,10 +156,12 @@ final class AppDialog extends StatelessWidget {
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       insetPadding: compact
-          ? EdgeInsets.only(top: MediaQuery.paddingOf(context).top + 24)
-          : const EdgeInsets.symmetric(
-              horizontal: AppSpacing.lg,
-              vertical: AppSpacing.xl,
+          ? EdgeInsets.only(
+              top: MediaQuery.paddingOf(context).top + (d.isCompact ? 12 : 24),
+            )
+          : EdgeInsets.symmetric(
+              horizontal: d.lg,
+              vertical: d.xl,
             ),
       alignment: compact ? Alignment.bottomCenter : null,
       shape: RoundedRectangleBorder(borderRadius: radius),
@@ -187,10 +189,10 @@ final class AppDialog extends StatelessWidget {
                   ),
                   child: Padding(
                     padding: EdgeInsets.fromLTRB(
-                      compact ? AppSpacing.lg : AppSpacing.xl,
-                      AppSpacing.xl,
-                      compact ? AppSpacing.lg : AppSpacing.xl,
-                      AppSpacing.lg + bottomSafe,
+                      compact ? d.lg : d.dialogPadding,
+                      d.dialogPadding,
+                      compact ? d.lg : d.dialogPadding,
+                      d.lg + bottomSafe,
                     ),
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -202,14 +204,14 @@ final class AppDialog extends StatelessWidget {
                             if (icon != null) ...[
                               Icon(
                                 icon,
-                                size: 22,
+                                size: d.iconMd + 2,
                                 color:
                                     iconColor ??
                                     (isDestructive
                                         ? theme.colorScheme.error
                                         : theme.colorScheme.secondary),
                               ),
-                              const SizedBox(width: AppSpacing.sm),
+                              SizedBox(width: d.sm),
                             ],
                             Expanded(
                               child: Text(
@@ -221,7 +223,7 @@ final class AppDialog extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: AppSpacing.md),
+                        SizedBox(height: d.md),
                         Flexible(
                           child: SingleChildScrollView(
                             child: DefaultTextStyle(
@@ -232,11 +234,11 @@ final class AppDialog extends StatelessWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(height: AppSpacing.xl),
+                        SizedBox(height: d.xl),
                         Wrap(
                           alignment: WrapAlignment.end,
-                          spacing: AppSpacing.sm,
-                          runSpacing: AppSpacing.sm,
+                          spacing: d.sm,
+                          runSpacing: d.sm,
                           children: [
                             ...?actions,
                             if (actions == null && cancelLabel != null)

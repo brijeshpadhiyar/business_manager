@@ -144,14 +144,10 @@ final class _WorkerListViewState extends State<_WorkerListView> {
             ),
           ];
         } else {
+          final d = context.density;
           slivers = [
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.lg,
-                AppSpacing.sm,
-                AppSpacing.lg,
-                AppSpacing.xl,
-              ),
+              padding: EdgeInsets.fromLTRB(d.lg, d.sm, d.lg, d.xl),
               sliver: AppDataTable.buildSliver<WorkerEntity>(
                 context,
                 enablePagination: true,
@@ -188,28 +184,31 @@ final class _WorkerListViewState extends State<_WorkerListView> {
                   content: Row(
                     children: [
                       AppAvatar(name: worker.name, dimmed: !worker.isActive),
-                      const SizedBox(width: AppSpacing.md),
+                      const AppGap.hMd(),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             AppText(
                               worker.name,
-                              variant: AppTextVariant.bodyLarge,
+                              variant: d.isCompact
+                                  ? AppTextVariant.bodyMedium
+                                  : AppTextVariant.bodyLarge,
                               fontWeight: FontWeight.w700,
                             ),
                             if (worker.phone != null) ...[
-                              const SizedBox(height: AppSpacing.xs),
+                              const AppGap.xs(),
                               AppText(
                                 worker.phone!,
                                 variant: AppTextVariant.bodySmall,
                               ),
                             ],
                             if (worker.address != null) ...[
-                              const SizedBox(height: AppSpacing.xs),
+                              const AppGap.xs(),
                               AppText(
                                 worker.address!,
                                 variant: AppTextVariant.bodySmall,
+                                maxLines: d.isCompact ? 1 : null,
                               ),
                             ],
                           ],
@@ -226,7 +225,7 @@ final class _WorkerListViewState extends State<_WorkerListView> {
                           ? AppStatusTone.good
                           : AppStatusTone.neutral,
                     ),
-                    const Icon(AppIcons.chevronRight),
+                    Icon(AppIcons.chevronRight, size: d.iconMd),
                   ],
                 ),
               ),
@@ -283,7 +282,7 @@ final class _WorkerListViewState extends State<_WorkerListView> {
                 onChanged: (q) =>
                     context.read<WorkerListCubit>().loadWorkers(searchQuery: q),
               ),
-              const SizedBox(height: AppSpacing.xs),
+              const AppGap.xs(),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: Row(
@@ -295,7 +294,7 @@ final class _WorkerListViewState extends State<_WorkerListView> {
                           .read<WorkerListCubit>()
                           .loadWorkers(clearActiveFilter: true),
                     ),
-                    const SizedBox(width: AppSpacing.sm),
+                    const AppGap.hSm(),
                     AppChip.filter(
                       label: l10n.filterActive,
                       selected: state.activeFilter == true,
@@ -303,7 +302,7 @@ final class _WorkerListViewState extends State<_WorkerListView> {
                           .read<WorkerListCubit>()
                           .loadWorkers(activeFilter: true),
                     ),
-                    const SizedBox(width: AppSpacing.sm),
+                    const AppGap.hSm(),
                     AppChip.filter(
                       label: l10n.filterInactive,
                       selected: state.activeFilter == false,

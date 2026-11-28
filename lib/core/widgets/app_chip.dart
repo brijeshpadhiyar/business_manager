@@ -1,5 +1,5 @@
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
-import 'package:business_manager/core/design_system/app_sizing.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -106,12 +106,15 @@ final class AppChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final d = context.density;
+    final useDense = dense || d.isCompact;
     final leading =
-        avatar ?? (icon != null ? Icon(icon, size: AppSizing.iconSm) : null);
+        avatar ?? (icon != null ? Icon(icon, size: d.iconSm) : null);
     final text = Text(label, maxLines: 1, overflow: TextOverflow.ellipsis);
     const shape = RoundedRectangleBorder(borderRadius: AppRadius.fullBorder);
-    const padding = EdgeInsets.symmetric(horizontal: AppSpacing.xs);
-    final density = dense ? VisualDensity.compact : null;
+    final padding = EdgeInsets.symmetric(horizontal: d.xs);
+    final density = useDense ? VisualDensity.compact : null;
+    final tapTarget = d.isCompact ? MaterialTapTargetSize.shrinkWrap : null;
 
     return switch (variant) {
       AppChipVariant.choice => ChoiceChip(
@@ -123,6 +126,7 @@ final class AppChip extends StatelessWidget {
         shape: shape,
         labelPadding: padding,
         visualDensity: density,
+        materialTapTargetSize: tapTarget,
         showCheckmark: showCheckmark,
       ),
       AppChipVariant.filter => FilterChip(
@@ -134,6 +138,7 @@ final class AppChip extends StatelessWidget {
         shape: shape,
         labelPadding: padding,
         visualDensity: density,
+        materialTapTargetSize: tapTarget,
         showCheckmark: showCheckmark,
       ),
       AppChipVariant.action => ActionChip(
@@ -144,6 +149,7 @@ final class AppChip extends StatelessWidget {
         shape: shape,
         labelPadding: padding,
         visualDensity: density,
+        materialTapTargetSize: tapTarget,
       ),
       AppChipVariant.input => InputChip(
         label: text,
@@ -154,6 +160,7 @@ final class AppChip extends StatelessWidget {
         shape: shape,
         labelPadding: padding,
         visualDensity: density,
+        materialTapTargetSize: tapTarget,
         isEnabled: enabled,
       ),
     };
@@ -209,6 +216,8 @@ final class AppChipGroup<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final d = context.density;
+    final effectiveSpacing = d.isCompact ? d.xs : spacing;
     final chips = [
       for (final item in items)
         multi
@@ -238,13 +247,17 @@ final class AppChipGroup<T> extends StatelessWidget {
         child: Row(
           children: [
             for (var i = 0; i < chips.length; i++) ...[
-              if (i > 0) SizedBox(width: spacing),
+              if (i > 0) SizedBox(width: effectiveSpacing),
               chips[i],
             ],
           ],
         ),
       );
     }
-    return Wrap(spacing: spacing, runSpacing: spacing, children: chips);
+    return Wrap(
+      spacing: effectiveSpacing,
+      runSpacing: effectiveSpacing,
+      children: chips,
+    );
   }
 }

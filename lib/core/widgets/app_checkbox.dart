@@ -1,4 +1,4 @@
-import 'package:business_manager/core/design_system/app_radius.dart';
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Compact accessible checkbox tile with optional subtitle.
@@ -31,8 +31,16 @@ final class AppCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final d = context.density;
     if (_bare) {
-      return Checkbox(value: value, onChanged: enabled ? onChanged : null);
+      return Checkbox(
+        value: value,
+        onChanged: enabled ? onChanged : null,
+        visualDensity: d.isCompact ? VisualDensity.compact : null,
+        materialTapTargetSize: d.isCompact
+            ? MaterialTapTargetSize.shrinkWrap
+            : null,
+      );
     }
     return CheckboxListTile(
       value: value,
@@ -42,9 +50,12 @@ final class AppCheckbox extends StatelessWidget {
           ? Text(subtitle!, style: Theme.of(context).textTheme.bodySmall)
           : null,
       dense: true,
+      visualDensity: d.isCompact
+          ? VisualDensity.compact
+          : VisualDensity.standard,
       contentPadding: EdgeInsets.zero,
       controlAffinity: ListTileControlAffinity.leading,
-      shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdBorder),
+      shape: RoundedRectangleBorder(borderRadius: d.radiusMdBorder),
     );
   }
 }

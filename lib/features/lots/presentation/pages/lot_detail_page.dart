@@ -388,13 +388,9 @@ final class _LotDetailView extends StatelessWidget {
                       .toList(growable: false);
 
             if (filteredDesigns.isEmpty) {
+              final d = context.density;
               return SliverPadding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.lg,
-                  0,
-                  AppSpacing.lg,
-                  AppSpacing.xl,
-                ),
+                padding: EdgeInsets.fromLTRB(d.lg, 0, d.lg, d.xl),
                 sliver: SliverToBoxAdapter(
                   child: AppEmptyState(
                     icon: AppIcons.designs,
@@ -410,17 +406,12 @@ final class _LotDetailView extends StatelessWidget {
               );
             }
 
+            final d = context.density;
             return SliverPadding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.lg,
-                0,
-                AppSpacing.lg,
-                AppSpacing.xl,
-              ),
+              padding: EdgeInsets.fromLTRB(d.lg, 0, d.lg, d.xl),
               sliver: SliverList.separated(
                 itemCount: filteredDesigns.length,
-                separatorBuilder: (_, _) =>
-                    const SizedBox(height: AppSpacing.md),
+                separatorBuilder: (_, _) => SizedBox(height: d.md),
                 itemBuilder: (ctx, i) {
                   final item = filteredDesigns[i];
                   return LotDesignSectionCard(
@@ -436,11 +427,11 @@ final class _LotDetailView extends StatelessWidget {
           },
         ),
         SliverPadding(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.lg,
+          padding: EdgeInsets.fromLTRB(
+            context.density.lg,
             0,
-            AppSpacing.lg,
-            AppSpacing.xl,
+            context.density.lg,
+            context.density.xl,
           ),
           sliver: SliverToBoxAdapter(
             child: LotPnlSection(lotId: lotId),

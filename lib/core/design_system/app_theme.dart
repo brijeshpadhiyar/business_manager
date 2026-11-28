@@ -1,8 +1,7 @@
 import 'package:business_manager/core/design_system/app_colors.dart';
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:business_manager/core/design_system/app_elevation.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
-import 'package:business_manager/core/design_system/app_sizing.dart';
-import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/design_system/app_typography.dart';
 import 'package:cupertino_ui/cupertino_ui.dart'
     show CupertinoPageTransitionsBuilder;
@@ -101,7 +100,14 @@ abstract final class AppTheme {
             onInverseSurface: AppColors.slate50,
             inversePrimary: AppColors.indigo300,
           );
-    final textTheme = AppTypography.buildTextTheme(colorScheme);
+    final isCompact = visualDensity == VisualDensity.compact;
+    final density = isCompact
+        ? AppDensityTokens.compact
+        : AppDensityTokens.comfortable;
+    final textTheme = AppTypography.buildTextTheme(
+      colorScheme,
+      compact: isCompact,
+    );
     final semanticColors = isDark
         ? AppSemanticColors.dark
         : AppSemanticColors.light;
@@ -114,9 +120,13 @@ abstract final class AppTheme {
         : AppColors.lightBorderStrong;
 
     final outlineBorder = OutlineInputBorder(
-      borderRadius: AppRadius.mdBorder,
+      borderRadius: density.radiusMdBorder,
       borderSide: BorderSide(color: glassInputBorderColor),
     );
+
+    final tapTarget = isCompact
+        ? MaterialTapTargetSize.shrinkWrap
+        : MaterialTapTargetSize.padded;
 
     return ThemeData(
       useMaterial3: true,
@@ -127,7 +137,7 @@ abstract final class AppTheme {
       fontFamily: AppTypography.fontFamily,
       fontFamilyFallback: AppTypography.fontFamilyFallback,
       textTheme: textTheme,
-      extensions: [semanticColors, surfaceTokens],
+      extensions: [semanticColors, surfaceTokens, density],
       // Native-feeling navigation (used by every pushed page via
       // `AppMotion.buildPage`): Android follows the predictive back gesture,
       // iOS/macOS keep edge-swipe back, desktop/web use a light fade-forward.
@@ -158,7 +168,7 @@ abstract final class AppTheme {
       focusColor: colorScheme.primary.withValues(alpha: isDark ? 0.24 : 0.14),
       hoverColor: colorScheme.primary.withValues(alpha: isDark ? 0.10 : 0.05),
       appBarTheme: AppBarTheme(
-        toolbarHeight: AppSizing.appBarHeight,
+        toolbarHeight: density.appBarHeight,
         elevation: AppElevation.none,
         scrolledUnderElevation: AppElevation.none,
         surfaceTintColor: Colors.transparent,
@@ -172,12 +182,19 @@ abstract final class AppTheme {
         margin: EdgeInsets.zero,
         color: surfaceTokens.glassFill,
         shape: RoundedRectangleBorder(
-          borderRadius: AppRadius.lgBorder,
+          borderRadius: density.radiusLgBorder,
           side: BorderSide(color: surfaceTokens.glassBorder),
         ),
       ),
+      listTileTheme: ListTileThemeData(
+        dense: isCompact,
+        visualDensity: visualDensity,
+        minVerticalPadding: isCompact ? 2 : null,
+        minLeadingWidth: isCompact ? 24 : null,
+        horizontalTitleGap: isCompact ? 8 : null,
+      ),
       navigationBarTheme: NavigationBarThemeData(
-        height: AppSizing.navBarHeight,
+        height: density.navBarHeight,
         backgroundColor: Colors.transparent,
         indicatorColor: colorScheme.primaryContainer,
         indicatorShape: const RoundedRectangleBorder(
@@ -196,9 +213,17 @@ abstract final class AppTheme {
         }),
       ),
       navigationRailTheme: NavigationRailThemeData(
+        minWidth: density.navigationRailWidth,
         backgroundColor: Colors.transparent,
         indicatorColor: colorScheme.primaryContainer,
-        selectedIconTheme: IconThemeData(color: colorScheme.onPrimaryContainer),
+        selectedIconTheme: IconThemeData(
+          color: colorScheme.onPrimaryContainer,
+          size: density.iconMd,
+        ),
+        unselectedIconTheme: IconThemeData(
+          color: colorScheme.onSurfaceVariant,
+          size: density.iconMd,
+        ),
         selectedLabelTextStyle: textTheme.labelSmall?.copyWith(
           fontWeight: FontWeight.w700,
           color: colorScheme.primary,
@@ -208,48 +233,52 @@ abstract final class AppTheme {
         ),
       ),
       navigationDrawerTheme: NavigationDrawerThemeData(
+        tileHeight: isCompact ? 38 : null,
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         indicatorColor: colorScheme.primaryContainer,
-        indicatorShape: const RoundedRectangleBorder(
-          borderRadius: AppRadius.mdBorder,
+        indicatorShape: RoundedRectangleBorder(
+          borderRadius: density.radiusMdBorder,
         ),
       ),
       chipTheme: ChipThemeData(
         backgroundColor: surfaceTokens.glassFill,
         shape: const RoundedRectangleBorder(borderRadius: AppRadius.fullBorder),
         side: BorderSide(color: colorScheme.outlineVariant),
-        padding: AppSpacing.chipPadding,
+        padding: density.chipPadding,
         selectedColor: colorScheme.primaryContainer,
         checkmarkColor: colorScheme.onPrimaryContainer,
         labelStyle: textTheme.labelMedium,
       ),
       segmentedButtonTheme: SegmentedButtonThemeData(
         style: ButtonStyle(
+          tapTargetSize: tapTarget,
+          visualDensity: visualDensity,
           backgroundColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
               return colorScheme.primaryContainer;
             }
             return surfaceTokens.glassFill;
           }),
-          shape: const WidgetStatePropertyAll(
-            RoundedRectangleBorder(borderRadius: AppRadius.mdBorder),
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(borderRadius: density.radiusMdBorder),
           ),
           side: WidgetStatePropertyAll(
             BorderSide(color: surfaceTokens.glassBorder),
           ),
-          padding: const WidgetStatePropertyAll(AppSpacing.segmentPadding),
+          padding: WidgetStatePropertyAll(density.segmentPadding),
           textStyle: WidgetStatePropertyAll(textTheme.labelMedium),
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
+        isDense: isCompact,
         fillColor: surfaceTokens.inputGlassFill,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.inputHorizontal,
-          vertical: AppSpacing.inputVertical,
+        contentPadding: EdgeInsets.symmetric(
+          horizontal: density.inputHorizontal,
+          vertical: density.inputVertical,
         ),
-        constraints: const BoxConstraints(minHeight: AppSizing.inputHeight),
+        constraints: BoxConstraints(minHeight: density.inputHeight),
         labelStyle: textTheme.bodyMedium?.copyWith(
           color: colorScheme.onSurfaceVariant,
         ),
@@ -269,81 +298,81 @@ abstract final class AppTheme {
         border: outlineBorder,
         enabledBorder: outlineBorder,
         focusedBorder: OutlineInputBorder(
-          borderRadius: AppRadius.mdBorder,
+          borderRadius: density.radiusMdBorder,
           borderSide: BorderSide(color: colorScheme.primary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: AppRadius.mdBorder,
+          borderRadius: density.radiusMdBorder,
           borderSide: BorderSide(color: colorScheme.error, width: 1.3),
         ),
         focusedErrorBorder: OutlineInputBorder(
-          borderRadius: AppRadius.mdBorder,
+          borderRadius: density.radiusMdBorder,
           borderSide: BorderSide(color: colorScheme.error, width: 1.8),
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          minimumSize: const Size(0, AppSizing.buttonHeight),
-          tapTargetSize: MaterialTapTargetSize.padded,
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg,
-            vertical: AppSpacing.buttonVertical,
+          minimumSize: Size(0, density.buttonHeight),
+          tapTargetSize: tapTarget,
+          padding: EdgeInsets.symmetric(
+            horizontal: density.lg,
+            vertical: density.buttonVertical,
           ),
-          shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdBorder),
+          shape: RoundedRectangleBorder(borderRadius: density.radiusMdBorder),
           textStyle: textTheme.labelLarge,
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          minimumSize: const Size(0, AppSizing.buttonHeight),
-          tapTargetSize: MaterialTapTargetSize.padded,
+          minimumSize: Size(0, density.buttonHeight),
+          tapTargetSize: tapTarget,
           backgroundColor: surfaceTokens.glassFill,
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.lg,
-            vertical: AppSpacing.buttonVertical,
+          padding: EdgeInsets.symmetric(
+            horizontal: density.lg,
+            vertical: density.buttonVertical,
           ),
-          shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdBorder),
+          shape: RoundedRectangleBorder(borderRadius: density.radiusMdBorder),
           side: BorderSide(color: colorScheme.outline),
           textStyle: textTheme.labelLarge,
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          minimumSize: const Size(0, AppSizing.buttonHeight),
-          tapTargetSize: MaterialTapTargetSize.padded,
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.buttonVertical,
+          minimumSize: Size(0, density.buttonHeight),
+          tapTargetSize: tapTarget,
+          padding: EdgeInsets.symmetric(
+            horizontal: density.md,
+            vertical: density.buttonVertical,
           ),
-          shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdBorder),
+          shape: RoundedRectangleBorder(borderRadius: density.radiusMdBorder),
           textStyle: textTheme.labelLarge,
         ),
       ),
       iconTheme: IconThemeData(
-        size: AppSizing.iconMd,
+        size: density.iconMd,
         color: colorScheme.onSurfaceVariant,
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: surfaceTokens.dialogGlassFill,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: AppRadius.xlBorder,
+          borderRadius: density.radiusXlBorder,
           side: BorderSide(color: surfaceTokens.glassBorder),
         ),
       ),
-      bottomSheetTheme: const BottomSheetThemeData(
+      bottomSheetTheme: BottomSheetThemeData(
         showDragHandle: false,
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
-            top: Radius.circular(AppRadius.xl),
+            top: Radius.circular(density.radiusXl),
           ),
         ),
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdBorder),
+        shape: RoundedRectangleBorder(borderRadius: density.radiusMdBorder),
         backgroundColor: colorScheme.inverseSurface,
         actionTextColor: colorScheme.inversePrimary,
         contentTextStyle: textTheme.bodyMedium?.copyWith(
@@ -355,7 +384,7 @@ abstract final class AppTheme {
         color: colorScheme.primary,
         linearTrackColor: colorScheme.primary.withValues(alpha: 0.14),
         circularTrackColor: colorScheme.primary.withValues(alpha: 0.14),
-        linearMinHeight: 4,
+        linearMinHeight: isCompact ? 3 : 4,
         borderRadius: AppRadius.fullBorder,
       ),
       dividerTheme: DividerThemeData(

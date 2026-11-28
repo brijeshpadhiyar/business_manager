@@ -26,7 +26,8 @@ final class ReportsEmptyView extends StatelessWidget {
   }
 }
 
-/// 2-column (mobile) or 3-column (wide) responsive metric tile grid.
+/// Responsive metric tile grid (2 cols mobile / 3 cols wide in comfortable;
+/// 3 cols mobile / 4-5 cols wide in compact).
 final class ReportResponsiveMetricGrid extends StatelessWidget {
   const ReportResponsiveMetricGrid({super.key, required this.tiles});
 
@@ -34,17 +35,14 @@ final class ReportResponsiveMetricGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final cols = constraints.maxWidth >= 700 ? 3 : 2;
-        final tileW =
-            (constraints.maxWidth - AppSpacing.sm * (cols - 1)) / cols;
-        return Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: [for (final t in tiles) SizedBox(width: tileW, child: t)],
-        );
-      },
+    return AppResponsiveGrid(
+      compactColumns: 2,
+      mediumColumns: 3,
+      expandedColumns: 3,
+      compactModeExtraCompact: 1,
+      compactModeExtraMedium: 1,
+      compactModeExtraExpanded: 2,
+      children: tiles,
     );
   }
 }

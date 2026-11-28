@@ -1,4 +1,4 @@
-import 'package:business_manager/core/design_system/app_sizing.dart';
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Round initials avatar for people (workers, team members).
@@ -11,12 +11,12 @@ final class AppAvatar extends StatelessWidget {
   const AppAvatar({
     super.key,
     required this.name,
-    this.size = AppSizing.touchTargetMin - 8,
+    this.size,
     this.dimmed = false,
   });
 
   final String name;
-  final double size;
+  final double? size;
 
   /// Greys the avatar out, e.g. for an inactive worker.
   final bool dimmed;
@@ -44,6 +44,8 @@ final class AppAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final d = context.density;
+    final resolvedSize = size ?? d.avatarSize;
     final palette = <(Color, Color)>[
       (scheme.primaryContainer, scheme.onPrimaryContainer),
       (scheme.secondaryContainer, scheme.onSecondaryContainer),
@@ -55,8 +57,8 @@ final class AppAvatar extends StatelessWidget {
 
     return ExcludeSemantics(
       child: Container(
-        width: size,
-        height: size,
+        width: resolvedSize,
+        height: resolvedSize,
         alignment: Alignment.center,
         decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
         child: Text(

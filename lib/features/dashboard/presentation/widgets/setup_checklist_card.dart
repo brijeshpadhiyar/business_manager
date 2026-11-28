@@ -1,5 +1,4 @@
 import 'package:business_manager/core/design_system/app_icons.dart';
-import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
@@ -64,9 +63,10 @@ final class _SetupChecklistCardState extends State<SetupChecklistCard> {
 
     final l10n = context.l10n;
     final colorScheme = Theme.of(context).colorScheme;
+    final d = context.density;
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+      padding: EdgeInsets.only(bottom: d.lg),
       child: AppCard(
         borderColor: colorScheme.primary.withValues(alpha: 0.35),
         child: Column(
@@ -75,8 +75,8 @@ final class _SetupChecklistCardState extends State<SetupChecklistCard> {
             AppActionRow(
               content: Row(
                 children: [
-                  Icon(AppIcons.checklist, color: colorScheme.primary),
-                  const SizedBox(width: AppSpacing.sm),
+                  Icon(AppIcons.checklist, size: d.iconMd, color: colorScheme.primary),
+                  const AppGap.hSm(),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,9 +108,9 @@ final class _SetupChecklistCardState extends State<SetupChecklistCard> {
                 ),
               ],
             ),
-            const SizedBox(height: AppSpacing.sm),
+            const AppGap.sm(),
             AppProgressBar(value: _completedCount / 4),
-            const SizedBox(height: AppSpacing.sm),
+            const AppGap.sm(),
             _ChecklistStepTile(
               done: _profileCustomized,
               label: l10n.setupStepProfile,

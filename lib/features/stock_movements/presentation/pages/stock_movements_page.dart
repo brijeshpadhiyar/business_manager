@@ -326,74 +326,55 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: AppSpacing.md),
+                          const AppGap.md(),
 
                           // KPI Summary Row (full glass preserved, batched via BackdropGroup)
-                          LayoutBuilder(
-                            builder: (context, constraints) {
-                              final isWide = constraints.maxWidth >= 580;
-                              final tileWidth = isWide
-                                  ? (constraints.maxWidth - AppSpacing.sm * 3) /
-                                        4
-                                  : (constraints.maxWidth - AppSpacing.sm) / 2;
-                              return Wrap(
-                                spacing: AppSpacing.sm,
-                                runSpacing: AppSpacing.sm,
-                                children: [
-                                  SizedBox(
-                                    width: tileWidth,
-                                    child: AppMetricTile(
-                                      label: l10n.stockAvailableGoodLabel,
-                                      value: totalGood,
-                                      suffix: l10n.piecesUnit,
-                                      icon: AppIcons.lot,
-                                      tone: AppStatusTone.good,
-                                      onTap: () => setState(() => _tab = 1),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: tileWidth,
-                                    child: AppMetricTile(
-                                      label: l10n.stockPendingWorkerLabel,
-                                      value: totalPending,
-                                      suffix: l10n.piecesUnit,
-                                      icon: AppIcons.pending,
-                                      tone: totalPending > 0
-                                          ? AppStatusTone.pending
-                                          : AppStatusTone.good,
-                                      onTap: () => setState(() => _tab = 0),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: tileWidth,
-                                    child: AppMetricTile(
-                                      label: l10n.stockDamagedBucketLabel,
-                                      value: totalDamaged,
-                                      suffix: l10n.piecesUnit,
-                                      icon: AppIcons.damaged,
-                                      tone: totalDamaged > 0
-                                          ? AppStatusTone.damaged
-                                          : AppStatusTone.neutral,
-                                      onTap: totalDamaged > 0
-                                          ? _openRepair
-                                          : null,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: tileWidth,
-                                    child: AppMetricTile(
-                                      label: l10n.stockTabPendingReturns,
-                                      value: state.openIssues.length,
-                                      icon: AppIcons.receiveReturn,
-                                      tone: AppStatusTone.info,
-                                      onTap: () => setState(() => _tab = 0),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            },
+                          AppResponsiveGrid(
+                            compactColumns: 2,
+                            mediumColumns: 4,
+                            expandedColumns: 4,
+                            compactModeExtraCompact: 1,
+                            compactModeExtraMedium: 0,
+                            compactModeExtraExpanded: 0,
+                            children: [
+                              AppMetricTile(
+                                label: l10n.stockAvailableGoodLabel,
+                                value: totalGood,
+                                suffix: l10n.piecesUnit,
+                                icon: AppIcons.lot,
+                                tone: AppStatusTone.good,
+                                onTap: () => setState(() => _tab = 1),
+                              ),
+                              AppMetricTile(
+                                label: l10n.stockPendingWorkerLabel,
+                                value: totalPending,
+                                suffix: l10n.piecesUnit,
+                                icon: AppIcons.pending,
+                                tone: totalPending > 0
+                                    ? AppStatusTone.pending
+                                    : AppStatusTone.good,
+                                onTap: () => setState(() => _tab = 0),
+                              ),
+                              AppMetricTile(
+                                label: l10n.stockDamagedBucketLabel,
+                                value: totalDamaged,
+                                suffix: l10n.piecesUnit,
+                                icon: AppIcons.damaged,
+                                tone: totalDamaged > 0
+                                    ? AppStatusTone.damaged
+                                    : AppStatusTone.neutral,
+                                onTap: totalDamaged > 0 ? _openRepair : null,
+                              ),
+                              AppMetricTile(
+                                label: l10n.stockTabPendingReturns,
+                                value: state.openIssues.length,
+                                icon: AppIcons.receiveReturn,
+                                tone: AppStatusTone.info,
+                                onTap: () => setState(() => _tab = 0),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: AppSpacing.lg),
+                          const AppGap.lg(),
 
                           // Clean Prioritized Daily-Work Tabs
                           GuideTarget(
@@ -535,14 +516,11 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
               })
               .toList(growable: false);
 
+    final d = context.density;
+    final bottomPad = d.isCompact ? 68.0 : 96.0;
     return [
       SliverPadding(
-        padding: const EdgeInsets.fromLTRB(
-          AppSpacing.lg,
-          0,
-          AppSpacing.lg,
-          AppSpacing.md,
-        ),
+        padding: EdgeInsets.fromLTRB(d.lg, 0, d.lg, d.md),
         sliver: SliverToBoxAdapter(
           child: AppSearchField(
             controller: _pendingSearchCtrl,
@@ -554,12 +532,7 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
       ),
       if (filtered.isEmpty)
         SliverPadding(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.lg,
-            0,
-            AppSpacing.lg,
-            96,
-          ),
+          padding: EdgeInsets.fromLTRB(d.lg, 0, d.lg, bottomPad),
           sliver: SliverToBoxAdapter(
             child: AppEmptyState(
               icon: AppIcons.clearFilter,
@@ -570,15 +543,10 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
         )
       else
         SliverPadding(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.lg,
-            0,
-            AppSpacing.lg,
-            96,
-          ),
+          padding: EdgeInsets.fromLTRB(d.lg, 0, d.lg, bottomPad),
           sliver: SliverList.separated(
             itemCount: filtered.length,
-            separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
+            separatorBuilder: (_, _) => SizedBox(height: d.sm),
             itemBuilder: (ctx, i) =>
                 _buildOpenIssueCard(ctx, filtered[i], localeCode),
           ),
@@ -705,9 +673,10 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
       ];
     }
 
+    final d = context.density;
     return [
       SliverPadding(
-        padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.lg, 96),
+        padding: EdgeInsets.fromLTRB(d.lg, 0, d.lg, d.isCompact ? 68 : 96),
         sliver: AppDataTable.buildSliver<DesignColourStockBalance>(
           context,
           enablePagination: true,
@@ -900,11 +869,11 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
       ),
       if (history.isEmpty)
         SliverPadding(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.lg,
+          padding: EdgeInsets.fromLTRB(
+            context.density.lg,
             0,
-            AppSpacing.lg,
-            96,
+            context.density.lg,
+            context.density.isCompact ? 68 : 96,
           ),
           sliver: SliverToBoxAdapter(
             child: AppEmptyState(
@@ -916,15 +885,15 @@ final class _StockMovementsViewState extends State<_StockMovementsView> {
         )
       else
         SliverPadding(
-          padding: const EdgeInsets.fromLTRB(
-            AppSpacing.lg,
+          padding: EdgeInsets.fromLTRB(
+            context.density.lg,
             0,
-            AppSpacing.lg,
-            96,
+            context.density.lg,
+            context.density.isCompact ? 68 : 96,
           ),
           sliver: SliverList.separated(
             itemCount: history.length,
-            separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
+            separatorBuilder: (_, _) => SizedBox(height: context.density.sm),
             itemBuilder: (ctx, i) {
               final item = history[i];
               return AppCard.listItem(

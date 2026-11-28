@@ -68,18 +68,14 @@ final class _InventoryOverviewViewState extends State<_InventoryOverviewView> {
             ),
           ];
         } else {
+          final d = context.density;
           slivers = [
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.lg,
-                AppSpacing.lg,
-                AppSpacing.lg,
-                AppSpacing.md,
-              ),
+              padding: EdgeInsets.fromLTRB(d.lg, d.lg, d.lg, d.md),
               sliver: SliverToBoxAdapter(
                 child: Wrap(
-                  spacing: AppSpacing.sm,
-                  runSpacing: AppSpacing.sm,
+                  spacing: d.sm,
+                  runSpacing: d.sm,
                   children: [
                     AppButton(
                       label: l10n.navStockMovements,
@@ -104,12 +100,7 @@ final class _InventoryOverviewViewState extends State<_InventoryOverviewView> {
             ),
             if (overview!.totalActiveLots == 0)
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.lg,
-                  0,
-                  AppSpacing.lg,
-                  AppSpacing.xl,
-                ),
+                padding: EdgeInsets.fromLTRB(d.lg, 0, d.lg, d.xl),
                 sliver: SliverToBoxAdapter(
                   child: AppEmptyState(
                     icon: AppIcons.inventory,
@@ -120,12 +111,7 @@ final class _InventoryOverviewViewState extends State<_InventoryOverviewView> {
               )
             else
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.lg,
-                  0,
-                  AppSpacing.lg,
-                  AppSpacing.xl,
-                ),
+                padding: EdgeInsets.fromLTRB(d.lg, 0, d.lg, d.xl),
                 sliver: switch (_tab) {
                   0 => _buildLotSliver(context, overview.lotSummaries),
                   1 => _buildDesignSliver(context, overview.designSummaries),

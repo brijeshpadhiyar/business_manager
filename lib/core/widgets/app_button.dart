@@ -1,8 +1,6 @@
 import 'package:business_manager/core/design_system/app_colors.dart';
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
-import 'package:business_manager/core/design_system/app_radius.dart';
-import 'package:business_manager/core/design_system/app_sizing.dart';
-import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:business_manager/core/widgets/app_icon_pop.dart';
 import 'package:business_manager/core/widgets/app_loader.dart';
@@ -40,6 +38,7 @@ final class AppButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final tokens = context.surfaceTokens;
+    final d = context.density;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final effectiveOnPressed = isLoading ? null : onPressed;
 
@@ -47,10 +46,10 @@ final class AppButton extends StatelessWidget {
     if (isLoading) {
       leadingWidget = SizedBox(
         key: const ValueKey<String>('loading'),
-        width: AppSizing.iconSm,
-        height: AppSizing.iconSm,
+        width: d.iconSm,
+        height: d.iconSm,
         child: AppSpinner(
-          size: AppSizing.iconSm,
+          size: d.iconSm,
           strokeWidth: 2,
           color: switch (variant) {
             AppButtonVariant.primary => colorScheme.onPrimary,
@@ -64,7 +63,7 @@ final class AppButton extends StatelessWidget {
     } else if (icon != null) {
       leadingWidget = AppIconPop(
         key: ValueKey<IconData>(icon!),
-        child: Icon(icon, size: AppSizing.iconMd),
+        child: Icon(icon, size: d.iconMd),
       );
     } else {
       leadingWidget = const SizedBox.shrink(key: ValueKey<String>('none'));
@@ -79,7 +78,7 @@ final class AppButton extends StatelessWidget {
             duration: AppMotion.duration(context, AppMotion.fast),
             child: leadingWidget,
           ),
-          const SizedBox(width: AppSpacing.sm),
+          SizedBox(width: d.sm),
         ],
         Flexible(
           child: Text(
@@ -95,13 +94,13 @@ final class AppButton extends StatelessWidget {
 
     final minSize = Size(
       isExpanded ? double.infinity : 0,
-      AppSizing.buttonHeight,
+      d.buttonHeight,
     );
-    const shape = RoundedRectangleBorder(borderRadius: AppRadius.mdBorder);
-    const padding = EdgeInsets.symmetric(
-      horizontal: AppSpacing.md + 2,
-      vertical: 10,
-    );
+    final shape = RoundedRectangleBorder(borderRadius: d.radiusMdBorder);
+    final padding = d.buttonPadding;
+    final tapTarget = d.isCompact
+        ? MaterialTapTargetSize.shrinkWrap
+        : MaterialTapTargetSize.padded;
 
     final button = switch (variant) {
       AppButtonVariant.primary => FilledButton(
@@ -112,7 +111,7 @@ final class AppButton extends StatelessWidget {
           shape: shape,
           elevation: 2,
           shadowColor: colorScheme.primary.withValues(alpha: 0.28),
-          tapTargetSize: MaterialTapTargetSize.padded,
+          tapTargetSize: tapTarget,
         ),
         child: content,
       ),
@@ -122,13 +121,13 @@ final class AppButton extends StatelessWidget {
           minimumSize: minSize,
           padding: padding,
           shape: RoundedRectangleBorder(
-            borderRadius: AppRadius.mdBorder,
+            borderRadius: d.radiusMdBorder,
             side: BorderSide(color: tokens.glassBorder, width: 0.9),
           ),
           backgroundColor: colorScheme.secondaryContainer.withValues(
             alpha: isDark ? 0.72 : 0.82,
           ),
-          tapTargetSize: MaterialTapTargetSize.padded,
+          tapTargetSize: tapTarget,
         ),
         child: content,
       ),
@@ -141,7 +140,7 @@ final class AppButton extends StatelessWidget {
           shape: shape,
           side: BorderSide(color: Theme.of(context).colorScheme.outline),
           foregroundColor: foregroundColor,
-          tapTargetSize: MaterialTapTargetSize.padded,
+          tapTargetSize: tapTarget,
         ),
         child: content,
       ),
@@ -151,7 +150,7 @@ final class AppButton extends StatelessWidget {
           minimumSize: minSize,
           padding: padding,
           shape: shape,
-          tapTargetSize: MaterialTapTargetSize.padded,
+          tapTargetSize: tapTarget,
           backgroundColor: colorScheme.error,
           foregroundColor: colorScheme.onError,
         ),
@@ -164,7 +163,7 @@ final class AppButton extends StatelessWidget {
           padding: padding,
           shape: shape,
           foregroundColor: foregroundColor,
-          tapTargetSize: MaterialTapTargetSize.padded,
+          tapTargetSize: tapTarget,
         ),
         child: content,
       ),

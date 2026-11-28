@@ -166,7 +166,7 @@ final class _BusinessProfileViewState extends State<_BusinessProfileView> {
               child: ListView(
                 keyboardDismissBehavior:
                     ScrollViewKeyboardDismissBehavior.onDrag,
-                padding: AppSpacing.screenAll,
+                padding: context.density.screenAll,
                 children: [
                   if (!widget.showAppBar) ...[
                     AppHeading(

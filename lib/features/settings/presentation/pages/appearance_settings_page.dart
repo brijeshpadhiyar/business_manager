@@ -1,5 +1,4 @@
 import 'package:business_manager/core/design_system/app_motion.dart';
-import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/localization/locale_cubit.dart';
 import 'package:business_manager/core/localization/locale_state.dart';
@@ -20,6 +19,7 @@ final class AppearanceSettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final d = context.density;
 
     return AppScaffold(
       title: l10n.settingsAppearanceTitle,
@@ -33,7 +33,7 @@ final class AppearanceSettingsPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   AppHeading(l10n.themeSectionTitle, level: AppHeadingLevel.h3),
-                  const SizedBox(height: AppSpacing.sm),
+                  const AppGap.sm(),
                   BlocBuilder<ThemeCubit, ThemeState>(
                     builder: (context, themeState) =>
                         AppRadio<AppThemePreference>(
@@ -63,7 +63,7 @@ final class AppearanceSettingsPage extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: AppSpacing.md),
+          const AppGap.md(),
           AppMotionEntrance(
             index: 1,
             child: AppCard(
@@ -74,7 +74,7 @@ final class AppearanceSettingsPage extends StatelessWidget {
                     l10n.languageSectionTitle,
                     level: AppHeadingLevel.h3,
                   ),
-                  const SizedBox(height: AppSpacing.sm),
+                  const AppGap.sm(),
                   BlocBuilder<LocaleCubit, LocaleState>(
                     builder: (context, localeState) =>
                         AppRadio<AppLocalePreference>(
@@ -104,7 +104,7 @@ final class AppearanceSettingsPage extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: AppSpacing.md),
+          const AppGap.md(),
           if (context.read<DensityCubit?>() != null) ...[
             AppMotionEntrance(
               index: 2,
@@ -116,7 +116,7 @@ final class AppearanceSettingsPage extends StatelessWidget {
                       l10n.densitySectionTitle,
                       level: AppHeadingLevel.h3,
                     ),
-                    const SizedBox(height: AppSpacing.sm),
+                    const AppGap.sm(),
                     BlocBuilder<DensityCubit, DensityState>(
                       builder: (context, densityState) =>
                           AppRadio<UiDensityMode>(
@@ -142,7 +142,7 @@ final class AppearanceSettingsPage extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: AppSpacing.md),
+            const AppGap.md(),
           ],
           AppMotionEntrance(
             index: 3,
@@ -155,10 +155,41 @@ final class AppearanceSettingsPage extends StatelessWidget {
                     level: AppHeadingLevel.h3,
                     subtitle: l10n.settingsAppearancePreviewBody,
                   ),
-                  const SizedBox(height: AppSpacing.md),
+                  const AppGap.md(),
+                  AppResponsiveGrid(
+                    compactColumns: 2,
+                    mediumColumns: 3,
+                    expandedColumns: 3,
+                    compactModeExtraCompact: 1,
+                    compactModeExtraMedium: 0,
+                    compactModeExtraExpanded: 0,
+                    children: [
+                      AppMetricTile(
+                        label: l10n.dashboardTotalLotsLabel,
+                        value: 18,
+                        icon: AppIcons.lot,
+                        tone: AppStatusTone.neutral,
+                      ),
+                      AppMetricTile(
+                        label: l10n.stockAvailableGoodLabel,
+                        value: 120,
+                        suffix: l10n.piecesUnit,
+                        icon: AppIcons.successOutline,
+                        tone: AppStatusTone.good,
+                      ),
+                      AppMetricTile(
+                        label: l10n.accountingEarnedLabourLabel,
+                        value: 125000,
+                        isCurrencyPaise: true,
+                        icon: AppIcons.work,
+                        tone: AppStatusTone.info,
+                      ),
+                    ],
+                  ),
+                  const AppGap.sm(),
                   Wrap(
-                    spacing: AppSpacing.sm,
-                    runSpacing: AppSpacing.xs,
+                    spacing: d.sm,
+                    runSpacing: d.xs,
                     children: [
                       AppStatusBadge(
                         label: '${l10n.statusGood}: 120 ${l10n.piecesUnit}',

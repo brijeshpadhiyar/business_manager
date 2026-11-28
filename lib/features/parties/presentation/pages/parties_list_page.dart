@@ -1,5 +1,4 @@
 import 'package:business_manager/core/design_system/app_icons.dart';
-import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
@@ -93,6 +92,7 @@ final class _PartiesListView extends StatelessWidget {
 
           final cubit = context.read<PartiesCubit>();
           final filtered = state.filteredSummaries;
+          final d = context.density;
 
           return ListView(
             children: [
@@ -118,11 +118,11 @@ final class _PartiesListView extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: AppSpacing.md),
+              const AppGap.md(),
               if (canDispatch) ...[
                 Wrap(
-                  spacing: AppSpacing.sm,
-                  runSpacing: AppSpacing.sm,
+                  spacing: d.sm,
+                  runSpacing: d.sm,
                   children: [
                     AppButton(
                       label: l10n.dispatchNewAction,
@@ -134,13 +134,13 @@ final class _PartiesListView extends StatelessWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: AppSpacing.md),
+                const AppGap.md(),
               ],
               AppSearchField(
                 label: l10n.partiesSearchHint,
                 onChanged: cubit.setSearchQuery,
               ),
-              const SizedBox(height: AppSpacing.sm),
+              const AppGap.sm(),
               AppChipGroup<PartyListFilter>(
                 scrollable: true,
                 items: PartyListFilter.values,
@@ -152,7 +152,7 @@ final class _PartiesListView extends StatelessWidget {
                   PartyListFilter.advanceCredit => l10n.partyFilterAdvance,
                 },
               ),
-              const SizedBox(height: AppSpacing.md),
+              const AppGap.md(),
               if (filtered.isEmpty)
                 AppEmptyState(
                   icon: AppIcons.party,
@@ -177,17 +177,19 @@ final class _PartiesListView extends StatelessWidget {
                       content: Row(
                         children: [
                           AppAvatar(name: s.partyName, dimmed: !s.isActive),
-                          const SizedBox(width: AppSpacing.sm),
+                          const AppGap.hSm(),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 AppText(
                                   s.partyName,
-                                  variant: AppTextVariant.bodyLarge,
+                                  variant: d.isCompact
+                                      ? AppTextVariant.bodyMedium
+                                      : AppTextVariant.bodyLarge,
                                   fontWeight: FontWeight.w600,
                                 ),
-                                const SizedBox(height: AppSpacing.xxs),
+                                const AppGap.xxs(),
                                 AppText(
                                   [
                                     _partyTypeLabel(context, s.partyType),
@@ -226,7 +228,7 @@ final class _PartiesListView extends StatelessWidget {
                       ],
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.sm),
+                  const AppGap.sm(),
                 ],
             ],
           );

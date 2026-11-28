@@ -1,8 +1,8 @@
 import 'dart:ui';
 
+import 'package:business_manager/core/design_system/app_breakpoints.dart';
 import 'package:business_manager/core/design_system/app_colors.dart';
-import 'package:business_manager/core/design_system/app_radius.dart';
-import 'package:business_manager/core/design_system/app_sizing.dart';
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/widgets/app_icon_button.dart';
 import 'package:business_manager/core/widgets/app_status_badge.dart';
@@ -92,8 +92,9 @@ final class AppCollapsibleHeader {
   }) {
     final theme = Theme.of(context);
     final tokens = context.surfaceTokens;
+    final d = context.density;
     final topPadding = primary ? MediaQuery.paddingOf(context).top : 0.0;
-    const toolbarHeight = AppSizing.appBarHeight;
+    final toolbarHeight = d.appBarHeight;
     final bottomHeight = bottom?.preferredSize.height ?? 0.0;
     final minExtent = toolbarHeight + bottomHeight + topPadding;
     final maxExtent = effectiveExpandedHeight + topPadding;
@@ -147,7 +148,7 @@ final class AppCollapsibleHeader {
                   ),
                 ),
                 if (subtitle != null && subtitle!.isNotEmpty) ...[
-                  const SizedBox(height: 2),
+                  SizedBox(height: d.xxs),
                   Text(
                     subtitle!,
                     maxLines: 1,
@@ -158,7 +159,7 @@ final class AppCollapsibleHeader {
                   ),
                 ],
                 if (summary != null) ...[
-                  const SizedBox(height: AppSpacing.sm),
+                  SizedBox(height: d.isCompact ? d.xs : d.sm),
                   summary!,
                 ],
               ],
@@ -210,8 +211,8 @@ final class AppCollapsibleHeader {
                         Positioned(
                           top: topPadding,
                           left: leading != null || automaticallyImplyLeading
-                              ? 56
-                              : AppSpacing.lg,
+                              ? (d.isCompact ? 44 : 56)
+                              : d.lg,
                           right: _actionsReserve(),
                           height: toolbarHeight,
                           child: Align(
@@ -240,9 +241,9 @@ final class AppCollapsibleHeader {
                       // Expanded large title + subtitle + summary strip
                       if (expandedOpacity > 0.01)
                         Positioned(
-                          left: AppSpacing.lg,
-                          right: AppSpacing.lg,
-                          bottom: AppSpacing.md + bottomHeight,
+                          left: d.lg,
+                          right: d.lg,
+                          bottom: (d.isCompact ? d.sm : d.md) + bottomHeight,
                           child: IgnorePointer(
                             ignoring: expandedOpacity < 0.2,
                             child: expandedContent,
@@ -286,6 +287,7 @@ final class AppPinnedSliverHeader extends SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     final tokens = context.surfaceTokens;
+    final d = context.density;
     // Lightweight frosted surface (zero stacked BackdropFilter directly beneath
     // AppCollapsibleHeader) so 120Hz scrolling never executes two overlapping
     // full-width Gaussian blur passes per frame.
@@ -301,13 +303,15 @@ final class AppPinnedSliverHeader extends SliverPersistentHeaderDelegate {
       child: Align(
         alignment: Alignment.center,
         child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxWidth: AppSizing.maxContentWidth,
+          constraints: BoxConstraints(
+            maxWidth: AppContentWidth.standard.effectiveMaxWidth(
+              isCompact: d.isCompact,
+            ),
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.lg,
-              vertical: AppSpacing.xs,
+            padding: EdgeInsets.symmetric(
+              horizontal: d.lg,
+              vertical: d.isCompact ? d.xxs : d.xs,
             ),
             child: child,
           ),
@@ -364,21 +368,22 @@ final class AppSummaryStrip extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final tokens = context.surfaceTokens;
+    final d = context.density;
 
     Widget cell(AppSummaryMetric metric) {
       final accent = _accentFor(metric.tone, isDark);
       return DecoratedBox(
         decoration: BoxDecoration(
           color: tokens.glassFill,
-          borderRadius: AppRadius.mdBorder,
+          borderRadius: d.radiusMdBorder,
           border: Border.all(
             color: accent.withValues(alpha: isDark ? 0.36 : 0.24),
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.sm,
-            vertical: 6,
+          padding: EdgeInsets.symmetric(
+            horizontal: d.isCompact ? d.xsm : d.sm,
+            vertical: d.isCompact ? 3 : 6,
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -392,7 +397,7 @@ final class AppSummaryStrip extends StatelessWidget {
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
               ),
-              const SizedBox(height: 1),
+              SizedBox(height: d.isCompact ? 0 : 1),
               // Amounts shrink to fit rather than being cut off.
               FittedBox(
                 fit: BoxFit.scaleDown,
@@ -414,8 +419,8 @@ final class AppSummaryStrip extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (context, constraints) {
-        const gap = AppSpacing.xs;
-        const minCell = 104.0;
+        final gap = d.xs;
+        final minCell = d.isCompact ? 76.0 : 104.0;
         final n = metrics.length;
         final available = constraints.maxWidth;
         final fits =
@@ -424,7 +429,7 @@ final class AppSummaryStrip extends StatelessWidget {
           return Row(
             children: [
               for (var i = 0; i < n; i++) ...[
-                if (i > 0) const SizedBox(width: gap),
+                if (i > 0) SizedBox(width: gap),
                 Expanded(child: cell(metrics[i])),
               ],
             ],
@@ -436,8 +441,11 @@ final class AppSummaryStrip extends StatelessWidget {
           child: Row(
             children: [
               for (var i = 0; i < n; i++) ...[
-                if (i > 0) const SizedBox(width: gap),
-                SizedBox(width: 120, child: cell(metrics[i])),
+                if (i > 0) SizedBox(width: gap),
+                SizedBox(
+                  width: d.isCompact ? 92 : 120,
+                  child: cell(metrics[i]),
+                ),
               ],
             ],
           ),

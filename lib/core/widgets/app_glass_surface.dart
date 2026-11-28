@@ -1,8 +1,7 @@
 import 'package:business_manager/core/design_system/app_colors.dart';
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
-import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_shadows.dart';
-import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Elevation mode for [AppGlassSurface] and [AppCard].
@@ -21,8 +20,8 @@ final class AppGlassSurface extends StatelessWidget {
   const AppGlassSurface({
     super.key,
     required this.child,
-    this.padding = AppSpacing.cardPadding,
-    this.borderRadius = AppRadius.lgBorder,
+    this.padding,
+    this.borderRadius,
     this.blurSigma = 14,
     this.glassStyle = AppGlassStyle.full,
     this.tintColor,
@@ -36,8 +35,8 @@ final class AppGlassSurface extends StatelessWidget {
   });
 
   final Widget child;
-  final EdgeInsetsGeometry padding;
-  final BorderRadius borderRadius;
+  final EdgeInsetsGeometry? padding;
+  final BorderRadius? borderRadius;
   final double blurSigma;
   final AppGlassStyle glassStyle;
   final Color? tintColor;
@@ -51,6 +50,9 @@ final class AppGlassSurface extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final d = context.density;
+    final resolvedPadding = padding ?? d.cardPadding;
+    final resolvedRadius = borderRadius ?? d.radiusLgBorder;
     final tokens = context.surfaceTokens;
     final shadows = AppShadows.of(context);
     // v1.4 soft elevation: surfaces are opaque. `blurSigma` / `backdropKey`
@@ -65,27 +67,27 @@ final class AppGlassSurface extends StatelessWidget {
                   (isFull ? tokens.glassFill : tokens.glassFillStrong))
             : null,
         gradient: gradient,
-        borderRadius: borderRadius,
+        borderRadius: resolvedRadius,
         border: Border.all(color: borderColor ?? tokens.glassBorder),
         boxShadow: elevated ? (isFull ? shadows.md : shadows.sm) : null,
       ),
       child: onTap != null
           ? Material(
               type: MaterialType.transparency,
-              borderRadius: borderRadius,
+              borderRadius: resolvedRadius,
               clipBehavior: Clip.antiAlias,
               child: InkWell(
                 onTap: onTap,
-                borderRadius: borderRadius,
-                child: Padding(padding: padding, child: child),
+                borderRadius: resolvedRadius,
+                child: Padding(padding: resolvedPadding, child: child),
               ),
             )
           // Own transparent Material so ListTile ink/backgrounds paint on top
           // of the opaque surface instead of being hidden behind it.
           : Material(
               type: MaterialType.transparency,
-              borderRadius: borderRadius,
-              child: Padding(padding: padding, child: child),
+              borderRadius: resolvedRadius,
+              child: Padding(padding: resolvedPadding, child: child),
             ),
     );
 

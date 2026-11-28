@@ -1,4 +1,5 @@
 import 'package:business_manager/core/design_system/app_breakpoints.dart';
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Sizes a filter or form control for the current window.
@@ -20,6 +21,9 @@ final class AppAdaptiveField extends StatelessWidget {
     if (sizeClass.isCompact) {
       return SizedBox(width: double.infinity, child: child);
     }
-    return SizedBox(width: maxWidth, child: child);
+    final effectiveMax = context.isCompactDensity
+        ? (maxWidth * 0.82).clamp(150.0, maxWidth)
+        : maxWidth;
+    return SizedBox(width: effectiveMax, child: child);
   }
 }

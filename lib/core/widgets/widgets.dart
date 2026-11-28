@@ -17,6 +17,7 @@
 library;
 
 export '../design_system/app_breakpoints.dart';
+export '../design_system/app_density.dart';
 export 'app_action_row.dart';
 export 'app_adaptive_field.dart';
 export 'app_animated_number.dart';
@@ -40,6 +41,7 @@ export 'app_error_view.dart';
 export 'app_feedback.dart';
 export 'app_form_dirty_tracker.dart';
 export 'app_form_section.dart';
+export 'app_gap.dart';
 export 'app_glass_backdrop.dart';
 export 'app_glass_surface.dart';
 export 'app_heading.dart';

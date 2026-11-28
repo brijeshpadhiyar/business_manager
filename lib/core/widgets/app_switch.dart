@@ -1,4 +1,4 @@
-import 'package:business_manager/core/design_system/app_radius.dart';
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Compact accessible Material 3 switch tile.
@@ -21,6 +21,7 @@ final class AppSwitch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
+    final d = context.density;
     return SwitchListTile(
       value: value,
       onChanged: enabled ? onChanged : null,
@@ -29,8 +30,11 @@ final class AppSwitch extends StatelessWidget {
           ? Text(subtitle!, style: textTheme.bodySmall)
           : null,
       dense: true,
+      visualDensity: d.isCompact
+          ? VisualDensity.compact
+          : VisualDensity.standard,
       contentPadding: EdgeInsets.zero,
-      shape: const RoundedRectangleBorder(borderRadius: AppRadius.mdBorder),
+      shape: RoundedRectangleBorder(borderRadius: d.radiusMdBorder),
     );
   }
 }

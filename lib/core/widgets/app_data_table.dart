@@ -1,8 +1,7 @@
 import 'dart:math' as math;
 
 import 'package:business_manager/core/design_system/app_breakpoints.dart';
-import 'package:business_manager/core/design_system/app_sizing.dart';
-import 'package:business_manager/core/design_system/app_spacing.dart';
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:business_manager/core/widgets/app_card.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:material_ui/material_ui.dart';
@@ -51,8 +50,8 @@ final class AppDataTable<T> extends StatefulWidget {
     this.onSort,
     this.sortValueBuilder,
     this.enablePagination = false,
-    this.initialPageSize = 25,
-    this.pageSizeOptions = const [10, 25, 50],
+    this.initialPageSize,
+    this.pageSizeOptions,
   });
 
   final List<AppDataColumn> columns;
@@ -71,8 +70,8 @@ final class AppDataTable<T> extends StatefulWidget {
   /// tap-to-sort headers without extra code.
   final Comparable<Object>? Function(T item, int columnIndex)? sortValueBuilder;
   final bool enablePagination;
-  final int initialPageSize;
-  final List<int> pageSizeOptions;
+  final int? initialPageSize;
+  final List<int>? pageSizeOptions;
 
   /// Builds a sliver-native responsive table driven by available cross-axis
   /// layout constraints (`SliverLayoutBuilder`):
@@ -91,16 +90,17 @@ final class AppDataTable<T> extends StatefulWidget {
     void Function(int columnIndex, bool ascending)? onSort,
     Comparable<Object>? Function(T item, int columnIndex)? sortValueBuilder,
     bool enablePagination = false,
-    int initialPageSize = 25,
-    List<int> pageSizeOptions = const [10, 25, 50],
+    int? initialPageSize,
+    List<int>? pageSizeOptions,
   }) {
+    final d = context.density;
     return SliverLayoutBuilder(
       builder: (ctx, constraints) {
         final sizeClass = AppBreakpoints.fromWidth(constraints.crossAxisExtent);
         if (sizeClass.isCompact) {
           return SliverList.separated(
             itemCount: items.length,
-            separatorBuilder: (_, _) => const SizedBox(height: AppSpacing.sm),
+            separatorBuilder: (_, _) => SizedBox(height: d.sm),
             itemBuilder: (itemCtx, i) {
               final item = items[i];
               return AppCard.listItem(
@@ -139,11 +139,22 @@ final class AppDataTable<T> extends StatefulWidget {
 
 final class _AppDataTableState<T> extends State<AppDataTable<T>> {
   int _pageIndex = 0;
-  late int _pageSize;
+  int? _userSelectedPageSize;
+  bool? _lastCompactDensity;
 
   // Built-in sort state (used only with `sortValueBuilder` and no `onSort`).
   int? _sortIndex;
   bool _sortAscending = true;
+
+  List<int> _effectivePageSizeOptions(AppDensityTokens d) =>
+      widget.pageSizeOptions ?? d.tablePageSizeOptions;
+
+  int _effectivePageSize(AppDensityTokens d) {
+    final options = _effectivePageSizeOptions(d);
+    final chosen =
+        _userSelectedPageSize ?? widget.initialPageSize ?? d.tableDefaultPageSize;
+    return options.contains(chosen) ? chosen : options.first;
+  }
 
   bool get _selfSorting =>
       widget.onSort == null && widget.sortValueBuilder != null;
@@ -185,32 +196,38 @@ final class _AppDataTableState<T> extends State<AppDataTable<T>> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    _pageSize = widget.initialPageSize;
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final isCompact = context.isCompactDensity;
+    if (_lastCompactDensity != null && _lastCompactDensity != isCompact) {
+      _userSelectedPageSize = null;
+      _pageIndex = 0;
+    }
+    _lastCompactDensity = isCompact;
   }
 
   @override
   void didUpdateWidget(covariant AppDataTable<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.items.length != widget.items.length) {
-      final maxPage = _totalPages - 1;
+      final d = context.density;
+      final maxPage = _totalPages(_effectivePageSize(d)) - 1;
       if (_pageIndex > maxPage) {
         _pageIndex = maxPage < 0 ? 0 : maxPage;
       }
     }
   }
 
-  int get _totalPages =>
-      widget.items.isEmpty ? 1 : ((widget.items.length - 1) ~/ _pageSize) + 1;
+  int _totalPages(int pageSize) =>
+      widget.items.isEmpty ? 1 : ((widget.items.length - 1) ~/ pageSize) + 1;
 
-  List<T> get _visibleItems {
+  List<T> _visibleItems(int pageSize) {
     final items = _sortedItems;
-    if (!widget.enablePagination || items.length <= _pageSize) {
+    if (!widget.enablePagination || items.length <= pageSize) {
       return items;
     }
-    final start = (_pageIndex * _pageSize).clamp(0, items.length);
-    final end = math.min(start + _pageSize, items.length);
+    final start = (_pageIndex * pageSize).clamp(0, items.length);
+    final end = math.min(start + pageSize, items.length);
     return items.sublist(start, end);
   }
 
@@ -223,10 +240,13 @@ final class _AppDataTableState<T> extends State<AppDataTable<T>> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    final pageItems = _visibleItems;
+    final d = context.density;
+    final pageSize = _effectivePageSize(d);
+    final pageSizeOptions = _effectivePageSizeOptions(d);
+    final pageItems = _visibleItems(pageSize);
     final showPagination =
         widget.enablePagination &&
-        widget.items.length > widget.pageSizeOptions.first;
+        widget.items.length > pageSizeOptions.first;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -243,12 +263,11 @@ final class _AppDataTableState<T> extends State<AppDataTable<T>> {
                       : null,
                   child: widget.mobileCardBuilder(context, pageItems[i]),
                 ),
-                if (i < pageItems.length - 1)
-                  const SizedBox(height: AppSpacing.sm),
+                if (i < pageItems.length - 1) SizedBox(height: d.sm),
               ],
               if (showPagination) ...[
-                const SizedBox(height: AppSpacing.sm),
-                _buildPaginationBar(context),
+                SizedBox(height: d.sm),
+                _buildPaginationBar(context, d, pageSize, pageSizeOptions),
               ],
             ],
           );
@@ -283,12 +302,13 @@ final class _AppDataTableState<T> extends State<AppDataTable<T>> {
                   ),
                   child: DataTable(
                     showCheckboxColumn: false,
-                    headingRowHeight: 46,
-                    dataRowMinHeight: 48,
-                    dataRowMaxHeight: 62,
+                    headingRowHeight: d.tableHeadingHeight,
+                    dataRowMinHeight: d.tableRowMinHeight,
+                    dataRowMaxHeight: d.tableRowMaxHeight,
+                    horizontalMargin: d.tableHorizontalMargin,
                     columnSpacing: sizeClass.isExpanded
-                        ? AppSpacing.xl
-                        : AppSpacing.md,
+                        ? d.tableColumnSpacingExpanded
+                        : d.tableColumnSpacingMedium,
                     sortColumnIndex:
                         mappedSortIndex != null && mappedSortIndex >= 0
                         ? mappedSortIndex
@@ -299,10 +319,14 @@ final class _AppDataTableState<T> extends State<AppDataTable<T>> {
                         alpha: 0.55,
                       ),
                     ),
-                    headingTextStyle: theme.textTheme.labelLarge?.copyWith(
-                      color: colorScheme.onSurface,
-                      fontWeight: FontWeight.w700,
-                    ),
+                    headingTextStyle:
+                        (d.isCompact
+                                ? theme.textTheme.labelMedium
+                                : theme.textTheme.labelLarge)
+                            ?.copyWith(
+                              color: colorScheme.onSurface,
+                              fontWeight: FontWeight.w700,
+                            ),
                     columns: [
                       for (final origIdx in visibleIndices)
                         DataColumn(
@@ -343,11 +367,16 @@ final class _AppDataTableState<T> extends State<AppDataTable<T>> {
               if (showPagination) ...[
                 const Divider(height: 1),
                 Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.md,
-                    vertical: AppSpacing.xs,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: d.md,
+                    vertical: d.xs,
                   ),
-                  child: _buildPaginationBar(context),
+                  child: _buildPaginationBar(
+                    context,
+                    d,
+                    pageSize,
+                    pageSizeOptions,
+                  ),
                 ),
               ],
             ],
@@ -357,17 +386,23 @@ final class _AppDataTableState<T> extends State<AppDataTable<T>> {
     );
   }
 
-  Widget _buildPaginationBar(BuildContext context) {
+  Widget _buildPaginationBar(
+    BuildContext context,
+    AppDensityTokens d,
+    int pageSize,
+    List<int> pageSizeOptions,
+  ) {
     final theme = Theme.of(context);
     final total = widget.items.length;
-    final start = total == 0 ? 0 : (_pageIndex * _pageSize) + 1;
-    final end = math.min((_pageIndex + 1) * _pageSize, total);
+    final totalPages = _totalPages(pageSize);
+    final start = total == 0 ? 0 : (_pageIndex * pageSize) + 1;
+    final end = math.min((_pageIndex + 1) * pageSize, total);
 
     return Wrap(
       alignment: WrapAlignment.spaceBetween,
       crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: AppSpacing.md,
-      runSpacing: AppSpacing.xs,
+      spacing: d.md,
+      runSpacing: d.xs,
       children: [
         Text(
           '$start–$end / $total',
@@ -379,44 +414,47 @@ final class _AppDataTableState<T> extends State<AppDataTable<T>> {
           mainAxisSize: MainAxisSize.min,
           children: [
             DropdownButton<int>(
-              value: widget.pageSizeOptions.contains(_pageSize)
-                  ? _pageSize
-                  : widget.pageSizeOptions.first,
+              isDense: d.isCompact,
+              value: pageSize,
               underline: const SizedBox.shrink(),
-              items: widget.pageSizeOptions
+              items: pageSizeOptions
                   .map(
                     (size) => DropdownMenuItem<int>(
                       value: size,
-                      child: Text(context.l10n.uxPerPage(size)),
+                      child: Text(
+                        context.l10n.uxPerPage(size),
+                        style: d.isCompact ? theme.textTheme.bodySmall : null,
+                      ),
                     ),
                   )
                   .toList(),
               onChanged: (next) {
                 if (next == null) return;
                 setState(() {
-                  _pageSize = next;
+                  _userSelectedPageSize = next;
                   _pageIndex = 0;
                 });
               },
             ),
-            const SizedBox(width: AppSpacing.sm),
+            SizedBox(width: d.sm),
             Semantics(
               button: true,
               label: MaterialLocalizations.of(context).previousPageTooltip,
               child: IconButton(
                 tooltip: MaterialLocalizations.of(context).previousPageTooltip,
-                constraints: const BoxConstraints(
-                  minWidth: AppSizing.touchTargetMin,
-                  minHeight: AppSizing.touchTargetMin,
+                padding: d.isCompact ? EdgeInsets.zero : null,
+                constraints: BoxConstraints(
+                  minWidth: d.touchTargetMin,
+                  minHeight: d.touchTargetMin,
                 ),
-                icon: const Icon(AppIcons.chevronLeft),
+                icon: Icon(AppIcons.chevronLeft, size: d.iconMd),
                 onPressed: _pageIndex > 0
                     ? () => setState(() => _pageIndex--)
                     : null,
               ),
             ),
             Text(
-              '${_pageIndex + 1} / $_totalPages',
+              '${_pageIndex + 1} / $totalPages',
               style: theme.textTheme.labelMedium,
             ),
             Semantics(
@@ -424,12 +462,13 @@ final class _AppDataTableState<T> extends State<AppDataTable<T>> {
               label: MaterialLocalizations.of(context).nextPageTooltip,
               child: IconButton(
                 tooltip: MaterialLocalizations.of(context).nextPageTooltip,
-                constraints: const BoxConstraints(
-                  minWidth: AppSizing.touchTargetMin,
-                  minHeight: AppSizing.touchTargetMin,
+                padding: d.isCompact ? EdgeInsets.zero : null,
+                constraints: BoxConstraints(
+                  minWidth: d.touchTargetMin,
+                  minHeight: d.touchTargetMin,
                 ),
-                icon: const Icon(AppIcons.chevronRight),
-                onPressed: _pageIndex + 1 < _totalPages
+                icon: Icon(AppIcons.chevronRight, size: d.iconMd),
+                onPressed: _pageIndex + 1 < totalPages
                     ? () => setState(() => _pageIndex++)
                     : null,
               ),

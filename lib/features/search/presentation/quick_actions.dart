@@ -1,7 +1,7 @@
-import 'package:business_manager/core/design_system/app_radius.dart';
-import 'package:business_manager/core/design_system/app_spacing.dart';
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
+import 'package:business_manager/core/widgets/app_gap.dart';
 import 'package:business_manager/features/guidance/domain/entities/guide_entities.dart';
 import 'package:business_manager/features/guidance/presentation/registry/guide_target_registry.dart';
 import 'package:go_router/go_router.dart';
@@ -106,6 +106,7 @@ final class QuickActionsPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     final actions = buildQuickActions(context);
     final theme = Theme.of(context);
+    final d = context.density;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -116,7 +117,7 @@ final class QuickActionsPanel extends StatelessWidget {
               fontWeight: FontWeight.w700,
             ),
           ),
-          const SizedBox(height: AppSpacing.sm),
+          const AppGap.sm(),
         ],
         LayoutBuilder(
           builder: (context, constraints) {
@@ -124,9 +125,9 @@ final class QuickActionsPanel extends StatelessWidget {
             final columns = width >= 1024
                 ? actions.length
                 : width >= 600
-                ? 3
-                : 2;
-            const gap = AppSpacing.sm;
+                ? (d.isCompact ? 4 : 3)
+                : (d.isCompact ? 3 : 2);
+            final gap = d.sm;
             final tileWidth = (width - gap * (columns - 1)) / columns;
             return Wrap(
               spacing: gap,
@@ -164,13 +165,14 @@ final class _QuickActionTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final d = context.density;
     return Semantics(
       button: true,
       label: action.label,
       excludeSemantics: true,
       child: Material(
         color: scheme.secondaryContainer.withValues(alpha: 0.55),
-        shape: const RoundedRectangleBorder(borderRadius: AppRadius.lgBorder),
+        shape: RoundedRectangleBorder(borderRadius: d.radiusLgBorder),
         clipBehavior: Clip.antiAlias,
         child: InkWell(
           onTap: () async {
@@ -178,25 +180,33 @@ final class _QuickActionTile extends StatelessWidget {
             onReturn?.call();
           },
           child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 72),
+            constraints: BoxConstraints(minHeight: d.quickActionMinHeight),
             child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.md,
-                vertical: AppSpacing.md,
+              padding: EdgeInsets.symmetric(
+                horizontal: d.isCompact ? d.sm : d.md,
+                vertical: d.isCompact ? d.xs : d.md,
               ),
               child: Row(
                 children: [
-                  Icon(action.icon, color: scheme.onSecondaryContainer),
-                  const SizedBox(width: AppSpacing.sm),
+                  Icon(
+                    action.icon,
+                    size: d.iconMd,
+                    color: scheme.onSecondaryContainer,
+                  ),
+                  SizedBox(width: d.isCompact ? d.xs : d.sm),
                   Expanded(
                     child: Text(
                       action.label,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: scheme.onSecondaryContainer,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style:
+                          (d.isCompact
+                                  ? Theme.of(context).textTheme.labelMedium
+                                  : Theme.of(context).textTheme.labelLarge)
+                              ?.copyWith(
+                                color: scheme.onSecondaryContainer,
+                                fontWeight: FontWeight.w600,
+                              ),
                     ),
                   ),
                 ],

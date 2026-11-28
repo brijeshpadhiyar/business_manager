@@ -2,9 +2,6 @@ import 'package:business_manager/core/config/app_config.dart';
 import 'package:business_manager/core/config/app_identity.dart';
 import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
-import 'package:business_manager/core/design_system/app_radius.dart';
-import 'package:business_manager/core/design_system/app_sizing.dart';
-import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/di/injection.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/router/route_paths.dart';
@@ -103,11 +100,16 @@ final class _DashboardViewState extends State<_DashboardView> {
     final l10n = context.l10n;
     final localeCode = Localizations.localeOf(context).languageCode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final d = context.density;
 
     return Align(
       alignment: Alignment.topCenter,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: AppSizing.wideContentWidth),
+        constraints: BoxConstraints(
+          maxWidth: AppContentWidth.wide.effectiveMaxWidth(
+            isCompact: d.isCompact,
+          ),
+        ),
         child: BlocBuilder<DashboardCubit, DashboardState>(
           buildWhen: (prev, curr) =>
               prev.status != curr.status ||
@@ -120,7 +122,7 @@ final class _DashboardViewState extends State<_DashboardView> {
             return RefreshIndicator(
               onRefresh: () => context.read<DashboardCubit>().loadDashboard(),
               child: ListView(
-                padding: AppSpacing.screenAll,
+                padding: d.screenAll,
                 children: [
                   if (state.status == DashboardStatus.error) ...[
                     AppCard(
@@ -131,9 +133,9 @@ final class _DashboardViewState extends State<_DashboardView> {
                             context.read<DashboardCubit>().loadDashboard(),
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.md),
+                    const AppGap.md(),
                   ],
-                  // 1. Branded Hero Banner (full glass blur preserved)
+                  // 1. Branded Hero Banner (compact slim banner in compact mode)
                   AppMotionEntrance(
                     index: 0,
                     child: AppCard(
@@ -143,32 +145,33 @@ final class _DashboardViewState extends State<_DashboardView> {
                           ? AppColors.heroGradientDark
                           : AppColors.heroGradientLight,
                       borderColor: AppColors.onHero.withValues(alpha: 0.16),
-                      borderRadius: AppRadius.xlBorder,
-                      padding: const EdgeInsets.all(AppSpacing.lg),
+                      borderRadius: d.radiusXlBorder,
+                      padding: EdgeInsets.all(d.isCompact ? d.md : d.lg),
                       child: Row(
                         children: [
                           Container(
-                            padding: const EdgeInsets.all(AppSpacing.sm),
+                            padding: EdgeInsets.all(d.isCompact ? d.xs : d.sm),
                             decoration: BoxDecoration(
                               color: AppColors.onHero.withValues(alpha: 0.14),
-                              borderRadius: AppRadius.lgBorder,
+                              borderRadius: d.radiusLgBorder,
                               border: Border.all(
                                 color: AppColors.onHero.withValues(alpha: 0.25),
                               ),
                             ),
                             child: Image.asset(
                               AppIdentity.symbolPngAsset,
-                              width: 40,
-                              height: 40,
+                              width: d.isCompact ? 26 : 40,
+                              height: d.isCompact ? 26 : 40,
                               cacheWidth: 120,
                               cacheHeight: 120,
-                              errorBuilder: (_, _, _) => const Icon(
+                              errorBuilder: (_, _, _) => Icon(
                                 AppIcons.brand,
+                                size: d.iconMd,
                                 color: AppColors.onHero,
                               ),
                             ),
                           ),
-                          const SizedBox(width: AppSpacing.md),
+                          const AppGap.hMd(),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -179,22 +182,27 @@ final class _DashboardViewState extends State<_DashboardView> {
                                       : l10n.appTitle,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .headlineSmall
-                                      ?.copyWith(
-                                        color: AppColors.onHero,
-                                        fontWeight: FontWeight.w700,
-                                      ),
+                                  style:
+                                      (d.isCompact
+                                              ? Theme.of(
+                                                  context,
+                                                ).textTheme.titleMedium
+                                              : Theme.of(
+                                                  context,
+                                                ).textTheme.headlineSmall)
+                                          ?.copyWith(
+                                            color: AppColors.onHero,
+                                            fontWeight: FontWeight.w700,
+                                          ),
                                 ),
-                                const SizedBox(height: AppSpacing.xxs),
+                                if (!d.isCompact) const AppGap.xxs(),
                                 Text(
                                   snap != null
                                       ? (localeCode == 'gu'
                                             ? snap.businessNameGu
                                             : snap.businessNameEn)
                                       : l10n.appTagline,
-                                  maxLines: 2,
+                                  maxLines: d.isCompact ? 1 : 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: Theme.of(context).textTheme.bodySmall
                                       ?.copyWith(color: AppColors.onHeroMuted),
@@ -228,7 +236,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.lg),
+                  const AppGap.lg(),
 
                   if (snap != null) FirstTimeWelcomeCard(snapshot: snap),
 
@@ -242,7 +250,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                           l10n.dashboardQuickActions,
                           level: AppHeadingLevel.h3,
                         ),
-                        const SizedBox(height: AppSpacing.sm),
+                        const AppGap.sm(),
                         // Everyday tasks as large one-tap tiles.
                         QuickActionsPanel(
                           showTitle: false,
@@ -252,14 +260,14 @@ final class _DashboardViewState extends State<_DashboardView> {
                             }
                           },
                         ),
-                        const SizedBox(height: AppSpacing.md),
+                        const AppGap.md(),
                         // Other screens as lighter secondary links.
                         AppCollapsibleFilters(
                           label: l10n.uxMoreScreens,
                           icon: AppIcons.moreScreens,
                           child: Wrap(
-                            spacing: AppSpacing.sm,
-                            runSpacing: AppSpacing.sm,
+                            spacing: d.sm,
+                            runSpacing: d.sm,
                             children: [
                               AppButton(
                                 label: l10n.dashboardDailySummaryAction,
@@ -327,7 +335,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.lg),
+                  const AppGap.lg(),
 
                   if (snap != null)
                     GuideTarget(
@@ -359,87 +367,68 @@ final class _DashboardViewState extends State<_DashboardView> {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: AppSpacing.xs),
-                            LayoutBuilder(
-                              builder: (context, constraints) {
-                                final isWide = constraints.maxWidth >= 700;
-                                final tileW = isWide
-                                    ? (constraints.maxWidth -
-                                              AppSpacing.sm * 3) /
-                                          4
-                                    : (constraints.maxWidth - AppSpacing.sm) /
-                                          2;
-                                return Wrap(
-                                  spacing: AppSpacing.sm,
-                                  runSpacing: AppSpacing.sm,
-                                  children: [
-                                    SizedBox(
-                                      width: tileW,
-                                      child: AppMetricTile(
-                                        label: l10n.dashboardTodayIssuedLabel,
-                                        value: snap.todayIssuedQty,
-                                        suffix: l10n.piecesUnit,
-                                        icon: AppIcons.stockIssue,
-                                        tone: AppStatusTone.info,
-                                        onTap: () => _pushAndRefresh(
-                                          context,
-                                          RoutePaths.dailySummary,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: tileW,
-                                      child: AppMetricTile(
-                                        backdropKey: null,
-                                        label: l10n.dashboardTodayReturnedLabel,
-                                        value: snap.todayReceivedGoodQty,
-                                        suffix: l10n.piecesUnit,
-                                        icon: AppIcons.successOutline,
-                                        tone: AppStatusTone.good,
-                                        onTap: () => _pushAndRefresh(
-                                          context,
-                                          RoutePaths.dailySummary,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: tileW,
-                                      child: AppMetricTile(
-                                        backdropKey: null,
-                                        label: l10n.dashboardTodayLabourLabel,
-                                        value: snap.todayLabourEarnedPaise,
-                                        isCurrencyPaise: true,
-                                        icon: AppIcons.work,
-                                        tone: AppStatusTone.good,
-                                        onTap: () => _pushAndRefresh(
-                                          context,
-                                          RoutePaths.dailySummary,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: tileW,
-                                      child: AppMetricTile(
-                                        backdropKey: null,
-                                        label: l10n.dashboardTodayPaymentsLabel,
-                                        value: snap.todayPaymentsPaise,
-                                        isCurrencyPaise: true,
-                                        icon: AppIcons.payment,
-                                        tone: AppStatusTone.neutral,
-                                        onTap: () => _pushAndRefresh(
-                                          context,
-                                          RoutePaths.accounting,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
+                            const AppGap.xs(),
+                            AppResponsiveGrid(
+                              compactColumns: 2,
+                              mediumColumns: 4,
+                              expandedColumns: 4,
+                              compactModeExtraCompact: 1,
+                              compactModeExtraMedium: 0,
+                              compactModeExtraExpanded: 0,
+                              children: [
+                                AppMetricTile(
+                                  label: l10n.dashboardTodayIssuedLabel,
+                                  value: snap.todayIssuedQty,
+                                  suffix: l10n.piecesUnit,
+                                  icon: AppIcons.stockIssue,
+                                  tone: AppStatusTone.info,
+                                  onTap: () => _pushAndRefresh(
+                                    context,
+                                    RoutePaths.dailySummary,
+                                  ),
+                                ),
+                                AppMetricTile(
+                                  backdropKey: null,
+                                  label: l10n.dashboardTodayReturnedLabel,
+                                  value: snap.todayReceivedGoodQty,
+                                  suffix: l10n.piecesUnit,
+                                  icon: AppIcons.successOutline,
+                                  tone: AppStatusTone.good,
+                                  onTap: () => _pushAndRefresh(
+                                    context,
+                                    RoutePaths.dailySummary,
+                                  ),
+                                ),
+                                AppMetricTile(
+                                  backdropKey: null,
+                                  label: l10n.dashboardTodayLabourLabel,
+                                  value: snap.todayLabourEarnedPaise,
+                                  isCurrencyPaise: true,
+                                  icon: AppIcons.work,
+                                  tone: AppStatusTone.good,
+                                  onTap: () => _pushAndRefresh(
+                                    context,
+                                    RoutePaths.dailySummary,
+                                  ),
+                                ),
+                                AppMetricTile(
+                                  backdropKey: null,
+                                  label: l10n.dashboardTodayPaymentsLabel,
+                                  value: snap.todayPaymentsPaise,
+                                  isCurrencyPaise: true,
+                                  icon: AppIcons.payment,
+                                  tone: AppStatusTone.neutral,
+                                  onTap: () => _pushAndRefresh(
+                                    context,
+                                    RoutePaths.accounting,
+                                  ),
+                                ),
+                              ],
                             ),
                             if (snap.todayDamagedQty +
                                     snap.todayLostShortageQty >
                                 0) ...[
-                              const SizedBox(height: AppSpacing.xs),
+                              const AppGap.xs(),
                               AppStatusBadge(
                                 label:
                                     '${l10n.dashboardTodayDamagedLostAlert}: ${snap.todayDamagedQty + snap.todayLostShortageQty} ${l10n.piecesUnit}',
@@ -451,7 +440,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.lg),
+                    const AppGap.lg(),
 
                     // 2B+. This week's issued vs good-returned trend.
                     if (state.weekTrend.any(
@@ -462,7 +451,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                         onPushAndRefresh: (path) =>
                             _pushAndRefresh(context, path),
                       ),
-                      const SizedBox(height: AppSpacing.lg),
+                      const AppGap.lg(),
                     ],
 
                     // 2C. Important & Oldest Pending Work
@@ -472,7 +461,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                         onPushAndRefresh: (path) =>
                             _pushAndRefresh(context, path),
                       ),
-                      const SizedBox(height: AppSpacing.lg),
+                      const AppGap.lg(),
                     ],
                   ],
 
@@ -484,7 +473,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                     onPushAndRefresh: (path) => _pushAndRefresh(context, path),
                   ),
                   if (snap != null) ...[
-                    const SizedBox(height: AppSpacing.lg),
+                    const AppGap.lg(),
 
                     // 4. Live Financial & Worker Accounting Summary
                     DashboardFinanceHealthSection(
@@ -492,7 +481,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                       onPushAndRefresh: (path) =>
                           _pushAndRefresh(context, path),
                     ),
-                    const SizedBox(height: AppSpacing.lg),
+                    const AppGap.lg(),
 
                     // 5. Process-wise Pending Breakdown
                     DashboardProcessPendingSection(
@@ -500,7 +489,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                       onPushAndRefresh: (path) =>
                           _pushAndRefresh(context, path),
                     ),
-                    const SizedBox(height: AppSpacing.lg),
+                    const AppGap.lg(),
 
                     // 6. Recent Audit Activity (localized labels, clean mobile wrap)
                     DashboardRecentActivitySection(
@@ -508,7 +497,7 @@ final class _DashboardViewState extends State<_DashboardView> {
                       localeCode: localeCode,
                     ),
                   ],
-                  const SizedBox(height: AppSpacing.lg),
+                  const AppGap.lg(),
                 ],
               ),
             );

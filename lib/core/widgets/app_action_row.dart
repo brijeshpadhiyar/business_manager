@@ -1,4 +1,4 @@
-import 'package:business_manager/core/design_system/app_spacing.dart';
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// A heading or text with one or more buttons beside it, that never
@@ -25,11 +25,12 @@ final class AppActionRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (actions.isEmpty) return content;
+    final d = context.density;
     final actionWrap = Wrap(
       alignment: WrapAlignment.end,
       crossAxisAlignment: WrapCrossAlignment.center,
-      spacing: AppSpacing.xs,
-      runSpacing: AppSpacing.xs,
+      spacing: d.xs,
+      runSpacing: d.xs,
       children: actions,
     );
     return LayoutBuilder(
@@ -40,7 +41,7 @@ final class AppActionRow extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               content,
-              const SizedBox(height: AppSpacing.xs),
+              SizedBox(height: d.xs),
               Align(
                 alignment: AlignmentDirectional.centerEnd,
                 child: actionWrap,
@@ -52,7 +53,7 @@ final class AppActionRow extends StatelessWidget {
           crossAxisAlignment: crossAxisAlignment,
           children: [
             Expanded(child: content),
-            const SizedBox(width: AppSpacing.sm),
+            SizedBox(width: d.sm),
             ConstrainedBox(
               constraints: BoxConstraints(maxWidth: constraints.maxWidth / 2),
               child: actionWrap,

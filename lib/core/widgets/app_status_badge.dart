@@ -1,7 +1,6 @@
 import 'package:business_manager/core/design_system/app_colors.dart';
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:business_manager/core/design_system/app_radius.dart';
-import 'package:business_manager/core/design_system/app_sizing.dart';
-import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/design_system/app_typography.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -28,6 +27,7 @@ final class AppStatusBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final semantic = context.semanticColors;
     final colorScheme = Theme.of(context).colorScheme;
+    final d = context.density;
     final (Color fg, Color bg) = switch (tone) {
       AppStatusTone.good => (semantic.goodStock, semantic.goodStockContainer),
       AppStatusTone.pending => (semantic.pending, semantic.pendingContainer),
@@ -42,17 +42,22 @@ final class AppStatusBadge extends StatelessWidget {
       ),
     };
 
+    final baseText = d.isCompact
+        ? Theme.of(context).textTheme.labelSmall
+        : Theme.of(context).textTheme.labelMedium;
     final labelStyle = AppTypography.tabular(
-      (Theme.of(context).textTheme.labelMedium ?? const TextStyle(fontSize: 12))
-          .copyWith(color: fg, fontWeight: FontWeight.w600),
+      (baseText ?? TextStyle(fontSize: d.isCompact ? 10.5 : 12)).copyWith(
+        color: fg,
+        fontWeight: FontWeight.w600,
+      ),
     );
 
     return Semantics(
       label: label,
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.sm + 2,
-          vertical: AppSpacing.xs + 1,
+        padding: EdgeInsets.symmetric(
+          horizontal: d.isCompact ? d.xsm + 3 : d.sm + 2,
+          vertical: d.isCompact ? d.xxs + 1 : d.xs + 1,
         ),
         decoration: BoxDecoration(
           color: bg,
@@ -63,8 +68,8 @@ final class AppStatusBadge extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (icon != null) ...[
-              Icon(icon, size: AppSizing.iconSm - 2, color: fg),
-              const SizedBox(width: AppSpacing.xs),
+              Icon(icon, size: d.iconSm - 2, color: fg),
+              SizedBox(width: d.xs),
             ],
             Flexible(
               child: Text(

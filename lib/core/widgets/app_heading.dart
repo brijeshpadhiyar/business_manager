@@ -1,4 +1,4 @@
-import 'package:business_manager/core/design_system/app_spacing.dart';
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:material_ui/material_ui.dart';
 
 enum AppHeadingLevel { h1, h2, h3 }
@@ -23,6 +23,7 @@ final class AppHeading extends StatelessWidget {
   Widget build(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
     final colorScheme = Theme.of(context).colorScheme;
+    final d = context.density;
     final style = switch (level) {
       AppHeadingLevel.h1 => textTheme.headlineSmall,
       AppHeadingLevel.h2 => textTheme.titleLarge,
@@ -35,7 +36,7 @@ final class AppHeading extends StatelessWidget {
       children: [
         Text(text, style: style, softWrap: true),
         if (subtitle != null) ...[
-          const SizedBox(height: AppSpacing.xs),
+          SizedBox(height: d.xs),
           Text(
             subtitle!,
             style: textTheme.bodySmall?.copyWith(
@@ -61,7 +62,7 @@ final class AppHeading extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 titleBlock,
-                const SizedBox(height: AppSpacing.sm),
+                SizedBox(height: d.sm),
                 trailing!,
               ],
             );
@@ -70,7 +71,7 @@ final class AppHeading extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(child: titleBlock),
-              const SizedBox(width: AppSpacing.sm),
+              SizedBox(width: d.sm),
               Flexible(flex: 0, child: trailing!),
             ],
           );

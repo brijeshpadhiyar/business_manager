@@ -358,82 +358,61 @@ final class _DailySummaryView extends StatelessWidget {
 
   Widget _buildKpiGrid(BuildContext context, DailyWorkshopSummary summary) {
     final l10n = context.l10n;
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final cols = constraints.maxWidth >= 700 ? 3 : 2;
-        final tileW =
-            (constraints.maxWidth - AppSpacing.sm * (cols - 1)) / cols;
-        return Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: [
-            SizedBox(
-              width: tileW,
-              child: AppMetricTile(
-                label: l10n.stockIssuedLabel,
-                value: summary.issuedQty,
-                suffix: l10n.piecesUnit,
-                icon: AppIcons.stockIssue,
-                tone: AppStatusTone.info,
-              ),
-            ),
-            SizedBox(
-              width: tileW,
-              child: AppMetricTile(
-                label: l10n.stockGoodReturnedLabel,
-                value: summary.goodReturnedQty,
-                suffix: l10n.piecesUnit,
-                icon: AppIcons.successOutline,
-                tone: AppStatusTone.good,
-              ),
-            ),
-            SizedBox(
-              width: tileW,
-              child: AppMetricTile(
-                label: l10n.dailySummaryDamagedLostLabel,
-                value: summary.damagedQty + summary.lostAndShortageQty,
-                suffix: l10n.piecesUnit,
-                icon: AppIcons.damaged,
-                tone: (summary.damagedQty + summary.lostAndShortageQty) > 0
-                    ? AppStatusTone.damaged
-                    : AppStatusTone.neutral,
-              ),
-            ),
-            SizedBox(
-              width: tileW,
-              child: AppMetricTile(
-                label: l10n.accountingEarnedLabourLabel,
-                value: summary.labourEarnedPaise,
-                isCurrencyPaise: true,
-                icon: AppIcons.work,
-                tone: AppStatusTone.good,
-              ),
-            ),
-            SizedBox(
-              width: tileW,
-              child: AppMetricTile(
-                label: l10n.accountingTabPayments,
-                value: summary.netPaymentsPaise,
-                isCurrencyPaise: true,
-                icon: AppIcons.payment,
-                tone: AppStatusTone.neutral,
-              ),
-            ),
-            SizedBox(
-              width: tileW,
-              child: AppMetricTile(
-                label: l10n.stockPendingWorkerLabel,
-                value: summary.currentTotalPendingQty,
-                suffix: l10n.piecesUnit,
-                icon: AppIcons.pending,
-                tone: summary.currentTotalPendingQty > 0
-                    ? AppStatusTone.pending
-                    : AppStatusTone.good,
-              ),
-            ),
-          ],
-        );
-      },
+    return AppResponsiveGrid(
+      compactColumns: 2,
+      mediumColumns: 3,
+      expandedColumns: 3,
+      compactModeExtraCompact: 1,
+      compactModeExtraMedium: 1,
+      compactModeExtraExpanded: 3,
+      children: [
+        AppMetricTile(
+          label: l10n.stockIssuedLabel,
+          value: summary.issuedQty,
+          suffix: l10n.piecesUnit,
+          icon: AppIcons.stockIssue,
+          tone: AppStatusTone.info,
+        ),
+        AppMetricTile(
+          label: l10n.stockGoodReturnedLabel,
+          value: summary.goodReturnedQty,
+          suffix: l10n.piecesUnit,
+          icon: AppIcons.successOutline,
+          tone: AppStatusTone.good,
+        ),
+        AppMetricTile(
+          label: l10n.dailySummaryDamagedLostLabel,
+          value: summary.damagedQty + summary.lostAndShortageQty,
+          suffix: l10n.piecesUnit,
+          icon: AppIcons.damaged,
+          tone: (summary.damagedQty + summary.lostAndShortageQty) > 0
+              ? AppStatusTone.damaged
+              : AppStatusTone.neutral,
+        ),
+        AppMetricTile(
+          label: l10n.accountingEarnedLabourLabel,
+          value: summary.labourEarnedPaise,
+          isCurrencyPaise: true,
+          icon: AppIcons.work,
+          tone: AppStatusTone.good,
+        ),
+        AppMetricTile(
+          label: l10n.accountingTabPayments,
+          value: summary.netPaymentsPaise,
+          isCurrencyPaise: true,
+          icon: AppIcons.payment,
+          tone: AppStatusTone.neutral,
+        ),
+        AppMetricTile(
+          label: l10n.stockPendingWorkerLabel,
+          value: summary.currentTotalPendingQty,
+          suffix: l10n.piecesUnit,
+          icon: AppIcons.pending,
+          tone: summary.currentTotalPendingQty > 0
+              ? AppStatusTone.pending
+              : AppStatusTone.good,
+        ),
+      ],
     );
   }
 }

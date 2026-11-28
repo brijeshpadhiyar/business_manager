@@ -102,7 +102,7 @@ final class _AccountSettingsPageState extends State<AccountSettingsPage> {
             builder: (context, state) {
               if (!state.isAuthenticated || state.user == null) {
                 return ListView(
-                  padding: AppSpacing.screenAll,
+                  padding: context.density.screenAll,
                   children: [
                     AppCard(
                       child: Column(
@@ -152,7 +152,7 @@ final class _AccountSettingsPageState extends State<AccountSettingsPage> {
 
               final user = state.user!;
               return ListView(
-                padding: AppSpacing.screenAll,
+                padding: context.density.screenAll,
                 children: [
                   if (state.errorMessage != null) ...[
                     AppStatusBadge(

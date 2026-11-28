@@ -3,11 +3,9 @@ import 'dart:ui';
 import 'package:business_manager/core/config/app_identity.dart';
 import 'package:business_manager/core/design_system/app_breakpoints.dart';
 import 'package:business_manager/core/design_system/app_colors.dart';
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
-import 'package:business_manager/core/design_system/app_radius.dart';
 import 'package:business_manager/core/design_system/app_shadows.dart';
-import 'package:business_manager/core/design_system/app_sizing.dart';
-import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/widgets/app_breadcrumb_bar.dart';
 import 'package:business_manager/core/widgets/app_glass_backdrop.dart';
 import 'package:flutter/services.dart';
@@ -137,20 +135,22 @@ final class ResponsiveNavigation extends StatelessWidget {
   }
 
   Widget _brandTitle(BuildContext context) {
+    final d = context.density;
     final showLogo = MediaQuery.sizeOf(context).width >= 360;
+    final logoSize = d.isCompact ? 20.0 : 26.0;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         if (showLogo) ...[
           Image.asset(
             AppIdentity.symbolPngAsset,
-            width: 26,
-            height: 26,
+            width: logoSize,
+            height: logoSize,
             cacheWidth: 96,
             cacheHeight: 96,
-            errorBuilder: (_, _, _) => const Icon(AppIcons.brand, size: 22),
+            errorBuilder: (_, _, _) => Icon(AppIcons.brand, size: d.iconMd),
           ),
-          const SizedBox(width: AppSpacing.sm),
+          SizedBox(width: d.sm),
         ],
         Flexible(
           child: Text(title, overflow: TextOverflow.ellipsis, maxLines: 1),
@@ -164,12 +164,13 @@ final class ResponsiveNavigation extends StatelessWidget {
     bool showTitle = true,
     bool automaticallyImplyLeading = true,
     Widget? customTitle,
-    double toolbarHeight = AppSizing.appBarHeight,
+    double? toolbarHeight,
     List<Widget>? actionsOverride,
   }) {
     final tokens = context.surfaceTokens;
+    final d = context.density;
     return AppBar(
-      toolbarHeight: toolbarHeight,
+      toolbarHeight: toolbarHeight ?? d.appBarHeight,
       backgroundColor: Colors.transparent,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
@@ -202,6 +203,7 @@ final class ResponsiveNavigation extends StatelessWidget {
   }) {
     final colorScheme = Theme.of(context).colorScheme;
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final d = context.density;
     final iconColor = selected
         ? (isDark ? colorScheme.secondary : colorScheme.primary)
         : colorScheme.onSurfaceVariant;
@@ -210,7 +212,7 @@ final class ResponsiveNavigation extends StatelessWidget {
       scale: selected ? 1.12 : 1.0,
       duration: AppMotion.duration(context, AppMotion.fast),
       curve: AppMotion.standardCurve,
-      child: Icon(icon, size: AppSizing.iconMd, color: iconColor),
+      child: Icon(icon, size: d.iconMd, color: iconColor),
     );
 
     if (badgeCount == null || badgeCount <= 0) {
@@ -247,6 +249,7 @@ final class ResponsiveNavigation extends StatelessWidget {
     final sizeClass = AppBreakpoints.fromWidth(width);
     final colorScheme = Theme.of(context).colorScheme;
     final tokens = context.surfaceTokens;
+    final d = context.density;
     final transitionBody = _animatedBody(context);
 
     Widget buildShell() {
@@ -276,8 +279,8 @@ final class ResponsiveNavigation extends StatelessWidget {
               floatingActionButton: floatingActionButton,
               bottomNavigationBar: RepaintBoundary(
                 child: ClipRRect(
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(AppRadius.xl),
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(d.radiusLg),
                   ),
                   child: BackdropFilter(
                     filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
@@ -285,8 +288,8 @@ final class ResponsiveNavigation extends StatelessWidget {
                     child: DecoratedBox(
                       decoration: BoxDecoration(
                         color: tokens.navGlassFill,
-                        borderRadius: const BorderRadius.vertical(
-                          top: Radius.circular(AppRadius.xl),
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(d.radiusLg),
                         ),
                         border: Border(
                           top: BorderSide(
@@ -300,6 +303,7 @@ final class ResponsiveNavigation extends StatelessWidget {
                         ],
                       ),
                       child: NavigationBar(
+                        height: d.navBarHeight,
                         selectedIndex: selectedIndex.clamp(
                           0,
                           destinations.length - 1,
@@ -358,26 +362,25 @@ final class ResponsiveNavigation extends StatelessWidget {
                   ? Drawer(
                       child: SafeArea(
                         child: ListView(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: AppSpacing.md,
-                          ),
+                          padding: EdgeInsets.symmetric(vertical: d.md),
                           children: [
                             Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: AppSpacing.lg,
-                                vertical: AppSpacing.sm,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: d.lg,
+                                vertical: d.sm,
                               ),
                               child: _brandTitle(context),
                             ),
                             const Divider(),
                             for (final item in sidebarExtraActions)
                               ListTile(
+                                dense: d.isCompact,
                                 selected:
                                     item.id != null &&
                                     item.id == activeExtraActionId,
                                 leading: Icon(
                                   item.icon,
-                                  size: AppSizing.iconMd,
+                                  size: d.iconMd,
                                 ),
                                 title: Text(item.label),
                                 onTap: () {
@@ -427,6 +430,7 @@ final class ResponsiveNavigation extends StatelessWidget {
                                       ),
                                       child: IntrinsicHeight(
                                         child: NavigationRail(
+                                          minWidth: d.navigationRailWidth,
                                           selectedIndex: safeSelected,
                                           onDestinationSelected:
                                               onDestinationSelected,
@@ -496,7 +500,7 @@ final class ResponsiveNavigation extends StatelessWidget {
                 children: [
                   RepaintBoundary(
                     child: SizedBox(
-                      width: AppSizing.desktopSidebarWidth,
+                      width: d.desktopSidebarWidth,
                       child: ClipRect(
                         child: BackdropFilter(
                           filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
@@ -520,24 +524,24 @@ final class ResponsiveNavigation extends StatelessWidget {
                               elevation: 0,
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                    AppSpacing.lg,
-                                    AppSpacing.lg,
-                                    AppSpacing.lg,
-                                    AppSpacing.md,
+                                  padding: EdgeInsets.fromLTRB(
+                                    d.lg,
+                                    d.isCompact ? d.md : d.lg,
+                                    d.lg,
+                                    d.isCompact ? d.sm : d.md,
                                   ),
                                   child: Row(
                                     children: [
                                       Image.asset(
                                         AppIdentity.symbolPngAsset,
-                                        width: 34,
-                                        height: 34,
+                                        width: d.isCompact ? 26 : 34,
+                                        height: d.isCompact ? 26 : 34,
                                         cacheWidth: 96,
                                         cacheHeight: 96,
                                         errorBuilder: (_, _, _) =>
-                                            const Icon(AppIcons.brand),
+                                            Icon(AppIcons.brand, size: d.iconMd),
                                       ),
-                                      const SizedBox(width: AppSpacing.sm),
+                                      SizedBox(width: d.sm),
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment:
@@ -574,24 +578,24 @@ final class ResponsiveNavigation extends StatelessWidget {
                                   ),
                                 ),
                                 const Divider(),
-                                const SizedBox(height: AppSpacing.xs),
+                                SizedBox(height: d.xs),
                                 ...destinations.map(
-                                  (d) => NavigationDrawerDestination(
+                                  (dest) => NavigationDrawerDestination(
                                     icon: _animatedNavIcon(
                                       context,
-                                      d.icon,
+                                      dest.icon,
                                       selected: false,
-                                      badgeCount: d.badgeCount,
+                                      badgeCount: dest.badgeCount,
                                     ),
                                     selectedIcon: _animatedNavIcon(
                                       context,
-                                      d.selectedIcon ?? d.icon,
+                                      dest.selectedIcon ?? dest.icon,
                                       selected: true,
-                                      badgeCount: d.badgeCount,
+                                      badgeCount: dest.badgeCount,
                                     ),
                                     label: Flexible(
                                       child: Text(
-                                        d.label,
+                                        dest.label,
                                         overflow: TextOverflow.ellipsis,
                                         maxLines: 1,
                                       ),
@@ -599,31 +603,35 @@ final class ResponsiveNavigation extends StatelessWidget {
                                   ),
                                 ),
                                 if (sidebarExtraActions.isNotEmpty) ...[
-                                  const Padding(
+                                  Padding(
                                     padding: EdgeInsets.symmetric(
-                                      horizontal: AppSpacing.lg,
-                                      vertical: AppSpacing.sm,
+                                      horizontal: d.lg,
+                                      vertical: d.sm,
                                     ),
-                                    child: Divider(),
+                                    child: const Divider(),
                                   ),
                                   ...sidebarExtraActions.map((item) {
                                     final isActive =
                                         item.id != null &&
                                         item.id == activeExtraActionId;
                                     return Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: AppSpacing.md,
-                                        vertical: 2,
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: d.md,
+                                        vertical: d.isCompact ? 1 : 2,
                                       ),
                                       child: ListTile(
                                         dense: true,
+                                        minVerticalPadding: d.isCompact ? 0 : null,
+                                        visualDensity: d.isCompact
+                                            ? VisualDensity.compact
+                                            : null,
                                         selected: isActive,
                                         selectedTileColor: colorScheme.secondary
                                             .withValues(
                                               alpha: isDark ? 0.26 : 0.16,
                                             ),
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: AppRadius.mdBorder,
+                                          borderRadius: d.radiusMdBorder,
                                           side: isActive
                                               ? BorderSide(
                                                   color: colorScheme.secondary
@@ -637,7 +645,7 @@ final class ResponsiveNavigation extends StatelessWidget {
                                         ),
                                         leading: Icon(
                                           item.icon,
-                                          size: AppSizing.iconMd,
+                                          size: d.iconMd,
                                           color: isActive
                                               ? (isDark
                                                     ? colorScheme.secondary
@@ -677,7 +685,7 @@ final class ResponsiveNavigation extends StatelessWidget {
                             context,
                             showTitle: false,
                             automaticallyImplyLeading: false,
-                            toolbarHeight: 44,
+                            toolbarHeight: d.isCompact ? 34 : 44,
                             customTitle: breadcrumbs.isNotEmpty
                                 ? AppBreadcrumbBar(items: breadcrumbs)
                                 : null,

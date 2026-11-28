@@ -2,9 +2,6 @@ import 'package:business_manager/core/config/app_config.dart';
 import 'package:business_manager/core/config/app_identity.dart';
 import 'package:business_manager/core/design_system/app_colors.dart';
 import 'package:business_manager/core/design_system/app_motion.dart';
-import 'package:business_manager/core/design_system/app_radius.dart';
-import 'package:business_manager/core/design_system/app_sizing.dart';
-import 'package:business_manager/core/design_system/app_spacing.dart';
 import 'package:business_manager/core/localization/l10n_extensions.dart';
 import 'package:business_manager/core/localization/locale_cubit.dart';
 import 'package:business_manager/core/localization/locale_state.dart';
@@ -59,17 +56,20 @@ final class SettingsHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = context.l10n;
     final colorScheme = Theme.of(context).colorScheme;
+    final d = context.density;
 
     final effectiveShowAppBar =
         showAppBar || (ModalRoute.of(context)?.canPop ?? false);
     final content = Align(
       alignment: Alignment.topCenter,
       child: ConstrainedBox(
-        constraints: const BoxConstraints(
-          maxWidth: AppSizing.narrowContentWidth,
+        constraints: BoxConstraints(
+          maxWidth: AppContentWidth.narrow.effectiveMaxWidth(
+            isCompact: d.isCompact,
+          ),
         ),
         child: ListView(
-          padding: AppSpacing.screenAll,
+          padding: d.screenAll,
           children: [
             if (!effectiveShowAppBar) ...[
               AppHeading(
@@ -77,7 +77,7 @@ final class SettingsHomePage extends StatelessWidget {
                 level: AppHeadingLevel.h2,
                 subtitle: l10n.settingsSubtitle,
               ),
-              const SizedBox(height: AppSpacing.lg),
+              const AppGap.lg(),
             ],
 
             // Section 0 (v1.5): Account & Cloud Sync
@@ -136,7 +136,7 @@ final class SettingsHomePage extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: AppSpacing.md),
+              const AppGap.md(),
             ],
 
             // Section 1: App & Workshop Setup
@@ -164,7 +164,7 @@ final class SettingsHomePage extends StatelessWidget {
                           ),
                     ),
                   ),
-                  const AppDivider(indent: 64),
+                  const AppDivider(indent: 52),
                   GuideTarget(
                     id: GuideTargetId.settingsBusinessProfileTile,
                     child: _SettingsTile(
@@ -177,7 +177,7 @@ final class SettingsHomePage extends StatelessWidget {
                           context.push(RoutePaths.settingsBusinessProfile),
                     ),
                   ),
-                  const AppDivider(indent: 64),
+                  const AppDivider(indent: 52),
                   GuideTarget(
                     id: GuideTargetId.settingsStockLabourTile,
                     child: _SettingsTile(
@@ -189,7 +189,7 @@ final class SettingsHomePage extends StatelessWidget {
                       onTap: () => context.push(RoutePaths.settingsStockLabour),
                     ),
                   ),
-                  const AppDivider(indent: 64),
+                  const AppDivider(indent: 52),
                   _SettingsTile(
                     icon: AppIcons.designs,
                     iconBg: colorScheme.secondaryContainer,
@@ -201,7 +201,7 @@ final class SettingsHomePage extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: AppSpacing.md),
+            const AppGap.md(),
 
             // Section 2: Security, Data Safety & Guidance
             AppMotionEntrance(
@@ -230,7 +230,7 @@ final class SettingsHomePage extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const AppDivider(indent: 64),
+                  const AppDivider(indent: 52),
                   _SettingsTile(
                     icon: AppIcons.team,
                     iconBg: colorScheme.primaryContainer,
@@ -239,7 +239,7 @@ final class SettingsHomePage extends StatelessWidget {
                     subtitle: l10n.settingsTeamSubtitle,
                     onTap: () => context.push(RoutePaths.settingsTeam),
                   ),
-                  const AppDivider(indent: 64),
+                  const AppDivider(indent: 52),
                   _SettingsTile(
                     icon: AppIcons.notifications,
                     iconBg: context.semanticColors.pendingContainer,
@@ -248,7 +248,7 @@ final class SettingsHomePage extends StatelessWidget {
                     subtitle: l10n.settingsNotificationsSubtitle,
                     onTap: () => context.push(RoutePaths.settingsNotifications),
                   ),
-                  const AppDivider(indent: 64),
+                  const AppDivider(indent: 52),
                   GuideTarget(
                     id: GuideTargetId.settingsBackupTile,
                     child: _SettingsTile(
@@ -260,7 +260,7 @@ final class SettingsHomePage extends StatelessWidget {
                       onTap: () => context.push(RoutePaths.settingsBackup),
                     ),
                   ),
-                  const AppDivider(indent: 64),
+                  const AppDivider(indent: 52),
                   _SettingsTile(
                     icon: AppIcons.dataHealth,
                     iconBg: colorScheme.primaryContainer,
@@ -269,7 +269,7 @@ final class SettingsHomePage extends StatelessWidget {
                     subtitle: l10n.settingsDataHealthSubtitle,
                     onTap: () => context.push(RoutePaths.settingsDataHealth),
                   ),
-                  const AppDivider(indent: 64),
+                  const AppDivider(indent: 52),
                   GuideTarget(
                     id: GuideTargetId.settingsHelpTile,
                     child: _SettingsTile(
@@ -284,7 +284,7 @@ final class SettingsHomePage extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: AppSpacing.md),
+            const AppGap.md(),
 
             // Section 3: About & Diagnostics
             AppMotionEntrance(
@@ -305,7 +305,7 @@ final class SettingsHomePage extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(height: AppSpacing.xl),
+            const AppGap.xl(),
           ],
         ),
       ),
@@ -362,27 +362,29 @@ final class _SettingsTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final d = context.density;
+    final boxSize = d.isCompact ? 30.0 : 40.0;
     return InkWell(
       onTap: onTap,
-      borderRadius: AppRadius.lgBorder,
+      borderRadius: d.radiusLgBorder,
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.md,
+        padding: EdgeInsets.symmetric(
+          horizontal: d.md,
+          vertical: d.isCompact ? d.sm + 2 : d.md,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
-              width: 40,
-              height: 40,
+              width: boxSize,
+              height: boxSize,
               decoration: BoxDecoration(
                 color: iconBg,
-                borderRadius: AppRadius.mdBorder,
+                borderRadius: d.radiusMdBorder,
               ),
-              child: Icon(icon, size: 20, color: iconColor),
+              child: Icon(icon, size: d.iconMd, color: iconColor),
             ),
-            const SizedBox(width: AppSpacing.md),
+            const AppGap.hMd(),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -392,14 +394,14 @@ final class _SettingsTile extends StatelessWidget {
                     variant: AppTextVariant.bodyLarge,
                     fontWeight: FontWeight.w600,
                   ),
-                  const SizedBox(height: AppSpacing.xxs),
+                  const AppGap.xxs(),
                   AppText(
                     subtitle,
                     variant: AppTextVariant.bodySmall,
                     color: colorScheme.onSurfaceVariant,
                   ),
                   if (badgeText != null) ...[
-                    const SizedBox(height: AppSpacing.xs),
+                    const AppGap.xs(),
                     AppStatusBadge(
                       label: badgeText!,
                       tone: AppStatusTone.neutral,
@@ -408,8 +410,12 @@ final class _SettingsTile extends StatelessWidget {
                 ],
               ),
             ),
-            const SizedBox(width: AppSpacing.xs),
-            Icon(AppIcons.chevronRight, color: colorScheme.onSurfaceVariant),
+            const AppGap.hXs(),
+            Icon(
+              AppIcons.chevronRight,
+              size: d.iconMd,
+              color: colorScheme.onSurfaceVariant,
+            ),
           ],
         ),
       ),

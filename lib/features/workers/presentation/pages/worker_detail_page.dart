@@ -272,83 +272,67 @@ final class _WorkerDetailView extends StatelessWidget {
                           l10n.workerWorkOverviewHeading,
                           level: AppHeadingLevel.h3,
                         ),
-                        const SizedBox(height: AppSpacing.sm),
-                        LayoutBuilder(
-                          builder: (context, constraints) {
-                            final isWide = constraints.maxWidth >= 580;
-                            final tileW = isWide
-                                ? (constraints.maxWidth - AppSpacing.sm * 3) / 4
-                                : (constraints.maxWidth - AppSpacing.sm) / 2;
-                            return Wrap(
-                              spacing: AppSpacing.sm,
-                              runSpacing: AppSpacing.sm,
-                              children: [
-                                SizedBox(
-                                  width: tileW,
-                                  child: AppMetricTile(
-                                    label: l10n.stockPendingWorkerLabel,
-                                    value: stock.pending,
-                                    suffix: l10n.piecesUnit,
-                                    subtitle:
-                                        '${openIssues.length} ${l10n.workerOpenIssuesCountLabel}',
-                                    icon: AppIcons.pending,
-                                    tone: stock.pending > 0
+                        const AppGap.sm(),
+                        AppResponsiveGrid(
+                          compactColumns: 2,
+                          mediumColumns: 4,
+                          expandedColumns: 4,
+                          compactModeExtraCompact: 1,
+                          compactModeExtraMedium: 0,
+                          compactModeExtraExpanded: 0,
+                          children: [
+                            AppMetricTile(
+                              label: l10n.stockPendingWorkerLabel,
+                              value: stock.pending,
+                              suffix: l10n.piecesUnit,
+                              subtitle:
+                                  '${openIssues.length} ${l10n.workerOpenIssuesCountLabel}',
+                              icon: AppIcons.pending,
+                              tone: stock.pending > 0
+                                  ? AppStatusTone.pending
+                                  : AppStatusTone.good,
+                              onTap: () => context.push(
+                                RoutePaths.stockReturnPickerFiltered(
+                                  workerId: worker.id,
+                                ),
+                              ),
+                            ),
+                            AppMetricTile(
+                              label: l10n.accountingEarnedLabourLabel,
+                              value: fin.earnedLabourPaise,
+                              isCurrencyPaise: true,
+                              icon: AppIcons.work,
+                              tone: AppStatusTone.good,
+                              onTap: () => context.push(
+                                RoutePaths.workerLedger(worker.id),
+                              ),
+                            ),
+                            AppMetricTile(
+                              label: fin.advanceCreditBalancePaise > 0
+                                  ? l10n.accountingAdvanceCreditLabel
+                                  : l10n.accountingOutstandingPayableLabel,
+                              value: fin.advanceCreditBalancePaise > 0
+                                  ? fin.advanceCreditBalancePaise
+                                  : fin.outstandingPayablePaise,
+                              isCurrencyPaise: true,
+                              icon: AppIcons.accounting,
+                              tone: fin.advanceCreditBalancePaise > 0
+                                  ? AppStatusTone.info
+                                  : (fin.outstandingPayablePaise > 0
                                         ? AppStatusTone.pending
-                                        : AppStatusTone.good,
-                                    onTap: () => context.push(
-                                      RoutePaths.stockReturnPickerFiltered(
-                                        workerId: worker.id,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: tileW,
-                                  child: AppMetricTile(
-                                    label: l10n.accountingEarnedLabourLabel,
-                                    value: fin.earnedLabourPaise,
-                                    isCurrencyPaise: true,
-                                    icon: AppIcons.work,
-                                    tone: AppStatusTone.good,
-                                    onTap: () => context.push(
-                                      RoutePaths.workerLedger(worker.id),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: tileW,
-                                  child: AppMetricTile(
-                                    label: fin.advanceCreditBalancePaise > 0
-                                        ? l10n.accountingAdvanceCreditLabel
-                                        : l10n.accountingOutstandingPayableLabel,
-                                    value: fin.advanceCreditBalancePaise > 0
-                                        ? fin.advanceCreditBalancePaise
-                                        : fin.outstandingPayablePaise,
-                                    isCurrencyPaise: true,
-                                    icon: AppIcons.accounting,
-                                    tone: fin.advanceCreditBalancePaise > 0
-                                        ? AppStatusTone.info
-                                        : (fin.outstandingPayablePaise > 0
-                                              ? AppStatusTone.pending
-                                              : AppStatusTone.good),
-                                    onTap: () => context.push(
-                                      RoutePaths.workerLedger(worker.id),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: tileW,
-                                  child: AppMetricTile(
-                                    label: l10n.stockGoodReturnedLabel,
-                                    value: stock.goodReturned,
-                                    suffix: l10n.piecesUnit,
-                                    icon: AppIcons.successOutline,
-                                    tone: AppStatusTone.neutral,
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
+                                        : AppStatusTone.good),
+                              onTap: () => context.push(
+                                RoutePaths.workerLedger(worker.id),
+                              ),
+                            ),
+                            AppMetricTile(
+                              label: l10n.stockGoodReturnedLabel,
+                              value: stock.goodReturned,
+                              suffix: l10n.piecesUnit,
+                              icon: AppIcons.successOutline,
+                              tone: AppStatusTone.neutral,
+                            ),
+                          ],
                         ),
                         if (openIssues.isNotEmpty) ...[
                           const SizedBox(height: AppSpacing.md),

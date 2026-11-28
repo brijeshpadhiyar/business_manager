@@ -159,21 +159,26 @@ final class _BusinessManagerAppState extends State<BusinessManagerApp>
                         scrollBehavior: const AppScrollBehavior(),
                         // Respect the phone's font-size setting, but cap it so very
                         // large system fonts cannot break tables and forms.
-                        builder: (context, child) =>
-                            MediaQuery.withClampedTextScaling(
-                              minScaleFactor: 1.0,
-                              maxScaleFactor: 1.5,
-                              child: ToastificationWrapper(
-                                child: AppLockGate(
-                                  onNavigateDeepLink: (routePath) =>
-                                      _router.push(routePath),
-                                  child: GuideSpotlightHost(
-                                    router: _router,
-                                    child: child ?? const SizedBox.shrink(),
-                                  ),
+                        // In Compact ERP mode, clamp a little tighter so high-density
+                        // screens preserve maximum row visibility.
+                        builder: (context, child) {
+                          final isCompact =
+                              densityState.mode == UiDensityMode.compact;
+                          return MediaQuery.withClampedTextScaling(
+                            minScaleFactor: isCompact ? 0.9 : 1.0,
+                            maxScaleFactor: isCompact ? 1.25 : 1.5,
+                            child: ToastificationWrapper(
+                              child: AppLockGate(
+                                onNavigateDeepLink: (routePath) =>
+                                    _router.push(routePath),
+                                child: GuideSpotlightHost(
+                                  router: _router,
+                                  child: child ?? const SizedBox.shrink(),
                                 ),
                               ),
                             ),
+                          );
+                        },
                       );
                     },
                   );

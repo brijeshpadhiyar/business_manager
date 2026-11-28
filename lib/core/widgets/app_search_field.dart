@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:business_manager/core/design_system/app_density.dart';
 import 'package:business_manager/core/validation/validation_error.dart';
 import 'package:business_manager/core/widgets/app_text_field.dart';
 import 'package:material_ui/material_ui.dart';
@@ -84,6 +85,7 @@ final class _AppSearchFieldState extends State<AppSearchField> {
 
   @override
   Widget build(BuildContext context) {
+    final d = context.density;
     return AppTextField(
       controller: _ctrl,
       label: widget.label,
@@ -93,8 +95,13 @@ final class _AppSearchFieldState extends State<AppSearchField> {
       textInputAction: TextInputAction.search,
       suffixIcon: _currentText.isNotEmpty
           ? IconButton(
-              icon: const Icon(AppIcons.close, size: 18),
+              icon: Icon(AppIcons.close, size: d.iconMd),
               tooltip: 'Clear',
+              constraints: BoxConstraints(
+                minWidth: d.touchTargetMin,
+                minHeight: d.touchTargetMin,
+              ),
+              padding: d.isCompact ? EdgeInsets.zero : null,
               onPressed: () {
                 _debounce?.cancel();
                 _ctrl.clear();
